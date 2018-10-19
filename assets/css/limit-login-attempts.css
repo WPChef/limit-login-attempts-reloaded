@@ -7,3 +7,6 @@
     padding: 10px; }
   .limit-login-page-settings .limit-login-log table tr:nth-child(even) {
     background-color: rgba(0, 0, 0, 0.09); }
+
+#toplevel_page_limit-login-attempts .wp-menu-image img {
+  max-width: 22px; }
