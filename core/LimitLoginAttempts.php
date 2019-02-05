@@ -333,12 +333,12 @@ class Limit_Login_Attempts
 	*/
 	public function network_admin_menu()
 	{
-		add_submenu_page( 'settings.php', 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+		add_menu_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ), LLA_PLUGIN_URL . '/assets/img/icon-menu2.svg' );
 	}
 	
 	public function admin_menu()
 	{
-		add_options_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+		add_menu_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ), LLA_PLUGIN_URL . '/assets/img/icon-menu2.svg' );
 	}
 
 	/**
@@ -942,8 +942,13 @@ class Limit_Login_Attempts
 		$my_warn_count = $limit_login_my_error_shown ? 1 : 0;
 
 		if ( $limit_login_nonempty_credentials && $count > $my_warn_count ) {
+
 			/* Replace error message, including ours if necessary */
-			$content = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' ) . "<br />\n";
+			if( !empty( $_REQUEST['log'] ) && is_email( $_REQUEST['log'] ) ) {
+				$content = __( '<strong>ERROR</strong>: Incorrect email address or password.', 'limit-login-attempts-reloaded' ) . "<br />\n";
+			} else{
+				$content = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' ) . "<br />\n";
+			}
 
 			if ( $limit_login_my_error_shown || $this->get_message() ) {
 				$content .= "<br />\n" . $this->get_message() . "<br />\n";
