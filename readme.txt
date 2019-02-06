@@ -3,7 +3,7 @@ Contributors: wpchefgadget
 Tags: brute force, login, security, GDPR, protection
 Requires at least: 3.0
 Tested up to: 5.0.3
-Stable tag: 2.7.2
+Stable tag: 2.7.3
 
 Reloaded version of the original Limit Login Attempts plugin for Login Protection by a team of WordPress developers. GDPR compliant.
 
@@ -50,6 +50,9 @@ Based on the original code from Limit Login Attemps plugin by Johan Eenfeldt.
 3. Administration interface in WordPress 4.5.3
 
 == Changelog ==
+
+= 2.7.3 =
+* Settings page is moved back to "Settings".
 
 = 2.7.2 =
 * Settings are moved to a separate page.
