@@ -648,7 +648,13 @@ class Limit_Login_Attempts
 			$message .= sprintf( __( "IP was blocked for %s", 'limit-login-attempts-reloaded' ), $when );
 		}
 
-		$admin_email = $this->use_local_options ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
+		if( $custom_admin_email = $this->get_option( 'admin_notify_email' ) ) {
+
+			$admin_email = $custom_admin_email;
+		} else {
+
+			$admin_email = $this->use_local_options ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
+		}
 
 		@wp_mail( $admin_email, $subject, $message );
 	}
@@ -1161,6 +1167,8 @@ class Limit_Login_Attempts
 				$this->update_option('allowed_lockouts',   (int)$_POST['allowed_lockouts'] );
 				$this->update_option('long_duration',      (int)$_POST['long_duration'] * 3600 );
 				$this->update_option('notify_email_after', (int)$_POST['email_after'] );
+
+				$this->update_option('admin_notify_email', sanitize_email( $_POST['admin_notify_email'] ) );
 
 				$white_list_ips = ( !empty( $_POST['lla_whitelist_ips'] ) ) ? explode("\n", str_replace("\r", "", stripslashes($_POST['lla_whitelist_ips']) ) ) : array();
 
