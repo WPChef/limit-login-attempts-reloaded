@@ -2,8 +2,8 @@
 Contributors: wpchefgadget
 Tags: brute force, login, security, GDPR, protection
 Requires at least: 3.0
-Tested up to: 5.0.3
-Stable tag: 2.7.3
+Tested up to: 5.1.1
+Stable tag: 2.7.4
 
 Reloaded version of the original Limit Login Attempts plugin for Login Protection by a team of WordPress developers. GDPR compliant.
 
@@ -50,6 +50,9 @@ Based on the original code from Limit Login Attemps plugin by Johan Eenfeldt.
 3. Administration interface in WordPress 4.5.3
 
 == Changelog ==
+
+= 2.7.4 =
+* The lockout alerts can be sent to a configurable email address now.
 
 = 2.7.3 =
 * Settings page is moved back to "Settings".
