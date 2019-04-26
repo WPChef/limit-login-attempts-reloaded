@@ -141,6 +141,7 @@ class Limit_Login_Attempts
 	public function after_password_reset( $user ) {
 
 		$lockouts = $this->get_option( 'lockouts' );
+		$lockouts_log = $this->get_option( 'logged' );
 
 		if( $user->has_cap( 'administrator' ) ) {
 
@@ -190,6 +191,16 @@ class Limit_Login_Attempts
 				unset( $lockouts[ $admin_ip ] );
 
 				$this->update_option( 'lockouts', $lockouts );
+
+				if( is_array( $lockouts_log ) && isset( $lockouts_log[ $admin_ip ] ) ) {
+
+					foreach ( $lockouts_log[ $admin_ip ] as $user_login => &$data ) {
+
+						$data['unlocked'] = true;
+					}
+
+					$this->update_option( 'logged', $lockouts_log );
+				}
 			}
 
 			$valid = $this->get_option( 'retries_valid' );
@@ -215,8 +226,6 @@ class Limit_Login_Attempts
 			$user_ip = $this->get_address();
 			$user_ip = ($this->get_option('gdpr') ? $this->getHash( $user_ip ) : $user_ip );
 
-			$lockouts_log = $this->get_option( 'logged' );
-
 			if ( isset( $lockouts_log[ $user_ip ] ) && is_array( $lockouts_log[ $user_ip ] ) ) {
 
 				$last_unlocked_time = 0;
@@ -235,7 +244,7 @@ class Limit_Login_Attempts
 					unset( $lockouts[ $user_ip ] );
 
 					if( is_array( $lockouts_log ) && isset( $lockouts_log[ $user_ip ] ) ) {
-						
+
 						foreach ( $lockouts_log[ $user_ip ] as $user_login => &$data ) {
 
 							$data['unlocked'] = true;
@@ -1001,7 +1010,7 @@ class Limit_Login_Attempts
 			$msg .= sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $when, 'limit-login-attempts-reloaded' ), $when );
 		}
 
-		$msg .= '<br>'. sprintf( __( 'You can also try <a href="%s">resetting your password</a> and that should help you to log in.', 'limit-login-attempts-reloaded' ), wp_lostpassword_url() );
+		$msg .= '<br><br>'. sprintf( __( 'You can also try <a href="%s">resetting your password</a> and that should help you to log in.', 'limit-login-attempts-reloaded' ), wp_lostpassword_url() );
 
 		return $msg;
 	}
