@@ -3,7 +3,7 @@ Contributors: wpchefgadget
 Tags: brute force, login, security, GDPR, protection
 Requires at least: 3.0
 Tested up to: 5.1.1
-Stable tag: 2.8.0
+Stable tag: 2.8.1
 
 Reloaded version of the original Limit Login Attempts plugin for Login Protection by a team of WordPress developers. GDPR compliant.
 
@@ -49,6 +49,9 @@ Based on the original code from Limit Login Attemps plugin by Johan Eenfeldt.
 3. Administration interface in WordPress 4.5.3
 
 == Changelog ==
+
+= 2.8.1 =
+* Extra lockout options are back.
 
 = 2.8.0 =
 * The plugin doesn't trust any IP addresses other than _SERVER["REMOTE_ADDR"] anymore. Trusting other IP origins make protection useless b/c they can be easily faked. This new version provides a way of secure IP unlocking for those sites that use a reverse proxy coupled with misconfigurated servers that populate _SERVER["REMOTE_ADDR"] with wrong IPs which leads to mass blocking of users.

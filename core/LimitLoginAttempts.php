@@ -69,7 +69,7 @@ class Limit_Login_Attempts
 		add_filter( 'limit_login_blacklist_ip', array( $this, 'check_blacklist_ips' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_usernames', array( $this, 'check_blacklist_usernames' ), 10, 2 );
 	}
-	
+
 	/**
 	* Hook 'plugins_loaded'
 	*/
@@ -80,13 +80,13 @@ class Limit_Login_Attempts
 
 		// Check if installed old plugin
 		$this->check_original_installed();
-		
+
 		if ( is_multisite() )
 			require_once ABSPATH.'wp-admin/includes/plugin.php';
-		
+
 		$this->network_mode = is_multisite() && is_plugin_active_for_network('limit-login-attempts-reloaded/limit-login-attempts-reloaded.php');
-		
-		
+
+
 		if ( $this->network_mode )
 		{
 			$this->allow_local_options = get_site_option( 'limit_login_allow_local_options', false );
@@ -97,7 +97,7 @@ class Limit_Login_Attempts
 			$this->allow_local_options = true;
 			$this->use_local_options = true;
 		}
-		
+
 
 		// Setup default plugin options
 		//$this->sanitize_options();
@@ -108,10 +108,10 @@ class Limit_Login_Attempts
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
 		add_action( 'login_head', array( $this, 'add_error_message' ) );
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
-		
+
 		if ( $this->network_mode )
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
-		
+
 		if ( $this->allow_local_options )
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 
@@ -128,10 +128,10 @@ class Limit_Login_Attempts
 		*/
 		add_action( 'wp_authenticate', array( $this, 'track_credentials' ), 10, 2 );
 		add_action( 'authenticate', array( $this, 'authenticate_filter' ), 5, 3 );
-		
+
 		if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST )
 			add_action( 'init', array( $this, 'check_xmlrpc_lock' ) );
-		
+
 		add_action('wp_ajax_limit-login-unlock', array( $this, 'ajax_unlock' ) );
 	}
 
@@ -264,7 +264,7 @@ class Limit_Login_Attempts
 	{
 		if ( is_user_logged_in() || $this->is_ip_whitelisted() )
 			return;
-			
+
 		if ( $this->is_ip_blacklisted() || !$this->is_limit_login_ok() )
 		{
 			header('HTTP/1.0 403 Forbidden');
@@ -287,7 +287,7 @@ class Limit_Login_Attempts
 	public function check_blacklist_usernames( $allow, $username ) {
 		return in_array( $username, (array) $this->get_option( 'blacklist_usernames' ) );
 	}
-	
+
 	public function ip_in_range( $ip, $list )
 	{
 		foreach ( $list as $range )
@@ -303,10 +303,10 @@ class Limit_Login_Attempts
 				$low = ip2long( $range[0] );
 				$high = ip2long( $range[1] );
 				$needle = ip2long( $ip );
-				
+
 				if ( $low === false || $high === false || $needle === false )
 					continue;
-				
+
 				$low = (float)sprintf("%u",$low);
 				$high = (float)sprintf("%u",$high);
 				$needle = (float)sprintf("%u",$needle);
@@ -315,7 +315,7 @@ class Limit_Login_Attempts
 					return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -461,7 +461,7 @@ class Limit_Login_Attempts
 	{
 		add_submenu_page( 'settings.php', 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
 	}
-	
+
 	public function admin_menu()
 	{
 		add_options_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
@@ -476,7 +476,7 @@ class Limit_Login_Attempts
 	{
 		if ( is_network_admin() )
 			return network_admin_url( 'settings.php?page=limit-login-attempts' );
-		
+
 		return menu_page_url( $this->_options_page_slug, false );
 	}
 
@@ -487,43 +487,43 @@ class Limit_Login_Attempts
 	*
 	* @return null
 	*/
-	public function get_option( $option_name, $local = null ) 
+	public function get_option( $option_name, $local = null )
 	{
 		if ( is_null( $local ) )
 			$local = $this->use_local_options;
-		
+
 		$option = 'limit_login_'.$option_name;
-		
+
 		$func = $local ? 'get_option' : 'get_site_option';
 		$value = $func( $option, null );
-		
+
 		if ( is_null( $value ) && isset( $this->default_options[ $option_name ] ) )
 			$value = $this->default_options[ $option_name ];
-		
+
 		return $value;
 	}
-	
+
 	public function update_option( $option_name, $value, $local = null )
 	{
 		if ( is_null( $local ) )
 			$local = $this->use_local_options;
-		
+
 		$option = 'limit_login_'.$option_name;
-		
+
 		$func = $local ? 'update_option' : 'update_site_option';
-		
+
 		return $func( $option, $value );
 	}
-	
+
 	public function add_option( $option_name, $value, $local=null )
 	{
 		if ( is_null( $local ) )
 			$local = $this->use_local_options;
-		
+
 		$option = 'limit_login_'.$option_name;
-		
+
 		$func = $local ? 'add_option' : 'add_site_option';
-		
+
 		return $func( $option, $value, '', 'no' );
 	}
 
@@ -541,11 +541,11 @@ class Limit_Login_Attempts
 		}
 		if ( $this->get_option('notify_email_after') > $this->get_option( 'allowed_lockouts' ) )
 			$this->update_option( 'notify_email_after', $this->get_option( 'allowed_lockouts' ) );
-		
+
 		$args         = explode( ',', $this->get_option( 'lockout_notify' ) );
 		$args_allowed = explode( ',', LLA_LOCKOUT_NOTIFY_ALLOWED );
 		$new_args     = array_intersect( $args, $args_allowed );
-		
+
 		$this->update_option( 'lockout_notify', implode( ',', $new_args ) );
 
 		$ctype = $this->get_option( 'client_type' );
@@ -784,7 +784,7 @@ class Limit_Login_Attempts
 
 		@wp_mail( $admin_email, $subject, $message );
 	}
-	
+
 	/**
 	* Logging of lockout (if configured)
 	*
@@ -808,15 +808,15 @@ class Limit_Login_Attempts
 		/* can be written much simpler, if you do not mind php warnings */
 		if ( !isset( $log[ $index ] ) )
 			$log[ $index ] = array();
-		
+
 		if ( !isset( $log[ $index ][ $user_login ] ) )
 			$log[ $index ][ $user_login ] = array( 'counter' => 0 );
-		
+
 		elseif ( !is_array( $log[ $index ][ $user_login ] ) )
 			$log[ $index ][ $user_login ] = array(
 				'counter' => $log[ $index ][ $user_login ],
 			);
-		
+
 		$log[ $index ][ $user_login ]['counter']++;
 		$log[ $index ][ $user_login ]['date'] = time();
 
@@ -1076,7 +1076,7 @@ class Limit_Login_Attempts
 		$my_warn_count = $limit_login_my_error_shown ? 1 : 0;
 
 		if ( $limit_login_nonempty_credentials && $count > $my_warn_count ) {
-			
+
 			/* Replace error message, including ours if necessary */
 			if( !empty( $_REQUEST['log'] ) && is_email( $_REQUEST['log'] ) ) {
 				$content = __( '<strong>ERROR</strong>: Incorrect email address or password.', 'limit-login-attempts-reloaded' ) . "<br />\n";
@@ -1245,14 +1245,14 @@ class Limit_Login_Attempts
 	public function options_page() {
 		$this->use_local_options = !is_network_admin();
 		$this->cleanup();
-		
+
 		if( !empty( $_POST ) )
 		{
 			check_admin_referer( 'limit-login-attempts-options' );
-			
+
 			if ( is_network_admin() )
 				$this->update_option( 'allow_local_options', !empty($_POST['allow_local_options']) );
-			
+
 			elseif ( $this->network_mode )
 				$this->update_option( 'use_local_options', empty($_POST['use_global_options']) );
 
@@ -1291,9 +1291,9 @@ class Limit_Login_Attempts
 			{
 				$this->update_option('allowed_retries',    (int)$_POST['allowed_retries'] );
 				$this->update_option('lockout_duration',   (int)$_POST['lockout_duration'] * 60 );
-//				$this->update_option('valid_duration',     (int)$_POST['valid_duration'] * 3600 );
-//				$this->update_option('allowed_lockouts',   (int)$_POST['allowed_lockouts'] );
-//				$this->update_option('long_duration',      (int)$_POST['long_duration'] * 3600 );
+				$this->update_option('valid_duration',     (int)$_POST['valid_duration'] * 3600 );
+				$this->update_option('allowed_lockouts',   (int)$_POST['allowed_lockouts'] );
+				$this->update_option('long_duration',      (int)$_POST['long_duration'] * 3600 );
 				$this->update_option('notify_email_after', (int)$_POST['email_after'] );
 
 				$this->update_option('admin_notify_email', sanitize_email( $_POST['admin_notify_email'] ) );
@@ -1345,7 +1345,7 @@ class Limit_Login_Attempts
 					}
 				}
 				$this->update_option('blacklist_usernames', $black_list_usernames );
-				
+
 				$notify_methods = array();
 				if( isset( $_POST[ 'lockout_notify_log' ] ) ) {
 					$notify_methods[] = 'log';
@@ -1354,44 +1354,44 @@ class Limit_Login_Attempts
 					$notify_methods[] = 'email';
 				}
 				$this->update_option('lockout_notify', implode( ',', $notify_methods ) );
-				
+
 				$this->sanitize_options();
-				
+
 				$this->show_error( __( 'Options saved.', 'limit-login-attempts-reloaded' ) );
 			}
 		}
-		
+
 		include_once( LLA_PLUGIN_DIR . '/views/options-page.php' );
 	}
-	
+
 	public function ajax_unlock()
 	{
 		check_ajax_referer('limit-login-unlock', 'sec');
 		$ip = (string)@$_POST['ip'];
-		
+
 		$lockouts = (array)$this->get_option('lockouts');
-		
+
 		if ( isset( $lockouts[ $ip ] ) )
 		{
 			unset( $lockouts[ $ip ] );
 			$this->update_option( 'lockouts', $lockouts );
 		}
-		
+
 		//save to log
 		$user_login = @(string)$_POST['username'];
 		$log = $this->get_option( 'logged' );
-		
+
 		if ( @$log[ $ip ][ $user_login ] )
 		{
 			if ( !is_array( $log[ $ip ][ $user_login ] ) )
-			$log[ $ip ][ $user_login ] = array( 
+			$log[ $ip ][ $user_login ] = array(
 				'counter' => $log[ $ip ][ $user_login ],
 			);
 			$log[ $ip ][ $user_login ]['unlocked'] = true;
-			
+
 			$this->update_option( 'logged', $log );
 		}
-		
+
 		header('Content-Type: application/json');
 		echo 'true';
 		exit;
