@@ -111,7 +111,6 @@ $admin_email_placeholder = (!is_multisite()) ? get_option( 'admin_email' ) : get
                            value="<?php echo( $this->get_option( 'lockout_duration' ) / 60 ); ?>"
                            name="lockout_duration"/> <?php echo __( 'minutes lockout', 'limit-login-attempts-reloaded' ); ?>
                     <br/>
-                    <?php /*
                     <input type="text" size="3" maxlength="4"
                            value="<?php echo( $this->get_option( 'allowed_lockouts' ) ); ?>"
                            name="allowed_lockouts"/> <?php echo __( 'lockouts increase lockout time to', 'limit-login-attempts-reloaded' ); ?>
@@ -121,7 +120,6 @@ $admin_email_placeholder = (!is_multisite()) ? get_option( 'admin_email' ) : get
                     <input type="text" size="3" maxlength="4"
                            value="<?php echo( $this->get_option( 'valid_duration' ) / 3600 ); ?>"
                            name="valid_duration"/> <?php echo __( 'hours until retries are reset', 'limit-login-attempts-reloaded' ); ?>
-                    */ ?>
                 </td>
             </tr>
             <tr>
