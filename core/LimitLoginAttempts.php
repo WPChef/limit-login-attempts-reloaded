@@ -53,6 +53,11 @@ class Limit_Login_Attempts
 	*/
 	public $_errors = array();
 
+	/**
+	 * @var null
+	 */
+	private $use_local_options = null;
+
 	public function __construct() {
 		$this->hooks_init();
 	}
