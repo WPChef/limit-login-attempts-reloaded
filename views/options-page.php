@@ -35,6 +35,9 @@ $admin_email_placeholder = (!is_multisite()) ? get_option( 'admin_email' ) : get
 $trusted_ip_origins = $this->get_option( 'trusted_ip_origins' );
 $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_origins ) ) ? implode( ", ", $trusted_ip_origins ) : 'REMOTE_ADDR';
 
+$cookies_yes = $this->get_option('cookies') ? ' checked ' : '';
+$cookies_no = $this->get_option('cookies') ? '' : ' checked ';
+
 ?>
 <div class="wrap limit-login-page-settings">
     <h2><?php echo __( 'Limit Login Attempts Settings', 'limit-login-attempts-reloaded' ); ?></h2>
@@ -124,6 +127,12 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_o
                     <input type="text" size="3" maxlength="4"
                            value="<?php echo( $this->get_option( 'valid_duration' ) / 3600 ); ?>"
                            name="valid_duration"/> <?php echo __( 'hours until retries are reset', 'limit-login-attempts-reloaded' ); ?>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" valign="top"><?php echo __( 'Handle cookie login','limit-login-attempts-reloaded' ); ?></th>
+                <td>
+                    <label><input type="radio" name="cookies" <?php echo $cookies_yes; ?> value="1" /> <?php echo __( 'Yes', 'limit-login-attempts-reloaded' ); ?></label> <label><input type="radio" name="cookies" <?php echo $cookies_no; ?> value="0" /> <?php echo __( 'No', 'limit-login-attempts-reloaded' ); ?></label>
                 </td>
             </tr>
             <tr>
