@@ -58,6 +58,14 @@ class Limit_Login_Attempts
 	}
 
 	/**
+	 * Deactivate plugin
+	 */
+	public function deactivation() {
+
+		wp_unschedule_hook( 'llar_update_cf_ips' );
+	}
+
+	/**
 	* Register wp hooks and filters
 	*/
 	public function hooks_init() {
@@ -77,6 +85,11 @@ class Limit_Login_Attempts
 
 		// Load languages files
 		load_plugin_textdomain( 'limit-login-attempts-reloaded', false, plugin_basename( dirname( __FILE__ ) ) . '/../languages' );
+
+		if( !empty($_SERVER['HTTP_CF_CONNECTING_IP']) && !wp_next_scheduled( 'llar_update_cf_ips' ) ) {
+			wp_schedule_event( time(), 'daily', 'llar_update_cf_ips');
+		}
+		add_action( 'llar_update_cf_ips', array( $this, 'cf_parse_ips' ) );
 
 		// Check if installed old plugin
 		$this->check_original_installed();
@@ -1175,31 +1188,76 @@ class Limit_Login_Attempts
 	 */
 	public function get_address() {
 
-		$trusted_ip_origins = $this->get_option( 'trusted_ip_origins' );
-
-		if( empty( $trusted_ip_origins ) || !is_array( $trusted_ip_origins ) ) {
-
-			$trusted_ip_origins = array();
-		}
-
-		if( !in_array( 'REMOTE_ADDR', $trusted_ip_origins ) ) {
-
-			$trusted_ip_origins[] = 'REMOTE_ADDR';
-		}
-
 		$ip = '';
-		foreach ( $trusted_ip_origins as $origin ) {
 
-			if( isset( $_SERVER[$origin] ) && !empty( $_SERVER[$origin] ) ) {
+		if(!empty($_SERVER['HTTP_CF_CONNECTING_IP']) && $this->is_cf_ip($_SERVER['REMOTE_ADDR'])) {
 
-				$ip = $_SERVER[$origin];
-				break;
+			$ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+
+		} else {
+
+			$trusted_ip_origins = $this->get_option( 'trusted_ip_origins' );
+
+			if( empty( $trusted_ip_origins ) || !is_array( $trusted_ip_origins ) ) {
+
+				$trusted_ip_origins = array();
+			}
+
+			if( !in_array( 'REMOTE_ADDR', $trusted_ip_origins ) ) {
+
+				$trusted_ip_origins[] = 'REMOTE_ADDR';
+			}
+
+			foreach ( $trusted_ip_origins as $origin ) {
+
+				if( isset( $_SERVER[$origin] ) && !empty( $_SERVER[$origin] ) ) {
+
+					$ip = $_SERVER[$origin];
+					break;
+				}
 			}
 		}
 
 		$ip = preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ip);
 
 		return $ip;
+	}
+
+	/**
+	 * Check if an IP is CloudFlare
+	 *
+	 * @param $ip
+	 * @return bool
+	 */
+	private function is_cf_ip($ip) {
+
+		$cf_ips = $this->get_option('cf_ips');
+
+		if( !filter_var($ip, FILTER_VALIDATE_IP) || empty($cf_ips) ) return false;
+
+		$address = \IPLib\Factory::addressFromString($ip);
+
+		if(	filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) && !empty($cf_ips['ipv4'])) {
+
+			foreach ($cf_ips['ipv4'] as $ip_range) {
+
+				$range = \IPLib\Factory::rangeFromString($ip_range);
+
+				if($address->matches($range)) return true;
+			}
+		}
+
+		if(	filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) && !empty($cf_ips['ipv6'])) {
+
+			foreach ($cf_ips['ipv6'] as $ip_range) {
+
+				$range = \IPLib\Factory::rangeFromString($ip_range);
+
+				if($address->matches($range)) return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -1456,4 +1514,35 @@ class Limit_Login_Attempts
     {
         return isset($arr[$k]) ? $arr[$k] : 0;
     }
+
+	/**
+	 * Cron: Updates CloudFlare's ips ranges
+	 */
+    public function cf_parse_ips() {
+
+    	$ips_urls = [
+    		'ipv4' => 'https://www.cloudflare.com/ips-v4',
+    		'ipv6' => 'https://www.cloudflare.com/ips-v6'
+		];
+
+    	$data = [
+    		'ipv4' => [],
+    		'ipv6' => [],
+		];
+		foreach ($ips_urls as $type => $url) {
+
+			$ch = curl_init($url);
+
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+			if(($response = curl_exec($ch)) !== false) {
+
+				$data[$type] = explode("\n", trim($response));
+			}
+
+			curl_close($ch);
+    	}
+
+    	$this->update_option('cf_ips', $data);
+	}
 }

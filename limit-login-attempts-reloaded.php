@@ -32,8 +32,12 @@ $limit_login_nonempty_credentials = false; /* user and pwd nonempty */
 /***************************************************************************************
  * Include files
  **************************************************************************************/
+require_once( LLA_PLUGIN_DIR . '/lib/ip-lib/ip-lib.php' );
+
 require_once( LLA_PLUGIN_DIR . '/core/Helpers.php' );
 require_once( LLA_PLUGIN_DIR . '/core/Logger.php' );
 require_once( LLA_PLUGIN_DIR . '/core/LimitLoginAttempts.php' );
 
 $limit_login_attempts_obj = new Limit_Login_Attempts();
+
+register_deactivation_hook( __FILE__, array( $limit_login_attempts_obj, 'deactivation' ) );
