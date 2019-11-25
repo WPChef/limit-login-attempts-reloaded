@@ -39,44 +39,44 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_o
 <div class="wrap limit-login-page-settings">
     <h2><?php echo __( 'Limit Login Attempts Settings', 'limit-login-attempts-reloaded' ); ?></h2>
     <h3><?php echo __( 'Statistics', 'limit-login-attempts-reloaded' ); ?></h3>
-    <form action="<?php echo $this->get_options_page_uri(); ?>" method="post">
+    <form action="<?php echo esc_url( $this->get_options_page_uri() ); ?>" method="post">
         <?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
         <table class="form-table">
             <tr>
-                <th scope="row" valign="top"><?php echo __( 'Total lockouts', 'limit-login-attempts-reloaded' ); ?></th>
+                <th scope="row" valign="top"><?php echo esc_html__( 'Total lockouts', 'limit-login-attempts-reloaded' ); ?></th>
                 <td>
                     <?php if( $lockouts_total > 0 ) { ?>
                         <input class="button" name="reset_total"
-                               value="<?php echo __( 'Reset Counter', 'limit-login-attempts-reloaded' ); ?>"
+                               value="<?php echo esc_html__( 'Reset Counter', 'limit-login-attempts-reloaded' ); ?>"
                                type="submit"/>
-                        <?php echo sprintf( _n( '%d lockout since last reset', '%d lockouts since last reset', $lockouts_total, 'limit-login-attempts-reloaded' ), $lockouts_total ); ?>
+                        <?php echo esc_html( sprintf( _n( '%d lockout since last reset', '%d lockouts since last reset', absint( $lockouts_total ), 'limit-login-attempts-reloaded' ), absint( $lockouts_total ) ) ); ?>
                     <?php } else {
-                        echo __( 'No lockouts yet', 'limit-login-attempts-reloaded' );
+                        echo esc_html__( 'No lockouts yet', 'limit-login-attempts-reloaded' );
                     } ?>
                 </td>
             </tr>
             <?php if( $lockouts_now > 0 ) { ?>
                 <tr>
                     <th scope="row"
-                        valign="top"><?php echo __( 'Active lockouts', 'limit-login-attempts-reloaded' ); ?></th>
+                        valign="top"><?php echo esc_html__( 'Active lockouts', 'limit-login-attempts-reloaded' ); ?></th>
                     <td>
                         <input class="button" name="reset_current"
-                               value="<?php echo __( 'Restore Lockouts', 'limit-login-attempts-reloaded' ); ?>"
+                               value="<?php echo esc_html__( 'Restore Lockouts', 'limit-login-attempts-reloaded' ); ?>"
                                type="submit"/>
-                        <?php echo sprintf( __( '%d IP is currently blocked from trying to log in', 'limit-login-attempts-reloaded' ), $lockouts_now ); ?>
+                        <?php echo esc_html( sprintf( __( '%d IP is currently blocked from trying to log in', 'limit-login-attempts-reloaded' ), absint( $lockouts_now ) ) ); ?>
                     </td>
                 </tr>
             <?php } ?>
         </table>
     </form>
     <h3><?php echo __( 'Options', 'limit-login-attempts-reloaded' ); ?></h3>
-    <form action="<?php echo $this->get_options_page_uri(); ?>" method="post">
+    <form action="<?php echo esc_url( $this->get_options_page_uri() ); ?>" method="post">
         <?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
         <?php if ( is_network_admin() ): ?>
-		<input type="checkbox" name="allow_local_options" <?php echo $this->get_option( 'allow_local_options' ) ? 'checked' : '' ?> value="1"/> <?php esc_html_e( 'Let network sites use their own settings', 'limit-login-attempts-reloaded' ); ?>
+		<input type="checkbox" name="allow_local_options" <?php echo esc_attr( $this->get_option( 'allow_local_options' ) ? 'checked' : '' ); ?> value="1"/> <?php esc_html_e( 'Let network sites use their own settings', 'limit-login-attempts-reloaded' ); ?>
 		<p class="description"><?php esc_html_e('If disabled, the global settings will be forcibly applied to the entire network.') ?></p>
 		<?php elseif ( $this->network_mode ): ?>
-        <input type="checkbox" name="use_global_options" <?php echo $this->get_option('use_local_options' ) ? '' : 'checked' ?> value="1" class="use_global_options"/> <?php echo __( 'Use global settings', 'limit-login-attempts-reloaded' ); ?><br/>
+        <input type="checkbox" name="use_global_options" <?php echo esc_attr( $this->get_option('use_local_options' ) ? '' : 'checked' ); ?> value="1" class="use_global_options"/> <?php echo esc_html__( 'Use global settings', 'limit-login-attempts-reloaded' ); ?><br/>
         <script>
         jQuery(function($){
 			var first = true;
@@ -108,81 +108,81 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_o
                 <td>
 
                     <input type="text" size="3" maxlength="4"
-                           value="<?php echo( $this->get_option( 'allowed_retries' ) ); ?>"
-                           name="allowed_retries"/> <?php echo __( 'allowed retries', 'limit-login-attempts-reloaded' ); ?>
+                           value="<?php echo esc_attr( $this->get_option( 'allowed_retries' ) ); ?>"
+                           name="allowed_retries"/> <?php echo esc_html__( 'allowed retries', 'limit-login-attempts-reloaded' ); ?>
                     <br/>
                     <input type="text" size="3" maxlength="4"
-                           value="<?php echo( $this->get_option( 'lockout_duration' ) / 60 ); ?>"
-                           name="lockout_duration"/> <?php echo __( 'minutes lockout', 'limit-login-attempts-reloaded' ); ?>
+                           value="<?php echo esc_attr( $this->get_option( 'lockout_duration' ) / 60 ); ?>"
+                           name="lockout_duration"/> <?php echo esc_html__( 'minutes lockout', 'limit-login-attempts-reloaded' ); ?>
                     <br/>
                     <input type="text" size="3" maxlength="4"
-                           value="<?php echo( $this->get_option( 'allowed_lockouts' ) ); ?>"
-                           name="allowed_lockouts"/> <?php echo __( 'lockouts increase lockout time to', 'limit-login-attempts-reloaded' ); ?>
+                           value="<?php echo esc_attr( $this->get_option( 'allowed_lockouts' ) ); ?>"
+                           name="allowed_lockouts"/> <?php echo esc_html__( 'lockouts increase lockout time to', 'limit-login-attempts-reloaded' ); ?>
                     <input type="text" size="3" maxlength="4"
-                           value="<?php echo( $this->get_option( 'long_duration' ) / 3600 ); ?>"
-                           name="long_duration"/> <?php echo __( 'hours', 'limit-login-attempts-reloaded' ); ?> <br/>
+                           value="<?php echo esc_attr( $this->get_option( 'long_duration' ) / 3600 ); ?>"
+                           name="long_duration"/> <?php echo esc_html__( 'hours', 'limit-login-attempts-reloaded' ); ?> <br/>
                     <input type="text" size="3" maxlength="4"
-                           value="<?php echo( $this->get_option( 'valid_duration' ) / 3600 ); ?>"
-                           name="valid_duration"/> <?php echo __( 'hours until retries are reset', 'limit-login-attempts-reloaded' ); ?>
+                           value="<?php echo esc_attr( $this->get_option( 'valid_duration' ) / 3600 ); ?>"
+                           name="valid_duration"/> <?php echo esc_html__( 'hours until retries are reset', 'limit-login-attempts-reloaded' ); ?>
                 </td>
             </tr>
             <tr>
                 <th scope="row"
                     valign="top"><?php echo __( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?></th>
                 <td>
-                    <input type="checkbox" name="lockout_notify_log" <?php echo $log_checked; ?>
-                           value="log"/> <?php echo __( 'Lockout log', 'limit-login-attempts-reloaded' ); ?><br/>
-                    <input type="checkbox" name="lockout_notify_email" <?php echo $email_checked; ?>
-                           value="email"/> <?php echo __( 'Email to', 'limit-login-attempts-reloaded' ); ?>
+                    <input type="checkbox" name="lockout_notify_log" <?php echo esc_attr( $log_checked ); ?>
+                           value="log"/> <?php echo esc_html__( 'Lockout log', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <input type="checkbox" name="lockout_notify_email" <?php echo esc_attr( $email_checked ); ?>
+                           value="email"/> <?php echo esc_html__( 'Email to', 'limit-login-attempts-reloaded' ); ?>
                     <input type="email" name="admin_notify_email"
                            value="<?php echo esc_attr( $admin_notify_email ) ?>"
-                           placeholder="<?php echo esc_attr( $admin_email_placeholder ); ?>"/> <?php echo __( 'after', 'limit-login-attempts-reloaded' ); ?>
+                           placeholder="<?php echo esc_attr( $admin_email_placeholder ); ?>"/> <?php echo esc_html__( 'after', 'limit-login-attempts-reloaded' ); ?>
                     <input type="text" size="3" maxlength="4"
-                           value="<?php echo( $this->get_option( 'notify_email_after' ) ); ?>"
-                           name="email_after"/> <?php echo __( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
+                           value="<?php echo esc_attr( $this->get_option( 'notify_email_after' ) ); ?>"
+                           name="email_after"/> <?php echo esc_html__( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
                 </td>
             </tr>
             <tr>
                 <th scope="row"
-                    valign="top"><?php echo __( 'Whitelist', 'limit-login-attempts-reloaded' ); ?></th>
+                    valign="top"><?php echo esc_html__( 'Whitelist', 'limit-login-attempts-reloaded' ); ?></th>
                 <td>
                     <div class="field-col">
-                        <p class="description"><?php _e( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ); ?></p>
+                        <p class="description"><?php esc_html_e( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ); ?></p>
                         <textarea name="lla_whitelist_ips" rows="10" cols="50"><?php echo esc_textarea( $white_list_ips ); ?></textarea>
                     </div>
                     <div class="field-col">
-                        <p class="description"><?php _e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?></p>
+                        <p class="description"><?php esc_html_e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?></p>
                         <textarea name="lla_whitelist_usernames" rows="10" cols="50"><?php echo esc_textarea( $white_list_usernames ); ?></textarea>
                     </div>
                 </td>
             </tr>
             <tr>
                 <th scope="row"
-                    valign="top"><?php echo __( 'Blacklist', 'limit-login-attempts-reloaded' ); ?></th>
+                    valign="top"><?php echo esc_html__( 'Blacklist', 'limit-login-attempts-reloaded' ); ?></th>
                 <td>
                     <div class="field-col">
-                        <p class="description"><?php _e( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ); ?></p>
+                        <p class="description"><?php esc_html_e( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ); ?></p>
                         <textarea name="lla_blacklist_ips" rows="10" cols="50"><?php echo esc_textarea( $black_list_ips ); ?></textarea>
                     </div>
                     <div class="field-col">
-                        <p class="description"><?php _e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?></p>
+                        <p class="description"><?php esc_html_e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?></p>
                         <textarea name="lla_blacklist_usernames" rows="10" cols="50"><?php echo esc_textarea( $black_list_usernames ); ?></textarea>
                     </div>
                 </td>
             </tr>
             <tr>
                 <th scope="row"
-                    valign="top"><?php echo __( 'Trusted IP Origins', 'limit-login-attempts-reloaded' ); ?></th>
+                    valign="top"><?php echo esc_html__( 'Trusted IP Origins', 'limit-login-attempts-reloaded' ); ?></th>
                 <td>
                     <div class="field-col">
                         <input type="text" class="regular-text" style="width: 100%;max-width: 431px;" name="lla_trusted_ip_origins" value="<?php echo esc_attr( $trusted_ip_origins ); ?>">
-                        <p class="description"><?php _e( 'Specify the origins you trust in order of priority, separated by commas. We strongly recommend that you <b>do not</b> use anything other than REMOTE_ADDR since other origins can be easily faked. Examples: HTTP_X_FORWARDED_FOR, HTTP_CF_CONNECTING_IP, HTTP_X_SUCURI_CLIENTIP', 'limit-login-attempts-reloaded' ); ?></p>
+                        <p class="description"><?php esc_html_e( 'Specify the origins you trust in order of priority, separated by commas. We strongly recommend that you <b>do not</b> use anything other than REMOTE_ADDR since other origins can be easily faked. Examples: HTTP_X_FORWARDED_FOR, HTTP_CF_CONNECTING_IP, HTTP_X_SUCURI_CLIENTIP', 'limit-login-attempts-reloaded' ); ?></p>
                     </div>
                 </td>
             </tr>
         </table>
         <p class="submit">
-            <input class="button button-primary" name="update_options" value="<?php echo __( 'Save Options', 'limit-login-attempts-reloaded' ); ?>"
+            <input class="button button-primary" name="update_options" value="<?php echo esc_attr__( 'Save Options', 'limit-login-attempts-reloaded' ); ?>"
                    type="submit"/>
         </p>
     </form>
@@ -193,12 +193,12 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_o
     $lockouts = (array)$this->get_option('lockouts');
 
     if( is_array( $log ) && ! empty( $log ) ) { ?>
-        <h3><?php echo __( 'Lockout log', 'limit-login-attempts-reloaded' ); ?></h3>
-        <form action="<?php echo $this->get_options_page_uri(); ?>" method="post">
+        <h3><?php echo esc_html__( 'Lockout log', 'limit-login-attempts-reloaded' ); ?></h3>
+        <form action="<?php echo esc_attr( $this->get_options_page_uri() ); ?>" method="post">
             <?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
             <input type="hidden" value="true" name="clear_log"/>
             <p class="submit">
-                <input class="button" name="submit" value="<?php echo __( 'Clear Log', 'limit-login-attempts-reloaded' ); ?>"
+                <input class="button" name="submit" value="<?php echo esc_attr__( 'Clear Log', 'limit-login-attempts-reloaded' ); ?>"
                        type="submit"/>
             </p>
         </form>
@@ -206,16 +206,16 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_o
         <div class="limit-login-log">
             <table class="form-table">
                 <tr>
-                    <th scope="col"><?php _e( "Date", 'limit-login-attempts-reloaded' ); ?></th>
-                    <th scope="col"><?php echo _x( "IP", "Internet address", 'limit-login-attempts-reloaded' ); ?></th>
-                    <th scope="col"><?php _e( 'Tried to log in as', 'limit-login-attempts-reloaded' ); ?></th>
-                    <th scope="col"><?php _e( 'Gateway', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th scope="col"><?php esc_html_e( "Date", 'limit-login-attempts-reloaded' ); ?></th>
+                    <th scope="col"><?php echo esc_html( _x( "IP", "Internet address", 'limit-login-attempts-reloaded' ) ); ?></th>
+                    <th scope="col"><?php esc_html_e( 'Tried to log in as', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th scope="col"><?php esc_html_e( 'Gateway', 'limit-login-attempts-reloaded' ); ?></th>
                     <th>
                 </tr>
 
                 <?php foreach ( $log as $date => $user_info ) : ?>
                     <tr>
-                        <td class="limit-login-date"><?php echo date_i18n( 'F d, Y H:i', $date ); ?></td>
+                        <td class="limit-login-date"><?php echo esc_html( date_i18n( 'F d, Y H:i', $date ) ); ?></td>
                         <td class="limit-login-ip">
                                 <?php echo esc_html( $user_info['ip'] ); ?>
                         </td>
