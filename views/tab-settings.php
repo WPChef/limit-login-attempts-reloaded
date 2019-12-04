@@ -6,9 +6,9 @@ if( !defined( 'ABSPATH' ) ) exit();
  * @var $this Limit_Login_Attempts
  */
 
-$gdpr = $this->get_option( 'gdpr', 0 );
+$gdpr = $this->get_option( 'gdpr' );
 
-$lockouts_total = $this->get_option( 'lockouts_total', 0 );
+$lockouts_total = $this->get_option( 'lockouts_total' );
 $lockouts = $this->get_option( 'login_lockouts' );
 $lockouts_now = is_array( $lockouts ) ? count( $lockouts ) : 0;
 
