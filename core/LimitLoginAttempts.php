@@ -764,6 +764,14 @@ class Limit_Login_Attempts
 		$message = sprintf( __( "%d failed login attempts (%d lockout(s)) from IP: %s"
 				, 'limit-login-attempts-reloaded' ) . "\r\n\r\n"
 			, $count, $lockouts, $ip );
+        /* Begin adding geo lookup */
+        $uri = "https://tools.keycdn.com/geo.json?host=".$ip;
+        $response = \Httpful\Request::get($uri)->send();
+        $array = json_decode($response);
+        $country = $array->data->geo->country_name;
+        $message .= sprintf( __( "Country of IP: %s", 'limit-login-attemps-reloaded' ) . "\r\n\r\n"
+            , $country );
+        /* End adding geo lookup */
 		if ( $user != '' ) {
 			$message .= sprintf( __( "Last user attempted: %s", 'limit-login-attempts-reloaded' )
 								. "\r\n\r\n", $user );
