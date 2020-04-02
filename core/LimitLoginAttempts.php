@@ -68,6 +68,7 @@ class Limit_Login_Attempts
 		add_filter( 'limit_login_whitelist_usernames', array( $this, 'check_whitelist_usernames' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_ip', array( $this, 'check_blacklist_ips' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_usernames', array( $this, 'check_blacklist_usernames' ), 10, 2 );
+		add_filter( 'illegal_user_logins', array( $this, 'register_user_blacklist' ), 999 );
 	}
 
 	/**
@@ -317,6 +318,21 @@ class Limit_Login_Attempts
 		}
 
 		return false;
+	}
+
+	/**
+	 * @param $blacklist
+	 * @return array|null
+	 */
+	public function register_user_blacklist($blacklist) {
+
+		$black_list_usernames = $this->get_option( 'blacklist_usernames' );
+
+		if(!empty($black_list_usernames) && is_array($black_list_usernames)) {
+			$blacklist += $black_list_usernames;
+		}
+
+		return $blacklist;
 	}
 
 	/**
