@@ -1487,7 +1487,7 @@ class Limit_Login_Attempts
 
         if(!$activation_timestamp) {
 
-			$activation_timestamp = filemtime(LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php');
+			$activation_timestamp = filemtime(LLA_PLUGIN_DIR . '/core/Helpers.php');
 			$this->update_option( 'activation_timestamp', $activation_timestamp );
         }
 
