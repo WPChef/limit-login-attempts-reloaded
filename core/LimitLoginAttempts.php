@@ -472,7 +472,7 @@ class Limit_Login_Attempts
 	* Enqueue js and css
 	*/
 	public function enqueue() {
-		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . '/assets/css/limit-login-attempts.css' );
+		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css' );
 	}
 
 	/**
@@ -1487,7 +1487,7 @@ class Limit_Login_Attempts
 
         if(!$activation_timestamp) {
 
-			$activation_timestamp = filemtime(LLA_PLUGIN_DIR . '/core/Helpers.php');
+			$activation_timestamp = filemtime(LLA_PLUGIN_DIR . 'core/Helpers.php');
 			$this->update_option( 'activation_timestamp', $activation_timestamp );
         }
 
@@ -1495,16 +1495,17 @@ class Limit_Login_Attempts
 
 			<div id="message" class="updated fade notice llar-notice-review">
                 <div class="llar-review-image">
-                    <img width="80px" src="<?php echo LLA_PLUGIN_URL?>/assets/img/icon-256x256.png" alt="review-logo">
+                    <img width="80px" src="<?php echo LLA_PLUGIN_URL?>assets/img/icon-256x256.png" alt="review-logo">
                 </div>
 				<div class="llar-review-info">
-                    <p><?php _e('Howdy,<br>We have recently come up with a crazy idea and wanted to share it with you! The thing is, a plugin maker can put any image in the header of their plugin page as seen in <a href="https://wordpress.org/plugins/hello-dolly/" target="_blank">this example</a>. What if we put YOUR image on the Limit Login Attempts page?! A nice peaceful drawing made by your child or you would look very nice there and will hopefully cheer up a lot of good people browsing the Internet! You can put your initials in the bottom right corner. How does this idea sound to you? To make this happen you can send us your drawings by <a href="mailto:wpchef.me@gmail.com" target="_blank">email</a> and in every new release we will add a picture we liked the most. Make it portrait oriented. Let\'s have some fun!', 'limit-login-attempts-reloaded'); ?></p>
+				    <p><?php _e('Hey <strong>Limit Login Attempts Reloaded</strong> user!', 'limit-login-attempts-reloaded'); ?></p>
+                    <p><?php _e('A <strong>crazy idea</strong> we wanted to share! What if we put an image from YOU on the <a href="https://wordpress.org/plugins/limit-login-attempts-reloaded/" target="_blank">LLAR page</a>?! (<a href="https://wordpress.org/plugins/hello-dolly/" target="_blank">example</a>) A drawing made by you or your child would cheer people up! Send us your drawing by <a href="mailto:wpchef.me@gmail.com" target="_blank">email</a> and we like it, we\'ll add it in the next release. Let\'s have some fun!', 'limit-login-attempts-reloaded'); ?></p>
                     <p><?php _e('Also, we would really like to hear your feedback about the plugin! Please take a couple minutes to write a few words <a href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post" target="_blank">here</a>. Thank you!', 'limit-login-attempts-reloaded'); ?></p>
 
                     <ul class="llar-buttons">
-                        <li><a class="button button-primary" target="_blank" href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post"><?php _e('Leave a review', 'limit-login-attempts-reloaded'); ?></a></li>
-                        <li><i class="dashicons dashicons-calendar"></i><a href="#" class="llar-review-dismiss" data-type="later"><?php _e('Maybe later', 'limit-login-attempts-reloaded'); ?></a></li>
-                        <li><i class="dashicons dashicons-no-alt"></i><a href="#" class="llar-review-dismiss" data-type="dismiss"><?php _e('Don\'t show again', 'limit-login-attempts-reloaded'); ?></a></li>
+						<li><a href="#" class="llar-review-dismiss" data-type="dismiss"><?php _e('Don\'t show again', 'limit-login-attempts-reloaded'); ?></a></li>
+                        <li><i class=""></i><a href="#" class="llar-review-dismiss button" data-type="later"><?php _e('Maybe later', 'limit-login-attempts-reloaded'); ?></a></li>
+						<li><a class="button button-primary" target="_blank" href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post"><?php _e('Leave a review', 'limit-login-attempts-reloaded'); ?></a></li>
                     </ul>
                 </div>
 			</div>
