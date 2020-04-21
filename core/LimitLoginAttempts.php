@@ -35,6 +35,8 @@ class Limit_Login_Attempts
 		/* If notify by email, do so after this number of lockouts */
 		'notify_email_after' => 4,
 
+		'review_notice_shown' => false,
+
 		'whitelist'           => array(),
 		'whitelist_usernames' => array(),
 		'blacklist'           => array(),
@@ -68,7 +70,10 @@ class Limit_Login_Attempts
 		add_filter( 'limit_login_whitelist_usernames', array( $this, 'check_whitelist_usernames' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_ip', array( $this, 'check_blacklist_ips' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_usernames', array( $this, 'check_blacklist_usernames' ), 10, 2 );
+
 		add_filter( 'illegal_user_logins', array( $this, 'register_user_blacklist' ), 999 );
+		add_action( 'admin_notices', array( $this, 'show_leave_review_notice' ) );
+		add_action( 'wp_ajax_dismiss_review_notice', array( $this, 'dismiss_review_notice_callback' ));
 	}
 
 	/**
@@ -467,7 +472,7 @@ class Limit_Login_Attempts
 	* Enqueue js and css
 	*/
 	public function enqueue() {
-		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . '/assets/css/limit-login-attempts.css' );
+		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css' );
 	}
 
 	/**
@@ -1472,4 +1477,85 @@ class Limit_Login_Attempts
     {
         return isset($arr[$k]) ? $arr[$k] : 0;
     }
+
+	public function show_leave_review_notice() {
+
+		$screen = get_current_screen();
+        if ( $screen->parent_base === 'edit' ) return;
+
+        $activation_timestamp = $this->get_option('activation_timestamp');
+
+        if(!$activation_timestamp) {
+
+			$activation_timestamp = filemtime(LLA_PLUGIN_DIR . 'core/Helpers.php');
+			$this->update_option( 'activation_timestamp', $activation_timestamp );
+        }
+
+		if ( !$this->get_option('review_notice_shown') && $activation_timestamp && $activation_timestamp < strtotime("-1 month") ) { ?>
+
+			<div id="message" class="updated fade notice llar-notice-review">
+                <div class="llar-review-image">
+                    <img width="80px" src="<?php echo LLA_PLUGIN_URL?>assets/img/icon-256x256.png" alt="review-logo">
+                </div>
+				<div class="llar-review-info">
+				    <p><?php _e('Hey <strong>Limit Login Attempts Reloaded</strong> user!', 'limit-login-attempts-reloaded'); ?></p>
+                    <p><?php _e('A <strong>crazy idea</strong> we wanted to share! What if we put an image from YOU on the <a href="https://wordpress.org/plugins/limit-login-attempts-reloaded/" target="_blank">LLAR page</a>?! (<a href="https://wordpress.org/plugins/hello-dolly/" target="_blank">example</a>) A drawing made by you or your child would cheer people up! Send us your drawing by <a href="mailto:wpchef.me@gmail.com" target="_blank">email</a> and we like it, we\'ll add it in the next release. Let\'s have some fun!', 'limit-login-attempts-reloaded'); ?></p>
+                    <p><?php _e('Also, we would really like to hear your feedback about the plugin! Please take a couple minutes to write a few words <a href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post" target="_blank">here</a>. Thank you!', 'limit-login-attempts-reloaded'); ?></p>
+
+                    <ul class="llar-buttons">
+						<li><a href="#" class="llar-review-dismiss" data-type="dismiss"><?php _e('Don\'t show again', 'limit-login-attempts-reloaded'); ?></a></li>
+                        <li><i class=""></i><a href="#" class="llar-review-dismiss button" data-type="later"><?php _e('Maybe later', 'limit-login-attempts-reloaded'); ?></a></li>
+						<li><a class="button button-primary" target="_blank" href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post"><?php _e('Leave a review', 'limit-login-attempts-reloaded'); ?></a></li>
+                    </ul>
+                </div>
+			</div>
+            <script type="text/javascript">
+                (function($){
+
+                    $(document).ready(function(){
+                        $('.llar-review-dismiss').on('click', function(e) {
+                            e.preventDefault();
+
+                            var type = $(this).data('type');
+
+                            $.post(ajaxurl, {
+                                action: 'dismiss_review_notice',
+                                type: type,
+                                sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+                            })
+
+                            $(this).closest('.llar-notice-review').remove();
+
+                        })
+                    });
+
+                })(jQuery);
+            </script>
+			<?php
+		}
+	}
+
+	public function dismiss_review_notice_callback() {
+
+		if ( !current_user_can('activate_plugins') ) {
+
+		    wp_send_json_error([]);
+        }
+
+		check_ajax_referer('llar-action', 'sec');
+
+		$type = isset( $_POST['type'] ) ? $_POST['type'] : false;
+
+		if ($type === 'dismiss'){
+
+			$this->update_option( 'review_notice_shown', true );
+		}
+
+		if ($type === 'later') {
+
+			$this->update_option( 'activation_timestamp', time() );
+		}
+
+		wp_send_json_success([]);
+	}
 }
