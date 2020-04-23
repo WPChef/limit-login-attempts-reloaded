@@ -1490,10 +1490,26 @@ class Limit_Login_Attempts
 
         $activation_timestamp = $this->get_option('activation_timestamp');
 
-        if(!$activation_timestamp) {
+        $plugin_info = get_plugin_data(LLA_PLUGIN_DIR.'limit-login-attempts-reloaded.php');
 
-			$activation_timestamp = filemtime(LLA_PLUGIN_DIR . 'core/Helpers.php');
-			$this->update_option( 'activation_timestamp', $activation_timestamp );
+        if(!$activation_timestamp || ($activation_timestamp && !empty($plugin_info['Version']) && version_compare($plugin_info['Version'], '2.12.0', '=='))) {
+
+			$logs = $this->get_option('logged');
+
+			preg_match_all('/\"date\";\i\:([0-9]+)\;/', serialize($logs), $matches);
+
+			if(!empty($matches[1]) && $min_time = min($matches[1])) {
+
+				$activation_timestamp = $min_time;
+
+				$this->update_option( 'activation_timestamp', $activation_timestamp );
+            }
+
+			if(!$activation_timestamp) {
+
+				// Write time when the plugin is activated
+				$this->update_option( 'activation_timestamp', time());
+			}
         }
 
 		if ( !$this->get_option('review_notice_shown') && $activation_timestamp && $activation_timestamp < strtotime("-1 month") ) { ?>
