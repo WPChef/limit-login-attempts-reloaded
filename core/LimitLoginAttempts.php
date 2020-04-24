@@ -1487,6 +1487,12 @@ class Limit_Login_Attempts
 
 		$screen = get_current_screen();
 
+		if(isset($_COOKIE['review_notice_shown'])) {
+
+			$this->update_option('review_notice_shown', true);
+			setcookie('review_notice_shown', '', time() - 3600, '/');
+		}
+
         if ( $this->get_option('review_notice_shown') || $screen->parent_base === 'edit' ) return;
 
         $activation_timestamp = $this->get_option('activation_timestamp');
@@ -1523,7 +1529,7 @@ class Limit_Login_Attempts
 
 		if ( $activation_timestamp && $activation_timestamp < strtotime("-1 month") ) { ?>
 
-			<div id="message" class="updated fade notice llar-notice-review">
+			<div id="message" class="updated fade notice is-dismissible llar-notice-review">
                 <div class="llar-review-image">
                     <img width="80px" src="<?php echo LLA_PLUGIN_URL?>assets/img/icon-256x256.png" alt="review-logo">
                 </div>
@@ -1555,8 +1561,25 @@ class Limit_Login_Attempts
                             });
 
                             $(this).closest('.llar-notice-review').remove();
+                        });
 
-                        })
+                        $(".llar-notice-review").on("click", ".notice-dismiss", function (event) {
+                            createCookie('review_notice_shown', '1', 30);
+                        });
+
+                        function createCookie(name, value, days) {
+                            var expires;
+
+                            if (days) {
+                                var date = new Date();
+                                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                                expires = "; expires=" + date.toGMTString();
+                            } else {
+                                expires = "";
+                            }
+                            document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
+                        }
+
                     });
 
                 })(jQuery);
