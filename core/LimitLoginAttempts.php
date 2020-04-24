@@ -1486,23 +1486,32 @@ class Limit_Login_Attempts
 	public function show_leave_review_notice() {
 
 		$screen = get_current_screen();
-        if ( $screen->parent_base === 'edit' ) return;
+
+        if ( $this->get_option('review_notice_shown') || $screen->parent_base === 'edit' ) return;
 
         $activation_timestamp = $this->get_option('activation_timestamp');
+        $file_changed_timestamp = filemtime(LLA_PLUGIN_DIR . 'core/Helpers.php');
 
-        $plugin_info = get_plugin_data(LLA_PLUGIN_DIR.'limit-login-attempts-reloaded.php');
+        if($file_changed_timestamp < strtotime("-1 week") && !$activation_timestamp) {
 
-        if(!$activation_timestamp || ($activation_timestamp && !empty($plugin_info['Version']) && version_compare($plugin_info['Version'], '2.12.0', '=='))) {
+			$activation_timestamp = $file_changed_timestamp;
 
-			$logs = $this->get_option('logged');
+			$this->update_option( 'activation_timestamp', $activation_timestamp );
 
-			preg_match_all('/\"date\";\i\:([0-9]+)\;/', serialize($logs), $matches);
+        } else {
 
-			if(!empty($matches[1]) && $min_time = min($matches[1])) {
+            if(!$activation_timestamp || $activation_timestamp < time()) {
 
-				$activation_timestamp = $min_time;
+				$logs = $this->get_option('logged');
 
-				$this->update_option( 'activation_timestamp', $activation_timestamp );
+				preg_match_all('/\"date\";\i\:([0-9]+)\;/', serialize($logs), $matches);
+
+				if(!empty($matches[1]) && $min_time = min($matches[1])) {
+
+					$activation_timestamp = $min_time;
+
+					$this->update_option( 'activation_timestamp', $activation_timestamp );
+				}
             }
 
 			if(!$activation_timestamp) {
@@ -1512,7 +1521,7 @@ class Limit_Login_Attempts
 			}
         }
 
-		if ( !$this->get_option('review_notice_shown') && $activation_timestamp && $activation_timestamp < strtotime("-1 month") ) { ?>
+		if ( $activation_timestamp && $activation_timestamp < strtotime("-1 month") ) { ?>
 
 			<div id="message" class="updated fade notice llar-notice-review">
                 <div class="llar-review-image">
@@ -1543,7 +1552,7 @@ class Limit_Login_Attempts
                                 action: 'dismiss_review_notice',
                                 type: type,
                                 sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
-                            })
+                            });
 
                             $(this).closest('.llar-notice-review').remove();
 
@@ -1574,7 +1583,7 @@ class Limit_Login_Attempts
 
 		if ($type === 'later') {
 
-			$this->update_option( 'activation_timestamp', time() );
+			$this->update_option( 'activation_timestamp', strtotime("+1 month") );
 		}
 
 		wp_send_json_success([]);
