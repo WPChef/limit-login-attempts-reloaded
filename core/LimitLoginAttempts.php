@@ -1487,7 +1487,7 @@ class Limit_Login_Attempts
 
 		$screen = get_current_screen();
 
-        if ( $this->get_option('review_notice_shown') || $screen->parent_base === 'edit' ) return;
+        if ( !current_user_can('manage_options') || $this->get_option('review_notice_shown') || $screen->parent_base === 'edit' ) return;
 
         $activation_timestamp = $this->get_option('activation_timestamp');
         $file_changed_timestamp = filemtime(LLA_PLUGIN_DIR . 'core/Helpers.php');
