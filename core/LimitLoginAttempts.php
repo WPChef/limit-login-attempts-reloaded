@@ -1487,10 +1487,10 @@ class Limit_Login_Attempts
 
 		$screen = get_current_screen();
 
-		if(isset($_COOKIE['review_notice_shown'])) {
+		if(isset($_COOKIE['llar_review_notice_shown'])) {
 
 			$this->update_option('review_notice_shown', true);
-			setcookie('review_notice_shown', '', time() - 3600, '/');
+			@setcookie('llar_review_notice_shown', '', time() - 3600, '/');
 		}
 
         if ( $this->get_option('review_notice_shown') || $screen->parent_base === 'edit' ) return;
@@ -1564,7 +1564,7 @@ class Limit_Login_Attempts
                         });
 
                         $(".llar-notice-review").on("click", ".notice-dismiss", function (event) {
-                            createCookie('review_notice_shown', '1', 30);
+                            createCookie('llar_review_notice_shown', '1', 30);
                         });
 
                         function createCookie(name, value, days) {
