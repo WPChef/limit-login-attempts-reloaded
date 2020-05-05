@@ -79,6 +79,8 @@ class Limit_Login_Attempts
 		add_filter( 'illegal_user_logins', array( $this, 'register_user_blacklist' ), 999 );
 		add_action( 'admin_notices', array( $this, 'show_leave_review_notice' ) );
 		add_action( 'wp_ajax_dismiss_review_notice', array( $this, 'dismiss_review_notice_callback' ));
+
+		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 	}
 
 	/**
@@ -145,6 +147,11 @@ class Limit_Login_Attempts
 
 		add_action('wp_ajax_limit-login-unlock', array( $this, 'ajax_unlock' ) );
 	}
+
+	public function load_admin_scripts() {
+
+		wp_enqueue_script('jquery-ui-accordion');
+    }
 
 	/**
 	 * @param $user Wp_User
@@ -500,10 +507,17 @@ class Limit_Login_Attempts
 	*/
 	public function get_options_page_uri()
 	{
-		if ( is_network_admin() )
-			return network_admin_url( 'settings.php?page=limit-login-attempts' );
 
-		return menu_page_url( $this->_options_page_slug, false );
+		if ( is_network_admin() )
+			$uri = network_admin_url( 'settings.php?page=limit-login-attempts' );
+		else
+		    $uri = menu_page_url( $this->_options_page_slug, false );
+
+		if(!empty($_GET['tab'])) {
+		    $uri .= '&tab='.$_GET['tab'];
+        }
+
+		return $uri;
 	}
 
 	/**
@@ -719,6 +733,11 @@ class Limit_Login_Attempts
 	*/
 	public function notify( $user ) {
 		$args = explode( ',', $this->get_option( 'lockout_notify' ) );
+
+		// TODO: Maybe temporarily
+		if(!in_array('log', $args)) {
+		    $args[] = 'log';
+        }
 
 		if ( empty( $args ) ) {
 			return;
@@ -1302,15 +1321,6 @@ class Limit_Login_Attempts
 			elseif ( $this->network_mode )
 				$this->update_option( 'use_local_options', empty($_POST['use_global_options']) );
 
-			/* Should we support GDPR */
-			if( isset( $_POST[ 'gdpr' ] ) )
-			{
-				$this->update_option( 'gdpr', 1 );
-			}
-            else {
-                $this->update_option( 'gdpr', 0 );
-            }
-
             /* Should we clear log? */
 			if( isset( $_POST[ 'clear_log' ] ) )
 			{
@@ -1333,16 +1343,7 @@ class Limit_Login_Attempts
 			}
 
 			/* Should we update options? */
-			if( isset( $_POST[ 'update_options' ] ) )
-			{
-				$this->update_option('allowed_retries',    (int)$_POST['allowed_retries'] );
-				$this->update_option('lockout_duration',   (int)$_POST['lockout_duration'] * 60 );
-				$this->update_option('valid_duration',     (int)$_POST['valid_duration'] * 3600 );
-				$this->update_option('allowed_lockouts',   (int)$_POST['allowed_lockouts'] );
-				$this->update_option('long_duration',      (int)$_POST['long_duration'] * 3600 );
-				$this->update_option('notify_email_after', (int)$_POST['email_after'] );
-
-				$this->update_option('admin_notify_email', sanitize_email( $_POST['admin_notify_email'] ) );
+			if( isset( $_POST[ 'llar_update_dashboard' ] ) ) {
 
 				$white_list_ips = ( !empty( $_POST['lla_whitelist_ips'] ) ) ? explode("\n", str_replace("\r", "", stripslashes($_POST['lla_whitelist_ips']) ) ) : array();
 
@@ -1392,10 +1393,33 @@ class Limit_Login_Attempts
 				}
 				$this->update_option('blacklist_usernames', $black_list_usernames );
 
+				$this->sanitize_options();
+
+				$this->show_error( __( 'Options saved.', 'limit-login-attempts-reloaded' ) );
+			}
+			elseif( isset( $_POST[ 'llar_update_settings' ] ) ) {
+
+				/* Should we support GDPR */
+				if( isset( $_POST[ 'gdpr' ] ) ) {
+
+				    $this->update_option( 'gdpr', 1 );
+				} else {
+
+				    $this->update_option( 'gdpr', 0 );
+				}
+
+				$this->update_option('allowed_retries',    (int)$_POST['allowed_retries'] );
+				$this->update_option('lockout_duration',   (int)$_POST['lockout_duration'] * 60 );
+				$this->update_option('valid_duration',     (int)$_POST['valid_duration'] * 3600 );
+				$this->update_option('allowed_lockouts',   (int)$_POST['allowed_lockouts'] );
+				$this->update_option('long_duration',      (int)$_POST['long_duration'] * 3600 );
+				$this->update_option('notify_email_after', (int)$_POST['email_after'] );
+
+				$this->update_option('admin_notify_email', sanitize_email( $_POST['admin_notify_email'] ) );
 
 				$trusted_ip_origins = ( !empty( $_POST['lla_trusted_ip_origins'] ) )
-										? array_map( 'trim', explode( ',', sanitize_text_field( $_POST['lla_trusted_ip_origins'] ) ) )
-										: array();
+					? array_map( 'trim', explode( ',', sanitize_text_field( $_POST['lla_trusted_ip_origins'] ) ) )
+					: array();
 
 				if( !in_array( 'REMOTE_ADDR', $trusted_ip_origins ) ) {
 
@@ -1403,7 +1427,6 @@ class Limit_Login_Attempts
 				}
 
 				$this->update_option('trusted_ip_origins', $trusted_ip_origins );
-
 
 				$notify_methods = array();
 				if( isset( $_POST[ 'lockout_notify_log' ] ) ) {
@@ -1417,7 +1440,7 @@ class Limit_Login_Attempts
 				$this->sanitize_options();
 
 				$this->show_error( __( 'Options saved.', 'limit-login-attempts-reloaded' ) );
-			}
+            }
 		}
 
 		include_once( LLA_PLUGIN_DIR . '/views/options-page.php' );
