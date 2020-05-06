@@ -88,7 +88,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
         </tr>
     </table>
     <p class="submit">
-        <input class="button button-primary" name="llar_update_dashboard" value="<?php echo __( 'Save Options', 'limit-login-attempts-reloaded' ); ?>"
+        <input class="button button-primary" name="llar_update_dashboard" value="<?php echo __( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
                type="submit"/>
     </p>
 </form>

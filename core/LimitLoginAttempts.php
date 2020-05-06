@@ -151,6 +151,7 @@ class Limit_Login_Attempts
 	public function load_admin_scripts() {
 
 		wp_enqueue_script('jquery-ui-accordion');
+		wp_enqueue_style('llar-jquery-ui', LLA_PLUGIN_URL.'assets/lib/jquery-ui/jquery-ui.css');
     }
 
 	/**
@@ -1395,7 +1396,7 @@ class Limit_Login_Attempts
 
 				$this->sanitize_options();
 
-				$this->show_error( __( 'Options saved.', 'limit-login-attempts-reloaded' ) );
+				$this->show_error( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
 			}
 			elseif( isset( $_POST[ 'llar_update_settings' ] ) ) {
 
@@ -1439,7 +1440,7 @@ class Limit_Login_Attempts
 
 				$this->sanitize_options();
 
-				$this->show_error( __( 'Options saved.', 'limit-login-attempts-reloaded' ) );
+				$this->show_error( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
             }
 		}
 
