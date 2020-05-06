@@ -142,7 +142,7 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_o
     </script>
 
     <p class="submit">
-        <input class="button button-primary" name="llar_update_settings" value="<?php echo __( 'Save Options', 'limit-login-attempts-reloaded' ); ?>"
+        <input class="button button-primary" name="llar_update_settings" value="<?php echo __( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
                type="submit"/>
     </p>
 </form>
