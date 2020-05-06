@@ -81,7 +81,7 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_o
     <h3><?php echo __( 'Worker Settings', 'limit-login-attempts-reloaded' ); ?></h3>
     <p><?php echo __( 'Workers take the main load from the brute-force attacks, analyse the incoming data and block unwanted users/bots. They can also provide other service functions.', 'limit-login-attempts-reloaded' ); ?></p>
 
-    <div id="llar-workers-accordion">
+    <div id="llar-workers-accordion" class="llar-accordion">
         <h3>Local Worker</h3>
         <div>
             <table class="form-table">

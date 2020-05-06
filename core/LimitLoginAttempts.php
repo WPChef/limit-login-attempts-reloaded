@@ -151,7 +151,7 @@ class Limit_Login_Attempts
 	public function load_admin_scripts() {
 
 		wp_enqueue_script('jquery-ui-accordion');
-		wp_enqueue_style('llar-jquery-ui', LLA_PLUGIN_URL.'assets/lib/jquery-ui/jquery-ui.css');
+		wp_enqueue_style('llar-jquery-ui', LLA_PLUGIN_URL.'assets/css/jquery-ui.css');
     }
 
 	/**
