@@ -1592,7 +1592,7 @@ class Limit_Login_Attempts
 
 		if ( !current_user_can('activate_plugins') ) {
 
-		    wp_send_json_error([]);
+		    wp_send_json_error(array());
         }
 
 		check_ajax_referer('llar-action', 'sec');
@@ -1609,6 +1609,6 @@ class Limit_Login_Attempts
 			$this->update_option( 'activation_timestamp', strtotime("+1 month") );
 		}
 
-		wp_send_json_success([]);
+		wp_send_json_success(array());
 	}
 }
