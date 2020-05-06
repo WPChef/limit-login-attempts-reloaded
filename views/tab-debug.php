@@ -4,7 +4,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 $debug_info = '';
 
-$ips = $server = [];
+$ips = $server = array();
 foreach ($_SERVER as $key => $value) {
 
 	if(in_array($key, ['SERVER_ADDR'])) continue;
