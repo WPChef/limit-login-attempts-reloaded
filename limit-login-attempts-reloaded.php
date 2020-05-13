@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Limit Login Attempts Reloaded
-Description: Limit the rate of login attempts, including by way of cookies and for each IP address.
+Description: Limit the rate of login attempts for each IP address.
 Author: WPChef
 Author URI: https://wpchef.org
 Text Domain: limit-login-attempts-reloaded
-Version: 2.12.3
+Version: 2.13.0
 
 Copyright 2008 - 2012 Johan Eenfeldt, 2016 - 2020 WPChef
 */
