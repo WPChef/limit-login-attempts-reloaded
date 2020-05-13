@@ -20,7 +20,7 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_o
 ?>
 
 <h3><?php echo __( 'General Settings', 'limit-login-attempts-reloaded' ); ?></h3>
-<p><?php echo __( 'These settings exist independently from the workers.', 'limit-login-attempts-reloaded' ); ?></p>
+<p><?php echo __( 'These settings are independent of the workers (see below).', 'limit-login-attempts-reloaded' ); ?></p>
 <form action="<?php echo $this->get_options_page_uri(); ?>" method="post">
 
     <?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
@@ -79,7 +79,7 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_o
     </table>
 
     <h3><?php echo __( 'Worker Settings', 'limit-login-attempts-reloaded' ); ?></h3>
-    <p><?php echo __( 'Workers take the main load from the brute-force attacks, analyse the incoming data and block unwanted users/bots. They can also provide other service functions.', 'limit-login-attempts-reloaded' ); ?></p>
+    <p><?php echo __( 'The workers absorb the main load caused by brute-force attacks, analyse login attempts and block unwanted visitors. They might provide other service functions as well.', 'limit-login-attempts-reloaded' ); ?></p>
 
     <div id="llar-workers-accordion" class="llar-accordion">
         <h3>Local Worker</h3>
@@ -124,8 +124,7 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_o
         <h3>Custom Worker</h3>
         <div>
             <p>
-                In the future versions of the plugin you will be able to create your own workers.
-                This will allow you to share White/Black lists and lockouts across all your websites. Stay tuned.
+                In the future versions of the plugin you will be able to create your own worker. This will allow you to share White/Black lists and lockout functionality across all your websites. Stay tuned.
             </p>
         </div>
     </div>
