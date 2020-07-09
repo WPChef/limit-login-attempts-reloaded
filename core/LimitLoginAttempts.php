@@ -287,7 +287,7 @@ class Limit_Login_Attempts
 
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $limit_login_my_error_shown;
 
-		if ( ! function_exists( 'is_account_page' ) || ! function_exists( 'wc_add_notice' ) ) {
+		if ( ! function_exists( 'is_account_page' ) || ! function_exists( 'wc_add_notice' ) || !$limit_login_nonempty_credentials ) {
 			return;
 		}
 
@@ -961,9 +961,9 @@ class Limit_Login_Attempts
 	* Add a message to login page when necessary
 	*/
 	public function add_error_message() {
-		global $error, $limit_login_my_error_shown;
+		global $error, $limit_login_my_error_shown, $limit_login_nonempty_credentials;
 
-		if ( ! $this->login_show_msg() || $limit_login_my_error_shown ) {
+		if ( ! $this->login_show_msg() || $limit_login_my_error_shown || !$limit_login_nonempty_credentials ) {
 			return;
 		}
 
