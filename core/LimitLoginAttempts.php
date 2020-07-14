@@ -77,7 +77,6 @@ class Limit_Login_Attempts
 	public function hooks_init() {
 		add_action( 'plugins_loaded', array( $this, 'setup' ), 9999 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
-		add_action( 'after_password_reset', array( $this, 'after_password_reset' ) );
 		add_filter( 'limit_login_whitelist_ip', array( $this, 'check_whitelist_ips' ), 10, 2 );
 		add_filter( 'limit_login_whitelist_usernames', array( $this, 'check_whitelist_usernames' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_ip', array( $this, 'check_blacklist_ips' ), 10, 2 );
@@ -160,131 +159,6 @@ class Limit_Login_Attempts
 		wp_enqueue_script('jquery-ui-accordion');
 		wp_enqueue_style('llar-jquery-ui', LLA_PLUGIN_URL.'assets/css/jquery-ui.css');
     }
-
-	/**
-	 * @param $user Wp_User
-	 */
-	public function after_password_reset( $user ) {
-
-		$lockouts = $this->get_option( 'lockouts' );
-		$lockouts_log = $this->get_option( 'logged' );
-
-		if( $user->has_cap( 'administrator' ) ) {
-
-			if( $this->is_ip_blacklisted() ) {
-
-				$black_list_ips = $this->get_option( 'blacklist' );
-
-				if( !empty( $black_list_ips )  ) {
-
-					foreach ( $black_list_ips as $key => $ip ) {
-
-						if( $ip === $this->get_address() ) {
-
-							unset($black_list_ips[$key]);
-						}
-					}
-
-				}
-
-				$this->update_option( 'blacklist', $black_list_ips );
-			}
-
-			if( $this->is_username_blacklisted( $user->data->user_login ) ) {
-
-				$black_list_usernames = $this->get_option( 'blacklist_usernames' );
-
-				if( !empty( $black_list_usernames )  ) {
-
-					foreach ( $black_list_usernames as $key => $login ) {
-
-						if( $login === $user->data->user_login ) {
-
-							unset($black_list_usernames[$key]);
-						}
-					}
-
-				}
-
-				$this->update_option( 'blacklist_usernames', $black_list_usernames );
-			}
-
-			$admin_ip = $this->get_address();
-			$admin_ip = ($this->get_option('gdpr') ? $this->getHash( $admin_ip ) : $admin_ip );
-
-			if ( is_array( $lockouts ) && isset( $lockouts[ $admin_ip ] ) ) {
-
-				unset( $lockouts[ $admin_ip ] );
-
-				$this->update_option( 'lockouts', $lockouts );
-
-				if( is_array( $lockouts_log ) && isset( $lockouts_log[ $admin_ip ] ) ) {
-
-					foreach ( $lockouts_log[ $admin_ip ] as $user_login => &$data ) {
-
-						$data['unlocked'] = true;
-					}
-
-					$this->update_option( 'logged', $lockouts_log );
-				}
-			}
-
-			$valid = $this->get_option( 'retries_valid' );
-
-			if ( is_array( $valid ) && isset( $valid[ $admin_ip ] ) ) {
-
-				unset( $valid[ $admin_ip ] );
-
-				$this->update_option( 'retries_valid', $valid );
-			}
-
-			$retries = $this->get_option( 'retries' );
-
-			if ( is_array( $retries ) && isset( $retries[ $admin_ip ] ) ) {
-
-				unset( $retries[ $admin_ip ] );
-
-				$this->update_option( 'retries', $retries );
-			}
-
-		} else {
-
-			$user_ip = $this->get_address();
-			$user_ip = ($this->get_option('gdpr') ? $this->getHash( $user_ip ) : $user_ip );
-
-			if ( isset( $lockouts_log[ $user_ip ] ) && is_array( $lockouts_log[ $user_ip ] ) ) {
-
-				$last_unlocked_time = 0;
-				foreach ( $lockouts_log[ $user_ip ] as $user_login => $data ) {
-
-					if( !isset( $data['unlocked'] ) || !$data['unlocked'] ) continue;
-
-					if( $data['date'] > $last_unlocked_time )
-						$last_unlocked_time = $data['date'];
-				}
-
-				if ( is_array( $lockouts ) && isset( $lockouts[ $user_ip ] ) &&
-					( $last_unlocked_time === 0 ||
-					( ( time() - $last_unlocked_time ) ) > ( $this->get_option( 'lockout_duration' ) ) ) ) {
-
-					unset( $lockouts[ $user_ip ] );
-
-					if( is_array( $lockouts_log ) && isset( $lockouts_log[ $user_ip ] ) ) {
-
-						foreach ( $lockouts_log[ $user_ip ] as $user_login => &$data ) {
-
-							$data['unlocked'] = true;
-						}
-
-						$this->update_option( 'logged', $lockouts_log );
-					}
-
-					$this->update_option( 'lockouts', $lockouts );
-				}
-
-			}
-		}
-	}
 
 	public function check_xmlrpc_lock()
 	{
@@ -413,7 +287,7 @@ class Limit_Login_Attempts
 
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $limit_login_my_error_shown;
 
-		if ( ! function_exists( 'is_account_page' ) || ! function_exists( 'wc_add_notice' ) ) {
+		if ( ! function_exists( 'is_account_page' ) || ! function_exists( 'wc_add_notice' ) || !$limit_login_nonempty_credentials ) {
 			return;
 		}
 
@@ -1080,8 +954,6 @@ class Limit_Login_Attempts
 			$msg .= sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $when, 'limit-login-attempts-reloaded' ), $when );
 		}
 
-		$msg .= '<br><br>'. sprintf( __( 'You can also try <a href="%s">resetting your password</a> and that should help you to log in.', 'limit-login-attempts-reloaded' ), wp_lostpassword_url() );
-
 		return $msg;
 	}
 
@@ -1089,9 +961,9 @@ class Limit_Login_Attempts
 	* Add a message to login page when necessary
 	*/
 	public function add_error_message() {
-		global $error, $limit_login_my_error_shown;
+		global $error, $limit_login_my_error_shown, $limit_login_nonempty_credentials;
 
-		if ( ! $this->login_show_msg() || $limit_login_my_error_shown ) {
+		if ( ! $this->login_show_msg() || $limit_login_my_error_shown || !$limit_login_nonempty_credentials ) {
 			return;
 		}
 
