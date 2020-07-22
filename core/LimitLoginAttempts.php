@@ -1147,8 +1147,29 @@ class Limit_Login_Attempts
 
 			if( isset( $_SERVER[$origin] ) && !empty( $_SERVER[$origin] ) ) {
 
-				$ip = $_SERVER[$origin];
-				break;
+				if( strpos( $_SERVER[$origin], ',' ) !== false ) {
+
+					$origin_ips = explode( ',', $_SERVER[$origin] );
+					$origin_ips = array_map( 'trim', $origin_ips );
+
+			        if( $origin_ips ) {
+
+						foreach ($origin_ips as $check_ip) {
+
+						    if( $this->is_ip_valid( $check_ip ) ) {
+
+						        $ip = $check_ip;
+						        break 2;
+                            }
+			            }
+                    }
+                }
+
+                if( $this->is_ip_valid( $_SERVER[$origin] ) ) {
+
+					$ip = $_SERVER[$origin];
+					break;
+                }
 			}
 		}
 
@@ -1156,6 +1177,17 @@ class Limit_Login_Attempts
 
 		return $ip;
 	}
+
+	/**
+	 * @param $ip
+	 * @return bool|mixed
+	 */
+	public function is_ip_valid( $ip ) {
+
+	    if( empty( $ip ) ) return false;
+
+	    return filter_var($ip, FILTER_VALIDATE_IP);
+    }
 
 	/**
 	* Clean up old lockouts and retries, and save supplied arrays
