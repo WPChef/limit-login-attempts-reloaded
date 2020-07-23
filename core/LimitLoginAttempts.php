@@ -401,7 +401,8 @@ class Limit_Login_Attempts
 		    $uri = menu_page_url( $this->_options_page_slug, false );
 
 		if(!empty($_GET['tab'])) {
-		    $uri .= '&tab='.$_GET['tab'];
+
+		    $uri .= '&tab=' . sanitize_text_field( $_GET['tab'] );
         }
 
 		return $uri;
@@ -614,10 +615,11 @@ class Limit_Login_Attempts
 	}
 
 	/**
-	* Handle notification in event of lockout
-	*
-	* @param $user
-	*/
+	 * Handle notification in event of lockout
+	 *
+	 * @param $user
+	 * @return bool|void
+	 */
 	public function notify( $user ) {
 		$args = explode( ',', $this->get_option( 'lockout_notify' ) );
 
@@ -635,14 +637,16 @@ class Limit_Login_Attempts
 		}
 
 		foreach ( $args as $mode ) {
-			switch ( trim( $mode ) ) {
-				case 'email':
-					$this->notify_email( $user );
-					break;
-				case 'log':
-					$this->notify_log( $user );
-					break;
+
+		    $mode = trim( $mode );
+
+			if( $mode === 'log' ) {
+				$this->notify_log( $user );
 			}
+
+		    if( $mode === 'email' ) {
+				$this->notify_email( $user );
+            }
 		}
 	}
 
@@ -1143,8 +1147,29 @@ class Limit_Login_Attempts
 
 			if( isset( $_SERVER[$origin] ) && !empty( $_SERVER[$origin] ) ) {
 
-				$ip = $_SERVER[$origin];
-				break;
+				if( strpos( $_SERVER[$origin], ',' ) !== false ) {
+
+					$origin_ips = explode( ',', $_SERVER[$origin] );
+					$origin_ips = array_map( 'trim', $origin_ips );
+
+			        if( $origin_ips ) {
+
+						foreach ($origin_ips as $check_ip) {
+
+						    if( $this->is_ip_valid( $check_ip ) ) {
+
+						        $ip = $check_ip;
+						        break 2;
+                            }
+			            }
+                    }
+                }
+
+                if( $this->is_ip_valid( $_SERVER[$origin] ) ) {
+
+					$ip = $_SERVER[$origin];
+					break;
+                }
 			}
 		}
 
@@ -1152,6 +1177,17 @@ class Limit_Login_Attempts
 
 		return $ip;
 	}
+
+	/**
+	 * @param $ip
+	 * @return bool|mixed
+	 */
+	public function is_ip_valid( $ip ) {
+
+	    if( empty( $ip ) ) return false;
+
+	    return filter_var($ip, FILTER_VALIDATE_IP);
+    }
 
 	/**
 	* Clean up old lockouts and retries, and save supplied arrays
@@ -1416,12 +1452,6 @@ class Limit_Login_Attempts
 
 		$screen = get_current_screen();
 
-		if(isset($_COOKIE['llar_review_notice_shown'])) {
-
-			$this->update_option('review_notice_shown', true);
-			@setcookie('llar_review_notice_shown', '', time() - 3600, '/');
-		}
-
         if ( !current_user_can('manage_options') || $this->get_option('review_notice_shown') || $screen->parent_base === 'edit' ) return;
 
         $activation_timestamp = $this->get_option('activation_timestamp');
@@ -1458,7 +1488,7 @@ class Limit_Login_Attempts
 
 		if ( $activation_timestamp && $activation_timestamp < strtotime("-1 month") ) { ?>
 
-			<div id="message" class="updated fade notice is-dismissible llar-notice-review">
+			<div id="message" class="updated fade notice llar-notice-review">
                 <div class="llar-review-image">
                     <img width="80px" src="<?php echo LLA_PLUGIN_URL?>assets/img/icon-256x256.png" alt="review-logo">
                 </div>
@@ -1491,24 +1521,6 @@ class Limit_Login_Attempts
 
                             $(this).closest('.llar-notice-review').remove();
                         });
-
-                        $(".llar-notice-review").on("click", ".notice-dismiss", function (event) {
-                            createCookie('llar_review_notice_shown', '1', 30);
-                        });
-
-                        function createCookie(name, value, days) {
-                            var expires;
-
-                            if (days) {
-                                var date = new Date();
-                                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                                expires = "; expires=" + date.toGMTString();
-                            } else {
-                                expires = "";
-                            }
-                            document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
-                        }
-
                     });
 
                 })(jQuery);
