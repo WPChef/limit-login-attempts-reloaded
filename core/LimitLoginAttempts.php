@@ -1488,7 +1488,7 @@ class Limit_Login_Attempts
 
 		if ( $activation_timestamp && $activation_timestamp < strtotime("-1 month") ) { ?>
 
-			<div id="message" class="updated fade notice is-dismissible llar-notice-review">
+			<div id="message" class="updated fade notice llar-notice-review">
                 <div class="llar-review-image">
                     <img width="80px" src="<?php echo LLA_PLUGIN_URL?>assets/img/icon-256x256.png" alt="review-logo">
                 </div>
