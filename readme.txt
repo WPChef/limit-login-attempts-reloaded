@@ -3,15 +3,15 @@ Contributors: wpchefgadget
 Tags: brute force, login, security, GDPR, protection
 Requires at least: 3.0
 Tested up to: 5.5
-Stable tag: 2.15.2
+Stable tag: 2.16.0
 
 Reloaded version of the original Limit Login Attempts plugin for Login Protection by a team of WordPress developers. GDPR compliant.
 
 == Description ==
 
-Limit the number of login attempts that possible through the normal login as well as XMLRPC, Woocommerce and custom login pages.
-WordPress by default allows unlimited login attempts. This allows passwords to be cracked via brute-force relatively easily.
-Limit Login Attempts Reloaded blocks an Internet address from making further attempts after a specified limit on retries has been reached, making a brute-force attack difficult or impossible.
+Limit the number of login attempts that are possible through the normal login as well as XMLRPC, Woocommerce and custom login pages.
+WordPress by default allows unlimited login attempts. This can lead to  passwords being easily cracked via brute-force.
+Limit Login Attempts Reloaded blocks an Internet address (IP) from making further attempts after a specified limit on retries has been reached, making a brute-force attack difficult or impossible.
 
 Features:
 
@@ -41,7 +41,6 @@ Translations: Bulgarian, Brazilian Portuguese, Catalan, Chinese (Traditional), C
 Plugin uses standard actions and filters only.
 
 Based on the original code from Limit Login Attemps plugin by Johan Eenfeldt.
-[](http://coderisk.com/wp/plugin/limit-login-attempts-reloaded/RIPS-M7n4uQXa-G)
 
 == Screenshots ==
 
@@ -50,6 +49,9 @@ Based on the original code from Limit Login Attemps plugin by Johan Eenfeldt.
 3. Administration interface in WordPress 5.2.1
 
 == Changelog ==
+
+= 2.16.0 =
+* Custom Apps functionality implemented. More details: https://limitloginattempts.com/app/
 
 = 2.15.2 =
 * Alternative method of closing the feedback message.
