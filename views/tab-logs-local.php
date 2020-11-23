@@ -24,7 +24,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
 ?>
 
 <h3><?php echo __( 'Statistics', 'limit-login-attempts-reloaded' ); ?></h3>
-<form action="<?php echo $this->get_options_page_uri(); ?>" method="post">
+<form action="<?php echo $this->get_options_page_uri('logs-local'); ?>" method="post">
 	<?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
     <table class="form-table">
         <tr>
@@ -54,7 +54,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
 		<?php } ?>
     </table>
 </form>
-<form action="<?php echo $this->get_options_page_uri(); ?>" method="post">
+<form action="<?php echo $this->get_options_page_uri('logs-local'); ?>" method="post">
 	<?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
 
     <table class="form-table">
@@ -100,7 +100,7 @@ $lockouts = (array)$this->get_option('lockouts');
 
 if( is_array( $log ) && ! empty( $log ) ) { ?>
     <h3><?php echo __( 'Lockout log', 'limit-login-attempts-reloaded' ); ?></h3>
-    <form action="<?php echo $this->get_options_page_uri(); ?>" method="post">
+    <form action="<?php echo $this->get_options_page_uri('logs-local'); ?>" method="post">
 		<?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
         <input type="hidden" value="true" name="clear_log"/>
         <p class="submit">
