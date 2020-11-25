@@ -171,9 +171,6 @@ class Limit_Login_Attempts {
 		 */
 		add_action( 'authenticate', array( $this, 'bp_authenticate_filter' ), 35, 3 );
 
-		if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST )
-			add_action( 'init', array( $this, 'check_xmlrpc_lock' ) );
-
 		add_action('wp_ajax_limit-login-unlock', array( $this, 'ajax_unlock' ) );
 
 	}
@@ -191,18 +188,6 @@ class Limit_Login_Attempts {
 		wp_enqueue_script('jquery-ui-accordion');
 		wp_enqueue_style('llar-jquery-ui', LLA_PLUGIN_URL.'assets/css/jquery-ui.css');
     }
-
-	public function check_xmlrpc_lock()
-	{
-		if ( is_user_logged_in() || $this->is_ip_whitelisted() )
-			return;
-
-		if ( $this->is_ip_blacklisted() || !$this->is_limit_login_ok() )
-		{
-			header('HTTP/1.0 403 Forbidden');
-			exit;
-		}
-	}
 
 	public function check_whitelist_ips( $allow, $ip ) {
 		return $this->ip_in_range( $ip, (array) $this->get_option( 'whitelist' ) );
@@ -277,39 +262,12 @@ class Limit_Login_Attempts {
 			return $error;
 		}
 
-		if ( ! $this->is_limit_login_ok() ) {
-			return new IXR_Error( 403, $this->error_msg() );
-		}
+		if( $login_error = $this->get_message() ) {
 
-		$ip      = $this->get_address();
-		$retries = $this->get_option( 'retries' );
-		$valid   = $this->get_option( 'retries_valid' );
+			return new IXR_Error( 403, strip_tags( $login_error ) );
+        }
 
-		/* Should we show retries remaining? */
-
-		if ( ! is_array( $retries ) || ! is_array( $valid ) ) {
-			/* no retries at all */
-			return $error;
-		}
-		if (
-                (! isset( $retries[ $ip ] ) && ! isset( $retries[ $this->getHash($ip) ] )) ||
-                (! isset( $valid[ $ip ] ) && ! isset( $valid[ $this->getHash($ip) ] )) ||
-                (time() > $valid[ $ip ] && time() > $valid[ $this->getHash($ip) ])
-
-        ) {
-			/* no: no valid retries */
-			return $error;
-		}
-		if (
-                ( ((isset($retries[ $ip ]) ? $retries[ $ip ] : 0) + (isset($retries[ $this->getHash($ip) ]) ? $retries[ $this->getHash($ip) ] : 0)) % $this->get_option( 'allowed_retries' ) ) == 0
-            ) {
-			//* no: already been locked out for these retries */
-			return $error;
-		}
-
-		$remaining = max( ( $this->get_option( 'allowed_retries' ) - ( ((isset($retries[ $ip ]) ? $retries[ $ip ] : 0) + (isset($retries[ $this->getHash($ip) ]) ? $retries[ $this->getHash($ip) ] : 0)) % $this->get_option( 'allowed_retries' ) ) ), 0 );
-
-		return new IXR_Error( 403, sprintf( _n( "<strong>%d</strong> attempt remaining.", "<strong>%d</strong> attempts remaining.", $remaining, 'limit-login-attempts-reloaded' ), $remaining ) );
+		return $error;
 	}
 
 	/**
@@ -379,6 +337,12 @@ class Limit_Login_Attempts {
 
 					$user = new WP_Error();
 					$user->add( 'username_blacklisted', $err );
+
+					if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
+
+						header('HTTP/1.0 403 Forbidden');
+						exit;
+					}
                 }
                 else if( $response['result'] === 'pass' ) {
 
@@ -406,6 +370,12 @@ class Limit_Login_Attempts {
 
 					$user = new WP_Error();
 					$user->add( 'username_blacklisted', "<strong>ERROR:</strong> Too many failed login attempts." );
+
+					if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
+
+						header('HTTP/1.0 403 Forbidden');
+						exit;
+                    }
 
 				} elseif ( $this->is_username_whitelisted( $username ) || $this->is_ip_whitelisted( $ip ) ) {
 
