@@ -30,10 +30,10 @@ class Limit_Login_Attempts {
 		'cookies'            => true,
 
 		/* Notify on lockout. Values: '', 'log', 'email', 'log,email' */
-		'lockout_notify'     => 'log',
+		'lockout_notify'     => 'log,email',
 
 		/* If notify by email, do so after this number of lockouts */
-		'notify_email_after' => 4,
+		'notify_email_after' => 3,
 
 		'review_notice_shown' => false,
 
@@ -176,6 +176,16 @@ class Limit_Login_Attempts {
 
 		add_action('wp_ajax_limit-login-unlock', array( $this, 'ajax_unlock' ) );
 
+		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
+	}
+
+	public function add_action_links( $actions ) {
+
+		$actions = array_merge( $actions, array(
+			'<a href="https://www.limitloginattempts.com/community/?from=plugins" target="_blank" style="font-weight: bold;">' . __( 'Premium support', 'limit-login-attempts-reloaded' ) . '</a>',
+		) );
+
+		return $actions;
 	}
 
 	public function app_init() {
