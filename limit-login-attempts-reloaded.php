@@ -15,6 +15,7 @@ Copyright 2008 - 2012 Johan Eenfeldt, 2016 - 2020 Limit Login Attempts Reloaded
  **************************************************************************************/
 define( 'LLA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'LLA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 /***************************************************************************************
  * Different ways to get remote address: direct & behind proxy
