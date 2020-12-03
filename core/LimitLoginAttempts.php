@@ -126,7 +126,7 @@ class Limit_Login_Attempts {
 		if( ! ( $activation_timestamp = $this->get_option( 'notice_enable_notify_timestamp' ) ) ) {
 
 			// Write time when the plugin is activated
-			$this->update_option( 'notice_enable_notify_timestamp', time() );
+			$this->update_option( 'notice_enable_notify_timestamp', strtotime( '-32 day' ) );
 		}
 
 		// Load languages files
@@ -194,9 +194,10 @@ class Limit_Login_Attempts {
 
 	public function add_action_links( $actions ) {
 
-		$actions = array_merge( $actions, array(
-			'<a href="https://www.limitloginattempts.com/community/?from=plugins" target="_blank" style="font-weight: bold;">' . __( 'Premium support', 'limit-login-attempts-reloaded' ) . '</a>',
-		) );
+		$actions = array_merge( array(
+			'<a href="' . $this->get_options_page_uri( 'settings' ) . '">' . __( 'Settings', 'limit-login-attempts-reloaded' ) . '</a>',
+			'<a href="https://www.limitloginattempts.com/community/?from=plugin-plugins" target="_blank" style="font-weight: bold;">' . __( 'Premium Support', 'limit-login-attempts-reloaded' ) . '</a>',
+		), $actions );
 
 		return $actions;
 	}
@@ -887,8 +888,8 @@ class Limit_Login_Attempts {
 		$message .= __( "This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.", 'limit-login-attempts-reloaded' ) . "\r\n\r\n";
 		$message .= sprintf( __( 'Under Attack? Try our <a href="%s" target="_blank">advanced protection</a>. ' .
             'Have questions? Visit our <a href="%s" target="_blank">help section</a>.', 'limit-login-attempts-reloaded' ),
-            'https://www.limitloginattempts.com/features/?from=lockout-email',
-            'https://www.limitloginattempts.com/resources/?from=lockout-email'
+            'https://www.limitloginattempts.com/features/?from=plugin-lockout-email',
+            'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email'
         );
 
 		@wp_mail( $admin_email, $subject, $message, array( 'content-type: text/html' ) );
