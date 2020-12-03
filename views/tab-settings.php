@@ -168,7 +168,7 @@ $active_app_config = $this->get_custom_app_config();
                         <span class="llar-app-ajax-msg"></span>
 
 						<?php if( $active_app === 'local' ) : ?>
-                        <p class="description"><?php echo sprintf( __( 'Use the <a href="%s" target="_blank">premium app</a> that we offer or follow the instructions on <a href="%s" target="_blank">how to</a> create your own one.', 'limit-login-attempts-reloaded' ), 'https://app.limitloginattempts.com/network/create', 'https://www.limitloginattempts.com/app/' ); ?></p>
+                        <p class="description"><?php echo sprintf( __( 'Use the <a href="%s" target="_blank">premium app</a> that we offer or follow the instructions on <a href="%s" target="_blank">how to</a> create your own one.', 'limit-login-attempts-reloaded' ), 'https://app.limitloginattempts.com/network/create?from=settings', 'https://www.limitloginattempts.com/app/?from=settings' ); ?></p>
                         <div class="llar-why-use-premium-text">
                             <div class="title"><?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?></div>
                             <ul>
