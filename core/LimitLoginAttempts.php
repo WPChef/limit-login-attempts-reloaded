@@ -875,19 +875,19 @@ class Limit_Login_Attempts {
 
         $subject = sprintf( __( "[%s] Too many failed login attempts", 'limit-login-attempts-reloaded' ) , $blogname );
 
-		$message = sprintf( __( "Hello%s,", 'limit-login-attempts-reloaded' ) . "\r\n\r\n", $admin_name );
+		$message = sprintf( __( "<p>Hello%s,</p>", 'limit-login-attempts-reloaded' ), $admin_name );
 
-		$message .= sprintf( __( "%d failed login attempts (%d lockout(s)) from IP: %s"
-				, 'limit-login-attempts-reloaded' ) . "\r\n", $count, $lockouts, $ip );
+		$message .= sprintf( __( "<p>%d failed login attempts (%d lockout(s)) from IP: %s<br>"
+				, 'limit-login-attempts-reloaded' ), $count, $lockouts, $ip );
 
 		if ( $user != '' ) {
-			$message .= sprintf( __( "Last user attempted: %s", 'limit-login-attempts-reloaded' ) . "\r\n", $user );
+			$message .= sprintf( __( "Last user attempted: %s<br>", 'limit-login-attempts-reloaded' ), $user );
 		}
 
-		$message .= sprintf( __( "IP was blocked for %s", 'limit-login-attempts-reloaded' ), $when ) . ".\r\n\r\n";
-		$message .= __( "This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.", 'limit-login-attempts-reloaded' ) . "\r\n\r\n";
-		$message .= sprintf( __( 'Under Attack? Try our <a href="%s" target="_blank">advanced protection</a>. ' .
-            'Have questions? Visit our <a href="%s" target="_blank">help section</a>.', 'limit-login-attempts-reloaded' ),
+		$message .= sprintf( __( "IP was blocked for %s</p>", 'limit-login-attempts-reloaded' ), $when );
+		$message .= __( "<p>This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.</p>", 'limit-login-attempts-reloaded' ) . "\r\n\r\n";
+		$message .= sprintf( __( '<p>Under Attack? Try our <a href="%s" target="_blank">advanced protection</a>. ' .
+            'Have questions? Visit our <a href="%s" target="_blank">help section</a>.</p>', 'limit-login-attempts-reloaded' ),
             'https://www.limitloginattempts.com/features/?from=plugin-lockout-email',
             'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email'
         );
