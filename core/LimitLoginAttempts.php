@@ -826,32 +826,6 @@ class Limit_Login_Attempts {
 			$when     = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
 		}
 
-		$blogname = $this->use_local_options ? get_option( 'blogname' ) : get_site_option( 'site_name' );
-		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
-
-		if ( $whitelisted ) {
-			$subject = sprintf( __( "[%s] Failed login attempts from whitelisted IP"
-					, 'limit-login-attempts-reloaded' )
-				, $blogname );
-		} else {
-			$subject = sprintf( __( "[%s] Too many failed login attempts"
-					, 'limit-login-attempts-reloaded' )
-				, $blogname );
-		}
-
-		$message = sprintf( __( "%d failed login attempts (%d lockout(s)) from IP: %s"
-				, 'limit-login-attempts-reloaded' ) . "\r\n\r\n"
-			, $count, $lockouts, $ip );
-		if ( $user != '' ) {
-			$message .= sprintf( __( "Last user attempted: %s", 'limit-login-attempts-reloaded' )
-								. "\r\n\r\n", $user );
-		}
-		if ( $whitelisted ) {
-			$message .= __( "IP was NOT blocked because of external whitelist.", 'limit-login-attempts-reloaded' );
-		} else {
-			$message .= sprintf( __( "IP was blocked for %s", 'limit-login-attempts-reloaded' ), $when );
-		}
-
 		if( $custom_admin_email = $this->get_option( 'admin_notify_email' ) ) {
 
 			$admin_email = $custom_admin_email;
@@ -860,7 +834,48 @@ class Limit_Login_Attempts {
 			$admin_email = $this->use_local_options ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 		}
 
-		@wp_mail( $admin_email, $subject, $message );
+		$admin_name = '';
+
+		global $wpdb;
+
+		$res = $wpdb->get_col( $wpdb->prepare( "
+                SELECT u.display_name
+                FROM $wpdb->users AS u
+                LEFT JOIN $wpdb->usermeta AS m ON u.ID = m.user_id
+                WHERE u.user_email = %s
+                AND m.meta_key LIKE 'wp_capabilities'
+                AND m.meta_value LIKE '%administrator%'",
+                $admin_email
+            )
+        );
+
+		if( $res ) {
+		    $admin_name = ' ' . $res[0];
+        }
+
+		$blogname = $this->use_local_options ? get_option( 'blogname' ) : get_site_option( 'site_name' );
+		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
+
+        $subject = sprintf( __( "[%s] Too many failed login attempts", 'limit-login-attempts-reloaded' ) , $blogname );
+
+		$message = sprintf( __( "Hello%s,", 'limit-login-attempts-reloaded' ) . "\r\n\r\n", $admin_name );
+
+		$message .= sprintf( __( "%d failed login attempts (%d lockout(s)) from IP: %s"
+				, 'limit-login-attempts-reloaded' ) . "\r\n", $count, $lockouts, $ip );
+
+		if ( $user != '' ) {
+			$message .= sprintf( __( "Last user attempted: %s", 'limit-login-attempts-reloaded' ) . "\r\n", $user );
+		}
+
+		$message .= sprintf( __( "IP was blocked for %s", 'limit-login-attempts-reloaded' ), $when ) . ".\r\n\r\n";
+		$message .= __( "This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.", 'limit-login-attempts-reloaded' ) . "\r\n\r\n";
+		$message .= sprintf( __( 'Under Attack? Try our <a href="%s" target="_blank">advanced protection</a>. ' .
+            'Have questions? Visit our <a href="%s" target="_blank">help section</a>.', 'limit-login-attempts-reloaded' ),
+            'https://www.limitloginattempts.com/features/?from=lockout-email',
+            'https://www.limitloginattempts.com/resources/?from=lockout-email'
+        );
+
+		@wp_mail( $admin_email, $subject, $message, array( 'content-type: text/html' ) );
 	}
 
 	/**
