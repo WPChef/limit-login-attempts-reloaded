@@ -480,8 +480,11 @@ class Limit_Login_Attempts {
 	* Enqueue js and css
 	*/
 	public function enqueue() {
-		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css' );
-		wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js' );
+
+	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
+
+		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css', array(), $plugin_data['Version'] );
+		wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array(), $plugin_data['Version'] );
 	}
 
 	/**
@@ -873,24 +876,21 @@ class Limit_Login_Attempts {
 		$blogname = $this->use_local_options ? get_option( 'blogname' ) : get_site_option( 'site_name' );
 		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
 
-        $subject = sprintf( __( "[%s] Too many failed login attempts", 'limit-login-attempts-reloaded' ) , $blogname );
+        $subject = sprintf( __( "[%s] Failed login attempts", 'limit-login-attempts-reloaded' ) , $blogname );
 
 		$message = sprintf( __( "<p>Hello%s,</p>", 'limit-login-attempts-reloaded' ), $admin_name );
 
-		$message .= sprintf( __( "<p>%d failed login attempts (%d lockout(s)) from IP: %s<br>"
-				, 'limit-login-attempts-reloaded' ), $count, $lockouts, $ip );
+		$message .= sprintf( __( "<p>%d failed login attempts (%d lockout(s)) from IP <b>%s</b> and it was blocked for %s<br>"	, 'limit-login-attempts-reloaded' ), $count, $lockouts, $ip, $when );
 
-		if ( $user != '' ) {
-			$message .= sprintf( __( "Last user attempted: %s<br>", 'limit-login-attempts-reloaded' ), $user );
-		}
+		$message .= sprintf( __( "Last user attempted: <b>%s</b></p>", 'limit-login-attempts-reloaded' ), $user );
 
-		$message .= sprintf( __( "IP was blocked for %s</p>", 'limit-login-attempts-reloaded' ), $when );
-		$message .= __( "<p>This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.</p>", 'limit-login-attempts-reloaded' ) . "\r\n\r\n";
 		$message .= sprintf( __( '<p>Under Attack? Try our <a href="%s" target="_blank">advanced protection</a>. ' .
             'Have questions? Visit our <a href="%s" target="_blank">help section</a>.</p>', 'limit-login-attempts-reloaded' ),
             'https://www.limitloginattempts.com/features/?from=plugin-lockout-email',
             'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email'
         );
+		
+		$message .= __( "<hr><p>This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.</p>", 'limit-login-attempts-reloaded' );		
 
 		@wp_mail( $admin_email, $subject, $message, array( 'content-type: text/html' ) );
 	}
