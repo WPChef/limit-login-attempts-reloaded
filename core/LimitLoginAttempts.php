@@ -53,6 +53,11 @@ class Limit_Login_Attempts {
 	private $_options_page_slug = 'limit-login-attempts';
 
 	/**
+	 * @var string
+	 */
+	private $_welcome_page_slug = 'llar-welcome';
+
+	/**
 	* Errors messages
 	*
 	* @var array
@@ -113,7 +118,40 @@ class Limit_Login_Attempts {
 		add_action( 'wp_ajax_app_acl_remove_rule', array( $this, 'app_acl_remove_rule_callback' ));
 
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
+
+		add_action( 'admin_init', array( $this, 'welcome_page_redirect' ), 9999 );
+		add_action( 'admin_head', array( $this, 'welcome_page_hide_menu' ) );
+
+		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
+
+	/**
+	 * Runs when the plugin is activated
+	 */
+	public function activation() {
+
+		set_transient( 'llar_welcome_redirect', true, 30 );
+	}
+
+	/**
+	 * Redirect to Welcome page after installed
+	 */
+	public function welcome_page_redirect() {
+
+	    if( ! get_transient( 'llar_welcome_redirect' ) || isset( $_GET['activate-multi'] ) || is_network_admin() ) {
+	        return;
+        }
+
+		delete_transient( 'llar_welcome_redirect' );
+
+	    wp_redirect( admin_url( 'index.php?page=' . $this->_welcome_page_slug ) );
+	    exit();
+    }
+
+    public function welcome_page_hide_menu() {
+
+		remove_submenu_page( 'index.php', $this->_welcome_page_slug );
+    }
 
 	/**
 	* Hook 'plugins_loaded'
@@ -491,6 +529,13 @@ class Limit_Login_Attempts {
 
 		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css', array(), $plugin_data['Version'] );
 		wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array(), $plugin_data['Version'] );
+
+		if( !empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_welcome_page_slug ) {
+
+			wp_enqueue_style( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/css/jquery-confirm.min.css' );
+			wp_enqueue_script( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/js/jquery-confirm.min.js' );
+        }
+
 	}
 
 	/**
@@ -504,6 +549,14 @@ class Limit_Login_Attempts {
 	public function admin_menu()
 	{
 		add_options_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+
+		add_dashboard_page(
+            'Welcome to Limit Login Attempts Reloaded',
+            'Limit Login Attempts Welcome',
+            'manage_options',
+            $this->_welcome_page_slug,
+            array( $this, 'welcome_page' )
+        );
 	}
 
 	/**
@@ -1548,6 +1601,14 @@ class Limit_Login_Attempts {
 
 		include_once( LLA_PLUGIN_DIR . '/views/options-page.php' );
 	}
+
+	/**
+	 * Render Welcome page
+	 */
+	public function welcome_page() {
+
+		include_once( LLA_PLUGIN_DIR . '/views/welcome-page.php' );
+    }
 
 	public function ajax_unlock()
 	{
