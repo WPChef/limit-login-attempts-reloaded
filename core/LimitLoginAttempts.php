@@ -878,19 +878,26 @@ class Limit_Login_Attempts {
 
         $subject = sprintf( __( "[%s] Failed login attempts", 'limit-login-attempts-reloaded' ) , $blogname );
 
-		$message = sprintf( __( "<p>Hello%s,</p>", 'limit-login-attempts-reloaded' ), $admin_name );
+        $message = __( "<p>Hello%s,</p>" .
+                       "<p>%d failed login attempts (%d lockout(s)) from IP <b>%s</b> and it was blocked for %s<br>" .
+                       "Last user attempted: <b>%s</b></p>" .
+                       '<p>Under Attack? Try our <a href="%s" target="_blank">advanced protection</a>. ' .
+                       'Have questions? Visit our <a href="%s" target="_blank">help section</a>.</p>' .
+                       "<hr><p>This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.</p>" .
+                       '<p style="font-size: 14px;color: #848484;">To turn off these notifications, please visit the <a style="color:inherit;" href="%s" target="_blank">plugin settings</a>.</p>', 'limit-login-attempts-reloaded' );
 
-		$message .= sprintf( __( "<p>%d failed login attempts (%d lockout(s)) from IP <b>%s</b> and it was blocked for %s<br>"	, 'limit-login-attempts-reloaded' ), $count, $lockouts, $ip, $when );
-
-		$message .= sprintf( __( "Last user attempted: <b>%s</b></p>", 'limit-login-attempts-reloaded' ), $user );
-
-		$message .= sprintf( __( '<p>Under Attack? Try our <a href="%s" target="_blank">advanced protection</a>. ' .
-            'Have questions? Visit our <a href="%s" target="_blank">help section</a>.</p>', 'limit-login-attempts-reloaded' ),
-            'https://www.limitloginattempts.com/features/?from=plugin-lockout-email',
-            'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email'
+        $message = sprintf(
+            $message,
+			$admin_name,
+			$count,
+            $lockouts,
+            $ip,
+            $when,
+			$user,
+			'https://www.limitloginattempts.com/features/?from=plugin-lockout-email',
+			'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email',
+            admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' )
         );
-		
-		$message .= __( "<hr><p>This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.</p>", 'limit-login-attempts-reloaded' );		
 
 		@wp_mail( $admin_email, $subject, $message, array( 'content-type: text/html' ) );
 	}
