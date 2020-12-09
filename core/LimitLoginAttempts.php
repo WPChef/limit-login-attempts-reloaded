@@ -878,13 +878,13 @@ class Limit_Login_Attempts {
 
         $subject = sprintf( __( "[%s] Failed login attempts", 'limit-login-attempts-reloaded' ) , $blogname );
 
-        $message = __( "<p>Hello%s,</p>" .
-                       "<p>%d failed login attempts (%d lockout(s)) from IP <b>%s</b> and it was blocked for %s<br>" .
-                       "Last user attempted: <b>%s</b></p>" .
-                       '<p>Under Attack? Try our <a href="%s" target="_blank">advanced protection</a>. ' .
-                       'Have questions? Visit our <a href="%s" target="_blank">help section</a>.</p>' .
-                       "<hr><p>This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.</p>" .
-                       '<p style="font-size: 14px;color: #848484;">To turn off these notifications, please visit the <a style="color:inherit;" href="%s" target="_blank">plugin settings</a>.</p>', 'limit-login-attempts-reloaded' );
+        $message = __( '<p>Hello%1$s,</p>' .
+                       '<p>%2$d failed login attempts (%3$d lockout(s)) from IP <b>%4$s</b> and it was blocked for %5$s<br>' .
+                       'Last user attempted: <b>%6$s</b></p>' .
+                       '<p>Under Attack? Learn more about <a href="%7$s">brute force attacks</a>. ' .
+                       'Have Questions? Visit our <a href="%8$s" target="_blank">help section</a>.<br>' .
+                       '<a href="%9$s">Unsubscribe</a> from these notifications.</p>' .
+                       "<hr><p>This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.</p>", 'limit-login-attempts-reloaded' );
 
         $message = sprintf(
             $message,
@@ -894,7 +894,7 @@ class Limit_Login_Attempts {
             $ip,
             $when,
 			$user,
-			'https://www.limitloginattempts.com/features/?from=plugin-lockout-email',
+			'https://www.limitloginattempts.com/am-i-under-attack/?from=plugin-lockout-email',
 			'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email',
             admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' )
         );
