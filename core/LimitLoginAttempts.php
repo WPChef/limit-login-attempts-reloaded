@@ -190,6 +190,16 @@ class Limit_Login_Attempts {
 		add_action('wp_ajax_limit-login-unlock', array( $this, 'ajax_unlock' ) );
 
 		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
+
+		/**
+		 * Transform setup link to setup code.
+		 */
+		if( ( $setup_link = $this->get_option( 'app_setup_link' ) ) && empty( $this->get_option( 'app_setup_code' ) ) ) {
+
+			$setup_link = str_replace( array( 'http://', 'https://' ), '', $setup_link );
+			$this->update_option( 'app_setup_code', strrev( $setup_link ) );
+			$this->delete_option( 'app_setup_link' );
+        }
 	}
 
 	public function add_action_links( $actions ) {
@@ -1526,7 +1536,7 @@ class Limit_Login_Attempts {
 
                 if( !empty( $_POST['llar_app_settings'] ) && $this->app ) {
 
-                    if( ( $app_setup_link = $this->get_option( 'app_setup_link' ) ) && $setup_result = LLAR_App::setup( $app_setup_link ) ) {
+                    if( ( $app_setup_code = $this->get_option( 'app_setup_code' ) ) && $setup_result = LLAR_App::setup( strrev( $app_setup_code ) ) ) {
 
                         if( $setup_result['success'] && $active_app_config = $setup_result['app_config'] ) {
 
@@ -1875,7 +1885,8 @@ class Limit_Login_Attempts {
 
 		if( !empty( $_POST['link'] ) ) {
 
-			$link = sanitize_text_field( $_POST['link'] );
+			$setup_code = sanitize_text_field( $_POST['link'] );
+			$link = strrev( $setup_code );
 
 			if( $setup_result = LLAR_App::setup( $link ) ) {
 
@@ -1886,7 +1897,7 @@ class Limit_Login_Attempts {
 						$this->app_update_config( $setup_result['app_config'], true );
 						$this->update_option( 'active_app', 'custom' );
 
-						$this->update_option( 'app_setup_link', $link );
+						$this->update_option( 'app_setup_code', $setup_code );
 
 						wp_send_json_success(array(
 							'msg' => ( !empty( $setup_result['app_config']['messages']['setup_success'] ) )
@@ -1905,7 +1916,7 @@ class Limit_Login_Attempts {
 		}
 
 		wp_send_json_error(array(
-			'msg' => __( 'Please specify the Setup Link', 'limit-login-attempts-reloaded' )
+			'msg' => __( 'Please specify the Setup Code', 'limit-login-attempts-reloaded' )
 		));
     }
 
