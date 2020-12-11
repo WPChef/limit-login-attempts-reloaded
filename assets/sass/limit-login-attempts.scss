@@ -254,11 +254,11 @@
 .llar-accordion {
   .ui-accordion-header {
     font-weight: bold;
-    background-color: #778899;
+    background: #778899;
     color: #fff;
 
     &.ui-accordion-header-active {
-      background-color: #87CEFA;
+      background: #87CEFA;
     }
   }
 }
