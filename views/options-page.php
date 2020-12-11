@@ -4,7 +4,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 $active_tab = "settings";
 $active_app = $this->get_option( 'active_app' );
-if(!empty($_GET["tab"]) && in_array($_GET["tab"], ['logs-local', 'logs-custom', 'settings', 'debug'])) {
+if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug' ) ) ) {
 
 	if(!$this->app && $_GET['tab'] === 'logs-custom') {
 

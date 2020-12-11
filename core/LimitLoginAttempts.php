@@ -446,7 +446,7 @@ class Limit_Login_Attempts {
 
 		foreach ( $_SERVER as $key => $value ) {
 
-			if( in_array( $key, ['SERVER_ADDR'] ) ) continue;
+			if( in_array( $key, array( 'SERVER_ADDR' ) ) ) continue;
 
 			if( filter_var( $value, FILTER_VALIDATE_IP ) ) {
 
