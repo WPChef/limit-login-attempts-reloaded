@@ -224,7 +224,10 @@ class Limit_Login_Attempts {
 
 		wp_enqueue_script('jquery-ui-accordion');
 		wp_enqueue_style('llar-jquery-ui', LLA_PLUGIN_URL.'assets/css/jquery-ui.css');
-    }
+
+		wp_enqueue_style( 'llar-charts', LLA_PLUGIN_URL.'assets/css/Chart.min.css' );
+		wp_enqueue_script( 'llar-charts', LLA_PLUGIN_URL . 'assets/js/Chart.bundle.min.js' );
+	}
 
 	public function check_whitelist_ips( $allow, $ip ) {
 		return $this->ip_in_range( $ip, (array) $this->get_option( 'whitelist' ) );
