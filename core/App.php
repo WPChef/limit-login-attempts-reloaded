@@ -120,6 +120,15 @@ class LLAR_App {
 	}
 
 	/**
+	 * @return bool|mixed
+	 * @throws Exception
+	 */
+	public function stats() {
+
+		return $this->request( 'stats', 'get' );
+	}
+
+	/**
 	 * @param $data
 	 * @return bool|mixed
 	 */
