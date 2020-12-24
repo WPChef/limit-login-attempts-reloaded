@@ -18,8 +18,9 @@ if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-c
 
 <?php if( $active_app === 'local' ) : ?>
 <div id="llar-header-upgrade-message">
-    <p><span class="dashicons dashicons-info"></span><?php echo sprintf( __( 'Upgrade to our <a href="%s" target="_blank">premium cloud app</a> for advanced protection.', 'limit-login-attempts-reloaded' ),
-            'https://www.limitloginattempts.com/features/?from=plugin-'.( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
+    <p><span class="dashicons dashicons-info"></span>
+        <?php echo sprintf( __( 'Thank you for using the free version of <b>Limit Login Attempts Reloaded</b>. <a href="%s" target="_blank">Upgrade to our cloud app</a> for enhanced protection, visual metrics & premium support.', 'limit-login-attempts-reloaded' ),
+            'https://www.limitloginattempts.com/info.php?from=plugin-'.( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
         ); ?></p>
 </div>
 <?php endif; ?>
