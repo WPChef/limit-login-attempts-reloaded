@@ -190,16 +190,6 @@ class Limit_Login_Attempts {
 		add_action('wp_ajax_limit-login-unlock', array( $this, 'ajax_unlock' ) );
 
 		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
-
-		/**
-		 * Transform setup link to setup code.
-		 */
-		if( ( $setup_link = $this->get_option( 'app_setup_link' ) ) && empty( $this->get_option( 'app_setup_code' ) ) ) {
-
-			$setup_link = str_replace( array( 'http://', 'https://' ), '', $setup_link );
-			$this->update_option( 'app_setup_code', strrev( $setup_link ) );
-			$this->delete_option( 'app_setup_link' );
-        }
 	}
 
 	public function add_action_links( $actions ) {
@@ -1883,9 +1873,9 @@ class Limit_Login_Attempts {
 
 		check_ajax_referer('llar-action', 'sec');
 
-		if( !empty( $_POST['link'] ) ) {
+		if( !empty( $_POST['code'] ) ) {
 
-			$setup_code = sanitize_text_field( $_POST['link'] );
+			$setup_code = sanitize_text_field( $_POST['code'] );
 			$link = strrev( $setup_code );
 
 			if( $setup_result = LLAR_App::setup( $link ) ) {
