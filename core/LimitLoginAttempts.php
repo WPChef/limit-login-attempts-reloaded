@@ -30,7 +30,7 @@ class Limit_Login_Attempts {
 		'cookies'            => true,
 
 		/* Notify on lockout. Values: '', 'log', 'email', 'log,email' */
-		'lockout_notify'     => 'log,email',
+		'lockout_notify'     => 'email',
 
 		/* If notify by email, do so after this number of lockouts */
 		'notify_email_after' => 3,
@@ -792,32 +792,21 @@ class Limit_Login_Attempts {
 	 * @return bool|void
 	 */
 	public function notify( $user ) {
-		$args = explode( ',', $this->get_option( 'lockout_notify' ) );
 
 		if( is_object( $user ) ) {
             return false;
 		}
 
-		// TODO: Maybe temporarily
-		if(!in_array('log', $args)) {
-		    $args[] = 'log';
-        }
+		$this->notify_log( $user );
+
+		$args = explode( ',', $this->get_option( 'lockout_notify' ) );
 
 		if ( empty( $args ) ) {
 			return;
 		}
 
-		foreach ( $args as $mode ) {
-
-		    $mode = trim( $mode );
-
-			if( $mode === 'log' ) {
-				$this->notify_log( $user );
-			}
-
-		    if( $mode === 'email' ) {
-				$this->notify_email( $user );
-            }
+		if( in_array( 'email', $args ) ) {
+			$this->notify_email( $user );
 		}
 	}
 
@@ -1524,9 +1513,7 @@ class Limit_Login_Attempts {
                 $this->update_option('trusted_ip_origins', $trusted_ip_origins );
 
                 $notify_methods = array();
-                if( isset( $_POST[ 'lockout_notify_log' ] ) ) {
-                    $notify_methods[] = 'log';
-                }
+
                 if( isset( $_POST[ 'lockout_notify_email' ] ) ) {
                     $notify_methods[] = 'email';
                 }
