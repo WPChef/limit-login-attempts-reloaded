@@ -9,7 +9,6 @@ if( !defined( 'ABSPATH' ) ) exit();
 $gdpr = $this->get_option( 'gdpr' );
 
 $v = explode( ',', $this->get_option( 'lockout_notify' ) );
-$log_checked = in_array( 'log', $v ) ? ' checked ' : '';
 $email_checked = in_array( 'email', $v ) ? ' checked ' : '';
 
 $admin_notify_email = $this->get_option( 'admin_notify_email' );
@@ -74,11 +73,6 @@ $active_app_config = $this->get_custom_app_config();
             <th scope="row"
                 valign="top"><?php echo __( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?></th>
             <td>
-				<?php /*
-                <input type="checkbox" name="lockout_notify_log" <?php echo $log_checked; ?>
-                       value="log"/> <?php echo __( 'Lockout log', 'limit-login-attempts-reloaded' ); ?><br/>
-                */ ?>
-
                 <input type="checkbox" name="lockout_notify_email" <?php echo $email_checked; ?>
                        value="email"/> <?php echo __( 'Email to', 'limit-login-attempts-reloaded' ); ?>
                 <input type="email" name="admin_notify_email"
