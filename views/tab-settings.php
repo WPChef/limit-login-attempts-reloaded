@@ -162,7 +162,7 @@ $active_app_config = $this->get_custom_app_config();
                     <th scope="row"
                         valign="top"><?php echo __( 'Setup Code', 'limit-login-attempts-reloaded' ); ?></th>
                     <td>
-                        <input type="text" class="regular-text" id="limit-login-app-setup-link" value="<?php echo ( !empty( $app_setup_code ) ) ? esc_attr( $app_setup_code ) : ''; ?>">
+                        <input type="text" class="regular-text" id="limit-login-app-setup-code" value="<?php echo ( !empty( $app_setup_code ) ) ? esc_attr( $app_setup_code ) : ''; ?>">
                         <button class="button" id="limit-login-app-setup"><?php echo __( 'Submit', 'limit-login-attempts-reloaded' ); ?></button>
                         <span class="spinner llar-app-ajax-spinner"></span><br>
                         <span class="llar-app-ajax-msg"></span>
@@ -250,11 +250,11 @@ $active_app_config = $this->get_custom_app_config();
                     $app_ajax_msg.text('').removeClass('success error');
                     $app_ajax_spinner.css('visibility', 'visible');
 
-                    var setup_link = $('#limit-login-app-setup-link').val();
+                    var setup_code = $('#limit-login-app-setup-code').val();
 
                     $.post(ajaxurl, {
                         action: 'app_setup',
-                        link: setup_link,
+                        code: setup_code,
                         sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
                     }, function(response){
 
