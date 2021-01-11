@@ -95,7 +95,10 @@ class Limit_Login_Attempts {
 		add_filter( 'limit_login_blacklist_usernames', array( $this, 'check_blacklist_usernames' ), 10, 2 );
 
 		add_filter( 'illegal_user_logins', array( $this, 'register_user_blacklist' ), 999 );
-		add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
+
+		// TODO: Temporary turn off the holiday warning.
+		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
+
 		add_action( 'admin_notices', array( $this, 'show_leave_review_notice' ) );
 		add_action( 'wp_ajax_dismiss_review_notice', array( $this, 'dismiss_review_notice_callback' ) );
 		add_action( 'wp_ajax_dismiss_notify_notice', array( $this, 'dismiss_notify_notice_callback' ) );
