@@ -42,7 +42,7 @@ if (!defined('ABSPATH')) exit();
             <h2><?php _e('2,000,000+ active installations on <br>WordPress worldwide!', 'limit-login-attempts-reloaded'); ?></h2>
             <h3><?php echo sprintf(
                     __('Looking for advanced protection? <a href="%s" target="_blank">Try our premium service</a> for only $4.99/month!', 'limit-login-attempts-reloaded'),
-                    'https://www.limitloginattempts.com/features/?from=plugin-welcome'
+                    'https://www.limitloginattempts.com/info.php?from=plugin-welcome'
                 ); ?></h3>
         </div>
         <div class="llar-welcome-page-features">
@@ -134,7 +134,7 @@ if (!defined('ABSPATH')) exit();
                 </ul>
             </div>
             <div class="llar-upgrade-btn-wrap">
-                <a href="https://www.limitloginattempts.com/features/?from=plugin-welcome" target="_blank"><?php _e( 'Upgrade Now', 'limit-login-attempts-reloaded' ); ?></a>
+                <a href="https://www.limitloginattempts.com/info.php?from=plugin-welcome" target="_blank"><?php _e( 'Upgrade Now', 'limit-login-attempts-reloaded' ); ?></a>
             </div>
             <div class="llar-upgrade-questions"><?php _e( 'Questions? Email us at <a href="mailto:sales@limitloginattempts.com">sales@limitloginattempts.com</a>', 'limit-login-attempts-reloaded' ); ?></div>
         </div>
