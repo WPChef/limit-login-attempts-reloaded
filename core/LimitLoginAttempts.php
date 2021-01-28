@@ -927,12 +927,16 @@ class Limit_Login_Attempts {
         $subject = sprintf( __( "[%s] Failed login attempts", 'limit-login-attempts-reloaded' ) , $blogname );
 
         $message = __( '<p>Hello%1$s,</p>' .
-                       '<p>%2$d failed login attempts (%3$d lockout(s)) from IP <b>%4$s</b> and it was blocked for %5$s<br>' .
-                       'Last user attempted: <b>%6$s</b></p>' .
-                       '<p>Under Attack? Learn more about <a href="%7$s" target="_blank">brute force attacks</a>. ' .
-                       'Have Questions? Visit our <a href="%8$s" target="_blank">help section</a>.<br>' .
-                       '<a href="%9$s">Unsubscribe</a> from these notifications.</p>' .
-                       "<hr><p>This notification was sent automatically via <b>Limit Login Attempts Reloaded Plugin</b>.</p>", 'limit-login-attempts-reloaded' );
+                       '<p>%2$d failed login attempts (%3$d lockout(s)) from IP <b>%4$s</b><br>' .
+                       'Last user attempted: <b>%5$s</b><br>'.
+                       'IP was blocked for %6$s</p>'.
+                       '<p>This notification was sent automatically via Limit Login Attempts Reloaded Plugin. ' .
+                       '<b>This is installed on your WordPress site.</b></p>'.
+                       '<p>Under Attack? Try our <a href="%7$s" target="_blank">advanced protection</a>. ' .
+                       'Have Questions? Visit our <a href="%8$s" target="_blank">help section</a>.</p>' .
+                       '<hr><a href="%9$s">Unsubscribe</a> from these notifications.', 'limit-login-attempts-reloaded' );
+
+		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 
         $message = sprintf(
             $message,
@@ -940,9 +944,9 @@ class Limit_Login_Attempts {
 			$count,
             $lockouts,
             $ip,
-            $when,
 			$user,
-			'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email',
+            $when,
+			'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v='.$plugin_data['Version'],
 			'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email',
             admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' )
         );
