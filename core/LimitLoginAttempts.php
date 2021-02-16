@@ -24,7 +24,7 @@ class Limit_Login_Attempts {
 		'long_duration'      => 86400, // 24 hours,
 
 		/* Reset failed attempts after this many seconds */
-		'valid_duration'     => 43200, // 12 hours
+		'valid_duration'     => 86400, // 12 hours
 
 		/* Also limit malformed/forged cookies? */
 		'cookies'            => true,
@@ -258,6 +258,7 @@ class Limit_Login_Attempts {
 
 		wp_enqueue_style( 'llar-charts', LLA_PLUGIN_URL.'assets/css/Chart.min.css' );
 		wp_enqueue_script( 'llar-charts', LLA_PLUGIN_URL . 'assets/js/Chart.bundle.min.js' );
+		wp_enqueue_script( 'llar-charts-gauge', LLA_PLUGIN_URL . 'assets/js/chartjs-gauge.js' );
 	}
 
 	public function check_whitelist_ips( $allow, $ip ) {
@@ -752,6 +753,7 @@ class Limit_Login_Attempts {
 			/* Get the arrays with retries and retries-valid information */
 			$retries = $this->get_option( 'retries' );
 			$valid   = $this->get_option( 'retries_valid' );
+			$retries_stats = $this->get_option( 'retries_stats' );
 
 			if ( ! is_array( $retries ) ) {
 				$retries = array();
@@ -762,6 +764,21 @@ class Limit_Login_Attempts {
 				$valid = array();
 				$this->add_option( 'retries_valid', $valid );
 			}
+
+			if ( ! is_array( $retries_stats ) ) {
+				$retries_stats = array();
+				$this->add_option( 'retries_stats', $retries_stats );
+			}
+
+			$date_key = date_i18n( 'Y-m-d' );
+            if(!empty($retries_stats[$date_key])) {
+
+				$retries_stats[$date_key]++;
+			} else {
+
+				$retries_stats[$date_key] = 1;
+            }
+			$this->update_option( 'retries_stats', $retries_stats );
 
 			$gdpr = $this->get_option('gdpr');
 			$ip = ($gdpr ? $ipHash : $ip);
@@ -921,10 +938,7 @@ class Limit_Login_Attempts {
 		    $admin_name = ' ' . $res[0];
         }
 
-		$blogname = $this->use_local_options ? get_option( 'blogname' ) : get_site_option( 'site_name' );
-		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
-
-        $subject = sprintf( __( "[%s] Failed login attempts", 'limit-login-attempts-reloaded' ) , $blogname );
+        $subject = sprintf( __( "Failed login attempt alert for %s", 'limit-login-attempts-reloaded' ) , str_replace( array( 'http://', 'https://' ), '', home_url() ) );
 
         $message = __( '<p>Hello%1$s,</p>' .
                        '<p>%2$d failed login attempts (%3$d lockout(s)) from IP <b>%4$s</b><br>' .
@@ -932,9 +946,10 @@ class Limit_Login_Attempts {
                        'IP was blocked for %6$s</p>'.
                        '<p>This notification was sent automatically via Limit Login Attempts Reloaded Plugin. ' .
                        '<b>This is installed on your WordPress site.</b></p>'.
-                       '<p>Under Attack? Try our <a href="%7$s" target="_blank">advanced protection</a>. ' .
-                       'Have Questions? Visit our <a href="%8$s" target="_blank">help section</a>.</p>' .
-                       '<hr><a href="%9$s">Unsubscribe</a> from these notifications.', 'limit-login-attempts-reloaded' );
+                       '<p><b><a href="%7$s">Visit your WordPress Dashboard</a> for complete stats and logs.</b></p>'.
+                       '<p>Under Attack? Try our <a href="%8$s" target="_blank">advanced protection</a>. ' .
+                       'Have Questions? Visit our <a href="%9$s" target="_blank">help section</a>.</p>' .
+                       '<hr><a href="%10$s">Unsubscribe</a> from these notifications.', 'limit-login-attempts-reloaded' );
 
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 
@@ -946,6 +961,7 @@ class Limit_Login_Attempts {
             $ip,
 			$user,
             $when,
+			admin_url( 'options-general.php?page=limit-login-attempts&tab=dashboard' ),
 			'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v='.$plugin_data['Version'],
 			'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email',
             admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' )
@@ -1435,6 +1451,16 @@ class Limit_Login_Attempts {
 			}
 		}
 
+		$retries_stats = $this->get_option( 'retries_stats' );
+
+		foreach( $retries_stats as $date => $count ) {
+
+		    if( strtotime( $date ) < strtotime( '-7 day' ) ) {
+		        unset($retries_stats[$date]);
+            }
+        }
+
+		$this->update_option( 'retries_stats', $retries_stats );
 		$this->update_option( 'retries', $retries );
 		$this->update_option( 'retries_valid', $valid );
 	}
