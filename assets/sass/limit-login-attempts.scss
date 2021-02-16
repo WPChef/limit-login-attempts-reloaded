@@ -356,13 +356,6 @@
   }
 }
 
-.llar-chart-wrap {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  clear: both;
-}
-
 #llar-welcome-page {
   padding: 50px 0;
 
@@ -537,7 +530,8 @@
   }
 }
 
-.dashboard_page_llar-welcome {
+.dashboard_page_llar-welcome,
+.toplevel_page_limit-login-attempts {
   .update-nag,
   .notice {
     display: none;
@@ -562,3 +556,36 @@
   top: -2px !important;
   right: -2px !important;
 }
+
+.llar-tooltip {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  cursor: pointer;
+  position: relative;
+
+  &:before {
+    content: attr(data-text);
+    position: absolute;
+    width: 200px;
+    padding: 5px;
+    background-color: rgba(#000, 0.8);
+    color: #fff;
+    font-size: 13px;
+    top: 100%;
+    z-index: 999;
+    visibility: hidden;
+    opacity: 0;
+    transition: all .2s;
+    font-weight: 300;
+    cursor: auto;
+  }
+
+  &:hover {
+    &:before {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+@import "dashboard-page";
