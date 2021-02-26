@@ -26,6 +26,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
     <div class="llar-chart-wrap">
         <canvas id="llar-api-requests-chart" style="width: 400px; height: auto;"></canvas>
+        <span class="llar-chart-info"><?php _e( '* one login attempt takes 1-2 API requests', 'limit-login-attempts-reloaded' ); ?></span>
     </div>
     <script type="text/javascript">
         (function(){
