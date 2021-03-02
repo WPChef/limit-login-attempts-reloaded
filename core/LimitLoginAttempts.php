@@ -938,15 +938,18 @@ class Limit_Login_Attempts {
 		    $admin_name = ' ' . $res[0];
         }
 
-        $subject = sprintf( __( "Failed login attempt alert for %s", 'limit-login-attempts-reloaded' ) , str_replace( array( 'http://', 'https://' ), '', home_url() ) );
+        $site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
+		$blogname = $this->use_local_options ? get_option( 'blogname' ) : get_site_option( 'site_name' );
+		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
+
+        $subject = sprintf( __( "[%s] Failed login attempt alert", 'limit-login-attempts-reloaded' ), $blogname );
 
         $message = __( '<p>Hello%1$s,</p>' .
                        '<p>%2$d failed login attempts (%3$d lockout(s)) from IP <b>%4$s</b><br>' .
                        'Last user attempted: <b>%5$s</b><br>'.
                        'IP was blocked for %6$s</p>'.
                        '<p>This notification was sent automatically via Limit Login Attempts Reloaded Plugin. ' .
-                       '<b>This is installed on your WordPress site.</b></p>'.
-                       '<p><b><a href="%7$s">Visit your WordPress Dashboard</a> for complete stats and logs.</b></p>'.
+                       '<b>This is installed on your %7$s WordPress site.</b></p>'.
                        '<p>Under Attack? Try our <a href="%8$s" target="_blank">advanced protection</a>. ' .
                        'Have Questions? Visit our <a href="%9$s" target="_blank">help section</a>.</p>' .
                        '<hr><a href="%10$s">Unsubscribe</a> from these notifications.', 'limit-login-attempts-reloaded' );
@@ -961,7 +964,7 @@ class Limit_Login_Attempts {
             $ip,
 			$user,
             $when,
-			admin_url( 'options-general.php?page=limit-login-attempts&tab=dashboard' ),
+			$site_domain,
 			'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v='.$plugin_data['Version'],
 			'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email',
             admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' )
