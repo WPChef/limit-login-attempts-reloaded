@@ -94,6 +94,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
 </form>
 <?php
 $log = $this->get_option( 'logged' );
+
 $log = LLA_Helpers::sorted_log_by_date( $log );
 
 $lockouts = (array)$this->get_option('lockouts');

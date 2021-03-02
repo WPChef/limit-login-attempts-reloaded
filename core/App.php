@@ -129,6 +129,22 @@ class LLAR_App {
 	}
 
 	/**
+	 * @return bool|mixed
+	 */
+	public static function stats_global() {
+
+		$response = wp_remote_get('https://api.limitloginattempts.com/v1/global-stats');
+
+		if( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
+
+			return false;
+		} else {
+
+			return json_decode( sanitize_textarea_field( stripslashes( wp_remote_retrieve_body( $response ) ) ), true );
+		}
+	}
+
+	/**
 	 * @param $data
 	 * @return bool|mixed
 	 */
