@@ -25,8 +25,7 @@ if( $active_app === 'local' ) {
 
     if( $retries_count === 0 ) {
 
-		$retries_chart_title = sprintf( __( 'Hooray! Zero attacks in the last %d hr', 'limit-login-attempts-reloaded' ), $valid_duration );
-		$retries_chart_desc = __( 'Your site is not under attack.', 'limit-login-attempts-reloaded' );
+		$retries_chart_title = sprintf( __( 'Hooray! Zero suspicious login attempts in the last %d hr', 'limit-login-attempts-reloaded' ), $valid_duration );
 		$retries_chart_color = '#66CC66';
     }
     else if ( $retries_count < 100 ) {

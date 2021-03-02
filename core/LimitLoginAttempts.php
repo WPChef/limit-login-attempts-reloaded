@@ -1453,14 +1453,18 @@ class Limit_Login_Attempts {
 
 		$retries_stats = $this->get_option( 'retries_stats' );
 
-		foreach( $retries_stats as $date => $count ) {
+		if($retries_stats) {
 
-		    if( strtotime( $date ) < strtotime( '-7 day' ) ) {
-		        unset($retries_stats[$date]);
-            }
+			foreach( $retries_stats as $date => $count ) {
+
+				if( strtotime( $date ) < strtotime( '-7 day' ) ) {
+					unset($retries_stats[$date]);
+				}
+			}
+
+			$this->update_option( 'retries_stats', $retries_stats );
         }
 
-		$this->update_option( 'retries_stats', $retries_stats );
 		$this->update_option( 'retries', $retries );
 		$this->update_option( 'retries_valid', $valid );
 	}
