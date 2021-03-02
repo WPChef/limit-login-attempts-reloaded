@@ -5,6 +5,13 @@
     box-sizing: border-box;
   }
 
+  ul, ol {
+    margin-left: 0;
+    li {
+      list-style-position: inside;
+    }
+  }
+
   .dashboard-header {
     background-color: #0071a0;
     color: #fff;
