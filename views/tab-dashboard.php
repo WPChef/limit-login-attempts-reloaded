@@ -3,16 +3,6 @@
 if( !defined( 'ABSPATH' ) ) exit();
 
 $active_app = $this->get_option( 'active_app' );
-$retries = $this->get_option( 'retries' );
-$valid_duration = $this->get_option( 'valid_duration' );
-$valid_duration  /= 3600;
-
-$retries_count = 0;
-if($retries) {
-	foreach ($retries as $ip => $retry) {
-	    $retries_count += (int)$retry;
-    }
-}
 
 $retries_chart_title = '';
 $retries_chart_desc = '';
@@ -23,20 +13,29 @@ $api_stats = false;
 $app_attacks = 0;
 if( $active_app === 'local' ) {
 
+	$retries_stats = $this->get_option( 'retries_stats' );
+
+	$retries_count = 0;
+	if( $retries_stats ) {
+		if( array_key_exists( date_i18n( 'Y-m-d' ), $retries_stats ) ) {
+			$retries_count = (int) $retries_stats[date_i18n( 'Y-m-d' )];
+		}
+	}
+
     if( $retries_count === 0 ) {
 
-		$retries_chart_title = sprintf( __( 'Hooray! Zero suspicious login attempts in the last %d hr', 'limit-login-attempts-reloaded' ), $valid_duration );
+		$retries_chart_title = __( 'Hooray! Zero suspicious login attempts in the last 24 hr', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#66CC66';
     }
     else if ( $retries_count < 100 ) {
 
 		$retries_chart_title = sprintf( _n( '%d suspicious login attempt ', '%d suspicious login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
-		$retries_chart_title .= sprintf( __( 'in the last %d hr', 'limit-login-attempts-reloaded' ), $valid_duration );
+		$retries_chart_title .= __( 'in the last 24 hr', 'limit-login-attempts-reloaded' );
 		$retries_chart_desc = __( 'Your site might have been discovered by hackers.', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#FFCC66';
     } else {
 
-		$retries_chart_title = sprintf( __( 'Warning: More than 100 suspicious login attempts in the last %d hr', 'limit-login-attempts-reloaded' ), $valid_duration );
+		$retries_chart_title = __( 'Warning: More than 100 suspicious login attempts in the last 24 hr', 'limit-login-attempts-reloaded' );
 		$retries_chart_desc = __( 'Your site is likely under a brute-force attack.', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#FF6633';
 		$retries_chart_show_actions = true;
@@ -183,26 +182,34 @@ if( $active_app === 'local' ) {
 
                 } else {
 
-					$daterange = new DatePeriod(
-                        (new DateTime())->modify('-6 day'),
-                        new DateInterval('P1D'),
-                        (new DateTime())->modify('+1 day')
-                    );
-
-					$retries_stats = $this->get_option( 'retries_stats' );
-
 					$date_format = trim( get_option( 'date_format' ), ' yY,._:;-/\\' );
 					$date_format = str_replace( 'F', 'M', $date_format );
 
-					$chart2_data = array();
-                    foreach ($daterange as $date) {
+					$retries_stats = $this->get_option( 'retries_stats' );
 
-						$chart2_labels[] = $date->format( $date_format );
-						$chart2_data[] = (!empty($retries_stats[$date->format("Y-m-d")])) ? $retries_stats[$date->format("Y-m-d")] : 0;
+					if( is_array( $retries_stats ) && $retries_stats ) {
+
+						$daterange = new DatePeriod(
+							new DateTime( key( $retries_stats ) ),
+							new DateInterval('P1D'),
+							new DateTime()
+						);
+
+						$chart2_data = array();
+						foreach ($daterange as $date) {
+
+							$chart2_labels[] = $date->format( $date_format );
+							$chart2_data[] = (!empty($retries_stats[$date->format("Y-m-d")])) ? $retries_stats[$date->format("Y-m-d")] : 0;
+						}
+                    } else {
+
+						$chart2_labels[] = (new DateTime())->format( $date_format );
+						$chart2_data[] = 0;
                     }
 
+
                     $chart2_datasets[] = array(
-						'label' => __( 'Suspicious Login Attempts By Day', 'limit-login-attempts-reloaded' ),
+						'label' => __( 'Suspicious Login Attempts', 'limit-login-attempts-reloaded' ),
 						'data' => $chart2_data,
 						'backgroundColor' => 'rgb(54, 162, 235)',
 						'borderColor' => 'rgb(54, 162, 235)',
@@ -241,8 +248,7 @@ if( $active_app === 'local' ) {
 									xAxes: [{
 										display: true,
 										scaleLabel: {
-											display: true,
-											labelString: '<?php echo esc_js( __( 'Date', 'limit-login-attempts-reloaded' ) ); ?>'
+											display: false
 										}
 									}],
 									yAxes: [{
@@ -415,15 +421,13 @@ if( $active_app === 'local' ) {
                                     xAxes: [{
                                         display: true,
                                         scaleLabel: {
-                                            display: true,
-                                            labelString: '<?php echo esc_js( __( 'Date', 'limit-login-attempts-reloaded' ) ); ?>'
+                                            display: false
                                         }
                                     }],
                                     yAxes: [{
                                         display: true,
                                         scaleLabel: {
-                                            display: false,
-//                                            labelString: '<?php //echo esc_js( __( 'Date', 'limit-login-attempts-reloaded' ) ); ?>//'
+                                            display: false
                                         },
                                         ticks: {
                                             beginAtZero: true,
