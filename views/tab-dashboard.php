@@ -10,12 +10,11 @@ $retries_chart_color = '';
 $retries_chart_show_actions = false;
 
 $api_stats = false;
-$app_attacks = 0;
+$retries_count = 0;
 if( $active_app === 'local' ) {
 
 	$retries_stats = $this->get_option( 'retries_stats' );
 
-	$retries_count = 0;
 	if( $retries_stats ) {
 		if( array_key_exists( date_i18n( 'Y-m-d' ), $retries_stats ) ) {
 			$retries_count = (int) $retries_stats[date_i18n( 'Y-m-d' )];
@@ -24,19 +23,19 @@ if( $active_app === 'local' ) {
 
     if( $retries_count === 0 ) {
 
-		$retries_chart_title = __( 'Hooray! Zero suspicious login attempts in the last 24 hr', 'limit-login-attempts-reloaded' );
+		$retries_chart_title = __( 'Hooray! Zero failed login attempts today', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#66CC66';
     }
     else if ( $retries_count < 100 ) {
 
-		$retries_chart_title = sprintf( _n( '%d suspicious login attempt ', '%d suspicious login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
-		$retries_chart_title .= __( 'in the last 24 hr', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = __( 'Your site might have been discovered by hackers.', 'limit-login-attempts-reloaded' );
+		$retries_chart_title = sprintf( _n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
+		$retries_chart_title .= __( 'today', 'limit-login-attempts-reloaded' );
+		$retries_chart_desc = __( 'Your site might have been discovered by hackers', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#FFCC66';
     } else {
 
-		$retries_chart_title = __( 'Warning: More than 100 suspicious login attempts in the last 24 hr', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = __( 'Your site is likely under a brute-force attack.', 'limit-login-attempts-reloaded' );
+		$retries_chart_title = __( 'Warning: More than 100 failed login attempts today', 'limit-login-attempts-reloaded' );
+		$retries_chart_desc = __( 'Your site is likely under a brute-force attack', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#FF6633';
 		$retries_chart_show_actions = true;
     }
@@ -47,15 +46,11 @@ if( $active_app === 'local' ) {
 
 	if( $api_stats && !empty( $api_stats['attempts']['count'] )) {
 
-	    $app_attacks = (int) end( $api_stats['attempts']['count'] );
+		$retries_count = (int) end( $api_stats['attempts']['count'] );
     }
 
-	$retries_count = 0;
-
-	$retries_chart_title = __( 'Zero local suspicious login attempts in the last 24 hr', 'limit-login-attempts-reloaded' );
-	$retries_chart_desc = ($app_attacks)
-                            ? sprintf( __( 'All %d excessive login attempts have been neutralized in the cloud', 'limit-login-attempts-reloaded' ), $app_attacks )
-                            : '';
+	$retries_chart_title = __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
+	$retries_chart_desc = __( 'All failed login attempts have been neutralized in the cloud', 'limit-login-attempts-reloaded' );
 	$retries_chart_color = '#66CC66';
 }
 
@@ -67,11 +62,7 @@ if( $active_app === 'local' ) {
 	</div>
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
-            <div class="section-title"><?php echo ($active_app === 'local')
-                    ? __( 'Suspicious Login Activity', 'limit-login-attempts-reloaded' ) .
-                        ' (<span class="llar-tooltip" data-text="' . esc_attr__( '"Local" means the server that hosts your website.', 'limit-login-attempts-reloaded' ) . '">' .
-                            __( 'Local', 'limit-login-attempts-reloaded' ) . '</span>)'
-                    : __( 'Suspicious Login Attempts Prevented', 'limit-login-attempts-reloaded' ); ?></div>
+            <div class="section-title"><?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?></div>
             <div class="section-content">
                 <div class="chart">
                     <canvas id="llar-attack-velocity-chart"></canvas>
@@ -136,7 +127,7 @@ if( $active_app === 'local' ) {
                         <ol>
                             <li><?php _e( 'Change your password to something more secure.', 'limit-login-attempts-reloaded' ); ?></li>
                             <li><?php _e( 'Make sure WordPress and all your plugins are updated.', 'limit-login-attempts-reloaded' ); ?></li>
-                            <li><?php echo sprintf( __( '<a href="%s" target="_blank">Update to Premium</a> Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded' ), 'https://www.limitloginattempts.com/features/?from=plugin-dashboard-status' ); ?></li>
+                            <li><?php echo sprintf( __( '<a href="%s" target="_blank">Update to Premium</a> Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded' ), 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-status' ); ?></li>
                         </ol>
                     </div>
 				<?php endif; ?>
@@ -165,7 +156,7 @@ if( $active_app === 'local' ) {
 					$chart2_labels = $stats_dates;
 
 					$chart2_datasets[] = array(
-						'label' => __( 'Suspicious Login Attempts', 'limit-login-attempts-reloaded' ),
+						'label' => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
 						'data' => $api_stats['attempts']['count'],
 						'backgroundColor' => 'rgb(54, 162, 235)',
 						'borderColor' => 'rgb(54, 162, 235)',
@@ -209,7 +200,7 @@ if( $active_app === 'local' ) {
 
 
                     $chart2_datasets[] = array(
-						'label' => __( 'Suspicious Login Attempts', 'limit-login-attempts-reloaded' ),
+						'label' => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
 						'data' => $chart2_data,
 						'backgroundColor' => 'rgb(54, 162, 235)',
 						'borderColor' => 'rgb(54, 162, 235)',
@@ -280,7 +271,7 @@ if( $active_app === 'local' ) {
                 <div class="title"><?php _e( 'Premium Protection Disabled', 'limit-login-attempts-reloaded' ); ?></div>
                 <div class="desc"><?php _e( 'As a free user, your local server is absorbing the traffic brought on by brute force attacks, potentially slowing down your website. Upgrade to Premium today to outsource these attacks through our cloud app, and slow down future attacks with advanced throttling.', 'limit-login-attempts-reloaded' ); ?></div>
                 <div class="actions">
-                    <a href="https://www.limitloginattempts.com/features/?from=plugin-dashboard-cta" target="_blank" class="button button-primary"><?php _e( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?></a><br>
+                    <a href="https://www.limitloginattempts.com/info.php?from=plugin-dashboard-cta" target="_blank" class="button button-primary"><?php _e( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?></a><br>
                 </div>
             </div>
         </div>
@@ -323,7 +314,7 @@ if( $active_app === 'local' ) {
                 <span class="dashicons dashicons-sos"></span>
             </div>
             <div class="info-box-content">
-                <div class="title"><a href="https://www.limitloginattempts.com/resources/?from=plugin-dashboard" target="_blank"><?php _e( 'Help', 'limit-login-attempts-reloaded' ); ?></a></div>
+                <div class="title"><a href="https://www.limitloginattempts.com/info.php?from=plugin-dashboard-help" target="_blank"><?php _e( 'Help', 'limit-login-attempts-reloaded' ); ?></a></div>
                 <div class="desc"><?php _e( 'Find the documentation and help you need.', 'limit-login-attempts-reloaded' ); ?></div>
             </div>
         </div>
@@ -377,7 +368,7 @@ if( $active_app === 'local' ) {
                         </tr>
                     <?php endforeach; ?>
                 </table>
-                <p class="countries-table-info"><?php _e( 'last 24 hr', 'limit-login-attempts-reloaded' ); ?></p>
+                <p class="countries-table-info"><?php _e( 'today', 'limit-login-attempts-reloaded' ); ?></p>
             </div>
         </div>
 
