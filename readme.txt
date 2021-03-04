@@ -97,6 +97,11 @@ Please follow this link: <a href="https://www.limitloginattempts.com/resources/"
 
 == Changelog ==
 
+= 2.20.3 =
+* More clear wording.
+* Cloud API: fixed double submit in the settings form.
+* Better displaying of stats.
+
 = 2.20.2 =
 * Updated email text.
 
