@@ -3,7 +3,7 @@ Contributors: wpchefgadget
 Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login, security, firewall, protection
 Requires at least: 3.0
-Tested up to: 5.6
+Tested up to: 5.7
 Stable tag: 2.20.3
 
 Reloaded version of the original Limit Login Attempts plugin for Login Protection by a team of WordPress developers. GDPR compliant.
