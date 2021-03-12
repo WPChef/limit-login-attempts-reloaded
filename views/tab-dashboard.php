@@ -147,29 +147,24 @@ if( $active_app === 'local' ) {
                     $date_format = trim( get_option( 'date_format' ), ' yY,._:;-/\\' );
                     $date_format = str_replace( 'F', 'M', $date_format );
 
-                    foreach ( $api_stats['attempts']['at'] as $timest ) {
+                    if( !empty( $api_stats['attempts'] ) ) {
 
-                        $stats_dates[] = get_date_from_gmt( date( 'Y-m-d H:i:s', $timest ), $date_format );
+						foreach ( $api_stats['attempts']['at'] as $timest ) {
+
+							$stats_dates[] = get_date_from_gmt( date( 'Y-m-d H:i:s', $timest ), $date_format );
+						}
+
+						$chart2_label = __( 'Requests', 'limit-login-attempts-reloaded' );
+						$chart2_labels = $stats_dates;
+
+						$chart2_datasets[] = array(
+							'label' => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
+							'data' => $api_stats['attempts']['count'],
+							'backgroundColor' => 'rgb(54, 162, 235)',
+							'borderColor' => 'rgb(54, 162, 235)',
+							'fill' => false,
+						);
                     }
-
-					$chart2_label = __( 'Requests', 'limit-login-attempts-reloaded' );
-					$chart2_labels = $stats_dates;
-
-					$chart2_datasets[] = array(
-						'label' => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
-						'data' => $api_stats['attempts']['count'],
-						'backgroundColor' => 'rgb(54, 162, 235)',
-						'borderColor' => 'rgb(54, 162, 235)',
-						'fill' => false,
-					);
-
-//					$chart2_datasets[] = array(
-//						'label' => __( 'API Requests', 'limit-login-attempts-reloaded' ),
-//						'data' => $api_stats['requests']['count'],
-//						'backgroundColor' => 'rgba(201, 203, 207, 0.4)',
-//						'borderColor' => 'rgb(201, 203, 207)',
-//						'fill' => '-1',
-//					);
 
                 } else {
 
