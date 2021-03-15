@@ -7,6 +7,7 @@ class Limit_Login_Attempts {
 
 	public $default_options = array(
         'gdpr'              => 0,
+		'gdpr_message'      => '',
 
 		/* Are we behind a proxy? */
 		'client_type'        => LLA_DIRECT_ADDR,
@@ -85,6 +86,9 @@ class Limit_Login_Attempts {
 	public $app = null;
 
 	public function __construct() {
+
+	    $this->default_options['gdpr_message'] = __( 'By proceeding you understand and give your consent that your IP address and browser information might be processed by the security plugins installed on this site.', 'limit-login-attempts-reloaded' );
+
 		$this->hooks_init();
         $this->app_init();
 	}
@@ -95,6 +99,7 @@ class Limit_Login_Attempts {
 	public function hooks_init() {
 		add_action( 'plugins_loaded', array( $this, 'setup' ), 9999 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
+		add_action( 'login_enqueue_scripts', array( $this, 'login_page_enqueue' ) );
 		add_filter( 'limit_login_whitelist_ip', array( $this, 'check_whitelist_ips' ), 10, 2 );
 		add_filter( 'limit_login_whitelist_usernames', array( $this, 'check_whitelist_usernames' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_ip', array( $this, 'check_blacklist_ips' ), 10, 2 );
@@ -123,6 +128,8 @@ class Limit_Login_Attempts {
 
 		add_action( 'admin_init', array( $this, 'welcome_page_redirect' ), 9999 );
 		add_action( 'admin_head', array( $this, 'welcome_page_hide_menu' ) );
+
+		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -234,6 +241,17 @@ class Limit_Login_Attempts {
 
 		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
 	}
+
+	public function login_page_gdpr_message() {
+
+	    if( ! $this->get_option( 'gdpr' )) return;
+
+	    ?>
+            <div id="llar-login-page-gdpr">
+                <div class="llar-login-page-gdpr__message"><?php echo esc_html( $this->get_option( 'gdpr_message' ) ); ?></div>
+            </div>
+        <?php
+    }
 
 	public function add_action_links( $actions ) {
 
@@ -541,6 +559,13 @@ class Limit_Login_Attempts {
 
 	}
 
+	public function login_page_enqueue() {
+
+	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
+
+		wp_enqueue_style( 'llar-login-page-styles', LLA_PLUGIN_URL . 'assets/css/login-page-styles.css', array(), $plugin_data['Version'] );
+	}
+
 	/**
 	* Add admin options page
 	*/
@@ -702,12 +727,7 @@ class Limit_Login_Attempts {
 		/* lockout active? */
 		$lockouts = $this->get_option( 'lockouts' );
 
-        $a = $this->checkKey($lockouts, $ip);
-        $b = $this->checkKey($lockouts, $this->getHash($ip));
-		return (
-                ! is_array( $lockouts ) ||
-                (! isset( $lockouts[ $ip ] ) && ! isset( $lockouts[ $this->getHash($ip) ] )) ||
-                (time() >= $a && time() >= $b ));
+		return ( !is_array( $lockouts ) || !isset( $lockouts[ $ip ] ) || time() >= $lockouts[$ip] );
 	}
 
 	/**
@@ -755,7 +775,6 @@ class Limit_Login_Attempts {
 		} else {
 
 			$ip = $this->get_address();
-			$ipHash = $this->getHash($this->get_address());
 
 			/* if currently locked-out, do not add to retries */
 			$lockouts = $this->get_option( 'lockouts' );
@@ -764,7 +783,7 @@ class Limit_Login_Attempts {
 				$lockouts = array();
 			}
 
-			if ( (isset( $lockouts[ $ip ] ) && time() < $lockouts[ $ip ]) || (isset( $lockouts[ $ipHash ] ) && time() < $lockouts[ $ipHash ] )) {
+			if ( isset( $lockouts[ $ip ] ) && time() < $lockouts[ $ip ] ) {
 				return;
 			}
 
@@ -798,8 +817,6 @@ class Limit_Login_Attempts {
             }
 			$this->update_option( 'retries_stats', $retries_stats );
 
-			$gdpr = $this->get_option('gdpr');
-			$ip = ($gdpr ? $ipHash : $ip);
 			/* Check validity and add one to retries */
 			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ]) {
 				$retries[ $ip ] ++;
@@ -835,18 +852,16 @@ class Limit_Login_Attempts {
 			} else {
 				global $limit_login_just_lockedout;
 				$limit_login_just_lockedout = true;
-				$gdpr = $this->get_option('gdpr');
-				$index = ($gdpr ? $ipHash : $ip);
 
 				/* setup lockout, reset retries as needed */
-				if ( (isset($retries[ $ip ]) ? $retries[ $ip ] : 0) >= $retries_long || (isset($retries[ $ipHash ]) ? $retries[ $ipHash ] : 0) >= $retries_long ) {
+				if ( (isset($retries[ $ip ]) ? $retries[ $ip ] : 0) >= $retries_long ) {
 					/* long lockout */
-					$lockouts[ $index ] = time() + $this->get_option( 'long_duration' );
-					unset( $retries[ $index ] );
-					unset( $valid[ $index ] );
+					$lockouts[ $ip ] = time() + $this->get_option( 'long_duration' );
+					unset( $retries[ $ip ] );
+					unset( $valid[ $ip ] );
 				} else {
 					/* normal lockout */
-					$lockouts[ $index ] = time() + $this->get_option( 'lockout_duration' );
+					$lockouts[ $ip ] = time() + $this->get_option( 'lockout_duration' );
 				}
 			}
 
@@ -906,15 +921,15 @@ class Limit_Login_Attempts {
 		}
 
 		/* check if we are at the right nr to do notification */
-		if (
-                (isset( $retries[ $ip ] ) || isset( $retries[ $this->getHash($ip) ] ))
+		if ( isset( $retries[ $ip ] )
                 &&
-                ( ( intval($retries[ $ip ] + $retries[ $this->getHash($ip) ]) / $this->get_option( 'allowed_retries' ) ) % $this->get_option( 'notify_email_after' ) ) != 0 ) {
+            ( ( intval($retries[$ip]) / $this->get_option( 'allowed_retries' ) ) % $this->get_option( 'notify_email_after' ) ) != 0 ) {
+
 			return;
 		}
 
 		/* Format message. First current lockout duration */
-		if ( !isset( $retries[ $ip ] ) && !isset( $retries[ $this->getHash($ip) ] ) ) {
+		if ( !isset( $retries[ $ip ] ) ) {
 			/* longer lockout */
 			$count    = $this->get_option( 'allowed_retries' )
 						* $this->get_option( 'allowed_lockouts' );
@@ -923,7 +938,7 @@ class Limit_Login_Attempts {
 			$when     = sprintf( _n( '%d hour', '%d hours', $time, 'limit-login-attempts-reloaded' ), $time );
 		} else {
 			/* normal lockout */
-			$count    = $retries[ $ip ] + $retries[ $this->getHash($ip) ];
+			$count    = $retries[ $ip ];
 			$lockouts = floor( ($count) / $this->get_option( 'allowed_retries' ) );
 			$time     = round( $this->get_option( 'lockout_duration' ) / 60 );
 			$when     = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
@@ -1010,23 +1025,22 @@ class Limit_Login_Attempts {
 		}
 		$ip = $this->get_address();
 
-        $index = ($this->get_option('gdpr') ? $this->getHash($ip) : $ip );
 		/* can be written much simpler, if you do not mind php warnings */
-		if ( !isset( $log[ $index ] ) )
-			$log[ $index ] = array();
+		if ( !isset( $log[ $ip ] ) )
+			$log[ $ip ] = array();
 
-		if ( !isset( $log[ $index ][ $user_login ] ) )
-			$log[ $index ][ $user_login ] = array( 'counter' => 0 );
+		if ( !isset( $log[ $ip ][ $user_login ] ) )
+			$log[ $ip ][ $user_login ] = array( 'counter' => 0 );
 
-		elseif ( !is_array( $log[ $index ][ $user_login ] ) )
-			$log[ $index ][ $user_login ] = array(
-				'counter' => $log[ $index ][ $user_login ],
+		elseif ( !is_array( $log[ $ip ][ $user_login ] ) )
+			$log[ $ip ][ $user_login ] = array(
+				'counter' => $log[ $ip ][ $user_login ],
 			);
 
-		$log[ $index ][ $user_login ]['counter']++;
-		$log[ $index ][ $user_login ]['date'] = time();
+		$log[ $ip ][ $user_login ]['counter']++;
+		$log[ $ip ][ $user_login ]['date'] = time();
 
-		$log[ $index ][ $user_login ]['gateway'] = $this->detect_gateway();
+		$log[ $ip ][ $user_login ]['gateway'] = $this->detect_gateway();
 
 		if ( $option === false ) {
 			$this->add_option( 'logged', $log );
@@ -1604,6 +1618,7 @@ class Limit_Login_Attempts {
                 $this->update_option('long_duration',      (int)$_POST['long_duration'] * 3600 );
                 $this->update_option('notify_email_after', (int)$_POST['email_after'] );
                 $this->update_option('active_app',       sanitize_text_field( $_POST['active_app'] ) );
+                $this->update_option('gdpr_message',       sanitize_textarea_field( $_POST['gdpr_message'] ) );
 
                 $this->update_option('admin_notify_email', sanitize_email( $_POST['admin_notify_email'] ) );
 
