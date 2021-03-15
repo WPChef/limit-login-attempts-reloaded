@@ -7,6 +7,7 @@ if( !defined( 'ABSPATH' ) ) exit();
  */
 
 $gdpr = $this->get_option( 'gdpr' );
+$gdpr_message = $this->get_option( 'gdpr_message' );
 
 $v = explode( ',', $this->get_option( 'lockout_notify' ) );
 $email_checked = in_array( 'email', $v ) ? ' checked ' : '';
@@ -60,7 +61,6 @@ $active_app_config = $this->get_custom_app_config();
     <?php endif ?>
 
     <table class="form-table">
-		<?php if( $active_app === 'local' ) : ?>
         <tr>
             <th scope="row"
                 valign="top"><?php echo __( 'GDPR compliance', 'limit-login-attempts-reloaded' ); ?></th>
@@ -69,7 +69,13 @@ $active_app_config = $this->get_custom_app_config();
 				<?php echo __( 'this makes the plugin <a href="https://gdpr-info.eu/" target="_blank" >GDPR</a> compliant', 'limit-login-attempts-reloaded' ); ?> <br/>
             </td>
         </tr>
-        <?php endif; ?>
+        <tr>
+            <th scope="row"
+                valign="top"><?php echo __( 'GDPR message', 'limit-login-attempts-reloaded' ); ?></th>
+            <td>
+                <textarea name="gdpr_message" cols="60"><?php echo esc_textarea( $gdpr_message ); ?></textarea>
+            </td>
+        </tr>
 
         <tr>
             <th scope="row"
