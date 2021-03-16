@@ -117,7 +117,7 @@ class Limit_Login_Attempts {
 		add_action( 'wp_ajax_app_acl_add_rule', array( $this, 'app_acl_add_rule_callback' ));
 		add_action( 'wp_ajax_app_acl_remove_rule', array( $this, 'app_acl_remove_rule_callback' ));
 
-		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
+		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 
 		add_action( 'admin_init', array( $this, 'welcome_page_redirect' ), 9999 );
 		add_action( 'admin_head', array( $this, 'welcome_page_hide_menu' ) );
@@ -549,7 +549,7 @@ class Limit_Login_Attempts {
 
 	public function admin_menu()
 	{
-		add_options_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+		add_menu_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
 
 		add_dashboard_page(
             'Welcome to Limit Login Attempts Reloaded',
@@ -967,7 +967,7 @@ class Limit_Login_Attempts {
 			$site_domain,
 			'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v='.$plugin_data['Version'],
 			'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email',
-            admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' )
+            admin_url( 'admin.php?page=limit-login-attempts&tab=settings' )
         );
 
 		@wp_mail( $admin_email, $subject, $message, array( 'content-type: text/html' ) );
@@ -1719,7 +1719,7 @@ class Limit_Login_Attempts {
 
         if ( !current_user_can('manage_options') ||
             $this->get_option('review_notice_shown') ||
-            !in_array( $screen->base, array( 'dashboard', 'plugins', 'settings_page_limit-login-attempts' ) ) ) return;
+            !in_array( $screen->base, array( 'dashboard', 'plugins', 'toplevel_page_limit-login-attempts' ) ) ) return;
 
         $activation_timestamp = $this->get_option('activation_timestamp');
 
@@ -2285,7 +2285,7 @@ class Limit_Login_Attempts {
 
 		    wp_send_json_error(array(
 				'error_notice' => '<div class="llar-app-notice">
-                                        <p>'. $app_config['messages']['sync_error'] .'<br><br>'. sprintf( __( 'Meanwhile, the app falls over to the <a href="%s">default functionality</a>.', 'limit-login-attempts-reloaded' ), admin_url('options-general.php?page=limit-login-attempts&tab=logs-local') ) . '</p>
+                                        <p>'. $app_config['messages']['sync_error'] .'<br><br>'. sprintf( __( 'Meanwhile, the app falls over to the <a href="%s">default functionality</a>.', 'limit-login-attempts-reloaded' ), admin_url('admin.php?page=limit-login-attempts&tab=logs-local') ) . '</p>
                                     </div>'
             ));
         } else {
