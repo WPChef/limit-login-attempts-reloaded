@@ -547,9 +547,26 @@ class Limit_Login_Attempts {
 		add_submenu_page( 'settings.php', 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
 	}
 
-	public function admin_menu()
-	{
+	public function admin_menu() {
+	    global $submenu;
+
+		add_options_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
 		add_menu_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+
+
+		$submenu_position = false;
+		if( !empty( $submenu['options-general.php'] ) ) {
+		     foreach ( $submenu['options-general.php'] as $pos => $item ) {
+		         if( $item[2] === $this->_options_page_slug ) {
+					 $submenu_position = $pos;
+					 break;
+                 }
+             }
+        }
+
+		if( $submenu_position ) {
+			$submenu['options-general.php'][$submenu_position] = array( 'Limit Login Attempts', 'manage_options', admin_url( 'admin.php?page='.$this->_options_page_slug ), 'Limit Login Attempts' );
+		}
 
 		add_dashboard_page(
             'Welcome to Limit Login Attempts Reloaded',
