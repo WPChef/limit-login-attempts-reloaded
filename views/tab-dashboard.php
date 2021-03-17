@@ -149,7 +149,7 @@ if( $active_app === 'local' ) {
 
                     foreach ( $api_stats['attempts']['at'] as $timest ) {
 
-                        $stats_dates[] = get_date_from_gmt( date( 'Y-m-d H:i:s', $timest ), $date_format );
+                        $stats_dates[] = date( $date_format, $timest );
                     }
 
 					$chart2_label = __( 'Requests', 'limit-login-attempts-reloaded' );
@@ -337,7 +337,7 @@ if( $active_app === 'local' ) {
 
 		foreach ( $stats_global['attempts']['day']['at'] as $timest ) {
 
-			$stats_global_dates[] = get_date_from_gmt( date( 'Y-m-d H:i:s', $timest ), $date_format );
+			$stats_global_dates[] = date( $date_format, $timest );
 		}
 
 		$countries_list = require LLA_PLUGIN_DIR . '/resources/countries.php';
