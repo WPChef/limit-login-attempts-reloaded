@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login, security, firewall, protection
 Requires at least: 3.0
 Tested up to: 5.7
-Stable tag: 2.20.3
+Stable tag: 2.20.4
 
 Reloaded version of the original Limit Login Attempts plugin for Login Protection by a team of WordPress developers. GDPR compliant.
 
@@ -29,7 +29,8 @@ https://www.youtube.com/watch?v=IsotthPWCPA
 * Email notification of blocked attempts.
 * Logging of blocked attempts.
 * Safelist/Blocklist of IPs and Usernames (Support IP ranges).
-* Sucuri Website Firewall compatibility.
+* **Sucuri** compatibility.
+* **Wordfence** compatibility.
 * **XMLRPC** gateway protection.
 * **Woocommerce** login page protection.
 * **Multi-site** compatibility with extra MU settings.
@@ -96,6 +97,12 @@ By default, you will need to copy and paste the lists to each site manually. For
 Please follow this link: <a href="https://www.limitloginattempts.com/resources/">https://www.limitloginattempts.com/resources/</a>
 
 == Changelog ==
+
+= 2.20.4 =
+* Sucuri compatibility verified/confirmed.
+* Wordfence compatibility verified/confirmed.
+* Better menu navigation.
+* Timezones fixed for the global chart.
 
 = 2.20.3 =
 * More clear wording.
