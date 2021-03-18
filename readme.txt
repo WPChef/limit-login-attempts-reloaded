@@ -99,8 +99,8 @@ Please follow this link: <a href="https://www.limitloginattempts.com/resources/"
 == Changelog ==
 
 = 2.20.4 =
-* Sucuri compatibility verified/confirmed.
-* Wordfence compatibility verified/confirmed.
+* Sucuri compatibility verified.
+* Wordfence compatibility verified.
 * Better menu navigation.
 * Timezones fixed for the global chart.
 
