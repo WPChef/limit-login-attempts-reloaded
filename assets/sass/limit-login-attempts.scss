@@ -588,17 +588,23 @@
   }
 }
 
+//#toplevel_page_limit-login-attempts {
+//  .wp-menu-image {
+//    &:before {
+//      content: '';
+//      background: url('../img/icon-logo-menu.png') no-repeat center center / 27px auto;
+//      display: block;
+//      position: absolute;
+//      top: 10px;
+//      left: 5px;
+//      width: 30px;
+//    }
+//  }
+//}
 #toplevel_page_limit-login-attempts {
-  .wp-menu-image {
-    &:before {
-      content: '';
-      background: url('../img/icon-logo-menu.png') no-repeat center center / 27px auto;
-      display: block;
-      position: absolute;
-      top: 10px;
-      left: 5px;
-      width: 30px;
-    }
+  .wp-menu-image.svg {
+    background-size: 25px auto !important;
+    margin-top: 7px;
   }
 }
 
