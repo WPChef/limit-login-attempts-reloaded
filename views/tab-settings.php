@@ -90,7 +90,7 @@ $active_app_config = $this->get_custom_app_config();
             <th scope="row"
                 valign="top"><?php echo __( 'Show top-level menu item', 'limit-login-attempts-reloaded' ); ?></th>
             <td>
-                <input type="checkbox" name="show_top_level_menu_item" <?php checked( $show_top_level_menu_item ); ?>> <?php _e( 'Reload the page to see the changes.', 'limit-login-attempts-reloaded' ) ?>
+                <input type="checkbox" name="show_top_level_menu_item" <?php checked( $show_top_level_menu_item ); ?>> <?php _e( '(Reload the page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
             </td>
         </tr>
         <tr>
