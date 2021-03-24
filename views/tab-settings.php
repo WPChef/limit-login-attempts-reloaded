@@ -11,6 +11,8 @@ $gdpr = $this->get_option( 'gdpr' );
 $v = explode( ',', $this->get_option( 'lockout_notify' ) );
 $email_checked = in_array( 'email', $v ) ? ' checked ' : '';
 
+$show_top_level_menu_item = $this->get_option( 'show_top_level_menu_item' );
+
 $admin_notify_email = $this->get_option( 'admin_notify_email' );
 $admin_email_placeholder = (!is_multisite()) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 
@@ -81,6 +83,14 @@ $active_app_config = $this->get_custom_app_config();
                 <input type="text" size="3" maxlength="4"
                        value="<?php echo( $this->get_option( 'notify_email_after' ) ); ?>"
                        name="email_after"/> <?php echo __( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
+            </td>
+        </tr>
+
+        <tr>
+            <th scope="row"
+                valign="top"><?php echo __( 'Show top-level menu item', 'limit-login-attempts-reloaded' ); ?></th>
+            <td>
+                <input type="checkbox" name="show_top_level_menu_item" <?php checked( $show_top_level_menu_item ); ?>> <?php _e( '(Reload the page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
             </td>
         </tr>
         <tr>

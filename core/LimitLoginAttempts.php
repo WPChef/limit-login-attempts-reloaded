@@ -45,6 +45,7 @@ class Limit_Login_Attempts {
 
         'active_app'       => 'local',
         'app_config'       => '',
+        'show_top_level_menu_item' => true
 	);
 	/**
 	* Admin options page slug
@@ -118,6 +119,7 @@ class Limit_Login_Attempts {
 		add_action( 'wp_ajax_app_acl_remove_rule', array( $this, 'app_acl_remove_rule_callback' ));
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
+		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 
 		add_action( 'admin_init', array( $this, 'welcome_page_redirect' ), 9999 );
 		add_action( 'admin_head', array( $this, 'welcome_page_hide_menu' ) );
@@ -548,26 +550,21 @@ class Limit_Login_Attempts {
 	}
 
 	public function admin_menu() {
-	    global $submenu;
 
-		add_options_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
-		add_menu_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+		if( $this->get_option( 'show_top_level_menu_item' ) ) {
 
-
-		$submenu_position = false;
-		if( !empty( $submenu['options-general.php'] ) ) {
-		     foreach ( $submenu['options-general.php'] as $pos => $item ) {
-		         if( $item[2] === $this->_options_page_slug ) {
-					 $submenu_position = $pos;
-					 break;
-                 }
-             }
+			add_menu_page(
+                'Limit Login Attempts',
+                'Limit Login Attempts',
+                'manage_options',
+                $this->_options_page_slug,
+                array( $this, 'options_page' ),
+				'data:image/svg+xml;base64,' . base64_encode($this->get_svg_logo_content())
+            );
         }
 
-		if( $submenu_position ) {
-			$submenu['options-general.php'][$submenu_position] = array( 'Limit Login Attempts', 'manage_options', admin_url( 'admin.php?page='.$this->_options_page_slug ), 'Limit Login Attempts' );
-		}
-
+		add_options_page( 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+        
 		add_dashboard_page(
             'Welcome to Limit Login Attempts Reloaded',
             'Limit Login Attempts Welcome',
@@ -576,6 +573,10 @@ class Limit_Login_Attempts {
             array( $this, 'welcome_page' )
         );
 	}
+
+	public function get_svg_logo_content() {
+	    return file_get_contents( LLA_PLUGIN_DIR . '/assets/img/logo.svg' );
+    }
 
 	/**
 	 * Get the correct options page URI
@@ -587,7 +588,7 @@ class Limit_Login_Attempts {
 	{
 
 		if ( is_network_admin() )
-			$uri = network_admin_url( 'settings.php?page=limit-login-attempts' );
+			$uri = network_admin_url( 'options-general.php?page=limit-login-attempts' );
 		else
 		    $uri = menu_page_url( $this->_options_page_slug, false );
 
@@ -984,7 +985,7 @@ class Limit_Login_Attempts {
 			$site_domain,
 			'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v='.$plugin_data['Version'],
 			'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email',
-            admin_url( 'admin.php?page=limit-login-attempts&tab=settings' )
+            admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' )
         );
 
 		@wp_mail( $admin_email, $subject, $message, array( 'content-type: text/html' ) );
@@ -1593,6 +1594,8 @@ class Limit_Login_Attempts {
 
                     $this->update_option( 'gdpr', 0 );
                 }
+
+                $this->update_option('show_top_level_menu_item', ( isset( $_POST['show_top_level_menu_item'] ) ? 1 : 0 ) );
 
                 $this->update_option('allowed_retries',    (int)$_POST['allowed_retries'] );
                 $this->update_option('lockout_duration',   (int)$_POST['lockout_duration'] * 60 );
@@ -2302,7 +2305,7 @@ class Limit_Login_Attempts {
 
 		    wp_send_json_error(array(
 				'error_notice' => '<div class="llar-app-notice">
-                                        <p>'. $app_config['messages']['sync_error'] .'<br><br>'. sprintf( __( 'Meanwhile, the app falls over to the <a href="%s">default functionality</a>.', 'limit-login-attempts-reloaded' ), admin_url('admin.php?page=limit-login-attempts&tab=logs-local') ) . '</p>
+                                        <p>'. $app_config['messages']['sync_error'] .'<br><br>'. sprintf( __( 'Meanwhile, the app falls over to the <a href="%s">default functionality</a>.', 'limit-login-attempts-reloaded' ), admin_url('options-general.php?page=limit-login-attempts&tab=logs-local') ) . '</p>
                                     </div>'
             ));
         } else {
