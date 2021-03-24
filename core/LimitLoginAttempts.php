@@ -588,7 +588,7 @@ class Limit_Login_Attempts {
 	{
 
 		if ( is_network_admin() )
-			$uri = network_admin_url( 'options-general.php?page=limit-login-attempts' );
+			$uri = network_admin_url( 'settings.php?page=' . $this->_options_page_slug );
 		else
 		    $uri = menu_page_url( $this->_options_page_slug, false );
 
