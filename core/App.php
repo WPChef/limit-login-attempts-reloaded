@@ -92,7 +92,9 @@ class LLAR_App {
 		}
 
 		$link = 'https://' . $link;
-		$link = add_query_arg( 'domain', $_SERVER['SERVER_NAME'], $link );
+
+		$domain = parse_url( home_url( '/' ) );
+		$link = add_query_arg( 'domain', $domain['host'], $link );
 
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 		$link = add_query_arg( 'version', $plugin_data['Version'], $link );
