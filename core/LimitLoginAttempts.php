@@ -2372,7 +2372,7 @@ class Limit_Login_Attempts {
                     <tr class="llar-app-rule-<?php echo esc_attr( $item['rule'] ); ?>">
                         <td class="rule-pattern" scope="col"><?php echo esc_html( $item['pattern'] ); ?></td>
                         <td scope="col"><?php echo esc_html( $item['rule'] ); ?></td>
-                        <td class="llar-app-acl-action-col" scope="col"><button class="button llar-app-acl-remove" data-type="login" data-pattern="<?php echo esc_attr( $item['pattern'] ); ?>"><span class="dashicons dashicons-no"></span></button></td>
+                        <td class="llar-app-acl-action-col" scope="col"><button class="button llar-app-acl-remove" data-type="<?php echo esc_attr( $type ); ?>" data-pattern="<?php echo esc_attr( $item['pattern'] ); ?>"><span class="dashicons dashicons-no"></span></button></td>
                     </tr>
 				<?php endforeach; ?>
 			<?php else : ?>
