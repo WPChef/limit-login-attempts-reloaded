@@ -3,6 +3,7 @@
 if( !defined( 'ABSPATH' ) ) exit();
 
 $active_app = $this->get_option( 'active_app' );
+$active_app = ($active_app === 'custom' && $this->app) ? 'custom' : 'local';
 
 $retries_chart_title = '';
 $retries_chart_desc = '';
