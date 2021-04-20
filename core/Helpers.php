@@ -60,4 +60,16 @@ class LLA_Helpers {
 
         return $new_log;
     }
+
+    public static function get_countries_list() {
+
+    	if( ! ( $countries = require LLA_PLUGIN_DIR . '/resources/countries.php' ) ) {
+
+    		return array();
+		}
+
+    	asort($countries);
+
+    	return $countries;
+	}
 }
