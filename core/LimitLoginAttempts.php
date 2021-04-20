@@ -115,13 +115,16 @@ class Limit_Login_Attempts {
 		add_action( 'wp_ajax_dismiss_notify_notice', array( $this, 'dismiss_notify_notice_callback' ) );
 		add_action( 'wp_ajax_enable_notify', array( $this, 'enable_notify_callback' ) );
 		add_action( 'wp_ajax_app_config_save', array( $this, 'app_config_save_callback' ));
-		add_action( 'wp_ajax_app_setup', array( $this, 'app_setup_callback' ));
-		add_action( 'wp_ajax_app_log_action', array( $this, 'app_log_action_callback' ));
-		add_action( 'wp_ajax_app_load_log', array( $this, 'app_load_log_callback' ));
-		add_action( 'wp_ajax_app_load_lockouts', array( $this, 'app_load_lockouts_callback' ));
-		add_action( 'wp_ajax_app_load_acl_rules', array( $this, 'app_load_acl_rules_callback' ));
-		add_action( 'wp_ajax_app_acl_add_rule', array( $this, 'app_acl_add_rule_callback' ));
-		add_action( 'wp_ajax_app_acl_remove_rule', array( $this, 'app_acl_remove_rule_callback' ));
+		add_action( 'wp_ajax_app_setup', array( $this, 'app_setup_callback' ) );
+		add_action( 'wp_ajax_app_log_action', array( $this, 'app_log_action_callback' ) );
+		add_action( 'wp_ajax_app_load_log', array( $this, 'app_load_log_callback' ) );
+		add_action( 'wp_ajax_app_load_lockouts', array( $this, 'app_load_lockouts_callback' ) );
+		add_action( 'wp_ajax_app_load_acl_rules', array( $this, 'app_load_acl_rules_callback' ) );
+		add_action( 'wp_ajax_app_load_country_access_rules', array( $this, 'app_load_country_access_rules_callback' ) );
+		add_action( 'wp_ajax_app_toggle_country', array( $this, 'app_toggle_country_callback' ) );
+		add_action( 'wp_ajax_app_country_rule', array( $this, 'app_country_rule_callback' ) );
+		add_action( 'wp_ajax_app_acl_add_rule', array( $this, 'app_acl_add_rule_callback' ) );
+		add_action( 'wp_ajax_app_acl_remove_rule', array( $this, 'app_acl_remove_rule_callback' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -2253,7 +2256,7 @@ class Limit_Login_Attempts {
                     </tr>
 				<?php endforeach; ?>
 			<?php else : ?>
-                <tr class="empty-row"><td colspan="9" style="text-align: center"><?php _e('No events yet.', 'limit-login-attempts-reloaded' ); ?></td></tr>
+                <tr class="empty-row"><td colspan="100%" style="text-align: center"><?php _e('No events yet.', 'limit-login-attempts-reloaded' ); ?></td></tr>
 			<?php endif; ?>
 <?php
 
@@ -2391,6 +2394,106 @@ class Limit_Login_Attempts {
 			));
         }
     }
+
+    public function app_load_country_access_rules_callback() {
+
+		if ( !current_user_can('activate_plugins') ) {
+
+			wp_send_json_error(array());
+		}
+
+		check_ajax_referer('llar-action', 'sec');
+
+		$country_rules = $this->app->country();
+
+		if( $country_rules ) {
+
+			wp_send_json_success($country_rules);
+		} else {
+
+			wp_send_json_error(array(
+				'msg' => 'Something wrong.'
+			));
+		}
+	}
+
+    public function app_toggle_country_callback() {
+
+		if ( !current_user_can('activate_plugins') ) {
+
+			wp_send_json_error(array());
+		}
+
+		check_ajax_referer('llar-action', 'sec');
+
+		$code = sanitize_text_field( $_POST['code'] );
+		$action_type = sanitize_text_field( $_POST['type'] );
+
+		if( !$code ) {
+
+			wp_send_json_error(array(
+                'msg' => 'Wrong country code.'
+            ));
+		}
+
+		$result = false;
+
+		if( $action_type === 'add' ) {
+
+			$result = $this->app->country_add(array(
+				'code' => $code
+			));
+
+		} else if ( $action_type === 'remove' ) {
+
+			$result = $this->app->country_remove(array(
+				'code' => $code
+			));
+		}
+
+		if( $result ) {
+
+		    wp_send_json_success(array());
+		} else {
+
+			wp_send_json_error(array(
+				'msg' => 'Something wrong.'
+			));
+		}
+	}
+
+    public function app_country_rule_callback() {
+
+		if ( !current_user_can('activate_plugins') ) {
+
+			wp_send_json_error(array());
+		}
+
+		check_ajax_referer('llar-action', 'sec');
+
+		$rule = sanitize_text_field( $_POST['rule'] );
+
+		if( empty( $rule ) || !in_array( $rule, array( 'allow', 'deny' ) ) ) {
+
+		    wp_send_json_error(array(
+                'msg' => 'Wrong rule.'
+            ));
+		}
+
+        $result = $this->app->country_rule(array(
+            'rule' => $rule
+        ));
+
+		if( $result ) {
+
+		    wp_send_json_success(array());
+		} else {
+
+			wp_send_json_error(array(
+				'msg' => 'Something wrong.'
+			));
+		}
+	}
 
     public function get_custom_app_config() {
 
