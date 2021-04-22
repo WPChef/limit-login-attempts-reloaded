@@ -147,6 +147,70 @@
         }
       }
     }
+
+    .llar-block-country-section {
+      background-color: #fff;
+      padding: 15px;
+      border:1px solid #b9b9b9;
+      border-top: 3px solid #3c8dbc;
+
+      .llar-block-country-mode {
+        display: inline-block;
+        margin-right: 5px;
+        vertical-align: top;
+      }
+      .llar-toggle-countries-list {
+        text-decoration-style: dotted;
+        vertical-align: middle;
+        line-height: 1.6;
+      }
+      .llar-block-country-list {
+        display: flex;
+        flex-wrap: wrap;
+        max-height: 400px;
+        overflow-y: auto;
+
+        &:first-child {
+          margin-top: 0;
+        }
+
+        .llar-country {
+          flex: 0 0 10%;
+
+          label {
+            padding-bottom: 10px;
+            display: inline-block;
+          }
+        }
+
+        &.llar-all-countries-selected {
+          display: inline;
+          vertical-align: middle;
+          overflow: hidden;
+
+          .llar-country {
+            margin-bottom: 0;
+            display: inline-block;
+            margin-right: 10px;
+
+            label {
+              padding-bottom: 0;
+              white-space: nowrap;
+            }
+          }
+        }
+        &.llar-all-countries-list {
+          display: none;
+          margin: 10px 0;
+
+          &.visible {
+            display: flex;
+            border-top: 1px solid #dddada;
+            padding-top: 10px;
+          }
+        }
+      }
+    }
   }
 
   .llar-app-notice {
