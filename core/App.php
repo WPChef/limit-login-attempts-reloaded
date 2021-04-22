@@ -190,6 +190,44 @@ class LLAR_App {
 	}
 
 	/**
+	 * @return bool|mixed
+	 * @throws Exception
+	 */
+	public function country() {
+
+		return $this->request( 'country', 'get' );
+	}
+
+	/**
+	 * @param $data
+	 * @return bool|mixed
+	 * @throws Exception
+	 */
+	public function country_add( $data ) {
+
+		return $this->request( 'country/add', 'post', $data );
+	}
+
+	/**
+	 * @param $data
+	 * @return bool|mixed
+	 * @throws Exception
+	 */
+	public function country_remove( $data ) {
+
+		return $this->request( 'country/remove', 'post', $data );
+	}
+
+	/**
+	 * @param $data
+	 * @return bool|mixed
+	 */
+	public function country_rule( $data ) {
+
+		return $this->request( 'country/rule', 'post', $data );
+	}
+
+	/**
 	 * @param $data
 	 * @return bool|mixed
 	 */
