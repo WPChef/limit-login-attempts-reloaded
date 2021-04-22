@@ -339,8 +339,8 @@ if( $active_app === 'local' ) {
 
 			$stats_global_dates[] = date( $date_format, $timest );
 		}
-
-		$countries_list = require LLA_PLUGIN_DIR . '/resources/countries.php';
+		
+		$countries_list = LLA_Helpers::get_countries_list();
         ?>
         <div class="info-box-1">
             <div class="section-title">
