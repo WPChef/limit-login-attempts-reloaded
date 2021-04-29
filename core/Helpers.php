@@ -72,4 +72,17 @@ class LLA_Helpers {
 
     	return $countries;
 	}
+
+	/**
+	 * @param $ip
+	 * @param $cidr
+	 * @return bool
+	 */
+	public static function check_ip_cidr($ip, $cidr) {
+
+		if( !$ip || !$cidr ) return false;
+
+    	$cidr_checker = new LLAR_cidr_check();
+    	return $cidr_checker->match( $ip, $cidr );
+	}
 }
