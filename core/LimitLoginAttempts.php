@@ -300,18 +300,26 @@ class Limit_Login_Attempts {
 		return in_array( $username, (array) $this->get_option( 'blacklist_usernames' ) );
 	}
 
-	public function ip_in_range( $ip, $list )
-	{
-		foreach ( $list as $range )
-		{
+	public function ip_in_range( $ip, $list ) {
+
+	    foreach ( $list as $range ) {
+
 			$range = array_map('trim', explode('-', $range) );
-			if ( count( $range ) == 1 )
-			{
-				if ( (string)$ip === (string)$range[0] )
-					return true;
-			}
-			else
-			{
+			if ( count( $range ) == 1 ) {
+
+			    // CIDR
+			    if( strpos( $range[0], '/' ) !== false && LLA_Helpers::check_ip_cidr( $ip, $range[0] ) ) {
+
+			        return true;
+				}
+			    // Single IP
+			    else if ( (string)$ip === (string)$range[0] ) {
+
+					 return true;
+				}
+
+			} else {
+
 				$low = ip2long( $range[0] );
 				$high = ip2long( $range[1] );
 				$needle = ip2long( $ip );
@@ -1115,9 +1123,9 @@ class Limit_Login_Attempts {
 			$ip = $this->get_address();
 		}
 
-		$whitelisted = apply_filters( 'limit_login_blacklist_ip', false, $ip );
+		$blacklisted = apply_filters( 'limit_login_blacklist_ip', false, $ip );
 
-		return ( $whitelisted === true );
+		return ( $blacklisted === true );
 	}
 
 	public function is_username_blacklisted( $username ) {
