@@ -247,11 +247,11 @@ class Limit_Login_Attempts {
 
 	public function login_page_gdpr_message() {
 
-	    if( ! $this->get_option( 'gdpr' )) return;
+	    if( ! $this->get_option( 'gdpr' ) || isset( $_REQUEST['interim-login'] ) ) return;
 
 	    ?>
             <div id="llar-login-page-gdpr">
-                <div class="llar-login-page-gdpr__message"><?php echo esc_html( $this->get_option( 'gdpr_message' ) ); ?></div>
+                <div class="llar-login-page-gdpr__message"><?php echo do_shortcode( stripslashes( $this->get_option( 'gdpr_message' ) ) ); ?></div>
             </div>
         <?php
     }
@@ -1647,7 +1647,7 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
                 $this->update_option('long_duration',      (int)$_POST['long_duration'] * 3600 );
                 $this->update_option('notify_email_after', (int)$_POST['email_after'] );
                 $this->update_option('active_app',       sanitize_text_field( $_POST['active_app'] ) );
-                $this->update_option('gdpr_message',       sanitize_textarea_field( $_POST['gdpr_message'] ) );
+                $this->update_option('gdpr_message',       sanitize_textarea_field( LLA_Helpers::deslash( $_POST['gdpr_message'] ) ) );
 
                 $this->update_option('admin_notify_email', sanitize_email( $_POST['admin_notify_email'] ) );
 
