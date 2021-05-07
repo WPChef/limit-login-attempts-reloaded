@@ -72,4 +72,14 @@ class LLA_Helpers {
 
     	return $countries;
 	}
+
+	/**
+	 * Checks if the plugin is installed as Must Use plugin
+	 *
+	 * @return bool
+	 */
+	public static function is_mu() {
+
+		return ( strpos( LLA_PLUGIN_DIR, 'mu-plugins' ) !== false );
+	}
 }
