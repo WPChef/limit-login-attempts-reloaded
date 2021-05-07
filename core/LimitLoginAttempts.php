@@ -978,17 +978,18 @@ class Limit_Login_Attempts {
 		$blogname = $this->use_local_options ? get_option( 'blogname' ) : get_site_option( 'site_name' );
 		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
 
-        $subject = sprintf( __( "[%s] Failed login attempt alert", 'limit-login-attempts-reloaded' ), $blogname );
+        $subject = sprintf( __( "[%s] Failed WordPress login attempt", 'limit-login-attempts-reloaded' ), $blogname );
 
-        $message = __( '<p>Hello%1$s,</p>' .
-                       '<p>%2$d failed login attempts (%3$d lockout(s)) from IP <b>%4$s</b><br>' .
-                       'Last user attempted: <b>%5$s</b><br>'.
-                       'IP was blocked for %6$s</p>'.
-                       '<p>This notification was sent automatically via Limit Login Attempts Reloaded Plugin. ' .
-                       '<b>This is installed on your %7$s WordPress site.</b></p>'.
-                       '<p>Under Attack? Try our <a href="%8$s" target="_blank">advanced protection</a>. ' .
-                       'Have Questions? Visit our <a href="%9$s" target="_blank">help section</a>.</p>' .
-                       '<hr><a href="%10$s">Unsubscribe</a> from these notifications.', 'limit-login-attempts-reloaded' );
+        $message = __(
+                '<p>Hello%1$s,</p>
+<p>%2$d failed login attempts (%3$d lockout(s)) from IP <b>%4$s</b><br>
+Last user attempted: <b>%5$s</b><br>
+IP was blocked for %6$s</p>
+<p>This notification was sent automatically via Limit Login Attempts Reloaded Plugin. 
+<b>This is installed on your %7$s WordPress site. Please login to your WordPress dashboard to view more info.</b></p>
+<p>Under Attack? Try our <a href="%8$s" target="_blank">advanced protection</a>. 
+Have Questions? Visit our <a href="%9$s" target="_blank">help section</a>.</p>
+<hr><a href="%10$s">Unsubscribe</a> from these <span>notifications</span>.', 'limit-login-attempts-reloaded' );
 
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 
@@ -1005,6 +1006,16 @@ class Limit_Login_Attempts {
 			'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email',
             admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' )
         );
+
+		if( LLA_Helpers::is_mu() ) {
+
+			$message .= sprintf( __(
+				'<br><p><i>This alert was sent by your website where Limit Login Attempts Reloaded free version 
+is installed and you are listed as the admin. If you are a GoDaddy customer, the plugin is installed 
+into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here</a>.</i></p>', 'limit-login-attempts-reloaded' ),
+				'https://www.limitloginattempts.com/how-to-tell-if-i-have-limit-login-attempts-reloaded-on-my-site-a-survival-guide-for-godaddy-customers/'
+            );
+		}
 
 		@wp_mail( $admin_email, $subject, $message, array( 'content-type: text/html' ) );
 	}
