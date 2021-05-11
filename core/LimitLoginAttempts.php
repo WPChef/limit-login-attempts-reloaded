@@ -996,8 +996,7 @@ IP was blocked for %6$s</p>
 <p>This notification was sent automatically via Limit Login Attempts Reloaded Plugin. 
 <b>This is installed on your %7$s WordPress site. Please login to your WordPress dashboard to view more info.</b></p>
 <p>Under Attack? Try our <a href="%8$s" target="_blank">advanced protection</a>. 
-Have Questions? Visit our <a href="%9$s" target="_blank">help section</a>.</p>
-<hr><a href="%10$s">Unsubscribe</a> from these <span>notifications</span>.', 'limit-login-attempts-reloaded' );
+Have Questions? Visit our <a href="%9$s" target="_blank">help section</a>.</p>', 'limit-login-attempts-reloaded' );
 
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 
@@ -1011,19 +1010,23 @@ Have Questions? Visit our <a href="%9$s" target="_blank">help section</a>.</p>
             $when,
 			$site_domain,
 			'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v='.$plugin_data['Version'],
-			'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email',
-            admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' )
+			'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email'
         );
 
 		if( LLA_Helpers::is_mu() ) {
 
 			$message .= sprintf( __(
-				'<br><p><i>This alert was sent by your website where Limit Login Attempts Reloaded free version 
+				'<p><i>This alert was sent by your website where Limit Login Attempts Reloaded free version 
 is installed and you are listed as the admin. If you are a GoDaddy customer, the plugin is installed 
 into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here</a>.</i></p>', 'limit-login-attempts-reloaded' ),
 				'https://www.limitloginattempts.com/how-to-tell-if-i-have-limit-login-attempts-reloaded-on-my-site-a-survival-guide-for-godaddy-customers/'
             );
 		}
+
+		$message .= sprintf( __(
+            '<hr><a href="%s">Unsubscribe</a> from these notifications.', 'limit-login-attempts-reloaded' ),
+			admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' )
+        );
 
 		@wp_mail( $admin_email, $subject, $message, array( 'content-type: text/html' ) );
 	}
