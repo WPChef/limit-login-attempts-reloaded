@@ -117,7 +117,7 @@ $active_app_config = $this->get_custom_app_config();
     </table>
 
     <h3><?php echo __( 'App Settings', 'limit-login-attempts-reloaded' ); ?></h3>
-    <p><?php echo __( 'The apps absorb the main load caused by brute-force attacks, analyse login attempts and block unwanted visitors. They might provide other service functions as well.', 'limit-login-attempts-reloaded' ); ?></p>
+    <p><?php echo __( 'The app absorbs the main load caused by brute-force attacks, analyzes login attempts, and blocks unwanted visitors. It provides other service functions as well.', 'limit-login-attempts-reloaded' ); ?></p>
 
     <div id="llar-apps-accordion" class="llar-accordion">
         <h3><?php echo __( 'Local App', 'limit-login-attempts-reloaded' ); ?></h3>
