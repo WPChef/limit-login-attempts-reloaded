@@ -85,4 +85,14 @@ class LLA_Helpers {
     	$cidr_checker = new LLAR_cidr_check();
     	return $cidr_checker->match( $ip, $cidr );
 	}
+
+	/**
+	 * Checks if the plugin is installed as Must Use plugin
+	 *
+	 * @return bool
+	 */
+	public static function is_mu() {
+
+		return ( strpos( LLA_PLUGIN_DIR, 'mu-plugins' ) !== false );
+	}
 }
