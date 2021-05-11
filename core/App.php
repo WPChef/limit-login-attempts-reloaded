@@ -77,10 +77,9 @@ class LLAR_App {
 
 	/**
 	 * @param $link
-	 * @param bool $is_update
 	 * @return false[]
 	 */
-	public static function setup( $link, $is_update = false ) {
+	public static function setup( $link ) {
 
 		$return = array(
 			'success' => false,
@@ -98,10 +97,6 @@ class LLAR_App {
 
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 		$link = add_query_arg( 'version', $plugin_data['Version'], $link );
-
-		if( $is_update ) {
-			$link = add_query_arg( 'is_update', 1, $link );
-		}
 
 		$setup_response = wp_remote_get( $link );
 		$setup_response_body = json_decode( wp_remote_retrieve_body( $setup_response ), true );
