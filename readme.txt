@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login, security, firewall, protection
 Requires at least: 3.0
 Tested up to: 5.7
-Stable tag: 2.21.1
+Stable tag: 2.22.0
 
 Reloaded version of the original Limit Login Attempts plugin for Login Protection by a team of WordPress developers. GDPR compliant.
 
@@ -18,9 +18,9 @@ WordPress by default allows unlimited login attempts. This can lead to passwords
 
 Limit Login Attempts Reloaded 
 > <strong>Limit Login Attempts Reloaded Premium Cloud App</strong><br>
-> Enables cloud protection for Limit Login Attempts Reloaded plugin. It comes with all the great features you'll need to stop hackers and bots from brute-force attacks. The cloud app <a href="https://www.limitloginattempts.com/features/">offers several features</a> including advanced protection out of the box, and the ability for site admins and agencies to sync safelists/blocklists across multiple domains. <a href="https://app.limitloginattempts.com/network/create">Click here to activate the cloud app for the best WordPress security plugin now!</a>
+> Enables cloud protection for Limit Login Attempts Reloaded plugin. It comes with all the great features you'll need to stop hackers and bots from brute-force attacks. The cloud app <a href="https://www.limitloginattempts.com/features/?from=wp-details">offers several features</a> including advanced protection out of the box, and the ability for site admins and agencies to sync safelists/blocklists across multiple domains. <a href="https://www.limitloginattempts.com/features/?from=wp-details-cta">Click here to activate the cloud app for the best WordPress security plugin now!</a>
 
-https://www.youtube.com/watch?v=IsotthPWCPA
+https://www.youtube.com/watch?v=wzmPXu55zLU
 
 = Features: =
 * Limit the number of retry attempts when logging in (per each IP). 
@@ -97,6 +97,11 @@ By default, you will need to copy and paste the lists to each site manually. For
 Please follow this link: <a href="https://www.limitloginattempts.com/resources/">https://www.limitloginattempts.com/resources/</a>
 
 == Changelog ==
+
+= 2.22.0 =
+* Added support of CIDR notation for specifying IP ranges.
+* Texts updated.
+* Refactoring.
 
 = 2.21.1 =
 * Fixed: Uncaught Error: Call to a member function stats()
