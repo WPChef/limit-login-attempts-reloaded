@@ -1647,7 +1647,7 @@ class Limit_Login_Attempts {
 
                 if( !empty( $_POST['llar_app_settings'] ) && $this->app ) {
 
-                    if( ( $app_setup_code = $this->get_option( 'app_setup_code' ) ) && $setup_result = LLAR_App::setup( strrev( $app_setup_code ), true ) ) {
+                    if( ( $app_setup_code = $this->get_option( 'app_setup_code' ) ) && $setup_result = LLAR_App::setup( strrev( $app_setup_code ) ) ) {
 
                         if( $setup_result['success'] && $active_app_config = $setup_result['app_config'] ) {
 
