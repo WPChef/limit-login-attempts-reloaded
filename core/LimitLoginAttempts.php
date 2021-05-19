@@ -986,7 +986,11 @@ class Limit_Login_Attempts {
 		$blogname = $this->use_local_options ? get_option( 'blogname' ) : get_site_option( 'site_name' );
 		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
 
-        $subject = sprintf( __( "[%s] Failed WordPress login attempt", 'limit-login-attempts-reloaded' ), $blogname );
+        $subject = sprintf(
+            __( "[%s] Failed WordPress login attempt by IP %s", 'limit-login-attempts-reloaded' ),
+            $blogname,
+            $ip 
+        );
 
         $message = __(
                 '<p>Hello%1$s,</p>
