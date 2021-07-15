@@ -95,4 +95,17 @@ class LLA_Helpers {
 
 		return ( strpos( LLA_PLUGIN_DIR, 'mu-plugins' ) !== false );
 	}
+
+	/**
+	 * @param $content
+	 * @return string|string[]|null
+	 */
+	public static function deslash( $content ) {
+
+		$content = preg_replace( "/\\\+'/", "'", $content );
+		$content = preg_replace( '/\\\+"/', '"', $content );
+		$content = preg_replace( '/\\\+/', '\\', $content );
+
+		return $content;
+	}
 }
