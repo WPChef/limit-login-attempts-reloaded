@@ -119,7 +119,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 								$this.closest('tr').after('<tr class="llar-app-rule-'+rule+'">' +
 									'<td class="rule-pattern">'+pattern+'</td>' +
-									'<td>'+rule+'</td>' +
+									'<td>'+rule+((type === 'ip') ? '<span class="origin">manual</span>' : '')+'</td>' +
 									'<td class="llar-app-acl-action-col" scope="col"><button class="button llar-app-acl-remove" data-type="'+type+'" data-pattern="'+pattern+'"><span class="dashicons dashicons-no"></span></button></td>' +
 									'</tr>');
 
