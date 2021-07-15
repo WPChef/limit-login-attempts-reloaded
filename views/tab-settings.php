@@ -66,14 +66,15 @@ $active_app_config = $this->get_custom_app_config();
                 valign="top"><?php echo __( 'GDPR compliance', 'limit-login-attempts-reloaded' ); ?></th>
             <td>
                 <input type="checkbox" name="gdpr" value="1" <?php if($gdpr): ?> checked <?php endif; ?>/>
-				<?php echo __( 'this makes the plugin <a href="https://gdpr-info.eu/" target="_blank" >GDPR</a> compliant', 'limit-login-attempts-reloaded' ); ?> <br/>
+				<?php echo __( 'this makes the plugin <a href="https://gdpr-info.eu/" target="_blank">GDPR</a> compliant by showing a message on the login page. <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-settings-gdpr" target="_blank">Read more</a>', 'limit-login-attempts-reloaded' ); ?> <br/>
             </td>
         </tr>
         <tr>
             <th scope="row"
                 valign="top"><?php echo __( 'GDPR message', 'limit-login-attempts-reloaded' ); ?></th>
             <td>
-                <textarea name="gdpr_message" cols="60"><?php echo esc_textarea( $gdpr_message ); ?></textarea>
+                <textarea name="gdpr_message" cols="60"><?php echo esc_textarea( stripslashes( $gdpr_message ) ); ?></textarea>
+                <p class="description"><?php echo __( 'You can use a shortcode here to insert links, for example, a link to your Privacy Policy page. <br>The shortcode is: [llar-link url="https://example.com" text="Privacy Policy"]', 'limit-login-attempts-reloaded' ); ?></p>
             </td>
         </tr>
 
