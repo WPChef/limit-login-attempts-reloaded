@@ -327,15 +327,6 @@ if( $active_app === 'local' ) {
                 <div class="desc"><?php _e( 'Many options such as notifications, alerts, premium status, and more.', 'limit-login-attempts-reloaded' ); ?></div>
             </div>
         </div>
-        <div class="info-box-1">
-            <div class="info-box-icon">
-                <span class="dashicons dashicons-groups"></span>
-            </div>
-            <div class="info-box-content">
-                <div class="title"><a href="https://limitloginattempts.tapfiliate.com/" target="_blank"><?php _e( 'Refer A Friend', 'limit-login-attempts-reloaded' ); ?></a></div>
-                <div class="desc"><?php _e( 'Earn $20 for every friend or client that signs up for our premium service.', 'limit-login-attempts-reloaded' ); ?></div>
-            </div>
-        </div>
     </div>
     <?php if( $stats_global = LLAR_App::stats_global() ) : ?>
 	<div class="dashboard-section-4">
