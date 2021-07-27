@@ -1,7 +1,9 @@
 <?php
 if( !defined( 'ABSPATH' ) ) exit();
 ?>
-
+<?php
+$app_config = $this->get_custom_app_config();
+?>
 <h3><?php _e( 'Event Log', 'limit-login-attempts-reloaded' ); ?></h3>
 
 <div class="llar-app-log-pagination">
@@ -11,6 +13,13 @@ if( !defined( 'ABSPATH' ) ) exit();
     <a class="llar-next-page button disabled" href="#">
         <span aria-hidden="true">›</span>
     </a>
+    <?php if( !empty( $app_config['key'] ) ): ?>
+    <span class="right-link"><a href="https://my.limitloginattempts.com/logs?key=<?php echo esc_attr( $app_config['key'] ); ?>" target="_blank"><?php _e( 'Full Logs', 'limit-login-attempts-reloaded' ); ?></a>
+        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'All attempts blocked by access rules are hidden by default. You can see the full log at this link.' ); ?>">
+            <span class="dashicons dashicons-editor-help"></span>
+        </i>
+    </span>
+    <?php endif; ?>
 </div>
 
 <div class="llar-table-scroll-wrap">

@@ -114,6 +114,29 @@
       .spinner {
         float: none;
       }
+      .right-link {
+        float: right;
+        line-height: 1.625;
+        a {
+          font-size: 14px;
+        }
+        .llar-tooltip {
+          text-decoration: none;
+          font-size: 12px;
+          display: inline-block;
+
+          &:before {
+            display: none;
+          }
+          &:hover {
+            &:before {
+              display: block;
+              right: 0;
+              left: auto;
+            }
+          }
+        }
+      }
     }
     .llar-app-acl-rules {
       display: flex;
