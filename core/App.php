@@ -244,6 +244,7 @@ class LLAR_App {
 
 		$data['limit'] = $limit;
 		$data['offset'] = $offset;
+		$data['is_short'] = 1;
 
 		return $this->request( 'log', 'get', $data );
 	}

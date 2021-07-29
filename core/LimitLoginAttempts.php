@@ -2226,27 +2226,14 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
 		check_ajax_referer('llar-action', 'sec');
 
 		$offset = sanitize_text_field( $_POST['offset'] );
+		$limit = sanitize_text_field( $_POST['limit'] );
 
-		$log = $this->app->log( 25, $offset );
+		$log = $this->app->log( $limit, $offset );
 
 		if( $log ) {
 
-		    ob_start(); ?>
+		    ob_start();
 
-            <tr>
-                <th scope="col"><?php _e( "Time", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Gateway", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Login", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Rule", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Reason", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Pattern", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Attempts Left", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Lockout Duration", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Actions", 'limit-login-attempts-reloaded' ); ?></th>
-            </tr>
-
-			<?php
 			$date_format = get_option('date_format') . ' ' . get_option('time_format');
 			?>
 
@@ -2288,7 +2275,8 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
 
 			wp_send_json_success(array(
 				'html' => ob_get_clean(),
-                'offset' => $log['offset']
+                'offset' => $log['offset'],
+                'total_items' => count( $log['items'] )
 			));
 
         } else {
