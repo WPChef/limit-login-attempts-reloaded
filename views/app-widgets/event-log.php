@@ -40,7 +40,7 @@ $app_config = $this->get_custom_app_config();
                 $infinity_box = $('.llar-app-log-infinity-scroll'),
                 loading_data = false,
 				page_offset = '',
-                page_limit = 25,
+                page_limit = 10,
                 total_loaded = 0;
 
             $infinity_box.on('scroll', function (){
