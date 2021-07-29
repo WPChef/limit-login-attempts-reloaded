@@ -62,7 +62,7 @@ if( !defined( 'ABSPATH' ) ) exit();
                     loading_data2 = false,
                     page_offset1 = '',
                     page_offset2 = '',
-                    page_limit = 25;
+                    page_limit = 10;
 
                 $infinity_box1.on('scroll', function (){
                     if (!loading_data1 && $infinity_box1.get(0).scrollTop + $infinity_box1.get(0).clientHeight >= $infinity_box1.get(0).scrollHeight - 1) {

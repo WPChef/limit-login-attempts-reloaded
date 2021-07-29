@@ -24,7 +24,7 @@ if( !defined( 'ABSPATH' ) ) exit();
                 $infinity_box = $('.llar-app-lockouts-infinity-scroll'),
                 loading_data = false,
                 page_offset = '',
-                page_limit = 25;
+                page_limit = 10;
 
             $infinity_box.on('scroll', function (){
                 if (!loading_data && $infinity_box.get(0).scrollTop + $infinity_box.get(0).clientHeight >= $infinity_box.get(0).scrollHeight - 1) {
