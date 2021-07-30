@@ -5,7 +5,7 @@ Description: Limit the rate of login attempts for each IP address.
 Author: Limit Login Attempts Reloaded
 Author URI: https://www.limitloginattempts.com/
 Text Domain: limit-login-attempts-reloaded
-Version: 2.23.0
+Version: 2.23.1
 
 Copyright 2008 - 2012 Johan Eenfeldt, 2016 - 2021 Limit Login Attempts Reloaded
 */
