@@ -21,6 +21,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 		$(document).ready(function () {
 
 			var $log_table = $('.llar-table-app-lockouts'),
+                $log_table_empty = $log_table.html();
                 $infinity_box = $('.llar-app-lockouts-infinity-scroll'),
                 loading_data = false,
                 page_offset = '',
@@ -30,6 +31,12 @@ if( !defined( 'ABSPATH' ) ) exit();
                 if (!loading_data && $infinity_box.get(0).scrollTop + $infinity_box.get(0).clientHeight >= $infinity_box.get(0).scrollHeight - 1) {
                     load_lockouts_data();
                 }
+            });
+
+            $log_table.on('llar:refresh', function () {
+                page_offset = '';
+                $log_table.html($log_table_empty);
+                load_lockouts_data();
             });
 
 			load_lockouts_data();
