@@ -71,10 +71,11 @@ $app_config = $this->get_custom_app_config();
 
 					llar.progressbar.stop();
 
-					console.log(response);
 					if(response.success) {
 
-
+                        if(method === 'lockout/delete') {
+                            $('.llar-table-app-lockouts').trigger('llar:refresh');
+                        }
 					}
 
 				});
