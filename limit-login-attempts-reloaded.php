@@ -7,7 +7,7 @@ Author URI: https://www.limitloginattempts.com/
 Text Domain: limit-login-attempts-reloaded
 Version: 2.23.2
 
-Copyright 2008 - 2012 Johan Eenfeldt, 2016 - 2021 Limit Login Attempts Reloaded
+Copyright 2008 - 2012 Johan Eenfeldt, 2016 - 2022 Limit Login Attempts Reloaded
 */
 
 /***************************************************************************************
