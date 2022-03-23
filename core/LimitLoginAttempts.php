@@ -1016,9 +1016,10 @@ class Limit_Login_Attempts {
 		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
 
         $subject = sprintf(
-            __( "[%s] Failed WordPress login attempt by IP %s", 'limit-login-attempts-reloaded' ),
+            __( "[%s] Failed WordPress login attempt by IP %s on %s", 'limit-login-attempts-reloaded' ),
             $blogname,
-            $ip 
+            $ip,
+            date( get_option( 'date_format' ) )
         );
 
         $message = __(
