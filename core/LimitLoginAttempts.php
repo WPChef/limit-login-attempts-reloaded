@@ -134,7 +134,7 @@ class Limit_Login_Attempts {
 		add_action( 'admin_head', array( $this, 'welcome_page_hide_menu' ) );
 
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
-		add_action( 'login_footer', array( $this, 'login_page_render_js' ) );
+		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -597,6 +597,7 @@ class Limit_Login_Attempts {
 	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 
 		wp_enqueue_style( 'llar-login-page-styles', LLA_PLUGIN_URL . 'assets/css/login-page-styles.css', array(), $plugin_data['Version'] );
+        wp_enqueue_script( 'jquery' );
 	}
 
 	/**
