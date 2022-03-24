@@ -264,7 +264,10 @@ class Limit_Login_Attempts {
 	    if( isset( $_POST['log'] ) && ($this->is_limit_login_ok() || $limit_login_just_lockedout ) ) : ?>
         <script>
             ;(function($) {
-                $.post('<?php echo admin_url( 'admin-ajax.php' ); ?>', {
+                var ajaxUrlObj = new URL('<?php echo admin_url( 'admin-ajax.php' ); ?>');
+                ajaxUrlObj.protocol = location.protocol;
+
+                $.post(ajaxUrlObj.toString(), {
                     action: 'get_remaining_attempts_message',
                     sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
                 }, function(response) {
