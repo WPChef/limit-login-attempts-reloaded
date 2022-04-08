@@ -1514,6 +1514,8 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
 					if( is_array( $log ) && isset( $log[ $ip ] ) ) {
 						foreach ( $log[ $ip ] as $user_login => &$data ) {
 
+						    if( !is_array( $data ) ) $data = array();
+
 							$data['unlocked'] = true;
 						}
 					}
