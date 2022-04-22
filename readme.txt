@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 5.9
 Stable tag: 2.24.1
 
-Reloaded version of the original Limit Login Attempts plugin for Login Protection by a team of WordPress developers. GDPR compliant.
+Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
 == Description ==
 
