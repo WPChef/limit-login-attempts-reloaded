@@ -129,6 +129,7 @@ class Limit_Login_Attempts {
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
+		add_action( 'admin_print_scripts-index.php', array( $this, 'load_admin_scripts' ) );
 
 		add_action( 'admin_init', array( $this, 'welcome_page_redirect' ), 9999 );
 		add_action( 'admin_init', array( $this, 'setup_cookie' ), 10 );
@@ -136,6 +137,8 @@ class Limit_Login_Attempts {
 
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
+
+		add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -150,13 +153,29 @@ class Limit_Login_Attempts {
 
 	public function setup_cookie() {
 
-	    if( empty( $_GET['page'] ) || $_GET['page'] !== $this->_options_page_slug ) return;
+		if (empty($_GET['page']) || $_GET['page'] !== $this->_options_page_slug) return;
 
-	    $cookie_name = 'llar_menu_alert_icon_shown';
+		$cookie_name = 'llar_menu_alert_icon_shown';
 
-	    if( empty( $_COOKIE[$cookie_name] ) ) {
-			setcookie( $cookie_name, '1', time() + 24 * 3600 );
-        }
+		if (empty($_COOKIE[$cookie_name])) {
+			setcookie($cookie_name, '1', time() + 24 * 3600);
+		}
+	}
+
+	public function register_dashboard_widgets() {
+		wp_add_dashboard_widget(
+            'llar_stats_widget',
+            __( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ),
+            array( $this, 'dashboard_widgets_content' ),
+            null,
+            null,
+            'normal',
+            'high'
+        );
+    }
+
+    public function dashboard_widgets_content() {
+		include_once( LLA_PLUGIN_DIR . '/views/admin-dashboard-widgets.php' );
     }
 
 	/**
