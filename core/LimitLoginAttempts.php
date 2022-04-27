@@ -134,6 +134,8 @@ class Limit_Login_Attempts {
 		add_action( 'admin_init', array( $this, 'setup_cookie' ), 10 );
 		add_action( 'admin_head', array( $this, 'welcome_page_hide_menu' ) );
 
+		add_action( 'admin_menu', array( $this, 'setting_menu_alert_icon' ) );
+
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
 
@@ -668,6 +670,14 @@ class Limit_Login_Attempts {
 
 	    return ' <span class="update-plugins count-1 llar-alert-icon-animation"><span class="plugin-count">!</span></span>';
     }
+
+    public function setting_menu_alert_icon() {
+		global $menu;
+		if( !$this->get_option( 'show_top_level_menu_item' ) && !empty( $menu[80][0] ) ) {
+		    
+			$menu[80][0] .= $this->menu_alert_icon();
+		}
+	}
 
 	/**
 	 * Get the correct options page URI
