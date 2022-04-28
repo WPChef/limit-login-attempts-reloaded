@@ -110,7 +110,7 @@ if ($active_app === 'local') {
                     <ol>
                         <li><?php _e('Change your password to something more secure.', 'limit-login-attempts-reloaded'); ?></li>
                         <li><?php _e('Make sure WordPress and all your plugins are updated.', 'limit-login-attempts-reloaded'); ?></li>
-                        <li><?php echo sprintf(__('<a href="%s" target="_blank">Update to Premium</a> Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded'), 'https://www.limitloginattempts.com/info.php?from=dashboard-status'); ?></li>
+                        <li><?php echo sprintf(__('<a href="%s" target="_blank">Update to Premium</a> Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded'), 'https://www.limitloginattempts.com/info.php?from=dashboard-widget'); ?></li>
                     </ol>
                 </div>
 			<?php endif; ?>
