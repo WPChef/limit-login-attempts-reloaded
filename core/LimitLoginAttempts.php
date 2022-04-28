@@ -160,7 +160,7 @@ class Limit_Login_Attempts {
 		$cookie_name = 'llar_menu_alert_icon_shown';
 
 		if (empty($_COOKIE[$cookie_name])) {
-			setcookie($cookie_name, '1', time() + 24 * 3600);
+			setcookie($cookie_name, '1', strtotime( 'tomorrow' ));
 		}
 	}
 
