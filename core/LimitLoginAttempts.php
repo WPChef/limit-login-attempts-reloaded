@@ -46,7 +46,8 @@ class Limit_Login_Attempts {
 
         'active_app'       => 'local',
         'app_config'       => '',
-        'show_top_level_menu_item' => true
+        'show_top_level_menu_item' => true,
+        'hide_dashboard_widget' => false,
 	);
 	/**
 	* Admin options page slug
@@ -140,7 +141,8 @@ class Limit_Login_Attempts {
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
 
-		add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
+		if( !$this->get_option( 'hide_dashboard_widget' ) )
+		    add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -165,6 +167,9 @@ class Limit_Login_Attempts {
 	}
 
 	public function register_dashboard_widgets() {
+
+	    if( !current_user_can( 'manage_options' ) ) return;
+
 		wp_add_dashboard_widget(
             'llar_stats_widget',
             __( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ),
@@ -1729,6 +1734,7 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
                 }
 
                 $this->update_option('show_top_level_menu_item', ( isset( $_POST['show_top_level_menu_item'] ) ? 1 : 0 ) );
+                $this->update_option('hide_dashboard_widget', ( isset( $_POST['hide_dashboard_widget'] ) ? 1 : 0 ) );
 
                 $this->update_option('allowed_retries',    (int)$_POST['allowed_retries'] );
                 $this->update_option('lockout_duration',   (int)$_POST['lockout_duration'] * 60 );
