@@ -10,15 +10,15 @@ Block excessive login attempts and protect your site against brute force attacks
 
 == Description ==
 
-Limit Login Attempts Reloaded stops brute-force attacks and optimizes your site performance by limiting the number of login attempts that are possible through the normal login as well as XMLRPC, Woocommerce and custom login pages.
+Limit Login Attempts Reloaded stops brute force attacks and optimizes your site performance by limiting the number of login attempts that are possible through the normal login as well as XMLRPC, Woocommerce and custom login pages. This is the only plugin you'll need for your login security needs with over 2 million downloads worldwide.
 
-This plugin will block an Internet address (IP) and/or username from making further attempts after a specified limit on retries has been reached, making a brute-force attack difficult or impossible.
+This plugin will block an Internet address (IP) and/or username from making further attempts after a specified limit on retries has been reached, making a brute force attack difficult or impossible.
 
-WordPress by default allows unlimited login attempts. This can lead to passwords being easily cracked via brute-force.
+WordPress by default allows unlimited login attempts. This can lead to passwords being easily cracked via brute force.
 
 Limit Login Attempts Reloaded 
 > <strong>Limit Login Attempts Reloaded Premium Cloud App</strong><br>
-> Enables cloud protection for Limit Login Attempts Reloaded plugin. It comes with all the great features you'll need to stop hackers and bots from brute-force attacks. The cloud app <a href="https://www.limitloginattempts.com/features/?from=wp-details">offers several features</a> including advanced protection out of the box, and the ability for site admins and agencies to sync safelists/blocklists across multiple domains. <a href="https://www.limitloginattempts.com/features/?from=wp-details-cta">Click here to activate the cloud app for the best WordPress security plugin now!</a>
+> Enables cloud protection for Limit Login Attempts Reloaded plugin and enhances your login security. It comes with all the great features you'll need to stop hackers and bots from brute force attacks. The cloud app <a href="https://www.limitloginattempts.com/features/?from=wp-details">offers several features</a> including advanced protection out of the box, and the ability for site admins and agencies to sync safelists/blocklists across multiple domains. <a href="https://www.limitloginattempts.com/features/?from=wp-details-cta">Click here to activate the cloud app for the best WordPress security plugin now!</a>
 
 https://www.youtube.com/watch?v=wzmPXu55zLU
 
@@ -38,7 +38,7 @@ https://www.youtube.com/watch?v=wzmPXu55zLU
 * **Custom IP origins** support (Cloudflare, Sucuri, etc.)
 
 = Features (Premium Cloud App): =
-* **Performance Optimizer** - Brute-force attacks absorbed in the cloud (Up to 100k requests monthly). 
+* **Performance Optimizer** - Brute force attacks absorbed in the cloud (Up to 100k requests monthly). 
 * **Throttling** - Longer lockout intervals each time a hacker/bot tries to login unsuccessfully.
 * **Auto Backups of All Data**
 * **Intelligent IP Blocking/Unblocking** - Make sure the legitimate IP’s are allowed automatically.
