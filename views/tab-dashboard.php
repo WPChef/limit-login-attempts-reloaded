@@ -35,8 +35,8 @@ if( $active_app === 'local' ) {
 		$retries_chart_color = '#FFCC66';
     } else {
 
-		$retries_chart_title = __( 'Warning: More than 100 failed login attempts today', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = __( 'Your site is likely under a brute-force attack', 'limit-login-attempts-reloaded' );
+		$retries_chart_title = __( 'Warning: Your site is experiencing over 100 failed login attempts today', 'limit-login-attempts-reloaded' );
+		$retries_chart_desc = __( 'Your site may be under a brute-force attack', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#FF6633';
 		$retries_chart_show_actions = true;
     }
@@ -126,9 +126,9 @@ if( $active_app === 'local' ) {
 				<?php if( $retries_chart_show_actions ) : ?>
                     <div class="actions">
                         <ol>
-                            <li><?php _e( 'Change your password to something more secure.', 'limit-login-attempts-reloaded' ); ?></li>
+                            <li><?php _e( 'Ensure your passwords are secure.', 'limit-login-attempts-reloaded' ); ?></li>
                             <li><?php _e( 'Make sure WordPress and all your plugins are updated.', 'limit-login-attempts-reloaded' ); ?></li>
-                            <li><?php echo sprintf( __( '<a href="%s" target="_blank">Update to Premium</a> Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded' ), 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-status' ); ?></li>
+                            <li><?php echo sprintf( __( 'Consider <a href="%s" target="_blank">upgrading to premium</a> for advanced protection.', 'limit-login-attempts-reloaded' ), 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-status' ); ?></li>
                         </ol>
                     </div>
 				<?php endif; ?>
