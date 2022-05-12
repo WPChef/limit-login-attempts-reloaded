@@ -136,8 +136,6 @@ class Limit_Login_Attempts {
 		add_action( 'admin_init', array( $this, 'setup_cookie' ), 10 );
 		add_action( 'admin_head', array( $this, 'welcome_page_hide_menu' ) );
 
-		add_action( 'admin_menu', array( $this, 'setting_menu_alert_icon' ) );
-
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
 
@@ -255,11 +253,15 @@ class Limit_Login_Attempts {
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
 
-		if ( $this->network_mode )
+		if ( $this->network_mode ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
+			add_action( 'network_admin_menu', array( $this, 'network_setting_menu_alert_icon' ) );
+		}
 
-		if ( $this->allow_local_options )
+		if ( $this->allow_local_options ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+			add_action( 'admin_menu', array( $this, 'setting_menu_alert_icon' ) );
+		}
 
 		// Add notices for XMLRPC request
 		add_filter( 'xmlrpc_login_error', array( $this, 'xmlrpc_error_messages' ) );
@@ -646,7 +648,7 @@ class Limit_Login_Attempts {
 	*/
 	public function network_admin_menu()
 	{
-		add_submenu_page( 'settings.php', 'Limit Login Attempts', 'Limit Login Attempts', 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+		add_submenu_page( 'settings.php', 'Limit Login Attempts', 'Limit Login Attempts' . $this->menu_alert_icon(), 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
 	}
 
 	public function admin_menu() {
@@ -700,6 +702,14 @@ class Limit_Login_Attempts {
 		if( !$this->get_option( 'show_top_level_menu_item' ) && !empty( $menu[80][0] ) ) {
 		    
 			$menu[80][0] .= $this->menu_alert_icon();
+		}
+	}
+
+	public function network_setting_menu_alert_icon() {
+		global $menu;
+		if( !empty( $menu[25][0] ) ) {
+
+			$menu[25][0] .= $this->menu_alert_icon();
 		}
 	}
 
