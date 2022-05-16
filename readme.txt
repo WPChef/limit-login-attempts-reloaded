@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login, security, firewall, protection
 Requires at least: 3.0
 Tested up to: 5.9
-Stable tag: 2.25.1
+Stable tag: 2.25.2
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -38,7 +38,7 @@ https://www.youtube.com/watch?v=wzmPXu55zLU
 * **Custom IP origins** support (Cloudflare, Sucuri, etc.)
 
 = Features (Premium Cloud App): =
-* **Performance Optimizer** - Brute force attacks absorbed in the cloud (Up to 100k requests monthly). 
+* **Performance Optimizer** - Brute force attacks absorbed in the cloud (Up to 100k requests monthly).
 * **Throttling** - Longer lockout intervals each time a hacker/bot tries to login unsuccessfully.
 * **Auto Backups of All Data**
 * **Intelligent IP Blocking/Unblocking** - Make sure the legitimate IP’s are allowed automatically.
@@ -97,6 +97,9 @@ By default, you will need to copy and paste the lists to each site manually. For
 Please follow this link: <a href="https://www.limitloginattempts.com/resources/">https://www.limitloginattempts.com/resources/</a>
 
 == Changelog ==
+
+= 2.25.2 =
+* Security indicator fixed for multisite.
 
 = 2.25.1 =
 * Added setting to turn the dashboard widged off.
