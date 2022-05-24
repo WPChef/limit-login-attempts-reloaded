@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login, security, firewall, protection
 Requires at least: 3.0
 Tested up to: 5.9
-Stable tag: 2.25.2
+Stable tag: 2.25.3
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -97,6 +97,11 @@ By default, you will need to copy and paste the lists to each site manually. For
 Please follow this link: <a href="https://www.limitloginattempts.com/resources/">https://www.limitloginattempts.com/resources/</a>
 
 == Changelog ==
+
+= 2.25.3 =
+* Improved compatibility with WordFence.
+* Better handling of HTTP_X_FORWARDED_FOR on Debug tab.
+* Added option to hide warning badge.
 
 = 2.25.2 =
 * Security indicator fixed for multisite.
