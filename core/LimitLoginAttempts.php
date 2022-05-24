@@ -278,9 +278,10 @@ class Limit_Login_Attempts {
 		add_action( 'authenticate', array( $this, 'authenticate_filter' ), 5, 3 );
 
 		/**
-		 * BuddyPress unactivated user account message
+		 * BuddyPress unactivated user account message fix
+         * Wordfence error message fix
 		 */
-		add_action( 'authenticate', array( $this, 'bp_authenticate_filter' ), 35, 3 );
+		add_action( 'authenticate', array( $this, 'authenticate_filter_errors_fix' ), 35, 3 );
 
 		add_action('wp_ajax_limit-login-unlock', array( $this, 'ajax_unlock' ) );
 
@@ -559,21 +560,31 @@ class Limit_Login_Attempts {
 	}
 
 	/**
-     * BuddyPress unactivated user account message fix
-     *
+     * Fix displaying the errors of other plugins
+	 *
 	 * @param $user
 	 * @param $username
 	 * @param $password
 	 * @return mixed
 	 */
-	public function bp_authenticate_filter( $user, $username, $password ) {
+	public function authenticate_filter_errors_fix( $user, $username, $password ) {
 
 		if ( ! empty( $username ) && ! empty( $password ) ) {
 
-		    if(is_wp_error($user) && in_array('bp_account_not_activated', $user->get_error_codes()) ) {
+		    if( is_wp_error($user) ) {
 
-				$this->other_login_errors[] = $user->get_error_message('bp_account_not_activated');
+		        // BuddyPress errors
+                if( in_array('bp_account_not_activated', $user->get_error_codes() ) ) {
+
+					$this->other_login_errors[] = $user->get_error_message('bp_account_not_activated');
+				}
+                // Wordfence errors
+                else if( in_array('wfls_captcha_verify', $user->get_error_codes() ) ) {
+
+					$this->other_login_errors[] = $user->get_error_message('wfls_captcha_verify');
+				}
             }
+
 		}
 		return $user;
 	}
