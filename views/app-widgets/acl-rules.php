@@ -4,7 +4,8 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 <div class="llar-app-acl-rules">
 	<div class="app-rules-col">
-		<h3><?php _e( 'Login Access Rules', 'limit-login-attempts-reloaded' ); ?></h3>
+		<h3><?php _e( 'Login Access Rules', 'limit-login-attempts-reloaded' ); ?><span class="help-link"><a
+                        href="https://www.limitloginattempts.com/access-rules-explained/" target="_blank"><?php _e( 'Documentation', 'limit-login-attempts-reloaded' ); ?></a></span></h3>
         <div class="llar-table-scroll-wrap llar-app-login-access-rules-infinity-scroll">
             <table class="form-table llar-app-login-access-rules-table">
                 <tr>
@@ -27,7 +28,8 @@ if( !defined( 'ABSPATH' ) ) exit();
         </div>
 	</div>
 	<div class="app-rules-col">
-		<h3><?php _e( 'IP Access Rules', 'limit-login-attempts-reloaded' ); ?></h3>
+		<h3><?php _e( 'IP Access Rules', 'limit-login-attempts-reloaded' ); ?><span class="help-link"><a
+                        href="https://www.limitloginattempts.com/access-rules-explained/" target="_blank"><?php _e( 'Documentation', 'limit-login-attempts-reloaded' ); ?></a></span></h3>
         <div class="llar-table-scroll-wrap llar-app-ip-access-rules-infinity-scroll">
             <table class="form-table llar-app-ip-access-rules-table">
                 <tr>
