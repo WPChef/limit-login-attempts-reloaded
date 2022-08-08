@@ -476,6 +476,10 @@ class Limit_Login_Attempts {
 	*/
 	public function authenticate_filter( $user, $username, $password ) {
 
+		if(!session_id()) {
+			session_start();
+		}
+
 		if ( ! empty( $username ) && ! empty( $password ) ) {
 
 			if( $this->app && $response = $this->app->acl_check( array(
@@ -485,6 +489,8 @@ class Limit_Login_Attempts {
                 ) ) ) {
 
 			    if( $response['result'] === 'deny' ) {
+
+					unset($_SESSION['login_attempts_left']);
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
@@ -533,6 +539,8 @@ class Limit_Login_Attempts {
 				if ( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) &&
 					( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
 				) {
+
+				    unset($_SESSION['login_attempts_left']);
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
