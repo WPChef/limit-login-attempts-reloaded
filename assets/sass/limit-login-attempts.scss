@@ -153,6 +153,20 @@
       .app-rules-col {
         flex: 0 0 49%;
 
+        h3 {
+          display: flex;
+          justify-content: space-between;
+
+          .help-link {
+            font-size: 14px;
+            font-weight: normal;
+
+            .dashicons {
+              text-decoration: none !important;
+            }
+          }
+        }
+
         .form-table {
           select {
             width: 100%;
