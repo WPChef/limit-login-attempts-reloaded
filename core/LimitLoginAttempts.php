@@ -2624,7 +2624,9 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
 
 		check_ajax_referer('llar-action', 'sec');
 
-		session_start();
+		if( !session_id() ) {
+			session_start();
+		}
 
 		$remaining = !empty( $_SESSION['login_attempts_left'] ) ? intval( $_SESSION['login_attempts_left'] ) : 0;
         $message = ( !$remaining ) ? '' : sprintf( _n( "<strong>%d</strong> attempt remaining.", "<strong>%d</strong> attempts remaining.", $remaining, 'limit-login-attempts-reloaded' ), $remaining );
