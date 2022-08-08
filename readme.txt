@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login, security, firewall, protection
 Requires at least: 3.0
 Tested up to: 6.0
-Stable tag: 2.25.3
+Stable tag: 2.25.4
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -97,6 +97,12 @@ By default, you will need to copy and paste the lists to each site manually. For
 Please follow this link: <a href="https://www.limitloginattempts.com/resources/">https://www.limitloginattempts.com/resources/</a>
 
 == Changelog ==
+
+= 2.25.4 =
+* Fixed session error in rare cases.
+* Access rules explained.
+* Improved session behavior on the login page.
+* Fixed warning on some GoDaddy installations.
 
 = 2.25.3 =
 * Improved compatibility with WordFence.
