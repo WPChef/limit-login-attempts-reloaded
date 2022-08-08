@@ -49,6 +49,11 @@ class Limit_Login_Attempts {
         'show_top_level_menu_item'  => true,
         'hide_dashboard_widget'     => false,
         'show_warning_badge'        => true,
+
+        'logged'                => array(),
+        'retries_valid'         => array(),
+        'retries'               => array(),
+        'lockouts'              => array(),
 	);
 	/**
 	* Admin options page slug
@@ -1685,7 +1690,7 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
             /* Should we clear log? */
             if( isset( $_POST[ 'clear_log' ] ) )
             {
-                $this->update_option( 'logged', '' );
+                $this->update_option( 'logged', array() );
                 $this->show_error( __( 'Cleared IP log', 'limit-login-attempts-reloaded' ) );
             }
 
