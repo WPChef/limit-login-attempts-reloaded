@@ -336,8 +336,14 @@ class Limit_Login_Attempts {
 
 		$actions = array_merge( array(
 			'<a href="' . $this->get_options_page_uri( 'settings' ) . '">' . __( 'Settings', 'limit-login-attempts-reloaded' ) . '</a>',
-			'<a href="https://www.limitloginattempts.com/info.php?from=plugin-plugins" target="_blank" style="font-weight: bold;">' . __( 'Premium Support', 'limit-login-attempts-reloaded' ) . '</a>',
 		), $actions );
+
+		if($this->get_option( 'active_app' ) === 'local') {
+
+			$actions = array_merge( $actions , array(
+				'<a href="https://www.limitloginattempts.com/info.php?from=plugin-plugins" target="_blank" style="font-weight: bold;">' . __( 'Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+			));
+		}
 
 		return $actions;
 	}
