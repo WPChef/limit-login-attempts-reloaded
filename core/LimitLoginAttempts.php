@@ -144,6 +144,7 @@ class Limit_Login_Attempts {
 
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
+		add_action( 'wp_footer', array( $this, 'login_page_render_js' ), 9999 );
 
 		if( !$this->get_option( 'hide_dashboard_widget' ) )
 		    add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
@@ -312,7 +313,8 @@ class Limit_Login_Attempts {
 	public function login_page_render_js() {
 	    global $limit_login_just_lockedout;
 
-	    if( isset( $_POST['log'] ) && ($this->is_limit_login_ok() || $limit_login_just_lockedout ) ) : ?>
+		if( ( isset( $_POST['log'] ) || ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) ) ) &&
+			($this->is_limit_login_ok() || $limit_login_just_lockedout ) ) : ?>
         <script>
             ;(function($) {
                 var ajaxUrlObj = new URL('<?php echo admin_url( 'admin-ajax.php' ); ?>');
@@ -324,6 +326,7 @@ class Limit_Login_Attempts {
                 }, function(response) {
                     if(response.success && response.data) {
                         $('#login_error').append("<br>" + response.data);
+                        $('.woocommerce-error').append("<li>(" + response.data + ")</li>");
                     }
                 })
             })(jQuery)
