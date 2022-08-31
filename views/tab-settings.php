@@ -15,6 +15,7 @@ $email_checked = in_array( 'email', $v ) ? ' checked ' : '';
 $show_top_level_menu_item = $this->get_option( 'show_top_level_menu_item' );
 $hide_dashboard_widget = $this->get_option( 'hide_dashboard_widget' );
 $show_warning_badge = $this->get_option( 'show_warning_badge' );
+$block_xmlrpc = $this->get_option( 'block_xmlrpc' );
 
 $admin_notify_email = $this->get_option( 'admin_notify_email' );
 $admin_email_placeholder = (!is_multisite()) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
@@ -170,6 +171,16 @@ $active_app_config = $this->get_custom_app_config();
                         <div class="field-col">
                             <input type="text" class="regular-text" style="width: 100%;max-width: 431px;" name="lla_trusted_ip_origins" value="<?php echo esc_attr( $trusted_ip_origins ); ?>">
                             <p class="description"><?php _e( 'Specify the origins you trust in order of priority, separated by commas. We strongly recommend that you <b>do not</b> use anything other than REMOTE_ADDR since other origins can be easily faked. Examples: HTTP_X_FORWARDED_FOR, HTTP_CF_CONNECTING_IP, HTTP_X_SUCURI_CLIENTIP', 'limit-login-attempts-reloaded' ); ?></p>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"
+                        valign="top"><?php echo __( 'Block XML-RPC', 'limit-login-attempts-reloaded' ); ?></th>
+                    <td>
+                        <div class="field-col">
+                            <input type="checkbox" name="block_xmlrpc" <?php checked( $block_xmlrpc ); ?>>
+                            <p class="description" style="display: inline"><?php _e( 'Block all login attempts made against XML-RPC from public IPs.', 'limit-login-attempts-reloaded' ); ?></p>
                         </div>
                     </td>
                 </tr>

@@ -87,6 +87,19 @@ class LLA_Helpers {
 	}
 
 	/**
+	 * Checks if an IP is in a local network
+	 *
+	 * @param $ip
+	 * @return bool
+	 */
+	public static function is_local_ip($ip) {
+		if($ip === '127.0.0.1')
+			return true;
+
+    	return ( !filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) );
+	}
+
+	/**
 	 * Checks if the plugin is installed as Must Use plugin
 	 *
 	 * @return bool
@@ -107,5 +120,14 @@ class LLA_Helpers {
 		$content = preg_replace( '/\\\+/', '\\', $content );
 
 		return $content;
+	}
+
+	/**
+	 * Checks if request is XMLRPC
+	 *
+	 * @return bool
+	 */
+	public static function is_xmlrpc_request() {
+		return defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST;
 	}
 }

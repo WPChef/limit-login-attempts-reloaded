@@ -54,6 +54,7 @@ class Limit_Login_Attempts {
         'retries_valid'         => array(),
         'retries'               => array(),
         'lockouts'              => array(),
+		'block_xmlrpc'          => true,
 	);
 	/**
 	* Admin options page slug
@@ -532,7 +533,7 @@ class Limit_Login_Attempts {
 					$user = new WP_Error();
 					$user->add( 'username_blacklisted', $err );
 
-					if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
+					if ( LLA_Helpers::is_xmlrpc_request() ) {
 
 						header('HTTP/1.0 403 Forbidden');
 						exit;
@@ -548,6 +549,15 @@ class Limit_Login_Attempts {
             } else {
 
 				$ip = $this->get_address();
+
+				if( LLA_Helpers::is_xmlrpc_request() &&
+					$this->get_option( 'block_xmlrpc' ) &&
+					! LLA_Helpers::is_local_ip( $ip )
+				) {
+
+					header('HTTP/1.0 403 Forbidden');
+					exit;
+				}
 
 				// Check if username is blacklisted
 				if ( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) &&
@@ -567,7 +577,7 @@ class Limit_Login_Attempts {
 					$user = new WP_Error();
 					$user->add( 'username_blacklisted', "<strong>ERROR:</strong> Too many failed login attempts." );
 
-					if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
+					if ( LLA_Helpers::is_xmlrpc_request() ) {
 
 						header('HTTP/1.0 403 Forbidden');
 						exit;
@@ -1786,6 +1796,7 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
                 $this->update_option('show_top_level_menu_item', ( isset( $_POST['show_top_level_menu_item'] ) ? 1 : 0 ) );
                 $this->update_option('hide_dashboard_widget', ( isset( $_POST['hide_dashboard_widget'] ) ? 1 : 0 ) );
                 $this->update_option('show_warning_badge', ( isset( $_POST['show_warning_badge'] ) ? 1 : 0 ) );
+                $this->update_option('block_xmlrpc', ( isset( $_POST['block_xmlrpc'] ) ? 1 : 0 ) );
 
                 $this->update_option('allowed_retries',    (int)$_POST['allowed_retries'] );
                 $this->update_option('lockout_duration',   (int)$_POST['lockout_duration'] * 60 );
