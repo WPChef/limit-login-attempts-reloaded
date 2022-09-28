@@ -1700,21 +1700,21 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
             if( isset( $_POST[ 'clear_log' ] ) )
             {
                 $this->update_option( 'logged', array() );
-                $this->show_error( __( 'Cleared IP log', 'limit-login-attempts-reloaded' ) );
+                $this->show_message( __( 'Cleared IP log', 'limit-login-attempts-reloaded' ) );
             }
 
             /* Should we reset counter? */
             if( isset( $_POST[ 'reset_total' ] ) )
             {
                 $this->update_option( 'lockouts_total', 0 );
-                $this->show_error( __( 'Reset lockout count', 'limit-login-attempts-reloaded' ) );
+                $this->show_message( __( 'Reset lockout count', 'limit-login-attempts-reloaded' ) );
             }
 
             /* Should we restore current lockouts? */
             if( isset( $_POST[ 'reset_current' ] ) )
             {
                 $this->update_option( 'lockouts', array() );
-                $this->show_error( __( 'Cleared current lockouts', 'limit-login-attempts-reloaded' ) );
+                $this->show_message( __( 'Cleared current lockouts', 'limit-login-attempts-reloaded' ) );
             }
 
             /* Should we update options? */
@@ -1748,7 +1748,7 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
                     foreach( $black_list_ips as $key => $ip ) {
                         $range = array_map('trim', explode('-', $ip) );
                         if ( count( $range ) > 1 && (float)sprintf("%u",ip2long($range[0])) > (float)sprintf("%u",ip2long($range[1]))) {
-                            $this->show_error( __( 'The "'. $ip .'" IP range is invalid', 'limit-login-attempts-reloaded' ) );
+                            $this->show_message( __( 'The "'. $ip .'" IP range is invalid', 'limit-login-attempts-reloaded' ) );
                         }
                         if( '' == $ip ) {
                             unset( $black_list_ips[ $key ] );
@@ -1770,7 +1770,7 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
 
                 $this->sanitize_options();
 
-                $this->show_error( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
+                $this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
             }
             elseif( isset( $_POST[ 'llar_update_settings' ] ) ) {
 
@@ -1843,7 +1843,7 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
                     }
                 }
 
-                $this->show_error( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
+                $this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
             }
 		}
 
@@ -1896,8 +1896,8 @@ into a must-use (MU) folder. You can read more <a href="%s" target="_blank">here
 	*
 	* @param $msg
 	*/
-	public function show_error( $msg ) {
-		LLA_Helpers::show_error( $msg );
+	public function show_message($msg, $is_error = false) {
+		LLA_Helpers::show_message( $msg, $is_error );
 	}
 
     /**
