@@ -307,14 +307,27 @@
 
 
 
-  .llar-show-app-fields {
-    position: absolute;
-    right: 15px;
-    top: 15px;
-    color: #bdbdbd;
-
+  .llar-toggle-setup-field {
+    color: #2271b1;
+    text-decoration-style: dashed;
     &:hover {
       color: #222;
+    }
+  }
+
+  .setup-code-wrap {
+    display: none;
+
+    &.active {
+      display: block;
+    }
+  }
+
+  .app-form-field {
+    display: none;
+
+    &.active {
+      display: table-row;
     }
   }
 
