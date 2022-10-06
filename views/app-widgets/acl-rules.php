@@ -80,6 +80,14 @@ if( !defined( 'ABSPATH' ) ) exit();
 				load_rules_data('login');
 				load_rules_data('ip');
 
+				$('.llar-global-reload-btn').on('click', function() {
+                    page_offset1 = '';
+                    page_offset2 = '';
+                    $app_acl_rules.find('table > tr').remove();
+                    load_rules_data('login');
+                    load_rules_data('ip');
+                });
+
 				$app_acl_rules
 					.on('click', '.llar-app-acl-remove', function(e){
 						e.preventDefault();
@@ -126,6 +134,8 @@ if( !defined( 'ABSPATH' ) ) exit();
 							pattern = $this.closest('tr').find('.llar-app-acl-pattern').val().trim(),
 							rule = $this.closest('tr').find('.llar-app-acl-rule').val(),
 							type = $this.data('type');
+
+                        $this.closest('tr').find('.llar-app-acl-pattern').val('');
 
 						if(!pattern) {
 
