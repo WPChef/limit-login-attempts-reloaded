@@ -67,6 +67,17 @@
         &.llar-col-nowrap {
           white-space: nowrap;
         }
+
+        .llar-log-country-flag {
+          display: flex;
+          align-items: center;
+          white-space: nowrap;
+
+          img {
+            width: 20px;
+            height: auto;
+          }
+        }
       }
       td {
         button {
