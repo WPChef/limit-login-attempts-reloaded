@@ -338,14 +338,15 @@ class Limit_Login_Attempts {
 	public function add_action_links( $actions ) {
 
 		$actions = array_merge( array(
+			'<a href="' . $this->get_options_page_uri() . '">' . __( 'Dashboard', 'limit-login-attempts-reloaded' ) . '</a>',
 			'<a href="' . $this->get_options_page_uri( 'settings' ) . '">' . __( 'Settings', 'limit-login-attempts-reloaded' ) . '</a>',
 		), $actions );
 
 		if($this->get_option( 'active_app' ) === 'local') {
 
-			$actions = array_merge( $actions , array(
-				'<a href="https://www.limitloginattempts.com/info.php?from=plugin-plugins" target="_blank" style="font-weight: bold;">' . __( 'Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
-			));
+			$actions = array_merge( array(
+				'<a href="https://www.limitloginattempts.com/info.php?from=plugin-plugins" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
+			), $actions );
 		}
 
 		return $actions;
@@ -1132,6 +1133,8 @@ class Limit_Login_Attempts {
 		$blogname = $this->use_local_options ? get_option( 'blogname' ) : get_site_option( 'site_name' );
 		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
 
+		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
+
         $subject = sprintf(
             __( "[%s] Failed WordPress login attempt by IP %s on %s", 'limit-login-attempts-reloaded' ),
             $blogname,
@@ -1145,8 +1148,10 @@ class Limit_Login_Attempts {
 Last user attempted: <b>%5$s</b><br>
 IP was blocked for %6$s</p>
 <p>This notification was sent automatically via Limit Login Attempts Reloaded Plugin. 
-<b>This is installed on your %7$s WordPress site. <a href="%8$s" target="_blank">Login to your WordPress dashboard</a> ' .
-                'to review more details and take action if necessary.</b></p>', 'limit-login-attempts-reloaded' );
+<b>This is installed on your %7$s WordPress site. <a href="%8$s" target="_blank">Please login to your WordPress</a> ' .
+'dashboard to view more info.</b></p>' .
+'<p>Experiencing frequent attacks or degraded performance? Try our <a href="%9$s" target="_blank">advanced protection</a>. ' .
+'Have Questions? Visit our <a href="%10$s" target="_blank">help section</a>.</p>', 'limit-login-attempts-reloaded' );
 
         $message = sprintf(
             $message,
@@ -1157,7 +1162,9 @@ IP was blocked for %6$s</p>
 			$user,
             $when,
 			$site_domain,
-			admin_url( 'options-general.php?page=' . $this->_options_page_slug )
+			admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
+            'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
+            'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email&v=' . $plugin_data['Version']
         );
 
         $message .= '<h3>Frequently Asked Questions</h3>
