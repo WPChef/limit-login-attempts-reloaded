@@ -15,21 +15,23 @@ $app_config = $this->get_custom_app_config();
 	<?php endif; ?>
 </div>
 
-<div class="llar-table-scroll-wrap llar-app-log-infinity-scroll">
-    <table class="form-table llar-table-app-log">
-        <tr>
-            <th scope="col"><?php _e( "Time", 'limit-login-attempts-reloaded' ); ?></th>
-            <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>
-            <th scope="col"><?php _e( "Gateway", 'limit-login-attempts-reloaded' ); ?></th>
-            <th scope="col"><?php _e( "Login", 'limit-login-attempts-reloaded' ); ?></th>
-            <th scope="col"><?php _e( "Rule", 'limit-login-attempts-reloaded' ); ?></th>
-            <th scope="col"><?php _e( "Reason", 'limit-login-attempts-reloaded' ); ?></th>
-            <th scope="col"><?php _e( "Pattern", 'limit-login-attempts-reloaded' ); ?></th>
-            <th scope="col"><?php _e( "Attempts Left", 'limit-login-attempts-reloaded' ); ?></th>
-            <th scope="col"><?php _e( "Lockout Duration", 'limit-login-attempts-reloaded' ); ?></th>
-            <th scope="col"><?php _e( "Actions", 'limit-login-attempts-reloaded' ); ?></th>
-        </tr>
-    </table>
+<div class="llar-preloader-wrap">
+    <div class="llar-table-scroll-wrap llar-app-log-infinity-scroll">
+        <table class="form-table llar-table-app-log">
+            <tr>
+                <th scope="col"><?php _e( "Time", 'limit-login-attempts-reloaded' ); ?></th>
+                <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>
+                <th scope="col"><?php _e( "Gateway", 'limit-login-attempts-reloaded' ); ?></th>
+                <th scope="col"><?php _e( "Login", 'limit-login-attempts-reloaded' ); ?></th>
+                <th scope="col"><?php _e( "Rule", 'limit-login-attempts-reloaded' ); ?></th>
+                <th scope="col"><?php _e( "Reason", 'limit-login-attempts-reloaded' ); ?></th>
+                <th scope="col"><?php _e( "Pattern", 'limit-login-attempts-reloaded' ); ?></th>
+                <th scope="col"><?php _e( "Attempts Left", 'limit-login-attempts-reloaded' ); ?></th>
+                <th scope="col"><?php _e( "Lockout Duration", 'limit-login-attempts-reloaded' ); ?></th>
+                <th scope="col"><?php _e( "Actions", 'limit-login-attempts-reloaded' ); ?></th>
+            </tr>
+        </table>
+    </div>
 </div>
 <script type="text/javascript">
 	;(function($){
@@ -37,6 +39,7 @@ $app_config = $this->get_custom_app_config();
 		$(document).ready(function () {
 
 			var $log_table = $('.llar-table-app-log'),
+                $preloader_wrap = $log_table.closest('.llar-preloader-wrap'),
                 $infinity_box = $('.llar-app-log-infinity-scroll'),
                 loading_data = false,
 				page_offset = '',
@@ -45,6 +48,7 @@ $app_config = $this->get_custom_app_config();
 
             $infinity_box.on('scroll', function (){
                 if (!loading_data && $infinity_box.get(0).scrollTop + $infinity_box.get(0).clientHeight >= $infinity_box.get(0).scrollHeight - 1) {
+                    total_loaded = 0;
                     load_log_data();
                 }
             });
@@ -54,6 +58,7 @@ $app_config = $this->get_custom_app_config();
             $('.llar-global-reload-btn').on('click', function() {
                 page_offset = '';
                 $log_table.find('> tr').remove();
+                total_loaded = 0;
                 load_log_data();
             });
 
@@ -66,7 +71,7 @@ $app_config = $this->get_custom_app_config();
 
 				if(!confirm('Are you sure?')) return;
 
-				llar.progressbar.start();
+                $preloader_wrap.addClass('loading');
 
 				$.post(ajaxurl, {
 					action: 'app_log_action',
@@ -75,7 +80,7 @@ $app_config = $this->get_custom_app_config();
 					sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
 				}, function(response){
 
-					llar.progressbar.stop();
+                    $preloader_wrap.removeClass('loading');
 
 					if(response.success) {
 
@@ -93,7 +98,7 @@ $app_config = $this->get_custom_app_config();
 			        return;
                 }
 
-				llar.progressbar.start();
+                $preloader_wrap.addClass('loading');
 				loading_data = true;
 
 				$.post(ajaxurl, {
@@ -103,11 +108,13 @@ $app_config = $this->get_custom_app_config();
 					sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
 				}, function(response){
 
-					llar.progressbar.stop();
+                    $preloader_wrap.removeClass('loading');
 
 					if(response.success) {
 
-						$log_table.append(response.data.html);
+					    if(response.data.html) {
+                            $log_table.append(response.data.html);
+                        }
 
                         total_loaded += response.data.total_items;
 
