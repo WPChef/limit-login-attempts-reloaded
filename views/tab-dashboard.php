@@ -441,3 +441,5 @@ if( $active_app === 'local' ) {
     </div>
     <?php endif; ?>
 </div>
+
+<?php require_once( LLA_PLUGIN_DIR . '/views/onboarding-popup.php')?>
