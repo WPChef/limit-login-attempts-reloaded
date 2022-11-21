@@ -73,10 +73,11 @@ $popup_app_setup_content = ob_get_clean();
                 typeAnimated: true,
                 draggable: false,
                 boxWidth: '40%',
+                bgOpacity: 0.9,
                 useBootstrap: false,
                 lazyOpen: true,
                 buttons: false,
-                closeIcon: false
+                closeIcon: true
             });
 
             $.confirm({
@@ -86,7 +87,15 @@ $popup_app_setup_content = ob_get_clean();
                 typeAnimated: true,
                 draggable: false,
                 boxWidth: '40%',
+                bgOpacity: 0.9,
                 useBootstrap: false,
+                closeIcon: true,
+                onClose: function() {
+                    $.post(ajaxurl, {
+                        action: 'dismiss_onboarding_popup',
+                        sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+                    }, function(){});
+                },
 				buttons: {
                     continue: {
                         text: 'Continue',
@@ -94,15 +103,14 @@ $popup_app_setup_content = ob_get_clean();
                         keys: ['enter'],
                         action: function(){
 
+                            app_setup_popup.open();
+
                             $.post(ajaxurl, {
                                 action: 'subscribe_email',
                                 email: $('body').find('#llar-subscribe-email').val(),
                                 is_subscribe_yes: !!$('body').find('.security-alerts-options .buttons span[data-val="yes"].llar-act').length,
                                 sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
-                            }, function(){
-
-                                app_setup_popup.open();
-                            });
+                            }, function(){});
                         }
                     }
 				}
