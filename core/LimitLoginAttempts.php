@@ -129,6 +129,7 @@ class Limit_Login_Attempts {
 		add_action( 'wp_ajax_app_acl_remove_rule', array( $this, 'app_acl_remove_rule_callback' ) );
 		add_action( 'wp_ajax_nopriv_get_remaining_attempts_message', array( $this, 'get_remaining_attempts_message_callback' ) );
 		add_action( 'wp_ajax_subscribe_email', array( $this, 'subscribe_email_callback' ) );
+		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -152,11 +153,15 @@ class Limit_Login_Attempts {
 	 */
 	public function activation() {
 
-		if( $this->get_option( 'activation_timestamp' ) && $this->get_option( 'onboarding_popup_shown' ) === null ) {
+		if( !$this->get_option( 'activation_timestamp' ) ) {
 
-            $this->update_option( 'onboarding_popup_shown', 0 );
             set_transient( 'llar_dashboard_redirect', true, 30 );
 		}
+
+		if( $this->get_option( 'onboarding_popup_shown' ) === null ) {
+
+			$this->update_option( 'onboarding_popup_shown', 0 );
+        }
 	}
 
 	public function setup_cookie() {
@@ -213,6 +218,10 @@ class Limit_Login_Attempts {
 
 			// Write time when the plugin is activated
 			$this->update_option( 'activation_timestamp', time() );
+
+			if( $this->get_option( 'onboarding_popup_shown' ) === null )
+				$this->update_option( 'onboarding_popup_shown', 0 );
+
 		} else {
 
 		    if( $this->get_option( 'onboarding_popup_shown' ) === null )
@@ -2697,6 +2706,20 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 		}
 
 		wp_send_json_error(array('email' => $email, 'is_subscribe_yes' => $is_subscribe_yes));exit();
+	}
+
+    public function dismiss_onboarding_popup_callback() {
+
+		if ( !current_user_can('activate_plugins') ) {
+
+			wp_send_json_error(array());
+		}
+
+		check_ajax_referer('llar-action', 'sec');
+
+		$this->update_option( 'onboarding_popup_shown', true );
+
+		wp_send_json_success();
 	}
 
 	public function get_remaining_attempts_message_callback() {
