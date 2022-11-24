@@ -20,7 +20,7 @@ ob_start(); ?>
 		<div class="field-desc"><?php _e( 'We do not use this email address for any other purpose unless you opt-in to receive other mailings. You can turn off alerts in the settings.', 'limit-login-attempts-reloaded' ); ?></div>
 	</div>
 	<div class="security-alerts-options">
-		<div class="info"><?php _e( 'Would you also like to join our WordPress security mailing list to receive WordPress security alerts and Limit Login Attempts Reloaded news?', 'limit-login-attempts-reloaded' ); ?></div>
+		<div class="info" style="font-size: 16px;"><?php _e( 'Would you also like to join our email newsletter to receive plugin updates, WordPress security news, and other relevant content?', 'limit-login-attempts-reloaded' ); ?></div>
 		<div class="buttons">
 			<span data-val="yes"><?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?></span>
 			<span data-val="no"><?php _e( 'No', 'limit-login-attempts-reloaded' ); ?></span>
@@ -34,7 +34,7 @@ $popup_complete_install_content = ob_get_clean();
 ob_start(); ?>
 <div class="llar-onboarding-popup-content llar-app-setup-popup">
     <div class="title"><?php _e( 'Activate Premium', 'limit-login-attempts-reloaded' ); ?></div>
-    <div class="desc"><?php _e( 'Enter your setup code to enable cloud protection, enhanced logs, intelligent IP management and 25+ features.', 'limit-login-attempts-reloaded' ); ?></div>
+    <div class="desc" style="font-size: 16px; line-height: 24px;"><?php _e( 'Enter your setup code to enable cloud protection. This will provide the highest level of security and performance during brute force attacks.', 'limit-login-attempts-reloaded' ); ?></div>
     <div class="field-wrap">
         <div class="field">
             <input type="text" id="llar-setup-code-field" placeholder="<?php esc_attr_e( 'Enter Setup Code', 'limit-login-attempts-reloaded' ); ?>">
@@ -49,9 +49,9 @@ ob_start(); ?>
     </div>
     <div class="divider-line"><span><?php _e( 'Or', 'limit-login-attempts-reloaded' ); ?></span></div>
     <div class="bottom-buttons">
-        <div class="text"><?php _e( 'If you don\'t have one, you can purchase one now.', 'limit-login-attempts-reloaded' ); ?></div>
+        <div class="text" style="font-size: 16px;"><?php _e( 'If you don\'t have one, you can purchase one now.', 'limit-login-attempts-reloaded' ); ?></div>
         <div class="buttons">
-            <a href="https://www.limitloginattempts.com/pricing/?from=plugin-welcome" target="_blank"
+            <a href="https://checkout.limitloginattempts.com/plan?from=plugin-welcome" target="_blank"
                class="button button-primary size-medium"><?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?><span><?php _e( 'Starting from $8/month', 'limit-login-attempts-reloaded' ); ?></span></a>
             <a href="https://www.limitloginattempts.com/features/?from=plugin-welcome" target="_blank"
                class="button button-secondary"><?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?></a>
