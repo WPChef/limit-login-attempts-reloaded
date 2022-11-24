@@ -49,6 +49,7 @@ class Limit_Login_Attempts {
         'show_top_level_menu_item'  => true,
         'hide_dashboard_widget'     => false,
         'show_warning_badge'        => true,
+		'onboarding_popup_shown'    => false,
 
         'logged'                => array(),
         'retries_valid'         => array(),
@@ -157,11 +158,6 @@ class Limit_Login_Attempts {
 
             set_transient( 'llar_dashboard_redirect', true, 30 );
 		}
-
-		if( $this->get_option( 'onboarding_popup_shown' ) === null ) {
-
-			$this->update_option( 'onboarding_popup_shown', 0 );
-        }
 	}
 
 	public function setup_cookie() {
@@ -218,15 +214,7 @@ class Limit_Login_Attempts {
 
 			// Write time when the plugin is activated
 			$this->update_option( 'activation_timestamp', time() );
-
-			if( $this->get_option( 'onboarding_popup_shown' ) === null )
-				$this->update_option( 'onboarding_popup_shown', 0 );
-
-		} else {
-
-		    if( $this->get_option( 'onboarding_popup_shown' ) === null )
-			    $this->update_option( 'onboarding_popup_shown', true );
-        }
+		}
 
 		if( ! ( $activation_timestamp = $this->get_option( 'notice_enable_notify_timestamp' ) ) ) {
 
@@ -2672,14 +2660,15 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 		$email = sanitize_text_field( trim( $_POST['email'] ) );
 		$is_subscribe_yes = sanitize_text_field( $_POST['is_subscribe_yes'] ) === 'true';
 
+		$admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
+		$current_email = $this->get_option( 'admin_notify_email' );
+
 		if( !empty( $email ) && is_email( $email ) ) {
-			$admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 
-			if( $admin_email !== $email ) {
-				$this->update_option( 'admin_notify_email', $email );
-			}
+            $this->update_option( 'admin_notify_email', $email );
+			$this->update_option( 'lockout_notify', 'email' );
 
-		    if( $is_subscribe_yes ) {
+			if( $is_subscribe_yes ) {
 				$response = wp_remote_post( 'https://api.limitloginattempts.com/my/key', array(
 					'body' => json_encode( array(
 						'email' => $email
@@ -2702,6 +2691,7 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
             }
 		}
 		else if ( empty( $email ) ) {
+			$this->update_option( 'admin_notify_email', $admin_email );
 			$this->update_option( 'lockout_notify', '' );
 		}
 
