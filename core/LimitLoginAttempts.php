@@ -49,6 +49,7 @@ class Limit_Login_Attempts {
         'show_top_level_menu_item'  => true,
         'hide_dashboard_widget'     => false,
         'show_warning_badge'        => true,
+		'onboarding_popup_shown'    => false,
 
         'logged'                => array(),
         'retries_valid'         => array(),
@@ -60,11 +61,6 @@ class Limit_Login_Attempts {
 	* @var string
 	*/
 	private $_options_page_slug = 'limit-login-attempts';
-
-	/**
-	 * @var string
-	 */
-	private $_welcome_page_slug = 'llar-welcome';
 
 	/**
 	* Errors messages
@@ -133,14 +129,15 @@ class Limit_Login_Attempts {
 		add_action( 'wp_ajax_app_acl_add_rule', array( $this, 'app_acl_add_rule_callback' ) );
 		add_action( 'wp_ajax_app_acl_remove_rule', array( $this, 'app_acl_remove_rule_callback' ) );
 		add_action( 'wp_ajax_nopriv_get_remaining_attempts_message', array( $this, 'get_remaining_attempts_message_callback' ) );
+		add_action( 'wp_ajax_subscribe_email', array( $this, 'subscribe_email_callback' ) );
+		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-index.php', array( $this, 'load_admin_scripts' ) );
 
-		add_action( 'admin_init', array( $this, 'welcome_page_redirect' ), 9999 );
+		add_action( 'admin_init', array( $this, 'dashboard_page_redirect' ), 9999 );
 		add_action( 'admin_init', array( $this, 'setup_cookie' ), 10 );
-		add_action( 'admin_head', array( $this, 'welcome_page_hide_menu' ) );
 
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
@@ -157,7 +154,10 @@ class Limit_Login_Attempts {
 	 */
 	public function activation() {
 
-		set_transient( 'llar_welcome_redirect', true, 30 );
+		if( !$this->get_option( 'activation_timestamp' ) ) {
+
+            set_transient( 'llar_dashboard_redirect', true, 30 );
+		}
 	}
 
 	public function setup_cookie() {
@@ -191,23 +191,18 @@ class Limit_Login_Attempts {
     }
 
 	/**
-	 * Redirect to Welcome page after installed
+	 * Redirect to dashboard page after installed
 	 */
-	public function welcome_page_redirect() {
+	public function dashboard_page_redirect() {
 
-	    if( ! get_transient( 'llar_welcome_redirect' ) || isset( $_GET['activate-multi'] ) || is_network_admin() ) {
+	    if( ! get_transient( 'llar_dashboard_redirect' ) || isset( $_GET['activate-multi'] ) || is_network_admin() ) {
 	        return;
         }
 
-		delete_transient( 'llar_welcome_redirect' );
+		delete_transient( 'llar_dashboard_redirect' );
 
-	    wp_redirect( admin_url( 'index.php?page=' . $this->_welcome_page_slug ) );
+	    wp_redirect( admin_url( 'index.php?page=' . $this->_options_page_slug ) );
 	    exit();
-    }
-
-    public function welcome_page_hide_menu() {
-
-		remove_submenu_page( 'index.php', $this->_welcome_page_slug );
     }
 
 	/**
@@ -666,7 +661,7 @@ class Limit_Login_Attempts {
 		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css', array(), $plugin_data['Version'] );
 		wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array(), $plugin_data['Version'] );
 
-		if( !empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_welcome_page_slug ) {
+		if( !empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_options_page_slug ) {
 
 			wp_enqueue_style( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/css/jquery-confirm.min.css' );
 			wp_enqueue_script( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/js/jquery-confirm.min.js' );
@@ -705,14 +700,6 @@ class Limit_Login_Attempts {
         }
 
 		add_options_page( 'Limit Login Attempts', 'Limit Login Attempts' . $this->menu_alert_icon(), 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
-        
-		add_dashboard_page(
-            'Welcome to Limit Login Attempts Reloaded',
-            'Limit Login Attempts Welcome',
-            'manage_options',
-            $this->_welcome_page_slug,
-            array( $this, 'welcome_page' )
-        );
 	}
 
 	public function get_svg_logo_content() {
@@ -1872,14 +1859,6 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 		include_once( LLA_PLUGIN_DIR . '/views/options-page.php' );
 	}
 
-	/**
-	 * Render Welcome page
-	 */
-	public function welcome_page() {
-
-		include_once( LLA_PLUGIN_DIR . '/views/welcome-page.php' );
-    }
-
 	public function ajax_unlock()
 	{
 		check_ajax_referer('limit-login-unlock', 'sec');
@@ -2665,6 +2644,72 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 				'msg' => 'Something wrong.'
 			));
 		}
+	}
+
+    public function subscribe_email_callback() {
+
+		if ( !current_user_can('activate_plugins') ) {
+
+			wp_send_json_error(array());
+		}
+
+		check_ajax_referer('llar-action', 'sec');
+
+		$this->update_option( 'onboarding_popup_shown', true );
+
+		$email = sanitize_text_field( trim( $_POST['email'] ) );
+		$is_subscribe_yes = sanitize_text_field( $_POST['is_subscribe_yes'] ) === 'true';
+
+		$admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
+		$current_email = $this->get_option( 'admin_notify_email' );
+
+		if( !empty( $email ) && is_email( $email ) ) {
+
+            $this->update_option( 'admin_notify_email', $email );
+			$this->update_option( 'lockout_notify', 'email' );
+
+			if( $is_subscribe_yes ) {
+				$response = wp_remote_post( 'https://api.limitloginattempts.com/my/key', array(
+					'body' => json_encode( array(
+						'email' => $email
+					), JSON_FORCE_OBJECT )
+				));
+
+				if( is_wp_error( $response ) ) {
+
+					wp_send_json_error( $response );
+				} else {
+
+				    $response_body = json_decode( wp_remote_retrieve_body( $response ), JSON_FORCE_OBJECT );
+
+				    if( !empty( $response_body['key'] ) ) {
+				        $this->update_option( 'cloud_key', $response_body['key'] );
+					}
+
+					wp_send_json_success( $response_body );
+				}
+            }
+		}
+		else if ( empty( $email ) ) {
+			$this->update_option( 'admin_notify_email', $admin_email );
+			$this->update_option( 'lockout_notify', '' );
+		}
+
+		wp_send_json_error(array('email' => $email, 'is_subscribe_yes' => $is_subscribe_yes));exit();
+	}
+
+    public function dismiss_onboarding_popup_callback() {
+
+		if ( !current_user_can('activate_plugins') ) {
+
+			wp_send_json_error(array());
+		}
+
+		check_ajax_referer('llar-action', 'sec');
+
+		$this->update_option( 'onboarding_popup_shown', true );
+
+		wp_send_json_success();
 	}
 
 	public function get_remaining_attempts_message_callback() {

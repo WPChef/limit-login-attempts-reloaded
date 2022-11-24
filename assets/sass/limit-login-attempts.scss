@@ -691,11 +691,6 @@
   }
 }
 
-.jconfirm .jconfirm-box div.jconfirm-closeIcon {
-  top: -2px !important;
-  right: -2px !important;
-}
-
 .llar-tooltip {
   text-decoration: underline;
   text-decoration-style: dotted;
@@ -792,3 +787,4 @@
 
 @import "dashboard-page";
 @import "admin-dashboard-widgets";
+@import "onboarding-popup";

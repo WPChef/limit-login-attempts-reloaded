@@ -63,7 +63,7 @@ if( $active_app === 'local' ) {
 	</div>
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
-            <div class="section-title"><?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?></div>
+            <div class="section-title"><?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?><?php echo $active_app === 'custom' ? '<span class="llar-premium-label"><span class="dashicons dashicons-yes-alt"></span>' . __( 'Premium protection enabled', 'limit-login-attempts-reloaded' ) . '</span>' : ''; ?></div>
             <div class="section-content">
                 <div class="chart">
                     <canvas id="llar-attack-velocity-chart"></canvas>
@@ -441,3 +441,5 @@ if( $active_app === 'local' ) {
     </div>
     <?php endif; ?>
 </div>
+
+<?php require_once( LLA_PLUGIN_DIR . '/views/onboarding-popup.php')?>

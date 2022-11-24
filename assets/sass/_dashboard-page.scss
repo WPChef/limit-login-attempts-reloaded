@@ -61,6 +61,19 @@
       }
     }
     .info-box-1 {
+      .section-title {
+        .llar-premium-label {
+          float: right;
+          color: #797777;
+          font-weight: 400;
+
+          .dashicons {
+            color: #66cc66;
+            margin-right: 2px;
+          }
+
+        }
+      }
       .chart {
         //margin-bottom: 10px;
         max-width: 300px;
