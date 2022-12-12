@@ -66,7 +66,7 @@ if( $active_app === 'local' ) {
             <div class="section-title"><?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?><?php echo $active_app === 'custom' ? '<span class="llar-premium-label"><span class="dashicons dashicons-yes-alt"></span>' . __( 'Premium protection enabled', 'limit-login-attempts-reloaded' ) . '</span>' : ''; ?></div>
             <div class="section-content">
                 <div class="chart">
-                    <canvas id="llar-attack-velocity-chart"></canvas>
+                    <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
                     <span class="llar-retries-count"><?php echo esc_html( $retries_count ); ?></span>
                 </div>
                 <script type="text/javascript">
@@ -81,41 +81,20 @@ if( $active_app === 'local' ) {
 									data: [1],
 									value: <?php echo esc_js( $retries_count ); ?>,
 									backgroundColor: ['<?php echo esc_js( $retries_chart_color ); ?>'],
-									borderWidth: [0]
+									borderWidth: [0],
 								}]
 							},
 							options: {
 								responsive: true,
-								cutoutPercentage: 70,
+								cutout: 50,
 								title: {
 									display: false,
-									// text: 'Local Attack Velocity'
 								},
-                                tooltips: {
-									enabled: false
-                                },
-								layout: {
-									padding: {
-										// bottom: 40
-									}
-								},
-								// needle: {
-								// 	// Needle circle radius as the percentage of the chart area width
-								// 	radiusPercentage: 2,
-								// 	// Needle width as the percentage of the chart area width
-								// 	widthPercentage: 3.2,
-								// 	// Needle length as the percentage of the interval between inner radius (0%) and outer radius (100%) of the arc
-								// 	lengthPercentage: 40,
-								// 	// The color of the needle
-								// 	color: 'rgba(0, 0, 0, 1)'
-								// },
-								valueLabel: {
-									display: true,
-									fontSize: 25,
-									color: '#3e76c1',
-									backgroundColor: 'rgba(0,0,0,0)',
-									bottomMarginPercentage: -6
-								},
+                                plugins: {
+                                    tooltip: {
+                                        enabled: false
+                                    }
+                                }
 							}
 						});
 
@@ -236,26 +215,26 @@ if( $active_app === 'local' ) {
 									intersect: true
 								},
 								scales: {
-									xAxes: [{
+									x: {
 										display: true,
 										scaleLabel: {
 											display: false
 										}
-									}],
-									yAxes: [{
+									},
+									y: {
 										display: true,
 										scaleLabel: {
 											display: false
 										},
-										ticks: {
-											beginAtZero: true,
-											userCallback: function(label, index, labels) {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: function(label, index, labels) {
 												if (Math.floor(label) === label) {
 													return label;
 												}
 											},
 										}
-									}]
+									}
 								}
 							}
 						});
@@ -410,26 +389,26 @@ if( $active_app === 'local' ) {
                                     intersect: true
                                 },
                                 scales: {
-                                    xAxes: [{
+                                    x: {
                                         display: true,
                                         scaleLabel: {
                                             display: false
                                         }
-                                    }],
-                                    yAxes: [{
+                                    },
+                                    y: {
                                         display: true,
                                         scaleLabel: {
                                             display: false
                                         },
+                                        beginAtZero: true,
                                         ticks: {
-                                            beginAtZero: true,
-                                            userCallback: function(label, index, labels) {
+                                            callback: function(label, index, labels) {
                                                 if (Math.floor(label) === label) {
                                                     return label;
                                                 }
                                             },
                                         }
-                                    }]
+                                    }
                                 }
                             }
                         });
