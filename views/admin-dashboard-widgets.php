@@ -59,7 +59,7 @@ if ($active_app === 'local') {
     <div class="llar-widget">
         <div class="widget-content">
             <div class="chart">
-                <canvas id="llar-attack-velocity-chart"></canvas>
+                <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
                 <span class="llar-retries-count"><?php echo esc_html($retries_count); ?></span>
             </div>
             <script type="text/javascript">
@@ -78,26 +78,15 @@ if ($active_app === 'local') {
                         },
                         options: {
                             responsive: true,
-                            cutoutPercentage: 70,
+                            cutout: 50,
                             title: {
                                 display: false,
-                                // text: 'Local Attack Velocity'
                             },
-                            tooltips: {
-                                enabled: false
-                            },
-                            layout: {
-                                padding: {
-                                    // bottom: 40
+                            plugins: {
+                                tooltip: {
+                                    enabled: false
                                 }
-                            },
-                            valueLabel: {
-                                display: true,
-                                fontSize: 25,
-                                color: '#3e76c1',
-                                backgroundColor: 'rgba(0,0,0,0)',
-                                bottomMarginPercentage: -6
-                            },
+                            }
                         }
                     });
 
@@ -219,26 +208,26 @@ if ($active_app === 'local') {
                                 intersect: true
                             },
                             scales: {
-                                xAxes: [{
+                                x: {
                                     display: true,
                                     scaleLabel: {
                                         display: false
                                     }
-                                }],
-                                yAxes: [{
+                                },
+                                y: {
                                     display: true,
                                     scaleLabel: {
                                         display: false
                                     },
+                                    beginAtZero: true,
                                     ticks: {
-                                        beginAtZero: true,
-                                        userCallback: function (label, index, labels) {
+                                        callback: function(label, index, labels) {
                                             if (Math.floor(label) === label) {
                                                 return label;
                                             }
                                         },
                                     }
-                                }]
+                                }
                             }
                         }
                     });
