@@ -102,6 +102,7 @@ Please follow this link: <a href="https://www.limitloginattempts.com/resources/"
 * Tested with PHP 8.
 * Small styles refactoring.
 * Fixed a rare issue with events log not being displayed correctly.
+* Chart library updated.
 
 = 2.25.9 =
 * Welcome page replaced with a modal.
