@@ -14,6 +14,8 @@ if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-c
 		$active_tab = sanitize_text_field( $_GET["tab"] );
 	}
 }
+
+$auto_update_choice = $this->get_option( 'auto_update_choice' );
 ?>
 
 <?php if( $active_app === 'local' ) : ?>
@@ -22,6 +24,15 @@ if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-c
         <?php echo sprintf( __( 'Thank you for using the free version of <b>Limit Login Attempts Reloaded</b>. <a href="%s" target="_blank">Upgrade to our cloud app</a> for enhanced protection, visual metrics & premium support.', 'limit-login-attempts-reloaded' ),
             'https://www.limitloginattempts.com/info.php?from=plugin-'.( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
         ); ?></p>
+</div>
+<?php endif; ?>
+
+<?php if( ( $auto_update_choice || $auto_update_choice === null ) && !LLA_Helpers::isAutoUpdateEnabled() ) : ?>
+<div class="notice notice-error llar-auto-update-notice">
+    <p>
+        <?php _e( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', 'limit-login-attempts-reloaded' ); ?>
+        <a href="#" class="auto-enable-update-option" data-val="yes"><?php _e( 'Yes, enable auto-update', 'limit-login-attempts-reloaded' ); ?></a> | <a href="#" class="auto-enable-update-option" data-val="no"><?php _e( 'No thanks', 'limit-login-attempts-reloaded' ); ?></a>
+    </p>
 </div>
 <?php endif; ?>
 
@@ -46,3 +57,24 @@ if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-c
     <?php include_once(LLA_PLUGIN_DIR.'views/tab-'.$active_tab.'.php'); ?>
 </div>
 
+<script>
+    (function($) {
+        const $auto_update_notice = $('.llar-auto-update-notice');
+
+        $(document).ready(function() {
+            $auto_update_notice.on('click', ' .auto-enable-update-option', function(e){
+                e.preventDefault();
+
+                $.post(ajaxurl, {
+                    action: 'toggle_auto_update',
+                    value: $(this).data('val'),
+                    sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+                }, function(response){
+                    if(response.success) {
+                        $auto_update_notice.remove();
+                    }
+                });
+            })
+        })
+    })(jQuery);
+</script>

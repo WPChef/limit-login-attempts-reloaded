@@ -38,6 +38,8 @@ foreach ($_SERVER as $key => $value) {
 foreach ($server as $server_key => $ips ) {
 	$debug_info .= $server_key . ' = ' . trim( $ips, ',' ) . "\n";
 }
+
+$plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
 ?>
 
 <table class="form-table">
@@ -46,6 +48,12 @@ foreach ($server as $server_key => $ips ) {
 		<td>
 			<textarea cols="70" rows="10" onclick="this.select()" readonly><?php echo esc_textarea($debug_info); ?></textarea>
 			<p class="description"><?php _e( 'Copy the contents of the window and provide to support.', 'limit-login-attempts-reloaded' ); ?></p>
+		</td>
+	</tr>
+	<tr>
+		<th scope="row" valign="top"><?php echo __( 'Version', 'limit-login-attempts-reloaded' ); ?></th>
+		<td>
+			<div><?php echo esc_html( $plugin_data['Version'] ); ?></div>
 		</td>
 	</tr>
 </table>
