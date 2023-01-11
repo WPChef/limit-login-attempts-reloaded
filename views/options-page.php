@@ -4,7 +4,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 $active_tab = "dashboard";
 $active_app = $this->get_option( 'active_app' );
-if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug' ) ) ) {
+if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug', 'premium' ) ) ) {
 
 	if(!$this->app && $_GET['tab'] === 'logs-custom') {
 
@@ -37,6 +37,10 @@ if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-c
             <a href="<?php echo $this->get_options_page_uri('logs-local'); ?>" class="nav-tab <?php if($active_tab == 'logs-local'){echo 'nav-tab-active';} ?> "><?php _e('Logs', 'limit-login-attempts-reloaded'); ?></a>
 		<?php endif; ?>
         <a href="<?php echo $this->get_options_page_uri('debug'); ?>" class="nav-tab <?php if($active_tab == 'debug'){echo 'nav-tab-active';} ?>"><?php _e('Debug', 'limit-login-attempts-reloaded'); ?></a>
+
+        <?php if( $active_app === 'local' ) : ?>
+        <a href="<?php echo $this->get_options_page_uri('premium'); ?>" class="nav-tab <?php if($active_tab == 'premium'){echo 'nav-tab-active';} ?>"><?php _e('Premium / Extensions', 'limit-login-attempts-reloaded'); ?></a>
+        <?php endif; ?>
 
         <?php if($active_tab == 'logs-custom') : ?>
         <a class="llar-failover-link" href="<?php echo $this->get_options_page_uri('logs-local'); ?>"><?php _e( 'Failover', 'limit-login-attempts-reloaded' ); ?></a>
