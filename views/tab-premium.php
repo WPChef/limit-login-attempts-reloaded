@@ -13,20 +13,20 @@ if( !defined( 'ABSPATH' ) ) exit();
             <div class="text">
                 <div class="title"><?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?></div>
                 <ul class="links">
-                    <li><a href="" target="_blank"><?php _e( 'Full feature list', 'limit-login-attempts-reloaded' ); ?></a></li>
-                    <li><a href="" target="_blank"><?php _e( 'Pre-sales FAQs', 'limit-login-attempts-reloaded' ); ?></a></li>
-                    <li><a href="" target="_blank"><?php _e( 'Ask a pre-sales question', 'limit-login-attempts-reloaded' ); ?></a></li>
-                    <li><a href="" target="_blank"><?php _e( 'Support', 'limit-login-attempts-reloaded' ); ?></a></li>
+                    <li><a href="https://www.limitloginattempts.com/features/?from=plugin-premium-tab" target="_blank"><?php _e( 'Full feature list', 'limit-login-attempts-reloaded' ); ?></a></li>
+                    <li><a href="https://www.limitloginattempts.com/services/pre-sales-questions/?from=plugin-premium-tab" target="_blank"><?php _e( 'Pre-sales FAQs', 'limit-login-attempts-reloaded' ); ?></a></li>
+                    <li><a href="https://www.limitloginattempts.com/contact-us/?from=plugin-premium-tab" target="_blank"><?php _e( 'Ask a pre-sales question', 'limit-login-attempts-reloaded' ); ?></a></li>
+                    <li><a href="https://www.limitloginattempts.com/contact-us/?from=plugin-premium-tab" target="_blank"><?php _e( 'Support', 'limit-login-attempts-reloaded' ); ?></a></li>
                 </ul>
             </div>
             <div class="action">
-                <a class="button button-primary" href="" target="_blank"><?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?></a>
+                <a class="button button-primary" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"><?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?></a>
                 <div class="label"><span class="dashicons dashicons-external"></span><?php _e( 'Goes to LLAR checkout page', 'limit-login-attempts-reloaded' ); ?></div>
             </div>
         </div>
         <div class="section-2">
 			<?php _e( 'You are currently using the free version of <strong>Limit Login Attempts Reloaded</strong>.', 'limit-login-attempts-reloaded' ); ?>
-            <a href="#" target="_blank"><?php _e( 'If you purchased a premium plan, check your email for setup instructions (key included).', 'limit-login-attempts-reloaded' ); ?></a>
+            <a href="https://www.limitloginattempts.com/activate/?from=plugin-premium-tab" target="_blank"><?php _e( 'If you purchased a premium plan, check your email for setup instructions (key included)', 'limit-login-attempts-reloaded' ); ?></a>
         </div>
     </div>
 
@@ -46,19 +46,19 @@ if( !defined( 'ABSPATH' ) ) exit();
                 <th class="feature"></th>
                 <th><img src="<?php echo esc_attr( LLA_PLUGIN_URL . '/assets/img/icon-256x256.png' ); ?>" alt=""><div class="plan-name"><?php _e( 'Free', 'limit-login-attempts-reloaded' ); ?></div></th>
                 <th><img src="<?php echo esc_attr( LLA_PLUGIN_URL . '/assets/img/icon-256x256.png' ); ?>" alt=""><div class="plan-name"><?php _e( 'Premium', 'limit-login-attempts-reloaded' ); ?></div></th>
-                <th><img src="<?php echo esc_attr( LLA_PLUGIN_URL . '/assets/img/icon-256x256.png' ); ?>" alt=""><div class="plan-name"><?php _e( 'Premium Plus', 'limit-login-attempts-reloaded' ); ?></div></th>
+                <th><img src="<?php echo esc_attr( LLA_PLUGIN_URL . '/assets/img/icon-256x256.png' ); ?>" alt=""><div class="plan-name"><?php _e( 'Premium+', 'limit-login-attempts-reloaded' ); ?></div></th>
                 <th><img src="<?php echo esc_attr( LLA_PLUGIN_URL . '/assets/img/icon-256x256.png' ); ?>" alt=""><div class="plan-name"><?php _e( 'Professional', 'limit-login-attempts-reloaded' ); ?></div></th>
             </tr>
             <tr class="table-actions">
                 <td class="feature"></td>
                 <td><span class="installed-label"><span class="dashicons dashicons-yes"></span> <?php _e( 'Installed', 'limit-login-attempts-reloaded' ); ?></span></td>
-                <td><a class="button button-primary" href="#" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
-                <td><a class="button button-primary" href="#" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
-                <td><a class="button button-primary" href="#" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
+                <td><a class="button button-primary" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
+                <td><a class="button button-primary" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
+                <td><a class="button button-primary" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
             </tr>
             <tr>
                 <td class="feature">
-                    <div class="name"><?php _e( 'Limit number of Retry Attempts', 'limit-login-attempts-reloaded' ); ?></div>
+                    <div class="name"><?php _e( 'Limit Number of Retry Attempts', 'limit-login-attempts-reloaded' ); ?></div>
                 </td>
                 <td><span class="dashicons dashicons-yes"></span></td>
                 <td><span class="dashicons dashicons-yes"></span></td>
@@ -96,9 +96,69 @@ if( !defined( 'ABSPATH' ) ) exit();
             </tr>
             <tr>
                 <td class="feature">
+                    <div class="name"><?php _e( 'Block By Country', 'limit-login-attempts-reloaded' ); ?></div>
+                    <div class="desc"><?php _e( 'Disable IPs from any region to disable logins.', 'limit-login-attempts-reloaded' ); ?></div>
+                </td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+            </tr>
+            <tr>
+                <td class="feature">
+                    <div class="name"><?php _e( 'Auto IP Blocklist', 'limit-login-attempts-reloaded' ); ?></div>
+                    <div class="desc"><?php _e( 'Automatically add malicious IPs to your blocklist when triggered by the system.', 'limit-login-attempts-reloaded' ); ?></div>
+                </td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+            </tr>
+            <tr>
+                <td class="feature">
                     <div class="name"><?php _e( 'Intelligent IP Blocking', 'limit-login-attempts-reloaded' ); ?></div>
-                    <div class="desc"><?php _e( 'Use active IP database vie the cloud to automatically block users ' .
+                    <div class="desc"><?php _e( 'Use active IP database via the cloud to automatically block users ' .
                             'before they are able to make a failed login.', 'limit-login-attempts-reloaded' ); ?></div>
+                </td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+            </tr>
+            <tr>
+                <td class="feature">
+                    <div class="name"><?php _e( 'Synchronize Lockouts & Safelists/Blocklists', 'limit-login-attempts-reloaded' ); ?></div>
+                    <div class="desc"><?php _e( 'Lockouts & safelists/blocklists can be shared between multiple domains to enhance protection.', 'limit-login-attempts-reloaded' ); ?></div>
+                </td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+            </tr>
+            <tr>
+                <td class="feature">
+                    <div class="name"><?php _e( 'Access Blocklist of Malicious IPs', 'limit-login-attempts-reloaded' ); ?></div>
+                    <div class="desc"><?php _e( 'Add another layer of protection from brute force bots by accessing a global database of known IPs with malicious activity.', 'limit-login-attempts-reloaded' ); ?></div>
+                </td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+            </tr>
+            <tr>
+                <td class="feature">
+                    <div class="name"><?php _e( 'Access Active Cloud Blocklist', 'limit-login-attempts-reloaded' ); ?></div>
+                    <div class="desc"><?php _e( 'Use system wide data from over 10,000 WordPress websites to identify and block malicious IPs. This is an active list in real-time.', 'limit-login-attempts-reloaded' ); ?></div>
+                </td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+            </tr>
+            <tr>
+                <td class="feature">
+                    <div class="name"><?php _e( 'Premium Support', 'limit-login-attempts-reloaded' ); ?></div>
+                    <div class="desc"><?php _e( 'Receive 1 on 1 technical support via email for any issues. Free support availabe in the <a href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/" target="_blank">WordPress support forum</a>.', 'limit-login-attempts-reloaded' ); ?></div>
                 </td>
                 <td><span class="dashicons dashicons-no-alt"></span></td>
                 <td><span class="dashicons dashicons-yes"></span></td>
@@ -108,9 +168,9 @@ if( !defined( 'ABSPATH' ) ) exit();
             <tr class="table-actions">
                 <td class="feature"></td>
                 <td><span class="installed-label"><span class="dashicons dashicons-yes"></span> <?php _e( 'Installed', 'limit-login-attempts-reloaded' ); ?></span></td>
-                <td><a class="button button-primary" href="#" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
-                <td><a class="button button-primary" href="#" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
-                <td><a class="button button-primary" href="#" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
+                <td><a class="button button-primary" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
+                <td><a class="button button-primary" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
+                <td><a class="button button-primary" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"><?php _e( 'Upgrade now', 'limit-login-attempts-reloaded' ); ?></a></td>
             </tr>
         </table>
     </div>
