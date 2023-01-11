@@ -55,6 +55,7 @@ class Limit_Login_Attempts {
         'retries_valid'         => array(),
         'retries'               => array(),
         'lockouts'              => array(),
+        'auto_update_choice'   => null,
 	);
 	/**
 	* Admin options page slug
@@ -131,6 +132,7 @@ class Limit_Login_Attempts {
 		add_action( 'wp_ajax_nopriv_get_remaining_attempts_message', array( $this, 'get_remaining_attempts_message_callback' ) );
 		add_action( 'wp_ajax_subscribe_email', array( $this, 'subscribe_email_callback' ) );
 		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
+		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -221,6 +223,10 @@ class Limit_Login_Attempts {
 			// Write time when the plugin is activated
 			$this->update_option( 'notice_enable_notify_timestamp', strtotime( '-32 day' ) );
 		}
+
+		if( version_compare( LLA_Helpers::getWordpressVersion(), '5.5', '<' ) ) {
+			$this->update_option( 'auto_update_choice', 0 );
+        }
 
 		// Load languages files
 		load_plugin_textdomain( 'limit-login-attempts-reloaded', false, plugin_basename( dirname( __FILE__ ) ) . '/../languages' );
@@ -2725,6 +2731,29 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 		$remaining = !empty( $_SESSION['login_attempts_left'] ) ? intval( $_SESSION['login_attempts_left'] ) : 0;
         $message = ( !$remaining ) ? '' : sprintf( _n( "<strong>%d</strong> attempt remaining.", "<strong>%d</strong> attempts remaining.", $remaining, 'limit-login-attempts-reloaded' ), $remaining );
 		wp_send_json_success( $message );
+	}
+
+	public function toggle_auto_update_callback() {
+
+		check_ajax_referer('llar-action', 'sec');
+
+		$value = sanitize_text_field( $_POST['value'] );
+		$auto_update_plugins = get_site_option( 'auto_update_plugins', array() );
+
+		if( $value === 'yes' ) {
+			$auto_update_plugins[] = LLA_PLUGIN_BASENAME;
+            $this->update_option( 'auto_update_choice', 1 );
+
+		} else if ( $value === 'no' ) {
+			if ( ( $key = array_search( LLA_PLUGIN_BASENAME, $auto_update_plugins ) ) !== false ) {
+				unset($auto_update_plugins[$key]);
+			}
+			$this->update_option( 'auto_update_choice', 0 );
+		}
+
+		update_site_option( 'auto_update_plugins', $auto_update_plugins );
+
+		wp_send_json_success();
 	}
 
 	public function get_custom_app_config() {
