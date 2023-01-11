@@ -193,6 +193,8 @@ $active_app_config = $this->get_custom_app_config();
                             <button class="button" id="limit-login-app-setup"><?php echo __( 'Submit', 'limit-login-attempts-reloaded' ); ?></button>
                             <span class="spinner llar-app-ajax-spinner"></span><br>
                             <span class="llar-app-ajax-msg"></span>
+                            <p class="description"><?php _e( 'Add this code to all websites in your network to sync ' .
+									'protection (payment required for additional domains unless subscribed to Agency plan).', 'limit-login-attempts-reloaded' ) ?></p>
                         </div>
 
 						<?php if( $active_app === 'local' ) : ?>
