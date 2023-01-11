@@ -107,4 +107,14 @@ class LLA_Helpers {
 
 		return $content;
 	}
+
+	public static function isAutoUpdateEnabled() {
+		$auto_update_plugins = get_site_option( 'auto_update_plugins' );
+		return is_array( $auto_update_plugins ) && in_array( LLA_PLUGIN_BASENAME, $auto_update_plugins );
+	}
+
+	public static function getWordpressVersion() {
+		global $wp_version;
+		return $wp_version;
+	}
 }
