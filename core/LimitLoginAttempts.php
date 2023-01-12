@@ -89,6 +89,11 @@ class Limit_Login_Attempts {
 	 */
 	public $app = null;
 
+	/**
+	 * @var bool
+	 */
+	private $network_mode = false;
+
 	public function __construct() {
 
 	    $this->default_options['gdpr_message'] = __( 'By proceeding you understand and give your consent that your IP address and browser information might be processed by the security plugins installed on this site.', 'limit-login-attempts-reloaded' );
@@ -242,12 +247,12 @@ class Limit_Login_Attempts {
 
 		if ( $this->network_mode )
 		{
-			$this->allow_local_options = get_site_option( 'limit_login_allow_local_options', false );
-			$this->use_local_options = $this->allow_local_options && get_option( 'limit_login_use_local_options', false );
+			$allow_local_options     = get_site_option( 'limit_login_allow_local_options', false );
+			$this->use_local_options = $allow_local_options && get_option( 'limit_login_use_local_options', false );
 		}
 		else
 		{
-			$this->allow_local_options = true;
+			$allow_local_options     = true;
 			$this->use_local_options = true;
 		}
 
@@ -268,7 +273,7 @@ class Limit_Login_Attempts {
 			    add_action( 'network_admin_menu', array( $this, 'network_setting_menu_alert_icon' ) );
 		}
 
-		if ( $this->allow_local_options ) {
+		if ( $allow_local_options ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 
 			if( $this->get_option( 'show_warning_badge' ) )
