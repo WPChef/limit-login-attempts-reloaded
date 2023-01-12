@@ -9,6 +9,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 ?>
 
 <div class="llar-help-page">
+    <?php if( $this->get_option( 'active_app' ) === 'local' ) : ?>
     <div class="section-1">
         <div class="block">
             <div class="title"><?php _e( 'Upgrade Now to Access Premium Support', 'limit-login-attempts-reloaded' ); ?></div>
@@ -28,6 +29,8 @@ if( !defined( 'ABSPATH' ) ) exit();
             </div>
         </div>
     </div>
+    <?php endif; ?>
+
     <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-help-tab" target="_blank" class="gdpr-information-link"><?php _e( 'GDPR Information', 'limit-login-attempts-reloaded' ); ?></a>
 
     <h2 class="all-doc-title"><a href="#" target="_blank"><?php _e( 'All Documentation', 'limit-login-attempts-reloaded' ); ?></a></h2>
