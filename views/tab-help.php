@@ -9,6 +9,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 ?>
 
 <div class="llar-help-page">
+    <?php if( $this->get_option( 'active_app' ) === 'local' ) : ?>
     <div class="section-1">
         <div class="block">
             <div class="title"><?php _e( 'Upgrade Now to Access Premium Support', 'limit-login-attempts-reloaded' ); ?></div>
@@ -28,6 +29,8 @@ if( !defined( 'ABSPATH' ) ) exit();
             </div>
         </div>
     </div>
+    <?php endif; ?>
+
     <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-help-tab" target="_blank" class="gdpr-information-link"><?php _e( 'GDPR Information', 'limit-login-attempts-reloaded' ); ?></a>
 
     <h2 class="all-doc-title"><a href="#" target="_blank"><?php _e( 'All Documentation', 'limit-login-attempts-reloaded' ); ?></a></h2>
@@ -53,11 +56,16 @@ if( !defined( 'ABSPATH' ) ) exit();
         <div class="top-list">
             <div class="title"><?php _e( 'Top Topics and Questions', 'limit-login-attempts-reloaded' ); ?></div>
             <ol>
+                <li><a href="https://www.limitloginattempts.com/under-attack/?from=plugin-help-tab" target="_blank"><?php _e( 'How do I know if I\'m under attack?', 'limit-login-attempts-reloaded' ); ?></a></li>
                 <li><a href="https://www.limitloginattempts.com/how-can-i-tell-that-the-premium-plugin-is-working/?from=plugin-help-tab" target="_blank"><?php _e( 'How can I tell that the premium plugin is working?', 'limit-login-attempts-reloaded' ); ?></a></li>
+                <li><a href="https://www.limitloginattempts.com/services/technical-questions/?from=plugin-help-tab#1499254962846-5ae4b44a-7b13" target="_blank"><?php _e( 'What do I do if the admin gets blocked?', 'limit-login-attempts-reloaded' ); ?></a></li>
                 <li><a href="https://www.limitloginattempts.com/why-am-i-still-seeing-login-attempts-even-after-the-ip-got-blocked/?from=plugin-help-tab" target="_blank"><?php _e( 'Why am I still seeing login attempts even after the IP got blocked?', 'limit-login-attempts-reloaded' ); ?></a></li>
-                <li><a href="https://www.limitloginattempts.com/access-rules-explained/?from=plugin-help-tab" target="_blank"><?php _e( 'Access Rules Explained', 'limit-login-attempts-reloaded' ); ?></a></li>
-                <li><a href="https://www.limitloginattempts.com/could-these-failed-login-attempts-be-fake/?from=plugin-help-tab" target="_blank"><?php _e( 'Could These Failed Login Attempts Be Fake?', 'limit-login-attempts-reloaded' ); ?></a></li>
+                <li><a href="https://www.limitloginattempts.com/could-these-failed-login-attempts-be-fake/?from=plugin-help-tab" target="_blank"><?php _e( 'Could these failed login attempts be fake?', 'limit-login-attempts-reloaded' ); ?></a></li>
                 <li><a href="https://www.limitloginattempts.com/the-logs-tab-how-system-works/?from=plugin-help-tab" target="_blank"><?php _e( 'The Logs tab: How the system works', 'limit-login-attempts-reloaded' ); ?></a></li>
+                <li><a href="https://www.limitloginattempts.com/services/accounts/?from=plugin-help-tab#1499254962846-5ae4b44a-7b13" target="_blank"><?php _e( 'What happens if my site exceeds the request limits in the plan?', 'limit-login-attempts-reloaded' ); ?></a></li>
+                <li><a href="https://www.limitloginattempts.com/services/technical-questions/?from=plugin-help-tab#1499254962814-d0468adc-2d49" target="_blank"><?php _e( 'What do I do if all users get blocked?', 'limit-login-attempts-reloaded' ); ?></a></li>
+                <li><a href="https://www.limitloginattempts.com/services/technical-questions/?from=plugin-help-tab#1499255188068-f47985cb-d829" target="_blank"><?php _e( 'I just installed LLAR and I\'m already getting several failed login attempts', 'limit-login-attempts-reloaded' ); ?></a></li>
+                <li><a href="https://www.limitloginattempts.com/services/technical-questions/?from=plugin-help-tab#1499255188068-f47985cb-d842" target="_blank"><?php _e( 'What URLs are being attacked and protected?', 'limit-login-attempts-reloaded' ); ?></a></li>
             </ol>
         </div>
     </div>
