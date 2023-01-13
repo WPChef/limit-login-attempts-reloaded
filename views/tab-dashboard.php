@@ -330,7 +330,7 @@ if( $active_app === 'local' ) {
                 <table class="lockouts-by-country-table">
                     <tr>
                         <th><?php _e( 'Country', 'limit-login-attempts-reloaded' ); ?></th>
-                        <th><?php _e( 'Count', 'limit-login-attempts-reloaded' ); ?></th>
+                        <th><?php _e( 'Attempts', 'limit-login-attempts-reloaded' ); ?></th>
                     </tr>
                     <?php foreach( $stats_global['countries'] as $country_data ) :
 

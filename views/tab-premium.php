@@ -100,7 +100,17 @@ if( !defined( 'ABSPATH' ) ) exit();
                     <div class="desc"><?php _e( 'Disable IPs from any region to disable logins.', 'limit-login-attempts-reloaded' ); ?></div>
                 </td>
                 <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
                 <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+            </tr>
+            <tr>
+                <td class="feature">
+                    <div class="name"><?php _e( 'Access Blocklist of Malicious IPs', 'limit-login-attempts-reloaded' ); ?></div>
+                    <div class="desc"><?php _e( 'Add another layer of protection from brute force bots by accessing a global database of known IPs with malicious activity.', 'limit-login-attempts-reloaded' ); ?></div>
+                </td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
                 <td><span class="dashicons dashicons-yes"></span></td>
                 <td><span class="dashicons dashicons-yes"></span></td>
             </tr>
@@ -110,10 +120,20 @@ if( !defined( 'ABSPATH' ) ) exit();
                     <div class="desc"><?php _e( 'Automatically add malicious IPs to your blocklist when triggered by the system.', 'limit-login-attempts-reloaded' ); ?></div>
                 </td>
                 <td><span class="dashicons dashicons-no-alt"></span></td>
-                <td><span class="dashicons dashicons-yes"></span></td>
-                <td><span class="dashicons dashicons-yes"></span></td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
                 <td><span class="dashicons dashicons-yes"></span></td>
             </tr>
+            <tr>
+                <td class="feature">
+                    <div class="name"><?php _e( 'Access Active Cloud Blocklist', 'limit-login-attempts-reloaded' ); ?></div>
+                    <div class="desc"><?php _e( 'Use system wide data from over 10,000 WordPress websites to identify and block malicious IPs. This is an active list in real-time.', 'limit-login-attempts-reloaded' ); ?></div>
+                </td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-no-alt"></span></td>
+                <td><span class="dashicons dashicons-yes"></span></td>
+            </tr>            
             <tr>
                 <td class="feature">
                     <div class="name"><?php _e( 'Intelligent IP Blocking', 'limit-login-attempts-reloaded' ); ?></div>
@@ -129,26 +149,6 @@ if( !defined( 'ABSPATH' ) ) exit();
                 <td class="feature">
                     <div class="name"><?php _e( 'Synchronize Lockouts & Safelists/Blocklists', 'limit-login-attempts-reloaded' ); ?></div>
                     <div class="desc"><?php _e( 'Lockouts & safelists/blocklists can be shared between multiple domains to enhance protection.', 'limit-login-attempts-reloaded' ); ?></div>
-                </td>
-                <td><span class="dashicons dashicons-no-alt"></span></td>
-                <td><span class="dashicons dashicons-yes"></span></td>
-                <td><span class="dashicons dashicons-yes"></span></td>
-                <td><span class="dashicons dashicons-yes"></span></td>
-            </tr>
-            <tr>
-                <td class="feature">
-                    <div class="name"><?php _e( 'Access Blocklist of Malicious IPs', 'limit-login-attempts-reloaded' ); ?></div>
-                    <div class="desc"><?php _e( 'Add another layer of protection from brute force bots by accessing a global database of known IPs with malicious activity.', 'limit-login-attempts-reloaded' ); ?></div>
-                </td>
-                <td><span class="dashicons dashicons-no-alt"></span></td>
-                <td><span class="dashicons dashicons-yes"></span></td>
-                <td><span class="dashicons dashicons-yes"></span></td>
-                <td><span class="dashicons dashicons-yes"></span></td>
-            </tr>
-            <tr>
-                <td class="feature">
-                    <div class="name"><?php _e( 'Access Active Cloud Blocklist', 'limit-login-attempts-reloaded' ); ?></div>
-                    <div class="desc"><?php _e( 'Use system wide data from over 10,000 WordPress websites to identify and block malicious IPs. This is an active list in real-time.', 'limit-login-attempts-reloaded' ); ?></div>
                 </td>
                 <td><span class="dashicons dashicons-no-alt"></span></td>
                 <td><span class="dashicons dashicons-yes"></span></td>
