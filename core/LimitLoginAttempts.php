@@ -1134,10 +1134,8 @@ class Limit_Login_Attempts {
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 
         $subject = sprintf(
-            __( "[%s] Failed WordPress login attempt by IP %s on %s", 'limit-login-attempts-reloaded' ),
-            $blogname,
-            $ip,
-            date( get_option( 'date_format' ) )
+            __( "Failed login by IP %s", 'limit-login-attempts-reloaded' ),
+            $ip
         );
 
         $message = __(
