@@ -1,8 +1,11 @@
 <?php
 
+use LLAR\Core\Config;
+use LLAR\Core\LimitLoginAttempts;
+
 if (!defined('ABSPATH')) exit();
 
-$active_app = ( $this->get_option( 'active_app' ) === 'custom' && $this->app ) ? 'custom' : 'local';
+$active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 
 $retries_chart_title = '';
 $retries_chart_desc = '';
@@ -12,7 +15,7 @@ $api_stats = false;
 $retries_count = 0;
 if ($active_app === 'local') {
 
-	$retries_stats = $this->get_option('retries_stats');
+	$retries_stats = Config::get('retries_stats');
 
 	if ($retries_stats) {
 		if (array_key_exists(date_i18n('Y-m-d'), $retries_stats)) {
@@ -28,18 +31,18 @@ if ($active_app === 'local') {
 
 		$retries_chart_title = sprintf(_n('%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded'), $retries_count);
 		$retries_chart_title .= __('today', 'limit-login-attempts-reloaded');
-		$retries_chart_desc = __('Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded');
+		$retries_chart_desc = __('Your site might have been discovered by hackers', 'limit-login-attempts-reloaded');
 		$retries_chart_color = '#FFCC66';
 	} else {
 
 		$retries_chart_title = __('Warning: Your site is experiencing over 100 failed login attempts today', 'limit-login-attempts-reloaded');
-		$retries_chart_desc = sprintf(__('Your site is currently at a high risk for brute force activity. Consider <a href="%s" target="_blank">premium protection</a> if frequent attacks persist or website performance is degraded', 'limit-login-attempts-reloaded'), 'https://www.limitloginattempts.com/info.php?from=dashboard-widget');
+		$retries_chart_desc = __('Your site may be under a brute-force attack', 'limit-login-attempts-reloaded');
 		$retries_chart_color = '#FF6633';
 	}
 
 } else {
 
-	$api_stats = $this->app->stats();
+	$api_stats = LimitLoginAttempts::$cloud_app->stats();
 
 	if ($api_stats && !empty($api_stats['attempts']['count'])) {
 
@@ -136,7 +139,7 @@ if ($active_app === 'local') {
 				$date_format = trim(get_option('date_format'), ' yY,._:;-/\\');
 				$date_format = str_replace('F', 'M', $date_format);
 
-				$retries_stats = $this->get_option('retries_stats');
+				$retries_stats = Config::get('retries_stats');
 
 				if (is_array($retries_stats) && $retries_stats) {
 

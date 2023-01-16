@@ -1,6 +1,10 @@
 <?php
 
-class LLAR_cidr_check {
+namespace LLAR\Lib;
+
+if( !defined( 'ABSPATH' ) ) exit;
+
+class CidrCheck {
 
 	public function match($ip, $cidr) {
 
