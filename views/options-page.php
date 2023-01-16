@@ -54,6 +54,7 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
             <a href="<?php echo $this->get_options_page_uri('logs-local'); ?>" class="nav-tab <?php if($active_tab == 'logs-local'){echo 'nav-tab-active';} ?> "><?php _e('Logs', 'limit-login-attempts-reloaded'); ?></a>
 		<?php endif; ?>
 
+        <a href="<?php echo $this->get_options_page_uri('load-proxy'); ?>" class="nav-tab <?php if($active_tab == 'load-proxy'){echo 'nav-tab-active';} ?>"><?php _e('Load Proxy', 'limit-login-attempts-reloaded'); ?></a>
         <a href="<?php echo $this->get_options_page_uri('debug'); ?>" class="nav-tab <?php if($active_tab == 'debug'){echo 'nav-tab-active';} ?>"><?php _e('Debug', 'limit-login-attempts-reloaded'); ?></a>
         <a href="<?php echo $this->get_options_page_uri('help'); ?>" class="nav-tab <?php if($active_tab == 'help'){echo 'nav-tab-active';} ?>"><?php _e('Help', 'limit-login-attempts-reloaded'); ?></a>
 
