@@ -8,7 +8,6 @@ $active_app = ($active_app === 'custom' && $this->app) ? 'custom' : 'local';
 $retries_chart_title = '';
 $retries_chart_desc = '';
 $retries_chart_color = '';
-$retries_chart_show_actions = false;
 
 $api_stats = false;
 $retries_count = 0;
@@ -31,14 +30,13 @@ if( $active_app === 'local' ) {
 
 		$retries_chart_title = sprintf( _n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
 		$retries_chart_title .= __( 'today', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = __( 'Your site might have been discovered by hackers', 'limit-login-attempts-reloaded' );
+		$retries_chart_desc = __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#FFCC66';
     } else {
 
 		$retries_chart_title = __( 'Warning: Your site is experiencing over 100 failed login attempts today', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = __( 'Your site may be under a brute-force attack', 'limit-login-attempts-reloaded' );
+		$retries_chart_desc = sprintf(__('Your site is currently at a high risk for brute force activity. Consider <a href="%s" target="_blank">premium protection</a> if frequent attacks persist or website performance is degraded', 'limit-login-attempts-reloaded'), 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-status');
 		$retries_chart_color = '#FF6633';
-		$retries_chart_show_actions = true;
     }
 
 } else {
@@ -102,15 +100,6 @@ if( $active_app === 'local' ) {
                 </script>
                 <div class="title"><?php echo esc_html( $retries_chart_title ); ?></div>
                 <div class="desc"><?php echo $retries_chart_desc; ?></div>
-				<?php if( $retries_chart_show_actions ) : ?>
-                    <div class="actions">
-                        <ol>
-                            <li><?php _e( 'Ensure your passwords are secure.', 'limit-login-attempts-reloaded' ); ?></li>
-                            <li><?php _e( 'Make sure WordPress and all your plugins are updated.', 'limit-login-attempts-reloaded' ); ?></li>
-                            <li><?php echo sprintf( __( 'Consider <a href="%s" target="_blank">upgrading to premium</a> for advanced protection.', 'limit-login-attempts-reloaded' ), 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-status' ); ?></li>
-                        </ol>
-                    </div>
-				<?php endif; ?>
             </div>
         </div>
         <div class="info-box-2">
