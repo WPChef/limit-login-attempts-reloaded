@@ -1,15 +1,12 @@
 <?php
 
+use LLAR\Core\Config;
+
 if( !defined( 'ABSPATH' ) ) exit();
-
-/**
- * @var $this Limit_Login_Attempts
- */
-
 ?>
 
 <div class="llar-help-page">
-    <?php if( $this->get_option( 'active_app' ) === 'local' ) : ?>
+    <?php if( Config::get( 'active_app' ) === 'local' ) : ?>
     <div class="section-1">
         <div class="block">
             <div class="title"><?php _e( 'Upgrade Now to Access Premium Support', 'limit-login-attempts-reloaded' ); ?></div>
