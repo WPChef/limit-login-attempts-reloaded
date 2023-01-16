@@ -1173,15 +1173,12 @@ You are receiving this email because there was a failed login attempt on your we
 If you\'d like to opt out of these notifications, please click the “Unsubscribe” link below.</p>
 
 <p><b>How Dangerous Is This Failed Login Attempt?</b><br>
-Unfortunately, we cannot determine how dangerous this failed login attempt is. 
-You will receive protection from the free version of the plugin, but depending on how frequent the attacks are, 
-you may experience performance issues. In the plugin dashboard, you can investigate the severity of the failed login 
-attempts and take additional steps to protect your website. You can visit the Limit Login Attempts Reloaded website 
-for more information on our premium services.</p>';
+Unfortunately, the free version of the plugin doesn\'t provide IP intelligence to determine how dangerous this IP address is, but it does prevent excessive login attempts. In the plugin dashboard, you can investigate the severity of the failed login attempts and take additional steps to protect your website. To learn more about IP intelligence and premium features, visit the <a href="%2$s" target="_blank">Limit Login Attempts Reloaded website</a>.</p>';
 
 		$message = sprintf(
 			$message,
-			$site_domain
+			$site_domain,
+			'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version']
 		);
 
 		if( LLA_Helpers::is_mu() ) {

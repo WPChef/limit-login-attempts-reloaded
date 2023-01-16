@@ -31,11 +31,8 @@ if( !defined( 'ABSPATH' ) ) exit();
     </div>
 
     <div class="text-block-1">
-        <h1><?php _e( 'Why should I Consider Premium?', 'limit-login-attempts-reloaded' ); ?></h1>
-        <p><?php _e( 'Although the free version offers great protection, it lacks higher IP intelligence. With higher IP ' .
-				'intelligence, your website will be able to identify malicious IPs before they attempt a login and absorb them' .
-				' into the cloud to save system resources. Your site will not only be more secure, but will operate at its ' .
-				'optimal performance.', 'limit-login-attempts-reloaded' ); ?></p>
+        <h1><?php _e( 'Why Should I Consider Premium?', 'limit-login-attempts-reloaded' ); ?></h1>
+        <p><?php _e( 'Although the free version offers great protection, the premium version includes an important feature called <b>IP Intelligence</b>. With IP intelligence, your website will be able to identify malicious IPs before they attempt a login, and absorb them into the cloud to save system resources. Your site will not only be more secure, but will operate at its optimal performance.', 'limit-login-attempts-reloaded' ); ?></p>
     </div>
 
     <h3><?php _e( 'Features comparison', 'limit-login-attempts-reloaded' ); ?></h3>
