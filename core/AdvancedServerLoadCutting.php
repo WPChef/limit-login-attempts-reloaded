@@ -110,6 +110,7 @@ class AdvancedServerLoadCutting {
 			);
 
 			$proxy_content .= '$acl = \'' . json_encode( $acl ) . '\';';
+			$proxy_content .= "\n\$trusted_ip_origins = '" . json_encode( Config::get( 'trusted_ip_origins' ) ) . "';";
 		}
 
 		$proxy_content = $proxy_content . "\ninclude_once(\"" . str_replace( '\\', '/', LLA_PLUGIN_DIR ) .  "load-proxy-handler.php\");";
