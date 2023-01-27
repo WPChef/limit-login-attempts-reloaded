@@ -99,21 +99,28 @@ class AdvancedServerLoadCutting {
 	public static function generate_proxy_file_content() {
 		$proxy_content = "<?php\n";
 
+		$proxy_config = array(
+			'trusted_ip_origins' => Config::get( 'trusted_ip_origins' ),
+		);
+
 		if( Config::get( 'active_app' ) === 'custom' && $config = Config::get( 'app_config' ) ) {
-			$proxy_content .= '$key = "' . $config['key'] . '";';
+			$proxy_config = array_merge( $proxy_config, array(
+				'key'       => $config['key'],
+				'header'    => $config['header'],
+				'api'       => $config['api'],
+				'settings'  => $config['settings'],
+			) );
 		} else {
-			$acl = array(
+			$proxy_config['acl'] =  array(
 				'whitelist_ips'         => Config::get( 'whitelist' ),
 				'whitelist_usernames'   => Config::get( 'whitelist_usernames' ),
 				'blacklist_ips'         => Config::get( 'blacklist' ),
 				'blacklist_usernames'   => Config::get( 'blacklist_usernames' ),
 			);
-
-			$proxy_content .= '$acl = \'' . json_encode( $acl ) . '\';';
-			$proxy_content .= "\n\$trusted_ip_origins = '" . json_encode( Config::get( 'trusted_ip_origins' ) ) . "';";
 		}
 
-		$proxy_content = $proxy_content . "\ninclude_once(\"" . str_replace( '\\', '/', LLA_PLUGIN_DIR ) .  "load-proxy-handler.php\");";
+		$proxy_content .= "\$proxy_config = '" . json_encode( $proxy_config, JSON_FORCE_OBJECT ) . "';";
+		$proxy_content .= "\ninclude_once(\"" . str_replace( '\\', '/', LLA_PLUGIN_DIR ) .  "load-proxy-handler.php\");";
 
 		return $proxy_content;
 	}

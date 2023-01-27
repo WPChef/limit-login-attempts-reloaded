@@ -201,4 +201,131 @@ class Helpers {
 	public static function is_writable( $filepath ) {
 		return file_exists( $filepath ) && wp_is_writable( $filepath );
 	}
+
+	public static function ip_in_range( $ip, $list ) {
+
+		foreach ( $list as $range ) {
+
+			$range = array_map('trim', explode('-', $range) );
+			if ( count( $range ) == 1 ) {
+
+				// CIDR
+				if( strpos( $range[0], '/' ) !== false && self::check_ip_cidr( $ip, $range[0] ) ) {
+
+					return true;
+				}
+				// Single IP
+				else if ( (string)$ip === (string)$range[0] ) {
+
+					return true;
+				}
+
+			} else {
+
+				$low = ip2long( $range[0] );
+				$high = ip2long( $range[1] );
+				$needle = ip2long( $ip );
+
+				if ( $low === false || $high === false || $needle === false )
+					continue;
+
+				$low = (float)sprintf("%u",$low);
+				$high = (float)sprintf("%u",$high);
+				$needle = (float)sprintf("%u",$needle);
+
+				if ( $needle >= $low && $needle <= $high )
+					return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static function detect_ip_address( $trusted_ip_origins ) {
+		if( empty( $trusted_ip_origins ) || !is_array( $trusted_ip_origins ) ) {
+
+			$trusted_ip_origins = array();
+		}
+
+		if( !in_array( 'REMOTE_ADDR', $trusted_ip_origins ) ) {
+
+			$trusted_ip_origins[] = 'REMOTE_ADDR';
+		}
+
+		$ip = '';
+		foreach ( $trusted_ip_origins as $origin ) {
+
+			if( isset( $_SERVER[$origin] ) && !empty( $_SERVER[$origin] ) ) {
+
+				if( strpos( $_SERVER[$origin], ',' ) !== false ) {
+
+					$origin_ips = explode( ',', $_SERVER[$origin] );
+					$origin_ips = array_map( 'trim', $origin_ips );
+
+					if( $origin_ips ) {
+
+						foreach ($origin_ips as $check_ip) {
+
+							if( self::is_ip_valid( $check_ip ) ) {
+
+								$ip = $check_ip;
+								break 2;
+							}
+						}
+					}
+				}
+
+				if( self::is_ip_valid( $_SERVER[$origin] ) ) {
+
+					$ip = $_SERVER[$origin];
+					break;
+				}
+			}
+		}
+
+		$ip = preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ip);
+
+		return $ip;
+	}
+
+	public static function get_all_ips() {
+
+		$ips = array();
+
+		foreach ( $_SERVER as $key => $value ) {
+
+			if( in_array( $key, array( 'SERVER_ADDR' ) ) ) continue;
+
+			if( filter_var( $value, FILTER_VALIDATE_IP ) ) {
+
+				$ips[$key] = $value;
+			}
+		}
+
+		if( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) && !array_key_exists( 'HTTP_X_FORWARDED_FOR', $ips ) ) {
+
+			$ips['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		}
+
+		return $ips;
+	}
+
+	public static function is_ip_valid( $ip ) {
+		if( empty( $ip ) ) return false;
+
+		return filter_var( $ip, FILTER_VALIDATE_IP );
+	}
+
+	public static function detect_gateway() {
+
+		$gateway = 'wp_login';
+
+		if ( isset( $_POST['woocommerce-login-nonce'] ) ) {
+			$gateway = 'wp_woo_login';
+		} elseif ( isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ) ) {
+			$gateway = 'wp_xmlrpc';
+		}
+
+		return $gateway;
+	}
 }
