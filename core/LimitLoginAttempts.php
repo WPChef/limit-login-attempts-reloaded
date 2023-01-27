@@ -287,7 +287,7 @@ class LimitLoginAttempts {
 	}
 
 	public function check_whitelist_ips( $allow, $ip ) {
-		return $this->ip_in_range( $ip, (array) Config::get( 'whitelist' ) );
+		return Helpers::ip_in_range( $ip, (array) Config::get( 'whitelist' ) );
 	}
 
 	public function check_whitelist_usernames( $allow, $username ) {
@@ -295,50 +295,11 @@ class LimitLoginAttempts {
 	}
 
 	public function check_blacklist_ips( $allow, $ip ) {
-		return $this->ip_in_range( $ip, (array) Config::get( 'blacklist' ) );
+		return Helpers::ip_in_range( $ip, (array) Config::get( 'blacklist' ) );
 	}
 
 	public function check_blacklist_usernames( $allow, $username ) {
 		return in_array( $username, (array) Config::get( 'blacklist_usernames' ) );
-	}
-
-	public function ip_in_range( $ip, $list ) {
-
-	    foreach ( $list as $range ) {
-
-			$range = array_map('trim', explode('-', $range) );
-			if ( count( $range ) == 1 ) {
-
-			    // CIDR
-			    if( strpos( $range[0], '/' ) !== false && Helpers::check_ip_cidr( $ip, $range[0] ) ) {
-
-			        return true;
-				}
-			    // Single IP
-			    else if ( (string)$ip === (string)$range[0] ) {
-
-					 return true;
-				}
-
-			} else {
-
-				$low = ip2long( $range[0] );
-				$high = ip2long( $range[1] );
-				$needle = ip2long( $ip );
-
-				if ( $low === false || $high === false || $needle === false )
-					continue;
-
-				$low = (float)sprintf("%u",$low);
-				$high = (float)sprintf("%u",$high);
-				$needle = (float)sprintf("%u",$needle);
-
-				if ( $needle >= $low && $needle <= $high )
-					return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**
@@ -415,9 +376,9 @@ class LimitLoginAttempts {
 		if ( ! empty( $username ) && ! empty( $password ) ) {
 
 			if( self::$cloud_app && $response = self::$cloud_app->acl_check( array(
-			        'ip'        => $this->get_all_ips(),
+			        'ip'        => Helpers::get_all_ips(),
                     'login'     => $username,
-                    'gateway'   => $this->detect_gateway()
+                    'gateway'   => Helpers::detect_gateway()
                 ) ) ) {
 
 			    if( $response['result'] === 'deny' ) {
@@ -533,31 +494,6 @@ class LimitLoginAttempts {
 		}
 		return $user;
 	}
-
-	/**
-	 * @return array
-	 */
-	public function get_all_ips() {
-
-	    $ips = array();
-
-		foreach ( $_SERVER as $key => $value ) {
-
-			if( in_array( $key, array( 'SERVER_ADDR' ) ) ) continue;
-
-			if( filter_var( $value, FILTER_VALIDATE_IP ) ) {
-
-				$ips[$key] = $value;
-			}
-		}
-
-		if( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) && !array_key_exists( 'HTTP_X_FORWARDED_FOR', $ips ) ) {
-
-			$ips['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-
-		return $ips;
-    }
 
 	/**
 	* Check if the original plugin is installed
@@ -725,9 +661,9 @@ class LimitLoginAttempts {
 		$_SESSION['login_attempts_left'] = 0;
 
 		if( self::$cloud_app && $response = self::$cloud_app->lockout_check( array(
-				'ip'        => $this->get_all_ips(),
+				'ip'        => Helpers::get_all_ips(),
 				'login'     => $username,
-                'gateway'   => $this->detect_gateway()
+                'gateway'   => Helpers::detect_gateway()
             ) ) ) {
 
 		    if( $response['result'] === 'allow' ) {
@@ -1062,7 +998,7 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 		$log[ $ip ][ $user_login ]['counter']++;
 		$log[ $ip ][ $user_login ]['date'] = time();
 
-		$log[ $ip ][ $user_login ]['gateway'] = $this->detect_gateway();
+		$log[ $ip ][ $user_login ]['gateway'] = Helpers::detect_gateway();
 
 		if ( $option === false ) {
 			Config::add( 'logged', $log );
@@ -1070,22 +1006,6 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 			Config::update( 'logged', $log );
 		}
 	}
-
-	/**
-	 * @return string
-	 */
-	public function detect_gateway() {
-
-		$gateway = 'wp_login';
-
-		if ( isset( $_POST['woocommerce-login-nonce'] ) ) {
-			$gateway = 'wp_woo_login';
-		} elseif ( isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ) ) {
-			$gateway = 'wp_xmlrpc';
-		}
-
-		return $gateway;
-    }
 
 	/**
 	* Check if IP is whitelisted.
@@ -1371,65 +1291,8 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 	 *
 	 */
 	public function get_address() {
-
-		$trusted_ip_origins = Config::get( 'trusted_ip_origins' );
-
-		if( empty( $trusted_ip_origins ) || !is_array( $trusted_ip_origins ) ) {
-
-			$trusted_ip_origins = array();
-		}
-
-		if( !in_array( 'REMOTE_ADDR', $trusted_ip_origins ) ) {
-
-			$trusted_ip_origins[] = 'REMOTE_ADDR';
-		}
-
-		$ip = '';
-		foreach ( $trusted_ip_origins as $origin ) {
-
-			if( isset( $_SERVER[$origin] ) && !empty( $_SERVER[$origin] ) ) {
-
-				if( strpos( $_SERVER[$origin], ',' ) !== false ) {
-
-					$origin_ips = explode( ',', $_SERVER[$origin] );
-					$origin_ips = array_map( 'trim', $origin_ips );
-
-			        if( $origin_ips ) {
-
-						foreach ($origin_ips as $check_ip) {
-
-						    if( $this->is_ip_valid( $check_ip ) ) {
-
-						        $ip = $check_ip;
-						        break 2;
-                            }
-			            }
-                    }
-                }
-
-                if( $this->is_ip_valid( $_SERVER[$origin] ) ) {
-
-					$ip = $_SERVER[$origin];
-					break;
-                }
-			}
-		}
-
-		$ip = preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ip);
-
-		return $ip;
+        return Helpers::detect_ip_address( Config::get( 'trusted_ip_origins' ) );
 	}
-
-	/**
-	 * @param $ip
-	 * @return bool|mixed
-	 */
-	public function is_ip_valid( $ip ) {
-
-	    if( empty( $ip ) ) return false;
-
-	    return filter_var($ip, FILTER_VALIDATE_IP);
-    }
 
 	/**
 	* Clean up old lockouts and retries, and save supplied arrays
