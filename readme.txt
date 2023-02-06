@@ -100,7 +100,7 @@ Please follow this link: <a href="https://www.limitloginattempts.com/resources/"
 
 = 2.25.12 =
 * Fixed IPv4 validation when passed with a port number.
-* Logs loading issue fixed.
+* Fixed texts and translations.
 
 = 2.25.11 =
 * PHP 8 compatibility fixed.
