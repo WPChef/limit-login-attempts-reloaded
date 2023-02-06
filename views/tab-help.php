@@ -17,7 +17,6 @@ if( !defined( 'ABSPATH' ) ) exit();
             <div class="actions">
                 <a class="button button-primary" href="https://checkout.limitloginattempts.com/plan?from=plugin-help-tab" target="_blank">
                     <?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?>
-					<span><?php _e( 'Starting from $7.99/month', 'limit-login-attempts-reloaded' ); ?></span>
                 </a>
             </div>
         </div>
