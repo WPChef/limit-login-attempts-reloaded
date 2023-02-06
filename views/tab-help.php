@@ -23,7 +23,7 @@ if( !defined( 'ABSPATH' ) ) exit();
         </div>
         <div class="block">
             <div class="title"><?php _e( 'Free Support', 'limit-login-attempts-reloaded' ); ?></div>
-            <div class="text"><?php _e( 'Support for free customers is available via our forums page on WordPress.org. The majority of requests <b>receive an answer within a few days</b>.' ); ?></div>
+            <div class="text"><?php _e( 'Support for free customers is available via our forums page on WordPress.org. The majority of requests <b>receive an answer within a few days</b>.', 'limit-login-attempts-reloaded' ); ?></div>
             <div class="actions">
                 <a class="button button-secondary" href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/" target="_blank"><?php _e( 'Go To Support Forums', 'limit-login-attempts-reloaded' ); ?></a>
             </div>
