@@ -210,7 +210,7 @@ $active_app_config = $this->get_custom_app_config();
                                 <li><span class="dashicons dashicons-yes"></span><?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?></li>
                                 <li><span class="dashicons dashicons-yes"></span><?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?></li>
                                 <li><span class="dashicons dashicons-yes"></span><?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?></li>
-                                <li><span class="dashicons dashicons-yes"></span><?php _e( 'Only pay $7.99/m per domain - cancel any time', 'limit-login-attempts-reloaded' ); ?></li>
+                                <li><span class="dashicons dashicons-yes"></span><?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?></li>
                             </ul>
                         </div>
                         <?php endif; ?>
