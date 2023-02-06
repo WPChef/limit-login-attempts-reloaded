@@ -634,9 +634,9 @@ class Limit_Login_Attempts {
 
 			if( in_array( $key, array( 'SERVER_ADDR' ) ) ) continue;
 
-			if( filter_var( $value, FILTER_VALIDATE_IP ) ) {
+			if( $valid_ip = $this->is_ip_valid( $value ) ) {
 
-				$ips[$key] = $value;
+				$ips[$key] = $valid_ip;
 			}
 		}
 
@@ -1573,7 +1573,6 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 			$trusted_ip_origins[] = 'REMOTE_ADDR';
 		}
 
-		$ip = '';
 		foreach ( $trusted_ip_origins as $origin ) {
 
 			if( isset( $_SERVER[$origin] ) && !empty( $_SERVER[$origin] ) ) {
@@ -1587,26 +1586,22 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 
 						foreach ($origin_ips as $check_ip) {
 
-						    if( $this->is_ip_valid( $check_ip ) ) {
+						    if( $valid_ip = $this->is_ip_valid( $check_ip ) ) {
 
-						        $ip = $check_ip;
-						        break 2;
+						        return $valid_ip;
                             }
 			            }
                     }
                 }
 
-                if( $this->is_ip_valid( $_SERVER[$origin] ) ) {
+                if( $valid_ip = $this->is_ip_valid( $_SERVER[$origin] ) ) {
 
-					$ip = $_SERVER[$origin];
-					break;
+					return $valid_ip;
                 }
 			}
 		}
 
-		$ip = preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ip);
-
-		return $ip;
+		return '';
 	}
 
 	/**
@@ -1617,7 +1612,8 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 
 	    if( empty( $ip ) ) return false;
 
-	    return filter_var($ip, FILTER_VALIDATE_IP);
+		return filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ?:
+               filter_var( preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ip ), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 );
     }
 
 	/**
