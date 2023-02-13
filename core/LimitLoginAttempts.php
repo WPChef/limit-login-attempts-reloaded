@@ -1438,7 +1438,7 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
                     foreach( $black_list_ips as $key => $ip ) {
                         $range = array_map('trim', explode('-', $ip) );
                         if ( count( $range ) > 1 && (float)sprintf("%u",ip2long($range[0])) > (float)sprintf("%u",ip2long($range[1]))) {
-                            $this->show_message( __( 'The "'. $ip .'" IP range is invalid', 'limit-login-attempts-reloaded' ) );
+                            $this->show_message( sprintf (__( 'The %s IP range is invalid', 'limit-login-attempts-reloaded' ),$ip));
                         }
                         if( '' == $ip ) {
                             unset( $black_list_ips[ $key ] );
