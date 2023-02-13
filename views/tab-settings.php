@@ -196,8 +196,7 @@ $active_app_config = Config::get( 'app_config' );
                             <button class="button" id="limit-login-app-setup"><?php echo __( 'Submit', 'limit-login-attempts-reloaded' ); ?></button>
                             <span class="spinner llar-app-ajax-spinner"></span><br>
                             <span class="llar-app-ajax-msg"></span>
-                            <p class="description"><?php _e( 'Add this code to all websites in your network to sync ' .
-									'protection (payment required for additional domains unless subscribed to Agency plan).', 'limit-login-attempts-reloaded' ) ?></p>
+                            <p class="description"><?php _e( 'Add this code to all websites in your network to sync protection (payment required for additional domains unless subscribed to Agency plan).', 'limit-login-attempts-reloaded' ) ?></p>
                         </div>
 
 						<?php if( $active_app === 'local' ) : ?>
@@ -214,7 +213,7 @@ $active_app_config = Config::get( 'app_config' );
                                 <li><span class="dashicons dashicons-yes"></span><?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?></li>
                                 <li><span class="dashicons dashicons-yes"></span><?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?></li>
                                 <li><span class="dashicons dashicons-yes"></span><?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?></li>
-                                <li><span class="dashicons dashicons-yes"></span><?php _e( 'Only pay $7.99/m per domain - cancel any time', 'limit-login-attempts-reloaded' ); ?></li>
+                                <li><span class="dashicons dashicons-yes"></span><?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?></li>
                             </ul>
                         </div>
                         <?php endif; ?>

@@ -296,9 +296,9 @@ class Helpers {
 
 			if( in_array( $key, array( 'SERVER_ADDR' ) ) ) continue;
 
-			if( filter_var( $value, FILTER_VALIDATE_IP ) ) {
+			if( $valid_ip = self::is_ip_valid( $value ) ) {
 
-				$ips[$key] = $value;
+				$ips[$key] = $valid_ip;
 			}
 		}
 
@@ -313,7 +313,8 @@ class Helpers {
 	public static function is_ip_valid( $ip ) {
 		if( empty( $ip ) ) return false;
 
-		return filter_var( $ip, FILTER_VALIDATE_IP );
+		return filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ?:
+			filter_var( preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ip ), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 );
 	}
 
 	public static function detect_gateway() {
