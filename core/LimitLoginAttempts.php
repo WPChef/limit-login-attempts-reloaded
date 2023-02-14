@@ -45,7 +45,7 @@ class Limit_Login_Attempts {
 		'blacklist_usernames' => array(),
 
         'active_app'       => 'local',
-        'app_config'       => '',
+        'app_config'       => array(),
         'show_top_level_menu_item'  => true,
         'hide_dashboard_widget'     => false,
         'show_warning_badge'        => true,

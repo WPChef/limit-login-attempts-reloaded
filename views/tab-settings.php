@@ -27,7 +27,7 @@ $app_setup_code = $this->get_option( 'app_setup_code' );
 $active_app_config = $this->get_custom_app_config();
 
 ?>
-<?php if( isset( $_GET['activated'] ) ) : ?>
+<?php if( isset( $_GET['llar-cloud-activated'] ) && !empty( $active_app_config['messages']['setup_success'] ) ) : ?>
 <div class="llar-app-notice success">
     <p><?php echo $active_app_config['messages']['setup_success']; ?></p>
 </div>
@@ -296,7 +296,7 @@ $active_app_config = $this->get_custom_app_config();
 
                             setTimeout(function(){
 
-                                window.location = window.location + '&activated';
+                                window.location = window.location + '&llar-cloud-activated';
 
                             }, 1000);
                         }
