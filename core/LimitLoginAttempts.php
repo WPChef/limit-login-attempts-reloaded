@@ -115,6 +115,7 @@ class Limit_Login_Attempts {
 		add_filter( 'limit_login_blacklist_usernames', array( $this, 'check_blacklist_usernames' ), 10, 2 );
 
 		add_filter( 'illegal_user_logins', array( $this, 'register_user_blacklist' ), 999 );
+		add_filter( 'um_custom_authenticate_error_codes', array( $this, 'ultimate_member_register_error_codes' ) );
 
 		// TODO: Temporary turn off the holiday warning.
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
@@ -319,8 +320,11 @@ class Limit_Login_Attempts {
 	public function login_page_render_js() {
 	    global $limit_login_just_lockedout;
 
-		if( ( isset( $_POST['log'] ) || ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) ) ) &&
-			($this->is_limit_login_ok() || $limit_login_just_lockedout ) ) : ?>
+	    $is_wp_login_page = isset( $_POST['log'] );
+	    $is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
+	    $is_um_login_page = ( function_exists( 'um_is_core_page' ) && um_is_core_page( 'login' ) && !empty( $_POST ) );
+
+		if( ( $is_wp_login_page || $is_woo_login_page || $is_um_login_page) && ( $this->is_limit_login_ok() || $limit_login_just_lockedout ) ) : ?>
         <script>
             ;(function($) {
                 var ajaxUrlObj = new URL('<?php echo admin_url( 'admin-ajax.php' ); ?>');
@@ -332,6 +336,7 @@ class Limit_Login_Attempts {
                 }, function(response) {
                     if(response.success && response.data) {
                         $('#login_error').append("<br>" + response.data);
+                        $('.um-notice.err').append("<br>" + response.data);
                         $('.woocommerce-error').append("<li>(" + response.data + ")</li>");
                     }
                 })
@@ -621,6 +626,16 @@ class Limit_Login_Attempts {
 
 		}
 		return $user;
+	}
+
+	public function ultimate_member_register_error_codes( $codes ) {
+
+	    if( !is_array( $codes ) ) return $codes;
+
+		$codes[] = 'too_many_retries';
+		$codes[] = 'username_blacklisted';
+
+		return $codes;
 	}
 
 	/**
