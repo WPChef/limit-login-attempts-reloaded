@@ -10,8 +10,11 @@ spl_autoload_register(function($class) {
 		return;
 	}
 
-	$relative_class = substr( $class, $len );
-	$file = LLA_PLUGIN_DIR . str_replace('\\', '/', $relative_class ) . '.php';
+	$relative_class = str_replace('\\', '/', substr( $class, $len ) );
+	$relative_class = explode( '/', $relative_class );
+	$class_name = array_pop( $relative_class );
+	$relative_class = implode( '/', $relative_class );
+	$file = LLA_PLUGIN_DIR . strtolower( $relative_class ) . '/' . $class_name . '.php';
 
 	if ( file_exists( $file ) ) {
 		require $file;

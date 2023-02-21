@@ -15,11 +15,22 @@
     }
   }
   .manual-installation {
+    h3 {
+      a {
+        font-weight: normal;
+        font-size: 15px;
+      }
+    }
     .toggle-btn {
       text-decoration-style: dashed;
     }
-    .textarea-wrap {
+    .steps-wrap {
       display: none;
+      max-width: 800px;
+
+      textarea {
+        background-color: #fff;
+      }
 
       &.active {
         display: block;

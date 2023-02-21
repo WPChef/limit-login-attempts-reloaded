@@ -8,8 +8,10 @@ function get_username_from_request() {
 
     if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) return false;
 
-	if ( !empty( $_POST['log'] ) ) {
+	if ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false && !empty( $_POST['log'] ) ) {
 		return trim( $_POST['log'] );
+	} else if ( !empty( $_POST['woocommerce-login-nonce'] ) && !empty( $_POST['username'] ) ) {
+		return trim( $_POST['username'] );
 	} else if( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
 
 		if( $data = @file_get_contents( 'php://input' ) ) {
