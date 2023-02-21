@@ -16,10 +16,15 @@ class AdvancedServerLoadCutting {
 	 */
 	public static function compatibility_checks() {
 		$checklist = array(
+			'root_folder_writable' => false,
 			'wp_config_writable' => false,
 			'proxy_file_writable' => false,
 			'curl_available' => false,
 		);
+
+		if( Helpers::is_writable( ABSPATH ) ) {
+			$checklist['root_folder_writable'] = true;
+		}
 
 		if( Helpers::is_writable( self::get_wp_config_path() ) ) {
 			$checklist['wp_config_writable'] = true;
@@ -49,6 +54,13 @@ class AdvancedServerLoadCutting {
 	 */
 	public static function get_proxy_file_path() {
 		return WP_CONTENT_DIR . DIRECTORY_SEPARATOR . self::PROXY_FILE_NAME;
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function get_include_file_line() {
+		return 'if( file_exists( "' . self::get_proxy_file_path() . '" ) ) include_once( "' . self::get_proxy_file_path() . '" );';
 	}
 
 	/**
@@ -143,14 +155,12 @@ class AdvancedServerLoadCutting {
 
 		$wp_config_content = file_get_contents( $wp_config_path );
 
-		$include_file_string = 'if( file_exists( "' . self::get_proxy_file_path() . '" ) ) include_once( "' . self::get_proxy_file_path() . '" );';
-
 		$pattern = '~[\/\/\#]*if\(\s*file_exists\((.*?load\-proxy\.php.*?)\)\s*\)\s*include_once\(\1\);\R~is';
 
 		$new_wp_config_content = preg_replace( $pattern, '', $wp_config_content, 1 );
 
 		if( $include ) {
-			$new_wp_config_content = preg_replace( '~<\?php~', "\\0\r\n" . str_replace( '\\', '/', $include_file_string ), $new_wp_config_content, 1 );
+			$new_wp_config_content = preg_replace( '~<\?php~', "\\0\r\n" . str_replace( '\\', '/', self::get_include_file_line() ), $new_wp_config_content, 1 );
 		}
 
 		if( $wp_config_content !== $new_wp_config_content ) {
@@ -169,7 +179,7 @@ class AdvancedServerLoadCutting {
 	 * @return bool
 	 */
 	private static function backup_wp_config( $wp_config_path ) {
-		$backup_wp_config_path = str_replace( 'wp-config', 'wp-config-backup-' . time(), $wp_config_path );
+		$backup_wp_config_path = str_replace( 'wp-config', 'wp-config-llar-backup-' . time(), $wp_config_path );
 
 		if( !copy( $wp_config_path, $backup_wp_config_path ) ) {
 			return false;
