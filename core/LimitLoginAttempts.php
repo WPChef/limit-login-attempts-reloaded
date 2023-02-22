@@ -1490,12 +1490,7 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
                 Config::update('gdpr_message',       sanitize_textarea_field( Helpers::deslash( $_POST['gdpr_message'] ) ) );
                 Config::update('admin_notify_email', sanitize_email( $_POST['admin_notify_email'] ) );
 
-                $old_app_choice = Config::get( 'active_app' );
-	            Config::update('active_app',       sanitize_text_field( $_POST['active_app'] ) );
-
-	            if( Config::get( 'load_proxy_enabled' ) && $old_app_choice !== $_POST['active_app'] ) {
-	                AdvancedServerLoadCutting::create_proxy_file();
-	            }
+	            Config::update('active_app', sanitize_text_field( $_POST['active_app'] ) );
 
                 $trusted_ip_origins = ( !empty( $_POST['lla_trusted_ip_origins'] ) )
                     ? array_map( 'trim', explode( ',', sanitize_text_field( $_POST['lla_trusted_ip_origins'] ) ) )
@@ -1541,6 +1536,10 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
                         }
                     }
                 }
+
+	            if( Config::get( 'load_proxy_enabled' ) ) {
+		            AdvancedServerLoadCutting::create_proxy_file();
+	            }
 
                 $this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
             }

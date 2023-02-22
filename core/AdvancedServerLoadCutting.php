@@ -146,11 +146,11 @@ class AdvancedServerLoadCutting {
 		$wp_config_path = self::get_wp_config_path();
 
 		if( !file_exists( $wp_config_path ) ) {
-			throw new \Exception( __( 'File wp-config.php not found', 'limit-login-attempts-reloaded' ) );
+			throw new \Exception( __( 'Unable to locate wp-config.php file', 'limit-login-attempts-reloaded' ) );
 		}
 
 		if( !Helpers::is_writable( $wp_config_path ) ) {
-			throw new \Exception( __( 'File wp-config.php is not writable', 'limit-login-attempts-reloaded' ) );
+			throw new \Exception( __( 'Unable to update wp-config.php. Fix the file and folder permissions.', 'limit-login-attempts-reloaded' ) );
 		}
 
 		$wp_config_content = file_get_contents( $wp_config_path );
@@ -166,7 +166,7 @@ class AdvancedServerLoadCutting {
 		if( $wp_config_content !== $new_wp_config_content ) {
 
 			if( !self::backup_wp_config( $wp_config_path ) ) {
-				throw new \Exception( 'Could not make a backup of wp-config.php' );
+				throw new \Exception( 'Unable to update wp-config.php. Fix the file and folder permissions.' );
 			}
 
 			@file_put_contents( $wp_config_path, $new_wp_config_content );
