@@ -727,9 +727,16 @@ class Limit_Login_Attempts {
 		$retries_count = 0;
         $retries_stats = $this->get_option( 'retries_stats' );
 
-        if( $retries_stats && array_key_exists( date_i18n( 'Y-m-d' ), $retries_stats ) ) {
-            $retries_count = (int) $retries_stats[date_i18n( 'Y-m-d' )];
-        }
+	    if( $retries_stats ) {
+		    foreach ( $retries_stats as $key => $count ) {
+			    if( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
+				    $retries_count += $count;
+			    }
+                elseif( !is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+				    $retries_count += $count;
+			    }
+		    }
+	    }
 
         if( $retries_count < 100 ) return '';
 
@@ -961,7 +968,7 @@ class Limit_Login_Attempts {
 				$this->add_option( 'retries_stats', $retries_stats );
 			}
 
-			$date_key = date_i18n( 'Y-m-d' );
+			$date_key = strtotime( date( 'Y-m-d H:00:00' ) );
             if(!empty($retries_stats[$date_key])) {
 
 				$retries_stats[$date_key]++;
@@ -1675,10 +1682,11 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 
 		if($retries_stats) {
 
-			foreach( $retries_stats as $date => $count ) {
+			foreach( $retries_stats as $key => $count ) {
 
-				if( strtotime( $date ) < strtotime( '-7 day' ) ) {
-					unset($retries_stats[$date]);
+				if( ( is_numeric( $key ) && $key < strtotime( '-8 day' ) ) ||
+                    ( !is_numeric( $key ) && strtotime( $key ) < strtotime( '-8 day' ) ) ) {
+					unset($retries_stats[$key]);
 				}
 			}
 
