@@ -14,9 +14,14 @@ if ($active_app === 'local') {
 
 	$retries_stats = $this->get_option('retries_stats');
 
-	if ($retries_stats) {
-		if (array_key_exists(date_i18n('Y-m-d'), $retries_stats)) {
-			$retries_count = (int)$retries_stats[date_i18n('Y-m-d')];
+	if( $retries_stats ) {
+		foreach ( $retries_stats as $key => $count ) {
+			if( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
+				$retries_count += $count;
+			}
+            elseif( !is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+				$retries_count += $count;
+			}
 		}
 	}
 
@@ -140,17 +145,32 @@ if ($active_app === 'local') {
 
 				if (is_array($retries_stats) && $retries_stats) {
 
+					$key = key( $retries_stats );
+					$start = is_numeric( $key ) ? date_i18n( 'Y-m-d', $key ) : $key;
+
 					$daterange = new DatePeriod(
-						new DateTime(key($retries_stats)),
+						new DateTime( $start ),
 						new DateInterval('P1D'),
-						new DateTime()
+						new DateTime('-1 day')
 					);
+
+					$retries_per_day = [];
+					foreach ( $retries_stats as $key => $count ) {
+
+						$date = is_numeric( $key ) ? date_i18n( 'Y-m-d', $key ) : $key;
+
+						if( empty( $retries_per_day[$date] ) ) {
+							$retries_per_day[$date] = 0;
+						}
+
+						$retries_per_day[$date] += $count;
+					}
 
 					$chart2_data = array();
 					foreach ($daterange as $date) {
 
-						$chart2_labels[] = $date->format($date_format);
-						$chart2_data[] = (!empty($retries_stats[$date->format("Y-m-d")])) ? $retries_stats[$date->format("Y-m-d")] : 0;
+						$chart2_labels[] = $date->format( $date_format );
+						$chart2_data[] = (!empty($retries_per_day[$date->format("Y-m-d")])) ? $retries_per_day[$date->format("Y-m-d")] : 0;
 					}
 
 				} else {
