@@ -27,17 +27,17 @@ if ($active_app === 'local') {
 
 	if ($retries_count === 0) {
 
-		$retries_chart_title = __('Hooray! Zero failed login attempts today', 'limit-login-attempts-reloaded');
+		$retries_chart_title = __('Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded');
 		$retries_chart_color = '#66CC66';
 	} else if ($retries_count < 100) {
 
 		$retries_chart_title = sprintf(_n('%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded'), $retries_count);
-		$retries_chart_title .= __('today', 'limit-login-attempts-reloaded');
+		$retries_chart_title .= __('(past 24 hrs)', 'limit-login-attempts-reloaded');
 		$retries_chart_desc = __('Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded');
 		$retries_chart_color = '#FFCC66';
 	} else {
 
-		$retries_chart_title = __('Warning: Your site is experiencing over 100 failed login attempts today', 'limit-login-attempts-reloaded');
+		$retries_chart_title = __('Warning: Your site has experienced over 100 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded');
 		$retries_chart_desc = sprintf(__('Your site is currently at a high risk for brute force activity. Consider <a href="%s" target="_blank">premium protection</a> if frequent attacks persist or website performance is degraded', 'limit-login-attempts-reloaded'), 'https://www.limitloginattempts.com/info.php?from=dashboard-widget');
 		$retries_chart_color = '#FF6633';
 	}
