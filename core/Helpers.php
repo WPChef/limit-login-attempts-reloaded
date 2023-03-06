@@ -117,4 +117,12 @@ class LLA_Helpers {
 		global $wp_version;
 		return $wp_version;
 	}
+
+	public static function short_number($num) {
+	    $units = ['', 'K', 'M', 'B', 'T'];
+	    for ($i = 0; $num >= 1000; $i++) {
+	        $num /= 1000;
+	    }
+		return round($num, 1) . $units[$i];
+	}
 }
