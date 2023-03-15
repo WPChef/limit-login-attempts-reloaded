@@ -21,7 +21,7 @@ $checklist = AdvancedServerLoadCutting::compatibility_checks();
             <li><span class="dashicons dashicons-<?php echo ( $checklist['root_folder_writable'] ) ? 'yes' : 'no'; ?>"></span> <?php _e( 'root folder is writable', 'limit-login-attempts-reloaded' ); ?></li>
             <li><span class="dashicons dashicons-<?php echo ( $checklist['wp_config_writable'] ) ? 'yes' : 'no'; ?>"></span> <?php _e( 'wp-config.php file is writable', 'limit-login-attempts-reloaded' ); ?></li>
             <li><span class="dashicons dashicons-<?php echo ( $checklist['proxy_file_writable'] ) ? 'yes' : 'no'; ?>"></span> <?php echo sprintf( __( 'wp-content/%s file is writable', 'limit-login-attempts-reloaded' ), AdvancedServerLoadCutting::PROXY_FILE_NAME ); ?></li>
-            <li><span class="dashicons dashicons-<?php echo ( $checklist['curl_available'] ) ? 'yes' : 'no'; ?>"></span> <?php _e( 'CURL Available', 'limit-login-attempts-reloaded' ); ?></li>
+            <li><span class="dashicons dashicons-<?php echo ( $checklist['curl_or_fopen_available'] ) ? 'yes' : 'no'; ?>"></span> <?php _e( 'allow_url_fopen == true or CURL is available', 'limit-login-attempts-reloaded' ); ?></li>
         </ul>
     </div>
 
