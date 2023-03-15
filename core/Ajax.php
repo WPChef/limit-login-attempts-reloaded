@@ -2,6 +2,8 @@
 
 namespace LLAR\Core;
 
+use LLAR\Core\Http\Http;
+
 if( !defined( 'ABSPATH' ) ) exit;
 
 class Ajax {
@@ -32,6 +34,7 @@ class Ajax {
 		) );
 		add_action( 'wp_ajax_subscribe_email', array( $this, 'subscribe_email_callback' ) );
 		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
+		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
 	}
 
 	public function ajax_unlock() {
@@ -616,7 +619,6 @@ class Ajax {
 		$is_subscribe_yes = sanitize_text_field( $_POST['is_subscribe_yes'] ) === 'true';
 
 		$admin_email   = ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
-		$current_email = Config::get( 'admin_notify_email' );
 
 		if ( ! empty( $email ) && is_email( $email ) ) {
 
@@ -624,24 +626,24 @@ class Ajax {
 			Config::update( 'lockout_notify', 'email' );
 
 			if ( $is_subscribe_yes ) {
-				$response = wp_remote_post( 'https://api.limitloginattempts.com/my/key', array(
-					'body' => json_encode( array(
+				$response = Http::post( 'https://api.limitloginattempts.com/my/key', array(
+					'data' => array(
 						'email' => $email
-					), JSON_FORCE_OBJECT )
+					)
 				) );
 
-				if ( is_wp_error( $response ) ) {
+				if ( !empty( $response['error'] ) ) {
 
-					wp_send_json_error( $response );
+					wp_send_json_error( $response['error'] );
 				} else {
 
-					$response_body = json_decode( wp_remote_retrieve_body( $response ), JSON_FORCE_OBJECT );
+					$response_body = json_decode( $response['data'], true );
 
 					if ( ! empty( $response_body['key'] ) ) {
 						Config::update( 'cloud_key', $response_body['key'] );
 					}
 
-					wp_send_json_success( $response_body );
+					wp_send_json_success();
 				}
 			}
 		} else if ( empty( $email ) ) {
@@ -678,5 +680,28 @@ class Ajax {
 		$remaining = ! empty( $_SESSION['login_attempts_left'] ) ? intval( $_SESSION['login_attempts_left'] ) : 0;
 		$message   = ( ! $remaining ) ? '' : sprintf( _n( "<strong>%d</strong> attempt remaining.", "<strong>%d</strong> attempts remaining.", $remaining, 'limit-login-attempts-reloaded' ), $remaining );
 		wp_send_json_success( $message );
+	}
+
+	public function toggle_auto_update_callback() {
+
+		check_ajax_referer('llar-action', 'sec');
+
+		$value = sanitize_text_field( $_POST['value'] );
+		$auto_update_plugins = get_site_option( 'auto_update_plugins', array() );
+
+		if( $value === 'yes' ) {
+			$auto_update_plugins[] = LLA_PLUGIN_BASENAME;
+			Config::update( 'auto_update_choice', 1 );
+
+		} else if ( $value === 'no' ) {
+			if ( ( $key = array_search( LLA_PLUGIN_BASENAME, $auto_update_plugins ) ) !== false ) {
+				unset($auto_update_plugins[$key]);
+			}
+			Config::update( 'auto_update_choice', 0 );
+		}
+
+		update_site_option( 'auto_update_plugins', $auto_update_plugins );
+
+		wp_send_json_success();
 	}
 }

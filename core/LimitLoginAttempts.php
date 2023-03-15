@@ -4,6 +4,7 @@ namespace LLAR\Core;
 
 use Exception;
 use IXR_Error;
+use LLAR\Core\Http\Http;
 use WP_Error;
 use WP_User;
 
@@ -40,13 +41,13 @@ class LimitLoginAttempts {
 	public function __construct() {
 
 	    Config::init();
+		Http::init();
 
 		$this->hooks_init();
         $this->cloud_app_init();
 
 		(new Shortcodes())->register();
 		(new Ajax())->register();
-
 	}
 
 	/**
@@ -1460,7 +1461,7 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 
 	            Config::sanitize_options();
 
-	            if( Config::get( 'load_proxy_enabled' )) {
+	            if( Config::get( 'load_proxy_enabled' ) ) {
 		            AdvancedServerLoadCutting::create_proxy_file();
 	            }
 

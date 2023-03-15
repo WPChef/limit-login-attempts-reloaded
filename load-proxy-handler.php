@@ -1,6 +1,7 @@
 <?php
 
 use LLAR\Core\Helpers;
+use LLAR\Core\Http\Http;
 
 if( empty( $proxy_config ) || !( $username = get_username_from_request() ) ) return;
 
@@ -26,8 +27,25 @@ function get_username_from_request() {
 	return false;
 }
 
-require_once( 'lib/CidrCheck.php' );
-require_once( 'core/Helpers.php' );
+spl_autoload_register(function($class) {
+
+	$namespace = 'LLAR\\';
+
+	$len = strlen( $namespace );
+	if (strncmp( $namespace, $class, $len) !== 0) {
+		return;
+	}
+
+	$relative_class = str_replace('\\', '/', substr( $class, $len ) );
+	$relative_class = explode( '/', $relative_class );
+	$class_name = array_pop( $relative_class );
+	$relative_class = implode( '/', $relative_class );
+	$file = dirname( __FILE__ ) . '/' . strtolower( $relative_class ) . '/' . $class_name . '.php';
+
+	if ( file_exists( $file ) ) {
+		require $file;
+	}
+});
 
 ( new LoadProxyHandler( $username, json_decode( $proxy_config, JSON_FORCE_OBJECT ) ) );
 
@@ -44,6 +62,8 @@ class LoadProxyHandler {
 		$this->user_login = $username;
 		$this->user_ip = Helpers::detect_ip_address( $config['trusted_ip_origins'] );
 		$this->gateway = Helpers::detect_gateway();
+
+		Http::init();
 
 		if( !empty( $config['acl'] ) ) {
 
@@ -98,20 +118,14 @@ class LoadProxyHandler {
 
 		if( $settings ) $post_data['settings'] = $settings;
 
-		$ch = curl_init( $config['api'] . '/acl' );
-
-		curl_setopt( $ch, CURLOPT_POST, true );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-			"{$config['header']}: {$config['key']}",
-			'Content-Type: application/json; charset=utf-8',
+		$response = Http::post( $config['api'] . '/acl', array(
+            'headers'   => array( "{$config['header']}: {$config['key']}" ),
+            'data'      => $post_data
         ) );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode( $post_data, JSON_FORCE_OBJECT ) );
 
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true);
+		if( empty( $response['data'] ) ) return;
 
-		$response = json_decode( curl_exec( $ch ), JSON_FORCE_OBJECT );
-
-		curl_close($ch);
+		$response = json_decode( $response['data'], JSON_FORCE_OBJECT );
 
 		if( is_array( $response ) && !empty( $response['result'] ) && $response['result'] === 'deny' ) {
 			$this->show_error_page();

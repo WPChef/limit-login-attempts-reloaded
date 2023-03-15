@@ -3,6 +3,7 @@
 namespace LLAR\Core;
 
 use Exception;
+use LLAR\Core\Http\Http;
 
 if( !defined( 'ABSPATH' ) ) exit;
 
@@ -99,14 +100,14 @@ class CloudApp {
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 		$link = add_query_arg( 'version', $plugin_data['Version'], $link );
 
-		$setup_response = wp_remote_get( $link );
-		$setup_response_body = json_decode( wp_remote_retrieve_body( $setup_response ), true );
+		$setup_response = Http::get( $link );
+		$setup_response_body = json_decode( $setup_response['data'], true );
 
-		if( is_wp_error( $setup_response ) ) {
+		if( !empty( $setup_response['error'] ) ) {
 
-			$return['error'] = $setup_response->get_error_message();
+			$return['error'] = $setup_response['error'];
 
-		} else if( wp_remote_retrieve_response_code( $setup_response ) === 200 ) {
+		} else if( $setup_response['status'] === 200 ) {
 
 			$return['success'] = true;
 			$return['app_config'] = $setup_response_body;
@@ -116,7 +117,7 @@ class CloudApp {
 			$return['error'] = ( !empty( $setup_response_body['message'] ) )
 								? $setup_response_body['message']
 								: __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
-			$return['response_code'] = wp_remote_retrieve_response_code( $setup_response );
+			$return['response_code'] = $setup_response['status'];
 		}
 
 		return $return;
@@ -136,15 +137,11 @@ class CloudApp {
 	 */
 	public static function stats_global() {
 
-		$response = wp_remote_get('https://api.limitloginattempts.com/v1/global-stats');
+		$response = Http::get( 'https://api.limitloginattempts.com/v1/global-stats' );
 
-		if( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
+		if( $response['status'] !== 200 ) return false;
 
-			return false;
-		} else {
-
-			return json_decode( sanitize_textarea_field( stripslashes( wp_remote_retrieve_body( $response ) ) ), true );
-		}
+		return json_decode( $response['data'], true );
 	}
 
 	/**
@@ -315,34 +312,22 @@ class CloudApp {
 	public function request( $method, $type = 'get', $data = null ) {
 
 		if( !$method ) {
-			throw new Exception( 'You must to specify API method.' );
+			throw new Exception( 'You must specify API method.' );
 		}
 
 		$headers = array();
-		$headers[$this->config['header']] = $this->config['key'];
+		$headers[] = "{$this->config['header']}: {$this->config['key']}";
 
-		if( $type === 'post' ) {
+		$response = Http::$type( $this->api.'/'.$method, array(
+			'data'      => $data,
+			'headers'   => $headers
+		) );
 
-			$headers['Content-Type'] = 'application/json; charset=utf-8';
-		}
+		$this->last_response_code = !empty( $response['status'] ) ? $response['status'] : 0;
 
-		$func = ( $type === 'post' ) ? 'wp_remote_post' : 'wp_remote_get';
+		if( $response['status'] !== 200 ) return false;
 
-		$response = $func( $this->api.'/'.$method, array(
-			'headers' 	=> $headers,
-			'body' 		=> ( $type === 'post' ) ? json_encode( $data, JSON_FORCE_OBJECT ) : $data
-		));
-
-		$this->last_response_code = wp_remote_retrieve_response_code( $response );
-
-		if( is_wp_error( $response ) || $this->last_response_code !== 200 ) {
-
-			return false;
-		} else {
-
-			return json_decode( sanitize_textarea_field( stripslashes( wp_remote_retrieve_body( $response ) ) ), true );
-		}
-
+		return json_decode( sanitize_textarea_field( stripslashes( $response['data'] ) ), true );
 	}
 
 }
