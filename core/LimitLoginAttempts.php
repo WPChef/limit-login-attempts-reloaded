@@ -106,6 +106,39 @@ class Limit_Login_Attempts {
 	* Register wp hooks and filters
 	*/
 	public function hooks_init() {
+
+		if ( is_multisite() )
+			require_once ABSPATH.'wp-admin/includes/plugin.php';
+
+		$this->network_mode = is_multisite() && is_plugin_active_for_network('limit-login-attempts-reloaded/limit-login-attempts-reloaded.php');
+
+		if ( $this->network_mode )
+		{
+			$allow_local_options     = get_site_option( 'limit_login_allow_local_options', false );
+			$this->use_local_options = $allow_local_options && get_option( 'limit_login_use_local_options', false );
+		}
+		else
+		{
+			$allow_local_options     = true;
+			$this->use_local_options = true;
+		}
+
+		if ( $this->network_mode ) {
+			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
+
+			if( $this->get_option( 'show_warning_badge' ) )
+				add_action( 'network_admin_menu', array( $this, 'network_setting_menu_alert_icon' ) );
+		} else {
+			add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
+        }
+
+		if ( $allow_local_options ) {
+			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+
+			if( $this->get_option( 'show_warning_badge' ) )
+				add_action( 'admin_menu', array( $this, 'setting_menu_alert_icon' ) );
+		}
+
 		add_action( 'plugins_loaded', array( $this, 'setup' ), 9999 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'login_enqueue_scripts', array( $this, 'login_page_enqueue' ) );
@@ -240,23 +273,6 @@ class Limit_Login_Attempts {
 		// Check if installed old plugin
 		$this->check_original_installed();
 
-		if ( is_multisite() )
-			require_once ABSPATH.'wp-admin/includes/plugin.php';
-
-		$this->network_mode = is_multisite() && is_plugin_active_for_network('limit-login-attempts-reloaded/limit-login-attempts-reloaded.php');
-
-
-		if ( $this->network_mode )
-		{
-			$allow_local_options     = get_site_option( 'limit_login_allow_local_options', false );
-			$this->use_local_options = $allow_local_options && get_option( 'limit_login_use_local_options', false );
-		}
-		else
-		{
-			$allow_local_options     = true;
-			$this->use_local_options = true;
-		}
-
 
 		// Setup default plugin options
 		//$this->sanitize_options();
@@ -266,20 +282,6 @@ class Limit_Login_Attempts {
 
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
-
-		if ( $this->network_mode ) {
-			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
-
-			if( $this->get_option( 'show_warning_badge' ) )
-			    add_action( 'network_admin_menu', array( $this, 'network_setting_menu_alert_icon' ) );
-		}
-
-		if ( $allow_local_options ) {
-			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
-
-			if( $this->get_option( 'show_warning_badge' ) )
-			    add_action( 'admin_menu', array( $this, 'setting_menu_alert_icon' ) );
-		}
 
 		// Add notices for XMLRPC request
 		add_filter( 'xmlrpc_login_error', array( $this, 'xmlrpc_error_messages' ) );
@@ -302,8 +304,6 @@ class Limit_Login_Attempts {
 		add_action( 'authenticate', array( $this, 'authenticate_filter_errors_fix' ), 35, 3 );
 
 		add_action('wp_ajax_limit-login-unlock', array( $this, 'ajax_unlock' ) );
-
-		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
 	}
 
 	public function login_page_gdpr_message() {
@@ -1717,18 +1717,22 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 	*/
 	public function options_page() {
 
-		$this->use_local_options = !is_network_admin();
+	    if( !empty( $_GET['tab'] ) && $_GET['tab'] === 'settings' ) {
+		    $this->use_local_options = !is_network_admin();
+        }
+
 		$this->cleanup();
 
 		if( !empty( $_POST ) ) {
 
 			check_admin_referer( 'limit-login-attempts-options' );
 
-            if ( is_network_admin() )
-                $this->update_option( 'allow_local_options', !empty($_POST['allow_local_options']) );
+            if ( is_network_admin() ) {
+	            $this->update_option( 'allow_local_options', !empty( $_POST['allow_local_options'] ) );
 
-            elseif ( $this->network_mode )
-                $this->update_option( 'use_local_options', empty($_POST['use_global_options']) );
+            } elseif ( $this->network_mode ) {
+	            $this->update_option( 'use_local_options', empty( $_POST['use_global_options'] ) );
+            }
 
             /* Should we clear log? */
             if( isset( $_POST[ 'clear_log' ] ) )
