@@ -369,6 +369,7 @@ class LimitLoginAttempts {
 	 * @throws Exception
 	 */
 	public function authenticate_filter( $user, $username, $password ) {
+        global $llar_acl_check_result;
 
 		if(!session_id()) {
 			session_start();
@@ -376,13 +377,22 @@ class LimitLoginAttempts {
 
 		if ( ! empty( $username ) && ! empty( $password ) ) {
 
-			if( self::$cloud_app && $response = self::$cloud_app->acl_check( array(
-			        'ip'        => Helpers::get_all_ips(),
-                    'login'     => $username,
-                    'gateway'   => Helpers::detect_gateway()
-                ) ) ) {
+		    $acl_result = false;
+		    if( !empty( $llar_acl_check_result ) && is_array( $llar_acl_check_result ) ) {
 
-			    if( $response['result'] === 'deny' ) {
+			    $acl_result = $llar_acl_check_result;
+		    } else if( self::$cloud_app && $response = self::$cloud_app->acl_check( array(
+				    'ip'        => Helpers::get_all_ips(),
+				    'login'     => $username,
+				    'gateway'   => Helpers::detect_gateway()
+			    ) ) ) {
+
+			    $acl_result = $response;
+            }
+
+			if( !empty( $acl_result ) && is_array( $acl_result ) ) {
+
+			    if( $acl_result['result'] === 'deny' ) {
 
 					unset($_SESSION['login_attempts_left']);
 
@@ -396,7 +406,7 @@ class LimitLoginAttempts {
 
 					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
-					$time_left = ( !empty( $response['time_left'] ) ) ? $response['time_left'] : 0;
+					$time_left = ( !empty( $acl_result['time_left'] ) ) ? $acl_result['time_left'] : 0;
 					if( $time_left ) {
 
 						if ( $time_left > 60 ) {
@@ -418,7 +428,7 @@ class LimitLoginAttempts {
 						exit;
 					}
                 }
-                else if( $response['result'] === 'pass' ) {
+                else if( $acl_result['result'] === 'pass' ) {
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );

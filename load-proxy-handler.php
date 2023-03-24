@@ -47,6 +47,8 @@ spl_autoload_register(function($class) {
 	}
 });
 
+$llar_acl_check_result = false;
+
 ( new LoadProxyHandler( $username, json_decode( $proxy_config, JSON_FORCE_OBJECT ) ) );
 
 class LoadProxyHandler {
@@ -95,6 +97,7 @@ class LoadProxyHandler {
 	}
 
 	private function check_acl_cloud( $config = array() ) {
+        global $llar_acl_check_result;
 
 	    if( !$config ) return;
 
@@ -127,7 +130,11 @@ class LoadProxyHandler {
 
 		$response = json_decode( $response['data'], JSON_FORCE_OBJECT );
 
-		if( is_array( $response ) && !empty( $response['result'] ) && $response['result'] === 'deny' ) {
+		if( !is_array( $response ) ) return;
+
+		$llar_acl_check_result = $response;
+
+		if( !empty( $response['result'] ) && $response['result'] === 'deny' ) {
 			$this->show_error_page();
         }
 	}
