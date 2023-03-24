@@ -19,7 +19,8 @@ class AdvancedServerLoadCutting {
 			'root_folder_writable' => false,
 			'wp_config_writable' => false,
 			'proxy_file_writable' => false,
-			'curl_or_fopen_available' => false,
+			'fopen_available' => false,
+			'curl_available' => false,
 		);
 
 		if( Helpers::is_writable( ABSPATH ) ) {
@@ -34,8 +35,10 @@ class AdvancedServerLoadCutting {
 			$checklist['proxy_file_writable'] = true;
 		}
 
-		if( ini_get( 'allow_url_fopen' ) === '1' || function_exists( 'curl_version' ) ) {
-			$checklist['curl_or_fopen_available'] = true;
+		if( function_exists( 'fopen' ) && ini_get( 'allow_url_fopen' ) === '1' ) {
+			$checklist['fopen_available'] = true;
+		} elseif( function_exists( 'curl_version' ) ) {
+			$checklist['curl_available'] = true;
 		}
 
 		return $checklist;
@@ -46,7 +49,13 @@ class AdvancedServerLoadCutting {
 	 * @throws \Exception
 	 */
 	public static function is_checks_passed() {
-		return !in_array( false, self::compatibility_checks(), true );
+		$checks = self::compatibility_checks();
+		$is_http_transport_available = $checks['fopen_available'] || $checks['curl_available'];
+
+		unset($checks['fopen_available']);
+		unset($checks['curl_available']);
+
+		return !in_array( false, $checks, true ) && $is_http_transport_available;
 	}
 
 	/**
