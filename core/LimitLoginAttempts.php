@@ -1090,9 +1090,7 @@ class Limit_Login_Attempts {
 	* @param $user
 	*/
 	public function notify_email( $user ) {
-		$ip          = $this->get_address();
-		$whitelisted = $this->is_ip_whitelisted( $ip );
-
+		$ip = $this->get_address();
 		$retries = $this->get_option( 'retries' );
 		if ( ! is_array( $retries ) ) {
 			$retries = array();
@@ -1150,8 +1148,6 @@ class Limit_Login_Attempts {
         }
 
         $site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
-		$blogname = $this->use_local_options ? get_option( 'blogname' ) : get_site_option( 'site_name' );
-		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
 
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 
@@ -1160,63 +1156,31 @@ class Limit_Login_Attempts {
             $ip
         );
 
-        $message = __(
-                '<p>Hello%1$s,</p>
-<p>%2$d failed login attempts (%3$d lockout(s)) from IP <b>%4$s</b><br>
-Last user attempted: <b>%5$s</b><br>
-IP was blocked for %6$s</p>
-<p>This notification was sent automatically via Limit Login Attempts Reloaded Plugin. 
-<b>This is installed on your %7$s WordPress site. <a href="%8$s" target="_blank">Please login to your WordPress</a> ' .
-'dashboard to view more info.</b></p>' .
-'<p>Experiencing frequent attacks or degraded performance? Try our <a href="%9$s" target="_blank">advanced protection</a>. ' .
-'Have Questions? Visit our <a href="%10$s" target="_blank">help section</a>.</p>', 'limit-login-attempts-reloaded' );
+		ob_start();
+		include LLA_PLUGIN_DIR . '/views/emails/failed-login.php';
+		$email_body = ob_get_clean();
 
-        $message = sprintf(
-            $message,
-			$admin_name,
-			$count,
-            $lockouts,
-            $ip,
-			$user,
-            $when,
-			$site_domain,
-			admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
-            'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
-            'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email&v=' . $plugin_data['Version']
+		$placeholders = array(
+            '{name}'                => $admin_name,
+            '{domain}'              => $site_domain,
+            '{attempts_count}'      => $count,
+            '{lockouts_count}'      => $lockouts,
+            '{ip_address}'          => $ip,
+            '{username}'            => $user,
+            '{blocked_duration}'    => $when,
+            '{dashboard_url}'       => admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
+            '{premium_url}'         => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
+            '{llar_url}'            => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
+            '{unsubscribe_url}'     => admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' ),
         );
 
-        $message .= '<h3>Frequently Asked Questions</h3>
-<p><b>What is a Failed Login Attempt?</b><br>
-A failed login attempt is when an IP address uses incorrect credentials to login to your website.
-The IP address could be a human operator, or a program designed to guess your password.</p>
-
-<p><b>Why Am I Getting This Email?</b><br>
-You are receiving this email because there was a failed login attempt on your website %1$s. 
-If you\'d like to opt out of these notifications, please click the “Unsubscribe” link below.</p>
-
-<p><b>How Dangerous Is This Failed Login Attempt?</b><br>
-Unfortunately, the free version of the plugin doesn\'t provide IP intelligence to determine how dangerous this IP address is, but it does prevent excessive login attempts. In the plugin dashboard, you can investigate the severity of the failed login attempts and take additional steps to protect your website. To learn more about IP intelligence and premium features, visit the <a href="%2$s" target="_blank">Limit Login Attempts Reloaded website</a>.</p>';
-
-		$message = sprintf(
-			$message,
-			$site_domain,
-			'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version']
-		);
-
-		if( LLA_Helpers::is_mu() ) {
-
-			$message .= __(
-				'<p><i>This alert was sent by your website where Limit Login Attempts Reloaded free version 
-is installed and you are listed as the admin. If you are a GoDaddy customer, the plugin is installed 
-into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
-		}
-
-		$message .= sprintf( __(
-            '<hr><a href="%s">Unsubscribe</a> from these notifications.', 'limit-login-attempts-reloaded' ),
-			admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' )
+		$email_body = str_replace(
+            array_keys( $placeholders ),
+            array_values( $placeholders ),
+            $email_body
         );
 
-		@wp_mail( $admin_email, $subject, $message, array( 'content-type: text/html' ) );
+		@wp_mail( $admin_email, $subject, $email_body, array( 'content-type: text/html' ) );
 	}
 
 	/**
