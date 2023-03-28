@@ -286,7 +286,8 @@ $active_app_config = $this->get_custom_app_config();
                     $.post(ajaxurl, {
                         action: 'app_setup',
                         code: setup_code,
-                        sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+                        sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>',
+                        is_network_admin: <?php echo esc_js( is_network_admin() ? 1 : 0 ); ?>
                     }, function(response){
 
                         if(!response.success) {
