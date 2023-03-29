@@ -2212,6 +2212,10 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 			$setup_code = sanitize_text_field( $_POST['code'] );
 			$link = strrev( $setup_code );
 
+			$is_network_admin = sanitize_text_field( $_POST['is_network_admin'] );
+			$is_network_admin = $is_network_admin === '1';
+			$this->use_local_options = !$is_network_admin;
+
 			if( $setup_result = LLAR_App::setup( $link ) ) {
 
 			    if( $setup_result['success'] ) {
