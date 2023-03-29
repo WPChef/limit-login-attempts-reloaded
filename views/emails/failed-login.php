@@ -360,7 +360,7 @@ mFz1LMg9jNFT8rIoJEWuPpiMeHYFJT68caTjjjMmqL7QFzik5uhRWhalh1000AgfqJGZ84Jgh9zw4mJD
                                                         <tr>
                                                             <td style="padding:0;Margin:0"><p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px">
-                                                                    <?php _e( 'Hello {name},', 'limit-login-attempts-reloaded' ); ?></p><br>
+                                                                    <?php _e( 'Hello,', 'limit-login-attempts-reloaded' ); ?></p><br>
                                                                 <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px">
                                                                     <?php _e( 'This notification was sent automatically via Limit Login Attempts Reloaded Plugin.', 'limit-login-attempts-reloaded' ); ?></p>
                                                                 <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px">
