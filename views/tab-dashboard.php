@@ -216,10 +216,17 @@ if( $active_app === 'local' ) {
 							options: {
 								responsive: true,
 								maintainAspectRatio: false,
-								tooltips: {
-									mode: 'index',
-									intersect: false,
-								},
+                                plugins: {
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false,
+                                        callbacks: {
+                                            label: function (context) {
+                                                return context.raw.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
+                                            }
+                                        }
+                                    },
+                                },
 								hover: {
 									mode: 'nearest',
 									intersect: true
@@ -390,9 +397,16 @@ if( $active_app === 'local' ) {
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                tooltips: {
-                                    mode: 'index',
-                                    intersect: false,
+                                plugins: {
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false,
+                                        callbacks: {
+                                            label: function (context) {
+                                                return context.raw.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
+                                            }
+                                        }
+                                    },
                                 },
                                 hover: {
                                     mode: 'nearest',
@@ -419,7 +433,7 @@ if( $active_app === 'local' ) {
                                             },
                                         }
                                     }
-                                }
+                                },
                             }
                         });
 
