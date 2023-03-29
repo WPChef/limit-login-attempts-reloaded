@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login, security, firewall, protection
 Requires at least: 3.0
 Tested up to: 6.1
-Stable tag: 2.25.13
+Stable tag: 2.25.14
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -98,6 +98,12 @@ By default, you will need to copy and paste the lists to each site manually. For
 Please follow this link: <a href="https://www.limitloginattempts.com/resources/">https://www.limitloginattempts.com/resources/</a>
 
 == Changelog ==
+
+= 2.25.14 =
+* Multisite support improved.
+* CSS outside of the plugin issue fixed.
+* Better number formatting on the dashboard.
+* Lockout email template updated.
 
 = 2.25.13 =
 * Ultimate Member compatibility.
