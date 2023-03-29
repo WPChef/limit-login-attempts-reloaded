@@ -125,4 +125,21 @@ class LLA_Helpers {
 	    }
 		return round($num, 1) . $units[$i];
 	}
+
+	public static function send_mail_with_logo( $to, $subject, $body ) {
+
+		add_action( 'phpmailer_init', array( 'LLA_Helpers', 'add_attachments_to_php_mailer' ) );
+
+		@wp_mail( $to, $subject, $body, array( 'content-type: text/html' ) );
+
+		remove_action( 'phpmailer_init', array( 'LLA_Helpers', 'add_attachments_to_php_mailer' ) );
+	}
+
+	public static function add_attachments_to_php_mailer( &$phpmailer ) {
+		$logo_path = LLA_PLUGIN_DIR . '/assets/img/logo.png';
+
+		if( file_exists( $logo_path ) ) {
+			$phpmailer->AddEmbeddedImage( $logo_path, 'logo' );
+		}
+	}
 }
