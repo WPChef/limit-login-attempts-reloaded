@@ -1144,7 +1144,7 @@ class Limit_Login_Attempts {
         );
 
 		if( $res ) {
-		    $admin_name = ' ' . $res[0];
+		    $admin_name = $res[0];
         }
 
         $site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
@@ -1180,7 +1180,7 @@ class Limit_Login_Attempts {
             $email_body
         );
 
-		@wp_mail( $admin_email, $subject, $email_body, array( 'content-type: text/html' ) );
+		LLA_Helpers::send_mail_with_logo( $admin_email, $subject, $email_body );
 	}
 
 	/**
