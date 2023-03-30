@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-03-29T15:50:18+03:00\n"
+"POT-Creation-Date: 2023-03-30T19:03:39+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -376,95 +376,99 @@ msgstr ""
 msgid "Loading older events, skipping ACL events. <a href=\"%s\" target=\"_blank\">Full logs</a>"
 msgstr ""
 
-#: views/emails/failed-login.php:363
+#: views/emails/failed-login.php:241
+msgid "Hello {name},"
+msgstr ""
+
+#: views/emails/failed-login.php:242
 msgid "Hello,"
 msgstr ""
 
-#: views/emails/failed-login.php:365
+#: views/emails/failed-login.php:244
 msgid "This notification was sent automatically via Limit Login Attempts Reloaded Plugin."
 msgstr ""
 
-#: views/emails/failed-login.php:367
+#: views/emails/failed-login.php:246
 msgid "This is installed on your <b>{domain}</b> WordPress site."
 msgstr ""
 
-#: views/emails/failed-login.php:369
+#: views/emails/failed-login.php:248
 msgid "The failed login details include:"
 msgstr ""
 
-#: views/emails/failed-login.php:372
+#: views/emails/failed-login.php:251
 msgid "{attempts_count} failed login attempts ({lockouts_count} lockout(s)) from IP <b>{ip_address}</b>"
 msgstr ""
 
-#: views/emails/failed-login.php:375
+#: views/emails/failed-login.php:254
 msgid "Last user attempted: <b>{username}</b>"
 msgstr ""
 
-#: views/emails/failed-login.php:377
+#: views/emails/failed-login.php:256
 msgid "IP was blocked for {blocked_duration}"
 msgstr ""
 
-#: views/emails/failed-login.php:381
+#: views/emails/failed-login.php:260
 msgid "Please visit your WordPress dashboard for additional details, investigation options, and help articles."
 msgstr ""
 
-#: views/emails/failed-login.php:395
+#: views/emails/failed-login.php:274
 msgid "Go to Dashboard"
 msgstr ""
 
-#: views/emails/failed-login.php:411
+#: views/emails/failed-login.php:290
 msgid "Experiencing frequent attacks or degraded performance? Consider "
 msgstr ""
 
-#: views/emails/failed-login.php:414
+#: views/emails/failed-login.php:293
 msgid "upgrading for advanced protection"
 msgstr ""
 
-#: views/emails/failed-login.php:423
+#: views/emails/failed-login.php:302
 msgid "Frequently Asked Questions"
 msgstr ""
 
-#: views/emails/failed-login.php:425
+#: views/emails/failed-login.php:304
 msgid "What is a failed login attempt?"
 msgstr ""
 
-#: views/emails/failed-login.php:426
+#: views/emails/failed-login.php:305
 msgid "A failed login attempt is when an IP address uses incorrect credentials to log into your website. The IP address could be a human operator, or a program designed to guess your password."
 msgstr ""
 
-#: views/emails/failed-login.php:428
+#: views/emails/failed-login.php:307
 msgid "Why am I getting these emails?"
 msgstr ""
 
-#: views/emails/failed-login.php:429
+#: views/emails/failed-login.php:308
 msgid "You are receiving this email because there was a failed login attempt on your website {domain}. If you'd like to opt out of these notifications, please click the “Unsubscribe” link below."
 msgstr ""
 
-#: views/emails/failed-login.php:431
+#: views/emails/failed-login.php:310
 msgid "How dangerous is this failed login attempt?"
 msgstr ""
 
-#: views/emails/failed-login.php:432
+#: views/emails/failed-login.php:311
 msgid "Unfortunately, we cannot determine the severity of the IP address with the free version of the plugin. If the IP continues to make attempts and is not recognized by your organization, then it's likely to have malicious intent. Depending on how frequent the attacks are, you may experience performance issues. In the plugin dashboard, you can investigate the frequency of the failed login attempts in the logs and take additional steps to protect your website (i.e. adding them to the block list). You can visit the "
 msgstr ""
 
-#: views/emails/failed-login.php:435
+#: views/emails/failed-login.php:314
 msgid "Limit Login Attempts Reloaded website"
 msgstr ""
 
-#: views/emails/failed-login.php:435
+#: views/emails/failed-login.php:314
 msgid " for more information on our premium services, which can automatically block and detect malicious IP addresses."
 msgstr ""
 
-#: views/emails/failed-login.php:445
+#: views/emails/failed-login.php:324
 msgid "This alert was sent by your website where Limit Login Attempts Reloaded free version is installed and you are listed as the admin. If you are a GoDaddy customer, the plugin is installed into a must-use (MU) folder."
 msgstr ""
 
-#: views/emails/failed-login.php:465
+#: views/emails/failed-login.php:344
 msgid "Unsubscribe"
 msgstr ""
 
-#: views/emails/failed-login.php:466
+#: views/emails/failed-login.php:345
 msgid "from these notifications."
 msgstr ""
 
