@@ -3,8 +3,8 @@ Contributors: wpchefgadget
 Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login, security, firewall, protection
 Requires at least: 3.0
-Tested up to: 6.1
-Stable tag: 2.25.14
+Tested up to: 6.2
+Stable tag: 2.25.15
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -98,6 +98,9 @@ By default, you will need to copy and paste the lists to each site manually. For
 Please follow this link: <a href="https://www.limitloginattempts.com/resources/">https://www.limitloginattempts.com/resources/</a>
 
 == Changelog ==
+
+= 2.25.15 =
+* Error messages logic fixed.
 
 = 2.25.14 =
 * Multisite support improved.
