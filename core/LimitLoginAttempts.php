@@ -320,11 +320,16 @@ class Limit_Login_Attempts {
 	public function login_page_render_js() {
 	    global $limit_login_just_lockedout;
 
+	    if( $limit_login_just_lockedout ||
+            ( $this->get_option( 'active_app' ) === 'local' && !$this->is_limit_login_ok() ) ||
+            ( $this->app && !empty( $this->app->get_errors() ) )
+        ) return;
+
 	    $is_wp_login_page = isset( $_POST['log'] );
 	    $is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
 	    $is_um_login_page = ( function_exists( 'um_is_core_page' ) && um_is_core_page( 'login' ) && !empty( $_POST ) );
 
-		if( ( $is_wp_login_page || $is_woo_login_page || $is_um_login_page) && ( $this->is_limit_login_ok() || $limit_login_just_lockedout ) ) : ?>
+		if( ( $is_wp_login_page || $is_woo_login_page || $is_um_login_page ) ) : ?>
         <script>
             ;(function($) {
                 var ajaxUrlObj = new URL('<?php echo admin_url( 'admin-ajax.php' ); ?>');
@@ -1484,9 +1489,11 @@ class Limit_Login_Attempts {
 	*/
 	public function get_message() {
 
-	    if( $this->app && $app_errors = $this->app->get_errors() ) {
+	    if( $this->app ) {
 
-	        return implode( '<br>', $app_errors);
+		    $app_errors = $this->app->get_errors();
+
+	        return !empty( $app_errors ) ? implode( '<br>', $app_errors ) : '';
         } else {
 
 			/* Check external whitelist */
