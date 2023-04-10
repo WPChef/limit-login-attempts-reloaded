@@ -10,6 +10,8 @@ if( !defined( 'ABSPATH' ) ) exit();
 $active_app = Config::get( 'active_app' );
 $active_app = ( $active_app === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 
+$wp_locale = str_replace( '_', '-', get_locale() );
+
 $retries_chart_title = '';
 $retries_chart_desc = '';
 $retries_chart_color = '';
@@ -21,25 +23,30 @@ if( $active_app === 'local' ) {
 	$retries_stats = Config::get( 'retries_stats' );
 
 	if( $retries_stats ) {
-		if( array_key_exists( date_i18n( 'Y-m-d' ), $retries_stats ) ) {
-			$retries_count = (int) $retries_stats[date_i18n( 'Y-m-d' )];
-		}
+		foreach ( $retries_stats as $key => $count ) {
+		    if( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
+			    $retries_count += $count;
+            }
+		    elseif( !is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+			    $retries_count += $count;
+            }
+        }
 	}
 
     if( $retries_count === 0 ) {
 
-		$retries_chart_title = __( 'Hooray! Zero failed login attempts today', 'limit-login-attempts-reloaded' );
+		$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#66CC66';
     }
     else if ( $retries_count < 100 ) {
 
 		$retries_chart_title = sprintf( _n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
-		$retries_chart_title .= __( 'today', 'limit-login-attempts-reloaded' );
+		$retries_chart_title .= __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
 		$retries_chart_desc = __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#FFCC66';
     } else {
 
-		$retries_chart_title = __( 'Warning: Your site is experiencing over 100 failed login attempts today', 'limit-login-attempts-reloaded' );
+		$retries_chart_title = __( 'Warning: Your site has experienced over 100 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
 		$retries_chart_desc = sprintf(__('Your site is currently at a high risk for brute force activity. Consider <a href="%s" target="_blank">premium protection</a> if frequent attacks persist or website performance is degraded', 'limit-login-attempts-reloaded'), 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-status');
 		$retries_chart_color = '#FF6633';
     }
@@ -70,7 +77,7 @@ if( $active_app === 'local' ) {
             <div class="section-content">
                 <div class="chart">
                     <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
-                    <span class="llar-retries-count"><?php echo esc_html( $retries_count ); ?></span>
+                    <span class="llar-retries-count"><?php echo esc_html( Helpers::short_number( $retries_count ) ); ?></span>
                 </div>
                 <script type="text/javascript">
 					(function(){
@@ -152,18 +159,32 @@ if( $active_app === 'local' ) {
 					$retries_stats = Config::get( 'retries_stats' );
 
 					if( is_array( $retries_stats ) && $retries_stats ) {
+                        $key = key( $retries_stats );
+                        $start = is_numeric( $key ) ? date_i18n( 'Y-m-d', $key ) : $key;
 
 						$daterange = new DatePeriod(
-							new DateTime( key( $retries_stats ) ),
+							new DateTime( $start ),
 							new DateInterval('P1D'),
-							new DateTime()
+							new DateTime('-1 day')
 						);
+
+						$retries_per_day = [];
+						foreach ( $retries_stats as $key => $count ) {
+
+						    $date = is_numeric( $key ) ? date_i18n( 'Y-m-d', $key ) : $key;
+
+						    if( empty( $retries_per_day[$date] ) ) {
+							    $retries_per_day[$date] = 0;
+                            }
+
+							$retries_per_day[$date] += $count;
+						}
 
 						$chart2_data = array();
 						foreach ($daterange as $date) {
 
 							$chart2_labels[] = $date->format( $date_format );
-							$chart2_data[] = (!empty($retries_stats[$date->format("Y-m-d")])) ? $retries_stats[$date->format("Y-m-d")] : 0;
+							$chart2_data[] = (!empty($retries_per_day[$date->format("Y-m-d")])) ? $retries_per_day[$date->format("Y-m-d")] : 0;
 						}
                     } else {
 
@@ -200,10 +221,17 @@ if( $active_app === 'local' ) {
 							options: {
 								responsive: true,
 								maintainAspectRatio: false,
-								tooltips: {
-									mode: 'index',
-									intersect: false,
-								},
+                                plugins: {
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false,
+                                        callbacks: {
+                                            label: function (context) {
+                                                return context.raw.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
+                                            }
+                                        }
+                                    },
+                                },
 								hover: {
 									mode: 'nearest',
 									intersect: true
@@ -224,7 +252,7 @@ if( $active_app === 'local' ) {
                                         ticks: {
                                             callback: function(label, index, labels) {
 												if (Math.floor(label) === label) {
-													return label;
+													return label.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
 												}
 											},
 										}
@@ -337,7 +365,7 @@ if( $active_app === 'local' ) {
                                 <img class="flag-icon" src="<?php echo LLA_PLUGIN_URL; ?>/assets/img/flags/<?php echo esc_attr( $country_data['code'] ); ?>.png">
                                 <?php endif; ?>
                             <?php echo esc_html( $country_name ); ?></td>
-                            <td><?php echo esc_html( $country_data['attempts'] ); ?></td>
+                            <td><?php echo esc_html( number_format_i18n( $country_data['attempts'] ) ); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </table>
@@ -374,9 +402,16 @@ if( $active_app === 'local' ) {
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                tooltips: {
-                                    mode: 'index',
-                                    intersect: false,
+                                plugins: {
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false,
+                                        callbacks: {
+                                            label: function (context) {
+                                                return context.raw.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
+                                            }
+                                        }
+                                    },
                                 },
                                 hover: {
                                     mode: 'nearest',
@@ -398,12 +433,12 @@ if( $active_app === 'local' ) {
                                         ticks: {
                                             callback: function(label, index, labels) {
                                                 if (Math.floor(label) === label) {
-                                                    return label;
+                                                    return label.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
                                                 }
                                             },
                                         }
                                     }
-                                }
+                                },
                             }
                         });
 

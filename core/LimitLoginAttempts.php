@@ -64,6 +64,7 @@ class LimitLoginAttempts {
 		add_filter( 'limit_login_blacklist_usernames', array( $this, 'check_blacklist_usernames' ), 10, 2 );
 
 		add_filter( 'illegal_user_logins', array( $this, 'register_user_blacklist' ), 999 );
+		add_filter( 'um_custom_authenticate_error_codes', array( $this, 'ultimate_member_register_error_codes' ) );
 
 		// TODO: Temporary turn off the holiday warning.
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
@@ -230,8 +231,16 @@ class LimitLoginAttempts {
 	public function login_page_render_js() {
 	    global $limit_login_just_lockedout;
 
-		if( ( isset( $_POST['log'] ) || ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) ) ) &&
-			($this->is_limit_login_ok() || $limit_login_just_lockedout ) ) : ?>
+	    if( $limit_login_just_lockedout ||
+            ( Config::get( 'active_app' ) === 'local' && !$this->is_limit_login_ok() ) ||
+            ( self::$cloud_app && !empty( self::$cloud_app->get_errors() ) )
+        ) return;
+
+	    $is_wp_login_page = isset( $_POST['log'] );
+	    $is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
+	    $is_um_login_page = ( function_exists( 'um_is_core_page' ) && um_is_core_page( 'login' ) && !empty( $_POST ) );
+
+		if( ( $is_wp_login_page || $is_woo_login_page || $is_um_login_page ) ) : ?>
         <script>
             ;(function($) {
                 var ajaxUrlObj = new URL('<?php echo admin_url( 'admin-ajax.php' ); ?>');
@@ -243,6 +252,7 @@ class LimitLoginAttempts {
                 }, function(response) {
                     if(response.success && response.data) {
                         $('#login_error').append("<br>" + response.data);
+                        $('.um-notice.err').append("<br>" + response.data);
                         $('.woocommerce-error').append("<li>(" + response.data + ")</li>");
                     }
                 })
@@ -506,6 +516,16 @@ class LimitLoginAttempts {
 		return $user;
 	}
 
+	public function ultimate_member_register_error_codes( $codes ) {
+
+	    if( !is_array( $codes ) ) return $codes;
+
+		$codes[] = 'too_many_retries';
+		$codes[] = 'username_blacklisted';
+
+		return $codes;
+	}
+
 	/**
 	* Check if the original plugin is installed
 	*/
@@ -585,9 +605,16 @@ class LimitLoginAttempts {
 		$retries_count = 0;
         $retries_stats = Config::get( 'retries_stats' );
 
-        if( $retries_stats && array_key_exists( date_i18n( 'Y-m-d' ), $retries_stats ) ) {
-            $retries_count = (int) $retries_stats[date_i18n( 'Y-m-d' )];
-        }
+	    if( $retries_stats ) {
+		    foreach ( $retries_stats as $key => $count ) {
+			    if( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
+				    $retries_count += $count;
+			    }
+                elseif( !is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+				    $retries_count += $count;
+			    }
+		    }
+	    }
 
         if( $retries_count < 100 ) return '';
 
@@ -734,7 +761,7 @@ class LimitLoginAttempts {
 				Config::add( 'retries_stats', $retries_stats );
 			}
 
-			$date_key = date_i18n( 'Y-m-d' );
+			$date_key = strtotime( date( 'Y-m-d H:00:00' ) );
             if(!empty($retries_stats[$date_key])) {
 
 				$retries_stats[$date_key]++;
@@ -841,10 +868,9 @@ class LimitLoginAttempts {
 	* @param $user
 	*/
 	public function notify_email( $user ) {
-		$ip          = $this->get_address();
-		$whitelisted = $this->is_ip_whitelisted( $ip );
-
+		$ip = $this->get_address();
 		$retries = Config::get( 'retries' );
+
 		if ( ! is_array( $retries ) ) {
 			$retries = array();
 		}
@@ -897,7 +923,7 @@ class LimitLoginAttempts {
         );
 
 		if( $res ) {
-		    $admin_name = ' ' . $res[0];
+		    $admin_name = $res[0];
         }
 
         $site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
@@ -906,73 +932,36 @@ class LimitLoginAttempts {
 
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
 
-        $subject = sprintf(
-            __( "[%s] Failed WordPress login attempt by IP %s on %s", 'limit-login-attempts-reloaded' ),
-            $blogname,
-            $ip,
-            date( get_option( 'date_format' ) )
-        );
-
-        $message = __(
-                '<p>Hello%1$s,</p>
-<p>%2$d failed login attempts (%3$d lockout(s)) from IP <b>%4$s</b><br>
-Last user attempted: <b>%5$s</b><br>
-IP was blocked for %6$s</p>
-<p>This notification was sent automatically via Limit Login Attempts Reloaded Plugin. 
-<b>This is installed on your %7$s WordPress site. <a href="%8$s" target="_blank">Please login to your WordPress</a> ' .
-'dashboard to view more info.</b></p>' .
-'<p>Experiencing frequent attacks or degraded performance? Try our <a href="%9$s" target="_blank">advanced protection</a>. ' .
-'Have Questions? Visit our <a href="%10$s" target="_blank">help section</a>.</p>', 'limit-login-attempts-reloaded' );
-
-        $message = sprintf(
-            $message,
-			$admin_name,
-			$count,
-            $lockouts,
-            $ip,
-			$user,
-            $when,
-			$site_domain,
-			admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
-            'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
-            'https://www.limitloginattempts.com/resources/?from=plugin-lockout-email&v=' . $plugin_data['Version']
-        );
-
-        $message .= '<h3>Frequently Asked Questions</h3>
-<p><b>What is a Failed Login Attempt?</b><br>
-A failed login attempt is when an IP address uses incorrect credentials to login to your website.
-The IP address could be a human operator, or a program designed to guess your password.</p>
-
-<p><b>Why Am I Getting This Email?</b><br>
-You are receiving this email because there was a failed login attempt on your website %1$s. 
-If you\'d like to opt out of these notifications, please click the “Unsubscribe” link below.</p>
-
-<p><b>How Dangerous Is This Failed Login Attempt?</b><br>
-Unfortunately, we cannot determine how dangerous this failed login attempt is. 
-You will receive protection from the free version of the plugin, but depending on how frequent the attacks are, 
-you may experience performance issues. In the plugin dashboard, you can investigate the severity of the failed login 
-attempts and take additional steps to protect your website. You can visit the Limit Login Attempts Reloaded website 
-for more information on our premium services.</p>';
-
-		$message = sprintf(
-			$message,
-			$site_domain
+		$subject = sprintf(
+			__( "Failed login by IP %s", 'limit-login-attempts-reloaded' ),
+			$ip
 		);
 
-		if( Helpers::is_mu() ) {
+		ob_start();
+		include LLA_PLUGIN_DIR . '/views/emails/failed-login.php';
+		$email_body = ob_get_clean();
 
-			$message .= __(
-				'<p><i>This alert was sent by your website where Limit Login Attempts Reloaded free version 
-is installed and you are listed as the admin. If you are a GoDaddy customer, the plugin is installed 
-into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
-		}
-
-		$message .= sprintf( __(
-            '<hr><a href="%s">Unsubscribe</a> from these notifications.', 'limit-login-attempts-reloaded' ),
-			admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' )
+		$placeholders = array(
+            '{name}'                => $admin_name,
+            '{domain}'              => $site_domain,
+            '{attempts_count}'      => $count,
+            '{lockouts_count}'      => $lockouts,
+            '{ip_address}'          => $ip,
+            '{username}'            => $user,
+            '{blocked_duration}'    => $when,
+            '{dashboard_url}'       => admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
+            '{premium_url}'         => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
+            '{llar_url}'            => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
+            '{unsubscribe_url}'     => admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' ),
         );
 
-		@wp_mail( $admin_email, $subject, $message, array( 'content-type: text/html' ) );
+		$email_body = str_replace(
+            array_keys( $placeholders ),
+            array_values( $placeholders ),
+            $email_body
+        );
+
+		Helpers::send_mail_with_logo( $admin_email, $subject, $email_body );
 	}
 
 	/**
@@ -1240,9 +1229,10 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 	*/
 	public function get_message() {
 
-	    if( self::$cloud_app && $app_errors = self::$cloud_app->get_errors() ) {
+	    if( self::$cloud_app ) {
+		    $app_errors = self::$cloud_app->get_errors();
 
-	        return implode( '<br>', $app_errors);
+	        return !empty( $app_errors ) ? implode( '<br>', $app_errors ) : '';
         } else {
 
 			/* Check external whitelist */
@@ -1364,10 +1354,11 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 
 		if($retries_stats) {
 
-			foreach( $retries_stats as $date => $count ) {
+			foreach( $retries_stats as $key => $count ) {
 
-				if( strtotime( $date ) < strtotime( '-7 day' ) ) {
-					unset($retries_stats[$date]);
+				if( ( is_numeric( $key ) && $key < strtotime( '-8 day' ) ) ||
+                    ( !is_numeric( $key ) && strtotime( $key ) < strtotime( '-8 day' ) ) ) {
+					unset($retries_stats[$key]);
 				}
 			}
 
@@ -1383,7 +1374,9 @@ into a must-use (MU) folder.</i></p>', 'limit-login-attempts-reloaded' );
 	*/
 	public function options_page() {
 
-	    Config::use_local_options( !is_network_admin() );
+	    if( !empty( $_GET['tab'] ) && $_GET['tab'] === 'settings' ) {
+		    Config::use_local_options( !is_network_admin() );
+        }
 
 		$this->cleanup();
 
