@@ -149,7 +149,7 @@ $popup_app_setup_content = ob_get_clean();
                     if(response.success) {
                         setTimeout(function(){
 
-                            window.location = window.location + '&activated';
+                            window.location = window.location + '&llar-cloud-activated';
 
                         }, 500);
                     }
