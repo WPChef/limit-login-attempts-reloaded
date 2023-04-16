@@ -38,6 +38,8 @@ class Config {
 
 		/* If notify by email, do so after this number of lockouts */
 		'notify_email_after' => 3,
+		/* Send plain text email instead of HTML */
+		'notify_email_plain' => false,
 
 		'review_notice_shown'        => false,
 		'enable_notify_notice_shown' => false,

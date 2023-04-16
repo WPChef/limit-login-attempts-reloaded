@@ -14,6 +14,8 @@ $gdpr_message = Config::get( 'gdpr_message' );
 
 $v = explode( ',', Config::get( 'lockout_notify' ) );
 $email_checked = in_array( 'email', $v ) ? ' checked ' : '';
+$email_html_checked = $this->get_option( 'notify_email_plain' ) ? '' : ' checked ';
+$email_plain_checked = $this->get_option( 'notify_email_plain' ) ? ' checked ' : '';
 
 $show_top_level_menu_item = Config::get( 'show_top_level_menu_item' );
 $hide_dashboard_widget = Config::get( 'hide_dashboard_widget' );
@@ -96,6 +98,16 @@ $active_app_config = Config::get( 'app_config' );
                     <input type="text" size="3" maxlength="4"
                            value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
                            name="email_after"/> <?php echo __( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
+                    <br>
+                    <?php _e( 'with format', 'limit-login-attempts-reloaded' ); ?>
+                    <label>
+                        <input type="radio" name="email_plain" <?php echo $email_html_checked; ?> value=""/>
+                        <?php _e( 'HTML', 'limit-login-attempts-reloaded' ); ?>
+                    </label>
+                    <label>
+                        <input type="radio" name="email_plain" <?php echo $email_plain_checked; ?> value="email_plain"/>
+                        <?php _e( 'Plaintext', 'limit-login-attempts-reloaded' ); ?>
+                    </label>
                 </td>
             </tr>
 
