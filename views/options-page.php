@@ -9,7 +9,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 $active_tab = "dashboard";
 $active_app = Config::get( 'active_app' );
 
-if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help', 'load-proxy' ) ) ) {
+if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help' ) ) ) {
 
 	if( !LimitLoginAttempts::$cloud_app && $_GET['tab'] === 'logs-custom' ) {
 
@@ -54,7 +54,6 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
             <a href="<?php echo $this->get_options_page_uri('logs-local'); ?>" class="nav-tab <?php if($active_tab == 'logs-local'){echo 'nav-tab-active';} ?> "><?php _e('Logs', 'limit-login-attempts-reloaded'); ?></a>
 		<?php endif; ?>
 
-        <a href="<?php echo $this->get_options_page_uri('load-proxy'); ?>" class="nav-tab <?php if($active_tab == 'load-proxy'){echo 'nav-tab-active';} ?>"><?php _e('Load Proxy', 'limit-login-attempts-reloaded'); ?></a>
         <a href="<?php echo $this->get_options_page_uri('debug'); ?>" class="nav-tab <?php if($active_tab == 'debug'){echo 'nav-tab-active';} ?>"><?php _e('Debug', 'limit-login-attempts-reloaded'); ?></a>
         <a href="<?php echo $this->get_options_page_uri('help'); ?>" class="nav-tab <?php if($active_tab == 'help'){echo 'nav-tab-active';} ?>"><?php _e('Help', 'limit-login-attempts-reloaded'); ?></a>
 

@@ -1464,10 +1464,6 @@ class LimitLoginAttempts {
 
 	            Config::sanitize_options();
 
-	            if( Config::get( 'load_proxy_enabled' ) ) {
-		            AdvancedServerLoadCutting::create_proxy_file();
-	            }
-
                 $this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
             }
             elseif( isset( $_POST[ 'llar_update_settings' ] ) ) {
@@ -1541,20 +1537,7 @@ class LimitLoginAttempts {
                     }
                 }
 
-	            if( Config::get( 'load_proxy_enabled' ) ) {
-		            AdvancedServerLoadCutting::create_proxy_file();
-	            }
-
                 $this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
-            }
-            elseif( isset( $_POST[ 'llar_load_proxy_save' ] ) ) {
-
-                try {
-	                AdvancedServerLoadCutting::form_handler();
-	                $this->show_message( __( 'Saved.', 'limit-login-attempts-reloaded' ) );
-                } catch (\Exception $exception) {
-	                $this->show_message( $exception->getMessage(), true );
-                }
             }
 		}
 
