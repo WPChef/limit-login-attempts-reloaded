@@ -59,8 +59,6 @@ class Config {
 		'retries'               => array(),
 		'lockouts'              => array(),
 		'auto_update_choice'    => null,
-
-		'load_proxy_enabled'    => false
 	);
 
 	private static $prefix = 'limit_login_';
