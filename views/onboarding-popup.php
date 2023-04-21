@@ -54,7 +54,7 @@ ob_start(); ?>
         <div class="text"><?php _e( 'If you don\'t have one, you can purchase one now.', 'limit-login-attempts-reloaded' ); ?></div>
         <div class="buttons">
             <a href="https://checkout.limitloginattempts.com/plan?from=plugin-welcome" target="_blank"
-               class="button button-primary size-medium"><?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?><span><?php _e( 'Starting from $8/month', 'limit-login-attempts-reloaded' ); ?></span></a>
+               class="button button-primary size-medium"><?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?></a>
             <a href="https://www.limitloginattempts.com/features/?from=plugin-welcome" target="_blank"
                class="button button-secondary"><?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?></a>
             <button class="button-link" id="llar-popup-no-thanks-btn"><?php _e( 'No thanks', 'limit-login-attempts-reloaded' ); ?></button>
