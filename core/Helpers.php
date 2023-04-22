@@ -62,7 +62,7 @@ class LLA_Helpers {
 
     public static function get_countries_list() {
 
-    	if( ! ( $countries = require LLA_PLUGIN_DIR . '/resources/countries.php' ) ) {
+    	if( ! ( $countries = require LLA_PLUGIN_DIR . 'resources/countries.php' ) ) {
 
     		return array();
 		}
@@ -136,7 +136,7 @@ class LLA_Helpers {
 	}
 
 	public static function add_attachments_to_php_mailer( &$phpmailer ) {
-		$logo_path = LLA_PLUGIN_DIR . '/assets/img/logo.png';
+		$logo_path = LLA_PLUGIN_DIR . 'assets/img/logo.png';
 
 		if( file_exists( $logo_path ) ) {
 			$phpmailer->AddEmbeddedImage( $logo_path, 'logo' );
