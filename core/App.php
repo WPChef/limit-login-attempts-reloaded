@@ -154,7 +154,9 @@ class LLAR_App {
 
 		$this->prepare_settings( 'acl', $data );
 
-		return $this->request( 'acl', 'post', $data );
+		$response = $this->request( 'acl', 'post', $data );
+
+		return !in_array( $this->last_response_code, array( 200, 403 ) ) ? array( 'result' => 'deny' ) : $response;
 	}
 
 	/**
