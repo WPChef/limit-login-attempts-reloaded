@@ -44,7 +44,7 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
 
 <table class="form-table">
 	<tr>
-		<th scope="row" valign="top"><?php echo __( 'Debug info', 'limit-login-attempts-reloaded' ); ?></th>
+		<th scope="row" valign="top"><?php echo __( 'Debug Info', 'limit-login-attempts-reloaded' ); ?></th>
 		<td>
 			<textarea cols="70" rows="10" onclick="this.select()" readonly><?php echo esc_textarea($debug_info); ?></textarea>
 			<p class="description"><?php _e( 'Copy the contents of the window and provide to support.', 'limit-login-attempts-reloaded' ); ?></p>
