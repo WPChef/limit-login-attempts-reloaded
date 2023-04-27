@@ -34,10 +34,10 @@ $limit_login_nonempty_credentials = false; /* user and pwd nonempty */
 /***************************************************************************************
  * Include files
  **************************************************************************************/
-require_once( LLA_PLUGIN_DIR . '/lib/CidrCheck.php' );
-require_once( LLA_PLUGIN_DIR . '/core/Shortcodes.php' );
-require_once( LLA_PLUGIN_DIR . '/core/Helpers.php' );
-require_once( LLA_PLUGIN_DIR . '/core/App.php' );
-require_once( LLA_PLUGIN_DIR . '/core/LimitLoginAttempts.php' );
+require_once( LLA_PLUGIN_DIR . 'lib/CidrCheck.php' );
+require_once( LLA_PLUGIN_DIR . 'core/Shortcodes.php' );
+require_once( LLA_PLUGIN_DIR . 'core/Helpers.php' );
+require_once( LLA_PLUGIN_DIR . 'core/App.php' );
+require_once( LLA_PLUGIN_DIR . 'core/LimitLoginAttempts.php' );
 
 $limit_login_attempts_obj = new Limit_Login_Attempts();
