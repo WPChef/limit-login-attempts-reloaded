@@ -97,7 +97,7 @@ class CloudApp {
 		$domain = parse_url( home_url( '/' ) );
 		$link = add_query_arg( 'domain', $domain['host'], $link );
 
-		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
+		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 		$link = add_query_arg( 'version', $plugin_data['Version'], $link );
 
 		$setup_response = Http::get( $link );
@@ -154,7 +154,9 @@ class CloudApp {
 
 		$this->prepare_settings( 'acl', $data );
 
-		return $this->request( 'acl', 'post', $data );
+		$response = $this->request( 'acl', 'post', $data );
+
+		return !in_array( $this->last_response_code, array( 200, 403 ) ) ? array( 'result' => 'deny' ) : $response;
 	}
 
 	/**

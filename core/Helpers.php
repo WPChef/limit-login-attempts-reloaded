@@ -10,6 +10,7 @@ class Helpers {
 
 	/**
 	 * @param string $msg
+	 * @param bool $is_error
 	 */
 	public static function show_message( $msg = '', $is_error = false ) {
 		if ( empty( $msg ) ) {
@@ -331,7 +332,7 @@ class Helpers {
 	}
 
 	public static function short_number($num) {
-	    $units = ['', 'K', 'M', 'B', 'T'];
+	    $units = array( '', 'K', 'M', 'B', 'T' );
 	    for ($i = 0; $num >= 1000; $i++) {
 	        $num /= 1000;
 	    }
@@ -348,7 +349,7 @@ class Helpers {
 	}
 
 	public static function add_attachments_to_php_mailer( &$phpmailer ) {
-		$logo_path = LLA_PLUGIN_DIR . '/assets/img/logo.png';
+		$logo_path = LLA_PLUGIN_DIR . 'assets/img/logo.png';
 
 		if( file_exists( $logo_path ) ) {
 			$phpmailer->AddEmbeddedImage( $logo_path, 'logo' );
