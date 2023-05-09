@@ -126,7 +126,7 @@ class LimitLoginAttempts {
     }
 
     public function dashboard_widgets_content() {
-		include_once( LLA_PLUGIN_DIR . '/views/admin-dashboard-widgets.php' );
+		include_once( LLA_PLUGIN_DIR . 'views/admin-dashboard-widgets.php' );
     }
 
 	/**
@@ -545,7 +545,7 @@ class LimitLoginAttempts {
 	*/
 	public function enqueue() {
 
-	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
+	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
 		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css', array(), $plugin_data['Version'] );
 //		wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array(), $plugin_data['Version'] );
@@ -560,7 +560,7 @@ class LimitLoginAttempts {
 
 	public function login_page_enqueue() {
 
-	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
+	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
 		wp_enqueue_style( 'llar-login-page-styles', LLA_PLUGIN_URL . 'assets/css/login-page-styles.css', array(), $plugin_data['Version'] );
         wp_enqueue_script( 'jquery' );
@@ -592,7 +592,7 @@ class LimitLoginAttempts {
 	}
 
 	public function get_svg_logo_content() {
-	    return file_get_contents( LLA_PLUGIN_DIR . '/assets/img/logo.svg' );
+	    return file_get_contents( LLA_PLUGIN_DIR . 'assets/img/logo.svg' );
     }
 
     private function menu_alert_icon() {
@@ -930,7 +930,7 @@ class LimitLoginAttempts {
 		$blogname = Helpers::use_local_options() ? get_option( 'blogname' ) : get_site_option( 'site_name' );
 		$blogname = htmlspecialchars_decode( $blogname, ENT_QUOTES );
 
-		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . '/limit-login-attempts-reloaded.php' );
+		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
 		$subject = sprintf(
 			__( "Failed login by IP %s", 'limit-login-attempts-reloaded' ),
@@ -938,7 +938,7 @@ class LimitLoginAttempts {
 		);
 
 		ob_start();
-		include LLA_PLUGIN_DIR . '/views/emails/failed-login.php';
+		include LLA_PLUGIN_DIR . 'views/emails/failed-login.php';
 		$email_body = ob_get_clean();
 
 		$placeholders = array(
@@ -1541,7 +1541,7 @@ class LimitLoginAttempts {
             }
 		}
 
-		include_once( LLA_PLUGIN_DIR . '/views/options-page.php' );
+		include_once( LLA_PLUGIN_DIR . 'views/options-page.php' );
 	}
 
 	/**
