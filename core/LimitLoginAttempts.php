@@ -379,7 +379,6 @@ class LimitLoginAttempts {
 	 * @throws Exception
 	 */
 	public function authenticate_filter( $user, $username, $password ) {
-        global $llar_acl_check_result;
 
 		if(!session_id()) {
 			session_start();
@@ -387,22 +386,13 @@ class LimitLoginAttempts {
 
 		if ( ! empty( $username ) && ! empty( $password ) ) {
 
-		    $acl_result = false;
-		    if( !empty( $llar_acl_check_result ) && is_array( $llar_acl_check_result ) ) {
-
-			    $acl_result = $llar_acl_check_result;
-		    } else if( self::$cloud_app && $response = self::$cloud_app->acl_check( array(
+		    if( self::$cloud_app && $response = self::$cloud_app->acl_check( array(
 				    'ip'        => Helpers::get_all_ips(),
 				    'login'     => $username,
 				    'gateway'   => Helpers::detect_gateway()
 			    ) ) ) {
 
-			    $acl_result = $response;
-            }
-
-			if( !empty( $acl_result ) && is_array( $acl_result ) ) {
-
-			    if( $acl_result['result'] === 'deny' ) {
+			    if( $response['result'] === 'deny' ) {
 
 					unset($_SESSION['login_attempts_left']);
 
@@ -438,7 +428,7 @@ class LimitLoginAttempts {
 						exit;
 					}
                 }
-                else if( $acl_result['result'] === 'pass' ) {
+                else if( $response['result'] === 'pass' ) {
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
