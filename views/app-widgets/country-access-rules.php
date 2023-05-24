@@ -1,4 +1,7 @@
 <?php
+
+use LLAR\Core\Helpers;
+
 if( !defined( 'ABSPATH' ) ) exit();
 ?>
 
@@ -6,7 +9,7 @@ if( !defined( 'ABSPATH' ) ) exit();
     <h3><?php _e( 'Country Access Rules', 'limit-login-attempts-reloaded' ); ?></h3>
 
     <?php
-    $countries_list = LLA_Helpers::get_countries_list();
+    $countries_list = Helpers::get_countries_list();
     ?>
     <div class="llar-preloader-wrap">
         <div class="llar-block-country-section">

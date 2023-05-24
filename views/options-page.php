@@ -1,12 +1,17 @@
 <?php
 
+use LLAR\Core\Config;
+use LLAR\Core\Helpers;
+use LLAR\Core\LimitLoginAttempts;
+
 if( !defined( 'ABSPATH' ) ) exit();
 
 $active_tab = "dashboard";
-$active_app = $this->get_option( 'active_app' );
+$active_app = Config::get( 'active_app' );
+
 if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help' ) ) ) {
 
-	if(!$this->app && $_GET['tab'] === 'logs-custom') {
+	if( !LimitLoginAttempts::$cloud_app && $_GET['tab'] === 'logs-custom' ) {
 
 		$active_tab = 'logs-local';
 	} else {
@@ -15,7 +20,7 @@ if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-c
 	}
 }
 
-$auto_update_choice = $this->get_option( 'auto_update_choice' );
+$auto_update_choice = Config::get( 'auto_update_choice' );
 ?>
 
 <?php if( $active_app === 'local' ) : ?>
@@ -27,7 +32,7 @@ $auto_update_choice = $this->get_option( 'auto_update_choice' );
 </div>
 <?php endif; ?>
 
-<?php if( ( $auto_update_choice || $auto_update_choice === null ) && !LLA_Helpers::isAutoUpdateEnabled() ) : ?>
+<?php if( ( $auto_update_choice || $auto_update_choice === null ) && !Helpers::is_auto_update_enabled() ) : ?>
 <div class="notice notice-error llar-auto-update-notice">
     <p>
         <?php _e( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', 'limit-login-attempts-reloaded' ); ?>
@@ -42,11 +47,13 @@ $auto_update_choice = $this->get_option( 'auto_update_choice' );
     <h2 class="nav-tab-wrapper">
         <a href="<?php echo $this->get_options_page_uri('dashboard'); ?>" class="nav-tab <?php if($active_tab == 'dashboard'){echo 'nav-tab-active';} ?> "><?php _e('Dashboard', 'limit-login-attempts-reloaded'); ?></a>
         <a href="<?php echo $this->get_options_page_uri('settings'); ?>" class="nav-tab <?php if($active_tab == 'settings'){echo 'nav-tab-active';} ?> "><?php _e('Settings', 'limit-login-attempts-reloaded'); ?></a>
+
         <?php if( $active_app === 'custom' ) : ?>
             <a href="<?php echo $this->get_options_page_uri('logs-custom'); ?>" class="nav-tab <?php if($active_tab == 'logs-custom'){echo 'nav-tab-active';} ?> "><?php _e('Logs', 'limit-login-attempts-reloaded'); ?></a>
         <?php else : ?>
             <a href="<?php echo $this->get_options_page_uri('logs-local'); ?>" class="nav-tab <?php if($active_tab == 'logs-local'){echo 'nav-tab-active';} ?> "><?php _e('Logs', 'limit-login-attempts-reloaded'); ?></a>
 		<?php endif; ?>
+
         <a href="<?php echo $this->get_options_page_uri('debug'); ?>" class="nav-tab <?php if($active_tab == 'debug'){echo 'nav-tab-active';} ?>"><?php _e('Debug', 'limit-login-attempts-reloaded'); ?></a>
         <a href="<?php echo $this->get_options_page_uri('help'); ?>" class="nav-tab <?php if($active_tab == 'help'){echo 'nav-tab-active';} ?>"><?php _e('Help', 'limit-login-attempts-reloaded'); ?></a>
 

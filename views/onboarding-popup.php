@@ -1,14 +1,16 @@
 <?php
 
+use LLAR\Core\Config;
+
 if( !defined( 'ABSPATH' ) ) exit();
 
 /**
- * @var $this Limit_Login_Attempts
+ * @var $this LLAR\Core\LimitLoginAttempts
  */
 
 $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
-$onboarding_popup_shown = $this->get_option( 'onboarding_popup_shown' );
-$setup_code = $this->get_option( 'app_setup_code' );
+$onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
+$setup_code = Config::get( 'app_setup_code' );
 
 if( $onboarding_popup_shown || !empty( $setup_code ) ) return;
 
@@ -52,7 +54,7 @@ ob_start(); ?>
         <div class="text"><?php _e( 'If you don\'t have one, you can purchase one now.', 'limit-login-attempts-reloaded' ); ?></div>
         <div class="buttons">
             <a href="https://checkout.limitloginattempts.com/plan?from=plugin-welcome" target="_blank"
-               class="button button-primary size-medium"><?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?><span><?php _e( 'Starting from $8/month', 'limit-login-attempts-reloaded' ); ?></span></a>
+               class="button button-primary size-medium"><?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?></a>
             <a href="https://www.limitloginattempts.com/features/?from=plugin-welcome" target="_blank"
                class="button button-secondary"><?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?></a>
             <button class="button-link" id="llar-popup-no-thanks-btn"><?php _e( 'No thanks', 'limit-login-attempts-reloaded' ); ?></button>
@@ -61,7 +63,6 @@ ob_start(); ?>
 </div>
 <?php
 $popup_app_setup_content = ob_get_clean();
-?>
 ?>
 <script>
     (function($){
