@@ -1,8 +1,11 @@
 <?php
+
+use LLAR\Core\Config;
+
 if( !defined( 'ABSPATH' ) ) exit();
 ?>
 <?php
-$app_config = $this->get_custom_app_config();
+$app_config = Config::get( 'app_config' );
 $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.com/logs?key=' . esc_attr( $app_config['key'] ) : false;
 ?>
 <div class="llar-table-header">
