@@ -33,6 +33,9 @@ $limit_login_my_error_shown = false; /* have we shown our stuff? */
 $limit_login_just_lockedout = false; /* started this pageload??? */
 $limit_login_nonempty_credentials = false; /* user and pwd nonempty */
 
-require_once( LLA_PLUGIN_DIR . 'autoload.php' );
+if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 
-(new LLAR\Core\LimitLoginAttempts());
+	require_once( LLA_PLUGIN_DIR . 'autoload.php' );
+
+	(new LLAR\Core\LimitLoginAttempts());
+}
