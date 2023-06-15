@@ -51,7 +51,6 @@ class CloudApp {
 		return floor( microtime( true ) * 1000 );
 	}
 
-
 	/**
 	 * @param $init
 	 * @param $input
@@ -181,8 +180,7 @@ class CloudApp {
 
 		$response = $this->request( 'acl', 'post', $data );
 
-		if( ( $this->last_response_code === 200 && !$this->validate_signature( $signature, $response['signature'] ) ) ||
-	        !in_array( $this->last_response_code, array( 200, 403 ) ) ) {
+		if( $this->last_response_code === 200 && !$this->validate_signature( $signature, $response['signature'] ) ) {
 			return array( 'result' => 'deny' );
 		}
 
