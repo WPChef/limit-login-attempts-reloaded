@@ -1,30 +1,33 @@
 <?php
 
+use LLAR\Core\Config;
+use LLAR\Core\Helpers;
+
 if( !defined( 'ABSPATH' ) ) exit();
 
 /**
- * @var $this Limit_Login_Attempts
+ * @var $this LLAR\Core\LimitLoginAttempts
  */
 
-$gdpr = $this->get_option( 'gdpr' );
-$gdpr_message = $this->get_option( 'gdpr_message' );
+$gdpr = Config::get( 'gdpr' );
+$gdpr_message = Config::get( 'gdpr_message' );
 
-$v = explode( ',', $this->get_option( 'lockout_notify' ) );
+$v = explode( ',', Config::get( 'lockout_notify' ) );
 $email_checked = in_array( 'email', $v ) ? ' checked ' : '';
 
-$show_top_level_menu_item = $this->get_option( 'show_top_level_menu_item' );
-$hide_dashboard_widget = $this->get_option( 'hide_dashboard_widget' );
-$show_warning_badge = $this->get_option( 'show_warning_badge' );
+$show_top_level_menu_item = Config::get( 'show_top_level_menu_item' );
+$hide_dashboard_widget = Config::get( 'hide_dashboard_widget' );
+$show_warning_badge = Config::get( 'show_warning_badge' );
 
-$admin_notify_email = $this->get_option( 'admin_notify_email' );
-$admin_email_placeholder = (!is_multisite()) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
+$admin_notify_email = Config::get( 'admin_notify_email' );
+$admin_email_placeholder = ( !is_network_admin() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 
-$trusted_ip_origins = $this->get_option( 'trusted_ip_origins' );
+$trusted_ip_origins = Config::get( 'trusted_ip_origins' );
 $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && !empty( $trusted_ip_origins ) ) ? implode( ", ", $trusted_ip_origins ) : 'REMOTE_ADDR';
 
-$active_app = $this->get_option( 'active_app' );
-$app_setup_code = $this->get_option( 'app_setup_code' );
-$active_app_config = $this->get_custom_app_config();
+$active_app = Config::get( 'active_app' );
+$app_setup_code = Config::get( 'app_setup_code' );
+$active_app_config = Config::get( 'app_config' );
 
 ?>
 <?php if( isset( $_GET['llar-cloud-activated'] ) && !empty( $active_app_config['messages']['setup_success'] ) ) : ?>
@@ -40,10 +43,10 @@ $active_app_config = $this->get_custom_app_config();
     <?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
 
     <?php if ( is_network_admin() ): ?>
-    <input type="checkbox" name="allow_local_options" <?php echo $this->get_option( 'allow_local_options' ) ? 'checked' : '' ?> value="1"/> <?php esc_html_e( 'Let network sites use their own settings', 'limit-login-attempts-reloaded' ); ?>
+    <input type="checkbox" name="allow_local_options" <?php echo Config::get( 'allow_local_options' ) ? 'checked' : '' ?> value="1"/> <?php esc_html_e( 'Let network sites use their own settings', 'limit-login-attempts-reloaded' ); ?>
         <p class="description"><?php esc_html_e('If disabled, the global settings will be forcibly applied to the entire network.') ?></p>
-    <?php elseif ( $this->network_mode ): ?>
-    <input type="checkbox" name="use_global_options" <?php echo $this->get_option('use_local_options' ) ? '' : 'checked' ?> value="1" class="use_global_options"/> <?php echo __( 'Use global settings', 'limit-login-attempts-reloaded' ); ?><br/>
+    <?php elseif ( Helpers::is_network_mode() ): ?>
+    <input type="checkbox" name="use_global_options" <?php echo Config::get('use_local_options' ) ? '' : 'checked' ?> value="1" class="use_global_options"/> <?php echo __( 'Use global settings', 'limit-login-attempts-reloaded' ); ?><br/>
         <script>
             jQuery(function($){
                 var first = true;
@@ -91,7 +94,7 @@ $active_app_config = $this->get_custom_app_config();
                            value="<?php echo esc_attr( $admin_notify_email ) ?>"
                            placeholder="<?php echo esc_attr( $admin_email_placeholder ); ?>"/> <?php echo __( 'after', 'limit-login-attempts-reloaded' ); ?>
                     <input type="text" size="3" maxlength="4"
-                           value="<?php echo( $this->get_option( 'notify_email_after' ) ); ?>"
+                           value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
                            name="email_after"/> <?php echo __( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
                 </td>
             </tr>
@@ -144,23 +147,22 @@ $active_app_config = $this->get_custom_app_config();
                     <tr>
                         <th scope="row" valign="top"><?php echo __( 'Lockout', 'limit-login-attempts-reloaded' ); ?></th>
                         <td>
-
                             <input type="text" size="3" maxlength="4"
-                                   value="<?php echo( $this->get_option( 'allowed_retries' ) ); ?>"
+                                   value="<?php echo( Config::get( 'allowed_retries' ) ); ?>"
                                    name="allowed_retries"/> <?php echo __( 'allowed retries', 'limit-login-attempts-reloaded' ); ?>
                             <br/>
                             <input type="text" size="3" maxlength="4"
-                                   value="<?php echo( $this->get_option( 'lockout_duration' ) / 60 ); ?>"
+                                   value="<?php echo( Config::get( 'lockout_duration' ) / 60 ); ?>"
                                    name="lockout_duration"/> <?php echo __( 'minutes lockout', 'limit-login-attempts-reloaded' ); ?>
                             <br/>
                             <input type="text" size="3" maxlength="4"
-                                   value="<?php echo( $this->get_option( 'allowed_lockouts' ) ); ?>"
+                                   value="<?php echo( Config::get( 'allowed_lockouts' ) ); ?>"
                                    name="allowed_lockouts"/> <?php echo __( 'lockouts increase lockout time to', 'limit-login-attempts-reloaded' ); ?>
                             <input type="text" size="3" maxlength="4"
-                                   value="<?php echo( $this->get_option( 'long_duration' ) / 3600 ); ?>"
+                                   value="<?php echo( Config::get( 'long_duration' ) / 3600 ); ?>"
                                    name="long_duration"/> <?php echo __( 'hours', 'limit-login-attempts-reloaded' ); ?> <br/>
                             <input type="text" size="3" maxlength="4"
-                                   value="<?php echo( $this->get_option( 'valid_duration' ) / 3600 ); ?>"
+                                   value="<?php echo( Config::get( 'valid_duration' ) / 3600 ); ?>"
                                    name="valid_duration"/> <?php echo __( 'hours until retries are reset', 'limit-login-attempts-reloaded' ); ?>
                         </td>
                     </tr>
@@ -176,6 +178,7 @@ $active_app_config = $this->get_custom_app_config();
                     </tr>
                 </table>
             </div>
+
 
             <h3><?php echo ($active_app_config) ? $active_app_config['name'] : __('Custom App', 'limit-login-attempts-reloaded' ); ?></h3>
             <div class="custom-app-tab">

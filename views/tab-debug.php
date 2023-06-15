@@ -1,5 +1,7 @@
 <?php
 
+use LLAR\Core\Helpers;
+
 if( !defined( 'ABSPATH' ) ) exit();
 
 /**
@@ -17,7 +19,7 @@ foreach ($_SERVER as $key => $value) {
 	$ips_for_check = array_map( 'trim', explode( ',', $value ) );
 	foreach ( $ips_for_check as $ip ) {
 
-		if( $this->is_ip_valid( $ip ) ) {
+		if( Helpers::is_ip_valid( $ip ) ) {
 
 			if( !in_array( $ip, $ips ) ) {
 				$ips[] = $ip;

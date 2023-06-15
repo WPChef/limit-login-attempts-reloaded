@@ -1,9 +1,14 @@
 <?php
 
+use LLAR\Core\CloudApp;
+use LLAR\Core\Config;
+use LLAR\Core\Helpers;
+use LLAR\Core\LimitLoginAttempts;
+
 if( !defined( 'ABSPATH' ) ) exit();
 
-$active_app = $this->get_option( 'active_app' );
-$active_app = ($active_app === 'custom' && $this->app) ? 'custom' : 'local';
+$active_app = Config::get( 'active_app' );
+$active_app = ( $active_app === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 
 $wp_locale = str_replace( '_', '-', get_locale() );
 
@@ -15,7 +20,7 @@ $api_stats = false;
 $retries_count = 0;
 if( $active_app === 'local' ) {
 
-	$retries_stats = $this->get_option( 'retries_stats' );
+	$retries_stats = Config::get( 'retries_stats' );
 
 	if( $retries_stats ) {
 		foreach ( $retries_stats as $key => $count ) {
@@ -48,7 +53,7 @@ if( $active_app === 'local' ) {
 
 } else {
 
-	$api_stats = $this->app->stats();
+	$api_stats = LimitLoginAttempts::$cloud_app->stats();
 
 	if( $api_stats && !empty( $api_stats['attempts']['count'] )) {
 
@@ -72,7 +77,7 @@ if( $active_app === 'local' ) {
             <div class="section-content">
                 <div class="chart">
                     <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
-                    <span class="llar-retries-count"><?php echo esc_html( LLA_Helpers::short_number( $retries_count ) ); ?></span>
+                    <span class="llar-retries-count"><?php echo esc_html( Helpers::short_number( $retries_count ) ); ?></span>
                 </div>
                 <script type="text/javascript">
 					(function(){
@@ -151,7 +156,7 @@ if( $active_app === 'local' ) {
 					$date_format = trim( get_option( 'date_format' ), ' yY,._:;-/\\' );
 					$date_format = str_replace( 'F', 'M', $date_format );
 
-					$retries_stats = $this->get_option( 'retries_stats' );
+					$retries_stats = Config::get( 'retries_stats' );
 
 					if( is_array( $retries_stats ) && $retries_stats ) {
                         $key = key( $retries_stats );
@@ -324,7 +329,7 @@ if( $active_app === 'local' ) {
             </div>
         </div>
     </div>
-    <?php if( $stats_global = LLAR_App::stats_global() ) : ?>
+    <?php if( $stats_global = CloudApp::stats_global() ) : ?>
 	<div class="dashboard-section-4">
         <?php
 		$stats_global_dates = array();
@@ -336,7 +341,7 @@ if( $active_app === 'local' ) {
 			$stats_global_dates[] = date( $date_format, $timest );
 		}
 		
-		$countries_list = LLA_Helpers::get_countries_list();
+		$countries_list = Helpers::get_countries_list();
         ?>
         <div class="info-box-1">
             <div class="section-title">

@@ -753,7 +753,7 @@
 .dashboard_page_llar-welcome,
 .toplevel_page_limit-login-attempts {
   .update-nag,
-  .notice {
+  .notice:not(.llar-notice-review) {
     display: none;
   }
   .video-container {
