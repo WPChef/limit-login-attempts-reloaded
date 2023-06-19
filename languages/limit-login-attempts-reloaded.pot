@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.25.18\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.25.19\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-05-25T15:03:17+03:00\n"
+"POT-Creation-Date: 2023-06-19T17:20:11+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -59,7 +59,7 @@ msgid_plural "<strong>%d</strong> attempts remaining."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/CloudApp.php:119
+#: core/CloudApp.php:139
 msgid "The endpoint is not responding. Please contact your app provider to settle that."
 msgstr ""
 
@@ -582,7 +582,7 @@ msgid "Limit Login Attempts Reloaded Dashboard"
 msgstr ""
 
 #: views/tab-dashboard.php:76
-msgid "Premium protection enabled"
+msgid "Cloud protection enabled"
 msgstr ""
 
 #: views/tab-dashboard.php:272
@@ -1071,7 +1071,7 @@ msgid "lockouts"
 msgstr ""
 
 #: views/tab-settings.php:104
-msgid "Show top-level menu item"
+msgid "Display top-level menu item"
 msgstr ""
 
 #: views/tab-settings.php:106
@@ -1084,7 +1084,7 @@ msgid "Hide Dashboard Widget"
 msgstr ""
 
 #: views/tab-settings.php:118
-msgid "Show Warning Badge"
+msgid "Display Warning Badge"
 msgstr ""
 
 #: views/tab-settings.php:125

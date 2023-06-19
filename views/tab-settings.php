@@ -101,7 +101,7 @@ $active_app_config = Config::get( 'app_config' );
 
             <tr>
                 <th scope="row"
-                    valign="top"><?php echo __( 'Show top-level menu item', 'limit-login-attempts-reloaded' ); ?></th>
+                    valign="top"><?php echo __( 'Display top-level menu item', 'limit-login-attempts-reloaded' ); ?></th>
                 <td>
                     <input type="checkbox" name="show_top_level_menu_item" <?php checked( $show_top_level_menu_item ); ?>> <?php _e( '(Reload the page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
                 </td>
@@ -115,7 +115,7 @@ $active_app_config = Config::get( 'app_config' );
             </tr>
             <tr>
                 <th scope="row"
-                    valign="top"><?php echo __( 'Show Warning Badge', 'limit-login-attempts-reloaded' ); ?></th>
+                    valign="top"><?php echo __( 'Display Warning Badge', 'limit-login-attempts-reloaded' ); ?></th>
                 <td>
                     <input type="checkbox" name="show_warning_badge" <?php checked( $show_warning_badge ); ?>> <?php _e( '(Reload the page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
                 </td>
