@@ -59,6 +59,9 @@ class Config {
 		'retries'               => array(),
 		'lockouts'              => array(),
 		'auto_update_choice'    => null,
+		'log_logins_enable'     => false,
+		'logins_auth_type'      => 'email',
+		'free_user_email'       => '',
 	);
 
 	private static $prefix = 'limit_login_';
