@@ -45,26 +45,6 @@ class CloudApp {
 	}
 
 	/**
-	 * @return false|float
-	 */
-	private function generate_signature() {
-		return floor( microtime( true ) * 1000 );
-	}
-
-	/**
-	 * @param $init
-	 * @param $input
-	 *
-	 * @return bool
-	 */
-	private function validate_signature( $init, $input ) {
-
-		if( !$init || !$input ) return false;
-
-		return strval( $init ) === strval( $input );
-	}
-
-	/**
 	 * @param $error
 	 * @return bool
 	 */
@@ -174,17 +154,7 @@ class CloudApp {
 
 		$this->prepare_settings( 'acl', $data );
 
-		$signature = $this->generate_signature();
-
-		$data['signature'] = $signature;
-
-		$response = $this->request( 'acl', 'post', $data );
-
-		if( $this->last_response_code === 200 && !$this->validate_signature( $signature, $response['signature'] ) ) {
-			return array( 'result' => 'deny' );
-		}
-
-		return $response;
+		return $this->request( 'acl', 'post', $data );
 	}
 
 	/**
