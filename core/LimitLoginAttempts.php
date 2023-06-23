@@ -927,8 +927,15 @@ class LimitLoginAttempts {
 			$ip
 		);
 
+
+		$plain = $this->get_option( 'notify_email_plain' );
+
 		ob_start();
-		include LLA_PLUGIN_DIR . 'views/emails/failed-login.php';
+		if ( $plain ) {
+			include LLA_PLUGIN_DIR . 'views/emails/failed-login-plain.php';
+		} else {
+			include LLA_PLUGIN_DIR . 'views/emails/failed-login.php';
+		}
 		$email_body = ob_get_clean();
 
 		$placeholders = array(
@@ -951,7 +958,11 @@ class LimitLoginAttempts {
             $email_body
         );
 
-		Helpers::send_mail_with_logo( $admin_email, $subject, $email_body );
+		if ( $plain ) {
+            Helpers::send_mail_plain($admin_email, $subject, $email_body);
+		} else {
+            Helpers::send_mail_with_logo($admin_email, $subject, $email_body);
+		}
 	}
 
 	/**
@@ -1477,6 +1488,7 @@ class LimitLoginAttempts {
                 Config::update('allowed_lockouts',   (int)$_POST['allowed_lockouts'] );
                 Config::update('long_duration',      (int)$_POST['long_duration'] * 3600 );
                 Config::update('notify_email_after', (int)$_POST['email_after'] );
+                $this->update_option('notify_email_plain', ( isset( $_POST['email_plain'] ) && !empty( $_POST['email_plain'] ) ? 1 : 0 ) );
                 Config::update('gdpr_message',       sanitize_textarea_field( Helpers::deslash( $_POST['gdpr_message'] ) ) );
                 Config::update('admin_notify_email', sanitize_email( $_POST['admin_notify_email'] ) );
 

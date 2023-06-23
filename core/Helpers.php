@@ -348,6 +348,10 @@ class Helpers {
 		remove_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
 	}
 
+	public static function send_mail_plain( $to, $subject, $body ) {
+		@wp_mail( $to, $subject, $body, array( 'content-type: text/plain' ) );
+	}
+
 	public static function add_attachments_to_php_mailer( &$phpmailer ) {
 		$logo_path = LLA_PLUGIN_DIR . 'assets/img/logo.png';
 
