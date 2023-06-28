@@ -2,9 +2,6 @@
 
 if( !defined( 'ABSPATH' ) ) exit();
 
-/**
- * @var $this Limit_Login_Attempts
- */
 ?>
 
 <div class="llar-premium-page-wrapper">

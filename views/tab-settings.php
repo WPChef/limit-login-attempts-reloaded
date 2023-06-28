@@ -96,6 +96,11 @@ $active_app_config = Config::get( 'app_config' );
                     <input type="text" size="3" maxlength="4"
                            value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
                            name="email_after"/> <?php echo __( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
+                    <a href="#" class="llar-test-email-notification-btn"><?php echo __( 'Test Email Notifications', 'limit-login-attempts-reloaded' ); ?></a>
+                    <p class="description"><?php echo sprintf(
+                            __( 'It\'s not uncommon for web hosts to turn off emails for plugins as a security measure.<br>You can install (free) <a href="%s" target="_blank">WP Mail SMTP</a> to insure deliverability. You can also view activity in the "Logs" tab.', 'limit-login-attempts-reloaded' ),
+                            'https://wordpress.org/plugins/wp-mail-smtp/'
+                        ); ?></p>
                 </td>
             </tr>
 
@@ -342,6 +347,17 @@ $active_app_config = Config::get( 'app_config' );
                     }, 500);
                 });
 
+                $('.llar-test-email-notification-btn').on('click', function(e) {
+                    e.preventDefault();
+
+                    const $email_input = $('input[name="admin_notify_email"]')
+
+                    $.post(ajaxurl, {
+                        action: 'test_email_notifications',
+                        email: $email_input.val() || $email_input.attr('placeholder'),
+                        sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>',
+                    });
+                })
             });
 
         })(jQuery);

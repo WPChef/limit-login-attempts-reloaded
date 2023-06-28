@@ -2,10 +2,9 @@
 
 if( !defined( 'ABSPATH' ) ) exit();
 
-/**
- * @var $this Limit_Login_Attempts
- */
 ?>
+
+<h3><?php echo __( 'Login Firewall Settings & Logs', 'limit-login-attempts-reloaded' ); ?></h3>
 
 <div class="limit-login-app-dashboard">
 
