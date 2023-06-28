@@ -78,7 +78,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
         </tr>
         <tr>
             <th scope="row"
-                valign="top"><?php echo __( 'Blocklist', 'limit-login-attempts-reloaded' ); ?></th>
+                valign="top"><?php echo __( 'Denylist', 'limit-login-attempts-reloaded' ); ?></th>
             <td>
                 <div class="field-col">
                     <p class="description"><?php _e( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ); ?></p>
@@ -88,6 +88,10 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
                     <p class="description"><?php _e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?></p>
                     <textarea name="lla_blacklist_usernames" rows="10" cols="50"><?php echo esc_textarea( $black_list_usernames ); ?></textarea>
                 </div>
+                <p class="description" style="font-weight: 600;"><?php echo sprintf(
+		                __( 'Automate your denylist with IP intelligence when you <a href="%s" target="_blank">upgrade to premium</a>.' ),
+                        'https://www.limitloginattempts.com/features/?from=plugin-blocklist'
+                    ); ?></p>
             </td>
         </tr>
     </table>
@@ -112,7 +116,7 @@ if( is_array( $log ) && ! empty( $log ) ) { ?>
             <input class="button" name="submit" value="<?php echo __( 'Clear Log', 'limit-login-attempts-reloaded' ); ?>"
                    type="submit"/>
             <span style="margin-left: 15px;"><?php echo sprintf(
-                    __( 'Receive enhanced logs and visual metrics when you <a href="%s" target="_blank">upgrade to our cloud app</a>', 'limit-login-attempts-reloaded' ),
+                    __( '<a href="%s" target="_blank">Upgrade today</a> to optimize or unload your DB by moving logs to the cloud.', 'limit-login-attempts-reloaded' ),
                     'https://www.limitloginattempts.com/info.php?from=plugin-clear-log' );
             ?></span>
         </p>
