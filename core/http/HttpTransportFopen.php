@@ -50,7 +50,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 		$request_data = null;
 		if( !empty( $data ) ) {
-			$request_data = json_encode( $data, JSON_FORCE_OBJECT );
+			$request_data = json_encode( $data );
 		}
 
 		$context = stream_context_create( array(

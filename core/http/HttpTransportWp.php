@@ -28,7 +28,7 @@ class HttpTransportWp implements HttpTransportInterface {
 	public function post( $url, $options = array() ) {
 		$response = wp_remote_post( $url, array(
 			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
-			'body' 		=> !empty( $options['data'] ) ? json_encode( $options['data'], JSON_FORCE_OBJECT ) : null
+			'body' 		=> !empty( $options['data'] ) ? json_encode( $options['data'] ) : null
 		) );
 
 		return $this->prepare_response( $response );

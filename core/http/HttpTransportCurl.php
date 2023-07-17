@@ -52,7 +52,7 @@ class HttpTransportCurl implements HttpTransportInterface {
 
 		if( $method === 'POST' ) {
 			curl_setopt($handle, CURLOPT_POST, true);
-			curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode( $data, JSON_FORCE_OBJECT ) );
+			curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode( $data ) );
 		}
 
 		if ( !empty( $headers ) ) {

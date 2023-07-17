@@ -40,9 +40,14 @@ $is_key_option_selected = !empty( $key );
                                 <?php checked( $is_key_option_selected ); ?>>
                             <?php _e( 'Key', 'limit-login-attempts-reloaded' ); ?>
                         </label>
-                        <input type="text" name="logins_auth_type_key"
-                               value="<?php echo esc_attr( $key ); ?>"
-                                <?php disabled( !$is_key_option_selected ); ?>>
+                        <span class="input-with-copy-btn">
+                            <input type="text" name="logins_auth_type_key"
+                                   value="<?php echo esc_attr( $key ); ?>"
+		                        <?php disabled( !$is_key_option_selected ); ?>>
+                            <span class="copy-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" class="c-icon" data-v-431cdece=""><polygon fill="var(--ci-primary-color, currentColor)" points="408 432 376 432 376 464 112 464 112 136 144 136 144 104 80 104 80 496 408 496 408 432" class="ci-primary"></polygon><path fill="var(--ci-primary-color, currentColor)" d="M176,16V400H496V153.373L358.627,16ZM464,368H208V48H312V200H464Zm0-200H344V48h1.372L464,166.627Z" class="ci-primary"></path></svg>
+                            </span>
+                        </span>
                         <p class="description"><?php _e( 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.', 'limit-login-attempts-reloaded' ); ?></p>
                     </div>
                 </td>
@@ -70,14 +75,14 @@ $is_key_option_selected = !empty( $key );
 
         <div id="llar-qr-code"></div>
 
-    <div class="mobile-app-buttons">
-        <a href="#" class="app-store">
-            <img src="<?php echo LLA_PLUGIN_URL; ?>assets/img/apple-app-store-btn.svg">
-        </a>
-        <a href="#" class="google-play">
-            <img src="<?php echo LLA_PLUGIN_URL; ?>assets/img/google-play-badge.png">
-        </a>
-    </div>
+        <div class="mobile-app-buttons">
+            <a href="#" class="app-store">
+                <img src="<?php echo LLA_PLUGIN_URL; ?>assets/img/apple-app-store-btn.svg">
+            </a>
+            <a href="#" class="google-play">
+                <img src="<?php echo LLA_PLUGIN_URL; ?>assets/img/google-play-badge.png">
+            </a>
+        </div>
     <?php endif; ?>
 </div>
 
@@ -88,7 +93,9 @@ $is_key_option_selected = !empty( $key );
 
         $(document).ready(function() {
 
+	        <?php if( $key ) : ?>
             new QRCode(document.getElementById('llar-qr-code'), "<?php echo $key; ?>");
+            <?php endif; ?>
 
             $wrapper.on('change', 'input[name="logins_auth_type"]', function() {
                 $wrapper.find('input[name="logins_auth_type_email"], input[name="logins_auth_type_key"]').attr('disabled', true);

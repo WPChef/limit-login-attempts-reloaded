@@ -540,13 +540,14 @@ class LimitLoginAttempts {
 	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
 		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css', array(), $plugin_data['Version'] );
-//		wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array(), $plugin_data['Version'] );
 
 		if( !empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_options_page_slug ) {
 
 			wp_enqueue_style( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/css/jquery-confirm.min.css' );
 			wp_enqueue_script( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/js/jquery-confirm.min.js' );
-        }
+
+			wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array(), $plugin_data['Version'] );
+		}
 
 	}
 
@@ -837,7 +838,6 @@ class LimitLoginAttempts {
 	 */
 	public function limit_login_success( $user_login, $user ) {
         $cloud_key = Config::get( 'cloud_key' );
-		$app_config = Config::get( 'app_config' );
 
         if( !$cloud_key ) return;
 
@@ -848,7 +848,7 @@ class LimitLoginAttempts {
 				'ip'        => Helpers::get_all_ips(),
 				'login'     => $user_login,
 				'key'       => $cloud_key,
-				'app_key'   => !empty( $app_config['key'] ) ? $app_config['key'] : null,
+				'gateway'   => Helpers::detect_gateway(),
 				'roles'     => $user->roles,
 				'domain'    => $parsedUrl['host'],
 			)
@@ -1617,6 +1617,8 @@ class LimitLoginAttempts {
 		}
 
 		Config::update( 'log_logins_enable', ( isset( $_POST['log_logins_enable'] ) ? 1 : 0 ) );
+
+		$this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
 	}
 
 	/**

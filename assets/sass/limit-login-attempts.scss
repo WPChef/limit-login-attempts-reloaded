@@ -431,6 +431,33 @@
       display: table-row;
     }
   }
+
+  .input-with-copy-btn {
+    position: relative;
+    display: inline-block;
+
+    .copy-btn {
+      display: inline-block;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 6px;
+      background-color: #fff;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      z-index: 99;
+    }
+
+    input {
+      padding-right: 25px;
+
+      &:disabled + .copy-btn {
+        opacity: 0.5;
+        cursor: default;
+      }
+    }
+  }
 }
 
 .llar-notice-review,
