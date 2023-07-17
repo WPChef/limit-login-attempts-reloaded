@@ -175,6 +175,7 @@ class LimitLoginAttempts {
 		//$this->sanitize_options();
 
 		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+		add_action( 'wp_login', array( $this, 'limit_login_success' ), 999, 2 );
 		add_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999, 2 );
 
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
@@ -295,6 +296,7 @@ class LimitLoginAttempts {
 		wp_enqueue_style('llar-jquery-ui', LLA_PLUGIN_URL.'assets/css/jquery-ui.css');
 
 		wp_enqueue_script( 'llar-charts', LLA_PLUGIN_URL . 'assets/js/chart.umd.js' );
+		wp_enqueue_script( 'llar-qrcode', LLA_PLUGIN_URL . 'assets/js/qrcode.min.js' );
 	}
 
 	public function check_whitelist_ips( $allow, $ip ) {
@@ -538,13 +540,14 @@ class LimitLoginAttempts {
 	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
 		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css', array(), $plugin_data['Version'] );
-//		wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array(), $plugin_data['Version'] );
 
 		if( !empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_options_page_slug ) {
 
 			wp_enqueue_style( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/css/jquery-confirm.min.css' );
 			wp_enqueue_script( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/js/jquery-confirm.min.js' );
-        }
+
+			wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array(), $plugin_data['Version'] );
+		}
 
 	}
 
@@ -825,6 +828,31 @@ class LimitLoginAttempts {
 				Config::update( 'lockouts_total', $total + 1 );
 			}
 		}
+	}
+
+	/**
+     * Fires after successful login
+     *
+	 * @param $user_login
+	 * @param $user
+	 */
+	public function limit_login_success( $user_login, $user ) {
+        $cloud_key = Config::get( 'cloud_key' );
+
+        if( !$cloud_key ) return;
+
+		$parsedUrl = parse_url( home_url( '/' ) );
+
+		Http::post( 'https://api.limitloginattempts.com/my/login', array(
+			'data' => array(
+				'ip'        => Helpers::get_all_ips(),
+				'login'     => $user_login,
+				'key'       => $cloud_key,
+				'gateway'   => Helpers::detect_gateway(),
+				'roles'     => $user->roles,
+				'domain'    => $parsedUrl['host'],
+			)
+		) );
 	}
 
 	/**
@@ -1529,9 +1557,68 @@ class LimitLoginAttempts {
 
                 $this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
             }
+            elseif( isset( $_POST[ 'llar_update_logins_page' ] ) ) {
+
+                $this->handle_logins_page_form();
+            }
 		}
 
 		include_once( LLA_PLUGIN_DIR . 'views/options-page.php' );
+	}
+
+	private function handle_logins_page_form() {
+
+		$type = sanitize_text_field( $_POST['logins_auth_type'] );
+		$logins_auth_type_email = isset( $_POST['logins_auth_type_email'] )
+			? sanitize_text_field( $_POST['logins_auth_type_email'] )
+			: '';
+		$logins_auth_type_key = isset( $_POST['logins_auth_type_key'] )
+			? sanitize_text_field( $_POST['logins_auth_type_key'] )
+			: '';
+
+		if( $type === 'email' ) {
+
+			if( empty( $logins_auth_type_email ) ) {
+
+				$this->show_message( __( 'You must specify email.', 'limit-login-attempts-reloaded' ), true );
+			} else {
+
+			    Config::update( 'free_user_email', $logins_auth_type_email );
+
+				$response = Http::post( 'https://api.limitloginattempts.com/my/key', array(
+					'data' => array(
+						'email' => $logins_auth_type_email
+					)
+				) );
+
+				if ( !empty( $response['error'] ) ) {
+
+					$this->show_message( $response['error'], true );
+				} else {
+
+					$response_body = json_decode( $response['data'], true );
+
+					if ( !empty( $response_body['key'] ) ) {
+						Config::update( 'cloud_key', $response_body['key'] );
+					}
+				}
+
+			}
+		}
+		else if( $type === 'key' ) {
+
+			if( empty( $logins_auth_type_key ) ) {
+
+				$this->show_message( __( 'You must specify key.', 'limit-login-attempts-reloaded' ), true );
+			} else {
+
+				Config::update( 'cloud_key', $logins_auth_type_key );
+			}
+		}
+
+		Config::update( 'log_logins_enable', ( isset( $_POST['log_logins_enable'] ) ? 1 : 0 ) );
+
+		$this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
 	}
 
 	/**
