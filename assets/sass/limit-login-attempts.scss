@@ -26,6 +26,13 @@
       font-size: 14px;
       float: right;
       line-height: 2;
+
+      .llar-tooltip {
+        &:before {
+          right: 0;
+          left: auto;
+        }
+      }
     }
   }
 
@@ -433,6 +440,14 @@
   }
 }
 
+.llar-settings-wrap {
+  .form-table {
+    th {
+      width: 220px;
+    }
+  }
+}
+
 .llar-notice-review,
 .llar-notice-notify {
   display: flex;
@@ -773,30 +788,54 @@
 }
 
 .llar-tooltip {
-  text-decoration: underline;
-  text-decoration-style: dotted;
+  text-decoration: none;
   cursor: pointer;
   position: relative;
+  color: #aeaeae;
+
+  span {
+    vertical-align: middle;
+  }
 
   &:before {
     content: attr(data-text);
     position: absolute;
-    width: 200px;
-    padding: 5px;
-    background-color: rgba(#000, 0.8);
-    color: #fff;
+    width: max-content;
+    max-width: 300px;
+    padding: 10px;
+    background-color: #fff;
+    color: #575757;
+    border-radius: 7px;
+    box-shadow: 0 0 15px 6px rgba(#000, 0.1);
     font-size: 13px;
-    top: 100%;
+    top: calc(100% + 5px);
+    left: -5px;
     z-index: 999;
     visibility: hidden;
     opacity: 0;
     transition: all .2s;
-    font-weight: 300;
+    font-weight: 400;
     cursor: auto;
+    font-style: normal;
+  }
+
+  &:after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    display: block;
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 5px;
+    transform: rotate(45deg);
+    z-index: 999;
+    visibility: hidden;
+    opacity: 0;
   }
 
   &:hover {
-    &:before {
+    &:before, &:after {
       visibility: visible;
       opacity: 1;
     }

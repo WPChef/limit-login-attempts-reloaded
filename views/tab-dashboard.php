@@ -73,7 +73,11 @@ if( $active_app === 'local' ) {
 	</div>
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
-            <div class="section-title"><?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?><?php echo $active_app === 'custom' ? '<span class="llar-premium-label"><span class="dashicons dashicons-yes-alt"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>' : ''; ?></div>
+            <div class="section-title"><?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Number of failed login attempts for today.' ); ?>">
+                    <span class="dashicons dashicons-editor-help"></span>
+                </i>
+                <?php echo $active_app === 'custom' ? '<span class="llar-premium-label"><span class="dashicons dashicons-yes-alt"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>' : ''; ?></div>
             <div class="section-content">
                 <div class="chart">
                     <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
@@ -346,7 +350,10 @@ if( $active_app === 'local' ) {
         <div class="info-box-1">
             <div class="section-title">
                 <span><?php _e( 'Failed Login Attempts By Country', 'limit-login-attempts-reloaded' ); ?></span>
-                <span class="section-title-info"><?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?></span>
+                <span class="section-title-info"><?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
+                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Failed logins for all users in the LLAR network.' ); ?>">
+                    <span class="dashicons dashicons-editor-help"></span>
+                </i></span>
             </div>
             <div class="section-content">
                 <table class="lockouts-by-country-table">
