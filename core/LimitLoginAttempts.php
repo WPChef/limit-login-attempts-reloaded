@@ -1764,7 +1764,7 @@ class LimitLoginAttempts {
         $response = self::$cloud_app->acl_check( array(
             'ip'        => Helpers::get_all_ips(),
             'login'     => $user_login,
-            'gateway'   => Helpers::detect_gateway()
+            'gateway'   => 'wp_register'
         ) );
 
         if ( $response['result'] === 'deny' ) {
@@ -1792,7 +1792,7 @@ class LimitLoginAttempts {
         $response = self::$cloud_app->acl_check( array(
             'ip'        => Helpers::get_all_ips(),
             'login'     => $user_data->user_login,
-            'gateway'   => Helpers::detect_gateway()
+            'gateway'   => 'wp_lostpassword'
         ) );
 
         if ( $response['result'] === 'deny' ) {
