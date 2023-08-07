@@ -35,6 +35,7 @@ class Ajax {
 		add_action( 'wp_ajax_subscribe_email', array( $this, 'subscribe_email_callback' ) );
 		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
 		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
+		add_action( 'wp_ajax_test_email_notifications', array( $this, 'test_email_notifications_callback' ) );
 	}
 
 	public function ajax_unlock() {
@@ -703,5 +704,31 @@ class Ajax {
 		update_site_option( 'auto_update_plugins', $auto_update_plugins );
 
 		wp_send_json_success();
+	}
+
+	public function test_email_notifications_callback() {
+
+		check_ajax_referer('llar-action', 'sec');
+
+		$to = sanitize_email( $_POST['email'] );
+
+		if( empty( $to ) || !is_email( $to ) ) {
+
+			wp_send_json_error( array(
+                'msg' => __( 'Wrong email format.', 'limit-login-attempts-reloaded' ),
+            ) );
+		}
+
+		if( wp_mail(
+            $to,
+            __( 'Test Email', 'limit-login-attempts-reloaded' ),
+            __( 'The email notifications work correctly.', 'limit-login-attempts-reloaded' )
+        ) ) {
+
+			wp_send_json_success();
+		} else {
+
+			wp_send_json_error();
+		}
 	}
 }

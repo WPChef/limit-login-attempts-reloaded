@@ -4,10 +4,6 @@ use LLAR\Core\Helpers;
 
 if( !defined( 'ABSPATH' ) ) exit();
 
-/**
- * @var $this Limit_Login_Attempts
- */
-
 $debug_info = '';
 
 $ips = $server = array();
