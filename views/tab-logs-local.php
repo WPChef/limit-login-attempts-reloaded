@@ -90,7 +90,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
                 </div>
                 <p class="description" style="font-weight: 600;"><?php echo sprintf(
 		                __( 'Automate your denylist with IP intelligence when you <a href="%s" target="_blank">upgrade to premium</a>.' ),
-                        'https://www.limitloginattempts.com/features/?from=plugin-blocklist'
+                        'https://www.limitloginattempts.com/info.php?from=plugin-denylist'
                     ); ?></p>
             </td>
         </tr>
@@ -115,7 +115,7 @@ if( is_array( $log ) && ! empty( $log ) ) { ?>
         <p class="submit">
             <input class="button" name="submit" value="<?php echo __( 'Clear Log', 'limit-login-attempts-reloaded' ); ?>"
                    type="submit"/>
-            <span style="margin-left: 15px;"><?php echo sprintf(
+            <span style="margin-left: 15px; font-weight: 600;"><?php echo sprintf(
                     __( '<a href="%s" target="_blank">Upgrade today</a> to optimize or unload your DB by moving logs to the cloud.', 'limit-login-attempts-reloaded' ),
                     'https://www.limitloginattempts.com/info.php?from=plugin-clear-log' );
             ?></span>
