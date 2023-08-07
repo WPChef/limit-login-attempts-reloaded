@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.25.20\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.25.21\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-06-21T15:13:55+03:00\n"
+"POT-Creation-Date: 2023-08-07T15:50:31+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -29,41 +29,53 @@ msgstr ""
 msgid "https://www.limitloginattempts.com/"
 msgstr ""
 
-#: core/Ajax.php:169
+#: core/Ajax.php:170
 msgid "The app has been successfully imported."
 msgstr ""
 
-#: core/Ajax.php:183
+#: core/Ajax.php:184
 msgid "Please specify the Setup Code"
 msgstr ""
 
-#: core/Ajax.php:371
+#: core/Ajax.php:372
 msgid "No events yet."
 msgstr ""
 
-#: core/Ajax.php:423
+#: core/Ajax.php:424
 msgid "No lockouts yet."
 msgstr ""
 
-#: core/Ajax.php:440
+#: core/Ajax.php:441
 msgid "Meanwhile, the app falls over to the <a href=\"%s\">default functionality</a>."
 msgstr ""
 
-#: core/Ajax.php:489
+#: core/Ajax.php:490
 msgid "No rules yet."
 msgstr ""
 
-#: core/Ajax.php:681
+#: core/Ajax.php:682
 msgid "<strong>%d</strong> attempt remaining."
 msgid_plural "<strong>%d</strong> attempts remaining."
 msgstr[0] ""
 msgstr[1] ""
 
+#: core/Ajax.php:718
+msgid "Wrong email format."
+msgstr ""
+
+#: core/Ajax.php:724
+msgid "Test Email"
+msgstr ""
+
+#: core/Ajax.php:725
+msgid "The email notifications work correctly."
+msgstr ""
+
 #: core/CloudApp.php:119
 msgid "The endpoint is not responding. Please contact your app provider to settle that."
 msgstr ""
 
-#: core/Config.php:82
+#: core/Config.php:90
 msgid "By proceeding you understand and give your consent that your IP address and browser information might be processed by the security plugins installed on this site."
 msgstr ""
 
@@ -78,7 +90,7 @@ msgid "Settings"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:275
-#: views/tab-dashboard.php:275
+#: views/tab-dashboard.php:279
 msgid "Upgrade to Premium"
 msgstr ""
 
@@ -238,13 +250,13 @@ msgstr ""
 #: views/admin-dashboard-widgets.php:123
 #: views/admin-dashboard-widgets.php:190
 #: views/tab-dashboard.php:76
-#: views/tab-dashboard.php:132
-#: views/tab-dashboard.php:197
+#: views/tab-dashboard.php:136
+#: views/tab-dashboard.php:201
 msgid "Failed Login Attempts"
 msgstr ""
 
 #: views/admin-dashboard-widgets.php:137
-#: views/tab-dashboard.php:146
+#: views/tab-dashboard.php:150
 msgid "Requests"
 msgstr ""
 
@@ -348,7 +360,7 @@ msgid "Time"
 msgstr ""
 
 #: views/app-widgets/event-log.php:28
-#: views/tab-logs-local.php:127
+#: views/tab-logs-local.php:131
 msgid "Gateway"
 msgstr ""
 
@@ -522,7 +534,7 @@ msgid "Upgrade To Premium"
 msgstr ""
 
 #: views/onboarding-popup.php:59
-#: views/tab-dashboard.php:297
+#: views/tab-dashboard.php:301
 msgid "Learn More"
 msgstr ""
 
@@ -556,6 +568,9 @@ msgid "Yes, enable auto-update"
 msgstr ""
 
 #: views/options-page.php:52
+msgid "Login Firewall"
+msgstr ""
+
 #: views/options-page.php:54
 msgid "Logs"
 msgstr ""
@@ -565,15 +580,15 @@ msgid "Debug"
 msgstr ""
 
 #: views/options-page.php:58
-#: views/tab-dashboard.php:318
+#: views/tab-dashboard.php:322
 msgid "Help"
 msgstr ""
 
-#: views/options-page.php:61
+#: views/options-page.php:59
 msgid "Premium / Extensions"
 msgstr ""
 
-#: views/options-page.php:65
+#: views/options-page.php:62
 msgid "Failover"
 msgstr ""
 
@@ -581,96 +596,96 @@ msgstr ""
 msgid "Limit Login Attempts Reloaded Dashboard"
 msgstr ""
 
-#: views/tab-dashboard.php:76
+#: views/tab-dashboard.php:80
 msgid "Cloud protection enabled"
 msgstr ""
 
-#: views/tab-dashboard.php:272
+#: views/tab-dashboard.php:276
 msgid "Premium Protection Disabled"
 msgstr ""
 
-#: views/tab-dashboard.php:273
+#: views/tab-dashboard.php:277
 msgid "As a free user, your local server is absorbing the traffic brought on by brute force attacks, potentially slowing down your website. Upgrade to Premium today to outsource these attacks through our cloud app, and slow down future attacks with advanced throttling."
 msgstr ""
 
-#: views/tab-dashboard.php:283
+#: views/tab-dashboard.php:287
 msgid "Notifications"
 msgstr ""
 
-#: views/tab-dashboard.php:294
+#: views/tab-dashboard.php:298
 msgid "Multiply Your Protection By Adding More Domains"
 msgstr ""
 
-#: views/tab-dashboard.php:295
+#: views/tab-dashboard.php:299
 msgid "When you upgrade to premium, you can synchronize your IP safelist and blacklist between multiple sites. This is a great way to improve your network performance and slow down future attacks."
 msgstr ""
 
-#: views/tab-dashboard.php:298
+#: views/tab-dashboard.php:302
 msgid "Connect This Site"
 msgstr ""
 
-#: views/tab-dashboard.php:309
+#: views/tab-dashboard.php:313
 msgid "Tools"
 msgstr ""
 
-#: views/tab-dashboard.php:310
+#: views/tab-dashboard.php:314
 msgid "View lockouts logs, block or whitelist usernames or IPs, and more."
 msgstr ""
 
-#: views/tab-dashboard.php:319
+#: views/tab-dashboard.php:323
 msgid "Find the documentation and help you need."
 msgstr ""
 
-#: views/tab-dashboard.php:327
+#: views/tab-dashboard.php:331
 msgid "Global Options"
 msgstr ""
 
-#: views/tab-dashboard.php:328
+#: views/tab-dashboard.php:332
 msgid "Many options such as notifications, alerts, premium status, and more."
 msgstr ""
 
-#: views/tab-dashboard.php:348
+#: views/tab-dashboard.php:352
 msgid "Failed Login Attempts By Country"
 msgstr ""
 
-#: views/tab-dashboard.php:349
-#: views/tab-dashboard.php:380
+#: views/tab-dashboard.php:353
+#: views/tab-dashboard.php:387
 msgid "Global Network (Premium Users)"
 msgstr ""
 
-#: views/tab-dashboard.php:354
+#: views/tab-dashboard.php:361
 msgid "Country"
 msgstr ""
 
-#: views/tab-dashboard.php:355
+#: views/tab-dashboard.php:362
 msgid "Attempts"
 msgstr ""
 
-#: views/tab-dashboard.php:372
+#: views/tab-dashboard.php:379
 msgid "today"
 msgstr ""
 
-#: views/tab-dashboard.php:373
+#: views/tab-dashboard.php:380
 msgid "Block by country feature available with <a href=\"https://www.limitloginattempts.com/info.php?from=plugin-dashboard-country\" target=\"_blank\">premium plus plan</a>."
 msgstr ""
 
-#: views/tab-dashboard.php:379
+#: views/tab-dashboard.php:386
 msgid "Total Failed Login Attempts"
 msgstr ""
 
-#: views/tab-dashboard.php:395
+#: views/tab-dashboard.php:402
 msgid "Total Attempts"
 msgstr ""
 
-#: views/tab-debug.php:49
+#: views/tab-debug.php:45
 msgid "Debug Info"
 msgstr ""
 
-#: views/tab-debug.php:52
+#: views/tab-debug.php:48
 msgid "Copy the contents of the window and provide to support."
 msgstr ""
 
-#: views/tab-debug.php:56
+#: views/tab-debug.php:52
 msgid "Version"
 msgstr ""
 
@@ -778,6 +793,10 @@ msgstr ""
 msgid "What URLs are being attacked and protected?"
 msgstr ""
 
+#: views/tab-logs-custom.php:7
+msgid "Login Firewall Settings & Logs"
+msgstr ""
+
 #: views/tab-logs-local.php:30
 msgid "Statistics"
 msgstr ""
@@ -827,198 +846,198 @@ msgid "One Username per line"
 msgstr ""
 
 #: views/tab-logs-local.php:81
-msgid "Blocklist"
+msgid "Denylist"
 msgstr ""
 
-#: views/tab-logs-local.php:95
-#: views/tab-settings.php:351
+#: views/tab-logs-local.php:99
+#: views/tab-settings.php:420
 msgid "Save Settings"
 msgstr ""
 
-#: views/tab-logs-local.php:107
+#: views/tab-logs-local.php:111
 msgid "Lockout log"
 msgstr ""
 
-#: views/tab-logs-local.php:112
+#: views/tab-logs-local.php:116
 msgid "Clear Log"
 msgstr ""
 
-#: views/tab-logs-local.php:115
-msgid "Receive enhanced logs and visual metrics when you <a href=\"%s\" target=\"_blank\">upgrade to our cloud app</a>"
+#: views/tab-logs-local.php:119
+msgid "<a href=\"%s\" target=\"_blank\">Upgrade today</a> to optimize or unload your DB by moving logs to the cloud."
 msgstr ""
 
-#: views/tab-logs-local.php:124
+#: views/tab-logs-local.php:128
 msgid "Date"
 msgstr ""
 
-#: views/tab-logs-local.php:125
+#: views/tab-logs-local.php:129
 msgctxt "Internet address"
 msgid "IP"
 msgstr ""
 
-#: views/tab-logs-local.php:126
+#: views/tab-logs-local.php:130
 msgid "Tried to log in as"
 msgstr ""
 
-#: views/tab-premium.php:14
+#: views/tab-premium.php:11
 msgid "Limit Login Attempts Reloaded <strong>Premium</strong>"
 msgstr ""
 
-#: views/tab-premium.php:16
+#: views/tab-premium.php:13
 msgid "Full feature list"
 msgstr ""
 
-#: views/tab-premium.php:17
+#: views/tab-premium.php:14
 msgid "Pre-sales FAQs"
 msgstr ""
 
-#: views/tab-premium.php:18
+#: views/tab-premium.php:15
 msgid "Ask a pre-sales question"
 msgstr ""
 
-#: views/tab-premium.php:19
+#: views/tab-premium.php:16
 msgid "Support"
 msgstr ""
 
-#: views/tab-premium.php:23
+#: views/tab-premium.php:20
 msgid "Get It Here"
 msgstr ""
 
-#: views/tab-premium.php:24
+#: views/tab-premium.php:21
 msgid "Goes to LLAR checkout page"
 msgstr ""
 
-#: views/tab-premium.php:28
+#: views/tab-premium.php:25
 msgid "You are currently using the free version of <strong>Limit Login Attempts Reloaded</strong>."
 msgstr ""
 
-#: views/tab-premium.php:29
+#: views/tab-premium.php:26
 msgid "If you purchased a premium plan, check your email for setup instructions (key included)"
 msgstr ""
 
-#: views/tab-premium.php:34
+#: views/tab-premium.php:31
 msgid "Why Should I Consider Premium?"
 msgstr ""
 
-#: views/tab-premium.php:35
+#: views/tab-premium.php:32
 msgid "Although the free version offers great protection, the premium version includes an important feature called <b>IP Intelligence</b>. With IP intelligence, your website will be able to identify malicious IPs before they attempt a login, and absorb them into the cloud to save system resources. Your site will not only be more secure, but will operate at its optimal performance."
 msgstr ""
 
-#: views/tab-premium.php:38
+#: views/tab-premium.php:35
 msgid "Features comparison"
 msgstr ""
 
-#: views/tab-premium.php:44
+#: views/tab-premium.php:41
 msgid "Free"
 msgstr ""
 
-#: views/tab-premium.php:45
+#: views/tab-premium.php:42
 msgid "Premium"
 msgstr ""
 
-#: views/tab-premium.php:46
+#: views/tab-premium.php:43
 msgid "Premium+"
 msgstr ""
 
-#: views/tab-premium.php:47
+#: views/tab-premium.php:44
 msgid "Professional"
 msgstr ""
 
-#: views/tab-premium.php:51
-#: views/tab-premium.php:167
+#: views/tab-premium.php:48
+#: views/tab-premium.php:164
 msgid "Installed"
 msgstr ""
 
-#: views/tab-premium.php:52
-#: views/tab-premium.php:53
-#: views/tab-premium.php:54
-#: views/tab-premium.php:168
-#: views/tab-premium.php:169
-#: views/tab-premium.php:170
+#: views/tab-premium.php:49
+#: views/tab-premium.php:50
+#: views/tab-premium.php:51
+#: views/tab-premium.php:165
+#: views/tab-premium.php:166
+#: views/tab-premium.php:167
 msgid "Upgrade now"
 msgstr ""
 
-#: views/tab-premium.php:58
+#: views/tab-premium.php:55
 msgid "Limit Number of Retry Attempts"
 msgstr ""
 
-#: views/tab-premium.php:67
+#: views/tab-premium.php:64
 msgid "Configurable Lockout Timing"
 msgstr ""
 
-#: views/tab-premium.php:76
+#: views/tab-premium.php:73
 msgid "Performance Optimizer"
 msgstr ""
 
-#: views/tab-premium.php:77
+#: views/tab-premium.php:74
 msgid "Absorb failed login attempts from brute force bots in the cloud to keep your website at its optimal performance."
 msgstr ""
 
-#: views/tab-premium.php:83
+#: views/tab-premium.php:80
 msgid "100k requests per month"
 msgstr ""
 
-#: views/tab-premium.php:87
+#: views/tab-premium.php:84
 msgid "200k requests per month"
 msgstr ""
 
-#: views/tab-premium.php:91
+#: views/tab-premium.php:88
 msgid "300k requests per month"
 msgstr ""
 
-#: views/tab-premium.php:96
+#: views/tab-premium.php:93
 msgid "Block By Country"
 msgstr ""
 
-#: views/tab-premium.php:97
+#: views/tab-premium.php:94
 msgid "Disable IPs from any region to disable logins."
 msgstr ""
 
-#: views/tab-premium.php:106
+#: views/tab-premium.php:103
 msgid "Access Blocklist of Malicious IPs"
 msgstr ""
 
-#: views/tab-premium.php:107
+#: views/tab-premium.php:104
 msgid "Add another layer of protection from brute force bots by accessing a global database of known IPs with malicious activity."
 msgstr ""
 
-#: views/tab-premium.php:116
+#: views/tab-premium.php:113
 msgid "Auto IP Blocklist"
 msgstr ""
 
-#: views/tab-premium.php:117
+#: views/tab-premium.php:114
 msgid "Automatically add malicious IPs to your blocklist when triggered by the system."
 msgstr ""
 
-#: views/tab-premium.php:126
+#: views/tab-premium.php:123
 msgid "Access Active Cloud Blocklist"
 msgstr ""
 
-#: views/tab-premium.php:127
+#: views/tab-premium.php:124
 msgid "Use system wide data from over 10,000 WordPress websites to identify and block malicious IPs. This is an active list in real-time."
 msgstr ""
 
-#: views/tab-premium.php:136
+#: views/tab-premium.php:133
 msgid "Intelligent IP Blocking"
 msgstr ""
 
-#: views/tab-premium.php:137
+#: views/tab-premium.php:134
 msgid "Use active IP database via the cloud to automatically block users before they are able to make a failed login."
 msgstr ""
 
-#: views/tab-premium.php:147
+#: views/tab-premium.php:144
 msgid "Synchronize Lockouts & Safelists/Blocklists"
 msgstr ""
 
-#: views/tab-premium.php:148
+#: views/tab-premium.php:145
 msgid "Lockouts & safelists/blocklists can be shared between multiple domains to enhance protection."
 msgstr ""
 
-#: views/tab-premium.php:157
+#: views/tab-premium.php:154
 msgid "Premium Support"
 msgstr ""
 
-#: views/tab-premium.php:158
+#: views/tab-premium.php:155
 msgid "Receive 1 on 1 technical support via email for any issues. Free support availabe in the <a href=\"https://wordpress.org/support/plugin/limit-login-attempts-reloaded/\" target=\"_blank\">WordPress support forum</a>."
 msgstr ""
 
@@ -1050,151 +1069,159 @@ msgstr ""
 msgid "GDPR message"
 msgstr ""
 
-#: views/tab-settings.php:83
+#: views/tab-settings.php:86
 msgid "You can use a shortcode here to insert links, for example, a link to your Privacy Policy page. <br>The shortcode is: [llar-link url=\"https://example.com\" text=\"Privacy Policy\"]"
 msgstr ""
 
-#: views/tab-settings.php:89
+#: views/tab-settings.php:92
 msgid "Notify on lockout"
 msgstr ""
 
-#: views/tab-settings.php:92
+#: views/tab-settings.php:98
 msgid "Email to"
 msgstr ""
 
-#: views/tab-settings.php:95
+#: views/tab-settings.php:101
 msgid "after"
 msgstr ""
 
-#: views/tab-settings.php:98
+#: views/tab-settings.php:104
 msgid "lockouts"
 msgstr ""
 
-#: views/tab-settings.php:104
+#: views/tab-settings.php:105
+msgid "Test Email Notifications"
+msgstr ""
+
+#: views/tab-settings.php:107
+msgid "It's not uncommon for web hosts to turn off emails for plugins as a security measure.<br>You can install (free) <a href=\"%s\" target=\"_blank\">WP Mail SMTP</a> to insure deliverability. You can also view activity in the \"Logs\" tab."
+msgstr ""
+
+#: views/tab-settings.php:115
 msgid "Display top-level menu item"
 msgstr ""
 
-#: views/tab-settings.php:106
 #: views/tab-settings.php:120
+#: views/tab-settings.php:140
 msgid "(Reload the page to see the changes)"
 msgstr ""
 
-#: views/tab-settings.php:111
+#: views/tab-settings.php:125
 msgid "Hide Dashboard Widget"
 msgstr ""
 
-#: views/tab-settings.php:118
+#: views/tab-settings.php:135
 msgid "Display Warning Badge"
 msgstr ""
 
-#: views/tab-settings.php:125
+#: views/tab-settings.php:145
 msgid "Active App"
 msgstr ""
 
-#: views/tab-settings.php:128
+#: views/tab-settings.php:151
 msgid "Local"
 msgstr ""
 
-#: views/tab-settings.php:134
+#: views/tab-settings.php:157
 msgid "Get advanced protection by <a href=\"#\" class=\"llar-upgrade-to-cloud\">upgrading to our Cloud App.</a>"
 msgstr ""
 
-#: views/tab-settings.php:140
+#: views/tab-settings.php:163
 msgid "App Settings"
 msgstr ""
 
-#: views/tab-settings.php:141
+#: views/tab-settings.php:164
 msgid "The app absorbs the main load caused by brute-force attacks, analyzes login attempts, and blocks unwanted visitors. It provides other service functions as well."
 msgstr ""
 
-#: views/tab-settings.php:144
+#: views/tab-settings.php:167
 msgid "Local App"
 msgstr ""
 
-#: views/tab-settings.php:148
+#: views/tab-settings.php:171
 msgid "Lockout"
 msgstr ""
 
-#: views/tab-settings.php:152
+#: views/tab-settings.php:178
 msgid "allowed retries"
 msgstr ""
 
-#: views/tab-settings.php:156
+#: views/tab-settings.php:185
 msgid "minutes lockout"
 msgstr ""
 
-#: views/tab-settings.php:160
+#: views/tab-settings.php:192
 msgid "lockouts increase lockout time to"
 msgstr ""
 
-#: views/tab-settings.php:163
+#: views/tab-settings.php:195
 msgid "hours"
 msgstr ""
 
-#: views/tab-settings.php:166
+#: views/tab-settings.php:202
 msgid "hours until retries are reset"
 msgstr ""
 
-#: views/tab-settings.php:171
+#: views/tab-settings.php:220
 msgid "Trusted IP Origins"
 msgstr ""
 
-#: views/tab-settings.php:175
+#: views/tab-settings.php:227
 msgid "Specify the origins you trust in order of priority, separated by commas. We strongly recommend that you <b>do not</b> use anything other than REMOTE_ADDR since other origins can be easily faked. Examples: HTTP_X_FORWARDED_FOR, HTTP_CF_CONNECTING_IP, HTTP_X_SUCURI_CLIENTIP"
 msgstr ""
 
-#: views/tab-settings.php:183
+#: views/tab-settings.php:235
 msgid "Custom App"
 msgstr ""
 
-#: views/tab-settings.php:190
+#: views/tab-settings.php:242
 msgid "Setup Code"
 msgstr ""
 
-#: views/tab-settings.php:193
+#: views/tab-settings.php:248
 msgid "Edit"
 msgstr ""
 
-#: views/tab-settings.php:197
+#: views/tab-settings.php:252
 msgid "Submit"
 msgstr ""
 
-#: views/tab-settings.php:200
+#: views/tab-settings.php:255
 msgid "Add this code to all websites in your network to sync protection (payment required for additional domains unless subscribed to Agency plan)."
 msgstr ""
 
-#: views/tab-settings.php:205
+#: views/tab-settings.php:260
 msgid "Use the <a href=\"%s\" target=\"_blank\">premium app</a> that we offer or follow the instructions on <a href=\"%s\" target=\"_blank\">how to</a> create your own one."
 msgstr ""
 
-#: views/tab-settings.php:210
+#: views/tab-settings.php:265
 msgid "Why Use Our Premium Cloud App?"
 msgstr ""
 
-#: views/tab-settings.php:212
+#: views/tab-settings.php:267
 msgid "Absorb site load caused by attacks"
 msgstr ""
 
-#: views/tab-settings.php:213
+#: views/tab-settings.php:268
 msgid "Use intelligent IP blocking/unblocking technology"
 msgstr ""
 
-#: views/tab-settings.php:214
+#: views/tab-settings.php:269
 msgid "Sync the allow/deny/pass lists between multiple domains"
 msgstr ""
 
-#: views/tab-settings.php:215
+#: views/tab-settings.php:270
 msgid "Get premium support"
 msgstr ""
 
-#: views/tab-settings.php:216
+#: views/tab-settings.php:271
 msgid "Run auto backups of access control lists, lockouts and logs"
 msgstr ""
 
-#: views/tab-settings.php:217
+#: views/tab-settings.php:272
 msgid "No contract - cancel anytime"
 msgstr ""
 
-#: views/tab-settings.php:226
+#: views/tab-settings.php:281
 msgid "Configuration"
 msgstr ""
