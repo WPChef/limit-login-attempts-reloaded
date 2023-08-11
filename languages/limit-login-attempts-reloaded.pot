@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-08-07T15:50:31+03:00\n"
+"POT-Creation-Date: 2023-08-11T14:15:00+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -584,11 +584,11 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: views/options-page.php:59
+#: views/options-page.php:61
 msgid "Premium / Extensions"
 msgstr ""
 
-#: views/options-page.php:62
+#: views/options-page.php:65
 msgid "Failover"
 msgstr ""
 
@@ -850,7 +850,7 @@ msgid "Denylist"
 msgstr ""
 
 #: views/tab-logs-local.php:99
-#: views/tab-settings.php:420
+#: views/tab-settings.php:436
 msgid "Save Settings"
 msgstr ""
 
@@ -1093,135 +1093,139 @@ msgstr ""
 msgid "Test Email Notifications"
 msgstr ""
 
-#: views/tab-settings.php:107
+#: views/tab-settings.php:111
 msgid "It's not uncommon for web hosts to turn off emails for plugins as a security measure.<br>You can install (free) <a href=\"%s\" target=\"_blank\">WP Mail SMTP</a> to insure deliverability. You can also view activity in the \"Logs\" tab."
 msgstr ""
 
-#: views/tab-settings.php:115
+#: views/tab-settings.php:119
 msgid "Display top-level menu item"
 msgstr ""
 
-#: views/tab-settings.php:120
-#: views/tab-settings.php:140
+#: views/tab-settings.php:124
+#: views/tab-settings.php:144
 msgid "(Reload the page to see the changes)"
 msgstr ""
 
-#: views/tab-settings.php:125
+#: views/tab-settings.php:129
 msgid "Hide Dashboard Widget"
 msgstr ""
 
-#: views/tab-settings.php:135
+#: views/tab-settings.php:139
 msgid "Display Warning Badge"
 msgstr ""
 
-#: views/tab-settings.php:145
+#: views/tab-settings.php:149
 msgid "Active App"
 msgstr ""
 
-#: views/tab-settings.php:151
+#: views/tab-settings.php:155
 msgid "Local"
 msgstr ""
 
-#: views/tab-settings.php:157
+#: views/tab-settings.php:161
 msgid "Get advanced protection by <a href=\"#\" class=\"llar-upgrade-to-cloud\">upgrading to our Cloud App.</a>"
 msgstr ""
 
-#: views/tab-settings.php:163
+#: views/tab-settings.php:167
 msgid "App Settings"
 msgstr ""
 
-#: views/tab-settings.php:164
+#: views/tab-settings.php:168
 msgid "The app absorbs the main load caused by brute-force attacks, analyzes login attempts, and blocks unwanted visitors. It provides other service functions as well."
 msgstr ""
 
-#: views/tab-settings.php:167
+#: views/tab-settings.php:171
 msgid "Local App"
 msgstr ""
 
-#: views/tab-settings.php:171
+#: views/tab-settings.php:175
 msgid "Lockout"
 msgstr ""
 
-#: views/tab-settings.php:178
+#: views/tab-settings.php:182
 msgid "allowed retries"
 msgstr ""
 
-#: views/tab-settings.php:185
+#: views/tab-settings.php:189
 msgid "minutes lockout"
 msgstr ""
 
-#: views/tab-settings.php:192
+#: views/tab-settings.php:196
 msgid "lockouts increase lockout time to"
 msgstr ""
 
-#: views/tab-settings.php:195
+#: views/tab-settings.php:199
 msgid "hours"
 msgstr ""
 
-#: views/tab-settings.php:202
+#: views/tab-settings.php:206
 msgid "hours until retries are reset"
 msgstr ""
 
-#: views/tab-settings.php:220
+#: views/tab-settings.php:224
 msgid "Trusted IP Origins"
 msgstr ""
 
-#: views/tab-settings.php:227
+#: views/tab-settings.php:231
 msgid "Specify the origins you trust in order of priority, separated by commas. We strongly recommend that you <b>do not</b> use anything other than REMOTE_ADDR since other origins can be easily faked. Examples: HTTP_X_FORWARDED_FOR, HTTP_CF_CONNECTING_IP, HTTP_X_SUCURI_CLIENTIP"
 msgstr ""
 
-#: views/tab-settings.php:235
+#: views/tab-settings.php:239
 msgid "Custom App"
 msgstr ""
 
-#: views/tab-settings.php:242
+#: views/tab-settings.php:246
 msgid "Setup Code"
 msgstr ""
 
-#: views/tab-settings.php:248
+#: views/tab-settings.php:252
 msgid "Edit"
 msgstr ""
 
-#: views/tab-settings.php:252
+#: views/tab-settings.php:256
 msgid "Submit"
 msgstr ""
 
-#: views/tab-settings.php:255
+#: views/tab-settings.php:259
 msgid "Add this code to all websites in your network to sync protection (payment required for additional domains unless subscribed to Agency plan)."
 msgstr ""
 
-#: views/tab-settings.php:260
+#: views/tab-settings.php:264
 msgid "Use the <a href=\"%s\" target=\"_blank\">premium app</a> that we offer or follow the instructions on <a href=\"%s\" target=\"_blank\">how to</a> create your own one."
 msgstr ""
 
-#: views/tab-settings.php:265
+#: views/tab-settings.php:269
 msgid "Why Use Our Premium Cloud App?"
 msgstr ""
 
-#: views/tab-settings.php:267
+#: views/tab-settings.php:271
 msgid "Absorb site load caused by attacks"
 msgstr ""
 
-#: views/tab-settings.php:268
+#: views/tab-settings.php:272
 msgid "Use intelligent IP blocking/unblocking technology"
 msgstr ""
 
-#: views/tab-settings.php:269
+#: views/tab-settings.php:273
 msgid "Sync the allow/deny/pass lists between multiple domains"
 msgstr ""
 
-#: views/tab-settings.php:270
+#: views/tab-settings.php:274
 msgid "Get premium support"
 msgstr ""
 
-#: views/tab-settings.php:271
+#: views/tab-settings.php:275
 msgid "Run auto backups of access control lists, lockouts and logs"
 msgstr ""
 
-#: views/tab-settings.php:272
+#: views/tab-settings.php:276
 msgid "No contract - cancel anytime"
 msgstr ""
 
-#: views/tab-settings.php:281
+#: views/tab-settings.php:285
 msgid "Configuration"
+msgstr ""
+
+#: views/tab-settings.php:424
+msgid "Test email has been sent!"
 msgstr ""
