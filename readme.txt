@@ -101,7 +101,7 @@ Please follow this link: <a href="https://www.limitloginattempts.com/resources/"
 
 = 2.25.22 =
 * Interface changes.
-* Tested with WordPress 6.3.
+* Tested with WP 6.3.
 
 = 2.25.21 =
 * Optimization: autoload for large options turned off.
