@@ -102,10 +102,14 @@ $active_app_config = Config::get( 'app_config' );
                     <input type="text" size="3" maxlength="4"
                            value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
                            name="email_after"/> <?php echo __( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
-                    <a href="#" class="llar-test-email-notification-btn"><?php echo __( 'Test Email Notifications', 'limit-login-attempts-reloaded' ); ?></a>
+                    <span class="button llar-test-email-notification-btn"><?php echo __( 'Test Email Notifications', 'limit-login-attempts-reloaded' ); ?></span>
+                    <span class="preloader-wrapper llar-test-email-notification-loader">
+                        <span class="spinner llar-app-ajax-spinner"></span>
+                        <span class="msg"></span>
+                    </span>
                     <p class="description"><?php echo sprintf(
                             __( 'It\'s not uncommon for web hosts to turn off emails for plugins as a security measure.<br>You can install (free) <a href="%s" target="_blank">WP Mail SMTP</a> to insure deliverability. You can also view activity in the "Logs" tab.', 'limit-login-attempts-reloaded' ),
-                            'https://wordpress.org/plugins/wp-mail-smtp/'
+                            'https://wpmailsmtp.com/limit-login-attempts-reloaded-not-sending-email/'
                         ); ?></p>
                 </td>
             </tr>
@@ -403,12 +407,24 @@ $active_app_config = Config::get( 'app_config' );
                 $('.llar-test-email-notification-btn').on('click', function(e) {
                     e.preventDefault();
 
-                    const $email_input = $('input[name="admin_notify_email"]')
+                    const $email_input = $('input[name="admin_notify_email"]');
+                    const $test_email_loader = $('.llar-test-email-notification-loader');
+                    const $test_email_loader_msg = $test_email_loader.find('.msg');
+
+                    $test_email_loader_msg.text('');
+
+                    $test_email_loader.toggleClass('loading');
 
                     $.post(ajaxurl, {
                         action: 'test_email_notifications',
                         email: $email_input.val() || $email_input.attr('placeholder'),
                         sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>',
+                    }, function(res) {
+                        if(res?.success) {
+                            $test_email_loader_msg.addClass('success').text('<?php echo esc_js( __( 'Test email has been sent!', 'limit-login-attempts-reloaded' ) ) ?>')
+                        }
+
+                        $test_email_loader.toggleClass('loading');
                     });
                 })
             });
