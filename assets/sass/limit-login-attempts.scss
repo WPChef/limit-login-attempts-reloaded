@@ -397,6 +397,28 @@
     font-weight: 600;
   }
 
+  .llar-test-email-notification-loader {
+    .llar-app-ajax-spinner {
+      float: none;
+      margin: -2px 5px 0;
+      display: none;
+    }
+
+    &.loading {
+      .llar-app-ajax-spinner {
+        display: inline-block;
+        visibility: visible;
+      }
+    }
+
+    .msg {
+      margin-left: 5px;
+      &.success {
+        color: #71c21b;
+      }
+    }
+  }
+
   .llar-protect-notice {
     font-size: 15px;
     color: #848484;
