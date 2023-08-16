@@ -10,46 +10,51 @@ Block excessive login attempts and protect your site against brute force attacks
 
 == Description ==
 
-Limit Login Attempts Reloaded stops brute force attacks and optimizes your site performance by limiting the number of login attempts that are possible through the normal login as well as XMLRPC, Woocommerce and custom login pages. This is the only plugin you'll need for your login security needs with over 2 million downloads worldwide.
+Limit Login Attempts Reloaded functions as a robust deterrent against brute force attacks, bolstering your website's security measures and optimizing its performance. It achieves this by restricting the number of login attempts allowed. This applies not only to the standard login method, but also to XMLRPC, Woocommerce, and custom login pages. With more than 2.5 million active users, this plugin fulfills all your login security requirements.
 
-This plugin will block an Internet address (IP) and/or username from making further attempts after a specified limit on retries has been reached, making a brute force attack difficult or impossible.
+The plugin functions by automatically preventing further attempts from a particular Internet Protocol (IP) address and/or username once a predetermined limit of retries has been surpassed. This significantly weakens the effectiveness of brute force attacks on your website. 
 
-WordPress by default allows unlimited login attempts. This can lead to passwords being easily cracked via brute force.
+By default, WordPress permits an unlimited number of login attempts, posing a vulnerability where passwords can be easily deciphered through brute force methods.
 
-Limit Login Attempts Reloaded 
-> <strong>Limit Login Attempts Reloaded Premium Cloud App</strong><br>
-> Enables cloud protection for Limit Login Attempts Reloaded plugin and enhances your login security. It comes with all the great features you'll need to stop hackers and bots from brute force attacks. The cloud app <a href="https://www.limitloginattempts.com/features/?from=wp-details">offers several features</a> including advanced protection out of the box, and the ability for site admins and agencies to sync safelists/blocklists across multiple domains. <a href="https://www.limitloginattempts.com/features/?from=wp-details-cta">Click here to activate the cloud app for the best WordPress security plugin now!</a>
+**Limit Login Attempts Reloaded Premium (Try For 7 Days)**
+Upgrade to our premium version to extend cloud-based protection to the Limit Login Attempts Reloaded plugin, thereby enhancing your login security. The premium version includes a range of highly beneficial features, including IP intelligence to detect, counter and deny malicious login attempts. Your failed login attempts will be safely neutralized in the cloud so your website can function at its optimal performance during an attack.  <a href="https://www.limitloginattempts.com/features/?from=wp-details-cta">Activate the premium version now</a> to fortify your login security using the most trusted login security plugin available!
 
-https://www.youtube.com/watch?v=wzmPXu55zLU
+https://www.youtube.com/watch?v=JfkvIiQft14
 
-= Features: =
-* Limit the number of retry attempts when logging in (per each IP). 
-* Configurable lockout timings.
-* Informs the user about the remaining retries or lockout time on the login page.
-* Email notification of blocked attempts.
-* Logging of blocked attempts.
-* Safelist/Blocklist of IPs and Usernames (Support IP ranges).
+= Features (Free Version): =
+* **Limit Logins** - Limit the number of retry attempts when logging in (per each IP).
+* **Configurable Lockout Timings** - Modify the amount of time a user or IP must wait after a lockout. 
+* **Remaining Tries** - Informs the user about the remaining retries or lockout time on the login page.
+* **Lockout Email Notifications** - Informs the admin via email of lockouts. 
+* **Denied Attempt Logs** - View a log of all denied attempts and lockouts. 
+* **IP & Username Safelist/Denylist** - Control access to usernames and IPs. 
 * **Sucuri** compatibility.
 * **Wordfence** compatibility.
 * **Ultimate Member** compatibility.
 * **XMLRPC** gateway protection.
 * **Woocommerce** login page protection.
-* **Multi-site** compatibility with extra MU settings.
+* **Multi-site compatibility** with extra MU settings.
 * **GDPR** compliant.
-* **Custom IP origins** support (Cloudflare, Sucuri, etc.)
+* **Custom IP origins support** (Cloudflare, Sucuri, etc.).
 
-= Features (Premium Cloud App): =
-* **Performance Optimizer** - Brute force attacks absorbed in the cloud (Up to 100k requests monthly).
-* **Throttling** - Longer lockout intervals each time a hacker/bot tries to login unsuccessfully.
-* **Auto Backups of All Data**
-* **Intelligent IP Blocking/Unblocking** - Make sure the legitimate IP’s are allowed automatically.
-* **Synchronized Lockouts** - Lockouts can be shared between multiple domains.
-* **Synchronized Safelist/Blocklist** - Safelist/Blocklist can be shared between multiple domains.
-* **Premium Support** - Get answers within 24 hours in our support forum. 
-* **Enhanced lockout logs** - A log of lockouts with extra features.
-* **CSV Download of IP Data** 
-* **Supports IPV6 Ranges For Safelist/Blocklist** 
+= Features (Premium Version): =
+* **Performance Optimizer** - Offload the burden of excessive failed logins from your server to protect your server resources, resulting in improved speed and efficiency of your website.
+* **Enhanced IP Intelligence** - Identify repetitive and suspicious login attempts to detect potential brute force attacks. IPs with known malicious activity are stored and used to help prevent and counter future attacks. 
+* **Enhanced Throttling** - Longer lockout intervals each time a malicious IP or username tries to login unsuccessfully.
+* **Deny By Country** - Deny IPs by country. 
+* **Auto IP Denylist** - Automatically add IP addresses to your active cloud deny list that repeatedly fail login attempts. 
+* **Global Denylist Protection** - Utilize our active cloud IP data from thousands of websites in the LLAR network. 
+* **Synchronized Lockouts** -  Lockout IP data can be shared between multiple domains for enhanced protection in your network.
+* **Synchronized Safelist/Denylist** - Safelist/Denylist IP and username data can be shared between multiple domains.
+* **Premium Support** - Email support with a security tech.  
+* **Auto Backups of All IP Data** - Store your active IP data in the cloud. 
+* **Enhanced lockout logs** - Gain valuable insights into the origins of IPs that are attempting logins.
+* **CSV Download of IP Data** - Download IP data direclty from the cloud. 
+* **Supports IPV6 Ranges For Safelist/Denylist** 
 * **Unlock The Locked Admin** - Easily unlock the locked admin through the cloud.
+
+*Some features require higher level plans. Please <a href="https://www.limitloginattempts.com/pricing/?from=wp-details">view our pricing</a> for a full list of plans and features.  
+
 
 = Upgrading from the old Limit Login Attempts plugin? =
 1. Go to the Plugins section in your site's backend.
@@ -70,6 +75,7 @@ Based on the original code from Limit Login Attempts plugin by Johan Eenfeldt.
 
 = Branding Guidelines =
 Limit Login Attempts Reloaded™ is a trademark of Atlantic Silicon Inc. When writing about the plugin, please make sure to use Reloaded after Limit Login Attempts. Limit Login Attempts is the old plugin.
+
 * Limit Login Attempts Reloaded (correct)
 * Limit Login Attempts (incorrect)
 
@@ -85,17 +91,49 @@ Limit Login Attempts Reloaded™ is a trademark of Atlantic Silicon Inc. When wr
 
 If you are using contemporary hosting, it's likely your site uses a proxy domain service like CloudFlare, Sucuri, Nginx, etc. They replace your user's IP address with their own. If the server where your site runs is not configured properly (this happens a lot) all users will get the same IP address. This also applies to bots and hackers. Therefore, locking one user will lead to locking everybody else out. If the plugin is not using our <a href="https://www.limitloginattempts.com/features/">Cloud App</a>, this can be adjusted using the Trusted IP Origin setting. The cloud service intelligently recognizes the non-standard IP origins and handles them correctly, even if your hosting provider does not.
 
+= How do I know if I'm under attack? =
+
+An easy way to check if the attack is legitimate is to copy the IP address from the lockout notification, and go to https://whatismyipaddress.com/ip-lookup. Enter in the IP address to see if you recognize the location. If the location is not somewhere you recognize and you have received several failed login attempts, then you are likely being attacked. You might notice dozens or hundreds of IPs each day.
+
+= How can I tell that the premium plugin is working? =
+
+After you upgrade to our premium version, you will see a new dashboard in your WordPress admin that shows all attacks that will now relay through our cloud service.
+
+You will still see the attacks because they will never stop regardless if you upgrade, but now our cloud service will safely process and neutralize them without taking resources from your site. This is very important and positively impacts your site’s stability and performance.
+
+In some cases, you may notice an increase in speed and efficiency with your website. Also, a reduction in lockout notifications via email. 
+
+= Could these failed login attempts be fake? =
+
+Some users feel that it’s impossible to receive so many failed login attempts, especially since they’re site was just created or they have minimal human traffic. Let us be clear that these failed login attempts are NOT generated by the plugin. New websites are often hosted on a shared IP address, which makes it very easy for hackers to find. Also, new domain names are often crawled once they are created, so as soon as a WordPress website is built on it, it’s vulnerable to attacks. New websites are often the best target since security is not top of mind for site owners.
+
+= What happens if my site exceeds the request limits in the plan? =
+
+The premium plan’s resource limits start from 100,000 requests per month, which should accept almost any heavy brute-force attack. We monitor all of our sites and will alert the user if it appears they are going over their limits. If limits are reached, we will suggest to the user upgrading to the next plan. If you are using the free version, the load caused by brute force attacks will be absorbed by your current hosting bandwidth, which could cause your hosting costs to increase.
+
+= What do I do if all users get blocked? =
+
+If you are using contemporary hosting, it’s likely your site uses a proxy domain service like CloudFlare, Sucuri, Nginx, etc. They replace your user’s IP address with their own. If your server is not configured properly, all users will get the same IP address. This also applies to bots and hackers. Therefore, locking one user will lead to locking everybody else out. In the free version of the plugin, this can be adjusted using the Trusted IP Origin setting. In the premium version, the cloud service intelligently recognizes the non-standard IP origins and handles them correctly, even if your hosting provider does not.
+
+= What URLs are being attacked and protected? =
+
+The URLs being protected are your login page (wp-login.php, wp-admin), xmlrpc.php, WooCommerce login page, and any custom login page you have that uses regular WordPress login hooks.
+
+= Why is LLAR more popular than other brute-force protection plugins? =
+
+Our main focus is protecting your site from brute-force attacks. This allows our plugin to be very lean and effective. It doesn’t require a lot of your web hosting resources and keeps your site well-protected. More importantly, it does all of this automatically as our service learns on its own about each IP it encounters. In contrast, a firewall would require manual addition or removal of IPs. We’ve published an article about it <a href="https://www.limitloginattempts.com/should-i-block-ip-addresses/">here</a>.
+
+= What to do when an admin gets blocked? =
+
+Open the site from another IP. You can do this from your cell phone, or using Opera browser and enabling free VPN there. You can also try turning off your router for a few minutes and then see if you get a different IP address. These will work if your hosting server is configured correctly. If that doesn’t work, connect to the site using FTP or  your hosting control panel file manager. Navigate to wp-content/plugins/ and rename the limit-login-attempts-reloaded folder. Log in to the site then rename that folder back and whitelist your IP. By upgrading to our premium app, you will have the unlocking functionality right from the cloud so you’ll never have to deal with this issue. 
+
 = What settings should I use In the plugin? =
 
 The settings are explained within the plugin in great detail. If you are unsure, use the default settings as they are the recommended ones.
 
-= Can I share the safelist/blocklist throughout all of my sites?=
+= Can I share the safelist/denylist throughout all of my sites?=
 
-By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/features/">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
-
-= Where can I find answers to my Cloud App related questions? =
-
-Please follow this link: <a href="https://www.limitloginattempts.com/resources/">https://www.limitloginattempts.com/resources/</a>
+By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/features/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
 
