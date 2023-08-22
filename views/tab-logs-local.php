@@ -89,7 +89,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
                     <textarea name="lla_blacklist_usernames" rows="10" cols="50"><?php echo esc_textarea( $black_list_usernames ); ?></textarea>
                 </div>
                 <p class="description" style="font-weight: 600;"><?php echo sprintf(
-		                __( 'Automate your denylist with IP intelligence when you <a href="%s" target="_blank">upgrade to premium</a>.' ),
+		                __( 'Automate your denylist with IP intelligence when you <a href="%s" target="_blank">upgrade to premium</a>.', 'limit-login-attempts-reloaded' ),
                         'https://www.limitloginattempts.com/info.php?from=plugin-denylist'
                     ); ?></p>
             </td>
@@ -134,17 +134,17 @@ if( is_array( $log ) && ! empty( $log ) ) { ?>
 
 			<?php foreach ( $log as $date => $user_info ) : ?>
                 <tr>
-                    <td class="limit-login-date"><?php echo date_i18n( 'F d, Y H:i', $date ); ?></td>
+                    <td class="limit-login-date"><?php echo date_i18n(__( 'F d, Y H:i', 'limit-login-attempts-reloaded' ), $date ); ?></td>
                     <td class="limit-login-ip">
 						<?php echo esc_html( $user_info['ip'] ); ?>
                     </td>
-                    <td class="limit-login-max"><?php echo esc_html( $user_info['username'] ) . ' (' . esc_html( $user_info['counter'] ) .' lockouts)'; ?></td>
+                    <td class="limit-login-max"><?php echo esc_html( $user_info['username'] ) . ' (' . esc_html( $user_info['counter'] ) . __( ' lockouts', 'limit-login-attempts-reloaded' ) . ')'; ?></td>
                     <td class="limit-login-gateway"><?php echo esc_html( $user_info['gateway'] ); ?></td>
                     <td>
 						<?php if ( !empty( $lockouts[ $user_info['ip'] ] ) && $lockouts[ $user_info['ip'] ] > time() ) : ?>
-                            <a href="#" class="button limit-login-unlock" data-ip="<?=esc_attr($user_info['ip'])?>" data-username="<?=esc_attr($user_info['username'])?>">Unlock</a>
+                            <a href="#" class="button limit-login-unlock" data-ip="<?=esc_attr($user_info['ip'])?>" data-username="<?=esc_attr($user_info['username'])?>"><?php esc_html_e( 'Unlock', 'limit-login-attempts-reloaded' ); ?></a>
 						<?php elseif ( $user_info['unlocked'] ): ?>
-                            Unlocked
+                            <?php esc_html_e( 'Unlocked', 'limit-login-attempts-reloaded' ); ?>
 						<?php endif ?>
                 </tr>
 			<?php endforeach; ?>
