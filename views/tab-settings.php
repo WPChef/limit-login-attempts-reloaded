@@ -16,6 +16,7 @@ $v = explode( ',', Config::get( 'lockout_notify' ) );
 $email_checked = in_array( 'email', $v ) ? ' checked ' : '';
 
 $show_top_level_menu_item = Config::get( 'show_top_level_menu_item' );
+$show_top_bar_menu_item = Config::get( 'show_top_bar_menu_item' );
 $hide_dashboard_widget = Config::get( 'hide_dashboard_widget' );
 $show_warning_badge = Config::get( 'show_warning_badge' );
 
@@ -116,12 +117,23 @@ $active_app_config = Config::get( 'app_config' );
 
             <tr>
                 <th scope="row"
-                    valign="top"><?php echo __( 'Display top-level menu item', 'limit-login-attempts-reloaded' ); ?>
-                    <i class="llar-tooltip" data-text="<?php esc_attr_e( 'The LLAR plugin displays a logo on the main vertical navigation menu, which provides a shortcut to the plugin. You may also access the plugin through settings.', 'limit-login-attempts-reloaded' ); ?>">
+                    valign="top"><?php echo __( 'Display top menu item', 'limit-login-attempts-reloaded' ); ?>
+                    <i class="llar-tooltip" data-text="<?php esc_attr_e( 'The LLAR plugin displays its item on the top navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>">
                         <span class="dashicons dashicons-editor-help"></span>
                     </i></th>
                 <td>
-                    <input type="checkbox" name="show_top_level_menu_item" <?php checked( $show_top_level_menu_item ); ?>> <?php _e( '(Reload the page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
+                    <input type="checkbox" name="show_top_bar_menu_item" <?php checked( $show_top_bar_menu_item ); ?>> <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
+                </td>
+            </tr>
+
+            <tr>
+                <th scope="row"
+                    valign="top"><?php echo __( 'Display left menu item', 'limit-login-attempts-reloaded' ); ?>
+                    <i class="llar-tooltip" data-text="<?php esc_attr_e( 'The LLAR plugin displays its item on the left navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>">
+                        <span class="dashicons dashicons-editor-help"></span>
+                    </i></th>
+                <td>
+                    <input type="checkbox" name="show_top_level_menu_item" <?php checked( $show_top_level_menu_item ); ?>> <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
                 </td>
             </tr>
             <tr>
