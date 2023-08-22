@@ -883,10 +883,25 @@
 //    }
 //  }
 //}
+
+#wp-admin-bar-llar-root {
+  #wp-admin-bar-llar-root-premium {
+    a {
+      color: orange;
+    }
+  }
+}
+
 #toplevel_page_limit-login-attempts {
   .wp-menu-image.svg {
     background-size: 25px auto !important;
     margin-top: 7px;
+  }
+
+  .llar-submenu-premium-item {
+    a {
+      color: orange;
+    }
   }
 }
 
