@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.25.21\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.25.23\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-08-11T14:15:00+03:00\n"
+"POT-Creation-Date: 2023-08-22T15:13:56+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -79,129 +79,160 @@ msgstr ""
 msgid "By proceeding you understand and give your consent that your IP address and browser information might be processed by the security plugins installed on this site."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:268
+#: core/LimitLoginAttempts.php:269
+#: core/LimitLoginAttempts.php:574
 #: views/options-page.php:48
 msgid "Dashboard"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:269
+#: core/LimitLoginAttempts.php:270
+#: core/LimitLoginAttempts.php:579
 #: views/options-page.php:49
 msgid "Settings"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:275
+#: core/LimitLoginAttempts.php:276
 #: views/tab-dashboard.php:279
 msgid "Upgrade to Premium"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:407
-#: core/LimitLoginAttempts.php:706
-#: core/LimitLoginAttempts.php:1145
+#: core/LimitLoginAttempts.php:408
+#: core/LimitLoginAttempts.php:803
+#: core/LimitLoginAttempts.php:1242
 msgid "<strong>ERROR</strong>: Too many failed login attempts."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:414
-#: core/LimitLoginAttempts.php:711
-#: core/LimitLoginAttempts.php:1161
+#: core/LimitLoginAttempts.php:415
+#: core/LimitLoginAttempts.php:808
+#: core/LimitLoginAttempts.php:1258
 msgid "Please try again in %d hour."
 msgid_plural "Please try again in %d hours."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:416
-#: core/LimitLoginAttempts.php:713
-#: core/LimitLoginAttempts.php:1163
+#: core/LimitLoginAttempts.php:417
+#: core/LimitLoginAttempts.php:810
+#: core/LimitLoginAttempts.php:1260
 msgid "Please try again in %d minute."
 msgid_plural "Please try again in %d minutes."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:883
+#: core/LimitLoginAttempts.php:585
+msgid "Login Firewal"
+msgstr ""
+
+#: core/LimitLoginAttempts.php:590
+#: views/options-page.php:54
+msgid "Logs"
+msgstr ""
+
+#: core/LimitLoginAttempts.php:595
+#: views/options-page.php:57
+msgid "Debug"
+msgstr ""
+
+#: core/LimitLoginAttempts.php:600
+#: views/options-page.php:58
+#: views/tab-dashboard.php:322
+msgid "Help"
+msgstr ""
+
+#: core/LimitLoginAttempts.php:608
+#: views/tab-premium.php:42
+msgid "Premium"
+msgstr ""
+
+#: core/LimitLoginAttempts.php:663
+msgid "LLAR"
+msgstr ""
+
+#: core/LimitLoginAttempts.php:980
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:889
+#: core/LimitLoginAttempts.php:986
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:926
+#: core/LimitLoginAttempts.php:1023
 msgid "Failed login by IP %s"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1153
+#: core/LimitLoginAttempts.php:1250
 msgid "Please try again later."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1195
+#: core/LimitLoginAttempts.php:1292
 msgid "<strong>ERROR</strong>: Incorrect email address or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1197
+#: core/LimitLoginAttempts.php:1294
 msgid "<strong>ERROR</strong>: Incorrect username or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1387
+#: core/LimitLoginAttempts.php:1484
 msgid "Cleared IP log"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1394
+#: core/LimitLoginAttempts.php:1491
 msgid "Reset lockout count"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1401
+#: core/LimitLoginAttempts.php:1498
 msgid "Cleared current lockouts"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1435
+#: core/LimitLoginAttempts.php:1532
 msgid "The %s IP range is invalid"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1457
-#: core/LimitLoginAttempts.php:1530
+#: core/LimitLoginAttempts.php:1554
+#: core/LimitLoginAttempts.php:1627
 msgid "Settings saved."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1587
+#: core/LimitLoginAttempts.php:1684
 msgid "Hey <strong>Limit Login Attempts Reloaded</strong> user!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1588
+#: core/LimitLoginAttempts.php:1685
 msgid "A <strong>crazy idea</strong> we wanted to share! What if we put an image from YOU on the <a href=\"https://wordpress.org/plugins/limit-login-attempts-reloaded/\" target=\"_blank\">LLAR page</a>?! (<a href=\"https://wordpress.org/plugins/hello-dolly/\" target=\"_blank\">example</a>) A drawing made by you or your child would cheer people up! Send us your drawing by <a href=\"mailto:wpchef.me@gmail.com\" target=\"_blank\">email</a> and we like it, we'll add it in the next release. Let's have some fun!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1589
+#: core/LimitLoginAttempts.php:1686
 msgid "We would really like to hear your feedback about the plugin! Please take a couple minutes to write a few words <a href=\"https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post\" target=\"_blank\">here</a>. Thank you!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1592
+#: core/LimitLoginAttempts.php:1689
 msgid "Don't show again"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1593
+#: core/LimitLoginAttempts.php:1690
 msgid "Maybe later"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1594
+#: core/LimitLoginAttempts.php:1691
 msgid "Leave a review"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1675
+#: core/LimitLoginAttempts.php:1772
 msgid "You have been upgraded to the latest version of <strong>Limit Login Attempts Reloaded</strong>.<br> Due to increased security threats around the holidays, we recommend turning on email notifications when you receive a failed login attempt."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1680
+#: core/LimitLoginAttempts.php:1777
 msgid "Yes, turn on email notifications"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1681
+#: core/LimitLoginAttempts.php:1778
 msgid "Remind me a month from now"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1682
+#: core/LimitLoginAttempts.php:1779
 msgid "Don't show this message again"
 msgstr ""
 
@@ -571,19 +602,6 @@ msgstr ""
 msgid "Login Firewall"
 msgstr ""
 
-#: views/options-page.php:54
-msgid "Logs"
-msgstr ""
-
-#: views/options-page.php:57
-msgid "Debug"
-msgstr ""
-
-#: views/options-page.php:58
-#: views/tab-dashboard.php:322
-msgid "Help"
-msgstr ""
-
 #: views/options-page.php:61
 msgid "Premium / Extensions"
 msgstr ""
@@ -594,6 +612,10 @@ msgstr ""
 
 #: views/tab-dashboard.php:72
 msgid "Limit Login Attempts Reloaded Dashboard"
+msgstr ""
+
+#: views/tab-dashboard.php:77
+msgid "Number of failed login attempts for today."
 msgstr ""
 
 #: views/tab-dashboard.php:80
@@ -610,6 +632,14 @@ msgstr ""
 
 #: views/tab-dashboard.php:287
 msgid "Notifications"
+msgstr ""
+
+#: views/tab-dashboard.php:289
+msgid "12 issues found in most recent scan"
+msgstr ""
+
+#: views/tab-dashboard.php:290
+msgid "Updates are available for WordPress (v5.6) and 10 plugins"
 msgstr ""
 
 #: views/tab-dashboard.php:298
@@ -651,6 +681,10 @@ msgstr ""
 #: views/tab-dashboard.php:353
 #: views/tab-dashboard.php:387
 msgid "Global Network (Premium Users)"
+msgstr ""
+
+#: views/tab-dashboard.php:354
+msgid "Failed logins for all users in the LLAR network."
 msgstr ""
 
 #: views/tab-dashboard.php:361
@@ -849,6 +883,10 @@ msgstr ""
 msgid "Denylist"
 msgstr ""
 
+#: views/tab-logs-local.php:92
+msgid "Automate your denylist with IP intelligence when you <a href=\"%s\" target=\"_blank\">upgrade to premium</a>."
+msgstr ""
+
 #: views/tab-logs-local.php:99
 #: views/tab-settings.php:436
 msgid "Save Settings"
@@ -877,6 +915,22 @@ msgstr ""
 
 #: views/tab-logs-local.php:130
 msgid "Tried to log in as"
+msgstr ""
+
+#: views/tab-logs-local.php:137
+msgid "F d, Y H:i"
+msgstr ""
+
+#: views/tab-logs-local.php:141
+msgid " lockouts"
+msgstr ""
+
+#: views/tab-logs-local.php:145
+msgid "Unlock"
+msgstr ""
+
+#: views/tab-logs-local.php:147
+msgid "Unlocked"
 msgstr ""
 
 #: views/tab-premium.php:11
@@ -929,10 +983,6 @@ msgstr ""
 
 #: views/tab-premium.php:41
 msgid "Free"
-msgstr ""
-
-#: views/tab-premium.php:42
-msgid "Premium"
 msgstr ""
 
 #: views/tab-premium.php:43
@@ -1053,6 +1103,10 @@ msgstr ""
 msgid "Let network sites use their own settings"
 msgstr ""
 
+#: views/tab-settings.php:47
+msgid "If disabled, the global settings will be forcibly applied to the entire network."
+msgstr ""
+
 #: views/tab-settings.php:49
 msgid "Use global settings"
 msgstr ""
@@ -1069,12 +1123,20 @@ msgstr ""
 msgid "GDPR message"
 msgstr ""
 
+#: views/tab-settings.php:81
+msgid "This message will appear at the bottom of the login page."
+msgstr ""
+
 #: views/tab-settings.php:86
 msgid "You can use a shortcode here to insert links, for example, a link to your Privacy Policy page. <br>The shortcode is: [llar-link url=\"https://example.com\" text=\"Privacy Policy\"]"
 msgstr ""
 
 #: views/tab-settings.php:92
 msgid "Notify on lockout"
+msgstr ""
+
+#: views/tab-settings.php:93
+msgid "Email address to which lockout notifications will be sent."
 msgstr ""
 
 #: views/tab-settings.php:98
@@ -1101,6 +1163,10 @@ msgstr ""
 msgid "Display top-level menu item"
 msgstr ""
 
+#: views/tab-settings.php:120
+msgid "The LLAR plugin displays a logo on the main vertical navigation menu, which provides a shortcut to the plugin. You may also access the plugin through settings."
+msgstr ""
+
 #: views/tab-settings.php:124
 #: views/tab-settings.php:144
 msgid "(Reload the page to see the changes)"
@@ -1110,12 +1176,24 @@ msgstr ""
 msgid "Hide Dashboard Widget"
 msgstr ""
 
+#: views/tab-settings.php:130
+msgid "The LLAR dashboard widget provides a quick glance of your daily failed login activity on the main WordPress dashboard. You may hide this widget by checking this box."
+msgstr ""
+
 #: views/tab-settings.php:139
 msgid "Display Warning Badge"
 msgstr ""
 
+#: views/tab-settings.php:140
+msgid "The warning badge is a red bubble icon displayed next to the LLAR logo on the main vertical navigation menu. It displays a warning if there were more than 100 attempts for a day."
+msgstr ""
+
 #: views/tab-settings.php:149
 msgid "Active App"
+msgstr ""
+
+#: views/tab-settings.php:150
+msgid "Switches from free version (local) to premium (cloud)."
 msgstr ""
 
 #: views/tab-settings.php:155
@@ -1142,12 +1220,24 @@ msgstr ""
 msgid "Lockout"
 msgstr ""
 
+#: views/tab-settings.php:176
+msgid "Set lockout limits based on failed attempts."
+msgstr ""
+
 #: views/tab-settings.php:182
 msgid "allowed retries"
 msgstr ""
 
+#: views/tab-settings.php:183
+msgid "Number of failed attempts allowed before locking out."
+msgstr ""
+
 #: views/tab-settings.php:189
 msgid "minutes lockout"
+msgstr ""
+
+#: views/tab-settings.php:190
+msgid "Lockout time in minutes."
 msgstr ""
 
 #: views/tab-settings.php:196
@@ -1158,12 +1248,28 @@ msgstr ""
 msgid "hours"
 msgstr ""
 
+#: views/tab-settings.php:200
+msgid "After the specified number of lockouts the lockout time will increase by specified hours."
+msgstr ""
+
 #: views/tab-settings.php:206
 msgid "hours until retries are reset"
 msgstr ""
 
+#: views/tab-settings.php:207
+msgid "Time in hours before blocks are removed."
+msgstr ""
+
+#: views/tab-settings.php:212
+msgid "After a specific IP address fails to log in <b>%1$s</b> times, a lockout lasting <b>%2$s</b> minutes is activated. If additional failed attempts occur within <b>%3$s</b> hours and lead to another lockout, once their combined total hits <b>%4$s</b>, the <b>%2$s</b> minutes duration is extended to <b>%5$s</b> hours. The lockout will be lifted once <b>%3$s</b> hours have passed since the last lockout incident."
+msgstr ""
+
 #: views/tab-settings.php:224
 msgid "Trusted IP Origins"
+msgstr ""
+
+#: views/tab-settings.php:225
+msgid "Server variables containing IP addresses."
 msgstr ""
 
 #: views/tab-settings.php:231
@@ -1176,6 +1282,10 @@ msgstr ""
 
 #: views/tab-settings.php:246
 msgid "Setup Code"
+msgstr ""
+
+#: views/tab-settings.php:247
+msgid "This is the code you receive via email once you subscribe to the LLAR premium cloud app. (example xxxxxxxxxxxxx=yek?putes/1v/moc.stpmettanigoltimil.ipa)"
 msgstr ""
 
 #: views/tab-settings.php:252
