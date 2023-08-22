@@ -189,6 +189,7 @@ class LimitLoginAttempts {
 
 		if ( Helpers::allow_local_options() ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+			add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 999 );
 
 			if( Config::get( 'show_warning_badge' ) )
 			    add_action( 'admin_menu', array( $this, 'setting_menu_alert_icon' ) );
@@ -564,7 +565,56 @@ class LimitLoginAttempts {
 		add_submenu_page( 'settings.php', 'Limit Login Attempts', 'Limit Login Attempts' . $this->menu_alert_icon(), 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
 	}
 
+	private function get_submenu_items() {
+		$is_cloud_app_enabled = Config::get( 'active_app' ) === 'custom';
+
+		$submenu_items = array(
+			array(
+                'id'    => 'dashboard',
+				'name'  => __( 'Dashboard', 'limit-login-attempts-reloaded' ),
+				'url'   => $this->_options_page_slug . '&tab=dashboard'
+			),
+			array(
+				'id'    => 'settings',
+				'name'  => __( 'Settings', 'limit-login-attempts-reloaded' ),
+				'url'   => $this->_options_page_slug . '&tab=settings'
+			),
+			$is_cloud_app_enabled
+				? array(
+				'id'    => 'logs-custom',
+				'name'  => __( 'Login Firewal', 'limit-login-attempts-reloaded' ),
+				'url'   => $this->_options_page_slug . '&tab=logs-custom'
+			)
+				: array(
+				'id'    => 'logs-local',
+				'name'  => __( 'Logs', 'limit-login-attempts-reloaded' ),
+				'url'   => $this->_options_page_slug . '&tab=logs-local'
+			),
+			array(
+				'id'    => 'debug',
+				'name'  => __( 'Debug', 'limit-login-attempts-reloaded' ),
+				'url'   => $this->_options_page_slug . '&tab=debug'
+			),
+			array(
+				'id'    => 'help',
+				'name'  => __( 'Help', 'limit-login-attempts-reloaded' ),
+				'url'   => $this->_options_page_slug . '&tab=help'
+			),
+		);
+
+		if( !$is_cloud_app_enabled ) {
+			$submenu_items[] = array(
+                'id'    => 'premium',
+				'name'  => __( 'Premium', 'limit-login-attempts-reloaded' ),
+				'url'   => $this->_options_page_slug . '&tab=premium'
+			);
+		}
+
+		return $submenu_items;
+	}
+
 	public function admin_menu() {
+		global $submenu;
 
 		if( Config::get( 'show_top_level_menu_item' ) ) {
 
@@ -574,11 +624,58 @@ class LimitLoginAttempts {
                 'manage_options',
                 $this->_options_page_slug,
                 array( $this, 'options_page' ),
-				'data:image/svg+xml;base64,' . base64_encode($this->get_svg_logo_content())
+				'data:image/svg+xml;base64,' . base64_encode($this->get_svg_logo_content()),
+                80
             );
-        }
 
-		add_options_page( 'Limit Login Attempts', 'Limit Login Attempts' . $this->menu_alert_icon(), 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+			$is_cloud_app_enabled = Config::get( 'active_app' ) === 'custom';
+            $submenu_items = $this->get_submenu_items();
+
+			foreach ( $submenu_items as $item ) {
+				add_submenu_page(
+					$this->_options_page_slug,
+					$item['name'],
+					$item['name'],
+					'manage_options',
+					$item['url'],
+					array( $this, 'options_page' )
+				);
+			}
+
+			remove_submenu_page( $this->_options_page_slug, $this->_options_page_slug );
+
+			if( !$is_cloud_app_enabled ) {
+				$submenu[$this->_options_page_slug][6][4] = 'llar-submenu-premium-item';
+			}
+
+        } else {
+
+			add_options_page( 'Limit Login Attempts', 'Limit Login Attempts' . $this->menu_alert_icon(), 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+		}
+	}
+
+	public function admin_bar_menu( $admin_bar ) {
+
+	    $root_item_id = 'llar-root';
+
+		$admin_bar->add_node( array(
+			'id'    => $root_item_id,
+			'title' => __( 'LLAR', 'limit-login-attempts-reloaded' ),
+			'href'  => $this->get_options_page_uri(),
+		) );
+
+		$submenu_items = $this->get_submenu_items();
+
+		foreach ( $submenu_items as $item ) {
+
+			$admin_bar->add_node( array(
+                'parent'    => $root_item_id,
+                'id'        => $root_item_id . '-' . $item['id'],
+				'title'     => $item['name'],
+				'href'      => $this->get_options_page_uri( $item['id'] ),
+			) );
+		}
+
 	}
 
 	public function get_svg_logo_content() {
