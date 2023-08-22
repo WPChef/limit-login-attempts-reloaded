@@ -189,7 +189,9 @@ class LimitLoginAttempts {
 
 		if ( Helpers::allow_local_options() ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
-			add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 999 );
+
+			if( Config::get( 'show_top_bar_menu_item' ) )
+			    add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 999 );
 
 			if( Config::get( 'show_warning_badge' ) )
 			    add_action( 'admin_menu', array( $this, 'setting_menu_alert_icon' ) );
@@ -625,7 +627,7 @@ class LimitLoginAttempts {
                 $this->_options_page_slug,
                 array( $this, 'options_page' ),
 				'data:image/svg+xml;base64,' . base64_encode($this->get_svg_logo_content()),
-                80
+                74
             );
 
 			$is_cloud_app_enabled = Config::get( 'active_app' ) === 'custom';
@@ -705,7 +707,7 @@ class LimitLoginAttempts {
 
         if( $retries_count < 100 ) return '';
 
-	    return ' <span class="update-plugins count-1 llar-alert-icon-animation"><span class="plugin-count">!</span></span>';
+	    return ' <span class="update-plugins count-1 llar-alert-icon"><span class="plugin-count">1</span></span>';
     }
 
     public function setting_menu_alert_icon() {
@@ -1565,6 +1567,7 @@ class LimitLoginAttempts {
                 }
 
                 Config::update('show_top_level_menu_item', ( isset( $_POST['show_top_level_menu_item'] ) ? 1 : 0 ) );
+                Config::update('show_top_bar_menu_item', ( isset( $_POST['show_top_bar_menu_item'] ) ? 1 : 0 ) );
                 Config::update('hide_dashboard_widget', ( isset( $_POST['hide_dashboard_widget'] ) ? 1 : 0 ) );
                 Config::update('show_warning_badge', ( isset( $_POST['show_warning_badge'] ) ? 1 : 0 ) );
 

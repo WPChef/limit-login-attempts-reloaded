@@ -282,28 +282,6 @@ if( $active_app === 'local' ) {
         </div>
         <?php endif; ?>
 	</div>
-	<div class="dashboard-section-2" style="display:none;">
-        <div class="info-box-1">
-            <div class="section-title"><?php _e( 'Notifications', 'limit-login-attempts-reloaded' ); ?></div>
-            <ul class="notifications-list">
-                <li><a href="#"><?php _e( '12 issues found in most recent scan', 'limit-login-attempts-reloaded' ); ?></a></li>
-                <li><a href="#"><?php _e( 'Updates are available for WordPress (v5.6) and 10 plugins', 'limit-login-attempts-reloaded' ); ?></a></li>
-            </ul>
-        </div>
-        <div class="info-box-2">
-            <div class="info-box-icon">
-                <span class="dashicons dashicons-rest-api"></span>
-            </div>
-            <div class="info-box-content">
-                <div class="title"><?php _e( 'Multiply Your Protection By Adding More Domains', 'limit-login-attempts-reloaded' ); ?></div>
-                <div class="desc"><?php _e( 'When you upgrade to premium, you can synchronize your IP safelist and blacklist between multiple sites. This is a great way to improve your network performance and slow down future attacks.', 'limit-login-attempts-reloaded' ); ?></div>
-                <div class="actions">
-                    <a href="#"><?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?></a>
-                    <a href="#"><?php _e( 'Connect This Site', 'limit-login-attempts-reloaded' ); ?></a>
-                </div>
-            </div>
-        </div>
-    </div>
 	<div class="dashboard-section-3">
         <div class="info-box-1">
             <div class="info-box-icon">
