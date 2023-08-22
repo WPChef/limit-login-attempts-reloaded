@@ -108,8 +108,8 @@ $active_app_config = Config::get( 'app_config' );
                         <span class="msg"></span>
                     </span>
                     <p class="description"><?php echo sprintf(
-                            __( 'It\'s not uncommon for web hosts to turn off emails for plugins as a security measure.<br>You can install (free) <a href="%s" target="_blank">WP Mail SMTP</a> to insure deliverability. You can also view activity in the "Logs" tab.', 'limit-login-attempts-reloaded' ),
-                            'https://wpmailsmtp.com/limit-login-attempts-reloaded-not-sending-email/'
+                            __( 'It\'s not uncommon for web hosts to turn off emails for plugins as a security measure.<br>We\'ve <a href="%s" target="_blank">created an article</a> to troubleshoot common email deliverability issues.', 'limit-login-attempts-reloaded' ),
+                            'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
                         ); ?></p>
                 </td>
             </tr>

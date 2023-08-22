@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-08-22T15:13:56+03:00\n"
+"POT-Creation-Date: 2023-08-22T17:35:13+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -1156,7 +1156,7 @@ msgid "Test Email Notifications"
 msgstr ""
 
 #: views/tab-settings.php:111
-msgid "It's not uncommon for web hosts to turn off emails for plugins as a security measure.<br>You can install (free) <a href=\"%s\" target=\"_blank\">WP Mail SMTP</a> to insure deliverability. You can also view activity in the \"Logs\" tab."
+msgid "It's not uncommon for web hosts to turn off emails for plugins as a security measure.<br>We've <a href=\"%s\" target=\"_blank\">created an article</a> to troubleshoot common email deliverability issues."
 msgstr ""
 
 #: views/tab-settings.php:119
