@@ -153,7 +153,7 @@ $active_app_config = Config::get( 'app_config' );
                         <span class="dashicons dashicons-editor-help"></span>
                     </i></th>
                 <td>
-                    <input type="checkbox" name="show_warning_badge" <?php checked( $show_warning_badge ); ?>> <?php _e( '(Reload the page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
+                    <input type="checkbox" name="show_warning_badge" <?php checked( $show_warning_badge ); ?>> <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
                 </td>
             </tr>
             <tr>
