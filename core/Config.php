@@ -50,6 +50,7 @@ class Config {
 		'active_app'               => 'local',
 		'app_config'               => '',
 		'show_top_level_menu_item' => true,
+		'show_top_bar_menu_item'   => true,
 		'hide_dashboard_widget'    => false,
 		'show_warning_badge'       => true,
 		'onboarding_popup_shown'   => false,
