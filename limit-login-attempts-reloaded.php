@@ -37,5 +37,7 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 
 	require_once( LLA_PLUGIN_DIR . 'autoload.php' );
 
-	(new LLAR\Core\LimitLoginAttempts());
+	add_action( 'plugins_loaded', function() {
+		(new LLAR\Core\LimitLoginAttempts());
+	}, 9999 );
 }

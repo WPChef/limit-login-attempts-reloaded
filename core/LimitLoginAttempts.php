@@ -44,6 +44,7 @@ class LimitLoginAttempts {
 		Http::init();
 
 		$this->hooks_init();
+		$this->setup();
         $this->cloud_app_init();
 
 		(new Shortcodes())->register();
@@ -55,7 +56,6 @@ class LimitLoginAttempts {
 	*/
 	public function hooks_init() {
 
-		add_action( 'plugins_loaded', array( $this, 'setup' ), 9999 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'login_enqueue_scripts', array( $this, 'login_page_enqueue' ) );
 		add_filter( 'limit_login_whitelist_ip', array( $this, 'check_whitelist_ips' ), 10, 2 );
