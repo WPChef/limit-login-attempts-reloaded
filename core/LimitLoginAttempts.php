@@ -646,7 +646,7 @@ class LimitLoginAttempts {
 
 			remove_submenu_page( $this->_options_page_slug, $this->_options_page_slug );
 
-			if( !$is_cloud_app_enabled ) {
+			if( !$is_cloud_app_enabled && isset( $submenu[$this->_options_page_slug] ) ) {
 				$submenu[$this->_options_page_slug][6][4] = 'llar-submenu-premium-item';
 			}
 
