@@ -15,6 +15,11 @@ class CloudApp {
 	private $id = null;
 
 	/**
+	 * @var null|string
+	 */
+	private $api = null;
+
+	/**
 	 * @var array
 	 */
 	private $config = array();
