@@ -584,7 +584,7 @@ class LimitLoginAttempts {
 			$is_cloud_app_enabled
 				? array(
 				'id'    => 'logs-custom',
-				'name'  => __( 'Login Firewal', 'limit-login-attempts-reloaded' ),
+				'name'  => __( 'Login Firewall', 'limit-login-attempts-reloaded' ),
 				'url'   => $this->_options_page_slug . '&tab=logs-custom'
 			)
 				: array(
