@@ -69,7 +69,7 @@ if( $active_app === 'local' ) {
 
 <div id="llar-dashboard-page">
 	<div class="dashboard-header">
-		<h1><?php _e( 'Limit Login Attempts Reloaded Dashboard', 'limit-login-attempts-reloaded' ); ?></h1>
+<!--		<h1>--><?php //_e( 'Limit Login Attempts Reloaded Dashboard', 'limit-login-attempts-reloaded' ); ?><!--</h1>-->
 	</div>
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
