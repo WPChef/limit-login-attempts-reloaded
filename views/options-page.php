@@ -26,9 +26,12 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 <?php if( $active_app === 'local' ) : ?>
 <div id="llar-header-upgrade-message">
     <p><span class="dashicons dashicons-info"></span>
-        <?php echo sprintf( __( 'Thank you for using the free version of <b>Limit Login Attempts Reloaded</b>. <a href="%s" target="_blank">Upgrade to our cloud app</a> for enhanced protection, visual metrics & premium support.', 'limit-login-attempts-reloaded' ),
+        <?php echo sprintf( __( '<a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to premium</a> to access our powerful login firewall, which detects, counters and neutralizes attacks in the cloud ', 'limit-login-attempts-reloaded' ),
             'https://www.limitloginattempts.com/info.php?from=plugin-'.( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
         ); ?></p>
+<!--        --><?php //echo sprintf( __( 'Thank you for using the free version of <b>Limit Login Attempts Reloaded</b>. <a href="%s" target="_blank">Upgrade to our cloud app</a> for enhanced protection, visual metrics & premium support.', 'limit-login-attempts-reloaded' ),
+//            'https://www.limitloginattempts.com/info.php?from=plugin-'.( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
+//        ); ?><!--</p>-->
 </div>
 <?php endif; ?>
 
@@ -42,9 +45,12 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 <?php endif; ?>
 
 <div class="wrap limit-login-page-settings">
-    <h2><?php echo __( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ); ?></h2>
 
-    <h2 class="nav-tab-wrapper">
+    <img class="limit-login-page-settings__logo" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/logo-llap.png">
+<!--    <h2>--><?php //echo __( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ); ?><!--</h2>-->
+
+<!--    <h2 class="nav-tab-wrapper">-->
+    <div class="nav-tab-wrapper">
         <a href="<?php echo $this->get_options_page_uri('dashboard'); ?>" class="nav-tab <?php if($active_tab == 'dashboard'){echo 'nav-tab-active';} ?> "><?php _e('Dashboard', 'limit-login-attempts-reloaded'); ?></a>
         <a href="<?php echo $this->get_options_page_uri('settings'); ?>" class="nav-tab <?php if($active_tab == 'settings'){echo 'nav-tab-active';} ?> "><?php _e('Settings', 'limit-login-attempts-reloaded'); ?></a>
 
@@ -67,7 +73,9 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
                 <span class="dashicons dashicons-editor-help"></span>
             </i></a>
         <?php endif; ?>
-    </h2>
+<!--    </h2>-->
+    </div>
+
 
     <?php include_once(LLA_PLUGIN_DIR.'views/tab-'.$active_tab.'.php'); ?>
 </div>

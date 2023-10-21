@@ -1,0 +1,74 @@
+@import "../css/fonts/stylesheet.css";
+
+
+$background-body: #FDFDFD;
+$background-sky-blue: #F6FBFF;
+$background-element__almond: #FFEFD6;
+$border-element__red_sand: #EBB35A;
+
+$typography-primary: #2A2F40;
+$typography-secondary: #666D84;
+$primary-colors__orange: #FF9800;
+$primary-colors__turquoise: #4ACAD8;
+
+
+
+
+
+
+//$conten-max-with: 1276px;
+//$border-radius: 20px;
+//$button-size: 12px;
+//$toolbar-height: 2.5rem;
+//$icon-size: 10px;
+//
+//$body-background: #FFFFFF;
+//$background-ash: #FDFDFD;
+
+//$background-gradient: #F3FBFF;
+//$body-background-transparent: rgba(255, 255, 255, 0.60);
+
+//$typography-secondary-gray: #6C6B6B;
+//$typography-additional: #A4A8B7;
+//$primary-colors-orange: #FF7C06;
+//$primary-colors-turquoise: #4ACAD8;
+//$primary-colors-red: #FF0000FF;
+//$primary-colors-turquoise-back: rgba(74, 202, 216, 0.3);
+//$primary-colors-turquoise-ligt: rgba(74, 202, 216, 0.1);
+//$primary-colors-orange-back: #FF7C0619; //rgba(255, 124, 6, 0.1);
+//$primary-colors-orange-fill: rgba(255, 124, 6, 0.3);
+//$secondary-colors-dark-orange: #F07200;
+//$secondary-colors-light-blue: #ECFAFB;
+
+
+$box-shadow__semi_transparent_gray: #72757B33; // rgba(114, 117, 123, 0.20);
+
+$font-primary: CoFo Sans;
+$font-secondary: arial;
+
+$text-font-size-all: 16px;
+$text-font-style: normal;
+$text-font-weight: 400;
+$text-font-weight-bold: 500;
+
+$border-radius: $text-font-size-all * 1.25;
+$border-radius__min: $text-font-size-all * .5;
+$border-radius__max: $border-radius * 2;
+
+.link__style_unlink, .link__style_color_inherit {
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+}
+
+.link__style_unlink:hover, .link__style_color_inherit:hover {
+  color: inherit;
+}
+
+.link__style_color_inherit {
+  text-decoration: underline;
+}
+
+.no_href_link {
+  cursor: default;
+}
