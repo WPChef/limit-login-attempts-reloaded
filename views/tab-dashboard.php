@@ -206,6 +206,8 @@ if( $active_app === 'local' ) {
                     );
 				}
 
+//                echo '<pre>' . print_r($chart2_datasets, true) . '</pre>';
+
                 ?>
 
                 <div class="llar-chart-wrap">
@@ -216,11 +218,21 @@ if( $active_app === 'local' ) {
 					(function(){
 
 						var ctx = document.getElementById('llar-api-requests-chart').getContext('2d');
-						var llar_stat_chart = new Chart(ctx, {
+
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+                        gradient.addColorStop(0, 'rgba(62, 183, 251, 0.4)');
+                        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                        let new_array = <?php echo json_encode($chart2_datasets); ?>;
+
+                        new_array[0].fill = true;
+                        new_array[0].backgroundColor = gradient;
+
+                        var llar_stat_chart = new Chart(ctx, {
 							type: 'line',
 							data: {
 								labels: <?php echo json_encode( $chart2_labels ); ?>,
-                                datasets: <?php echo json_encode( $chart2_datasets ); ?>
+                                datasets: new_array,
 							},
 							options: {
 								responsive: true,
