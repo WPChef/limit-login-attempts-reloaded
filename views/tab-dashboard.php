@@ -36,7 +36,7 @@ if( $active_app === 'local' ) {
     if( $retries_count === 0 ) {
 
 		$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
-		$retries_chart_color = '#66CC66';
+		$retries_chart_color = '#97F6C8';
     }
     else if ( $retries_count < 100 ) {
 
@@ -62,22 +62,20 @@ if( $active_app === 'local' ) {
 
 	$retries_chart_title = __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
 	$retries_chart_desc = __( 'All failed login attempts have been neutralized in the cloud', 'limit-login-attempts-reloaded' );
-	$retries_chart_color = '#66CC66';
+	$retries_chart_color = '#97F6C8';
 }
 
 ?>
 
 <div id="llar-dashboard-page">
-	<div class="dashboard-header">
-<!--		<h1>--><?php //_e( 'Limit Login Attempts Reloaded Dashboard', 'limit-login-attempts-reloaded' ); ?><!--</h1>-->
-	</div>
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
-            <div class="section-title"><?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
-                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Number of failed login attempts for today.', 'limit-login-attempts-reloaded' ); ?>">
-                    <span class="dashicons dashicons-editor-help"></span>
-                </i>
-                <?php echo $active_app === 'custom' ? '<span class="llar-premium-label"><span class="dashicons dashicons-yes-alt"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>' : ''; ?></div>
+            <div class="section-title__new">
+                <span class="llar-label">
+                    <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+                </span>
+                <?php echo $active_app === 'custom' ? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>' : ''; ?>
+            </div>
             <div class="section-content">
                 <div class="chart">
                     <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
@@ -87,6 +85,19 @@ if( $active_app === 'local' ) {
 					(function(){
 
 						var ctx = document.getElementById('llar-attack-velocity-chart').getContext('2d');
+
+                        // Add a shadow on the graph
+                        let shadow_fill = ctx.fill;
+                        ctx.fill = function () {
+                            ctx.save();
+                            ctx.shadowColor = '#97F6C8';
+                            ctx.shadowBlur = 10;
+                            ctx.shadowOffsetX = 0;
+                            ctx.shadowOffsetY = 3;
+                            shadow_fill.apply(this, arguments)
+                            ctx.restore();
+                        };
+
 						var llar_retries_chart = new Chart(ctx, {
 							type: 'doughnut',
 							data: {
@@ -95,20 +106,25 @@ if( $active_app === 'local' ) {
 									data: [1],
 									value: <?php echo esc_js( $retries_count ); ?>,
 									backgroundColor: ['<?php echo esc_js( $retries_chart_color ); ?>'],
-									borderWidth: [0],
+									borderWidth: 0,
 								}]
 							},
 							options: {
+                                layout: {
+                                    padding: {
+                                        bottom: 10,
+                                    },
+                                },
 								responsive: true,
-								cutout: 50,
+								cutout: 65,
 								title: {
 									display: false,
 								},
                                 plugins: {
                                     tooltip: {
-                                        enabled: false
+                                        enabled: false,
                                     }
-                                }
+                                },
 							}
 						});
 
@@ -119,6 +135,12 @@ if( $active_app === 'local' ) {
             </div>
         </div>
         <div class="info-box-2">
+            <div class="section-title__new">
+                <span class="llar-label">
+                    <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+                </span>
+                <span class="llar-premium-label"><a href="www.yourdomain.com">www.yourdomain.com</a></span>
+            </div>
             <div class="section-content">
                 <?php
                 $chart2_label = '';
@@ -236,7 +258,7 @@ if( $active_app === 'local' ) {
                                     point: {
                                         pointStyle: 'circle',
                                         radius: 3.5,
-                                        pointBackgroundColor: '#FFF',
+                                        pointBackgroundColor: '#FFFFFF',
                                         pointBorderWidth: 1.5,
                                         pointBorderColor: '#58C3FF',
                                     }
@@ -254,19 +276,7 @@ if( $active_app === 'local' ) {
                                         }
                                     },
                                     legend: {
-                                        align: 'start',
-                                        labels: {
-                                            pointStyle: 'circle',
-                                            usePointStyle: true,
-                                            boxHeight: 10,
-                                            padding: 15,
-                                            font: {
-                                                family: 'CoFo Sans, arial',
-                                                weight: 400,
-                                                size: 18,
-                                                lineHeight: 1.5,
-                                            }
-                                        }
+                                        display: false,
                                     }
                                 },
 								hover: {
