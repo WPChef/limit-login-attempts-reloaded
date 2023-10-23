@@ -794,7 +794,8 @@
 }
 
 #llar-dashboard-page {
-  padding-top: 10px;
+  font-family: CoFo Sans, arial;
+  padding-top: 2.44rem;
 }
 #llar-dashboard-page * {
   box-sizing: border-box;
@@ -818,15 +819,17 @@
 }
 #llar-dashboard-page .dashboard-section-1 {
   margin-bottom: 20px;
-  background-color: #fff;
   display: flex;
   flex-wrap: wrap;
+  column-gap: 1rem;
 }
 #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
   text-align: center;
-  flex: 0 0 33.333%;
-  max-width: 33.333%;
-  border-right: 1px solid #e4e4e4;
+  flex: 1 0 auto;
+  max-width: 32%;
+  border-radius: 20px;
+  background: #FDFDFD;
+  box-shadow: 0.25rem 0.25rem 1.125rem 0 rgba(162, 180, 189, 0.2);
 }
 #llar-dashboard-page .dashboard-section-1 > [class^=info-box-]:last-child {
   border: 0;
@@ -932,7 +935,7 @@
 #llar-dashboard-page .dashboard-section-2 > [class^=info-box-] {
   flex: 0 0 calc(50% - 10px);
   min-height: 100px;
-  background-color: #fff;
+  background: #FDFDFD;
   border: 1px solid #e4e4e4;
   padding: 15px;
 }
@@ -999,15 +1002,18 @@
 #llar-dashboard-page .dashboard-section-3 {
   display: flex;
   flex-wrap: wrap;
-  background-color: #fff;
   margin-bottom: 20px;
+  column-gap: 1rem;
 }
 #llar-dashboard-page .dashboard-section-3 > [class^=info-box-] {
   display: flex;
   flex-wrap: wrap;
   padding: 30px 15px 30px 0;
-  flex: 1;
-  border-right: 1px solid #e4e4e4;
+  flex: 1 0 auto;
+  max-width: 32%;
+  border-radius: 20px;
+  background: #FDFDFD;
+  box-shadow: 0.25rem 0.25rem 1.125rem 0 rgba(162, 180, 189, 0.2);
 }
 #llar-dashboard-page .dashboard-section-3 > [class^=info-box-] .info-box-icon {
   flex: 0 0 100px;
