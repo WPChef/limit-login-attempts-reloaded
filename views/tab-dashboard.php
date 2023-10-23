@@ -200,14 +200,10 @@ if( $active_app === 'local' ) {
                     $chart2_datasets[] = array(
 						'label' => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
 						'data' => $chart2_data,
-						'backgroundColor' => 'rgb(54, 162, 235)',
-						'borderColor' => 'rgb(54, 162, 235)',
+						'borderColor' => '#58C3FF',
 						'fill' => false,
                     );
 				}
-
-//                echo '<pre>' . print_r($chart2_datasets, true) . '</pre>';
-
                 ?>
 
                 <div class="llar-chart-wrap">
@@ -217,8 +213,9 @@ if( $active_app === 'local' ) {
                 <script type="text/javascript">
 					(function(){
 
-						var ctx = document.getElementById('llar-api-requests-chart').getContext('2d');
+						let ctx = document.getElementById('llar-api-requests-chart').getContext('2d');
 
+						// Add a gradient fill below the graph
                         const gradient = ctx.createLinearGradient(0, 0, 0, 350);
                         gradient.addColorStop(0, 'rgba(62, 183, 251, 0.4)');
                         gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
@@ -228,13 +225,22 @@ if( $active_app === 'local' ) {
                         new_array[0].fill = true;
                         new_array[0].backgroundColor = gradient;
 
-                        var llar_stat_chart = new Chart(ctx, {
+                        let llar_stat_chart = new Chart(ctx, {
 							type: 'line',
 							data: {
 								labels: <?php echo json_encode( $chart2_labels ); ?>,
                                 datasets: new_array,
 							},
 							options: {
+                                elements: {
+                                    point: {
+                                        pointStyle: 'circle',
+                                        radius: 3.5,
+                                        pointBackgroundColor: '#FFF',
+                                        pointBorderWidth: 1.5,
+                                        pointBorderColor: '#58C3FF',
+                                    }
+                                },
 								responsive: true,
 								maintainAspectRatio: false,
                                 plugins: {
@@ -247,6 +253,21 @@ if( $active_app === 'local' ) {
                                             }
                                         }
                                     },
+                                    legend: {
+                                        align: 'start',
+                                        labels: {
+                                            pointStyle: 'circle',
+                                            usePointStyle: true,
+                                            boxHeight: 10,
+                                            padding: 15,
+                                            font: {
+                                                family: 'CoFo Sans, arial',
+                                                weight: 400,
+                                                size: 18,
+                                                lineHeight: 1.5,
+                                            }
+                                        }
+                                    }
                                 },
 								hover: {
 									mode: 'nearest',
@@ -276,7 +297,6 @@ if( $active_app === 'local' ) {
 								}
 							}
 						});
-
 					})();
                 </script>
 
