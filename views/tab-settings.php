@@ -363,7 +363,7 @@ $active_app_config = Config::get( 'app_config' );
                     $.post(ajaxurl, {
                         action: 'app_setup',
                         code: setup_code,
-                        sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>',
+                        sec: '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>',
                         is_network_admin: <?php echo esc_js( is_network_admin() ? 1 : 0 ); ?>
                     }, function(response){
 
@@ -430,7 +430,7 @@ $active_app_config = Config::get( 'app_config' );
                     $.post(ajaxurl, {
                         action: 'test_email_notifications',
                         email: $email_input.val() || $email_input.attr('placeholder'),
-                        sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>',
+                        sec: '<?php echo esc_js( wp_create_nonce( "llar-test-email-notifications" ) ); ?>',
                     }, function(res) {
                         if(res?.success) {
                             $test_email_loader_msg.addClass('success').text('<?php echo esc_js( __( 'Test email has been sent!', 'limit-login-attempts-reloaded' ) ) ?>')
