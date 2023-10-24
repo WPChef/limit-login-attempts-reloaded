@@ -74,7 +74,7 @@ if( $active_app === 'local' ) {
                 <span class="llar-label">
                     <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
                 </span>
-                <?php echo $active_app === 'custom' ? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>' : ''; ?>
+                <?php echo $active_app !== 'custom' ? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>' : ''; ?>
             </div>
             <div class="section-content">
                 <div class="chart">
@@ -137,9 +137,14 @@ if( $active_app === 'local' ) {
         <div class="info-box-2">
             <div class="section-title__new">
                 <span class="llar-label">
+                    <span class="llar-label__circle">&bull;</span>
                     <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
                 </span>
-                <span class="llar-premium-label"><a href="www.yourdomain.com">www.yourdomain.com</a></span>
+                <span class="llar-label__url">
+                    <a href="<?= home_url( '/' ) ?>" class="link__style_unlink">
+                        <?= wp_parse_url( home_url(), PHP_URL_HOST ) ?>
+                    </a>
+                </span>
             </div>
             <div class="section-content">
                 <?php
@@ -239,7 +244,8 @@ if( $active_app === 'local' ) {
 
 						// Add a gradient fill below the graph
                         const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                        gradient.addColorStop(0, 'rgba(62, 183, 251, 0.4)');
+                        // gradient.addColorStop(0, 'rgba(62, 183, 251, 0.4)');
+                        gradient.addColorStop(0, 'rgba(88, 195, 255, .7)');
                         gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
                         let new_array = <?php echo json_encode($chart2_datasets); ?>;
@@ -314,9 +320,23 @@ if( $active_app === 'local' ) {
         </div>
         <?php if( $active_app === 'local' ) : ?>
 		<div class="info-box-3">
+            <div class="section-title__new">
+                <div class="title"><?php _e( 'Enable Micro Cloud (FREE)', 'limit-login-attempts-reloaded' ); ?></div>
+            </div>
             <div class="section-content">
-                <div class="title"><?php _e( 'Premium Protection Disabled', 'limit-login-attempts-reloaded' ); ?></div>
-                <div class="desc"><?php _e( 'As a free user, your local server is absorbing the traffic brought on by brute force attacks, potentially slowing down your website. Upgrade to Premium today to outsource these attacks through our cloud app, and slow down future attacks with advanced throttling.', 'limit-login-attempts-reloaded' ); ?></div>
+                <div class="desc">
+                    <ul class="list-unstyled">
+                        <li class="star">
+                            <?php _e( 'Help us secure our network by providing access to your login IP data.', 'limit-login-attempts-reloaded' ); ?>
+                        </li>
+                        <li class="star">
+                            <?php _e( 'In return, receive access to our premium features up to 1,000 requests per month!', 'limit-login-attempts-reloaded' ); ?>
+                        </li>
+                        <li class="star">
+                            <?php _e( 'Once 1,000 requests are reached each month, the premium app will switch back to the free version and reset the follow month.', 'limit-login-attempts-reloaded' ); ?>
+                        </li>
+                    </ul>
+                </div>
                 <div class="actions">
                     <a href="https://www.limitloginattempts.com/info.php?from=plugin-dashboard-cta" target="_blank" class="button button-primary"><?php _e( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?></a><br>
                 </div>
