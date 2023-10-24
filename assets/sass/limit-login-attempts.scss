@@ -3,14 +3,16 @@
 "mixins";
 
 .toplevel_page_limit-login-attempts { // top level css
-  background-color: $background-sky-blue;
-  font-family: $font-primary, $font-secondary;
-  font-style: $text-font-style;
-  font-weight: $text-font-weight;
-  color: $typography-primary;
 
-
+  #wpcontent {
+    background-color: $background-sky-blue;
+    font-family: $font-primary, $font-secondary;
+    font-style: $text-font-style;
+    font-weight: $text-font-weight;
+    color: $typography-primary;
+  }
 }
+
 
 
 .limit-login-page-settings {
@@ -984,6 +986,7 @@
 }
 
 #toplevel_page_limit-login-attempts {
+
   .wp-menu-image.svg {
     background-size: 25px auto !important;
     margin-top: 7px;

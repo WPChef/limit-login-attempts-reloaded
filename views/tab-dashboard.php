@@ -64,7 +64,6 @@ if( $active_app === 'local' ) {
 	$retries_chart_desc = __( 'All failed login attempts have been neutralized in the cloud', 'limit-login-attempts-reloaded' );
 	$retries_chart_color = '#97F6C8';
 }
-
 ?>
 
 <div id="llar-dashboard-page">
@@ -74,7 +73,9 @@ if( $active_app === 'local' ) {
                 <span class="llar-label">
                     <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
                 </span>
-                <?php echo $active_app !== 'custom' ? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>' : ''; ?>
+                <?php echo $active_app === 'custom'
+                    ? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>'
+                    : ''; ?>
             </div>
             <div class="section-content">
                 <div class="chart">
@@ -90,7 +91,7 @@ if( $active_app === 'local' ) {
                         let shadow_fill = ctx.fill;
                         ctx.fill = function () {
                             ctx.save();
-                            ctx.shadowColor = '#97F6C8';
+                            ctx.shadowColor = '<?php echo esc_js( $retries_chart_color ) ?>';
                             ctx.shadowBlur = 10;
                             ctx.shadowOffsetX = 0;
                             ctx.shadowOffsetY = 3;
@@ -337,8 +338,19 @@ if( $active_app === 'local' ) {
                         </li>
                     </ul>
                 </div>
-                <div class="actions">
-                    <a href="https://www.limitloginattempts.com/info.php?from=plugin-dashboard-cta" target="_blank" class="button button-primary"><?php _e( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?></a><br>
+            </div>
+            <div class="actions">
+                <div class="actions__buttons">
+                    <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta" title="Upgrade To Premium" target="_blank" class="link__style_unlink">
+                        <button class="menu__item col button__transparent_orange">
+                            Learn More
+                        </button>
+                    </a>
+                    <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta" title="Upgrade To Premium" target="_blank" class="link__style_unlink">
+                        <button class="menu__item col button__orange">
+                            Get Started
+                        </button>
+                    </a>
                 </div>
             </div>
         </div>
