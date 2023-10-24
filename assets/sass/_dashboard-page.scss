@@ -8,26 +8,68 @@
 
   ul, ol {
     margin-left: 0;
+
+    &.list-unstyled {
+      padding-left: 2rem;
+      list-style: none;
+    }
+
     li {
       list-style-position: inside;
+
+      &.star {
+        padding-left: 1rem;
+        color: $typography-secondary;
+        margin-bottom: .62rem;
+
+        &::before {
+          content: "\2727";
+          color: $color-marker;
+          margin-left: -1.25rem;
+        }
+      }
     }
   }
 
   .section-title__new {
-    margin: 2rem 2.5rem;
-    font-size: 1.125rem;
+    font-size: 1rem;
     text-align: left;
+
+    @include _1599 {
+      font-size: .875rem;
+    }
 
     .llar-label {
       color: $typography-primary;
       padding: .12rem 1rem;
       border-radius: $border-radius__min;
       background-color: rgba(10, 172, 208, 0.08);
+
+      @include _1599 {
+        padding: .12rem .32rem;
+      }
+
+      &__url {
+        float: right;
+        color: $typography-additional;
+        font-size: 87.5%;
+        margin-right: 1.12rem;
+
+        @include _1599 {
+          margin-right: .25rem;
+        }
+      }
+
+      &__circle {
+        font-size: 4rem;
+        vertical-align: middle;
+        color: #58C3FF;
+      }
     }
   }
 
   .section-content {
-    padding: 15px;
+    margin-top: 1.87rem;
     overflow: hidden;
   }
 
@@ -35,20 +77,36 @@
     margin-bottom: 20px;
     display: flex;
     flex-wrap: wrap;
-    column-gap: 1rem;
+    gap: 1rem;
 
+    @include _1399 {
+      gap: .5rem;
+    }
 
     > [class^="info-box-"] {
-      //padding: 15px;
       text-align: center;
       //flex: 0 0 33.333%;
-      flex: 1 0 32%;
-      max-width: 50%;
-      min-width: 530px;
+      flex: 1 0 auto;
+      max-width: 32.5%;
+      //min-width: 30rem;
+      padding: 2rem 1.87rem 1.5rem;
       //border-right: 1px solid #e4e4e4;
       border-radius: $border-radius;
       background: $background-body;
       box-shadow: .25rem .25rem 1.125rem 0 $box-shadow__light_transparent_gray;
+
+      @include _1799 {
+        padding: 1.87rem 1.32rem 1rem;
+        max-width: 32%;
+      }
+
+      @include _1399 {
+        max-width: 49.5%;
+      }
+
+      @include _991 {
+        max-width: 100%;
+      }
 
       &:last-child {
         border: 0;
@@ -68,36 +126,38 @@
 
         .llar-premium-label {
           float: right;
+          margin-right: 1.12rem;
           color: $typography-secondary;
 
           .dashicons {
+            width: unset;
+            height: unset;
             background-color: $primary-colors__aero_blue;
             border-radius: $border-radius__min * .5;
             color: $background-body;
-            margin-right: .22rem;
+            margin-right: .32rem;
             font-size: inherit;
+
+            @include _1199 {
+              margin-right: .12rem;
+            }
           }
         }
 
-        @media all and (max-width: 1340px) {
-          padding: 15px 10px;
 
-          .llar-premium-label {
-            font-size: 12px;
-          }
-        }
-
-        @media all and (max-width: 1220px) {
-          .llar-premium-label {
-            display: block;
-            margin-top: 5px;
-            float: none;
-          }
-        }
+        //@media all and (max-width: 1220px) {
+        //  .llar-premium-label {
+        //    display: block;
+        //    margin-top: 5px;
+        //    float: none;
+        //  }
+        //}
       }
+
       .section-content {
         clear: both;
       }
+
       .chart {
         //margin-bottom: 10px;
         max-width: 300px;
@@ -123,18 +183,21 @@
           font-weight: bold;
         }
       }
+
       .desc {
         font-size: 15px;
       }
+
       .actions {
         margin-top: 5px;
       }
     }
+
     .info-box-2 {
 
       .llar-chart-wrap {
         width: 100%;
-        max-width: 80%;
+        //max-width: 80%;
         margin: 0 auto;
         clear: both;
 
@@ -147,12 +210,26 @@
         margin-top: 10px;
       }
     }
+
     .info-box-3 {
       text-align: left;
+
+      @include _1399 {
+        max-width: 100%;
+      }
+
+      .section-content {
+
+        .list-unstyled {
+          padding-left: .2rem;
+          font-size: .875rem;
+        }
+      }
 
       .desc {
         margin-bottom: 20px;
       }
+
       .actions {
         text-align: center;
         padding-top: 20px;

@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import "../css/fonts/stylesheet.css";
 .link__style_unlink, .link__style_color_inherit {
   text-decoration: none;
@@ -28,6 +29,11 @@
 .limit-login-page-settings {
   margin: 0.5rem 3.12rem;
 }
+@media screen and (max-width: 1799.5px) {
+  .limit-login-page-settings {
+    margin: 0.5rem 1rem 0.5rem 0;
+  }
+}
 .limit-login-page-settings__logo {
   margin-top: 21px;
   margin-left: 0.25rem;
@@ -49,6 +55,23 @@
 }
 .limit-login-page-settings .nav-tab-wrapper .nav-tab-active {
   border-bottom: 4px solid #4ACAD8;
+}
+@media screen and (max-width: 991.5px) {
+  .limit-login-page-settings .nav-tab-wrapper .nav-tab {
+    font-size: 14px;
+    margin-right: 1.25rem;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  .limit-login-page-settings .nav-tab-wrapper .nav-tab {
+    margin-right: 0.87rem;
+  }
+}
+@media screen and (max-width: 575.5px) {
+  .limit-login-page-settings .nav-tab-wrapper .nav-tab {
+    font-size: 12px;
+    margin-right: 0.5rem;
+  }
 }
 .limit-login-page-settings .nav-tab-wrapper .llar-failover-link {
   font-size: 14px;
@@ -531,6 +554,18 @@
   background-color: #FFEFD6;
   box-shadow: 0 0.25rem 1.125rem 0 rgba(114, 117, 123, 0.2);
 }
+@media screen and (max-width: 991.5px) {
+  #llar-header-upgrade-message {
+    padding: 0.32rem 0.875rem;
+    font-size: 11px;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  #llar-header-upgrade-message {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+}
 #llar-header-upgrade-message p {
   margin: 0;
 }
@@ -541,6 +576,13 @@
   color: #FF9800;
   vertical-align: middle;
   margin-right: 5px;
+}
+@media screen and (max-width: 991.5px) {
+  #llar-header-upgrade-message p .dashicons {
+    width: 1rem;
+    height: 1rem;
+    font-size: 1rem;
+  }
 }
 
 .settings_page_limit-login-attempts .update-nag {
@@ -803,13 +845,31 @@
 #llar-dashboard-page ul, #llar-dashboard-page ol {
   margin-left: 0;
 }
+#llar-dashboard-page ul.list-unstyled, #llar-dashboard-page ol.list-unstyled {
+  padding-left: 2rem;
+  list-style: none;
+}
 #llar-dashboard-page ul li, #llar-dashboard-page ol li {
   list-style-position: inside;
 }
+#llar-dashboard-page ul li.star, #llar-dashboard-page ol li.star {
+  padding-left: 1rem;
+  color: #666D84;
+  margin-bottom: 0.62rem;
+}
+#llar-dashboard-page ul li.star::before, #llar-dashboard-page ol li.star::before {
+  content: "✧";
+  color: #9762EF;
+  margin-left: -1.25rem;
+}
 #llar-dashboard-page .section-title__new {
-  margin: 2rem 2.5rem;
-  font-size: 1.125rem;
+  font-size: 1rem;
   text-align: left;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .section-title__new {
+    font-size: 0.875rem;
+  }
 }
 #llar-dashboard-page .section-title__new .llar-label {
   color: #2A2F40;
@@ -817,24 +877,66 @@
   border-radius: 8px;
   background-color: rgba(10, 172, 208, 0.08);
 }
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .section-title__new .llar-label {
+    padding: 0.12rem 0.32rem;
+  }
+}
+#llar-dashboard-page .section-title__new .llar-label__url {
+  float: right;
+  color: #A4A8B7;
+  font-size: 87.5%;
+  margin-right: 1.12rem;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .section-title__new .llar-label__url {
+    margin-right: 0.25rem;
+  }
+}
+#llar-dashboard-page .section-title__new .llar-label__circle {
+  font-size: 4rem;
+  vertical-align: middle;
+  color: #58C3FF;
+}
 #llar-dashboard-page .section-content {
-  padding: 15px;
+  margin-top: 1.87rem;
   overflow: hidden;
 }
 #llar-dashboard-page .dashboard-section-1 {
   margin-bottom: 20px;
   display: flex;
   flex-wrap: wrap;
-  column-gap: 1rem;
+  gap: 1rem;
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-1 {
+    gap: 0.5rem;
+  }
 }
 #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
   text-align: center;
-  flex: 1 0 32%;
-  max-width: 50%;
-  min-width: 530px;
+  flex: 1 0 auto;
+  max-width: 32.5%;
+  padding: 2rem 1.87rem 1.5rem;
   border-radius: 20px;
   background: #FDFDFD;
   box-shadow: 0.25rem 0.25rem 1.125rem 0 rgba(162, 180, 189, 0.2);
+}
+@media screen and (max-width: 1799.5px) {
+  #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
+    padding: 1.87rem 1.32rem 1rem;
+    max-width: 32%;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
+    max-width: 49.5%;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
+    max-width: 100%;
+  }
 }
 #llar-dashboard-page .dashboard-section-1 > [class^=info-box-]:last-child {
   border: 0;
@@ -847,28 +949,21 @@
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label {
   float: right;
+  margin-right: 1.12rem;
   color: #666D84;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label .dashicons {
+  width: unset;
+  height: unset;
   background-color: #97F6C8;
   border-radius: 4px;
   color: #FDFDFD;
-  margin-right: 0.22rem;
+  margin-right: 0.32rem;
   font-size: inherit;
 }
-@media all and (max-width: 1340px) {
-  #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new {
-    padding: 15px 10px;
-  }
-  #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label {
-    font-size: 12px;
-  }
-}
-@media all and (max-width: 1220px) {
-  #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label {
-    display: block;
-    margin-top: 5px;
-    float: none;
+@media screen and (max-width: 1199.5px) {
+  #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label .dashicons {
+    margin-right: 0.12rem;
   }
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-content {
@@ -903,7 +998,6 @@
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-2 .llar-chart-wrap {
   width: 100%;
-  max-width: 80%;
   margin: 0 auto;
   clear: both;
 }
@@ -916,6 +1010,15 @@
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 {
   text-align: left;
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-1 .info-box-3 {
+    max-width: 100%;
+  }
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .section-content .list-unstyled {
+  padding-left: 0.2rem;
+  font-size: 0.875rem;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .desc {
   margin-bottom: 20px;

@@ -1,4 +1,6 @@
-@import "settings";
+@import
+"settings",
+"mixins";
 
 .toplevel_page_limit-login-attempts { // top level css
   background-color: $background-sky-blue;
@@ -13,6 +15,10 @@
 
 .limit-login-page-settings {
   margin: .5rem 3.12rem;
+
+  @include _1799 {
+    margin: .5rem 1rem .5rem 0;
+  }
 
   &__logo {
     margin-top: 21px;
@@ -40,6 +46,19 @@
         border-bottom: 4px solid $primary-colors__turquoise;
       }
 
+      @include _991 {
+        font-size: $text-font-size-all * .875;
+        margin-right: 1.25rem;
+      }
+
+      @include _767 {
+        margin-right: .87rem;
+      }
+
+      @include _575 {
+        font-size: $text-font-size-all * .75;
+        margin-right: .5rem;
+      }
 
     }
 
@@ -57,10 +76,6 @@
       }
     }
   }
-
-
-
-
 
 
   .field-col {
@@ -644,10 +659,7 @@
 }
 
 
-
-
 // new design
-
 #llar-header-upgrade-message {
   margin: 1.25rem auto;
   width: fit-content;
@@ -660,6 +672,16 @@
   background-color: $background-element__almond;
   box-shadow: 0 .25rem 1.125rem 0 $box-shadow__semi_transparent_gray;
 
+  @include _991 {
+    padding: .32rem .875rem;
+    font-size: 11px;
+  }
+
+  @include _767 {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
   p {
     margin: 0;
 
@@ -670,12 +692,15 @@
       color: $primary-colors__orange;
       vertical-align: middle;
       margin-right: 5px;
+
+      @include _991 {
+        width: 1rem;
+        height: 1rem;
+        font-size: 1rem;
+      }
     }
   }
 }
-
-
-
 
 
 
