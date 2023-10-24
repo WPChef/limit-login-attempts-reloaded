@@ -18,7 +18,7 @@
   cursor: default;
 }
 
-.toplevel_page_limit-login-attempts {
+.toplevel_page_limit-login-attempts #wpcontent {
   background-color: #F6FBFF;
   font-family: CoFo Sans, arial;
   font-style: normal;
@@ -855,7 +855,7 @@
 #llar-dashboard-page ul li.star, #llar-dashboard-page ol li.star {
   padding-left: 1rem;
   color: #666D84;
-  margin-bottom: 0.62rem;
+  margin-bottom: 1rem;
 }
 #llar-dashboard-page ul li.star::before, #llar-dashboard-page ol li.star::before {
   content: "✧";
@@ -899,7 +899,7 @@
   color: #58C3FF;
 }
 #llar-dashboard-page .section-content {
-  margin-top: 1.87rem;
+  margin-top: 1rem;
   overflow: hidden;
 }
 #llar-dashboard-page .dashboard-section-1 {
@@ -914,9 +914,11 @@
   }
 }
 #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
+  position: relative;
   text-align: center;
   flex: 1 0 auto;
   max-width: 32.5%;
+  min-height: 17rem;
   padding: 2rem 1.87rem 1.5rem;
   border-radius: 20px;
   background: #FDFDFD;
@@ -936,16 +938,17 @@
 @media screen and (max-width: 991.5px) {
   #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
     max-width: 100%;
+    min-height: 21rem;
   }
 }
 #llar-dashboard-page .dashboard-section-1 > [class^=info-box-]:last-child {
   border: 0;
 }
 #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] .title {
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: 500;
+  color: #666D84;
+  font-size: 1rem;
   line-height: 1.5;
-  margin-bottom: 10px;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label {
   float: right;
@@ -968,6 +971,8 @@
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-content {
   clear: both;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .chart {
   max-width: 300px;
@@ -991,7 +996,9 @@
   font-weight: bold;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .desc {
-  font-size: 15px;
+  margin-top: 0.67rem;
+  color: #A4A8B7;
+  font-size: 0.875rem;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .actions {
   margin-top: 5px;
@@ -1016,21 +1023,68 @@
     max-width: 100%;
   }
 }
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .section-content {
+  overflow: unset;
+}
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .section-content .list-unstyled {
-  padding-left: 0.2rem;
+  padding-left: 0.32rem;
   font-size: 0.875rem;
+  line-height: 1.5;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .desc {
   margin-bottom: 20px;
 }
-#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions {
-  text-align: center;
-  padding-top: 20px;
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .title {
+  color: #2A2F40;
+  font-size: 1.125rem;
 }
-#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions a {
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions {
+  position: absolute;
+  width: fit-content;
+  bottom: 1.87rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons {
+  display: flex;
+  flex-direction: row;
+  column-gap: 1rem;
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons a {
   text-transform: uppercase;
   font-size: 16px;
   margin-bottom: 5px;
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item {
+  min-width: 12.5rem;
+  max-width: 14.6rem;
+  padding: 0.47rem 0.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  margin: 0 auto;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item {
+    min-width: 10rem;
+  }
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button__transparent_orange {
+  color: #FF7C06 !important;
+  border: 1px solid;
+  background: transparent;
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button__transparent_orange:hover {
+  background: rgba(255, 124, 6, 0.0980392157);
+  border: 1px solid #FF7C06;
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button__orange {
+  color: #FDFDFD !important;
+  background: #FF7C06;
+  border: 1px solid #FF7C06;
+  box-shadow: 0 0.3rem 0.72rem 0 rgba(255, 124, 6, 0.4980392157);
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button__orange:hover {
+  background: #F07200;
 }
 #llar-dashboard-page .dashboard-section-1.custom .info-box-2 {
   flex: 0 0 66.666%;
