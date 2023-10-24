@@ -71,7 +71,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 					action: 'app_load_lockouts',
                     offset: page_offset,
                     limit: page_limit,
-					sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+					sec: '<?php echo wp_create_nonce( "llar-app-load-lockouts" ); ?>'
 				}, function(response){
 
                     $preloader_wrap.removeClass('loading');

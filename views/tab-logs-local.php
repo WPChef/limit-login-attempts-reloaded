@@ -162,7 +162,7 @@ if( is_array( $log ) && ! empty( $log ) ) { ?>
 
                 $.post( ajaxurl, {
                     action: 'limit-login-unlock',
-                    sec: '<?=wp_create_nonce('limit-login-unlock') ?>',
+                    sec: '<?php echo wp_create_nonce( 'llar-unlock' ) ?>',
                     ip: btn.data('ip'),
                     username: btn.data('username')
                 } )

@@ -83,7 +83,7 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
                 $.post(ajaxurl, {
                     action: 'toggle_auto_update',
                     value: $(this).data('val'),
-                    sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+                    sec: '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>'
                 }, function(response){
                     if(response.success) {
                         $auto_update_notice.remove();
