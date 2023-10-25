@@ -135,6 +135,7 @@ if( $active_app === 'local' ) {
                 <div class="desc"><?php echo $retries_chart_desc; ?></div>
             </div>
         </div>
+
         <div class="info-box-2">
             <div class="section-title__new">
                 <span class="llar-label">
@@ -152,6 +153,8 @@ if( $active_app === 'local' ) {
                 $chart2_label = '';
                 $chart2_labels = array();
 				$chart2_datasets = array();
+                $chart2__color = '#58C3FF';
+                $chart2__color_gradient = '#58C3FFB3';
 
                 if( $active_app === 'custom' ) {
 
@@ -163,8 +166,8 @@ if( $active_app === 'local' ) {
 					$dataset = array(
 						'label' => __('Failed Login Attempts', 'limit-login-attempts-reloaded'),
 						'data' => [],
-						'backgroundColor' => 'rgb(54, 162, 235)',
-						'borderColor' => 'rgb(54, 162, 235)',
+						'backgroundColor' => 'white',
+						'borderColor' => $chart2__color,
 						'fill' => false,
 					);
 
@@ -228,7 +231,7 @@ if( $active_app === 'local' ) {
                     $chart2_datasets[] = array(
 						'label' => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
 						'data' => $chart2_data,
-						'borderColor' => '#58C3FF',
+						'borderColor' => $chart2__color,
 						'fill' => false,
                     );
 				}
@@ -245,8 +248,8 @@ if( $active_app === 'local' ) {
 
 						// Add a gradient fill below the graph
                         const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                        gradient.addColorStop(0, 'rgba(88, 195, 255, .7)');
-                        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                        gradient.addColorStop(0, '<?php echo esc_js( $chart2__color_gradient ); ?>');
+                        gradient.addColorStop(1, '<?php echo esc_js( '#FFFFFF00' ); ?>');
 
                         let new_array = <?php echo json_encode($chart2_datasets); ?>;
 
@@ -264,9 +267,9 @@ if( $active_app === 'local' ) {
                                     point: {
                                         pointStyle: 'circle',
                                         radius: 3.5,
-                                        pointBackgroundColor: '#FFFFFF',
+                                        pointBackgroundColor: 'white',
                                         pointBorderWidth: 1.5,
-                                        pointBorderColor: '#58C3FF',
+                                        pointBorderColor: '<?php echo esc_js( $chart2__color ); ?>',
                                     }
                                 },
 								responsive: true,
@@ -414,6 +417,8 @@ if( $active_app === 'local' ) {
 		$stats_global_dates = array();
 		$date_format = trim( get_option( 'date_format' ), ' yY,._:;-/\\' );
 		$date_format = str_replace( 'F', 'M', $date_format );
+        $chart3__color = '#FF7C06';
+        $chart3__color_gradient = '#FF7C06B3';
 
 		foreach ( $stats_global['attempts']['day']['at'] as $timest ) {
 
@@ -469,6 +474,12 @@ if( $active_app === 'local' ) {
                     (function(){
 
                         var ctx = document.getElementById('llar-total-attacks-blocked-chart').getContext('2d');
+
+                        // Add a gradient fill below the graph
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+                        gradient.addColorStop(0, '<?php echo esc_js( $chart3__color_gradient ); ?>');
+                        gradient.addColorStop(1, '<?php echo esc_js( '#FFFFFF00' ); ?>');
+
                         var llar_total_attacks_blocked_chart = new Chart(ctx, {
                             type: 'line',
                             data: {
@@ -476,12 +487,21 @@ if( $active_app === 'local' ) {
                                 datasets: [{
                                     label: '<?php echo esc_js( __( 'Total Attempts', 'limit-login-attempts-reloaded' ) ); ?>',
                                     data: <?php echo json_encode( $stats_global['attempts']['day']['count'] ); ?>,
-                                    backgroundColor: 'rgb(255, 159, 64)',
-                                    borderColor: 'rgb(255, 159, 64)',
-                                    fill: false
+                                    backgroundColor: gradient,
+                                    borderColor: '<?php echo esc_js( $chart3__color ); ?>',
+                                    fill: true
                                 }]
                             },
                             options: {
+                                elements: {
+                                    point: {
+                                        pointStyle: 'circle',
+                                        radius: 3.5,
+                                        pointBackgroundColor: 'white',
+                                        pointBorderWidth: 1.5,
+                                        pointBorderColor: '<?php echo esc_js($chart3__color); ?>',
+                                    }
+                                },
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 plugins: {

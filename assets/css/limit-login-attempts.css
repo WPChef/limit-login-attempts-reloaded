@@ -987,7 +987,7 @@
   position: relative;
   text-align: center;
   flex: 0 0 auto;
-  width: calc(33.3% - 0.5rem);
+  width: calc(33.3% - 1rem);
   padding: 2rem 1.87rem 1.5rem;
   border-radius: 20px;
   background: #FDFDFD;
@@ -1000,7 +1000,7 @@
 }
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
-    width: calc(50% - 0.3rem);
+    width: calc(50% - 0.25rem);
     min-height: 17rem;
   }
 }
@@ -1252,7 +1252,8 @@
   position: relative;
   display: flex;
   flex-wrap: wrap;
-  flex: 0 0 calc(33.333% - 0.5rem);
+  flex: 0 0 auto;
+  width: calc(33.33333333% - 1rem);
   padding: 1.25rem 5.69rem 1.69rem 1.81rem;
   border-radius: 20px;
   background: #FDFDFD;
@@ -1261,7 +1262,7 @@
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-3 > [class^=info-box-] {
     padding: 1rem 1.69rem 1.87rem;
-    flex: 0 0 calc(33.333% - 0.3rem);
+    width: calc(33.33333333% - 0.3rem);
   }
 }
 @media screen and (max-width: 767.5px) {
@@ -1330,17 +1331,26 @@
   }
 }
 #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
-  flex: 0 0 calc(50% - 1rem);
+  flex: 0 0 auto;
+  width: calc(50% - 1rem);
   min-height: 100px;
-  background-color: #fff;
-  border: 1px solid #e4e4e4;
-  padding: 15px;
+  padding: 2rem 1.87rem 1.5rem;
+  border-radius: 20px;
+  background: #FDFDFD;
+  box-shadow: 0.25rem 0.25rem 1.125rem 0 rgba(162, 180, 189, 0.2);
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
+    width: calc(50% - 0.25rem);
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
+    width: 100%;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 > [class^=info-box-]:last-child {
   margin-right: 0;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 {
-  padding: 0;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title {
   display: flex;
@@ -1385,9 +1395,6 @@
   margin-bottom: 0;
   float: right;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-2 {
-  padding: 0;
-}
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title {
   display: flex;
   justify-content: space-between;
@@ -1398,7 +1405,6 @@
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .llar-chart-wrap {
   width: 100%;
-  max-width: 80%;
   margin: 0 auto;
   clear: both;
 }
