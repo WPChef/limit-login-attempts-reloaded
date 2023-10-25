@@ -88,7 +88,7 @@
       position: relative;
       text-align: center;
       flex: 0 0 auto;
-      width: calc(33.3% - 1rem /2);
+      width: calc(33.3% - 1rem);
       padding: 2rem 1.87rem 1.5rem;
       border-radius: $border-radius;
       background: $background-body;
@@ -99,7 +99,7 @@
       }
 
       @include _1399 {
-        width: calc(50% - .3rem);
+        width: calc(50% - .5rem /2);
         min-height: 17rem;
       }
 
@@ -400,7 +400,8 @@
       position: relative;
       display: flex;
       flex-wrap: wrap;
-      flex: 0 0 calc(33.333% - 1rem / 2);
+      flex: 0 0 auto;
+      width: calc(33.33333333% - 1rem);
       padding: 1.25rem 5.69rem 1.69rem 1.81rem;
       border-radius: $border-radius;
       background: $background-body;
@@ -408,7 +409,7 @@
 
       @include _1399 {
         padding: 1rem 1.69rem 1.87rem;
-        flex: 0 0 calc(33.333% - .6rem / 2);
+        width: calc(33.33333333% - .6rem / 2);
       }
 
       @include _767 {
@@ -485,18 +486,27 @@
 
 
     > [class^="info-box-"] {
-      flex: 0 0 calc(50% - 1rem);
+      flex: 0 0 auto;
+      width: calc(50% - 1rem);
       min-height: 100px;
-      background-color: #fff;
-      border: 1px solid #e4e4e4;
-      padding: 15px;
+      padding: 2rem 1.87rem 1.5rem;
+      border-radius: $border-radius;
+      background: $background-body;
+      box-shadow: .25rem .25rem 1.125rem 0 $box-shadow__light_transparent_gray;
+
+      @include _1399 {
+        width: calc(50% - .5rem / 2);
+      }
+
+      @include _991 {
+        width: 100%;
+      }
 
       &:last-child {
         margin-right: 0;
       }
     }
     .info-box-1 {
-      padding: 0;
 
       .section-title {
         display: flex;
@@ -553,7 +563,6 @@
       }
     }
     .info-box-2 {
-      padding: 0;
 
       .section-title {
         display: flex;
@@ -567,7 +576,6 @@
 
       .llar-chart-wrap {
         width: 100%;
-        max-width: 80%;
         margin: 0 auto;
         clear: both;
 
