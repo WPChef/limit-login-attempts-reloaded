@@ -407,6 +407,7 @@ if( $active_app === 'local' ) {
             </div>
         </div>
     </div>
+
     <?php if( $stats_global = CloudApp::stats_global() ) : ?>
 	<div class="dashboard-section-4">
         <?php

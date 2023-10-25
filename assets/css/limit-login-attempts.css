@@ -974,20 +974,20 @@
 #llar-dashboard-page .dashboard-section-1 {
   margin-bottom: 1.25rem;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 1rem;
 }
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-1 {
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
 }
 #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
   position: relative;
   text-align: center;
-  flex: 1 0 auto;
-  max-width: 32.5%;
-  min-height: 17rem;
+  flex: 0 0 auto;
+  width: calc(33.3% - 0.5rem);
   padding: 2rem 1.87rem 1.5rem;
   border-radius: 20px;
   background: #FDFDFD;
@@ -996,17 +996,17 @@
 @media screen and (max-width: 1799.5px) {
   #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
     padding: 1.87rem 1.32rem 1rem;
-    max-width: 32%;
   }
 }
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
-    max-width: 49.5%;
+    width: calc(50% - 0.3rem);
+    min-height: 17rem;
   }
 }
 @media screen and (max-width: 991.5px) {
   #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
-    max-width: 100%;
+    width: 100%;
     min-height: 21rem;
   }
 }
@@ -1089,7 +1089,7 @@
 }
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-1 .info-box-3 {
-    max-width: 100%;
+    width: 100%;
   }
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .section-content {
@@ -1252,33 +1252,26 @@
   position: relative;
   display: flex;
   flex-wrap: wrap;
-  flex: 1 0 auto;
-  max-width: 32.5%;
+  flex: 0 0 calc(33.333% - 0.5rem);
   padding: 1.25rem 5.69rem 1.69rem 1.81rem;
   border-radius: 20px;
   background: #FDFDFD;
   box-shadow: 0.25rem 0.25rem 1.125rem 0 rgba(162, 180, 189, 0.2);
 }
-@media screen and (max-width: 1799.5px) {
-  #llar-dashboard-page .dashboard-section-3 > [class^=info-box-] {
-    max-width: 32%;
-  }
-}
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-3 > [class^=info-box-] {
     padding: 1rem 1.69rem 1.87rem;
-    max-width: 32.8%;
+    flex: 0 0 calc(33.333% - 0.3rem);
   }
 }
 @media screen and (max-width: 767.5px) {
   #llar-dashboard-page .dashboard-section-3 > [class^=info-box-] {
-    padding: 0.87rem 1rem;
-    max-width: 32.5%;
+    padding: 1rem 0.67rem 1rem;
   }
 }
 @media screen and (max-width: 575.5px) {
   #llar-dashboard-page .dashboard-section-3 > [class^=info-box-] {
-    max-width: 100%;
+    flex: 0 0 100%;
   }
 }
 #llar-dashboard-page .dashboard-section-3 > [class^=info-box-] .info-box-icon {
@@ -1328,11 +1321,16 @@
 #llar-dashboard-page .dashboard-section-4 {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
+  column-gap: 1rem;
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 {
+    gap: 0.5rem;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
-  flex: 0 0 calc(50% - 10px);
+  flex: 0 0 calc(50% - 1rem);
   min-height: 100px;
   background-color: #fff;
   border: 1px solid #e4e4e4;
