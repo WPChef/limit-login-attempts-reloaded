@@ -76,38 +76,35 @@
   .dashboard-section-1 {
     margin-bottom: 1.25rem;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 1rem;
 
     @include _1399 {
+      flex-wrap: wrap;
       gap: .5rem;
     }
 
     > [class^="info-box-"] {
       position: relative;
       text-align: center;
-      //flex: 0 0 33.333%;
-      flex: 1 0 auto;
-      max-width: 32.5%;
-      min-height: 17rem;
-      //min-width: 30rem;
+      flex: 0 0 auto;
+      width: calc(33.3% - 1rem /2);
       padding: 2rem 1.87rem 1.5rem;
-      //border-right: 1px solid #e4e4e4;
       border-radius: $border-radius;
       background: $background-body;
       box-shadow: .25rem .25rem 1.125rem 0 $box-shadow__light_transparent_gray;
 
       @include _1799 {
         padding: 1.87rem 1.32rem 1rem;
-        max-width: 32%;
       }
 
       @include _1399 {
-        max-width: 49.5%;
+        width: calc(50% - .3rem);
+        min-height: 17rem;
       }
 
       @include _991 {
-        max-width: 100%;
+        width: 100%;
         min-height: 21rem;
       }
 
@@ -195,7 +192,6 @@
 
       .llar-chart-wrap {
         width: 100%;
-        //max-width: 80%;
         margin: 0 auto;
         clear: both;
 
@@ -213,7 +209,7 @@
       text-align: left;
 
       @include _1399 {
-        max-width: 100%;
+        width: 100%;
       }
 
       .section-content {
@@ -404,29 +400,23 @@
       position: relative;
       display: flex;
       flex-wrap: wrap;
-      flex: 1 0 auto;
-      max-width: 32.5%;
+      flex: 0 0 calc(33.333% - 1rem / 2);
       padding: 1.25rem 5.69rem 1.69rem 1.81rem;
       border-radius: $border-radius;
       background: $background-body;
       box-shadow: .25rem .25rem 1.125rem 0 $box-shadow__light_transparent_gray;
 
-      @include _1799 {
-        max-width: 32%;
-      }
-
       @include _1399 {
         padding: 1rem 1.69rem 1.87rem;
-        max-width: 32.8%;
+        flex: 0 0 calc(33.333% - .6rem / 2);
       }
 
       @include _767 {
-        padding: .87rem 1rem;
-        max-width: 32.5%;
+        padding: 1rem .67rem 1rem;
       }
 
       @include _575 {
-        max-width: 100%;
+        flex: 0 0 100%;
       }
 
 
@@ -486,12 +476,16 @@
   .dashboard-section-4 {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
+    column-gap: 1rem;
+
+    @include _1399 {
+      gap: .5rem;
+    }
+
 
     > [class^="info-box-"] {
-      flex: 0 0 calc(50% - 10px);
-      //margin-right: 20px;
+      flex: 0 0 calc(50% - 1rem);
       min-height: 100px;
       background-color: #fff;
       border: 1px solid #e4e4e4;
