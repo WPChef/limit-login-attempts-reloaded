@@ -47,7 +47,7 @@ if( $active_app === 'local' ) {
     } else {
 
 		$retries_chart_title = __( 'Warning: Your site has experienced over 100 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = sprintf(__('Your site is currently at a high risk for brute force activity. Consider <a href="%s" target="_blank">premium protection</a> if frequent attacks persist or website performance is degraded', 'limit-login-attempts-reloaded'), 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-status');
+		$retries_chart_desc = sprintf(__('Your site is currently at a high risk for brute force activity. Consider <a href="%s" class="link__style_color_inherit llar_orange" target="_blank">premium protection</a> if frequent attacks persist or website performance is degraded', 'limit-login-attempts-reloaded'), 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-status');
 		$retries_chart_color = '#FF6633';
     }
 
@@ -245,7 +245,6 @@ if( $active_app === 'local' ) {
 
 						// Add a gradient fill below the graph
                         const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                        // gradient.addColorStop(0, 'rgba(62, 183, 251, 0.4)');
                         gradient.addColorStop(0, 'rgba(88, 195, 255, .7)');
                         gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
@@ -359,29 +358,52 @@ if( $active_app === 'local' ) {
 	<div class="dashboard-section-3">
         <div class="info-box-1">
             <div class="info-box-icon">
-                <span class="dashicons dashicons-admin-tools"></span>
+                <svg class="icon-base">
+                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-lock"></use>
+                </svg>
             </div>
             <div class="info-box-content">
-                <div class="title"><a href="<?php echo $this->get_options_page_uri('logs-'.$active_app); ?>"><?php _e( 'Tools', 'limit-login-attempts-reloaded' ); ?></a></div>
-                <div class="desc"><?php _e( 'View lockouts logs, block or whitelist usernames or IPs, and more.', 'limit-login-attempts-reloaded' ); ?></div>
+                <div class="title"><a href="<?php echo $this->get_options_page_uri('logs-'.$active_app); ?>" class="link__style_unlink">
+                        <?php _e( 'Tools', 'limit-login-attempts-reloaded' ); ?>
+                    </a>
+                </div>
+                <div class="desc">
+                    <?php _e( 'View lockouts logs, block or whitelist usernames or IPs, and more.', 'limit-login-attempts-reloaded' ); ?>
+                </div>
             </div>
         </div>
         <div class="info-box-1">
             <div class="info-box-icon">
-                <span class="dashicons dashicons-sos"></span>
+                <svg class="icon-base">
+                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-help"></use>
+                </svg>
             </div>
             <div class="info-box-content">
-                <div class="title"><a href="https://www.limitloginattempts.com/info.php?from=plugin-dashboard-help" target="_blank"><?php _e( 'Help', 'limit-login-attempts-reloaded' ); ?></a></div>
-                <div class="desc"><?php _e( 'Find the documentation and help you need.', 'limit-login-attempts-reloaded' ); ?></div>
+                <div class="title">
+                    <a href="https://www.limitloginattempts.com/info.php?from=plugin-dashboard-help" class="link__style_unlink" target="_blank">
+                        <?php _e( 'Help', 'limit-login-attempts-reloaded' ); ?>
+                    </a>
+                </div>
+                <div class="desc">
+                    <?php _e( 'Find the documentation and help you need.', 'limit-login-attempts-reloaded' ); ?>
+                </div>
             </div>
         </div>
         <div class="info-box-1">
             <div class="info-box-icon">
-                <span class="dashicons dashicons-admin-generic"></span>
+                <svg class="icon-base">
+                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-web"></use>
+                </svg>
             </div>
             <div class="info-box-content">
-                <div class="title"><a href="<?php echo $this->get_options_page_uri('settings'); ?>"><?php _e( 'Global Options', 'limit-login-attempts-reloaded' ); ?></a></div>
-                <div class="desc"><?php _e( 'Many options such as notifications, alerts, premium status, and more.', 'limit-login-attempts-reloaded' ); ?></div>
+                <div class="title">
+                    <a href="<?php echo $this->get_options_page_uri('settings'); ?>" class="link__style_unlink">
+                        <?php _e( 'Global Options', 'limit-login-attempts-reloaded' ); ?>
+                    </a>
+                </div>
+                <div class="desc">
+                    <?php _e( 'Many options such as notifications, alerts, premium status, and more.', 'limit-login-attempts-reloaded' ); ?>
+                </div>
             </div>
         </div>
     </div>

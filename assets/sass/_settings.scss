@@ -2,21 +2,21 @@
 
 
 $background-body: #FDFDFD;
-$background-sky-blue: #F6FBFF;
+$background__sky-blue: #F6FBFF;
 $background-element__almond: #FFEFD6;
-$border-element__red_sand: #EBB35A;
+$border-element__red-sand: #EBB35A;
 
-$primary-colors-orange: #FF7C06;
-$primary-colors-orange__back: #FF7C0619; //rgba(255, 124, 6, 0.1);
-$primary-colors-orange__semi_back: #FF7C067F; //rgba(255, 124, 6, 0.50);
-$secondary-colors-dark-orange: #F07200;
+$primary-colors__orange: #FF7C06;
+$primary-colors__orange-back: #FF7C0619; //rgba(255, 124, 6, 0.1);
+$primary-colors__orange-semi_back: #FF7C067F; //rgba(255, 124, 6, 0.50);
+$secondary-colors__dark-orange: #F07200;
 
 $typography-primary: #2A2F40;
 $typography-secondary: #666D84;
 $typography-additional: #A4A8B7;
 $primary-colors__orange: #FF9800;
 $primary-colors__turquoise: #4ACAD8;
-$primary-colors__aero_blue: #97F6C8;
+$primary-colors__aero-blue: #97F6C8;
 $color-marker: #9762EF;
 
 
@@ -49,8 +49,8 @@ $color-marker: #9762EF;
 //$secondary-colors-light-blue: #ECFAFB;
 
 
-$box-shadow__semi_transparent_gray: #72757B33; // rgba(114, 117, 123, 0.20);
-$box-shadow__light_transparent_gray: #A2B4BD33; //rgba(162, 180, 189, 0.20);
+$box-shadow__semi-transparent-gray: #72757B33; // rgba(114, 117, 123, 0.20);
+$box-shadow__light-transparent-gray: #A2B4BD33; //rgba(162, 180, 189, 0.20);
 
 $font-primary: CoFo Sans;
 $font-secondary: arial;
@@ -80,4 +80,12 @@ $border-radius__max: $border-radius * 2;
 
 .no_href_link {
   cursor: default;
+}
+
+.llar_orange {
+  color: $primary-colors__orange;
+
+  &:hover {
+    color: $secondary-colors__dark-orange;
+  }
 }

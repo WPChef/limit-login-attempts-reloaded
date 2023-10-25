@@ -1,11 +1,12 @@
 @import
 "settings",
-"mixins";
+"mixins",
+"icon-block";
 
 .toplevel_page_limit-login-attempts { // top level css
 
   #wpcontent {
-    background-color: $background-sky-blue;
+    background-color: $background__sky-blue;
     font-family: $font-primary, $font-secondary;
     font-style: $text-font-style;
     font-weight: $text-font-weight;
