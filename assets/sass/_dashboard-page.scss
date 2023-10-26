@@ -508,40 +508,210 @@
     }
     .info-box-1 {
 
-      .section-title {
+      .section-title__new {
         display: flex;
         justify-content: space-between;
+        position: relative;
+
+        .dashicons {
+          font-size: 1.5rem;
+          position: relative;
+          z-index: 1;
+          color: $typography-additional;
+        }
+
+        .hint_tooltip-parent {
+          display: inline-block;
+          position: relative;
+
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 15px;
+            height: 15px;
+            border-radius: $border-radius;
+            background-color: $typography-primary;
+            z-index: 0;
+          }
+        }
+
+
+        .hint_tooltip {
+          display: none;
+          position: absolute;
+          background-color: $primary-colors__turquoise;
+          color: #fff;
+          padding: .75rem 1rem .75rem 2.25rem;
+          width: 10rem;
+          border-radius: $border-radius;
+          top: 1.62rem;
+          right: -2%;
+          z-index: 955;
+
+          &-content {
+            list-style: none;
+            font-size: 0.75rem;
+            white-space: initial;
+            text-align: left;
+            margin-top: 0;
+            margin-bottom: 0;
+
+            li {
+              position: relative;
+              list-style: none;
+              font-size: 0.75rem;
+              white-space: initial;
+
+              &::before {
+                position: absolute;
+                box-sizing: inherit;
+                content: "\2727";
+                color: $background-body;
+                margin-left: -1.25rem;
+                top: 0;
+              }
+            }
+          }
+
+          &::before {
+            content: "";
+            position: absolute;
+            top: -12px;
+            right: 12%;
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent transparent $primary-colors__turquoise transparent;
+          }
+
+          &-parent {
+
+            &:hover .hint_tooltip {
+              display: block;
+            }
+          }
+        }
 
         .section-title-info {
           color: #a7a7a7;
           font-weight: 400;
+
+          //.llar-tooltip {
+          //  text-decoration: none;
+          //  cursor: pointer;
+          //  position: relative;
+          //  color: #aeaeae;
+          //
+          //  span {
+          //    vertical-align: middle;
+          //  }
+          //
+          //  &:before {
+          //    content: attr(data-text);
+          //    position: absolute;
+          //    width: max-content;
+          //    max-width: 300px;
+          //    padding: 10px;
+          //    background-color: $primary-colors__turquoise;
+          //    color: #575757;
+          //    border-radius: 7px;
+          //    box-shadow: 0 0 15px 6px rgba(#000, 0.1);
+          //    font-size: 13px;
+          //    top: calc(100% + 5px);
+          //    right: -5px;
+          //    z-index: 999;
+          //    visibility: hidden;
+          //    opacity: 0;
+          //    transition: all .2s;
+          //    font-weight: 400;
+          //    cursor: auto;
+          //    font-style: normal;
+          //  }
+          //
+          //  &:after {
+          //    content: "";
+          //    width: 10px;
+          //    height: 10px;
+          //    background-color: white;
+          //    display: block;
+          //    position: absolute;
+          //    top: calc(100% + 1px);
+          //    right: 5px;
+          //    transform: rotate(45deg);
+          //    z-index: 999;
+          //    visibility: hidden;
+          //    opacity: 0;
+          //  }
+          //
+          //  &:hover {
+          //    &:before, &:after {
+          //      visibility: visible;
+          //      opacity: 1;
+          //    }
+          //  }
+          //}
+
         }
       }
 
       .lockouts-by-country-table {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: inherit;
+        border-spacing: 0;
+        margin-bottom: 1rem;
+        font-size: 1rem;
 
-        tr {
-          th, td {
-            padding: 10px;
-            border: 1px solid #cecece;
-          }
-          th {
-            background-color: #000;
-            color: #fff;
-            text-align: left;
-          }
-          &:nth-child(odd){
-            td {
-              background-color: #eff0ef;
+        tbody {
+
+          tr {
+            border-color: inherit;
+            border-style: solid;
+            border-width: 0;
+            position: relative;
+
+            &:nth-child(even){
+
+              &::after {
+                content: '';
+                position: absolute;
+                top: 0.32rem;
+                bottom: 0.32rem;
+                left: 0;
+                right: 0;
+                border-radius: $border-radius;
+                background-color: $background__sky-blue;
+              }
             }
-          }
-          td {
-            .flag-icon {
-              width: 24px;
-              vertical-align: middle;
-              margin-right: 10px;
+
+            td, th {
+              padding: 1.25rem;
+            }
+
+            th {
+              background-color: $background-body;
+              color: $typography-primary;
+              text-align: left;
+              font-weight: 500;
+            }
+
+            td {
+              color: $typography-secondary;
+              border-bottom: 1px solid $border-element__ghostly-white;
+              border-right: 1px solid $border-element__ghostly-white;
+              position: relative;
+              z-index: 1;
+
+              &:last-child {
+                border-right: unset;
+              }
+
+              .flag-icon {
+                width: 2.12rem;
+                vertical-align: middle;
+                margin-right: 10px;
+              }
             }
           }
         }

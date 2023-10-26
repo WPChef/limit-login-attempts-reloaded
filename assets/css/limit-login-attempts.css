@@ -1352,32 +1352,126 @@
 #llar-dashboard-page .dashboard-section-4 > [class^=info-box-]:last-child {
   margin-right: 0;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title {
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new {
   display: flex;
   justify-content: space-between;
+  position: relative;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title .section-title-info {
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .dashicons {
+  font-size: 1.5rem;
+  position: relative;
+  z-index: 1;
+  color: #A4A8B7;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-parent {
+  display: inline-block;
+  position: relative;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-parent::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 15px;
+  height: 15px;
+  border-radius: 20px;
+  background-color: #2A2F40;
+  z-index: 0;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip {
+  display: none;
+  position: absolute;
+  background-color: #4ACAD8;
+  color: #fff;
+  padding: 0.75rem 1rem 0.75rem 2.25rem;
+  width: 10rem;
+  border-radius: 20px;
+  top: 1.62rem;
+  right: -2%;
+  z-index: 955;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-content {
+  list-style: none;
+  font-size: 0.75rem;
+  white-space: initial;
+  text-align: left;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-content li {
+  position: relative;
+  list-style: none;
+  font-size: 0.75rem;
+  white-space: initial;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-content li::before {
+  position: absolute;
+  box-sizing: inherit;
+  content: "✧";
+  color: #FDFDFD;
+  margin-left: -1.25rem;
+  top: 0;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  right: 12%;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent #4ACAD8 transparent;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-parent:hover .hint_tooltip {
+  display: block;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .section-title-info {
   color: #a7a7a7;
   font-weight: 400;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: inherit;
+  border-spacing: 0;
+  margin-bottom: 1rem;
+  font-size: 1rem;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tr th, #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tr td {
-  padding: 10px;
-  border: 1px solid #cecece;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr {
+  border-color: inherit;
+  border-style: solid;
+  border-width: 0;
+  position: relative;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tr th {
-  background-color: #000;
-  color: #fff;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr:nth-child(even)::after {
+  content: "";
+  position: absolute;
+  top: 0.32rem;
+  bottom: 0.32rem;
+  left: 0;
+  right: 0;
+  border-radius: 20px;
+  background-color: #F6FBFF;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr th {
+  padding: 1.25rem;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr th {
+  background-color: #FDFDFD;
+  color: #2A2F40;
   text-align: left;
+  font-weight: 500;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tr:nth-child(odd) td {
-  background-color: #eff0ef;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td {
+  color: #666D84;
+  border-bottom: 1px solid #ECFAFB;
+  border-right: 1px solid #ECFAFB;
+  position: relative;
+  z-index: 1;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tr td .flag-icon {
-  width: 24px;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td:last-child {
+  border-right: unset;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td .flag-icon {
+  width: 2.12rem;
   vertical-align: middle;
   margin-right: 10px;
 }

@@ -424,16 +424,25 @@ if( $active_app === 'local' ) {
 
 			$stats_global_dates[] = date( $date_format, $timest );
 		}
-		
+
 		$countries_list = Helpers::get_countries_list();
         ?>
         <div class="info-box-1">
-            <div class="section-title">
-                <span><?php _e( 'Failed Login Attempts By Country', 'limit-login-attempts-reloaded' ); ?></span>
-                <span class="section-title-info"><?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
-                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Failed logins for all users in the LLAR network.', 'limit-login-attempts-reloaded' ); ?>">
+            <div class="section-title__new">
+                <span class="llar-label">
+                    <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+                </span>
+                <?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
+                <div class="hint_tooltip-parent">
                     <span class="dashicons dashicons-editor-help"></span>
-                </i></span>
+                    <div class="hint_tooltip">
+                        <ul class="hint_tooltip-content">
+                            <li>
+                                <?php esc_attr_e( 'Failed logins for all users in the LLAR network.', 'limit-login-attempts-reloaded' ); ?>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="section-content">
                 <table class="lockouts-by-country-table">
@@ -449,10 +458,13 @@ if( $active_app === 'local' ) {
                         <tr>
                             <td>
                                 <?php if( $country_code !== 'ZZ' ) : ?>
-                                <img class="flag-icon" src="<?php echo LLA_PLUGIN_URL; ?>/assets/img/flags/<?php echo esc_attr( $country_data['code'] ); ?>.png">
+                                    <img class="flag-icon" src="<?php echo LLA_PLUGIN_URL; ?>/assets/img/flags/<?php echo esc_attr( $country_data['code'] ); ?>.png">
                                 <?php endif; ?>
-                            <?php echo esc_html( $country_name ); ?></td>
-                            <td><?php echo esc_html( number_format_i18n( $country_data['attempts'] ) ); ?></td>
+                                <?php echo esc_html( $country_name ); ?>
+                            </td>
+                            <td>
+                                <?php echo esc_html( number_format_i18n( $country_data['attempts'] ) ); ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </table>
