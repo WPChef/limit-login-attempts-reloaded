@@ -139,7 +139,7 @@ if( $active_app === 'local' ) {
         <div class="info-box-2">
             <div class="section-title__new">
                 <span class="llar-label">
-                    <span class="llar-label__circle">&bull;</span>
+                    <span class="llar-label__circle-blue">&bull;</span>
                     <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
                 </span>
                 <span class="llar-label__url">
@@ -432,8 +432,12 @@ if( $active_app === 'local' ) {
                 <span class="llar-label">
                     <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
                 </span>
-                <?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
-                <div class="hint_tooltip-parent">
+                <span class="llar-label llar-label__date">
+                    <?php _e( 'Today', 'limit-login-attempts-reloaded' ); ?>
+                </span>
+                <span class="llar-label llar-label__info">
+                    <?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
+                    <div class="hint_tooltip-parent">
                     <span class="dashicons dashicons-editor-help"></span>
                     <div class="hint_tooltip">
                         <ul class="hint_tooltip-content">
@@ -443,6 +447,7 @@ if( $active_app === 'local' ) {
                         </ul>
                     </div>
                 </div>
+                </span>
             </div>
             <div class="section-content">
                 <table class="lockouts-by-country-table">
@@ -468,15 +473,34 @@ if( $active_app === 'local' ) {
                         </tr>
                     <?php endforeach; ?>
                 </table>
-                <p class="countries-table-info"><?php _e( 'today', 'limit-login-attempts-reloaded' ); ?></p>
-                <p class="countries-table-info-right"><?php _e( 'Block by country feature available with <a href="https://www.limitloginattempts.com/info.php?from=plugin-dashboard-country" target="_blank">premium plus plan</a>.', 'limit-login-attempts-reloaded' ) ?></p>
+                <p class="countries-table-info">
+                    <?php _e( 'Block by country feature available with <a href="https://www.limitloginattempts.com/info.php?from=plugin-dashboard-country" class="link__style_color_inherit llar_bold" target="_blank">premium plus plan</a>.', 'limit-login-attempts-reloaded' ) ?>
+                </p>
             </div>
         </div>
 
         <div class="info-box-2">
-            <div class="section-title">
-				<span><?php _e( 'Total Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?></span>
-                <span class="section-title-info"><?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?></span>
+            <div class="section-title__new">
+                <span class="llar-label">
+                    <?php _e( 'Total Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+                </span>
+                <span class="llar-label llar-label__date">
+                    <span class="llar-label__circle-orange">&bull;</span>
+                    <?php _e( 'Total Attempts', 'limit-login-attempts-reloaded' ); ?>
+                </span>
+                <span class="llar-label llar-label__info">
+                    <?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
+                    <div class="hint_tooltip-parent">
+                    <span class="dashicons dashicons-editor-help"></span>
+                    <div class="hint_tooltip">
+                        <ul class="hint_tooltip-content">
+                            <li>
+                                <?php esc_attr_e( 'Failed logins for all users in the LLAR network.', 'limit-login-attempts-reloaded' ); ?>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                </span>
             </div>
             <div class="section-content">
                 <div class="llar-chart-wrap">
@@ -526,6 +550,9 @@ if( $active_app === 'local' ) {
                                             }
                                         }
                                     },
+                                    legend: {
+                                        display: false,
+                                    }
                                 },
                                 hover: {
                                     mode: 'nearest',

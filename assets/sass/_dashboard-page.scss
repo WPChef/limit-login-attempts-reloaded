@@ -60,7 +60,7 @@
         }
       }
 
-      &__circle {
+      &__circle-blue {
         font-size: 4rem;
         vertical-align: middle;
         color: #58C3FF;
@@ -289,9 +289,21 @@
     }
 
     &.custom {
+
       .info-box-2 {
-        flex: 0 0 66.666%;
-        max-width: 66.666%;
+        flex: 0 0 calc(66.666% - 1rem);
+        width: calc(66.666% - 1rem);
+
+        @include _1399 {
+          flex: 1 0 calc(50% - .5rem / 2);
+          width: calc(50% - .5rem / 2);
+
+          @include _991 {
+            flex: 1 0 100%;
+            width: 100%;
+            min-height: 21rem;
+          }
+        }
       }
     }
   }
@@ -484,6 +496,119 @@
       gap: .5rem;
     }
 
+    .section-title__new {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+
+      .llar-label {
+
+        &__date {
+          background-color: $background__sky-blue;
+        }
+
+        &__info {
+          background-color: unset;
+          color: $typography-additional;
+        }
+
+        &__circle-orange {
+          font-size: 4rem;
+          vertical-align: middle;
+          color: $primary-colors__orange;
+        }
+      }
+
+      .dashicons {
+        font-size: 1.7rem;
+        line-height: inherit;
+        position: relative;
+        z-index: 1;
+        color: $border-element__ghostly-white;
+
+        @include _767 {
+          font-size: 1.4rem;
+        }
+      }
+
+      .hint_tooltip-parent {
+        display: inline-block;
+        position: relative;
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 5px;
+          width: 15px;
+          height: 15px;
+          border-radius: $border-radius;
+          background-color: $typography-secondary;
+          z-index: 0;
+
+          @include _767 {
+            top: 2px;
+            width: 12px;
+            height: 12px;
+          }
+        }
+      }
+
+      .hint_tooltip {
+        display: none;
+        position: absolute;
+        background-color: $primary-colors__turquoise;
+        color: #fff;
+        padding: .75rem 1rem .75rem 2.25rem;
+        width: 10rem;
+        border-radius: $border-radius;
+        top: 1.62rem;
+        right: -2%;
+        z-index: 955;
+
+        &-content {
+          list-style: none;
+          font-size: 0.75rem;
+          white-space: initial;
+          text-align: left;
+          margin-top: 0;
+          margin-bottom: 0;
+
+          li {
+            position: relative;
+            list-style: none;
+            font-size: 0.75rem;
+            white-space: initial;
+
+            &::before {
+              position: absolute;
+              box-sizing: inherit;
+              content: "\2727";
+              color: $background-body;
+              margin-left: -1.25rem;
+              top: 0;
+            }
+          }
+        }
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: -12px;
+          right: 12%;
+          border-width: 6px;
+          border-style: solid;
+          border-color: transparent transparent $primary-colors__turquoise transparent;
+        }
+
+        &-parent {
+
+          &:hover .hint_tooltip {
+            display: block;
+          }
+        }
+      }
+    }
 
     > [class^="info-box-"] {
       flex: 0 0 auto;
@@ -495,166 +620,19 @@
       box-shadow: .25rem .25rem 1.125rem 0 $box-shadow__light_transparent_gray;
 
       @include _1399 {
-        width: calc(50% - .5rem / 2);
+        width: 100%;
       }
 
       @include _991 {
-        width: 100%;
+        padding: 1.87rem 1.32rem 1rem;
       }
 
       &:last-child {
         margin-right: 0;
       }
     }
+
     .info-box-1 {
-
-      .section-title__new {
-        display: flex;
-        justify-content: space-between;
-        position: relative;
-
-        .dashicons {
-          font-size: 1.5rem;
-          position: relative;
-          z-index: 1;
-          color: $typography-additional;
-        }
-
-        .hint_tooltip-parent {
-          display: inline-block;
-          position: relative;
-
-
-          &::after {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            width: 15px;
-            height: 15px;
-            border-radius: $border-radius;
-            background-color: $typography-primary;
-            z-index: 0;
-          }
-        }
-
-
-        .hint_tooltip {
-          display: none;
-          position: absolute;
-          background-color: $primary-colors__turquoise;
-          color: #fff;
-          padding: .75rem 1rem .75rem 2.25rem;
-          width: 10rem;
-          border-radius: $border-radius;
-          top: 1.62rem;
-          right: -2%;
-          z-index: 955;
-
-          &-content {
-            list-style: none;
-            font-size: 0.75rem;
-            white-space: initial;
-            text-align: left;
-            margin-top: 0;
-            margin-bottom: 0;
-
-            li {
-              position: relative;
-              list-style: none;
-              font-size: 0.75rem;
-              white-space: initial;
-
-              &::before {
-                position: absolute;
-                box-sizing: inherit;
-                content: "\2727";
-                color: $background-body;
-                margin-left: -1.25rem;
-                top: 0;
-              }
-            }
-          }
-
-          &::before {
-            content: "";
-            position: absolute;
-            top: -12px;
-            right: 12%;
-            border-width: 6px;
-            border-style: solid;
-            border-color: transparent transparent $primary-colors__turquoise transparent;
-          }
-
-          &-parent {
-
-            &:hover .hint_tooltip {
-              display: block;
-            }
-          }
-        }
-
-        .section-title-info {
-          color: #a7a7a7;
-          font-weight: 400;
-
-          //.llar-tooltip {
-          //  text-decoration: none;
-          //  cursor: pointer;
-          //  position: relative;
-          //  color: #aeaeae;
-          //
-          //  span {
-          //    vertical-align: middle;
-          //  }
-          //
-          //  &:before {
-          //    content: attr(data-text);
-          //    position: absolute;
-          //    width: max-content;
-          //    max-width: 300px;
-          //    padding: 10px;
-          //    background-color: $primary-colors__turquoise;
-          //    color: #575757;
-          //    border-radius: 7px;
-          //    box-shadow: 0 0 15px 6px rgba(#000, 0.1);
-          //    font-size: 13px;
-          //    top: calc(100% + 5px);
-          //    right: -5px;
-          //    z-index: 999;
-          //    visibility: hidden;
-          //    opacity: 0;
-          //    transition: all .2s;
-          //    font-weight: 400;
-          //    cursor: auto;
-          //    font-style: normal;
-          //  }
-          //
-          //  &:after {
-          //    content: "";
-          //    width: 10px;
-          //    height: 10px;
-          //    background-color: white;
-          //    display: block;
-          //    position: absolute;
-          //    top: calc(100% + 1px);
-          //    right: 5px;
-          //    transform: rotate(45deg);
-          //    z-index: 999;
-          //    visibility: hidden;
-          //    opacity: 0;
-          //  }
-          //
-          //  &:hover {
-          //    &:before, &:after {
-          //      visibility: visible;
-          //      opacity: 1;
-          //    }
-          //  }
-          //}
-
-        }
-      }
 
       .lockouts-by-country-table {
         width: 100%;
@@ -662,6 +640,10 @@
         border-spacing: 0;
         margin-bottom: 1rem;
         font-size: 1rem;
+
+        @include _767 {
+          font-size: .75rem;
+        }
 
         tbody {
 
@@ -711,6 +693,10 @@
                 width: 2.12rem;
                 vertical-align: middle;
                 margin-right: 10px;
+
+                @include _767 {
+                  width: 1.75rem;
+                }
               }
             }
           }
@@ -718,42 +704,38 @@
       }
 
       .countries-table-info {
-        color: #a7a7a7;
-        font-weight: 400;
-        margin-top: 5px;
+        font-size: 1rem;
+        color: $primary-colors__orange;
+        background-color: $primary-colors__orange-back;
+        border-radius: $border-radius;
+        padding: .25rem 2.06rem;
+        margin-top: .25rem;
         margin-bottom: 0;
         float: left;
-      }
-      .countries-table-info-right {
-        color: #2271b1;
-        font-weight: 400;
-        margin-top: 5px;
-        margin-bottom: 0;
-        float: right;
-      }
-    }
-    .info-box-2 {
 
-      .section-title {
-        display: flex;
-        justify-content: space-between;
-
-        .section-title-info {
-          color: #a7a7a7;
-          font-weight: 400;
+        &-right {
+          margin-top: 5px;
+          margin-bottom: 0;
+          float: right;
         }
       }
+    }
+
+    .info-box-2 {
 
       .llar-chart-wrap {
         width: 100%;
-        margin: 0 auto;
+        margin: 1rem auto;
         clear: both;
 
         canvas {
-          height: 300px;
+          min-height: 400px;
+
+          @include _1399 {
+            min-height: 300px;
+          }
         }
       }
     }
   }
-
 }
