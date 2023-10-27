@@ -25,6 +25,10 @@
   color: #F07200;
 }
 
+.llar_bold {
+  font-weight: bold;
+}
+
 /* testing */
 .icon {
   vertical-align: middle;
@@ -962,7 +966,7 @@
     margin-right: 0.25rem;
   }
 }
-#llar-dashboard-page .section-title__new .llar-label__circle {
+#llar-dashboard-page .section-title__new .llar-label__circle-blue {
   font-size: 4rem;
   vertical-align: middle;
   color: #58C3FF;
@@ -1156,8 +1160,21 @@
   background: #F07200;
 }
 #llar-dashboard-page .dashboard-section-1.custom .info-box-2 {
-  flex: 0 0 66.666%;
-  max-width: 66.666%;
+  flex: 0 0 calc(66.666% - 1rem);
+  width: calc(66.666% - 1rem);
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-1.custom .info-box-2 {
+    flex: 1 0 calc(50% - 0.25rem);
+    width: calc(50% - 0.25rem);
+  }
+}
+@media screen and (max-width: 1399.5px) and (max-width: 991.5px) {
+  #llar-dashboard-page .dashboard-section-1.custom .info-box-2 {
+    flex: 1 0 100%;
+    width: 100%;
+    min-height: 21rem;
+  }
 }
 #llar-dashboard-page .dashboard-section-2 {
   display: flex;
@@ -1330,55 +1347,58 @@
     gap: 0.5rem;
   }
 }
-#llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
-  flex: 0 0 auto;
-  width: calc(50% - 1rem);
-  min-height: 100px;
-  padding: 2rem 1.87rem 1.5rem;
-  border-radius: 20px;
-  background: #FDFDFD;
-  box-shadow: 0.25rem 0.25rem 1.125rem 0 rgba(162, 180, 189, 0.2);
-}
-@media screen and (max-width: 1399.5px) {
-  #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
-    width: calc(50% - 0.25rem);
-  }
-}
-@media screen and (max-width: 991.5px) {
-  #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
-    width: 100%;
-  }
-}
-#llar-dashboard-page .dashboard-section-4 > [class^=info-box-]:last-child {
-  margin-right: 0;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new {
+#llar-dashboard-page .dashboard-section-4 .section-title__new {
   display: flex;
   justify-content: space-between;
   position: relative;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .dashicons {
-  font-size: 1.5rem;
-  position: relative;
-  z-index: 1;
+#llar-dashboard-page .dashboard-section-4 .section-title__new .llar-label__date {
+  background-color: #F6FBFF;
+}
+#llar-dashboard-page .dashboard-section-4 .section-title__new .llar-label__info {
+  background-color: unset;
   color: #A4A8B7;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-parent {
+#llar-dashboard-page .dashboard-section-4 .section-title__new .llar-label__circle-orange {
+  font-size: 4rem;
+  vertical-align: middle;
+  color: #FF9800;
+}
+#llar-dashboard-page .dashboard-section-4 .section-title__new .dashicons {
+  font-size: 1.7rem;
+  line-height: inherit;
+  position: relative;
+  z-index: 1;
+  color: #ECFAFB;
+}
+@media screen and (max-width: 767.5px) {
+  #llar-dashboard-page .dashboard-section-4 .section-title__new .dashicons {
+    font-size: 1.4rem;
+  }
+}
+#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-parent {
   display: inline-block;
   position: relative;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-parent::after {
+#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-parent::after {
   content: "";
   position: absolute;
-  top: 5px;
+  top: 0;
   left: 5px;
   width: 15px;
   height: 15px;
   border-radius: 20px;
-  background-color: #2A2F40;
+  background-color: #666D84;
   z-index: 0;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip {
+@media screen and (max-width: 767.5px) {
+  #llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-parent::after {
+    top: 2px;
+    width: 12px;
+    height: 12px;
+  }
+}
+#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip {
   display: none;
   position: absolute;
   background-color: #4ACAD8;
@@ -1390,7 +1410,7 @@
   right: -2%;
   z-index: 955;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-content {
+#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-content {
   list-style: none;
   font-size: 0.75rem;
   white-space: initial;
@@ -1398,13 +1418,13 @@
   margin-top: 0;
   margin-bottom: 0;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-content li {
+#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-content li {
   position: relative;
   list-style: none;
   font-size: 0.75rem;
   white-space: initial;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-content li::before {
+#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-content li::before {
   position: absolute;
   box-sizing: inherit;
   content: "✧";
@@ -1412,7 +1432,7 @@
   margin-left: -1.25rem;
   top: 0;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip::before {
+#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip::before {
   content: "";
   position: absolute;
   top: -12px;
@@ -1421,12 +1441,30 @@
   border-style: solid;
   border-color: transparent transparent #4ACAD8 transparent;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .hint_tooltip-parent:hover .hint_tooltip {
+#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-parent:hover .hint_tooltip {
   display: block;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .section-title-info {
-  color: #a7a7a7;
-  font-weight: 400;
+#llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
+  flex: 0 0 auto;
+  width: calc(50% - 1rem);
+  min-height: 100px;
+  padding: 2rem 1.87rem 1.5rem;
+  border-radius: 20px;
+  background: #FDFDFD;
+  box-shadow: 0.25rem 0.25rem 1.125rem 0 rgba(162, 180, 189, 0.2);
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
+    padding: 1.87rem 1.32rem 1rem;
+  }
+}
+#llar-dashboard-page .dashboard-section-4 > [class^=info-box-]:last-child {
+  margin-right: 0;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table {
   width: 100%;
@@ -1434,6 +1472,11 @@
   border-spacing: 0;
   margin-bottom: 1rem;
   font-size: 1rem;
+}
+@media screen and (max-width: 767.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table {
+    font-size: 0.75rem;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr {
   border-color: inherit;
@@ -1475,35 +1518,38 @@
   vertical-align: middle;
   margin-right: 10px;
 }
+@media screen and (max-width: 767.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td .flag-icon {
+    width: 1.75rem;
+  }
+}
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .countries-table-info {
-  color: #a7a7a7;
-  font-weight: 400;
-  margin-top: 5px;
+  font-size: 1rem;
+  color: #FF9800;
+  background-color: rgba(255, 124, 6, 0.0980392157);
+  border-radius: 20px;
+  padding: 0.25rem 2.06rem;
+  margin-top: 0.25rem;
   margin-bottom: 0;
   float: left;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .countries-table-info-right {
-  color: #2271b1;
-  font-weight: 400;
   margin-top: 5px;
   margin-bottom: 0;
   float: right;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title {
-  display: flex;
-  justify-content: space-between;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title .section-title-info {
-  color: #a7a7a7;
-  font-weight: 400;
-}
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .llar-chart-wrap {
   width: 100%;
-  margin: 0 auto;
+  margin: 1rem auto;
   clear: both;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .llar-chart-wrap canvas {
-  height: 300px;
+  min-height: 400px;
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 .llar-chart-wrap canvas {
+    min-height: 300px;
+  }
 }
 
 #llar-admin-dashboard-widgets .widget-title {
