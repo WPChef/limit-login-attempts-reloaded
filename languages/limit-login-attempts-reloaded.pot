@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.25.25\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.25.26\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-09-04T15:47:34+03:00\n"
+"POT-Creation-Date: 2023-11-01T16:28:39+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -29,45 +29,45 @@ msgstr ""
 msgid "https://www.limitloginattempts.com/"
 msgstr ""
 
-#: core/Ajax.php:170
+#: core/Ajax.php:176
 msgid "The app has been successfully imported."
 msgstr ""
 
-#: core/Ajax.php:184
+#: core/Ajax.php:190
 msgid "Please specify the Setup Code"
 msgstr ""
 
-#: core/Ajax.php:372
+#: core/Ajax.php:378
 msgid "No events yet."
 msgstr ""
 
-#: core/Ajax.php:424
+#: core/Ajax.php:430
 msgid "No lockouts yet."
 msgstr ""
 
-#: core/Ajax.php:441
+#: core/Ajax.php:447
 msgid "Meanwhile, the app falls over to the <a href=\"%s\">default functionality</a>."
 msgstr ""
 
-#: core/Ajax.php:490
+#: core/Ajax.php:496
 msgid "No rules yet."
 msgstr ""
 
-#: core/Ajax.php:682
+#: core/Ajax.php:688
 msgid "<strong>%d</strong> attempt remaining."
 msgid_plural "<strong>%d</strong> attempts remaining."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/Ajax.php:718
+#: core/Ajax.php:734
 msgid "Wrong email format."
 msgstr ""
 
-#: core/Ajax.php:724
+#: core/Ajax.php:740
 msgid "Test Email"
 msgstr ""
 
-#: core/Ajax.php:725
+#: core/Ajax.php:741
 msgid "The email notifications work correctly."
 msgstr ""
 
