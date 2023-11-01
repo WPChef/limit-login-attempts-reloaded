@@ -39,7 +39,13 @@ class Ajax {
 	}
 
 	public function ajax_unlock() {
-		check_ajax_referer( 'limit-login-unlock', 'sec' );
+
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+
+			wp_send_json_error( array() );
+		}
+
+		check_ajax_referer( 'llar-unlock', 'sec' );
 		$ip = (string) @$_POST['ip'];
 
 		$lockouts = (array) Config::get( 'lockouts' );
@@ -76,7 +82,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-dismiss-review', 'sec' );
 
 		$type = isset( $_POST['type'] ) ? sanitize_text_field( $_POST['type'] ) : false;
 
@@ -100,7 +106,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-dismiss-notify-notice', 'sec' );
 
 		$type = isset( $_POST['type'] ) ? sanitize_text_field( $_POST['type'] ) : false;
 
@@ -124,7 +130,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-enable-notify', 'sec' );
 
 		$notify_methods = explode( ',', Config::get( 'lockout_notify' ) );
 
@@ -146,7 +152,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-app-setup', 'sec' );
 
 		if ( ! empty( $_POST['code'] ) ) {
 
@@ -192,7 +198,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-app-log', 'sec' );
 
 		if ( ! empty( $_POST['method'] ) && ! empty( $_POST['params'] ) ) {
 
@@ -232,7 +238,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-app-acl-add-rule', 'sec' );
 
 		if ( ! empty( $_POST['pattern'] ) && ! empty( $_POST['rule'] ) && ! empty( $_POST['type'] ) ) {
 
@@ -277,7 +283,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-app-acl-remove-rule', 'sec' );
 
 		if ( ! empty( $_POST['pattern'] ) && ! empty( $_POST['type'] ) ) {
 
@@ -313,7 +319,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-app-load-log', 'sec' );
 
 		$offset = sanitize_text_field( $_POST['offset'] );
 		$limit  = sanitize_text_field( $_POST['limit'] );
@@ -396,7 +402,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-app-load-lockouts', 'sec' );
 
 		$offset = sanitize_text_field( $_POST['offset'] );
 		$limit  = sanitize_text_field( $_POST['limit'] );
@@ -456,7 +462,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-app-load-acl-rules', 'sec' );
 
 		$type   = sanitize_text_field( $_POST['type'] );
 		$limit  = sanitize_text_field( $_POST['limit'] );
@@ -512,7 +518,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-app-load-country-access-rules', 'sec' );
 
 		$country_rules = LimitLoginAttempts::$cloud_app->country();
 
@@ -534,7 +540,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-app-toggle-country', 'sec' );
 
 		$code        = sanitize_text_field( $_POST['code'] );
 		$action_type = sanitize_text_field( $_POST['type'] );
@@ -579,7 +585,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-app-country-rule', 'sec' );
 
 		$rule = sanitize_text_field( $_POST['rule'] );
 
@@ -612,7 +618,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-subscribe-email', 'sec' );
 
 		Config::update( 'onboarding_popup_shown', true );
 
@@ -663,7 +669,7 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-dismiss-onboarding-popup', 'sec' );
 
 		Config::update( 'onboarding_popup_shown', true );
 
@@ -672,7 +678,7 @@ class Ajax {
 
 	public function get_remaining_attempts_message_callback() {
 
-		check_ajax_referer( 'llar-action', 'sec' );
+		check_ajax_referer( 'llar-get-remaining-attempts-message', 'sec' );
 
 		if ( ! session_id() ) {
 			session_start();
@@ -685,7 +691,12 @@ class Ajax {
 
 	public function toggle_auto_update_callback() {
 
-		check_ajax_referer('llar-action', 'sec');
+		if ( ! current_user_can( 'update_plugins' ) ) {
+
+			wp_send_json_error( array() );
+		}
+
+		check_ajax_referer('llar-toggle-auto-update', 'sec');
 
 		$value = sanitize_text_field( $_POST['value'] );
 		$auto_update_plugins = get_site_option( 'auto_update_plugins', array() );
@@ -708,7 +719,12 @@ class Ajax {
 
 	public function test_email_notifications_callback() {
 
-		check_ajax_referer('llar-action', 'sec');
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+
+			wp_send_json_error( array() );
+		}
+
+		check_ajax_referer('llar-test-email-notifications', 'sec');
 
 		$to = sanitize_email( $_POST['email'] );
 

@@ -97,7 +97,7 @@ $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.co
 					action: 'app_log_action',
 					method: method,
 					params: params,
-					sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+					sec: '<?php echo esc_js( wp_create_nonce( "llar-app-log" ) ); ?>'
 				}, function(response){
 
                     $preloader.removeClass('loading');
@@ -125,7 +125,7 @@ $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.co
 					action: 'app_load_log',
 					offset: page_offset,
                     limit: page_limit,
-					sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+					sec: '<?php echo wp_create_nonce( "llar-app-load-log" ); ?>'
 				}, function(response){
 
                     $preloader.removeClass('loading');
