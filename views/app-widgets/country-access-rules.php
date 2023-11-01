@@ -36,7 +36,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 			$.post(ajaxurl, {
 				action: 'app_load_country_access_rules',
-				sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+				sec: '<?php echo wp_create_nonce( "llar-app-load-country-access-rules" ); ?>'
 			}, function(response){
 
                 $preloader_wrap.removeClass('loading');
@@ -111,7 +111,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 					action: 'app_toggle_country',
 					code: country_code,
 					type: (is_checked) ? 'add' : 'remove',
-					sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+					sec: '<?php echo wp_create_nonce( "llar-app-toggle-country" ); ?>'
 				}, function(response){
 
                     $preloader_wrap.removeClass('loading');
@@ -127,7 +127,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 				$.post(ajaxurl, {
 					action: 'app_country_rule',
 					rule: $this.val(),
-					sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+					sec: '<?php echo wp_create_nonce( "llar-app-country-rule" ); ?>'
 				}, function(response){
 
                     $preloader_wrap.removeClass('loading');
