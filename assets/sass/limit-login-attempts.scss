@@ -14,8 +14,6 @@
   }
 }
 
-
-
 .limit-login-page-settings {
   margin: .5rem 3.12rem;
 
@@ -272,6 +270,7 @@
         }
       }
     }
+
     .llar-table-header {
       display: flex;
       justify-content: space-between;
@@ -304,6 +303,7 @@
         }
       }
     }
+
     .llar-app-log-pagination {
       > a {
         font-size: 16px;
@@ -313,6 +313,7 @@
         float: none;
       }
     }
+
     .llar-app-acl-rules {
       display: flex;
       justify-content: space-between;
@@ -500,8 +501,6 @@
     }
   }
 
-
-
   .llar-toggle-setup-field {
     color: #2271b1;
     text-decoration-style: dashed;
@@ -535,13 +534,32 @@
   }
 }
 
-.llar-settings-wrap {
-  .form-table {
-    th {
-      width: 220px;
+
+#llar-setting-page {
+  color: $typography-primary;
+  font-size: 1rem;
+
+
+  .title_page {
+    margin-top: 2.5rem;
+    color: inherit;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+
+
+  .llar-settings-wrap {
+
+    .form-table {
+
+      th {
+        width: 220px;
+      }
     }
   }
 }
+
+
 
 .llar-notice-review,
 .llar-notice-notify {

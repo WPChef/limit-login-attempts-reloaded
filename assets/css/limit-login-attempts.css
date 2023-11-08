@@ -51,6 +51,18 @@
   color: #FF9800;
   filter: drop-shadow(0.7px 0.7px 0.7px rgba(255, 124, 6, 0.5));
 }
+.icon-page-setting {
+  width: 36px;
+  height: 36px;
+  padding: 0.325rem;
+  margin-right: 1rem;
+  color: #FF9800;
+  background-color: rgba(255, 124, 6, 0.0980392157);
+  border-radius: 8px;
+  vertical-align: middle;
+  box-sizing: border-box;
+  filter: drop-shadow(0.7px 0.7px 0.7px rgba(255, 124, 6, 0.5));
+}
 .icon-additional {
   width: 28px;
   height: 28px;
@@ -504,7 +516,17 @@
   display: table-row;
 }
 
-.llar-settings-wrap .form-table th {
+#llar-setting-page {
+  color: #2A2F40;
+  font-size: 1rem;
+}
+#llar-setting-page .title_page {
+  margin-top: 2.5rem;
+  color: inherit;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+#llar-setting-page .llar-settings-wrap .form-table th {
   width: 220px;
 }
 
