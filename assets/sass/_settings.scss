@@ -17,7 +17,9 @@ $typography-secondary: #666D84;
 $typography-additional: #A4A8B7;
 $primary-colors__orange: #FF9800;
 $primary-colors__turquoise: #4ACAD8;
+$primary-colors__turquoise_back: #4ACAD819; //rgba(74, 202, 216, 0.1);
 $primary-colors__aero-blue: #97F6C8;
+
 $color-marker: #9762EF;
 
 
@@ -90,6 +92,22 @@ $border-radius__max: $border-radius * 2;
   &:hover {
     color: $secondary-colors__dark-orange;
   }
+}
+
+.llar_turquoise {
+  color: $primary-colors__turquoise;
+
+  &:hover {
+    color: $primary-colors__turquoise;
+    text-decoration: underline;
+  }
+}
+
+.llar-label {
+  @extend .link__style_unlink;
+  border-radius: $border-radius__min;
+  background-color: $primary-colors__turquoise_back;
+  padding: .125rem 1.125rem;
 }
 
 .llar_bold {

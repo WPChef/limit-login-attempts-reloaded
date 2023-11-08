@@ -553,61 +553,6 @@
           }
         }
       }
-
-      .hint_tooltip {
-        display: none;
-        position: absolute;
-        background-color: $primary-colors__turquoise;
-        color: #fff;
-        padding: .75rem 1rem .75rem 2.25rem;
-        width: 10rem;
-        border-radius: $border-radius;
-        top: 1.62rem;
-        right: -2%;
-        z-index: 955;
-
-        &-content {
-          list-style: none;
-          font-size: 0.75rem;
-          white-space: initial;
-          text-align: left;
-          margin-top: 0;
-          margin-bottom: 0;
-
-          li {
-            position: relative;
-            list-style: none;
-            font-size: 0.75rem;
-            white-space: initial;
-
-            &::before {
-              position: absolute;
-              box-sizing: inherit;
-              content: "\2727";
-              color: $background-body;
-              margin-left: -1.25rem;
-              top: 0;
-            }
-          }
-        }
-
-        &::before {
-          content: "";
-          position: absolute;
-          top: -12px;
-          right: 12%;
-          border-width: 6px;
-          border-style: solid;
-          border-color: transparent transparent $primary-colors__turquoise transparent;
-        }
-
-        &-parent {
-
-          &:hover .hint_tooltip {
-            display: block;
-          }
-        }
-      }
     }
 
     > [class^="info-box-"] {

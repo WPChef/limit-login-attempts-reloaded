@@ -538,6 +538,7 @@
 #llar-setting-page {
   color: $typography-primary;
   font-size: 1rem;
+  line-height: 1.5;
 
 
   .title_page {
@@ -547,14 +548,176 @@
     font-weight: 500;
   }
 
+  .description-page {
+    position: relative;
+    font-size: 1.125rem;
+    color: $typography-secondary;
+    padding: 1.81rem 2.75rem;
+    border-radius: 20px;
+    background: $background-body;
+    box-shadow: 0.25rem 0.25rem 1.125rem 0 $box-shadow__light-transparent-gray;
+  }
 
   .llar-settings-wrap {
 
     .form-table {
+      color: $typography-primary;
+      font-size: 1.125rem;
+      border-collapse: separate;
+      border-spacing: 0 1.25rem;
+      border-color: unset;
 
-      th {
-        width: 220px;
+      tr {
+        position: relative;
+        font-size: 1.125rem;
+        border-radius: $border-radius;
+        color: $typography-secondary;
+        background: $background-body;
+        box-shadow: 0.25rem 0.25rem 1.125rem 0 $box-shadow__light-transparent-gray;
+
+        th, td {
+          font-size: inherit;
+          line-height: inherit;
+          border-radius: $border-radius;
+          background-color: unset;
+          padding: 1.81rem 2.75rem;
+        }
+
+        th {
+          font-weight: 500;
+          border-top-right-radius: unset;
+          border-bottom-right-radius: unset;
+          width: 220px;
+
+          .dashicons {
+            color: $primary-colors__turquoise;
+            line-height: inherit;
+          }
+
+          .hint_tooltip {
+            right: -5rem;
+            top: 1.72rem;
+
+            &:before {
+              right: 5.2rem;
+            }
+          }
+        }
+
+        td {
+          color: $typography-secondary;
+          font-size: 1rem;
+          border-top-left-radius: unset;
+          border-bottom-left-radius: unset;
+
+          .textarea_border, .input_border {
+            font-size: 1rem;
+            line-height: inherit;
+            padding: .5rem .5rem .5rem 1rem;
+            color: $typography-secondary;
+            border-radius: $border-radius__normal;
+            border: 1px solid $primary-colors__turquoise;
+            background: $background-body;
+            width: fit-content;
+
+            textarea {
+              font-size: 1rem;
+              padding-right: 1.5rem;
+              border: unset;
+
+              &::-webkit-scrollbar {
+                width: .5rem;
+              }
+
+              &::-webkit-scrollbar-track {
+                background-color: $typography-additional;
+                border-radius: $border-radius__min;
+              }
+
+              &::-webkit-scrollbar-thumb {
+                background-color: $typography-secondary;
+                border-radius: $border-radius__min;
+              }
+
+              &:hover, &:focus {
+                border: unset;
+                box-shadow: unset;
+                outline: unset;
+              }
+            }
+          }
+
+          .input_border {
+            border-radius: $border-radius__min;
+          }
+
+          a {
+            @extend .llar_turquoise;
+          }
+
+          .description-additional {
+            font-size: 1rem;
+            color: $typography-additional;
+            padding: .5rem .5rem .5rem 1.25rem;
+          }
+        }
       }
+    }
+  }
+}
+
+.hint_tooltip {
+  display: none;
+  position: absolute;
+  background-color: $primary-colors__turquoise;
+  color: #fff;
+  padding: .75rem 1rem .75rem 2.25rem;
+  width: 10rem;
+  border-radius: $border-radius;
+  top: 1.67rem;
+  right: -100%;
+  z-index: 955;
+
+  &-content {
+    list-style: none;
+    font-size: 0.75rem;
+    white-space: initial;
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 0;
+
+    li {
+      position: relative;
+      list-style: none;
+      font-size: 0.75rem;
+      white-space: initial;
+
+      &::before {
+        position: absolute;
+        box-sizing: inherit;
+        content: "\2727";
+        color: $background-body;
+        margin-left: -1.25rem;
+        top: 0;
+      }
+    }
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    right: 12%;
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent $primary-colors__turquoise transparent;
+  }
+
+  &-parent {
+    position: relative;
+
+    &:hover .hint_tooltip {
+      display: block;
     }
   }
 }

@@ -45,7 +45,9 @@ $active_app_config = Config::get( 'app_config' );
         </svg>
         <?php echo __( 'General Settings', 'limit-login-attempts-reloaded' ); ?>
     </h3>
-    <p><?php echo __( 'These settings are independent of the apps (see below).', 'limit-login-attempts-reloaded' ); ?></p>
+    <div class="description-page">
+        <?php echo __( 'These settings are independent of the apps (see below).', 'limit-login-attempts-reloaded' ); ?>
+    </div>
     <form action="<?php echo $this->get_options_page_uri('settings'); ?>" method="post">
 
         <?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
@@ -80,37 +82,57 @@ $active_app_config = Config::get( 'app_config' );
                         valign="top"><?php echo __( 'GDPR compliance', 'limit-login-attempts-reloaded' ); ?></th>
                     <td>
                         <input type="checkbox" name="gdpr" value="1" <?php if($gdpr): ?> checked <?php endif; ?>/>
-                        <?php echo __( 'this makes the plugin <a href="https://gdpr-info.eu/" target="_blank">GDPR</a> compliant by showing a message on the login page. <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-settings-gdpr" target="_blank">Read more</a>', 'limit-login-attempts-reloaded' ); ?> <br/>
+                        <?php echo __( 'this makes the plugin <a href="https://gdpr-info.eu/" class="link__style_unlink" target="_blank">GDPR</a> compliant by showing a message on the login page. <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-settings-gdpr" class="llar-label" target="_blank">Read more</a>', 'limit-login-attempts-reloaded' ); ?> <br/>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'GDPR message', 'limit-login-attempts-reloaded' ); ?>
-                        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'This message will appear at the bottom of the login page.', 'limit-login-attempts-reloaded' ); ?>">
+                    <th scope="row" valign="top"><?php echo __( 'GDPR message', 'limit-login-attempts-reloaded' ); ?>
+                        <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
-                        </i></th>
+                            <div class="hint_tooltip">
+                                <ul class="hint_tooltip-content">
+                                    <li>
+                                        <?php esc_attr_e( 'This message will appear at the bottom of the login page.', 'limit-login-attempts-reloaded' ); ?>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                    </th>
                     <td>
-                        <textarea name="gdpr_message" cols="60"><?php echo esc_textarea( stripslashes( $gdpr_message ) ); ?></textarea>
-                        <p class="description"><?php echo __( 'You can use a shortcode here to insert links, for example, a link to your Privacy Policy page. <br>The shortcode is: [llar-link url="https://example.com" text="Privacy Policy"]', 'limit-login-attempts-reloaded' ); ?></p>
+                        <div class="textarea_border">
+                            <textarea name="gdpr_message" cols="85"><?php echo esc_textarea( stripslashes( $gdpr_message ) ); ?></textarea>
+                        </div>
+                        <div class="description-additional">
+                            <?php echo __( 'You can use a shortcode here to insert links, for example, a link to your Privacy Policy page. <br>The shortcode is: [llar-link url="https://example.com" text="Privacy Policy"]', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
                     </td>
                 </tr>
 
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
-                        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Email address to which lockout notifications will be sent.', 'limit-login-attempts-reloaded'  ); ?>">
+                    <th scope="row" valign="top"><?php echo __( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
+                        <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
-                        </i></th>
+                            <div class="hint_tooltip">
+                                <ul class="hint_tooltip-content">
+                                    <li>
+                                        <?php esc_attr_e( 'Email address to which lockout notifications will be sent.', 'limit-login-attempts-reloaded'  ); ?>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                    </th>
                     <td>
                         <input type="checkbox" name="lockout_notify_email" <?php echo $email_checked; ?>
                                value="email"/> <?php echo __( 'Email to', 'limit-login-attempts-reloaded' ); ?>
-                        <input type="email" name="admin_notify_email"
+                        <input class="input_border" type="email" name="admin_notify_email"
                                value="<?php echo esc_attr( $admin_notify_email ) ?>"
                                placeholder="<?php echo esc_attr( $admin_email_placeholder ); ?>"/> <?php echo __( 'after', 'limit-login-attempts-reloaded' ); ?>
-                        <input type="text" size="3" maxlength="4"
+                        <input class="input_border" type="text" size="3" maxlength="4"
                                value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
                                name="email_after"/> <?php echo __( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
-                        <span class="button llar-test-email-notification-btn"><?php echo __( 'Test Email Notifications', 'limit-login-attempts-reloaded' ); ?></span>
+                        <span class="button llar-test-email-notification-btn">
+                            <?php echo __( 'Test Email Notifications', 'limit-login-attempts-reloaded' ); ?>
+                        </span>
                         <span class="preloader-wrapper llar-test-email-notification-loader">
                         <span class="spinner llar-app-ajax-spinner"></span>
                         <span class="msg"></span>
@@ -123,52 +145,87 @@ $active_app_config = Config::get( 'app_config' );
                 </tr>
 
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Display top menu item', 'limit-login-attempts-reloaded' ); ?>
-                        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'The LLAR plugin displays its item on the top navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>">
+                    <th scope="row" valign="top"><?php echo __( 'Display top menu item', 'limit-login-attempts-reloaded' ); ?>
+                        <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
-                        </i></th>
+                            <div class="hint_tooltip">
+                                <ul class="hint_tooltip-content">
+                                    <li>
+                                        <?php esc_attr_e( 'The LLAR plugin displays its item on the top navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                    </th>
                     <td>
                         <input type="checkbox" name="show_top_bar_menu_item" <?php checked( $show_top_bar_menu_item ); ?>> <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
                     </td>
                 </tr>
 
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Display left menu item', 'limit-login-attempts-reloaded' ); ?>
-                        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'The LLAR plugin displays its item on the left navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>">
+                    <th scope="row" valign="top"><?php echo __( 'Display left menu item', 'limit-login-attempts-reloaded' ); ?>
+                        <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
-                        </i></th>
+                            <div class="hint_tooltip">
+                                <ul class="hint_tooltip-content">
+                                    <li>
+                                        <?php esc_attr_e( 'The LLAR plugin displays its item on the left navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                    </th>
                     <td>
                         <input type="checkbox" name="show_top_level_menu_item" <?php checked( $show_top_level_menu_item ); ?>> <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Hide Dashboard Widget', 'limit-login-attempts-reloaded' ); ?>
-                        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'The LLAR dashboard widget provides a quick glance of your daily failed login activity on the main WordPress dashboard. You may hide this widget by checking this box.', 'limit-login-attempts-reloaded' ); ?>">
+                    <th scope="row" valign="top"><?php echo __( 'Hide Dashboard Widget', 'limit-login-attempts-reloaded' ); ?>
+                        <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
-                        </i></th>
+                            <div class="hint_tooltip">
+                                <ul class="hint_tooltip-content">
+                                    <li>
+                                        <?php esc_attr_e( 'The LLAR dashboard widget provides a quick glance of your daily failed login activity on the main WordPress dashboard. You may hide this widget by checking this box.', 'limit-login-attempts-reloaded' ); ?>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                    </th>
                     <td>
                         <input type="checkbox" name="hide_dashboard_widget" <?php checked( $hide_dashboard_widget ); ?>>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Display Warning Badge', 'limit-login-attempts-reloaded' ); ?>&nbsp;
-                        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'The warning badge is a red bubble icon displayed next to the LLAR logo on the main vertical navigation menu. It displays a warning if there were more than 100 attempts for a day.', 'limit-login-attempts-reloaded' ); ?>">
+                    <th scope="row" valign="top"><?php echo __( 'Display Warning Badge', 'limit-login-attempts-reloaded' ); ?>&nbsp;
+                        <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
-                        </i></th>
+                            <div class="hint_tooltip">
+                                <ul class="hint_tooltip-content">
+                                    <li>
+                                        <?php esc_attr_e( 'The warning badge is a red bubble icon displayed next to the LLAR logo on the main vertical navigation menu. It displays a warning if there were more than 100 attempts for a day.', 'limit-login-attempts-reloaded' ); ?>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                    </th>
                     <td>
                         <input type="checkbox" name="show_warning_badge" <?php checked( $show_warning_badge ); ?>> <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Active App', 'limit-login-attempts-reloaded' ); ?>
-                        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Switches from free version (local) to premium (cloud).', 'limit-login-attempts-reloaded' ); ?>">
+                    <th scope="row" valign="top"><?php echo __( 'Active App', 'limit-login-attempts-reloaded' ); ?>
+                        <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
-                        </i></th>
+                            <div class="hint_tooltip">
+                                <ul class="hint_tooltip-content">
+                                    <li>
+                                        <?php esc_attr_e( 'Switches from free version (local) to premium (cloud).', 'limit-login-attempts-reloaded' ); ?>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                    </th>
                     <td>
                         <select name="active_app" id="">
                             <option value="local" <?php selected( $active_app, 'local' ); ?>><?php echo __( 'Local', 'limit-login-attempts-reloaded' ); ?></option>

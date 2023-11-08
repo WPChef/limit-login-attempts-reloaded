@@ -1,12 +1,12 @@
 @charset "UTF-8";
 @import "../css/fonts/stylesheet.css";
-.link__style_unlink, .link__style_color_inherit {
+.link__style_unlink, .llar-label, .link__style_color_inherit {
   text-decoration: none;
   color: inherit;
   position: relative;
 }
 
-.link__style_unlink:hover, .link__style_color_inherit:hover {
+.link__style_unlink:hover, .llar-label:hover, .link__style_color_inherit:hover {
   color: inherit;
 }
 
@@ -23,6 +23,20 @@
 }
 .llar_orange:hover {
   color: #F07200;
+}
+
+.llar_turquoise, #llar-setting-page .llar-settings-wrap .form-table tr td a {
+  color: #4ACAD8;
+}
+.llar_turquoise:hover, #llar-setting-page .llar-settings-wrap .form-table tr td a:hover {
+  color: #4ACAD8;
+  text-decoration: underline;
+}
+
+.llar-label {
+  border-radius: 8px;
+  background-color: rgba(74, 202, 216, 0.0980392157);
+  padding: 0.125rem 1.125rem;
 }
 
 .llar_bold {
@@ -519,6 +533,7 @@
 #llar-setting-page {
   color: #2A2F40;
   font-size: 1rem;
+  line-height: 1.5;
 }
 #llar-setting-page .title_page {
   margin-top: 2.5rem;
@@ -526,8 +541,148 @@
   font-size: 1.25rem;
   font-weight: 500;
 }
-#llar-setting-page .llar-settings-wrap .form-table th {
+#llar-setting-page .description-page {
+  position: relative;
+  font-size: 1.125rem;
+  color: #666D84;
+  padding: 1.81rem 2.75rem;
+  border-radius: 20px;
+  background: #FDFDFD;
+  box-shadow: 0.25rem 0.25rem 1.125rem 0 rgba(162, 180, 189, 0.2);
+}
+#llar-setting-page .llar-settings-wrap .form-table {
+  color: #2A2F40;
+  font-size: 1.125rem;
+  border-collapse: separate;
+  border-spacing: 0 1.25rem;
+  border-color: unset;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr {
+  position: relative;
+  font-size: 1.125rem;
+  border-radius: 20px;
+  color: #666D84;
+  background: #FDFDFD;
+  box-shadow: 0.25rem 0.25rem 1.125rem 0 rgba(162, 180, 189, 0.2);
+}
+#llar-setting-page .llar-settings-wrap .form-table tr th, #llar-setting-page .llar-settings-wrap .form-table tr td {
+  font-size: inherit;
+  line-height: inherit;
+  border-radius: 20px;
+  background-color: unset;
+  padding: 1.81rem 2.75rem;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr th {
+  font-weight: 500;
+  border-top-right-radius: unset;
+  border-bottom-right-radius: unset;
   width: 220px;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr th .dashicons {
+  color: #4ACAD8;
+  line-height: inherit;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr th .hint_tooltip {
+  right: -5rem;
+  top: 1.72rem;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr th .hint_tooltip:before {
+  right: 5.2rem;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td {
+  color: #666D84;
+  font-size: 1rem;
+  border-top-left-radius: unset;
+  border-bottom-left-radius: unset;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border {
+  font-size: 1rem;
+  line-height: inherit;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  color: #666D84;
+  border-radius: 16px;
+  border: 1px solid #4ACAD8;
+  background: #FDFDFD;
+  width: fit-content;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border textarea {
+  font-size: 1rem;
+  padding-right: 1.5rem;
+  border: unset;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border textarea::-webkit-scrollbar {
+  width: 0.5rem;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border textarea::-webkit-scrollbar-track {
+  background-color: #A4A8B7;
+  border-radius: 8px;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border textarea::-webkit-scrollbar-thumb {
+  background-color: #666D84;
+  border-radius: 8px;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border textarea:hover, #llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border textarea:focus, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border textarea:hover, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border textarea:focus {
+  border: unset;
+  box-shadow: unset;
+  outline: unset;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .input_border {
+  border-radius: 8px;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .description-additional {
+  font-size: 1rem;
+  color: #A4A8B7;
+  padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+}
+
+.hint_tooltip {
+  display: none;
+  position: absolute;
+  background-color: #4ACAD8;
+  color: #fff;
+  padding: 0.75rem 1rem 0.75rem 2.25rem;
+  width: 10rem;
+  border-radius: 20px;
+  top: 1.67rem;
+  right: -100%;
+  z-index: 955;
+}
+.hint_tooltip-content {
+  list-style: none;
+  font-size: 0.75rem;
+  white-space: initial;
+  text-align: left;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.hint_tooltip-content li {
+  position: relative;
+  list-style: none;
+  font-size: 0.75rem;
+  white-space: initial;
+}
+.hint_tooltip-content li::before {
+  position: absolute;
+  box-sizing: inherit;
+  content: "✧";
+  color: #FDFDFD;
+  margin-left: -1.25rem;
+  top: 0;
+}
+.hint_tooltip::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  right: 12%;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent #4ACAD8 transparent;
+}
+.hint_tooltip-parent {
+  position: relative;
+}
+.hint_tooltip-parent:hover .hint_tooltip {
+  display: block;
 }
 
 .llar-notice-review,
@@ -1419,52 +1574,6 @@
     width: 12px;
     height: 12px;
   }
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip {
-  display: none;
-  position: absolute;
-  background-color: #4ACAD8;
-  color: #fff;
-  padding: 0.75rem 1rem 0.75rem 2.25rem;
-  width: 10rem;
-  border-radius: 20px;
-  top: 1.62rem;
-  right: -2%;
-  z-index: 955;
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-content {
-  list-style: none;
-  font-size: 0.75rem;
-  white-space: initial;
-  text-align: left;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-content li {
-  position: relative;
-  list-style: none;
-  font-size: 0.75rem;
-  white-space: initial;
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-content li::before {
-  position: absolute;
-  box-sizing: inherit;
-  content: "✧";
-  color: #FDFDFD;
-  margin-left: -1.25rem;
-  top: 0;
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip::before {
-  content: "";
-  position: absolute;
-  top: -12px;
-  right: 12%;
-  border-width: 6px;
-  border-style: solid;
-  border-color: transparent transparent #4ACAD8 transparent;
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-parent:hover .hint_tooltip {
-  display: block;
 }
 #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
   flex: 0 0 auto;
