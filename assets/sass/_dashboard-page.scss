@@ -693,6 +693,7 @@
                 width: 2.12rem;
                 vertical-align: middle;
                 margin-right: 10px;
+                border-radius: $border-radius__min * .5;
 
                 @include _767 {
                   width: 1.75rem;

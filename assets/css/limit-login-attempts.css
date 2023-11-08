@@ -1517,6 +1517,7 @@
   width: 2.12rem;
   vertical-align: middle;
   margin-right: 10px;
+  border-radius: 4px;
 }
 @media screen and (max-width: 767.5px) {
   #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td .flag-icon {

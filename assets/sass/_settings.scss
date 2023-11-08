@@ -62,7 +62,8 @@ $text-font-weight: 400;
 $text-font-weight-bold: 500;
 
 $border-radius: $text-font-size-all * 1.25;
-$border-radius__min: $text-font-size-all * .5;
+$border-radius__normal: $text-font-size-all;
+$border-radius__min: $border-radius__normal * .5;
 $border-radius__max: $border-radius * 2;
 
 .link__style_unlink, .link__style_color_inherit {
