@@ -30,6 +30,19 @@
     filter: drop-shadow(.7px .7px .7px rgba(255, 124, 6, 0.5));
   }
 
+  &-page-setting {
+    width: 36px;
+    height: 36px;
+    padding: .325rem;
+    margin-right: 1rem;
+    color: $primary-colors__orange;
+    background-color: $primary-colors__orange-back;
+    border-radius: $border-radius__min;
+    vertical-align: middle;
+    box-sizing: border-box;
+    filter: drop-shadow(.7px .7px .7px rgba(255, 124, 6, 0.5));
+  }
+
   //&-before_turquoise {
   //  position: absolute;
   //  top: 0;
