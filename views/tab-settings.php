@@ -82,7 +82,7 @@ $active_app_config = Config::get( 'app_config' );
                         valign="top"><?php echo __( 'GDPR compliance', 'limit-login-attempts-reloaded' ); ?></th>
                     <td>
                         <input type="checkbox" name="gdpr" value="1" <?php if($gdpr): ?> checked <?php endif; ?>/>
-                        <?php echo __( 'this makes the plugin <a href="https://gdpr-info.eu/" class="link__style_unlink" target="_blank">GDPR</a> compliant by showing a message on the login page. <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-settings-gdpr" class="llar-label" target="_blank">Read more</a>', 'limit-login-attempts-reloaded' ); ?> <br/>
+                        <?php echo __( 'this makes the plugin <a href="https://gdpr-info.eu/" class="unlink link__style_unlink" target="_blank">GDPR</a> compliant by showing a message on the login page. <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-settings-gdpr" class="llar-label" target="_blank">Read more</a>', 'limit-login-attempts-reloaded' ); ?> <br/>
                     </td>
                 </tr>
                 <tr>
@@ -137,10 +137,11 @@ $active_app_config = Config::get( 'app_config' );
                         <span class="spinner llar-app-ajax-spinner"></span>
                         <span class="msg"></span>
                     </span>
-                        <p class="description"><?php echo sprintf(
-                                __( 'It\'s not uncommon for web hosts to turn off emails for plugins as a security measure.<br>We\'ve <a href="%s" target="_blank">created an article</a> to troubleshoot common email deliverability issues.', 'limit-login-attempts-reloaded' ),
+                        <p class="description-secondary"><?php echo sprintf(
+                                __( 'It\'s not uncommon for web hosts to turn off emails for plugins as a security measure.<br>We\'ve <a class="llar_bold link__style_color_inherit" href="%s" target="_blank">created an article</a> to troubleshoot common email deliverability issues.', 'limit-login-attempts-reloaded' ),
                                 'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
-                            ); ?></p>
+                            ); ?>
+                        </p>
                     </td>
                 </tr>
 
@@ -227,7 +228,7 @@ $active_app_config = Config::get( 'app_config' );
                         </span>
                     </th>
                     <td>
-                        <select name="active_app" id="">
+                        <select class="input_border" name="active_app" id="">
                             <option value="local" <?php selected( $active_app, 'local' ); ?>><?php echo __( 'Local', 'limit-login-attempts-reloaded' ); ?></option>
                             <?php if( $active_app_config ) : ?>
                                 <option value="custom" <?php selected( $active_app, 'custom' ); ?>><?php echo esc_html( $active_app_config['name'] ); ?></option>

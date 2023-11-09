@@ -25,10 +25,10 @@
   color: #F07200;
 }
 
-.llar_turquoise, #llar-setting-page .llar-settings-wrap .form-table tr td a {
+.llar_turquoise, #llar-setting-page .llar-settings-wrap .form-table tr td a.unlink {
   color: #4ACAD8;
 }
-.llar_turquoise:hover, #llar-setting-page .llar-settings-wrap .form-table tr td a:hover {
+.llar_turquoise:hover, #llar-setting-page .llar-settings-wrap .form-table tr td a.unlink:hover {
   color: #4ACAD8;
   text-decoration: underline;
 }
@@ -41,80 +41,6 @@
 
 .llar_bold {
   font-weight: bold;
-}
-
-button, .button {
-  border-radius: 10px;
-  background: #FDFDFD;
-  border: 1px solid #2A2F40;
-  cursor: pointer;
-  white-space: nowrap;
-}
-button.menu__item, .menu__item.button {
-  padding: 0.5rem 1.875rem;
-}
-@media screen and (max-width: 991.5px) {
-  button.menu__item, .menu__item.button {
-    padding: 0.3rem 1rem;
-  }
-}
-@media screen and (max-width: 428px) {
-  button.menu__item, .menu__item.button {
-    padding: 0.3rem 0.75rem;
-  }
-}
-button.tags, .tags.button {
-  font-size: 0.87rem;
-  font-weight: 400;
-  line-height: 1.37rem;
-  border: 1px solid #FF7C06;
-  width: fit-content;
-  padding: 0 1.5rem;
-  z-index: 50;
-}
-button.tags_basic, .tags_basic.button {
-  color: #FF7C06;
-  background: rgba(255, 124, 6, 0.0980392157);
-}
-button.tags_basic.active, .tags_basic.active.button, button.tags_basic:hover, .tags_basic.button:hover {
-  color: #FDFDFD;
-  background: #FF7C06;
-}
-button.tags_add, .tags_add.button {
-  color: #2A2F40;
-  border: 1px solid #A4A8B7;
-  background: #F6FBFF;
-}
-button.tags_add:hover, .tags_add.button:hover {
-  background: rgba(255, 124, 6, 0.0980392157);
-}
-
-.button__orange {
-  color: white !important;
-  background: #FF7C06;
-  border: 1px solid #FF7C06;
-  box-shadow: 0 0.312rem 0.625rem 0 rgba(255, 124, 6, 0.4980392157);
-}
-.button__orange:hover {
-  background: #F07200;
-}
-.button__orange:disabled {
-  border: 1px solid rgba(255, 124, 6, 0.4980392157);
-  background: rgba(255, 124, 6, 0.4980392157);
-  cursor: auto;
-}
-.button__transparent_orange {
-  color: #FF7C06 !important;
-  border: 1px solid;
-  background: transparent;
-}
-.button__transparent_orange:hover {
-  background: rgba(255, 124, 6, 0.0980392157);
-  border: 1px solid #FF7C06;
-}
-.button__transparent_orange:disabled {
-  background: transparent;
-  cursor: auto;
 }
 
 /* testing */
@@ -334,14 +260,14 @@ button.tags_add:hover, .tags_add.button:hover {
   width: 20px;
   height: auto;
 }
-.limit-login-page-settings .limit-login-app-dashboard .form-table td button, .limit-login-page-settings .limit-login-app-dashboard .form-table td .button {
+.limit-login-page-settings .limit-login-app-dashboard .form-table td button, .limit-login-page-settings .limit-login-app-dashboard .form-table td #llar-setting-page .button, #llar-setting-page .limit-login-page-settings .limit-login-app-dashboard .form-table td .button {
   line-height: 1;
   margin-right: 5px;
 }
-.limit-login-page-settings .limit-login-app-dashboard .form-table td button:last-child, .limit-login-page-settings .limit-login-app-dashboard .form-table td .button:last-child {
+.limit-login-page-settings .limit-login-app-dashboard .form-table td button:last-child, .limit-login-page-settings .limit-login-app-dashboard .form-table td #llar-setting-page .button:last-child, #llar-setting-page .limit-login-page-settings .limit-login-app-dashboard .form-table td .button:last-child {
   margin-right: 0;
 }
-.limit-login-page-settings .limit-login-app-dashboard .form-table td button .dashicons, .limit-login-page-settings .limit-login-app-dashboard .form-table td .button .dashicons {
+.limit-login-page-settings .limit-login-app-dashboard .form-table td button .dashicons, .limit-login-page-settings .limit-login-app-dashboard .form-table td #llar-setting-page .button .dashicons, #llar-setting-page .limit-login-page-settings .limit-login-app-dashboard .form-table td .button .dashicons {
   vertical-align: middle;
 }
 .limit-login-page-settings .limit-login-app-dashboard .form-table td.llar-app-log-actions {
@@ -670,10 +596,9 @@ button.tags_add:hover, .tags_add.button:hover {
   border-bottom-left-radius: unset;
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border {
-  background: #FDFDFD;
   font-size: 1rem;
   line-height: inherit;
-  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  padding: 0.375rem 0.5rem 0.375rem 1rem;
   color: #666D84;
   border-radius: 16px;
   border: 1px solid #4ACAD8;
@@ -700,13 +625,116 @@ button.tags_add:hover, .tags_add.button:hover {
   box-shadow: unset;
   outline: unset;
 }
+#llar-setting-page .llar-settings-wrap .form-table tr td select.input_border {
+  padding: 0.375rem 2rem 0.375rem 1rem;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td input[type=checkbox] {
+  position: relative;
+  background-color: #FF7C06;
+  border: 1px solid #FF7C06;
+  box-sizing: content-box;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td input[type=checkbox]:checked::before {
+  content: "✓";
+  font-size: 1rem;
+  line-height: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  color: #FDFDFD;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td input[type=checkbox]:focus {
+  box-shadow: unset;
+}
 #llar-setting-page .llar-settings-wrap .form-table tr td .input_border {
   border-radius: 8px;
 }
-#llar-setting-page .llar-settings-wrap .form-table tr td .description-additional {
+#llar-setting-page .llar-settings-wrap .form-table tr td .input_border:hover, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border:focus {
+  box-shadow: unset;
+  outline: unset;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .form-table tr td .description-secondary {
   font-size: 1rem;
   color: #A4A8B7;
-  padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.375rem;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .description-secondary {
+  color: #666D84;
+}
+#llar-setting-page button, #llar-setting-page .button {
+  border-radius: 10px;
+  background: #FDFDFD;
+  border: 1px solid #2A2F40;
+  cursor: pointer;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+#llar-setting-page button.menu__item, #llar-setting-page .menu__item.button {
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 0.375rem 1.125rem;
+}
+@media screen and (max-width: 991.5px) {
+  #llar-setting-page button.menu__item, #llar-setting-page .menu__item.button {
+    padding: 0.3rem 1rem;
+  }
+}
+@media screen and (max-width: 428px) {
+  #llar-setting-page button.menu__item, #llar-setting-page .menu__item.button {
+    padding: 0.3rem 0.75rem;
+  }
+}
+#llar-setting-page button.tags, #llar-setting-page .tags.button {
+  font-size: 0.87rem;
+  font-weight: 400;
+  line-height: 1.37rem;
+  border: 1px solid #FF7C06;
+  width: fit-content;
+  padding: 0 1.5rem;
+  z-index: 50;
+}
+#llar-setting-page button.tags_basic, #llar-setting-page .tags_basic.button {
+  color: #FF7C06;
+  background: rgba(255, 124, 6, 0.0980392157);
+}
+#llar-setting-page button.tags_basic.active, #llar-setting-page .tags_basic.active.button, #llar-setting-page button.tags_basic:hover, #llar-setting-page .tags_basic.button:hover {
+  color: #FDFDFD;
+  background: #FF7C06;
+}
+#llar-setting-page button.tags_add, #llar-setting-page .tags_add.button {
+  color: #2A2F40;
+  border: 1px solid #A4A8B7;
+  background: #F6FBFF;
+}
+#llar-setting-page button.tags_add:hover, #llar-setting-page .tags_add.button:hover {
+  background: rgba(255, 124, 6, 0.0980392157);
+}
+#llar-setting-page .button__orange {
+  color: white !important;
+  background: #FF7C06;
+  border: 1px solid #FF7C06;
+  box-shadow: 0 0.312rem 0.625rem 0 rgba(255, 124, 6, 0.4980392157);
+}
+#llar-setting-page .button__orange:hover {
+  background: #F07200;
+}
+#llar-setting-page .button__orange:disabled {
+  border: 1px solid rgba(255, 124, 6, 0.4980392157);
+  background: rgba(255, 124, 6, 0.4980392157);
+  cursor: auto;
+}
+#llar-setting-page .button__transparent_orange {
+  color: #FF7C06 !important;
+  border: 1px solid;
+  background: transparent;
+}
+#llar-setting-page .button__transparent_orange:hover {
+  background: rgba(255, 124, 6, 0.0980392157);
+  border: 1px solid #FF7C06;
+}
+#llar-setting-page .button__transparent_orange:disabled {
+  background: transparent;
+  cursor: auto;
 }
 
 .hint_tooltip {
@@ -1918,13 +1946,13 @@ button.tags_add:hover, .tags_add.button:hover {
   display: none;
   color: red;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col #llar-setting-page .button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button {
   margin-left: 10px;
   text-transform: uppercase;
   position: relative;
   height: 44px;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button .preloader-wrapper, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button .preloader-wrapper {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button .preloader-wrapper, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col #llar-setting-page .button .preloader-wrapper, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button .preloader-wrapper {
   position: absolute;
   top: 0;
   left: 0;
@@ -1935,10 +1963,10 @@ button.tags_add:hover, .tags_add.button:hover {
   justify-content: center;
   display: none;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button.button-disabled .preloader-wrapper, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button-disabled.button .preloader-wrapper {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button.button-disabled .preloader-wrapper, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col #llar-setting-page .button-disabled.button .preloader-wrapper, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button-disabled.button .preloader-wrapper {
   display: flex;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button.button-disabled .preloader-wrapper span, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button-disabled.button .preloader-wrapper span {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button.button-disabled .preloader-wrapper span, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col #llar-setting-page .button-disabled.button .preloader-wrapper span, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button-disabled.button .preloader-wrapper span {
   visibility: visible;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .divider-line {
