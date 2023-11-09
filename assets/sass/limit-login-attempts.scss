@@ -1,6 +1,5 @@
 @import
 "settings",
-"mixins",
 "icon-block";
 
 .toplevel_page_limit-login-attempts { // top level css
@@ -461,8 +460,8 @@
 
   .llar-test-email-notification-btn {
     text-decoration: none;
-    margin-left: 15px;
-    font-weight: 600;
+    margin-left: 1rem;
+    font-weight: 400;
   }
 
   .llar-test-email-notification-loader {
@@ -611,13 +610,13 @@
           border-bottom-left-radius: unset;
 
           .textarea_border, .input_border {
+            background: $background-body;
             font-size: 1rem;
             line-height: inherit;
             padding: .5rem .5rem .5rem 1rem;
             color: $typography-secondary;
             border-radius: $border-radius__normal;
             border: 1px solid $primary-colors__turquoise;
-            background: $background-body;
             width: fit-content;
 
             textarea {

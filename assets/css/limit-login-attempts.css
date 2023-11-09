@@ -19,7 +19,7 @@
 }
 
 .llar_orange {
-  color: #FF9800;
+  color: #FF7C06;
 }
 .llar_orange:hover {
   color: #F07200;
@@ -43,6 +43,80 @@
   font-weight: bold;
 }
 
+button, .button {
+  border-radius: 10px;
+  background: #FDFDFD;
+  border: 1px solid #2A2F40;
+  cursor: pointer;
+  white-space: nowrap;
+}
+button.menu__item, .menu__item.button {
+  padding: 0.5rem 1.875rem;
+}
+@media screen and (max-width: 991.5px) {
+  button.menu__item, .menu__item.button {
+    padding: 0.3rem 1rem;
+  }
+}
+@media screen and (max-width: 428px) {
+  button.menu__item, .menu__item.button {
+    padding: 0.3rem 0.75rem;
+  }
+}
+button.tags, .tags.button {
+  font-size: 0.87rem;
+  font-weight: 400;
+  line-height: 1.37rem;
+  border: 1px solid #FF7C06;
+  width: fit-content;
+  padding: 0 1.5rem;
+  z-index: 50;
+}
+button.tags_basic, .tags_basic.button {
+  color: #FF7C06;
+  background: rgba(255, 124, 6, 0.0980392157);
+}
+button.tags_basic.active, .tags_basic.active.button, button.tags_basic:hover, .tags_basic.button:hover {
+  color: #FDFDFD;
+  background: #FF7C06;
+}
+button.tags_add, .tags_add.button {
+  color: #2A2F40;
+  border: 1px solid #A4A8B7;
+  background: #F6FBFF;
+}
+button.tags_add:hover, .tags_add.button:hover {
+  background: rgba(255, 124, 6, 0.0980392157);
+}
+
+.button__orange {
+  color: white !important;
+  background: #FF7C06;
+  border: 1px solid #FF7C06;
+  box-shadow: 0 0.312rem 0.625rem 0 rgba(255, 124, 6, 0.4980392157);
+}
+.button__orange:hover {
+  background: #F07200;
+}
+.button__orange:disabled {
+  border: 1px solid rgba(255, 124, 6, 0.4980392157);
+  background: rgba(255, 124, 6, 0.4980392157);
+  cursor: auto;
+}
+.button__transparent_orange {
+  color: #FF7C06 !important;
+  border: 1px solid;
+  background: transparent;
+}
+.button__transparent_orange:hover {
+  background: rgba(255, 124, 6, 0.0980392157);
+  border: 1px solid #FF7C06;
+}
+.button__transparent_orange:disabled {
+  background: transparent;
+  cursor: auto;
+}
+
 /* testing */
 .icon {
   vertical-align: middle;
@@ -53,7 +127,7 @@
   background-color: rgba(255, 124, 6, 0.0980392157);
   border-radius: 1rem;
   margin-right: 1rem;
-  color: #FF9800;
+  color: #FF7C06;
   filter: drop-shadow(0.7px 0.7px 0.7px rgba(255, 124, 6, 0.5));
 }
 .icon-base {
@@ -62,7 +136,7 @@
   background-color: rgba(255, 124, 6, 0.0980392157);
   border-radius: 1rem;
   margin-right: 1rem;
-  color: #FF9800;
+  color: #FF7C06;
   filter: drop-shadow(0.7px 0.7px 0.7px rgba(255, 124, 6, 0.5));
 }
 .icon-page-setting {
@@ -70,7 +144,7 @@
   height: 36px;
   padding: 0.325rem;
   margin-right: 1rem;
-  color: #FF9800;
+  color: #FF7C06;
   background-color: rgba(255, 124, 6, 0.0980392157);
   border-radius: 8px;
   vertical-align: middle;
@@ -95,7 +169,7 @@
   height: 50px;
   background-color: #FDFDFD;
   border-radius: 1rem;
-  color: #FF9800;
+  color: #FF7C06;
   flex: 0 0 auto;
 }
 @media screen and (max-width: 767.5px) {
@@ -260,14 +334,14 @@
   width: 20px;
   height: auto;
 }
-.limit-login-page-settings .limit-login-app-dashboard .form-table td button {
+.limit-login-page-settings .limit-login-app-dashboard .form-table td button, .limit-login-page-settings .limit-login-app-dashboard .form-table td .button {
   line-height: 1;
   margin-right: 5px;
 }
-.limit-login-page-settings .limit-login-app-dashboard .form-table td button:last-child {
+.limit-login-page-settings .limit-login-app-dashboard .form-table td button:last-child, .limit-login-page-settings .limit-login-app-dashboard .form-table td .button:last-child {
   margin-right: 0;
 }
-.limit-login-page-settings .limit-login-app-dashboard .form-table td button .dashicons {
+.limit-login-page-settings .limit-login-app-dashboard .form-table td button .dashicons, .limit-login-page-settings .limit-login-app-dashboard .form-table td .button .dashicons {
   vertical-align: middle;
 }
 .limit-login-page-settings .limit-login-app-dashboard .form-table td.llar-app-log-actions {
@@ -476,8 +550,8 @@
 }
 .limit-login-page-settings .llar-test-email-notification-btn {
   text-decoration: none;
-  margin-left: 15px;
-  font-weight: 600;
+  margin-left: 1rem;
+  font-weight: 400;
 }
 .limit-login-page-settings .llar-test-email-notification-loader .llar-app-ajax-spinner {
   float: none;
@@ -596,13 +670,13 @@
   border-bottom-left-radius: unset;
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border {
+  background: #FDFDFD;
   font-size: 1rem;
   line-height: inherit;
   padding: 0.5rem 0.5rem 0.5rem 1rem;
   color: #666D84;
   border-radius: 16px;
   border: 1px solid #4ACAD8;
-  background: #FDFDFD;
   width: fit-content;
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border textarea {
@@ -795,7 +869,7 @@
 #llar-header-upgrade-message {
   margin: 1.25rem auto;
   width: fit-content;
-  color: #FF9800;
+  color: #FF7C06;
   font-weight: 500;
   padding: 0.75rem 2rem;
   text-align: center;
@@ -823,7 +897,7 @@
   width: 2rem;
   height: 2rem;
   font-size: 2rem;
-  color: #FF9800;
+  color: #FF7C06;
   vertical-align: middle;
   margin-right: 5px;
 }
@@ -1325,12 +1399,12 @@
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button__transparent_orange:hover {
   background: rgba(255, 124, 6, 0.0980392157);
-  border: 1px solid #FF9800;
+  border: 1px solid #FF7C06;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button__orange {
   color: #FDFDFD !important;
-  background: #FF9800;
-  border: 1px solid #FF9800;
+  background: #FF7C06;
+  border: 1px solid #FF7C06;
   box-shadow: 0 0.3rem 0.72rem 0 rgba(255, 124, 6, 0.4980392157);
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button__orange:hover {
@@ -1539,7 +1613,7 @@
 #llar-dashboard-page .dashboard-section-4 .section-title__new .llar-label__circle-orange {
   font-size: 4rem;
   vertical-align: middle;
-  color: #FF9800;
+  color: #FF7C06;
 }
 #llar-dashboard-page .dashboard-section-4 .section-title__new .dashicons {
   font-size: 1.7rem;
@@ -1657,7 +1731,7 @@
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .countries-table-info {
   font-size: 1rem;
-  color: #FF9800;
+  color: #FF7C06;
   background-color: rgba(255, 124, 6, 0.0980392157);
   border-radius: 20px;
   padding: 0.25rem 2.06rem;
@@ -1844,13 +1918,13 @@
   display: none;
   color: red;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button {
   margin-left: 10px;
   text-transform: uppercase;
   position: relative;
   height: 44px;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button .preloader-wrapper {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button .preloader-wrapper, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button .preloader-wrapper {
   position: absolute;
   top: 0;
   left: 0;
@@ -1861,10 +1935,10 @@
   justify-content: center;
   display: none;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button.button-disabled .preloader-wrapper {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button.button-disabled .preloader-wrapper, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button-disabled.button .preloader-wrapper {
   display: flex;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button.button-disabled .preloader-wrapper span {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col button.button-disabled .preloader-wrapper span, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .field-wrap .button-col .button-disabled.button .preloader-wrapper span {
   visibility: visible;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content.llar-app-setup-popup .divider-line {

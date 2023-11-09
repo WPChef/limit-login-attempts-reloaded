@@ -130,9 +130,9 @@ $active_app_config = Config::get( 'app_config' );
                         <input class="input_border" type="text" size="3" maxlength="4"
                                value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
                                name="email_after"/> <?php echo __( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
-                        <span class="button llar-test-email-notification-btn">
+                        <button class="button menu__item col llar-test-email-notification-btn button__transparent_orange">
                             <?php echo __( 'Test Email Notifications', 'limit-login-attempts-reloaded' ); ?>
-                        </span>
+                        </button>
                         <span class="preloader-wrapper llar-test-email-notification-loader">
                         <span class="spinner llar-app-ajax-spinner"></span>
                         <span class="msg"></span>
