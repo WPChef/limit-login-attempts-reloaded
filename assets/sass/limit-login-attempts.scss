@@ -493,8 +493,6 @@
 
     a {
       color: #222222;
-      //text-decoration-style: dotted;
-      //text-underline-offset: 3px;
       text-decoration: none;
       border-bottom: 1px dashed;
     }
@@ -610,10 +608,9 @@
           border-bottom-left-radius: unset;
 
           .textarea_border, .input_border {
-            background: $background-body;
             font-size: 1rem;
             line-height: inherit;
-            padding: .5rem .5rem .5rem 1rem;
+            padding: .375rem .5rem .375rem 1rem;
             color: $typography-secondary;
             border-radius: $border-radius__normal;
             border: 1px solid $primary-colors__turquoise;
@@ -646,20 +643,152 @@
             }
           }
 
-          .input_border {
-            border-radius: $border-radius__min;
+          select {
+
+            &.input_border {
+              padding: .375rem 2rem .375rem 1rem;
+            }
           }
 
-          a {
+          input[type="checkbox"] {
+            position: relative;
+            background-color: $primary-colors__orange;
+            border: 1px solid $primary-colors__orange;
+            box-sizing: content-box;
+
+            &:checked {
+
+              &::before {
+                content: "\2713";
+                font-size: 1rem;
+                line-height: 1;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                color: $background-body;
+              }
+            }
+
+            &:focus {
+              box-shadow: unset;
+            }
+          }
+
+          .input_border {
+            border-radius: $border-radius__min;
+
+            &:hover, &:focus {
+              box-shadow: unset;
+              outline: unset;
+            }
+          }
+
+          a.unlink {
             @extend .llar_turquoise;
           }
 
-          .description-additional {
+          .description-additional, .description-secondary {
             font-size: 1rem;
             color: $typography-additional;
-            padding: .5rem .5rem .5rem 1.25rem;
+            padding: .5rem .5rem .5rem 1.375rem;
+          }
+
+          .description-secondary {
+            color: $typography-secondary;
           }
         }
+      }
+    }
+  }
+
+  button {
+    border-radius: 0.5 * $border-radius;
+    background: $background-body;
+    border: 1px solid $typography-primary;
+    cursor: pointer;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    &.menu__item {
+      font-size: 1rem;
+      line-height: 1.5;
+      padding: .375rem 1.125rem;
+
+      @include _991 {
+        padding: .3rem 1rem;
+      }
+
+      @include _428 {
+        padding: .3rem .75rem;
+      }
+    }
+
+    &.tags {
+      font-size: .87rem;
+      font-weight: 400;
+      line-height: 1.37rem;
+      border: 1px solid $primary-colors__orange;
+      width: fit-content;
+      padding: 0 1.5rem;
+      z-index: 50;
+
+
+      &_basic {
+        color: $primary-colors__orange;
+        background: $primary-colors__orange-back;
+
+        &.active, &:hover {
+          color: $background-body;
+          background: $primary-colors__orange;
+        }
+      }
+
+
+      &_add {
+        color: $typography-primary;
+        border: 1px solid $typography-additional;
+        background: $background__sky-blue;
+
+        &:hover {
+          background: $primary-colors__orange-back;
+        }
+      }
+    }
+  }
+
+  .button {
+    @extend button;
+
+    &__orange {
+      color: white!important;
+      background: $primary-colors__orange;
+      border: 1px solid $primary-colors__orange;
+      box-shadow: 0 .312rem .625rem 0 $primary-colors__orange-semi_back;
+
+      &:hover {
+        background: $secondary-colors__dark-orange;
+      }
+
+      &:disabled {
+        border: 1px solid $primary-colors__orange-semi_back;
+        background: $primary-colors__orange-semi_back;
+        cursor: auto;
+      }
+    }
+
+    &__transparent_orange {
+      color: $primary-colors__orange!important;
+      border: 1px solid;
+      background: transparent;
+
+      &:hover {
+        background: $primary-colors__orange-back;
+        border: 1px solid $primary-colors__orange;
+      }
+
+      &:disabled {
+        background: transparent;
+        cursor: auto;
       }
     }
   }
