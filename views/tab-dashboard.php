@@ -438,7 +438,7 @@ if( $active_app === 'local' ) {
                 <span class="llar-label llar-label__info">
                     <?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
                     <div class="hint_tooltip-parent">
-                    <span class="dashicons dashicons-editor-help"></span>
+                    <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                     <div class="hint_tooltip">
                         <ul class="hint_tooltip-content">
                             <li>
