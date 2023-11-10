@@ -629,7 +629,6 @@
   padding: 0.375rem 2rem 0.375rem 1rem;
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td input[type=checkbox] {
-  position: relative;
   background-color: #FF7C06;
   border: 1px solid #FF7C06;
   box-sizing: content-box;
