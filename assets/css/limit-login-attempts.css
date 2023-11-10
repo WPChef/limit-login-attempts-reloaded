@@ -47,6 +47,50 @@
   padding: 0 !important;
 }
 
+.pt-0_5 {
+  padding-top: 0.5rem !important;
+}
+
+.pt-1_5 {
+  padding-top: 1.5rem !important;
+}
+
+.mt-0_5 {
+  margin-top: 0.5rem !important;
+}
+
+.mt-1_5 {
+  margin-top: 1.5rem !important;
+}
+
+.dashicons-secondary {
+  margin-left: 0.5rem;
+  font-size: 170%;
+  line-height: inherit;
+  position: relative;
+  z-index: 1;
+  color: #E8E9EC;
+  width: 15px;
+  height: 15px;
+  border-radius: 20px;
+  vertical-align: middle;
+  background: #666D84;
+}
+@media screen and (max-width: 767.5px) {
+  .dashicons-secondary {
+    font-size: 1.4rem;
+  }
+}
+.dashicons-secondary:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  transform: translate(-50%, -50%);
+}
+
 /* testing */
 .icon {
   vertical-align: middle;
@@ -597,6 +641,7 @@
 #llar-setting-page .llar-settings-wrap .form-table tr td {
   color: #666D84;
   font-size: 1rem;
+  line-height: 1.5;
   border-top-left-radius: unset;
   border-bottom-left-radius: unset;
 }
@@ -668,8 +713,10 @@
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .form-table tr td .llar-protect-notice {
   font-size: 1rem;
+  line-height: inherit;
   color: #A4A8B7;
   padding: 1rem 0.5rem 0.5rem 1.5rem;
+  max-width: 52rem;
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .form-table tr td .llar-protect-notice {
   color: #666D84;
@@ -770,17 +817,28 @@
   column-gap: 1rem;
 }
 #llar-setting-page .llar-accordion {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  border-radius: 20px;
   background-color: #FDFDFD;
 }
 #llar-setting-page .llar-accordion .ui-accordion-header {
   color: #2A2F40;
   font-weight: 500;
-  padding: 1.5rem 2.55rem 1rem;
+  padding: 1.94rem 2.55rem 1.94rem;
   border: 1px solid #4ACAD8;
   border-bottom: 0;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
   background-color: #FDFDFD;
+}
+#llar-setting-page .llar-accordion .ui-accordion-header-collapsed {
+  border: 0;
+  border-radius: 20px;
+  background: unset;
+  box-shadow: 0.25rem 0.25rem 1.125rem 0 rgba(162, 180, 189, 0.2);
 }
 #llar-setting-page .llar-accordion .ui-accordion-header.ui-accordion-header-active {
   background: unset;
@@ -791,9 +849,16 @@
   border: 1px solid #4ACAD8;
   border-top: 0;
   background-color: #FDFDFD;
+  margin-bottom: 1rem;
+}
+#llar-setting-page .llar-accordion .ui-widget-content table {
+  font-weight: 400;
 }
 #llar-setting-page .llar-accordion .ui-widget-content table tr {
   box-shadow: unset;
+}
+#llar-setting-page .llar-accordion .ui-widget-content table tr th {
+  padding-left: 0;
 }
 
 .hint_tooltip {
@@ -1693,39 +1758,9 @@
   vertical-align: middle;
   color: #FF7C06;
 }
-#llar-dashboard-page .dashboard-section-4 .section-title__new .dashicons {
-  font-size: 1.7rem;
-  line-height: inherit;
-  position: relative;
-  z-index: 1;
-  color: #ECFAFB;
-}
-@media screen and (max-width: 767.5px) {
-  #llar-dashboard-page .dashboard-section-4 .section-title__new .dashicons {
-    font-size: 1.4rem;
-  }
-}
 #llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-parent {
   display: inline-block;
   position: relative;
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-parent::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 5px;
-  width: 15px;
-  height: 15px;
-  border-radius: 20px;
-  background-color: #666D84;
-  z-index: 0;
-}
-@media screen and (max-width: 767.5px) {
-  #llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-parent::after {
-    top: 2px;
-    width: 12px;
-    height: 12px;
-  }
 }
 #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
   flex: 0 0 auto;
@@ -1788,8 +1823,8 @@
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td {
   color: #666D84;
-  border-bottom: 1px solid #ECFAFB;
-  border-right: 1px solid #ECFAFB;
+  border-bottom: 1px solid #E8E9EC;
+  border-right: 1px solid #E8E9EC;
   position: relative;
   z-index: 1;
 }

@@ -268,15 +268,15 @@ $active_app_config = Config::get( 'app_config' );
                     <tr>
                         <th scope="row" valign="top"><?php echo __( 'Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
                             <span class="hint_tooltip-parent">
-                            <span class="dashicons dashicons-editor-help"></span>
-                            <div class="hint_tooltip">
-                                <ul class="hint_tooltip-content">
-                                    <li>
-                                        <?php echo generate_lorem_ipsum(50) ?>
-                                    </li>
-                                </ul>
-                            </div>
-                        </span>
+                                <span class="dashicons dashicons-editor-help"></span>
+                                <div class="hint_tooltip">
+                                    <ul class="hint_tooltip-content">
+                                        <li>
+                                            <?php echo generate_lorem_ipsum(50) ?>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </span>
                         </th>
                         <td>
                             <div class="description-secondary p-0">
@@ -296,15 +296,15 @@ $active_app_config = Config::get( 'app_config' );
                     <tr>
                         <th scope="row" valign="top"><?php echo __( 'Active App', 'limit-login-attempts-reloaded' ); ?>
                             <span class="hint_tooltip-parent">
-                                    <span class="dashicons dashicons-editor-help"></span>
-                                    <div class="hint_tooltip">
-                                        <ul class="hint_tooltip-content">
-                                            <li>
-                                                <?php esc_attr_e( 'Switches from free version (local) to premium (cloud).', 'limit-login-attempts-reloaded' ); ?>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </span>
+                                <span class="dashicons dashicons-editor-help"></span>
+                                <div class="hint_tooltip">
+                                    <ul class="hint_tooltip-content">
+                                        <li>
+                                            <?php esc_attr_e( 'Switches from free version (local) to premium (cloud).', 'limit-login-attempts-reloaded' ); ?>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </span>
                         </th>
                         <td>
                             <select class="input_border" name="active_app" id="">
@@ -331,41 +331,81 @@ $active_app_config = Config::get( 'app_config' );
                     <table class="form-table">
                         <tr>
                             <th scope="row" valign="top"><?php echo __( 'Lockout', 'limit-login-attempts-reloaded' ); ?>
-                                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Set lockout limits based on failed attempts.', 'limit-login-attempts-reloaded' ); ?>">
+                                <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-editor-help"></span>
-                                </i></th>
+                                    <div class="hint_tooltip">
+                                        <ul class="hint_tooltip-content">
+                                            <li>
+                                                <?php esc_attr_e( 'Set lockout limits based on failed attempts.', 'limit-login-attempts-reloaded' ); ?>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </span>
+                            </th>
                             <td>
-                                <input type="text" size="3" maxlength="4"
+                                <input class="input_border" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'allowed_retries' ) ); ?>"
-                                       name="allowed_retries"/> <?php echo __( 'allowed retries', 'limit-login-attempts-reloaded' ); ?>
-                                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Number of failed attempts allowed before locking out.', 'limit-login-attempts-reloaded' ); ?>">
-                                    <span class="dashicons dashicons-editor-help"></span>
-                                </i>
+                                       name="allowed_retries"/>
+                                <?php echo __( 'allowed retries', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="hint_tooltip-parent">
+                                    <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
+                                    <div class="hint_tooltip">
+                                        <ul class="hint_tooltip-content">
+                                            <li>
+                                                <?php esc_attr_e( 'Number of failed attempts allowed before locking out.', 'limit-login-attempts-reloaded' ); ?>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </span>
                                 <br/>
-                                <input type="text" size="3" maxlength="4"
+                                <input class="input_border mt-0_5" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'lockout_duration' ) / 60 ); ?>"
-                                       name="lockout_duration"/> <?php echo __( 'minutes lockout', 'limit-login-attempts-reloaded' ); ?>
-                                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Lockout time in minutes.', 'limit-login-attempts-reloaded' ); ?>">
-                                    <span class="dashicons dashicons-editor-help"></span>
-                                </i>
+                                       name="lockout_duration"/>
+                                <?php echo __( 'minutes lockout', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="hint_tooltip-parent">
+                                    <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
+                                    <div class="hint_tooltip">
+                                        <ul class="hint_tooltip-content">
+                                            <li>
+                                                <?php esc_attr_e( 'Lockout time in minutes.', 'limit-login-attempts-reloaded' ); ?>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </span>
                                 <br/>
-                                <input type="text" size="3" maxlength="4"
+                                <input class="input_border mt-0_5" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'allowed_lockouts' ) ); ?>"
                                        name="allowed_lockouts"/> <?php echo __( 'lockouts increase lockout time to', 'limit-login-attempts-reloaded' ); ?>
-                                <input type="text" size="3" maxlength="4"
+                                <input class="input_border" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'long_duration' ) / 3600 ); ?>"
-                                       name="long_duration"/> <?php echo __( 'hours', 'limit-login-attempts-reloaded' ); ?>
-                                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'After the specified number of lockouts the lockout time will increase by specified hours.', 'limit-login-attempts-reloaded' ); ?>">
-                                    <span class="dashicons dashicons-editor-help"></span>
-                                </i>
+                                       name="long_duration"/>
+                                <?php echo __( 'hours', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="hint_tooltip-parent">
+                                    <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
+                                    <div class="hint_tooltip">
+                                        <ul class="hint_tooltip-content">
+                                            <li>
+                                                <?php esc_attr_e( 'After the specified number of lockouts the lockout time will increase by specified hours.', 'limit-login-attempts-reloaded' ); ?>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </span>
                                 <br/>
-                                <input type="text" size="3" maxlength="4"
+                                <input class="input_border mt-0_5" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'valid_duration' ) / 3600 ); ?>"
-                                       name="valid_duration"/> <?php echo __( 'hours until retries are reset', 'limit-login-attempts-reloaded' ); ?>
-                                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Time in hours before blocks are removed.', 'limit-login-attempts-reloaded' ); ?>">
-                                    <span class="dashicons dashicons-editor-help"></span>
-                                </i>
-                                <p class="description">
+                                       name="valid_duration"/>
+                                <?php echo __( 'hours until retries are reset', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="hint_tooltip-parent">
+                                    <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
+                                    <div class="hint_tooltip">
+                                        <ul class="hint_tooltip-content">
+                                            <li>
+                                                <?php esc_attr_e( 'Time in hours before blocks are removed.', 'limit-login-attempts-reloaded' ); ?>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </span>
+                                <div class="description-secondary mt-0_5 p-0">
                                     <?php echo sprintf(
                                         __( 'After a specific IP address fails to log in <b>%1$s</b> times, a lockout lasting <b>%2$s</b> minutes is activated. If additional failed attempts occur within <b>%3$s</b> hours and lead to another lockout, once their combined total hits <b>%4$s</b>, the <b>%2$s</b> minutes duration is extended to <b>%5$s</b> hours. The lockout will be lifted once <b>%3$s</b> hours have passed since the last lockout incident.', 'limit-login-attempts-reloaded' ),
                                         Config::get( 'allowed_retries' ),
@@ -374,37 +414,50 @@ $active_app_config = Config::get( 'app_config' );
                                         Config::get( 'allowed_lockouts' ),
                                         Config::get( 'long_duration' ) / 3600
                                     ); ?>
-                                </p>
+                                </div>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"
-                                valign="top"><?php echo __( 'Trusted IP Origins', 'limit-login-attempts-reloaded' ); ?>
-                                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Server variables containing IP addresses.', 'limit-login-attempts-reloaded' ); ?>">
+                            <th scope="row" valign="top"><?php echo __( 'Trusted IP Origins', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-editor-help"></span>
-                                </i></th>
+                                    <div class="hint_tooltip">
+                                        <ul class="hint_tooltip-content">
+                                            <li>
+                                                <?php esc_attr_e( 'Server variables containing IP addresses.', 'limit-login-attempts-reloaded' ); ?>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </span>
+                            </th>
                             <td>
                                 <div class="field-col">
-                                    <input type="text" class="regular-text" style="width: 100%;max-width: 431px;" name="lla_trusted_ip_origins" value="<?php echo esc_attr( $trusted_ip_origins ); ?>">
-                                    <p class="description"><?php _e( 'Specify the origins you trust in order of priority, separated by commas. We strongly recommend that you <b>do not</b> use anything other than REMOTE_ADDR since other origins can be easily faked. Examples: HTTP_X_FORWARDED_FOR, HTTP_CF_CONNECTING_IP, HTTP_X_SUCURI_CLIENTIP', 'limit-login-attempts-reloaded' ); ?></p>
+                                    <input t class="input_border" ype="text" class="regular-text" style="width: 100%;max-width: 431px;" name="lla_trusted_ip_origins" value="<?php echo esc_attr( $trusted_ip_origins ); ?>">
+                                    <div class="description-secondary mt-0_5 p-0">
+                                        <?php _e( 'Specify the origins you trust in order of priority, separated by commas. We strongly recommend that you <b>do not</b> use anything other than REMOTE_ADDR since other origins can be easily faked. Examples: HTTP_X_FORWARDED_FOR, HTTP_CF_CONNECTING_IP, HTTP_X_SUCURI_CLIENTIP', 'limit-login-attempts-reloaded' ); ?>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
                     </table>
                 </div>
 
-
                 <h3><?php echo ($active_app_config) ? $active_app_config['name'] : __('Custom App', 'limit-login-attempts-reloaded' ); ?></h3>
                 <div class="custom-app-tab">
-
                     <table class="form-table">
-
                         <tr>
-                            <th scope="row"
-                                valign="top"><?php echo __( 'Setup Code', 'limit-login-attempts-reloaded' ); ?>
-                                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'This is the code you receive via email once you subscribe to the LLAR premium cloud app. (example xxxxxxxxxxxxx=yek?putes/1v/moc.stpmettanigoltimil.ipa)', 'limit-login-attempts-reloaded' ); ?>">
+                            <th scope="row" valign="top"><?php echo __( 'Setup Code', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-editor-help"></span>
-                                </i></th>
+                                    <div class="hint_tooltip">
+                                        <ul class="hint_tooltip-content">
+                                            <li>
+                                                <?php esc_attr_e( 'This is the code you receive via email once you subscribe to the LLAR premium cloud app. (example xxxxxxxxxxxxx=yek?putes/1v/moc.stpmettanigoltimil.ipa)', 'limit-login-attempts-reloaded' ); ?>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </span>
+                            </th>
                             <td>
                                 <?php if( $active_app === 'custom') : ?>
                                     <a class="llar-toggle-setup-field" href="#"><?php _e( 'Edit', 'limit-login-attempts-reloaded' ); ?></a>

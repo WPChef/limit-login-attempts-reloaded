@@ -5,7 +5,7 @@ $background-body: #FDFDFD;
 $background__sky-blue: #F6FBFF;
 $background-element__almond: #FFEFD6;
 $border-element__red-sand: #EBB35A;
-$border-element__ghostly-white: #ECFAFB;
+$border-element__ghostly-white: #E8E9EC;
 
 $primary-colors__orange: #FF7C06;
 $primary-colors__orange_light: #FF9800;
@@ -120,4 +120,48 @@ $border-radius__max: $border-radius * 2;
 
 .p-0 {
   padding: 0!important;
+}
+
+.pt-0_5 {
+  padding-top: .5rem!important;
+}
+
+.pt-1_5 {
+  padding-top: 1.5rem!important;
+}
+
+.mt-0_5 {
+  margin-top: 0.5rem!important;
+}
+
+.mt-1_5 {
+  margin-top: 1.5rem!important;
+}
+
+.dashicons-secondary {
+  margin-left: .5rem;
+  font-size: 170%;
+  line-height: inherit;
+  position: relative;
+  z-index: 1;
+  color: $border-element__ghostly-white;
+  width: 15px;
+  height: 15px;
+  border-radius: 20px;
+  vertical-align: middle;
+  background: $typography-secondary;
+
+  @include _767 {
+    font-size: 1.4rem;
+  }
+
+  &:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    transform: translate(-50%, -50%);
+  }
 }

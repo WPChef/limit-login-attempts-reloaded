@@ -605,6 +605,7 @@
         td {
           color: $typography-secondary;
           font-size: 1rem;
+          line-height: 1.5;
           border-top-left-radius: unset;
           border-bottom-left-radius: unset;
 
@@ -694,8 +695,10 @@
 
           .description-additional, .description-secondary, .llar-protect-notice {
             font-size: 1rem;
+            line-height: inherit;
             color: $typography-additional;
             padding: 1rem .5rem .5rem 1.5rem;
+            max-width: 52rem;
           }
 
           .description-secondary, .llar-protect-notice {
@@ -821,17 +824,29 @@
   }
 
   .llar-accordion {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    border-radius: $border-radius;
     background-color: $background-body;
 
     .ui-accordion-header {
       color: $typography-primary;
       font-weight: 500;
-      padding: 1.5rem 2.55rem 1rem;
+      padding: 1.94rem 2.55rem 1.94rem;
       border: 1px solid $primary-colors__turquoise;
       border-bottom: 0;
       border-top-right-radius: $border-radius;
       border-top-left-radius: $border-radius;
       background-color: $background-body;
+
+      &-collapsed {
+        border: 0;
+        border-radius: $border-radius;
+        background: unset;
+        box-shadow: 0.25rem 0.25rem 1.125rem 0 $box-shadow__light-transparent-gray;
+      }
 
       &.ui-accordion-header-active {
         background: unset;
@@ -844,11 +859,17 @@
       border: 1px solid $primary-colors__turquoise;
       border-top: 0;
       background-color: $background-body;
+      margin-bottom: 1rem;
 
       table {
+        font-weight: 400;
 
         tr {
           box-shadow: unset;
+
+          th {
+            padding-left: 0;
+          }
         }
       }
     }

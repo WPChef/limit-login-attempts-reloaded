@@ -519,39 +519,9 @@
         }
       }
 
-      .dashicons {
-        font-size: 1.7rem;
-        line-height: inherit;
-        position: relative;
-        z-index: 1;
-        color: $border-element__ghostly-white;
-
-        @include _767 {
-          font-size: 1.4rem;
-        }
-      }
-
       .hint_tooltip-parent {
         display: inline-block;
         position: relative;
-
-        &::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 5px;
-          width: 15px;
-          height: 15px;
-          border-radius: $border-radius;
-          background-color: $typography-secondary;
-          z-index: 0;
-
-          @include _767 {
-            top: 2px;
-            width: 12px;
-            height: 12px;
-          }
-        }
       }
     }
 
