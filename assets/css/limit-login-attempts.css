@@ -577,6 +577,7 @@
   padding: 1.81rem 2.75rem;
 }
 #llar-setting-page .llar-settings-wrap .form-table tr th {
+  color: #2A2F40;
   font-weight: 500;
   border-top-right-radius: unset;
   border-bottom-right-radius: unset;
@@ -603,13 +604,14 @@
   font-size: 1rem;
   line-height: inherit;
   padding: 0.375rem 0.5rem 0.375rem 1rem;
-  color: #666D84;
+  color: #4ACAD8;
   border-radius: 16px;
   border: 1px solid #4ACAD8;
   width: fit-content;
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border textarea {
   font-size: 1rem;
+  color: #666D84;
   padding-right: 1.5rem;
   border: unset;
 }
@@ -629,8 +631,12 @@
   box-shadow: unset;
   outline: unset;
 }
+#llar-setting-page .llar-settings-wrap .form-table tr td select {
+  background: #FDFDFD url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234ACAD8FF'%3e%3cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") no-repeat right 5px top 55%;
+  background-size: 16px 16px;
+}
 #llar-setting-page .llar-settings-wrap .form-table tr td select.input_border {
-  padding: 0.375rem 2rem 0.375rem 1rem;
+  padding: 0.375rem 4rem 0.375rem 1rem;
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td input[type=checkbox] {
   background-color: #FDFDFD;
@@ -660,13 +666,24 @@
   box-shadow: unset;
   outline: unset;
 }
-#llar-setting-page .llar-settings-wrap .form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .form-table tr td .description-secondary {
+#llar-setting-page .llar-settings-wrap .form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .form-table tr td .llar-protect-notice {
   font-size: 1rem;
   color: #A4A8B7;
   padding: 1rem 0.5rem 0.5rem 1.5rem;
 }
-#llar-setting-page .llar-settings-wrap .form-table tr td .description-secondary {
+#llar-setting-page .llar-settings-wrap .form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .form-table tr td .llar-protect-notice {
   color: #666D84;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .llar-protect-notice {
+  font-size: inherit;
+  color: inherit;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .llar-protect-notice a {
+  text-decoration: none;
+  border-bottom: unset;
+}
+#llar-setting-page .llar-settings-wrap .form-table tr td .llar-protect-notice a:hover {
+  text-decoration: underline;
 }
 #llar-setting-page button, #llar-setting-page .button {
   border-radius: 10px;
@@ -751,6 +768,32 @@
   display: flex;
   flex-wrap: nowrap;
   column-gap: 1rem;
+}
+#llar-setting-page .llar-accordion {
+  background-color: #FDFDFD;
+}
+#llar-setting-page .llar-accordion .ui-accordion-header {
+  color: #2A2F40;
+  font-weight: 500;
+  padding: 1.5rem 2.55rem 1rem;
+  border: 1px solid #4ACAD8;
+  border-bottom: 0;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  background-color: #FDFDFD;
+}
+#llar-setting-page .llar-accordion .ui-accordion-header.ui-accordion-header-active {
+  background: unset;
+}
+#llar-setting-page .llar-accordion .ui-widget-content {
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border: 1px solid #4ACAD8;
+  border-top: 0;
+  background-color: #FDFDFD;
+}
+#llar-setting-page .llar-accordion .ui-widget-content table tr {
+  box-shadow: unset;
 }
 
 .hint_tooltip {
@@ -839,15 +882,6 @@
 .llar-notice-review .llar-review-info .llar-buttons li .dashicons,
 .llar-notice-notify .llar-review-info .llar-buttons li .dashicons {
   margin-right: 5px;
-}
-
-.llar-accordion .ui-accordion-header {
-  font-weight: bold;
-  background: #778899;
-  color: #fff;
-}
-.llar-accordion .ui-accordion-header.ui-accordion-header-active {
-  background: #87CEFA;
 }
 
 .custom-app-tab {
