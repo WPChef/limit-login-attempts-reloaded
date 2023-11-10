@@ -25,13 +25,12 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 
 <?php if( $active_app === 'local' ) : ?>
 <div id="llar-header-upgrade-message">
-    <p><span class="dashicons dashicons-info"></span>
+    <p>
+        <span class="dashicons dashicons-info"></span>
         <?php echo sprintf( __( '<a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to premium</a> to access our powerful login firewall, which detects, counters and neutralizes attacks in the cloud ', 'limit-login-attempts-reloaded' ),
             'https://www.limitloginattempts.com/info.php?from=plugin-'.( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
-        ); ?></p>
-<!--        --><?php //echo sprintf( __( 'Thank you for using the free version of <b>Limit Login Attempts Reloaded</b>. <a href="%s" target="_blank">Upgrade to our cloud app</a> for enhanced protection, visual metrics & premium support.', 'limit-login-attempts-reloaded' ),
-//            'https://www.limitloginattempts.com/info.php?from=plugin-'.( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
-//        ); ?><!--</p>-->
+        ); ?>
+    </p>
 </div>
 <?php endif; ?>
 
