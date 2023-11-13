@@ -126,6 +126,16 @@
   box-sizing: border-box;
   filter: drop-shadow(0.7px 0.7px 0.7px rgba(255, 124, 6, 0.5));
 }
+.icon-page-setting_add {
+  width: 50px;
+  height: 50px;
+  padding: 0.62rem;
+  margin-right: 0.75rem;
+  color: #FF7C06;
+  background-color: #FDFDFD;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
 .icon-additional {
   width: 28px;
   height: 28px;
@@ -855,25 +865,61 @@
 #llar-setting-page .llar-accordion .ui-accordion-header.ui-accordion-header-active {
   background: unset;
 }
-#llar-setting-page .llar-accordion .ui-widget-content {
+#llar-setting-page .llar-accordion .ui-accordion-content {
+  padding-top: 0;
+  margin-bottom: 1rem;
+  color: #2A2F40;
   border-bottom-right-radius: 20px;
   border-bottom-left-radius: 20px;
   border: 1px solid #4ACAD8;
   border-top: 0;
   background-color: #FDFDFD;
-  margin-bottom: 1rem;
 }
-#llar-setting-page .llar-accordion .ui-widget-content a {
+#llar-setting-page .llar-accordion .ui-accordion-content a {
   color: inherit;
 }
-#llar-setting-page .llar-accordion .ui-widget-content table {
+#llar-setting-page .llar-accordion .ui-accordion-content .form-table {
+  margin-top: 0;
+  border-spacing: 0;
   font-weight: 400;
 }
-#llar-setting-page .llar-accordion .ui-widget-content table tr {
+#llar-setting-page .llar-accordion .ui-accordion-content .form-table tr {
   box-shadow: unset;
 }
-#llar-setting-page .llar-accordion .ui-widget-content table tr th {
+#llar-setting-page .llar-accordion .ui-accordion-content .form-table tr th, #llar-setting-page .llar-accordion .ui-accordion-content .form-table tr td {
+  padding-top: 0;
+}
+#llar-setting-page .llar-accordion .ui-accordion-content .form-table tr th {
   padding-left: 0;
+}
+#llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table {
+  margin: 0.5rem 0;
+  padding: 1.5rem 3rem;
+  background-color: #F6FBFF;
+  border-radius: 20px;
+}
+#llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table .description {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+#llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table .add_block__list {
+  display: flex;
+  color: #666D84;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  justify-content: space-between;
+}
+#llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table .add_block__list .item {
+  flex: 0 0 16%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+#llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table .add_block__list .item .name {
+  width: 80%;
 }
 
 .hint_tooltip {

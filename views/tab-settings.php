@@ -440,6 +440,64 @@ $active_app_config = Config::get( 'app_config' );
                             </td>
                         </tr>
                     </table>
+                    <div class="add_block__under_table">
+                        <div class="description">
+                            Why Use Our Premium Cloud App?
+                        </div>
+                        <div class="add_block__list">
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                </svg>
+                                <div class="name">
+                                    Absorb site load caused by attacks
+                                </div>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                </svg>
+                                <div class="name">
+                                    Use intelligent IP denial/unblocking technology
+                                </div>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                </svg>
+                                <div class="name">
+                                    Sync the allow/deny/pass lists between multiple domains
+                                </div>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                </svg>
+                                <div class="name">
+                                    Get premium support
+                                </div>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                </svg>
+                                <div class="name">
+                                    Run auto backups of access control lists, lockouts and logs
+                                </div>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                </svg>
+                                <div class="name">
+                                    No contract - cancel anytime
+                                </div>
+                            </div>
+                        </div>
+                        <button class="button menu__item button__transparent_orange" id="">
+                            <?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+                        </button>
+                    </div>
                 </div>
 
                 <h3><?php echo ($active_app_config) ? $active_app_config['name'] : __('Custom App', 'limit-login-attempts-reloaded' ); ?></h3>
@@ -466,10 +524,14 @@ $active_app_config = Config::get( 'app_config' );
                                 <?php endif; ?>
                                 <div class="setup-code-wrap <?php echo ( $active_app === 'local' || !$active_app_config ) ? 'active' : ''; ?>">
                                     <input  class="input_border full_area" type="text" class="regular-text" id="limit-login-app-setup-code" value="<?php echo ( !empty( $app_setup_code ) ) ? esc_attr( $app_setup_code ) : ''; ?>">
-                                    <button class="button menu__item button__transparent_orange" id="limit-login-app-setup"><?php echo __( 'Submit', 'limit-login-attempts-reloaded' ); ?></button>
+                                    <button class="button menu__item button__transparent_orange" id="limit-login-app-setup">
+                                        <?php echo __( 'Submit', 'limit-login-attempts-reloaded' ); ?>
+                                    </button>
                                     <span class="spinner llar-app-ajax-spinner"></span><br>
                                     <span class="llar-app-ajax-msg"></span>
-                                    <div class="description-secondary mt-0_5 p-0"><?php _e( 'Add this code to all websites in your network to sync protection (payment required for additional domains unless subscribed to Agency plan).', 'limit-login-attempts-reloaded' ) ?></div>
+                                    <div class="description-secondary mt-0_5 p-0">
+                                        <?php _e( 'Add this code to all websites in your network to sync protection (payment required for additional domains unless subscribed to Agency plan).', 'limit-login-attempts-reloaded' ) ?>
+                                    </div>
                                 </div>
 
                                 <?php if( $active_app === 'local' ) : ?>
