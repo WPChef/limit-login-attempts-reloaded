@@ -175,6 +175,9 @@
     transform: scale(0.9);
   }
 }
+.icon-corr {
+  padding: 0.375rem;
+}
 
 .toplevel_page_limit-login-attempts #wpcontent {
   background-color: #F6FBFF;

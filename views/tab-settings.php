@@ -447,15 +447,15 @@ $active_app_config = Config::get( 'app_config' );
                         <div class="add_block__list">
                             <div class="item">
                                 <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-lock-big"></use>
                                 </svg>
                                 <div class="name">
                                     Absorb site load caused by attacks
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                <svg class="icon-page-setting_add icon-corr">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-ip"></use>
                                 </svg>
                                 <div class="name">
                                     Use intelligent IP denial/unblocking technology
@@ -463,7 +463,7 @@ $active_app_config = Config::get( 'app_config' );
                             </div>
                             <div class="item">
                                 <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-align-left"></use>
                                 </svg>
                                 <div class="name">
                                     Sync the allow/deny/pass lists between multiple domains
@@ -471,7 +471,7 @@ $active_app_config = Config::get( 'app_config' );
                             </div>
                             <div class="item">
                                 <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-admin-big"></use>
                                 </svg>
                                 <div class="name">
                                     Get premium support
@@ -479,7 +479,7 @@ $active_app_config = Config::get( 'app_config' );
                             </div>
                             <div class="item">
                                 <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exit"></use>
                                 </svg>
                                 <div class="name">
                                     Run auto backups of access control lists, lockouts and logs
@@ -487,7 +487,7 @@ $active_app_config = Config::get( 'app_config' );
                             </div>
                             <div class="item">
                                 <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-folder-cross"></use>
                                 </svg>
                                 <div class="name">
                                     No contract - cancel anytime
