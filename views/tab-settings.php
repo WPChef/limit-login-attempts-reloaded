@@ -442,7 +442,7 @@ $active_app_config = Config::get( 'app_config' );
                     </table>
                     <div class="add_block__under_table">
                         <div class="description">
-                            Why Use Our Premium Cloud App?
+                            <?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                         <div class="add_block__list">
                             <div class="item">
@@ -450,7 +450,7 @@ $active_app_config = Config::get( 'app_config' );
                                     <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-lock-big"></use>
                                 </svg>
                                 <div class="name">
-                                    Absorb site load caused by attacks
+                                    <?php _e( 'Absorb site load caused by attacks', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
@@ -458,7 +458,7 @@ $active_app_config = Config::get( 'app_config' );
                                     <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-ip"></use>
                                 </svg>
                                 <div class="name">
-                                    Use intelligent IP denial/unblocking technology
+                                    <?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
@@ -466,7 +466,7 @@ $active_app_config = Config::get( 'app_config' );
                                     <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-align-left"></use>
                                 </svg>
                                 <div class="name">
-                                    Sync the allow/deny/pass lists between multiple domains
+                                    <?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
@@ -474,7 +474,7 @@ $active_app_config = Config::get( 'app_config' );
                                     <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-admin-big"></use>
                                 </svg>
                                 <div class="name">
-                                    Get premium support
+                                    <?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
@@ -482,7 +482,7 @@ $active_app_config = Config::get( 'app_config' );
                                     <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exit"></use>
                                 </svg>
                                 <div class="name">
-                                    Run auto backups of access control lists, lockouts and logs
+                                    <?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
@@ -490,7 +490,7 @@ $active_app_config = Config::get( 'app_config' );
                                     <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-folder-cross"></use>
                                 </svg>
                                 <div class="name">
-                                    No contract - cancel anytime
+                                    <?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                         </div>
@@ -594,6 +594,64 @@ $active_app_config = Config::get( 'app_config' );
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </table>
+                    <div class="add_block__under_table image_plus">
+                        <div class="add_block__list">
+                            <div class="item item_column">
+                                <?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
+                                <button class="button menu__item button__transparent_orange" id="">
+                                    <?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+                                </button>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-lock-big"></use>
+                                </svg>
+                                <div class="name">
+                                    <?php _e( 'Absorb site load caused by attacks', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add icon-corr">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-ip"></use>
+                                </svg>
+                                <div class="name">
+                                    <?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-align-left"></use>
+                                </svg>
+                                <div class="name">
+                                    <?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-admin-big"></use>
+                                </svg>
+                                <div class="name">
+                                    <?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exit"></use>
+                                </svg>
+                                <div class="name">
+                                    <?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <svg class="icon-page-setting_add">
+                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-folder-cross"></use>
+                                </svg>
+                                <div class="name">
+                                    <?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

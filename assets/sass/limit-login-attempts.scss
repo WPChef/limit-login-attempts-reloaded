@@ -912,7 +912,7 @@
           display: flex;
           color: $typography-secondary;
           margin-top: 1rem;
-          margin-bottom: 1rem;
+          margin-bottom: .5rem;
           font-size: 1rem;
           justify-content: space-between;
 
@@ -925,6 +925,20 @@
 
             .name {
               width: 80%;
+            }
+          }
+        }
+
+        &.image_plus {
+
+          .add_block__list {
+
+            .item {
+              flex: 0 0 14%;
+
+              &_column {
+                flex-direction: column;
+              }
             }
           }
         }

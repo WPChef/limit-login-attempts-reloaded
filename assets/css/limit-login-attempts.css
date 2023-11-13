@@ -910,7 +910,7 @@
   display: flex;
   color: #666D84;
   margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   font-size: 1rem;
   justify-content: space-between;
 }
@@ -923,6 +923,12 @@
 }
 #llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table .add_block__list .item .name {
   width: 80%;
+}
+#llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table.image_plus .add_block__list .item {
+  flex: 0 0 14%;
+}
+#llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table.image_plus .add_block__list .item_column {
+  flex-direction: column;
 }
 
 .hint_tooltip {
