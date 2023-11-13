@@ -41,6 +41,17 @@
     vertical-align: middle;
     box-sizing: border-box;
     filter: drop-shadow(.7px .7px .7px rgba(255, 124, 6, 0.5));
+
+    &_add {
+      width: 50px;
+      height: 50px;
+      padding: .62rem;
+      margin-right: .75rem;
+      color: $primary-colors__orange;
+      background-color: $background-body;
+      border-radius: $border-radius__min;
+      box-sizing: border-box;
+    }
   }
 
   //&-before_turquoise {
