@@ -432,7 +432,7 @@ $active_app_config = Config::get( 'app_config' );
                             </th>
                             <td>
                                 <div class="field-col">
-                                    <input t class="input_border" ype="text" class="regular-text" style="width: 100%;max-width: 431px;" name="lla_trusted_ip_origins" value="<?php echo esc_attr( $trusted_ip_origins ); ?>">
+                                    <input class="input_border" ype="text" class="regular-text" style="width: 100%;max-width: 431px;" name="lla_trusted_ip_origins" value="<?php echo esc_attr( $trusted_ip_origins ); ?>">
                                     <div class="description-secondary mt-0_5 p-0">
                                         <?php _e( 'Specify the origins you trust in order of priority, separated by commas. We strongly recommend that you <b>do not</b> use anything other than REMOTE_ADDR since other origins can be easily faked. Examples: HTTP_X_FORWARDED_FOR, HTTP_CF_CONNECTING_IP, HTTP_X_SUCURI_CLIENTIP', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
@@ -460,22 +460,26 @@ $active_app_config = Config::get( 'app_config' );
                             </th>
                             <td>
                                 <?php if( $active_app === 'custom') : ?>
-                                    <a class="llar-toggle-setup-field" href="#"><?php _e( 'Edit', 'limit-login-attempts-reloaded' ); ?></a>
+                                    <a class="unlink link__style_unlink llar-toggle-setup-field" href="#">
+                                        <?php _e( 'Edit', 'limit-login-attempts-reloaded' ); ?>
+                                    </a>
                                 <?php endif; ?>
                                 <div class="setup-code-wrap <?php echo ( $active_app === 'local' || !$active_app_config ) ? 'active' : ''; ?>">
-                                    <input type="text" class="regular-text" id="limit-login-app-setup-code" value="<?php echo ( !empty( $app_setup_code ) ) ? esc_attr( $app_setup_code ) : ''; ?>">
-                                    <button class="button" id="limit-login-app-setup"><?php echo __( 'Submit', 'limit-login-attempts-reloaded' ); ?></button>
+                                    <input  class="input_border full_area" type="text" class="regular-text" id="limit-login-app-setup-code" value="<?php echo ( !empty( $app_setup_code ) ) ? esc_attr( $app_setup_code ) : ''; ?>">
+                                    <button class="button menu__item button__transparent_orange" id="limit-login-app-setup"><?php echo __( 'Submit', 'limit-login-attempts-reloaded' ); ?></button>
                                     <span class="spinner llar-app-ajax-spinner"></span><br>
                                     <span class="llar-app-ajax-msg"></span>
-                                    <p class="description"><?php _e( 'Add this code to all websites in your network to sync protection (payment required for additional domains unless subscribed to Agency plan).', 'limit-login-attempts-reloaded' ) ?></p>
+                                    <div class="description-secondary mt-0_5 p-0"><?php _e( 'Add this code to all websites in your network to sync protection (payment required for additional domains unless subscribed to Agency plan).', 'limit-login-attempts-reloaded' ) ?></div>
                                 </div>
 
                                 <?php if( $active_app === 'local' ) : ?>
-                                    <p class="description"><?php echo sprintf(
-                                            __( 'Use the <a href="%s" target="_blank">premium app</a> that we offer or follow the instructions on <a href="%s" target="_blank">how to</a> create your own one.', 'limit-login-attempts-reloaded' ),
+                                    <div class="description-secondary p-0">
+                                        <?php echo sprintf(
+                                            __( 'Use the <a href="%s" class="link__style_color_inherit" target="_blank">premium app</a> that we offer or follow the instructions on <a href="%s" target="_blank">how to</a> create your own one.', 'limit-login-attempts-reloaded' ),
                                             'https://www.limitloginattempts.com/info.php?from=plugin-settings',
                                             'https://www.limitloginattempts.com/app/?from=plugin-settings' );
-                                        ?></p>
+                                        ?>
+                                    </div>
                                     <div class="llar-why-use-premium-text">
                                         <div class="title"><?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?></div>
                                         <ul>
