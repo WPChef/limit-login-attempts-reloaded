@@ -523,7 +523,7 @@ $active_app_config = Config::get( 'app_config' );
                                     </a>
                                 <?php endif; ?>
                                 <div class="setup-code-wrap <?php echo ( $active_app === 'local' || !$active_app_config ) ? 'active' : ''; ?>">
-                                    <input  class="input_border full_area" type="text" class="regular-text" id="limit-login-app-setup-code" value="<?php echo ( !empty( $app_setup_code ) ) ? esc_attr( $app_setup_code ) : ''; ?>">
+                                    <input class="input_border full_area regular-text" type="text" id="limit-login-app-setup-code" value="<?php echo ( !empty( $app_setup_code ) ) ? esc_attr( $app_setup_code ) : ''; ?>">
                                     <button class="button menu__item button__transparent_orange" id="limit-login-app-setup">
                                         <?php echo __( 'Submit', 'limit-login-attempts-reloaded' ); ?>
                                     </button>
@@ -547,11 +547,12 @@ $active_app_config = Config::get( 'app_config' );
                         </tr>
                         <?php if( $active_app === 'custom' && $active_app_config ) : ?>
                             <tr class="app-form-field">
-                                <th scope="row"
-                                    valign="top"><?php echo __( 'Configuration', 'limit-login-attempts-reloaded' ); ?></th>
+                                <th scope="row" valign="top"><?php echo __( 'Configuration', 'limit-login-attempts-reloaded' ); ?></th>
                                 <td>
                                     <div class="field-col">
-                                        <textarea id="limit-login-app-config" readonly="readonly" name="limit-login-app-config" cols="60" rows="5"><?php echo esc_textarea( json_encode( $active_app_config ) ); ?></textarea><br>
+                                        <div class="textarea_border">
+                                            <textarea id="limit-login-app-config" readonly="readonly" name="limit-login-app-config" cols="60" rows="5"><?php echo esc_textarea( json_encode( $active_app_config ) ); ?></textarea><br>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -561,19 +562,27 @@ $active_app_config = Config::get( 'app_config' );
                             <?php foreach( $active_app_config['settings'] as $setting_name => $setting_params ) : ?>
                                 <tr>
                                     <th scope="row" valign="top"><?php echo $setting_params['label']; ?>
-                                        <i class="llar-tooltip" data-text="<?php echo esc_attr( $setting_params['description'] ); ?>">
+                                        <span class="hint_tooltip-parent">
                                             <span class="dashicons dashicons-editor-help"></span>
-                                        </i></th>
+                                            <div class="hint_tooltip">
+                                                <ul class="hint_tooltip-content">
+                                                    <li>
+                                                        <?php echo esc_attr( $setting_params['description'] ); ?>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </span>
+                                    </th>
                                     <td>
                                         <div class="field-col">
                                             <?php if( !empty( $setting_params['options'] ) ) : ?>
-                                                <select name="llar_app_settings[<?php echo $setting_name; ?>]">
+                                                <select class="input_border" name="llar_app_settings[<?php echo $setting_name; ?>]">
                                                     <?php foreach ( $setting_params['options'] as $option ) : ?>
                                                         <option value="<?php echo esc_attr( $option ); ?>" <?php selected( $option, $setting_params['value'] ); ?>><?php echo esc_html( $option ); ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
                                             <?php else : ?>
-                                                <input type="text" class="regular-text" name="llar_app_settings[<?php echo esc_attr( $setting_name ); ?>]" value="<?php echo esc_attr( $setting_params['value'] ); ?>">
+                                                <input  class="input_border" type="text" class="regular-text" name="llar_app_settings[<?php echo esc_attr( $setting_name ); ?>]" value="<?php echo esc_attr( $setting_params['value'] ); ?>">
                                             <?php endif; ?>
 
                                             <p class="description"><?php echo esc_html( $setting_params['description'] ); ?></p>
@@ -584,8 +593,8 @@ $active_app_config = Config::get( 'app_config' );
                         <?php endif; ?>
                     </table>
                     <div class="add_block__under_table image_plus">
-                        <div class="add_block__list">
-                            <div class="item">
+                        <div class="row__list">
+                            <div class="add_block__title">
                                 <div class="description mt-1_5">
                                     <?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
@@ -593,40 +602,42 @@ $active_app_config = Config::get( 'app_config' );
                                     <?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
                                 </button>
                             </div>
-                            <div class="item">
-                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/shield-min.png">
-                                <div class="name">
-                                    <?php _e( 'Absorb site load caused by attacks', 'limit-login-attempts-reloaded' ); ?>
+                            <div class="add_block__list">
+                                <div class="item">
+                                    <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/shield-min.png">
+                                    <div class="name">
+                                        <?php _e( 'Absorb site load caused by attacks', 'limit-login-attempts-reloaded' ); ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="item">
-                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/ip-min.png">
-                                <div class="name">
-                                    <?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
+                                <div class="item">
+                                    <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/ip-min.png">
+                                    <div class="name">
+                                        <?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="item">
-                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/cross-min.png">
-                                <div class="name">
-                                    <?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
+                                <div class="item">
+                                    <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/cross-min.png">
+                                    <div class="name">
+                                        <?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="item">
-                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/call-min.png">
-                                <div class="name">
-                                    <?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?>
+                                <div class="item">
+                                    <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/call-min.png">
+                                    <div class="name">
+                                        <?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="item">
-                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/backup-min.png">
-                                <div class="name">
-                                    <?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?>
+                                <div class="item">
+                                    <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/backup-min.png">
+                                    <div class="name">
+                                        <?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="item">
-                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/anytime-min.png">
-                                <div class="name">
-                                    <?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?>
+                                <div class="item">
+                                    <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/anytime-min.png">
+                                    <div class="name">
+                                        <?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
