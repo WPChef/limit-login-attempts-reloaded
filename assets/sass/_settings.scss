@@ -56,21 +56,27 @@ $color-marker: #9762EF;
 $box-shadow__semi-transparent-gray: #72757B33; // rgba(114, 117, 123, 0.20);
 $box-shadow__light-transparent-gray: #A2B4BD33; //rgba(162, 180, 189, 0.20);
 
+@import "mixins";
+
 $font-primary: CoFo Sans;
 $font-secondary: arial;
 
-$text-font-size-all: 16px;
+$text-font: 16px;
+
+@include _1599 {
+  $text-font: 14px;
+}
+
 $text-font-style: normal;
 $text-font-weight: 400;
 $text-font-weight-bold: 500;
 
-$border-radius: $text-font-size-all * 1.25;
-$border-radius__normal: $text-font-size-all;
+$border-radius: $text-font * 1.25;
+$border-radius__normal: $text-font;
 $border-radius__min: $border-radius__normal * .5;
 $border-radius__max: $border-radius * 2;
 
 
-@import "mixins";
 
 .link__style_unlink, .link__style_color_inherit {
   text-decoration: none;

@@ -14,15 +14,15 @@
 }
 
 .limit-login-page-settings {
-  margin: .5rem 3.12rem;
+  margin: 8px 50px;
 
   @include _1799 {
-    margin: .5rem 1rem .5rem 0;
+    margin: 8px 16px 8px 0;
   }
 
   &__logo {
     margin-top: 21px;
-    margin-left: .25rem;
+    margin-left: 4px;
     max-width: 172px;
   }
 
@@ -33,35 +33,31 @@
     .nav-tab {
       border: unset;
       background-color: unset;
-      font-size: $text-font-size-all;
+      font-size: 16px;
       color: $typography-primary;
       font-weight: $text-font-weight;
       margin-left: 0;
-      margin-right: 2.2rem;
-      padding: .25rem .31rem .38rem;
-
-      //padding-bottom: .38rem;
+      margin-right: 35px;
+      padding: 4px 5px 6px;
 
       &-active {
         border-bottom: 4px solid $primary-colors__turquoise;
       }
 
       @include _991 {
-        font-size: $text-font-size-all * .875;
-        margin-right: 1.25rem;
+        margin-right: 20px;
       }
 
       @include _767 {
-        margin-right: .87rem;
+        font-size: 14px;
+        margin-right: .87em;
       }
 
       @include _575 {
-        font-size: $text-font-size-all * .75;
-        margin-right: .5rem;
+        font-size: 12px;
+        margin-right: .5em;
       }
-
     }
-
 
     .llar-failover-link {
       font-size: 14px;
@@ -77,18 +73,20 @@
     }
   }
 
-
   .field-col {
     display: inline-block;
     margin-right: 20px;
   }
 
   .limit-login-log {
+
     table {
       background-color: #fff;
+
       th, td {
         padding: 10px;
       }
+
       tr:nth-child(even) {
         background-color: rgba(#000, .09);
       }
@@ -98,7 +96,6 @@
   #limit-login-app-setup-code {
     width: 85%;
   }
-
 
   .limit-login-app-dashboard {
     .llar-preloader-wrap {
@@ -151,10 +148,10 @@
       }
 
       th {
-        //color: #3c8dbc;
         font-weight: bold;
         border-bottom: 1px solid #dbdbdb !important;
       }
+
       th, td {
         padding: 10px;
         border: 1px solid #b9b9b9;
@@ -165,7 +162,6 @@
 
         .llar-log-country-flag {
           display: flex;
-          //align-items: center;
           white-space: nowrap;
 
           .llar-tooltip {
@@ -180,7 +176,9 @@
           }
         }
       }
+
       td {
+
         button {
           line-height: 1;
           margin-right: 5px;
@@ -193,6 +191,7 @@
             vertical-align: middle;
           }
         }
+
         &.llar-app-log-actions {
           text-align: center;
 
@@ -206,14 +205,15 @@
             }
 
             &:hover {
+
               i {
                 color: #3c8dbc;
               }
             }
           }
-
         }
       }
+
       tr:nth-child(even) {
         background-color: #f9f9f9;
       }
@@ -226,6 +226,7 @@
         }
 
         tr {
+
           td {
             padding: 5px;
 
@@ -234,6 +235,7 @@
                 text-decoration-style: dashed;
               }
             }
+
             .preloader-row {
               display: none;
               align-items: center;
@@ -246,6 +248,7 @@
                 height: 30px;
                 display: inline-block;
               }
+
               .preloader-text {
                 color: #999;
               }
@@ -257,10 +260,13 @@
           //display: table-footer-group;
 
           tr {
+
             td {
+
               .load-more-button {
                 display: none;
               }
+
               .preloader-row {
                 display: inline-flex;
               }
@@ -279,11 +285,14 @@
       h3 {
         margin: 0;
       }
+
       .right-link {
         line-height: 1.625;
+
         a {
           font-size: 14px;
         }
+
         .llar-tooltip {
           text-decoration: none;
           font-size: 12px;
@@ -292,7 +301,9 @@
           &:before {
             display: none;
           }
+
           &:hover {
+
             &:before {
               display: block;
               right: 0;
@@ -308,6 +319,7 @@
         font-size: 16px;
         line-height: 1.625;
       }
+
       .spinner {
         float: none;
       }
@@ -376,11 +388,13 @@
         margin-right: 5px;
         vertical-align: top;
       }
+
       .llar-toggle-countries-list {
         text-decoration-style: dotted;
         vertical-align: middle;
         line-height: 1.6;
       }
+
       .llar-block-country-list {
         display: flex;
         flex-wrap: wrap;
@@ -460,7 +474,7 @@
 
   .llar-test-email-notification-btn {
     text-decoration: none;
-    margin-left: 1rem;
+    margin-left: 16px;
     font-weight: 400;
   }
 
@@ -534,35 +548,30 @@
 
 #llar-setting-page {
   color: $typography-primary;
-  font-size: 1rem;
   line-height: 1.5;
 
-  @include _1599 {
-    font-size: .875rem;
-  }
-
   .title_page {
-    margin-top: 2.5rem;
+    margin-top: 40px;
     color: inherit;
-    font-size: 1.25rem;
+    font-size: 20px;
     font-weight: 500;
 
     @include _1599 {
-      font-size: 1.125rem;
+      font-size: 18px;
     }
   }
 
   .description-page {
     position: relative;
-    font-size: 1.125rem;
+    font-size: 18px;
     color: $typography-secondary;
-    padding: 1.81rem 2.75rem;
-    border-radius: 20px;
+    padding: 30px 44px;
+    border-radius: $border-radius;
     background: $background-body;
-    box-shadow: 0.25rem 0.25rem 1.125rem 0 $box-shadow__light-transparent-gray;
+    box-shadow: 4px 4px 18px 0 $box-shadow__light-transparent-gray;
 
     @include _1599 {
-      font-size: 1rem;
+      font-size: 16px;
     }
   }
 
@@ -570,25 +579,21 @@
 
     .form-table {
       color: $typography-primary;
-      font-size: 1.125rem;
+      font-size: 18px;
       border-collapse: separate;
-      border-spacing: 0 1.25rem;
+      border-spacing: 0 18px;
       border-color: unset;
-
-      @include _1599 {
-        font-size: 1rem;
-      }
 
       tr {
         position: relative;
-        font-size: 1.125rem;
+        font-size: 18px;
         border-radius: $border-radius;
         color: $typography-secondary;
         background: $background-body;
-        box-shadow: 0.25rem 0.25rem 1.125rem 0 $box-shadow__light-transparent-gray;
+        box-shadow: 4px 4px 18px 0 $box-shadow__light-transparent-gray;
 
         @include _1599 {
-          font-size: 1rem;
+          font-size: 16px;
         }
 
         th, td {
@@ -596,15 +601,23 @@
           line-height: inherit;
           border-radius: $border-radius;
           background-color: unset;
-          padding: 1.81rem 2.75rem;
+          padding: 14px 44px;
+
+          @include _1599 {
+            padding: 12px 25px;
+          }
         }
 
         th {
           color: $typography-primary;
-          font-weight: 500;
+          font-weight: 400;
           border-top-right-radius: unset;
           border-bottom-right-radius: unset;
           width: 250px;
+
+          @include _1399 {
+            width: 230px;
+          }
 
           .dashicons {
             color: $primary-colors__turquoise;
@@ -612,56 +625,62 @@
           }
 
           .hint_tooltip {
-            right: -9rem;
-            top: 1.72rem;
-            width: 12.5rem;
+            right: -140px;
+            top: 30px;
+            width: 200px;
 
             &:before {
-              right: 9.2rem;
+              right: 142px;
             }
           }
         }
 
         td {
           color: $typography-secondary;
-          font-size: 1rem;
+          font-size: 16px;
           line-height: 1.5;
           border-top-left-radius: unset;
           border-bottom-left-radius: unset;
 
           @include _1599 {
-            font-size: .875rem;
+            font-size: 14px;
           }
 
           .textarea_border, .input_border {
-            font-size: 1rem;
+            font-size: 16px;
             line-height: inherit;
-            padding: .375rem .5rem .375rem 1rem;
+            padding: 6px 8px 6px 16px;
             color: $primary-colors__turquoise;
             border-radius: $border-radius__normal;
             border: 1px solid $primary-colors__turquoise;
             width: fit-content;
 
             @include _1599 {
-              font-size: .875rem;
+              padding: 6px 8px 6px 12px;
+              font-size: 14px;
             }
 
             &.full_area {
-              min-width: 45rem;
+              min-width: 720px;
+
+              @include _1599 {
+                min-width: 600px;
+              }
             }
 
             textarea {
-              font-size: 1rem;
+              font-size: 16px;
               color: $typography-secondary;
-              padding-right: 1.5rem;
+              padding-right: 24px;
               border: unset;
 
               @include _1599 {
-                font-size: .875rem;
+                padding-right: 18px;
+                font-size: 14px;
               }
 
               &::-webkit-scrollbar {
-                width: .5rem;
+                width: 8px;
               }
 
               &::-webkit-scrollbar-track {
@@ -687,7 +706,11 @@
             background-size: 16px 16px;
 
             &.input_border {
-              padding: .375rem 4rem .375rem 1rem;
+              padding: 6px 64px 6px 16px;
+
+              @include _1599 {
+                padding-right: 12px;
+              }
             }
           }
 
@@ -702,7 +725,7 @@
 
               &::before {
                 content: "\2714";
-                font-size: .875rem;
+                font-size: 14px;
                 line-height: 1.1;
                 width: 100%;
                 height: 100%;
@@ -735,14 +758,14 @@
           }
 
           .description-additional, .description-secondary, .llar-protect-notice {
-            font-size: 1rem;
+            font-size: 16px;
             line-height: inherit;
             color: $typography-additional;
-            padding: 1rem .5rem .5rem 1.5rem;
-            max-width: 52rem;
+            padding: 16px 8px 8px 24px;
+            max-width: 832px;
 
             @include _1599 {
-              font-size: .875rem;
+              font-size: 14px;
             }
           }
 
@@ -769,7 +792,7 @@
   }
 
   button {
-    border-radius: 0.5 * $border-radius;
+    border-radius: $border-radius * .5;
     background: $background-body;
     border: 1px solid $typography-primary;
     cursor: pointer;
@@ -777,30 +800,30 @@
     vertical-align: baseline;
 
     &.menu__item {
-      font-size: 1rem;
+      font-size: 16px;
       line-height: 1.5;
-      padding: .375rem 1.125rem;
+      padding: 6px 18px;
 
       @include _1599 {
-        font-size: .875rem;
+        font-size: 14px;
       }
 
       @include _991 {
-        padding: .3rem 1rem;
+        padding: 5px 16px;
       }
 
       @include _428 {
-        padding: .3rem .75rem;
+        padding: 5px 14px;
       }
     }
 
     &.tags {
-      font-size: .87rem;
+      font-size: 14px;
       font-weight: 400;
-      line-height: 1.37rem;
+      line-height: 1.4;
       border: 1px solid $primary-colors__orange;
       width: fit-content;
-      padding: 0 1.5rem;
+      padding: 0 24px;
       z-index: 50;
 
       &_basic {
@@ -827,13 +850,13 @@
 
   .button {
     @extend button;
-    min-width: 11rem;
+    min-width: 175px;
 
     &__orange {
       color: white!important;
       background: $primary-colors__orange;
       border: 1px solid $primary-colors__orange;
-      box-shadow: 0 .312rem .625rem 0 $primary-colors__orange-semi_back;
+      box-shadow: 0 6px 12px 0 $primary-colors__orange-semi_back;
 
       &:hover {
         background: $secondary-colors__dark-orange;
@@ -864,10 +887,10 @@
   }
 
   .button_block {
-    margin-top: 1.5rem;
+    margin-top: 24px;
     display: flex;
     flex-wrap: nowrap;
-    column-gap: 1rem;
+    column-gap: 16px;
   }
 
   .llar-accordion {
@@ -881,8 +904,8 @@
     .ui-accordion-header {
       color: $typography-primary;
       font-weight: 500;
-      font-size: 1.125rem;
-      padding: 1.94rem 2.55rem 1.94rem;
+      font-size: 18px;
+      padding: 31px 40px 31px;
       border: 1px solid $primary-colors__turquoise;
       border-bottom: 0;
       border-top-right-radius: $border-radius;
@@ -890,14 +913,14 @@
       background-color: $background-body;
 
       @include _1599 {
-        font-size: 1rem;
+        font-size: 16px;
       }
 
       &-collapsed {
         border: 0;
         border-radius: $border-radius;
         background: unset;
-        box-shadow: 0.25rem 0.25rem 1.125rem 0 $box-shadow__light-transparent-gray;
+        box-shadow: 4px 4px 18px 0 $box-shadow__light-transparent-gray;
       }
 
       &.ui-accordion-header-active {
@@ -907,7 +930,7 @@
 
     .ui-accordion-content {
       padding-top: 0;
-      margin-bottom: 1rem;
+      margin-bottom: 16px;
       color: $typography-primary;
       border-bottom-right-radius: $border-radius;
       border-bottom-left-radius: $border-radius;
@@ -938,32 +961,33 @@
       }
 
       .add_block__under_table {
-        margin: .5rem 0;
-        padding: 1.5rem 3rem;
+        margin: 8px 0;
+        padding: 24px 48px;
         background-color: $background__sky-blue;
         border-radius: $border-radius;
 
         .description {
           color: $typography-primary;
-          font-size: 1.125rem;
+          font-size: 18px;
           line-height: 1.5;
           font-weight: 500;
 
           @include _1599 {
-            font-size: 1rem;
+            font-size: 16px;
           }
         }
 
         .add_block__list {
           display: flex;
-          margin-top: 1rem;
-          margin-bottom: .5rem;
+          margin-top: 16px;
+          margin-bottom: 8px;
           color: $typography-secondary;
-          font-size: 1rem;
+          font-size: 16px;
+          flex-wrap: nowrap;
           justify-content: space-between;
 
           @include _1599 {
-            font-size: 1rem;
+            flex-wrap: wrap;
           }
 
           .item {
@@ -972,6 +996,10 @@
             flex-direction: row;
             flex-wrap: nowrap;
             align-items: flex-start;
+
+            @include _1599 {
+              flex: 0 0 32%;
+            }
 
             .name {
               width: 80%;
@@ -982,7 +1010,7 @@
         &.image_plus {
 
           .add_block__list {
-            column-gap: 1rem;
+            column-gap: 16px;
 
             .item {
               flex: 0 0 13.5%;
@@ -997,7 +1025,7 @@
               }
 
               img {
-                width: 7.5rem;
+                width: 120px;
               }
             }
           }
@@ -1012,16 +1040,16 @@
   position: absolute;
   background-color: $primary-colors__turquoise;
   color: #fff;
-  padding: .75rem 1rem .75rem 2.25rem;
-  width: 10rem;
+  padding: 12px 16px 12px 36px;
+  width: 160px;
   border-radius: $border-radius;
-  top: 1.67rem;
+  top: 26px;
   right: -100%;
   z-index: 955;
 
   &-content {
     list-style: none;
-    font-size: 0.75rem;
+    font-size: 14px;
     white-space: initial;
     text-align: left;
     margin-top: 0;
@@ -1030,7 +1058,7 @@
     li {
       position: relative;
       list-style: none;
-      font-size: 0.75rem;
+      font-size: 12px;
       white-space: initial;
 
       &::before {
@@ -1038,7 +1066,7 @@
         box-sizing: inherit;
         content: "\2727";
         color: $background-body;
-        margin-left: -1.25rem;
+        margin-left: -18px;
         top: 0;
       }
     }
