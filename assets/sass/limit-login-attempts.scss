@@ -546,7 +546,7 @@
 }
 
 
-#llar-setting-page {
+#llar-setting-page, #llar-setting-page-debug {
   color: $typography-primary;
   line-height: 1.5;
 
@@ -601,7 +601,7 @@
           line-height: inherit;
           border-radius: $border-radius;
           background-color: unset;
-          padding: 14px 44px;
+          padding: 29px 44px 32px;
 
           @include _1599 {
             padding: 12px 25px;
@@ -1053,6 +1053,28 @@
               img {
                 width: 120px;
               }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+#llar-setting-page-debug {
+
+  .llar-settings-wrap {
+
+    .form-table {
+
+      tr {
+
+        td {
+
+          .textarea_border, .input_border {
+
+            textarea {
+              color: $typography-additional;
             }
           }
         }
