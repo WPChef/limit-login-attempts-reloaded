@@ -537,12 +537,19 @@
   font-size: 1rem;
   line-height: 1.5;
 
+  @include _1599 {
+    font-size: .875rem;
+  }
 
   .title_page {
     margin-top: 2.5rem;
     color: inherit;
     font-size: 1.25rem;
     font-weight: 500;
+
+    @include _1599 {
+      font-size: 1.125rem;
+    }
   }
 
   .description-page {
@@ -553,6 +560,10 @@
     border-radius: 20px;
     background: $background-body;
     box-shadow: 0.25rem 0.25rem 1.125rem 0 $box-shadow__light-transparent-gray;
+
+    @include _1599 {
+      font-size: 1rem;
+    }
   }
 
   .llar-settings-wrap {
@@ -564,6 +575,10 @@
       border-spacing: 0 1.25rem;
       border-color: unset;
 
+      @include _1599 {
+        font-size: 1rem;
+      }
+
       tr {
         position: relative;
         font-size: 1.125rem;
@@ -571,6 +586,10 @@
         color: $typography-secondary;
         background: $background-body;
         box-shadow: 0.25rem 0.25rem 1.125rem 0 $box-shadow__light-transparent-gray;
+
+        @include _1599 {
+          font-size: 1rem;
+        }
 
         th, td {
           font-size: inherit;
@@ -610,6 +629,10 @@
           border-top-left-radius: unset;
           border-bottom-left-radius: unset;
 
+          @include _1599 {
+            font-size: .875rem;
+          }
+
           .textarea_border, .input_border {
             font-size: 1rem;
             line-height: inherit;
@@ -618,6 +641,10 @@
             border-radius: $border-radius__normal;
             border: 1px solid $primary-colors__turquoise;
             width: fit-content;
+
+            @include _1599 {
+              font-size: .875rem;
+            }
 
             &.full_area {
               min-width: 45rem;
@@ -628,6 +655,10 @@
               color: $typography-secondary;
               padding-right: 1.5rem;
               border: unset;
+
+              @include _1599 {
+                font-size: .875rem;
+              }
 
               &::-webkit-scrollbar {
                 width: .5rem;
@@ -709,6 +740,10 @@
             color: $typography-additional;
             padding: 1rem .5rem .5rem 1.5rem;
             max-width: 52rem;
+
+            @include _1599 {
+              font-size: .875rem;
+            }
           }
 
           .description-secondary, .llar-protect-notice {
@@ -746,6 +781,10 @@
       line-height: 1.5;
       padding: .375rem 1.125rem;
 
+      @include _1599 {
+        font-size: .875rem;
+      }
+
       @include _991 {
         padding: .3rem 1rem;
       }
@@ -764,7 +803,6 @@
       padding: 0 1.5rem;
       z-index: 50;
 
-
       &_basic {
         color: $primary-colors__orange;
         background: $primary-colors__orange-back;
@@ -774,7 +812,6 @@
           background: $primary-colors__orange;
         }
       }
-
 
       &_add {
         color: $typography-primary;
@@ -852,6 +889,10 @@
       border-top-left-radius: $border-radius;
       background-color: $background-body;
 
+      @include _1599 {
+        font-size: 1rem;
+      }
+
       &-collapsed {
         border: 0;
         border-radius: $border-radius;
@@ -903,18 +944,27 @@
         border-radius: $border-radius;
 
         .description {
+          color: $typography-primary;
           font-size: 1.125rem;
           line-height: 1.5;
           font-weight: 500;
+
+          @include _1599 {
+            font-size: 1rem;
+          }
         }
 
         .add_block__list {
           display: flex;
-          color: $typography-secondary;
           margin-top: 1rem;
           margin-bottom: .5rem;
+          color: $typography-secondary;
           font-size: 1rem;
           justify-content: space-between;
+
+          @include _1599 {
+            font-size: 1rem;
+          }
 
           .item {
             flex: 0 0 16%;
@@ -932,12 +982,22 @@
         &.image_plus {
 
           .add_block__list {
+            column-gap: 1rem;
 
             .item {
-              flex: 0 0 14%;
+              flex: 0 0 13.5%;
+              flex-direction: column;
+              align-items: center;
+              border-radius: $border-radius;
+              border: 1px solid $primary-colors__turquoise;
 
-              &_column {
-                flex-direction: column;
+              &:first-child {
+                align-items: start;
+                border: unset;
+              }
+
+              img {
+                width: 7.5rem;
               }
             }
           }
