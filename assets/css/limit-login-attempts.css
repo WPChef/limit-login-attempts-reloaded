@@ -690,6 +690,7 @@
   }
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border {
+  font-family: inherit;
   font-size: 16px;
   line-height: inherit;
   padding: 6px 8px 6px 16px;
@@ -713,8 +714,10 @@
   }
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border textarea {
+  font-family: inherit;
   font-size: 16px;
   color: #666D84;
+  background-color: #FDFDFD;
   padding-right: 24px;
   border: unset;
 }
@@ -741,6 +744,7 @@
   outline: unset;
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td select {
+  font-family: inherit;
   background: #FDFDFD url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234ACAD8FF'%3e%3cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") no-repeat right 5px top 55%;
   background-size: 16px 16px;
 }
@@ -791,7 +795,7 @@
   line-height: inherit;
   color: #A4A8B7;
   padding: 16px 8px 8px 24px;
-  max-width: 832px;
+  max-width: 740px;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page .llar-settings-wrap .form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .form-table tr td .llar-protect-notice {
@@ -813,12 +817,17 @@
   border-bottom: 1px solid currentColor;
 }
 #llar-setting-page button, #llar-setting-page .button {
+  font-family: inherit;
   border-radius: 10px;
   background: #FDFDFD;
   border: 1px solid #2A2F40;
   cursor: pointer;
   white-space: nowrap;
   vertical-align: baseline;
+}
+#llar-setting-page button:focus, #llar-setting-page .button:focus, #llar-setting-page button:focus-visible, #llar-setting-page .button:focus-visible {
+  outline: none;
+  box-shadow: unset;
 }
 #llar-setting-page button.menu__item, #llar-setting-page .menu__item.button {
   font-size: 16px;
@@ -884,7 +893,7 @@
 }
 #llar-setting-page .button__transparent_orange {
   color: #FF7C06 !important;
-  border: 1px solid;
+  border: 1px solid currentColor;
   background: transparent;
 }
 #llar-setting-page .button__transparent_orange:hover {
@@ -967,6 +976,11 @@
   background-color: #F6FBFF;
   border-radius: 20px;
 }
+@media screen and (max-width: 1199.5px) {
+  #llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table {
+    padding: 16px;
+  }
+}
 #llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table .description {
   color: #2A2F40;
   font-size: 18px;
@@ -1007,8 +1021,20 @@
 #llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table .add_block__list .item .name {
   width: 80%;
 }
+#llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table.image_plus .row__list {
+  display: flex;
+}
+#llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table.image_plus .row__list .add_block__title {
+  flex: 0 0 14%;
+  margin-right: 20px;
+}
 #llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table.image_plus .add_block__list {
-  column-gap: 16px;
+  gap: 16px;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table.image_plus .add_block__list {
+    column-gap: 10px;
+  }
 }
 #llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table.image_plus .add_block__list .item {
   flex: 0 0 13.5%;
@@ -1017,9 +1043,10 @@
   border-radius: 20px;
   border: 1px solid #4ACAD8;
 }
-#llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table.image_plus .add_block__list .item:first-child {
-  align-items: start;
-  border: unset;
+@media screen and (max-width: 1599.5px) {
+  #llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table.image_plus .add_block__list .item {
+    flex: 0 0 30%;
+  }
 }
 #llar-setting-page .llar-accordion .ui-accordion-content .add_block__under_table.image_plus .add_block__list .item img {
   width: 120px;

@@ -647,6 +647,7 @@
           }
 
           .textarea_border, .input_border {
+            font-family: inherit;
             font-size: 16px;
             line-height: inherit;
             padding: 6px 8px 6px 16px;
@@ -669,8 +670,10 @@
             }
 
             textarea {
+              font-family: inherit;
               font-size: 16px;
               color: $typography-secondary;
+              background-color: $background-body;
               padding-right: 24px;
               border: unset;
 
@@ -702,6 +705,7 @@
           }
 
           select {
+            font-family: inherit;
             background: $background-body url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234ACAD8FF'%3e%3cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") no-repeat right 5px top 55%;
             background-size: 16px 16px;
 
@@ -762,7 +766,7 @@
             line-height: inherit;
             color: $typography-additional;
             padding: 16px 8px 8px 24px;
-            max-width: 832px;
+            max-width: 740px;
 
             @include _1599 {
               font-size: 14px;
@@ -792,12 +796,18 @@
   }
 
   button {
+    font-family: inherit;
     border-radius: $border-radius * .5;
     background: $background-body;
     border: 1px solid $typography-primary;
     cursor: pointer;
     white-space: nowrap;
     vertical-align: baseline;
+
+    &:focus, &:focus-visible {
+      outline: none;
+      box-shadow: unset;
+    }
 
     &.menu__item {
       font-size: 16px;
@@ -871,7 +881,7 @@
 
     &__transparent_orange {
       color: $primary-colors__orange!important;
-      border: 1px solid;
+      border: 1px solid currentColor;
       background: transparent;
 
       &:hover {
@@ -966,6 +976,10 @@
         background-color: $background__sky-blue;
         border-radius: $border-radius;
 
+        @include _1199 {
+          padding: 16px;
+        }
+
         .description {
           color: $typography-primary;
           font-size: 18px;
@@ -1009,8 +1023,21 @@
 
         &.image_plus {
 
+          .row__list {
+            display: flex;
+
+            .add_block__title {
+              flex: 0 0 14%;
+              margin-right: 20px;
+            }
+          }
+
           .add_block__list {
-            column-gap: 16px;
+            gap: 16px;
+
+            @include _1599 {
+              column-gap: 10px;
+            }
 
             .item {
               flex: 0 0 13.5%;
@@ -1019,9 +1046,8 @@
               border-radius: $border-radius;
               border: 1px solid $primary-colors__turquoise;
 
-              &:first-child {
-                align-items: start;
-                border: unset;
+              @include _1599 {
+                flex: 0 0 30%;
               }
 
               img {
