@@ -542,17 +542,6 @@ $active_app_config = Config::get( 'app_config' );
                                             'https://www.limitloginattempts.com/app/?from=plugin-settings' );
                                         ?>
                                     </div>
-                                    <div class="llar-why-use-premium-text">
-                                        <div class="title"><?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?></div>
-                                        <ul>
-                                            <li><span class="dashicons dashicons-yes"></span><?php _e( 'Absorb site load caused by attacks', 'limit-login-attempts-reloaded' ); ?></li>
-                                            <li><span class="dashicons dashicons-yes"></span><?php _e( 'Use intelligent IP blocking/unblocking technology', 'limit-login-attempts-reloaded' ); ?></li>
-                                            <li><span class="dashicons dashicons-yes"></span><?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?></li>
-                                            <li><span class="dashicons dashicons-yes"></span><?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?></li>
-                                            <li><span class="dashicons dashicons-yes"></span><?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?></li>
-                                            <li><span class="dashicons dashicons-yes"></span><?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?></li>
-                                        </ul>
-                                    </div>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -596,56 +585,46 @@ $active_app_config = Config::get( 'app_config' );
                     </table>
                     <div class="add_block__under_table image_plus">
                         <div class="add_block__list">
-                            <div class="item item_column">
-                                <?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
-                                <button class="button menu__item button__transparent_orange" id="">
+                            <div class="item">
+                                <div class="description mt-1_5">
+                                    <?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
+                                <button class="button menu__item button__transparent_orange mt-1_5" id="">
                                     <?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
                                 </button>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-lock-big"></use>
-                                </svg>
+                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/shield-min.png">
                                 <div class="name">
                                     <?php _e( 'Absorb site load caused by attacks', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add icon-corr">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-ip"></use>
-                                </svg>
+                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/ip-min.png">
                                 <div class="name">
                                     <?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-align-left"></use>
-                                </svg>
+                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/cross-min.png">
                                 <div class="name">
                                     <?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-admin-big"></use>
-                                </svg>
+                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/call-min.png">
                                 <div class="name">
                                     <?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exit"></use>
-                                </svg>
+                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/backup-min.png">
                                 <div class="name">
                                     <?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-folder-cross"></use>
-                                </svg>
+                                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/anytime-min.png">
                                 <div class="name">
                                     <?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
