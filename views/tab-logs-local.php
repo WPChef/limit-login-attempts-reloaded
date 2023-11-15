@@ -44,7 +44,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
                     </th>
                     <td>
                         <?php if( $lockouts_total > 0 ) : ?>
-                            <input class="button" name="reset_total"
+                            <input class="button menu__item col button__transparent_orange mx-0_5" name="reset_total"
                                    value="<?php echo __( 'Reset Counter', 'limit-login-attempts-reloaded' ); ?>"
                                    type="submit"/>
                             <?php echo sprintf( _n( '%d lockout since last reset', '%d lockouts since last reset', $lockouts_total, 'limit-login-attempts-reloaded' ), $lockouts_total ); ?>
@@ -86,7 +86,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
                                 <?php _e( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ); ?>
                             </div>
                             <div class="textarea_border mt-0_5">
-                                <textarea name="lla_whitelist_ips" rows="10" cols="50"><?php echo esc_textarea( $white_list_ips ); ?></textarea>
+                                <textarea name="lla_whitelist_ips" rows="5" cols="50"><?php echo esc_textarea( $white_list_ips ); ?></textarea>
                             </div>
                         </div>
                         <div class="field-col">
@@ -94,21 +94,22 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
                                 <?php _e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?>
                             </div>
                             <div class="textarea_border mt-0_5">
-                                <textarea name="lla_whitelist_usernames" rows="10" cols="50"><?php echo esc_textarea( $white_list_usernames ); ?></textarea>
+                                <textarea name="lla_whitelist_usernames" rows="5" cols="50"><?php echo esc_textarea( $white_list_usernames ); ?></textarea>
                             </div>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Denylist', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th scope="row" valign="top">
+                        <?php echo __( 'Denylist', 'limit-login-attempts-reloaded' ); ?>
+                    </th>
                     <td>
                         <div class="field-col">
                             <div class="description-secondary p-0"><?php _e
                                 ( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ); ?>
                             </div>
                             <div class="textarea_border mt-0_5">
-                                <textarea name="lla_blacklist_ips" rows="10" cols="50"><?php echo esc_textarea( $black_list_ips ); ?></textarea>
+                                <textarea name="lla_blacklist_ips" rows="5" cols="50"><?php echo esc_textarea( $black_list_ips ); ?></textarea>
                             </div>
                         </div>
                         <div class="field-col">
@@ -116,12 +117,12 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
                                 <?php _e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?>
                             </div>
                             <div class="textarea_border mt-0_5">
-                                <textarea name="lla_blacklist_usernames" rows="10" cols="50"><?php echo esc_textarea( $black_list_usernames ); ?></textarea>
+                                <textarea name="lla_blacklist_usernames" rows="5" cols="50"><?php echo esc_textarea( $black_list_usernames ); ?></textarea>
                             </div>
                         </div>
-                        <div class="description-additional p-0" style="font-weight: 600;">
+                        <div class="description-additional p-0 mt-0_5">
                             <?php echo sprintf(
-                                __( 'Automate your denylist with IP intelligence when you <a href="%s" target="_blank">upgrade to premium</a>.', 'limit-login-attempts-reloaded' ),
+                                __( 'Automate your denylist with IP intelligence when you <a href="%s" class="unlink link__style_unlink" target="_blank">upgrade to premium</a>.', 'limit-login-attempts-reloaded' ),
                                 'https://www.limitloginattempts.com/info.php?from=plugin-denylist'
                             ); ?>
                         </div>
@@ -129,10 +130,10 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
                 </tr>
             </table>
         </div>
-
         <div class="submit">
             <input class="button menu__item col button__orange" name="llar_update_dashboard"
-                   value="<?php echo __( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>" type="submit"/>
+                   value="<?php echo __( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
+                   type="submit"/>
         </div>
     </form>
 
@@ -189,16 +190,17 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
         <form action="<?php echo $this->get_options_page_uri('logs-local'); ?>" method="post">
             <?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
             <input type="hidden" value="true" name="clear_log"/>
-            <p class="submit">
-                <input class="button" name="submit" value="<?php echo __( 'Clear Log', 'limit-login-attempts-reloaded' ); ?>"
+            <div class="description-page">
+                <input class="button menu__item col button__transparent_orange mx-0_5" name="submit"
+                       value="<?php echo __( 'Clear Log', 'limit-login-attempts-reloaded' ); ?>"
                        type="submit"/>
-                <span style="margin-left: 15px; font-weight: 600;">
+                <span class="description-secondary">
                     <?php echo sprintf(
-                        __( '<a href="%s" target="_blank">Upgrade today</a> to optimize or unload your DB by moving logs to the cloud.', 'limit-login-attempts-reloaded' ),
+                        __( '<a href="%s" class="unlink link__style_unlink" target="_blank">Upgrade today</a> to optimize or unload your DB by moving logs to the cloud.', 'limit-login-attempts-reloaded' ),
                         'https://www.limitloginattempts.com/info.php?from=plugin-clear-log' );
                     ?>
                 </span>
-            </p>
+            </div>
         </form>
 
         <div class="limit-login-log">

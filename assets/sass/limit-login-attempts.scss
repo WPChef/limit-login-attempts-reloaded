@@ -1145,6 +1145,21 @@
       }
     }
   }
+
+  .description-page {
+
+    .description-secondary {
+
+      a.unlink {
+        @extend .llar_turquoise;
+        font-weight: 500;
+
+        &:hover {
+          border-bottom: unset;
+        }
+      }
+    }
+  }
 }
 
 .hint_tooltip {
