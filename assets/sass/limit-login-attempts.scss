@@ -1,6 +1,5 @@
 @import
-"settings",
-"icon-block";
+"settings";
 
 .toplevel_page_limit-login-attempts { // top level css
 
@@ -1280,8 +1279,11 @@
       font-size: 16px;
       color: #4d4d4d;
     }
+
     ul {
+
       li {
+
         .dashicons {
           color: #3ab54a;
           font-size: 25px;
@@ -1616,22 +1618,10 @@
   }
 }
 
-//#toplevel_page_limit-login-attempts {
-//  .wp-menu-image {
-//    &:before {
-//      content: '';
-//      background: url('../img/icon-logo-menu.png') no-repeat center center / 27px auto;
-//      display: block;
-//      position: absolute;
-//      top: 10px;
-//      left: 5px;
-//      width: 30px;
-//    }
-//  }
-//}
-
 #wp-admin-bar-llar-root {
+
   #wp-admin-bar-llar-root-premium {
+
     a {
       color: orange;
     }
@@ -1653,8 +1643,10 @@
 }
 
 #menu-settings {
+
   li {
     position: relative;
+
     .llar-alert-icon {
       position: absolute;
       right: 5px;
