@@ -29,7 +29,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
 
 <div id="llar-setting-page-logs">
     <h3 class="title_page">
-        <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/check.png">
+        <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-check.png">
         <?php echo __( 'Statistics', 'limit-login-attempts-reloaded' ); ?>
     </h3>
 
@@ -182,7 +182,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
 
     if( is_array( $log ) && ! empty( $log ) ) : ?>
         <h3 class="title_page">
-            <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/pre-install.png">
+            <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-pre-install.png">
             <?php echo __( 'Lockout log', 'limit-login-attempts-reloaded' ); ?>
         </h3>
 

@@ -54,9 +54,7 @@ $active_app_config = Config::get( 'app_config' );
 
 <div id="llar-setting-page">
     <h3 class="title_page">
-        <svg class="icon-page-setting">
-            <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exploitation"></use>
-        </svg>
+        <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-exploitation.png">
         <?php echo __( 'General Settings', 'limit-login-attempts-reloaded' ); ?>
     </h3>
     <div class="description-page">
@@ -255,9 +253,7 @@ $active_app_config = Config::get( 'app_config' );
             </table>
 
             <h3 class="title_page">
-                <svg class="icon-page-setting p-0">
-                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-gears"></use>
-                </svg>
+                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-gears.png">
                 <?php echo __( 'App Settings', 'limit-login-attempts-reloaded' ); ?>
             </h3>
             <div class="description-page">
@@ -446,49 +442,37 @@ $active_app_config = Config::get( 'app_config' );
                         </div>
                         <div class="add_block__list">
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-lock-big"></use>
-                                </svg>
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-lock.png">
                                 <div class="name">
                                     <?php _e( 'Absorb site load caused by attacks', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add icon-corr">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-ip"></use>
-                                </svg>
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-ip.png">
                                 <div class="name">
                                     <?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-align-left"></use>
-                                </svg>
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-blocklist.png">
                                 <div class="name">
                                     <?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-admin-big"></use>
-                                </svg>
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-tech-support.png">
                                 <div class="name">
                                     <?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-exit"></use>
-                                </svg>
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-backup.png">
                                 <div class="name">
                                     <?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <svg class="icon-page-setting_add">
-                                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite-add.svg#icon-folder-cross"></use>
-                                </svg>
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-cancellation.png">
                                 <div class="name">
                                     <?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?>
                                 </div>

@@ -361,9 +361,7 @@ if( $active_app === 'local' ) {
 	<div class="dashboard-section-3">
         <div class="info-box-1">
             <div class="info-box-icon">
-                <svg class="icon-base">
-                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-lock"></use>
-                </svg>
+                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-exploitation.png">
             </div>
             <div class="info-box-content">
                 <div class="title"><a href="<?php echo $this->get_options_page_uri('logs-'.$active_app); ?>" class="link__style_unlink">
@@ -377,9 +375,7 @@ if( $active_app === 'local' ) {
         </div>
         <div class="info-box-1">
             <div class="info-box-icon">
-                <svg class="icon-base">
-                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-help"></use>
-                </svg>
+                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-help.png">
             </div>
             <div class="info-box-content">
                 <div class="title">
@@ -394,9 +390,7 @@ if( $active_app === 'local' ) {
         </div>
         <div class="info-box-1">
             <div class="info-box-icon">
-                <svg class="icon-base">
-                    <use xlink:href="<?= LLA_PLUGIN_URL ?>/assets/css/images/sprite.svg#icon-web"></use>
-                </svg>
+                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-web.png">
             </div>
             <div class="info-box-content">
                 <div class="title">
