@@ -545,8 +545,9 @@
 }
 
 
-#llar-setting-page, #llar-setting-page-debug, #llar-setting-page-logs {
+#llar-setting-page, #llar-setting-page-debug, #llar-setting-page-logs, #llar-setting-page-help {
   color: $typography-primary;
+  margin-top: 40px;
   line-height: 1.5;
 
   .title_page {
@@ -582,6 +583,7 @@
   }
 
   .llar-settings-wrap {
+    margin-top: 20px;
 
     .form-table {
       color: $typography-primary;
@@ -589,6 +591,8 @@
       border-collapse: separate;
       border-spacing: 0 18px;
       border-color: unset;
+      margin-top: -18px;
+      margin-bottom: -18px;
 
       tr {
         position: relative;
@@ -969,6 +973,7 @@
   .button {
     @extend button;
     min-width: 175px;
+    text-transform: inherit;
 
     &__orange {
       color: white!important;

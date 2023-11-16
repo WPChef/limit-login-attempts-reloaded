@@ -462,6 +462,9 @@ if( $active_app === 'local' ) {
                                 <?php echo esc_html( $country_name ); ?>
                             </td>
                             <td>
+                                <div class="separate"></div>
+                            </td>
+                            <td>
                                 <?php echo esc_html( number_format_i18n( $country_data['attempts'] ) ); ?>
                             </td>
                         </tr>

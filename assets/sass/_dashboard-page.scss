@@ -1,6 +1,6 @@
 #llar-dashboard-page {
   font-family: $font-primary, $font-secondary;
-  padding-top: 2.44rem;
+  margin-top: 40px;
 
   * {
     box-sizing: border-box;
@@ -600,9 +600,13 @@
             td {
               color: $typography-secondary;
               border-bottom: 1px solid $border-element__ghostly-white;
-              border-right: 1px solid $border-element__ghostly-white;
               position: relative;
               z-index: 1;
+
+              .separate {
+                height: 40px;
+                border-left: 1px solid $border-element__ghostly-white;
+              }
 
               &:last-child {
                 border-right: unset;
