@@ -442,37 +442,37 @@ $active_app_config = Config::get( 'app_config' );
                         </div>
                         <div class="add_block__list">
                             <div class="item">
-                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-lock.png">
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-lock-bg.png">
                                 <div class="name">
                                     <?php _e( 'Absorb site load caused by attacks', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-ip.png">
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-ip-bg.png">
                                 <div class="name">
                                     <?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-blocklist.png">
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-blocklist-bg.png">
                                 <div class="name">
                                     <?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-tech-support.png">
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-tech-support-bg.png">
                                 <div class="name">
                                     <?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-backup.png">
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-backup-bg.png">
                                 <div class="name">
                                     <?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-cancellation.png">
+                                <img class="icon" src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-cancellation-bg.png">
                                 <div class="name">
                                     <?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
