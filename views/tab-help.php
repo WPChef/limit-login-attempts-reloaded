@@ -3,6 +3,8 @@
 use LLAR\Core\Config;
 
 if( !defined( 'ABSPATH' ) ) exit();
+
+$active_app = Config::get( 'active_app' );
 ?>
 
 <div id="llar-setting-page-help" class="llar-help-page">
@@ -139,4 +141,22 @@ if( !defined( 'ABSPATH' ) ) exit();
             </div>
         </div>
     </div>
+
+    <?php if( $active_app === 'custom' ) : ?>
+        <div class="section-1 mt-1_5">
+            <div class="block">
+                <div class="title">
+                    <?php _e( 'Premium Support', 'limit-login-attempts-reloaded' ); ?>
+                </div>
+                <div class="text">
+                    <?php _e( 'Our technical support team is available by email to help with any questions.', 'limit-login-attempts-reloaded' ); ?>
+                </div>
+                <div class="actions mt-1_5">
+                    <a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-help-tab" target="_blank">
+                        <?php _e( 'Contact Support', 'limit-login-attempts-reloaded' ); ?>
+                    </a>
+                </div>
+            </div>
+        </div>
+    <?php endif ?>
 </div>
