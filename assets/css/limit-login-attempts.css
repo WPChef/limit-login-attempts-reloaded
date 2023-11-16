@@ -2507,47 +2507,81 @@
   display: flex;
 }
 .llar-help-page .documentation-section .questions {
-  flex: 1;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
 }
-.llar-help-page .documentation-section .questions .question {
+.llar-help-page .documentation-section .questions__block {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+.llar-help-page .documentation-section .questions__block .question {
   display: block;
-  background-color: #fff;
-  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.05);
+  flex: 1 0 auto;
   margin-bottom: 20px;
-  padding: 30px;
+  padding: 30px 40px;
+  background-color: #FDFDFD;
+  border-radius: 20px;
   text-decoration: none;
-  color: #333;
+  box-shadow: 2px 2px 9px 0 rgba(162, 180, 189, 0.2);
 }
-.llar-help-page .documentation-section .questions .question:last-child {
+.llar-help-page .documentation-section .questions__block .question:last-child {
   margin-bottom: 0;
 }
-.llar-help-page .documentation-section .questions .question:hover {
-  box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.1);
+.llar-help-page .documentation-section .questions__block .question:hover {
+  box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
 }
-.llar-help-page .documentation-section .questions .question .title {
-  font-size: 26px;
-  margin-bottom: 15px;
+.llar-help-page .documentation-section .questions__block .question .title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #2A2F40;
 }
-.llar-help-page .documentation-section .questions .question .desc {
+.llar-help-page .documentation-section .questions__block .question .desc {
   font-size: 16px;
+  margin-top: 5px;
+  color: #666D84;
 }
 .llar-help-page .documentation-section .top-list {
-  flex: 0 0 300px;
+  flex: 0 0 500px;
   margin-left: 20px;
-  background-color: #fff;
-  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.05);
-  padding: 20px;
 }
-.llar-help-page .documentation-section .top-list .title {
-  font-weight: bold;
-  margin-bottom: 20px;
-  font-size: 18px;
+.llar-help-page .documentation-section .top-list .list__block {
+  padding: 30px 35px;
+  border-radius: 20px;
+  background-color: #FDFDFD;
+  box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
+}
+.llar-help-page .documentation-section .top-list ol {
+  margin: 0;
+  margin-left: 35px;
+  color: #5C8FDC;
+  list-style: none;
+  counter-reset: my-counter;
 }
 .llar-help-page .documentation-section .top-list ol li {
-  margin-bottom: 15px;
+  position: relative;
   font-size: 16px;
+  margin-bottom: 15px;
+  padding: 3px;
+  border-radius: 8px;
+  counter-increment: my-counter;
+}
+.llar-help-page .documentation-section .top-list ol li:before {
+  content: counter(my-counter) ".";
+  position: absolute;
+  left: -45px;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  font-size: inherit;
+  background-color: #F6FBFF;
+  border-radius: 16px;
+  padding: 3px 20px;
 }
 .llar-help-page .documentation-section .top-list ol li a {
+  position: relative;
+  color: inherit;
   text-decoration: none;
 }
 .llar-help-page .documentation-section .top-list ol li a:hover {
