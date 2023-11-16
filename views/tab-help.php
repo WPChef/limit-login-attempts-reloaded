@@ -5,32 +5,52 @@ use LLAR\Core\Config;
 if( !defined( 'ABSPATH' ) ) exit();
 ?>
 
-<div class="llar-help-page">
+<div id="llar-setting-page-help" class="llar-help-page">
     <?php if( Config::get( 'active_app' ) === 'local' ) : ?>
     <div class="section-1">
         <div class="block">
-            <div class="title"><?php _e( 'Upgrade Now to Access Premium Support', 'limit-login-attempts-reloaded' ); ?></div>
-            <div class="text"><?php _e( 'Our technical support team is available by email to help with any questions.', 'limit-login-attempts-reloaded' ); ?></div>
-            <div class="actions">
-                <a class="button button-primary" href="https://checkout.limitloginattempts.com/plan?from=plugin-help-tab" target="_blank">
+            <div class="title">
+                <?php _e( 'Upgrade Now to Access Premium Support', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="text">
+                <?php _e( 'Our technical support team is available by email to help<br>with any questions.', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="actions mt-1_5">
+                <a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-help-tab" target="_blank">
                     <?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?>
                 </a>
             </div>
         </div>
         <div class="block">
-            <div class="title"><?php _e( 'Free Support', 'limit-login-attempts-reloaded' ); ?></div>
-            <div class="text"><?php _e( 'Support for free customers is available via our forums page on WordPress.org. The majority of requests <b>receive an answer within a few days</b>.', 'limit-login-attempts-reloaded' ); ?></div>
-            <div class="actions">
-                <a class="button button-secondary" href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/" target="_blank"><?php _e( 'Go To Support Forums', 'limit-login-attempts-reloaded' ); ?></a>
+            <div class="title">
+                <?php _e( 'Free Support', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="text">
+                <?php _e( 'Support for free customers is available via our forums page on WordPress.org.<br>The majority of requests <b>receive an answer within a few days</b>.', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="actions mt-1_5">
+                <a class="button menu__item col button__transparent_orange" href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/" target="_blank">
+                    <?php _e( 'Go To Support Forums', 'limit-login-attempts-reloaded' ); ?>
+                </a>
             </div>
         </div>
     </div>
     <?php endif; ?>
 
-    <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-help-tab" target="_blank" class="gdpr-information-link"><?php _e( 'GDPR Information', 'limit-login-attempts-reloaded' ); ?></a>
+    <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-help-tab" target="_blank" class="description-page gdpr-information-link">
+        <?php _e( 'GDPR Information', 'limit-login-attempts-reloaded' ); ?>
+    </a>
 
-    <h2 class="all-doc-title"><a href="#" target="_blank"><?php _e( 'All Documentation', 'limit-login-attempts-reloaded' ); ?></a></h2>
-    <div class="documentation-section">
+    <a href="#" class="description-page gdpr-information-link all-doc-title mt-1_5" target="_blank">
+        <?php _e( 'Software Documentation', 'limit-login-attempts-reloaded' ); ?>
+    </a>
+
+    <h3 class="title_page">
+        <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-exploitation.png">
+        <?php _e( 'All Documentation', 'limit-login-attempts-reloaded' ); ?>
+    </h3>
+
+    <div class="documentation-section mt-1_5">
         <div class="questions">
             <a class="question" href="https://www.limitloginattempts.com/services/cloud-service/?from=plugin-help-tab" target="_blank">
                 <div class="title"><?php _e( 'Cloud Service & Security', 'limit-login-attempts-reloaded' ); ?></div>
