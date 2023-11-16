@@ -616,6 +616,10 @@
           @include _1599 {
             padding: 12px 25px;
           }
+
+          @include _1399 {
+            padding: 12px 15px;
+          }
         }
 
         th {
@@ -632,6 +636,10 @@
           .dashicons {
             color: $primary-colors__turquoise;
             line-height: inherit;
+
+            @include _1599 {
+              font-size: 16px;
+            }
           }
 
           .hint_tooltip {
@@ -675,7 +683,7 @@
               min-width: 720px;
 
               @include _1599 {
-                min-width: 600px;
+                min-width: 70%;
               }
             }
 
