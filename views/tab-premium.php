@@ -4,35 +4,64 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 ?>
 
-<div class="llar-premium-page-wrapper">
+<div id="llar-setting-page-premium" class="llar-premium-page-wrapper">
     <div class="llar-premium-page-promo">
         <div class="section-1">
             <div class="text">
-                <div class="title"><?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?></div>
+                <div class="title">
+                    <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
+                </div>
                 <ul class="links">
-                    <li><a href="https://www.limitloginattempts.com/features/?from=plugin-premium-tab" target="_blank"><?php _e( 'Full feature list', 'limit-login-attempts-reloaded' ); ?></a></li>
-                    <li><a href="https://www.limitloginattempts.com/services/pre-sales-questions/?from=plugin-premium-tab" target="_blank"><?php _e( 'Pre-sales FAQs', 'limit-login-attempts-reloaded' ); ?></a></li>
-                    <li><a href="https://www.limitloginattempts.com/contact-us/?from=plugin-premium-tab" target="_blank"><?php _e( 'Ask a pre-sales question', 'limit-login-attempts-reloaded' ); ?></a></li>
-                    <li><a href="https://www.limitloginattempts.com/contact-us/?from=plugin-premium-tab" target="_blank"><?php _e( 'Support', 'limit-login-attempts-reloaded' ); ?></a></li>
+                    <li class="button tags tags_add">
+                        <a href="https://www.limitloginattempts.com/features/?from=plugin-premium-tab" class="link__style_unlink gdpr-information-link" target="_blank">
+                            <?php _e( 'Full feature list', 'limit-login-attempts-reloaded' ); ?>
+                        </a>
+                    </li>
+                    <li class="button tags tags_add">
+                        <a href="https://www.limitloginattempts.com/services/pre-sales-questions/?from=plugin-premium-tab" class="link__style_unlink gdpr-information-link" target="_blank">
+                            <?php _e( 'Pre-sales FAQs', 'limit-login-attempts-reloaded' ); ?>
+                        </a>
+                    </li>
+                    <li class="button tags tags_add">
+                        <a href="https://www.limitloginattempts.com/contact-us/?from=plugin-premium-tab" class="link__style_unlink gdpr-information-link" target="_blank">
+                            <?php _e( 'Ask a pre-sales question', 'limit-login-attempts-reloaded' ); ?>
+                        </a>
+                    </li>
+                    <li class="button tags tags_add">
+                        <a href="https://www.limitloginattempts.com/contact-us/?from=plugin-premium-tab" class="link__style_unlink gdpr-information-link" target="_blank">
+                            <?php _e( 'Support', 'limit-login-attempts-reloaded' ); ?>
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="action">
-                <a class="button button-primary" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"><?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?></a>
-                <div class="label"><span class="dashicons dashicons-external"></span><?php _e( 'Goes to LLAR checkout page', 'limit-login-attempts-reloaded' ); ?></div>
+                <a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">
+                    <?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?>
+                </a>
+                <div class="label">
+                    <span class="dashicons dashicons-external"></span>
+                    <?php _e( 'Goes to LLAR checkout page', 'limit-login-attempts-reloaded' ); ?>
+                </div>
             </div>
         </div>
-        <div class="section-2">
-			<?php _e( 'You are currently using the free version of <strong>Limit Login Attempts Reloaded</strong>.', 'limit-login-attempts-reloaded' ); ?>
-            <a href="https://www.limitloginattempts.com/activate/?from=plugin-premium-tab" target="_blank"><?php _e( 'If you purchased a premium plan, check your email for setup instructions (key included)', 'limit-login-attempts-reloaded' ); ?></a>
+        <div class="section-1__internal mt-1_5">
+            <?php _e( 'You are currently using the free version of <strong>Limit Login Attempts Reloaded</strong>.', 'limit-login-attempts-reloaded' ); ?>
+            <a href="https://www.limitloginattempts.com/activate/?from=plugin-premium-tab" class="link__style_unlink llar_turquoise" target="_blank">
+                <?php _e( 'If you purchased a premium plan, check your email for setup instructions (key included)', 'limit-login-attempts-reloaded' ); ?>
+            </a>
         </div>
     </div>
+
+    <h3 class="title_page">
+        <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-exploitation.png">
+        <?php _e( 'Features comparison', 'limit-login-attempts-reloaded' ); ?>
+    </h3>
 
     <div class="text-block-1">
         <h1><?php _e( 'Why Should I Consider Premium?', 'limit-login-attempts-reloaded' ); ?></h1>
         <p><?php _e( 'Although the free version offers great protection, the premium version includes an important feature called <b>IP Intelligence</b>. With IP intelligence, your website will be able to identify malicious IPs before they attempt a login, and absorb them into the cloud to save system resources. Your site will not only be more secure, but will operate at its optimal performance.', 'limit-login-attempts-reloaded' ); ?></p>
     </div>
 
-    <h3><?php _e( 'Features comparison', 'limit-login-attempts-reloaded' ); ?></h3>
 
     <div class="llar-premium-plans-table">
         <table>
