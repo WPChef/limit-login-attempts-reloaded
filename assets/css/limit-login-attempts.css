@@ -19,6 +19,10 @@
   cursor: default;
 }
 
+.llar_typography-secondary {
+  color: #666D84;
+}
+
 .llar_orange {
   color: #FF7C06;
 }
@@ -2370,30 +2374,32 @@
   text-align: center;
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .action a.button {
-  text-transform: uppercase;
-  font-size: 18px;
-  padding: 10px 30px;
-  min-width: 170px;
+  font-size: 16px;
+  padding: 7px 35px;
+  min-width: 250px;
   text-align: center;
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .action .label {
-  font-size: 12px;
-  color: #a9a9a9;
-  margin-top: 5px;
+  font-size: 14px;
+  color: #A4A8B7;
+  margin-top: 9px;
+}
+#llar-setting-page-premium .llar-premium-page-promo .section-1 .action .label .dashicons {
+  font-size: 18px;
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1__internal {
   font-size: 16px;
   text-align: center;
+  margin-top: 40px;
   color: #666D84;
   border-radius: 20px;
   background-color: #F6FBFF;
   padding: 27px 0;
 }
-
-.text-block-1 {
+#llar-setting-page-premium .text-block-1 {
   margin-bottom: 20px;
 }
-.text-block-1 p {
+#llar-setting-page-premium .text-block-1 p {
   font-size: 15px;
 }
 

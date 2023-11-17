@@ -11,7 +11,7 @@ if( !defined( 'ABSPATH' ) ) exit();
                 <div class="title">
                     <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
                 </div>
-                <ul class="links">
+                <ul class="links mt-1_5">
                     <li class="button tags tags_add">
                         <a href="https://www.limitloginattempts.com/features/?from=plugin-premium-tab" class="link__style_unlink gdpr-information-link" target="_blank">
                             <?php _e( 'Full feature list', 'limit-login-attempts-reloaded' ); ?>
@@ -44,11 +44,20 @@ if( !defined( 'ABSPATH' ) ) exit();
                 </div>
             </div>
         </div>
-        <div class="section-1__internal mt-1_5">
+        <div class="section-1__internal">
             <?php _e( 'You are currently using the free version of <strong>Limit Login Attempts Reloaded</strong>.', 'limit-login-attempts-reloaded' ); ?>
             <a href="https://www.limitloginattempts.com/activate/?from=plugin-premium-tab" class="link__style_unlink llar_turquoise" target="_blank">
                 <?php _e( 'If you purchased a premium plan, check your email for setup instructions (key included)', 'limit-login-attempts-reloaded' ); ?>
             </a>
+        </div>
+    </div>
+
+    <div class="description-page">
+        <h2 class="llar_typography-secondary">
+            <?php _e( 'Why Should I Consider Premium?', 'limit-login-attempts-reloaded' ); ?>
+        </h2>
+        <div class="description-secondary">
+            <?php _e( 'Although the free version offers great protection, the premium version includes an important feature called <b>IP Intelligence</b>. With IP intelligence, your website will be able to identify malicious IPs before they attempt a login, and absorb them into the cloud to save system resources. Your site will not only be more secure, but will operate at its optimal performance.', 'limit-login-attempts-reloaded' ); ?>
         </div>
     </div>
 
@@ -57,10 +66,6 @@ if( !defined( 'ABSPATH' ) ) exit();
         <?php _e( 'Features comparison', 'limit-login-attempts-reloaded' ); ?>
     </h3>
 
-    <div class="text-block-1">
-        <h1><?php _e( 'Why Should I Consider Premium?', 'limit-login-attempts-reloaded' ); ?></h1>
-        <p><?php _e( 'Although the free version offers great protection, the premium version includes an important feature called <b>IP Intelligence</b>. With IP intelligence, your website will be able to identify malicious IPs before they attempt a login, and absorb them into the cloud to save system resources. Your site will not only be more secure, but will operate at its optimal performance.', 'limit-login-attempts-reloaded' ); ?></p>
-    </div>
 
 
     <div class="llar-premium-plans-table">
