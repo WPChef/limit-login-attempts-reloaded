@@ -2402,23 +2402,23 @@
 #llar-setting-page-premium .text-block-1 p {
   font-size: 15px;
 }
-#llar-setting-page-premium .compare__block {
+#llar-setting-page-premium .llar-premium-plans-table {
   margin-top: 3.75rem;
 }
-#llar-setting-page-premium .compare__block .content {
+#llar-setting-page-premium .llar-premium-plans-table .content {
   overflow-x: auto;
 }
-#llar-setting-page-premium .compare__block .content .table_background {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background {
   border-collapse: inherit;
   border-spacing: 0;
   margin-bottom: 10rem;
   border-radius: 1rem;
   box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2), -1px -1px 2px 0 rgba(162, 180, 189, 0.2);
 }
-#llar-setting-page-premium .compare__block .content .table_background td {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background td {
   padding: 1.12rem 0.87rem 1.12rem 1.81rem;
 }
-#llar-setting-page-premium .compare__block .content .table_background thead td {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background thead td {
   min-width: 12rem;
   width: 20%;
   border-top-left-radius: 20px;
@@ -2430,45 +2430,50 @@
   font-weight: 500;
   text-align: left;
 }
-#llar-setting-page-premium .compare__block .content .table_background thead td:first-child {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background thead td:first-child {
   min-width: 14rem;
 }
-#llar-setting-page-premium .compare__block .content .table_background tbody tr {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr {
   border-color: #ECFAFB;
   border-radius: 20px;
 }
-#llar-setting-page-premium .compare__block .content .table_background tbody tr:nth-child(even) {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr:nth-child(even) {
   background-color: #F6FBFF;
 }
-#llar-setting-page-premium .compare__block .content .table_background tbody tr:nth-child(odd) {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr:nth-child(odd) {
   background-color: #FDFDFD;
 }
-#llar-setting-page-premium .compare__block .content .table_background tbody tr td {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td {
   font-size: 1.125rem;
   line-height: 1.4;
   max-width: 16rem;
   border-right-width: 1px;
 }
 @media screen and (max-width: 991.5px) {
-  #llar-setting-page-premium .compare__block .content .table_background tbody tr td {
+  #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td {
     font-size: 0.875rem;
   }
 }
-#llar-setting-page-premium .compare__block .content .table_background tbody tr td .old_price {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .icon-lock {
+  color: #2A2F40;
+  width: 24px;
+  height: 24px;
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .old_price {
   font-size: 0.87rem;
   margin-right: 0.5rem;
   color: #A4A8B7;
   display: inline-block;
   text-decoration: line-through;
 }
-#llar-setting-page-premium .compare__block .content .table_background tbody tr td button, #llar-setting-page-premium .compare__block .content .table_background tbody tr td .button {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .button {
   width: 100%;
 }
-#llar-setting-page-premium .compare__block .content .table_background tbody tr td span {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td span {
   display: block;
   color: #666D84;
 }
-#llar-setting-page-premium .compare__block .content .table_background tbody tr td span.orange {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td span.orange {
   border-radius: 20px;
   background-color: rgba(255, 124, 6, 0.0980392157);
   color: #F07200;
@@ -2476,7 +2481,7 @@
   padding-right: 1.37rem;
 }
 @media screen and (max-width: 991.5px) {
-  #llar-setting-page-premium .compare__block .content .table_background tbody tr td span.orange {
+  #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td span.orange {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
