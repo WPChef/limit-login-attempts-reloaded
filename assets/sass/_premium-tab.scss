@@ -7,7 +7,7 @@
     margin-bottom: 20px;
     border-radius: $border-radius;
     background-color: $background-body;
-    box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
+    box-shadow: 3px 5px 23px 0 $box-shadow__light-transparent-gray;
 
     .section-1 {
       display: flex;
@@ -87,13 +87,114 @@
       font-size: 15px;
     }
   }
+
+  .compare__block {
+    margin-top: 3.75rem;
+
+    &.compare_plans {
+      //display: none;
+    }
+
+    .content {
+      overflow-x: auto;
+
+      .table_background {
+        border-collapse: inherit;
+        border-spacing: 0;
+        margin-bottom: 10rem;
+        border-radius: 1rem;
+        box-shadow: 3px 5px 23px 0 $box-shadow__light-transparent-gray, -1px -1px 2px 0 $box-shadow__light-transparent-gray;
+
+
+        td {
+          padding: 1.12rem .87rem 1.12rem 1.81rem;
+        }
+
+        thead {
+
+          td {
+            min-width: 12rem;
+            width: 20%;
+            border-top-left-radius: $border-radius;
+            border-top-right-radius: $border-radius;
+            background-color: $primary-colors__turquoise_back;
+            color: $primary-colors__turquoise;
+            border: 1px solid $primary-colors__turquoise_back;
+            font-size: 1.125rem;
+            font-weight: 500;
+            text-align: left;
+
+            &:first-child {
+              min-width: 14rem;
+            }
+          }
+        }
+
+        tbody {
+
+          tr {
+            border-color: #ECFAFB;
+            border-radius: $border-radius;
+
+            &:nth-child(even) {
+              background-color: $background__sky-blue;
+            }
+
+            &:nth-child(odd) {
+              background-color: $background-body;
+            }
+
+            td {
+              font-size: 1.125rem;
+              line-height: 1.4;
+              max-width: 16rem;
+              border-right-width: 1px;
+
+              @include _991 {
+                font-size: .875rem;
+              }
+
+              .old_price {
+                font-size: .87rem;
+                margin-right: .5rem;
+                color: $typography-additional;
+                display: inline-block;
+                text-decoration: line-through;
+              }
+
+              button {
+                width: 100%;
+              }
+
+              span {
+                display: block;
+                color: $typography-secondary;
+
+                &.orange {
+                  border-radius: $border-radius;
+                  background-color: $primary-colors__orange-back;
+                  color: $secondary-colors__dark-orange;
+                  padding-left: 1.37rem;
+                  padding-right: 1.37rem;
+
+                  @include _991 {
+                    padding-left: .5rem;
+                    padding-right: .5rem;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 
 
-
-
 .llar-premium-plans-table {
+
   table {
     width: 100%;
     background-color: #fff;
