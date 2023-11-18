@@ -143,8 +143,8 @@ if( $active_app === 'local' ) {
                     <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
                 </span>
                 <span class="llar-label__url">
-                    <a href="<?= home_url( '/' ) ?>" class="link__style_unlink">
-                        <?= wp_parse_url( home_url(), PHP_URL_HOST ) ?>
+                    <a href="<?php echo home_url( '/' ) ?>" class="link__style_unlink">
+                        <?php echo wp_parse_url( home_url(), PHP_URL_HOST ) ?>
                     </a>
                 </span>
             </div>
@@ -361,7 +361,7 @@ if( $active_app === 'local' ) {
 	<div class="dashboard-section-3">
         <div class="info-box-1">
             <div class="info-box-icon">
-                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-exploitation.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-exploitation.png">
             </div>
             <div class="info-box-content">
                 <div class="title"><a href="<?php echo $this->get_options_page_uri('logs-'.$active_app); ?>" class="link__style_unlink">
@@ -375,7 +375,7 @@ if( $active_app === 'local' ) {
         </div>
         <div class="info-box-1">
             <div class="info-box-icon">
-                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-help.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-help.png">
             </div>
             <div class="info-box-content">
                 <div class="title">
@@ -390,7 +390,7 @@ if( $active_app === 'local' ) {
         </div>
         <div class="info-box-1">
             <div class="info-box-icon">
-                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-web.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-web.png">
             </div>
             <div class="info-box-content">
                 <div class="title">

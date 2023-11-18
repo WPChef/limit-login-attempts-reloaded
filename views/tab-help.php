@@ -50,7 +50,7 @@ $active_app = Config::get( 'active_app' );
     <div class="documentation-section mt-1_5">
         <div class="questions">
             <h3 class="title_page">
-                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-blocklist.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-blocklist.png">
                 <?php _e( 'All Documentation', 'limit-login-attempts-reloaded' ); ?>
             </h3>
             <div class="questions__block">
@@ -82,7 +82,7 @@ $active_app = Config::get( 'active_app' );
         </div>
         <div class="top-list">
             <h3 class="title_page">
-                <img src="<?= LLA_PLUGIN_URL ?>/assets/css/images/icon-blocklist.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-blocklist.png">
                 <?php _e( 'Top Topics and Questions', 'limit-login-attempts-reloaded' ); ?>
             </h3>
             <div class="list__block">

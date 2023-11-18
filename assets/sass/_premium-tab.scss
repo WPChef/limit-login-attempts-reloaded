@@ -88,12 +88,8 @@
     }
   }
 
-  .compare__block {
+  .llar-premium-plans-table {
     margin-top: 3.75rem;
-
-    &.compare_plans {
-      //display: none;
-    }
 
     .content {
       overflow-x: auto;
@@ -152,6 +148,12 @@
 
               @include _991 {
                 font-size: .875rem;
+              }
+
+              .icon-lock {
+                color: $typography-primary;
+                width: 24px;
+                height: 24px;
               }
 
               .old_price {
