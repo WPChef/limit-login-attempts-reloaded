@@ -200,13 +200,14 @@ if( !defined( 'ABSPATH' ) ) exit();
             </tr>
         </table>
     </div>
-</div>
+
 
 
 <?php
 $features = [
 'Features',
 'Free',
+'Micro Cloud',
 'Premium',
 'Premium +',
 'Professional',
@@ -220,41 +221,45 @@ $lock = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox=
 $compare_list = require LLA_PLUGIN_DIR . '/resources/compare-plans-data.php';
 ?>
 
-<section id="compare_section" class="compare__block compare_plans">
-    <div class="content container-xxl">
-        <table class="table table_background">
-            <thead>
-            <tr>
-                <?php foreach ($features as $item) : ?>
-                    <td scope="col"><?= $item ?></td>
-                <?php endforeach; ?>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($compare_list as $category => $list) : ?>
+    <section id="compare_section" class="compare__block compare_plans">
+        <div class="content container-xxl">
+            <table class="table table_background">
+                <thead>
                 <tr>
-                    <td>
-                        <?= $category !== 'buttons' ? $category : '' ?>
-                    </td>
-                    <?php foreach ($features as $item) :
-                        if ($item === 'Features') :
-                            continue;
-                        endif; ?>
-                        <?php
-                        $shouldBeBlack = ($item === 'Free' && ($list[$item] === 'Yes'));
-                        $class = $shouldBeBlack ? 'black' : (($item !== 'Free' && ($list[$item] === 'Yes')) ? 'orange' : 'black');
-                        $class = $category === 'buttons' ? $class . ' text-center' : $class;
-
-                        $string = $list[$item] === 'Yes' ? '&#x2713;' : ($list[$item] === 'Lock' ? $lock : $list[$item]);
-                        ?>
-                        <td class="<?= $class ?>">
-                            <?= $string ?>
-                        </td>
+                    <?php foreach ($features as $item) : ?>
+                        <td scope="col"><?php echo $item ?></td>
                     <?php endforeach; ?>
                 </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</section>
+                </thead>
+                <tbody>
+                <?php foreach ($compare_list as $category => $list) : ?>
+                    <tr>
+                        <td>
+                            <?php echo ($category === 'buttons_header' || $category === 'buttons_footer') ? '' : $category ?>
+                            <div class="description">
+                                <?php echo !empty($list['description']) ? $list['description'] : '' ?>
+                            </div>
+                        </td>
+                        <?php foreach ($features as $item) :
+                            if ($item === 'Features' || !isset($list[$item])) :
+                                continue;
+                            endif;
+
+                            $shouldBeBlack = ($item === 'Free' && ($list[$item] === 'Yes'));
+                            $class = $shouldBeBlack ? 'black' : (($item !== 'Free' && ($list[$item] === 'Yes')) ? 'orange' : 'black');
+                            $class = ($category === 'buttons_header' || $category === 'buttons_footer') ? $class : $class . ' text-center';
+
+                            $string = $list[$item] === 'Yes' ? '&#x2713;' : ($list[$item] === 'Lock' ? $lock : $list[$item]);
+                            ?>
+                            <td class="<?php echo $class ?>">
+                                <?php echo $string ?>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
 

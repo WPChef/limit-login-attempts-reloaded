@@ -5,193 +5,86 @@
  */
 
 $compare_list = [
-    'Recommended For' => [
-        'Free' => 'Basic Login Protection For Entry-Level WordPress Websites.',
-        'Premium' => 'Websites that are Self-Managed and Require Optimal Safeguards Against Present and Future Hazards.',
-        'Premium +' => 'Websites Under Elevated Threat that Require Additional Features & Resources To Operate At Their Optimal Performance.',
-        'Professional' => 'Websites Under Frequent Attack That Require The Most Comprehensive Protection To Protect Sensitive Data.',
+    'buttons_header' => [
+        'Free'          => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Installed', 'limit-login-attempts-reloaded') . '</a>',
+        'Micro Cloud'   => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Premium'       => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Premium +'     => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Professional'  => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
     ],
-    'Monthly Price' => [
-        'Free' => '-',
-        'Premium' => 'ssss',
-        'Premium +' => 'ssss',
-        'Professional' => 'ssss',
+    'Limit Number of Retry Attempts' => [
+        'Free'          => 'Yes',
+        'Micro Cloud'   => 'Yes',
+        'Premium'       => 'Yes',
+        'Premium +'     => 'Yes',
+        'Professional'  => 'Yes',
     ],
-    'Annual Price' => [
-        'Free' => '-',
-        'Premium' => 'ssss',
-        'Premium +' => 'ssss',
-        'Professional' => 'ssss',
+    'Configurable Lockout Timing' => [
+        'Free'          => 'Yes',
+        'Micro Cloud'   => 'Yes',
+        'Premium'       => 'Yes',
+        'Premium +'     => 'Yes',
+        'Professional'  => 'Yes',
     ],
-    'Lifetime Price' => [
-        'Free' => '-',
-        'Premium' => 'ssss',
-        'Premium +' => 'ssss',
-        'Professional' => 'ssss',
+    'Performance Optimizer' => [
+        'description'   => 'Absorb failed login attempts from brute force bots in the cloud to keep your website at its optimal performance.',
+        'Free'          => 'Lock',
+        'Micro Cloud'   => 'Yes',
+        'Premium'       => 'Yes',
+        'Premium +'     => 'Yes',
+        'Professional'  => 'Yes',
     ],
-    'Limit Login Attempts' => [
+    'Block By Country' => [
+        'description'   => 'Disable IPs from any region to disable logins.',
+        'Free'          => 'Lock',
+        'Micro Cloud'   => 'Yes',
+        'Premium'       => 'Yes',
+        'Premium +'     => 'Yes',
+        'Professional'  => 'Yes',
+    ],
+    'Access Blocklist of Malicious IPs' => [
+        'description' => 'Add another layer of protection from brute force bots by accessing a global database of known IPs with malicious activity.',
         'Free' => 'Yes',
         'Premium' => 'Yes',
         'Premium +' => 'Yes',
         'Professional' => 'Yes',
     ],
-    'Configurable Lockout Timings' => [
+    'Auto IP Blocklist' => [
+        'description' => 'Automatically add malicious IPs to your blocklist when triggered by the system.',
         'Free' => 'Yes',
         'Premium' => 'Yes',
         'Premium +' => 'Yes',
         'Professional' => 'Yes',
     ],
-    'GDPR Compliance' => [
+    'Access Active Cloud Blocklist' => [
+        'description' => 'Use system wide data from over 10,000 WordPress websites to identify and block malicious IPs. This is an active list in real-time.',
         'Free' => 'Yes',
         'Premium' => 'Yes',
         'Premium +' => 'Yes',
         'Professional' => 'Yes',
     ],
-    'WordPress Login Page Protect<span>(Includes WooCommerce & XMLRPC)</span>' => [
+    'Intelligent IP Blocking' => [
+        'description' => 'Use active IP database via the cloud to automatically block users before they are able to make a failed login.',
         'Free' => 'Yes',
         'Premium' => 'Yes',
         'Premium +' => 'Yes',
         'Professional' => 'Yes',
     ],
-    'Safelist/Denylist<span>(Supports IP Ranges)</span>' => [
+    'Synchronize Lockouts & Safelists/Blocklists' => [
+        'description' => 'Lockouts & safelists/blocklists can be shared between multiple domains to enhance protection.',
         'Free' => 'Yes',
         'Premium' => 'Yes',
         'Premium +' => 'Yes',
         'Professional' => 'Yes',
     ],
-    'Lockouts Log' => [
+    'Premium Support' => [
+        'Receive 1 on 1 technical support via email for any issues. Free support availabe in the WordPress support forum.',
         'Free' => 'Yes',
         'Premium' => 'Yes',
         'Premium +' => 'Yes',
         'Professional' => 'Yes',
     ],
-    'Configurable Email Notifications On Lockouts' => [
-        'Free' => 'Yes',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Trusted IP Origins' => [
-        'Free' => 'Yes',
-        'Premium' => 'Auto',
-        'Premium +' => 'Auto',
-        'Professional' => 'Auto',
-    ],
-    'Login Firewall' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Performance Optimizer - Brute Force Attacks Absorbed In The Cloud' => [
-        'Free' => 'Lock',
-        'Premium' => 'ssss',
-        'Premium +' => 'ssss',
-        'Professional' => 'ssss',
-    ],
-    'Access Active Cloud Denylist' => [
-        'Free' => 'Lock',
-        'Premium' => 'Lock',
-        'Premium +' => 'Lock',
-        'Professional' => 'Yes',
-    ],
-    'Auto IP Denylist' => [
-        'Free' => 'Lock',
-        'Premium' => 'Lock',
-        'Premium +' => 'Lock',
-        'Professional' => 'Yes',
-    ],
-    'Deny By Country' => [
-        'Free' => 'Lock',
-        'Premium' => 'Lock',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Access IP Denylist of Known Malicious IPs' => [
-        'Free' => 'Lock',
-        'Premium' => 'Lock',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'XML-RPC Denial' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Enriched IP Data' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'IP Throttling' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Synchronized IP Safelist/Denylist Between Multiple Domains' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Synchronized Lockouts Check Between Multiple Domains' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Supports IPV6 Ranges for Safelist/Denylist' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Visual Metrics' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'CSV Download of All IP Data' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Intelligent IP Denial' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Auto Backup Of All IP Data' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Enhanced Lockouts Log' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Unlock The Locked Admin' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'Email Support' => [
-        'Free' => 'Lock',
-        'Premium' => 'Yes',
-        'Premium +' => 'Yes',
-        'Professional' => 'Yes',
-    ],
-    'buttons' => [
+    'buttons_footer' => [
         'Free' => '<button class="menu__item button__transparent_orange" data-bs-toggle="modal" data-bs-target="#download_modal_window" type="button">Download</button>',
         'Premium' => '<a href="#plans_menu_nav" class="link__style_unlink"><button class="menu__item button__orange">Subscribe</button></a>',
         'Premium +' => '<a href="#plans_menu_nav" class="link__style_unlink"><button class="menu__item button__orange">Subscribe</button></a>',
