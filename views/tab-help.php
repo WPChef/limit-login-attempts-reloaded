@@ -8,7 +8,7 @@ $active_app = Config::get( 'active_app' );
 ?>
 
 <div id="llar-setting-page-help" class="llar-help-page">
-    <?php if( Config::get( 'active_app' ) === 'local' ) : ?>
+    <?php if( $active_app === 'local' ) : ?>
     <div class="section-1">
         <div class="block">
             <div class="title">

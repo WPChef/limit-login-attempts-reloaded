@@ -73,6 +73,11 @@
   margin-right: 8px !important;
 }
 
+.llar-disabled {
+  cursor: default !important;
+  pointer-events: none;
+}
+
 .dashicons-secondary {
   margin-left: 0.5rem;
   font-size: 170%;
@@ -2343,6 +2348,7 @@
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1 {
   display: flex;
+  align-items: flex-end;
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .text .title {
   font-size: 31px;
@@ -2406,153 +2412,128 @@
   margin-top: 3.75rem;
 }
 #llar-setting-page-premium .llar-premium-plans-table .content {
+  border-radius: 16px;
+  background-color: #F6FBFF;
+  padding-right: 15px;
+  padding-bottom: 15px;
   overflow-x: auto;
 }
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  width: 100%;
   border-collapse: inherit;
   border-spacing: 0;
-  margin-bottom: 10rem;
-  border-radius: 1rem;
-  box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2), -1px -1px 2px 0 rgba(162, 180, 189, 0.2);
+  border-radius: 16px;
+  box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
 }
-#llar-setting-page-premium .llar-premium-plans-table .content .table_background td {
-  padding: 1.12rem 0.87rem 1.12rem 1.81rem;
+@media screen and (max-width: 1599.5px) {
+  #llar-setting-page-premium .llar-premium-plans-table .content .table_background {
+    font-size: 14px;
+  }
 }
-#llar-setting-page-premium .llar-premium-plans-table .content .table_background thead td {
-  min-width: 12rem;
-  width: 20%;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  background-color: rgba(74, 202, 216, 0.0980392157);
-  color: #4ACAD8;
-  border: 1px solid rgba(74, 202, 216, 0.0980392157);
-  font-size: 1.125rem;
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background thead tr td {
+  font-size: 20px;
   font-weight: 500;
   text-align: left;
+  color: #4ACAD8;
+  width: 15%;
+  min-width: 150px;
+  padding: 16px 29px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  border: 1px solid rgba(74, 202, 216, 0.0980392157);
+  background-color: rgba(74, 202, 216, 0.0980392157);
 }
-#llar-setting-page-premium .llar-premium-plans-table .content .table_background thead td:first-child {
-  min-width: 14rem;
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background thead tr td:first-child {
+  width: 25%;
+  min-width: 300px;
+}
+@media screen and (max-width: 1799.5px) {
+  #llar-setting-page-premium .llar-premium-plans-table .content .table_background thead tr td {
+    min-width: 100px;
+  }
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-setting-page-premium .llar-premium-plans-table .content .table_background thead tr td {
+    font-size: 18px;
+    font-weight: 400;
+  }
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody {
+  text-align: left;
+  background-color: white;
+  border-bottom-right-radius: 16px;
+  border-bottom-left-radius: 16px;
 }
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr {
-  border-color: #ECFAFB;
-  border-radius: 20px;
+  position: relative;
 }
-#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr:nth-child(even) {
-  background-color: #F6FBFF;
-}
-#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr:nth-child(odd) {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr:nth-child(even)::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  border-radius: 16px;
   background-color: #FDFDFD;
 }
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 16px;
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 16px;
+}
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td {
-  font-size: 1.125rem;
-  line-height: 1.4;
-  max-width: 16rem;
-  border-right-width: 1px;
+  position: relative;
+  padding: 16px 29px;
+  border-right: 1px solid #F6FBFF;
+  border-bottom: 1px solid #F6FBFF;
+  z-index: 1;
+}
+@media screen and (max-width: 1799.5px) {
+  #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td {
+    padding: 12px 10px;
+  }
 }
 @media screen and (max-width: 991.5px) {
   #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td {
-    font-size: 0.875rem;
+    font-size: 14px;
   }
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td:last-child {
+  border-right: unset;
 }
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .icon-lock {
   color: #2A2F40;
   width: 24px;
   height: 24px;
 }
-#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .old_price {
-  font-size: 0.87rem;
-  margin-right: 0.5rem;
-  color: #A4A8B7;
-  display: inline-block;
-  text-decoration: line-through;
-}
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .button {
+  margin: 40px auto;
+  padding-top: 12px;
+  padding-bottom: 12px;
   width: 100%;
 }
-#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td span {
-  display: block;
-  color: #666D84;
-}
-#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td span.orange {
-  border-radius: 20px;
-  background-color: rgba(255, 124, 6, 0.0980392157);
-  color: #F07200;
-  padding-left: 1.37rem;
-  padding-right: 1.37rem;
-}
-@media screen and (max-width: 991.5px) {
-  #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td span.orange {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+@media screen and (max-width: 1799.5px) {
+  #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .button {
+    width: auto;
   }
 }
-
-.llar-premium-plans-table table {
-  width: 100%;
-  background-color: #fff;
-  table-layout: fixed;
-  position: relative;
-  border-collapse: collapse;
+@media screen and (max-width: 1599.5px) {
+  #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .button {
+    min-width: 120px;
+  }
 }
-.llar-premium-plans-table table tr th {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .description {
+  display: block;
+  margin-top: 5px;
+  color: #666D84;
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields {
   text-align: center;
-  padding: 25px 15px;
-}
-.llar-premium-plans-table table tr th img {
-  width: 50px;
-  height: auto;
-  margin-bottom: 15px;
-}
-.llar-premium-plans-table table tr th .plan-name {
-  font-weight: normal;
-  font-size: 18px;
-}
-.llar-premium-plans-table table tr td {
-  padding: 15px;
-  text-align: center;
-}
-.llar-premium-plans-table table tr td .dashicons-yes {
-  color: #00be00;
-  font-size: 28px;
-  display: inline-block;
-  line-height: 1;
-  height: auto;
-  width: auto;
-  vertical-align: middle;
-}
-.llar-premium-plans-table table tr td .dashicons-no-alt {
-  color: #e80000;
-  font-size: 28px;
-  display: inline-block;
-  line-height: 1;
-  height: auto;
-  width: auto;
-  vertical-align: middle;
-}
-.llar-premium-plans-table table tr td .feature-value {
-  color: #a9a9a9;
-  line-height: 1.1;
-}
-.llar-premium-plans-table table tr th, .llar-premium-plans-table table tr td {
-  border-left: 1px solid #ecedef;
-  border-right: 1px solid #ecedef;
-}
-.llar-premium-plans-table table tr th:last-child, .llar-premium-plans-table table tr td:last-child {
-  border-right: 0;
-}
-.llar-premium-plans-table table tr th.feature, .llar-premium-plans-table table tr td.feature {
-  text-align: center;
-  width: 30%;
-}
-.llar-premium-plans-table table tr th.feature .name, .llar-premium-plans-table table tr td.feature .name {
-  font-size: 16px;
-  font-weight: 600;
-}
-.llar-premium-plans-table table tr:nth-child(even) td {
-  background-color: #f8f8f8;
-}
-.llar-premium-plans-table table tr.table-actions .installed-label {
-  color: green;
 }
 
 .llar-help-page {
