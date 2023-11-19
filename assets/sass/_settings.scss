@@ -29,8 +29,6 @@ $color-marker: #9762EF;
 
 
 
-
-
 //$conten-max-with: 1276px;
 //$border-radius: 20px;
 //$button-size: 12px;
@@ -157,6 +155,11 @@ $border-radius__max: $border-radius * 2;
 .mx-0_5 {
   margin-left: $text-font * .5 !important;
   margin-right: $text-font * .5 !important;
+}
+
+.llar-disabled {
+  cursor: default !important;
+  pointer-events: none;
 }
 
 .dashicons-secondary {
