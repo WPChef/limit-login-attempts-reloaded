@@ -2532,6 +2532,11 @@
   margin-top: 5px;
   color: #666D84;
 }
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .description a {
+  color: #5C8FDC;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields {
   text-align: center;
 }

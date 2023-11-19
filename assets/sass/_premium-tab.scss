@@ -228,6 +228,12 @@
                 display: block;
                 margin-top: 5px;
                 color: $typography-secondary;
+
+                a {
+                  color: $secondary-colors__blue;
+                  text-decoration: none;
+                  border-bottom: 1px solid currentColor;
+                }
               }
 
               &.inner_fields {
