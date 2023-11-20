@@ -8,7 +8,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 <div class="llar-block-country-wrap" style="display:none;">
     <div class="llar-table-header">
         <h3 class="title_page">
-            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-pre-install.png">
+            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-filter.png">
             <?php _e( 'Country Access Rules', 'limit-login-attempts-reloaded' ); ?>
         </h3>
         <?php $countries_list = Helpers::get_countries_list(); ?>
@@ -47,7 +47,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 				    const rule = response.data.rule || 'deny';
 
-				    $('.llar-block-country-mode').prepend(`<select>
+				    $('.llar-block-country-mode').prepend(`<select class="input_border" >
                         <option value="deny"`+(rule === 'deny' ? 'selected' : '')+`>Deny</option>
                         <option value="allow"`+(rule === 'allow' ? 'selected' : '')+`>Allow only</option>
                     </select>`);
