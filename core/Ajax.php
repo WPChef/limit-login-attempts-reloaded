@@ -353,7 +353,8 @@ class Ajax {
 
 								foreach ( $item['actions'] as $action ) {
 
-									echo '<button class="button llar-app-log-action-btn js-app-log-action" style="color:' . esc_attr( $action['color'] ) . ';border-color:' . esc_attr( $action['color'] ) . '" 
+									echo '<button class="button llar-app-log-action-btn js-app-log-action" 
+									style="color:' . esc_attr( $action['color'] ) . '; border-color:' . esc_attr( $action['color'] ) . '" 
                                     data-method="' . esc_attr( $action['method'] ) . '" 
                                     data-params="' . esc_attr( json_encode( $action['data'], JSON_FORCE_OBJECT ) ) . '" 
                                     href="#" title="' . $action['label'] . '"><i class="dashicons dashicons-' . esc_attr( $action['icon'] ) . '"></i></button>';
