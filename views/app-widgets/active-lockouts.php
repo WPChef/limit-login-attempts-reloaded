@@ -3,10 +3,13 @@ if( !defined( 'ABSPATH' ) ) exit();
 ?>
 
 <div class="llar-table-header">
-    <h3><?php _e( 'Active Lockouts', 'limit-login-attempts-reloaded' ); ?></h3>
+    <h3 class="title_page">
+        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-exploitation.png">
+        <?php echo __( 'Active Lockouts', 'limit-login-attempts-reloaded' ); ?>
+    </h3>
     <span class="right-link">
-        <button class="button button-secondary llar-global-reload-btn">
-            <span class="dashicons dashicons-image-rotate" style="font-size: 16px; vertical-align: middle"></span>
+        <button class="button menu__item col button__transparent_orange llar-global-reload-btn">
+            <span class="dashicons dashicons-image-rotate"></span>
             <?php _e( "Reload", 'limit-login-attempts-reloaded' ); ?></button>
     </span>
 </div>
@@ -25,11 +28,12 @@ if( !defined( 'ABSPATH' ) ) exit();
 </div>
 
 <script type="text/javascript">
-	;(function($){
+	(function($){
 
 		$(document).ready(function () {
 
 			var $log_table = $('.llar-table-app-lockouts'),
+			    $log_table_body = $log_table.find('tbody'),
                 $preloader_wrap = $log_table.closest('.llar-preloader-wrap'),
                 $log_table_empty = $log_table.html();
                 $infinity_box = $('.llar-app-lockouts-infinity-scroll'),
@@ -59,7 +63,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 			function load_lockouts_data() {
 
-                if(page_offset === false) {
+                if (page_offset === false) {
                     return;
                 }
 
@@ -78,7 +82,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 					if(response.success) {
 
-                        $log_table.append(response.data.html);
+                        $log_table_body.append(response.data.html);
 
                         if(response.data.offset) {
                             page_offset = response.data.offset;
