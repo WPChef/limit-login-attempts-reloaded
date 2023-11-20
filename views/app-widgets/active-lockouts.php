@@ -17,12 +17,15 @@ if( !defined( 'ABSPATH' ) ) exit();
 <div class="llar-preloader-wrap">
     <div class="llar-table-scroll-wrap llar-app-lockouts-infinity-scroll">
         <table class="form-table llar-table-app-lockouts">
-            <tr>
-                <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Login", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Count", 'limit-login-attempts-reloaded' ); ?></th>
-                <th scope="col"><?php _e( "Expires in (minutes)", 'limit-login-attempts-reloaded' ); ?></th>
-            </tr>
+            <thead>
+                <tr>
+                    <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>
+                    <th scope="col"><?php _e( "Login", 'limit-login-attempts-reloaded' ); ?></th>
+                    <th scope="col"><?php _e( "Count", 'limit-login-attempts-reloaded' ); ?></th>
+                    <th scope="col"><?php _e( "Expires in (minutes)", 'limit-login-attempts-reloaded' ); ?></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
         </table>
     </div>
 </div>

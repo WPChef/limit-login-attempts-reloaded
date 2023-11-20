@@ -1017,7 +1017,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin: 15px 0 5px;
+    margin: 40px 0 5px;
 
     .title_page {
       margin-top: 0;
@@ -1026,9 +1026,15 @@
     .right-link {
       font-size: 16px;
       line-height: 1.625;
+      text-align: center;
 
       .dashicons-image-rotate {
         font-size: 16px;
+        vertical-align: middle;
+      }
+
+      .dashicons-editor-help {
+        //color: $primary-colors__turquoise;
         vertical-align: middle;
       }
     }
@@ -1036,9 +1042,7 @@
 
   .llar-table-scroll-wrap {
     max-height: 400px;
-    font-size: 16px;
     padding: 0 30px 30px;
-    color: $typography-secondary;
     border-radius: $border-radius__normal;
     background-color: white;
     box-shadow: 4px 4px 18px 0 $box-shadow__light-transparent-gray;
@@ -1065,7 +1069,21 @@
         }
       }
 
+      thead {
+        color: $typography-primary;
+
+        tr {
+
+          th {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 22px 27px;
+          }
+        }
+      }
+
       tbody {
+        color: $typography-secondary;;
 
         tr {
 
@@ -1074,6 +1092,8 @@
             background-color: $background__sky-blue;
 
             td {
+              font-size: 16px;
+              font-weight: 400;
 
               &:first-child {
                 border-top-left-radius: $border-radius__normal;
@@ -1087,21 +1107,17 @@
             }
           }
 
-          th {
-            font-weight: 500;
-          }
-
-          th, td {
+          td {
             padding: 22px 27px;
-            //border: 1px solid #b9b9b9;
-
             &.llar-col-nowrap {
               white-space: nowrap;
             }
 
             .llar-log-country-flag {
               display: flex;
+              align-items: center;
               white-space: nowrap;
+              gap: 3px;
 
               .llar-tooltip {
                 &:before {
@@ -1110,15 +1126,16 @@
               }
 
               img {
-                width: 20px;
+                width: 34px;
                 height: auto;
+                border-radius: $border-radius__min * .5;
               }
             }
-          }
-
-          td {
 
             button {
+              //color: $state-color__error;
+              //background-color: $state-color__error_back;
+              //border-color: currentColor;
               line-height: 1;
               margin-right: 5px;
 
@@ -1129,32 +1146,30 @@
               .dashicons {
                 vertical-align: middle;
               }
-            }
 
-            &.llar-app-log-actions {
+            &.llar-app-log-action-btn {
+              min-width: 45px;
               text-align: center;
+              display: inline-block;
+              line-height: 20px;
+              cursor: pointer;
 
-              .llar-app-log-action-btn {
-                display: inline-block;
-                line-height: 20px;
-                cursor: pointer;
+              i {
+                vertical-align: middle;
+              }
+
+              &:hover {
 
                 i {
-                  vertical-align: middle;
+                  color: #3c8dbc;
                 }
-
-                &:hover {
-
-                  i {
-                    color: #3c8dbc;
-                  }
-                }
+              }
               }
             }
           }
 
-          &:nth-child(even) {
-            //background-color: #f9f9f9;
+          &:nth-child(odd) {
+            @extend .empty-row;
           }
         }
       }
