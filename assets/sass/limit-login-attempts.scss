@@ -1186,6 +1186,8 @@
       }
 
       .llar-block-country-list {
+        font-size: 16px;
+        color: $typography-primary;
         display: flex;
         flex-wrap: wrap;
         max-height: 400px;
@@ -1205,7 +1207,6 @@
         }
 
         &.llar-all-countries-selected {
-          font-size: 16px;
           display: inline;
           margin-left: 20px;
           vertical-align: middle;
@@ -1256,6 +1257,7 @@
         }
 
         &.llar-all-countries-list {
+          font-size: 14px;
           display: none;
           margin: 10px 0;
 
