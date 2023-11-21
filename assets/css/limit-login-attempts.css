@@ -162,9 +162,10 @@
   }
 }
 .limit-login-page-settings .nav-tab-wrapper .llar-failover-link {
+  color: #4ACAD8;
   font-size: 14px;
   float: right;
-  line-height: 2;
+  padding: 7px 15px;
 }
 .limit-login-page-settings .nav-tab-wrapper .llar-failover-link .llar-tooltip:before {
   right: 0;
@@ -648,26 +649,26 @@
 }
 #llar-setting-page .button__orange, #llar-setting-page-logs .button__orange, #llar-setting-page-logs__active .button__orange, #llar-setting-page-debug .button__orange, #llar-setting-page-help .button__orange, #llar-setting-page-premium .button__orange {
   color: white !important;
-  background: #FF7C06;
-  border: 1px solid #FF7C06;
-  box-shadow: 0 6px 12px 0 rgba(255, 124, 6, 0.4980392157);
+  background: #FF7C06 !important;
+  border: 1px solid #FF7C06 !important;
+  box-shadow: 0 6px 12px 0 rgba(255, 124, 6, 0.4980392157) !important;
 }
 #llar-setting-page .button__orange:hover, #llar-setting-page-logs .button__orange:hover, #llar-setting-page-logs__active .button__orange:hover, #llar-setting-page-debug .button__orange:hover, #llar-setting-page-help .button__orange:hover, #llar-setting-page-premium .button__orange:hover {
-  background: #F07200;
+  background: #F07200 !important;
 }
 #llar-setting-page .button__orange:disabled, #llar-setting-page-logs .button__orange:disabled, #llar-setting-page-logs__active .button__orange:disabled, #llar-setting-page-debug .button__orange:disabled, #llar-setting-page-help .button__orange:disabled, #llar-setting-page-premium .button__orange:disabled {
-  border: 1px solid rgba(255, 124, 6, 0.4980392157);
-  background: rgba(255, 124, 6, 0.4980392157);
+  border: 1px solid rgba(255, 124, 6, 0.4980392157) !important;
+  background: rgba(255, 124, 6, 0.4980392157) !important;
   cursor: auto;
 }
 #llar-setting-page .button__transparent_orange, #llar-setting-page-logs .button__transparent_orange, #llar-setting-page-logs__active .button__transparent_orange, #llar-setting-page-debug .button__transparent_orange, #llar-setting-page-help .button__transparent_orange, #llar-setting-page-premium .button__transparent_orange {
   color: #FF7C06 !important;
-  border: 1px solid currentColor;
-  background: transparent;
+  border: 1px solid currentColor !important;
+  background: transparent !important;
 }
 #llar-setting-page .button__transparent_orange:hover, #llar-setting-page-logs .button__transparent_orange:hover, #llar-setting-page-logs__active .button__transparent_orange:hover, #llar-setting-page-debug .button__transparent_orange:hover, #llar-setting-page-help .button__transparent_orange:hover, #llar-setting-page-premium .button__transparent_orange:hover {
-  background: rgba(255, 124, 6, 0.0980392157);
-  border: 1px solid #FF7C06;
+  background: rgba(255, 124, 6, 0.0980392157) !important;
+  border: 1px solid #FF7C06 !important;
 }
 #llar-setting-page .button__transparent_orange:disabled, #llar-setting-page-logs .button__transparent_orange:disabled, #llar-setting-page-logs__active .button__transparent_orange:disabled, #llar-setting-page-debug .button__transparent_orange:disabled, #llar-setting-page-help .button__transparent_orange:disabled, #llar-setting-page-premium .button__transparent_orange:disabled {
   background: transparent;
@@ -913,11 +914,14 @@
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td.llar-col-nowrap {
   white-space: nowrap;
 }
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td input.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td select.input_border {
+  color: #A4A8B7;
+  border: 1px solid #A4A8B7;
+}
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td select {
   font-family: inherit;
   min-width: 150px;
   margin-right: 25px;
-  background: #FDFDFD url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234ACAD8FF'%3e%3cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") no-repeat right 5px top 55%;
   background-size: 16px 16px;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .llar-log-country-flag {
@@ -1044,7 +1048,7 @@
   margin-right: 0;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .form-table tbody td button, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .form-table tbody td .button {
-  min-width: 40px;
+  min-width: 20px;
   margin-right: 20px;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .form-table tbody [class^=llar-app-rule] {
@@ -1079,8 +1083,9 @@
   background-color: rgba(255, 150, 155, 0.1490196078);
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .form-table tbody .llar-app-acl-remove {
-  color: crimson;
-  border-color: crimson;
+  color: #EC4652;
+  border-color: #EC4652;
+  background-color: rgba(255, 150, 155, 0.1490196078);
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .form-table .origin {
   float: right;
