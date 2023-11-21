@@ -65,12 +65,20 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
         <?php endif; ?>
         
         <?php if($active_tab == 'logs-custom') : ?>
-        <a class="llar-failover-link" href="<?php echo $this->get_options_page_uri('logs-local'); ?>"><?php _e( 'Failover', 'limit-login-attempts-reloaded' ); ?>
-            <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Server variables containing IP addresses.' ); ?>">
+        <a class="unlink llar-label llar-failover-link" href="<?php echo $this->get_options_page_uri('logs-local'); ?>">
+            <?php _e( 'Failover', 'limit-login-attempts-reloaded' ); ?>
+            <span class="hint_tooltip-parent">
                 <span class="dashicons dashicons-editor-help"></span>
-            </i></a>
+                <div class="hint_tooltip">
+                    <ul class="hint_tooltip-content">
+                        <li>
+                            <?php esc_attr_e( 'Server variables containing IP addresses.' ); ?>
+                        </li>
+                    </ul>
+                </div>
+            </span>
+        </a>
         <?php endif; ?>
-<!--    </h2>-->
     </div>
 
 

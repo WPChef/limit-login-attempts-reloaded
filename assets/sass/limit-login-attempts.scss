@@ -59,11 +59,14 @@
     }
 
     .llar-failover-link {
+      color: $primary-colors__turquoise;
       font-size: 14px;
       float: right;
-      line-height: 2;
+      padding: 7px 15px ;
+
 
       .llar-tooltip {
+
         &:before {
           right: 0;
           left: auto;
@@ -216,7 +219,6 @@
     font-size: 14px;
   }
 }
-
 
 #llar-setting-page, #llar-setting-page-help, #llar-setting-page-premium {
   color: $typography-primary;
@@ -616,29 +618,29 @@
 
     &__orange {
       color: white!important;
-      background: $primary-colors__orange;
-      border: 1px solid $primary-colors__orange;
-      box-shadow: 0 6px 12px 0 $primary-colors__orange-semi_back;
+      background: $primary-colors__orange!important;
+      border: 1px solid $primary-colors__orange!important;
+      box-shadow: 0 6px 12px 0 $primary-colors__orange-semi_back!important;
 
       &:hover {
-        background: $secondary-colors__dark-orange;
+        background: $secondary-colors__dark-orange!important;
       }
 
       &:disabled {
-        border: 1px solid $primary-colors__orange-semi_back;
-        background: $primary-colors__orange-semi_back;
+        border: 1px solid $primary-colors__orange-semi_back!important;
+        background: $primary-colors__orange-semi_back!important;
         cursor: auto;
       }
     }
 
     &__transparent_orange {
       color: $primary-colors__orange!important;
-      border: 1px solid currentColor;
-      background: transparent;
+      border: 1px solid currentColor!important;
+      background: transparent!important;
 
       &:hover {
-        background: $primary-colors__orange-back;
-        border: 1px solid $primary-colors__orange;
+        background: $primary-colors__orange-back!important;
+        border: 1px solid $primary-colors__orange!important;
       }
 
       &:disabled {
@@ -681,6 +683,7 @@
       }
     }
   }
+
 
   .gdpr-information-link {
     display: block;
@@ -976,6 +979,8 @@
 
               &.input_border {
                 @extend .llar_input_border;
+                color: $typography-additional;
+                border: 1px solid $typography-additional;
               }
             }
 
@@ -983,7 +988,6 @@
               font-family: inherit;
               min-width: 150px;
               margin-right: 25px;
-              background: $background-body url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234ACAD8FF'%3e%3cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") no-repeat right 5px top 55%;
               background-size: 16px 16px;
             }
 
@@ -1180,8 +1184,13 @@
               }
 
               button {
-                min-width: 40px;
+                min-width: 20px;
                 margin-right: 20px;
+
+                //.dashicons {
+                //  font-size: 16px;
+                //  line-height: 1.3;
+                //}
               }
             }
 
@@ -1227,8 +1236,9 @@
             }
 
             .llar-app-acl-remove {
-              color: crimson;
-              border-color: crimson;
+              color: $state-color__error;
+              border-color: $state-color__error;
+              background-color: $state-color__red_back;
             }
           }
 
