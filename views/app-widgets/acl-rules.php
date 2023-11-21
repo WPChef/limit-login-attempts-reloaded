@@ -4,62 +4,104 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 <div class="llar-app-acl-rules">
 	<div class="app-rules-col">
-		<h3><?php _e( 'Login Access Rules', 'limit-login-attempts-reloaded' ); ?><span class="help-link"><a
-                        href="https://www.limitloginattempts.com/access-rules-explained/" target="_blank"><?php _e( 'Documentation', 'limit-login-attempts-reloaded' ); ?></a></span></h3>
+        <div class="llar-table-header">
+            <h3 class="title_page">
+                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-grow-clients.png">
+                <?php _e( 'Login Access Rules', 'limit-login-attempts-reloaded' ); ?>
+            </h3>
+            <span class="help-link">
+                <a href="https://www.limitloginattempts.com/access-rules-explained/" class="link__style_unlink" target="_blank">
+                    <?php _e( 'Documentation', 'limit-login-attempts-reloaded' ); ?>
+                </a>
+            </span>
+        </div>
 
         <div class="llar-preloader-wrap login-rules">
             <div class="llar-table-scroll-wrap llar-app-login-access-rules-infinity-scroll">
                 <table class="form-table llar-app-login-access-rules-table">
-                    <tr>
-                        <th scope="col"><?php _e( 'Pattern', 'limit-login-attempts-reloaded' ); ?></th>
-                        <th scope="col"><?php _e( 'Rule', 'limit-login-attempts-reloaded' ); ?></th>
-                        <th class="llar-app-acl-action-col" scope="col"><?php _e( 'Action', 'limit-login-attempts-reloaded' ); ?></th>
-                    </tr>
-                    <tr>
-                        <td><input class="regular-text llar-app-acl-pattern" type="text" placeholder="<?php esc_attr_e( 'Pattern', 'limit-login-attempts-reloaded' ); ?>"></td>
-                        <td>
-                            <select class="llar-app-acl-rule">
-                                <option value="deny" selected><?php esc_html_e( 'Deny',  'limit-login-attempts-reloaded' ); ?></option>
-                                <option value="allow"><?php esc_html_e( 'Allow',  'limit-login-attempts-reloaded' ); ?></option>
-                                <option value="pass"><?php esc_html_e( 'Pass',  'limit-login-attempts-reloaded' ); ?></option>
-                            </select>
-                        </td>
-                        <td class="llar-app-acl-action-col"><button class="button llar-app-acl-add-rule" data-type="login"><?php _e( 'Add', 'limit-login-attempts-reloaded' ); ?></button></td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th scope="col"><?php _e( 'Pattern', 'limit-login-attempts-reloaded' ); ?></th>
+                            <th scope="col"><?php _e( 'Rule', 'limit-login-attempts-reloaded' ); ?></th>
+                            <th class="llar-app-acl-action-col" scope="col"><?php _e( 'Action', 'limit-login-attempts-reloaded' ); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input class="input_border regular-text llar-app-acl-pattern"
+                                       type="text" placeholder="<?php esc_attr_e( 'Pattern', 'limit-login-attempts-reloaded' ); ?>">
+                            </td>
+                            <td>
+                                <select class="input_border llar-app-acl-rule">
+                                    <option value="deny" selected><?php esc_html_e( 'Deny',  'limit-login-attempts-reloaded' ); ?></option>
+                                    <option value="allow"><?php esc_html_e( 'Allow',  'limit-login-attempts-reloaded' ); ?></option>
+                                    <option value="pass"><?php esc_html_e( 'Pass',  'limit-login-attempts-reloaded' ); ?></option>
+                                </select>
+                            </td>
+                            <td class="llar-app-acl-action-col">
+                                <button class="button menu__item col button__transparent_orange llar-app-acl-add-rule" data-type="login">
+                                    <?php _e( 'Add', 'limit-login-attempts-reloaded' ); ?>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
 	</div>
+
+
 	<div class="app-rules-col">
-		<h3><?php _e( 'IP Access Rules', 'limit-login-attempts-reloaded' ); ?><span class="help-link"><a
-                        href="https://www.limitloginattempts.com/access-rules-explained/" target="_blank"><?php _e( 'Documentation', 'limit-login-attempts-reloaded' ); ?></a></span></h3>
+        <div class="llar-table-header">
+            <h3 class="title_page">
+                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-ip.png">
+                <?php _e( 'IP Access Rules', 'limit-login-attempts-reloaded' ); ?>
+            </h3>
+            <span class="help-link">
+                <a href="https://www.limitloginattempts.com/access-rules-explained/" class="link__style_unlink" target="_blank">
+                    <?php _e( 'Documentation', 'limit-login-attempts-reloaded' ); ?>
+                </a>
+            </span>
+        </div>
 
         <div class="llar-preloader-wrap ip-rules">
             <div class="llar-table-scroll-wrap llar-app-ip-access-rules-infinity-scroll">
                 <table class="form-table llar-app-ip-access-rules-table">
-                    <tr>
-                        <th scope="col"><?php _e( 'Pattern', 'limit-login-attempts-reloaded' ); ?></th>
-                        <th scope="col"><?php _e( 'Rule', 'limit-login-attempts-reloaded' ); ?></th>
-                        <th class="llar-app-acl-action-col" scope="col"><?php _e( 'Action', 'limit-login-attempts-reloaded' ); ?></th>
-                    </tr>
-                    <tr>
-                        <td><input class="regular-text llar-app-acl-pattern" type="text" placeholder="<?php esc_attr_e( 'Pattern', 'limit-login-attempts-reloaded' ); ?>"></td>
-                        <td>
-                            <select class="llar-app-acl-rule">
-                                <option value="deny" selected><?php esc_html_e( 'Deny',  'limit-login-attempts-reloaded' ); ?></option>
-                                <option value="allow"><?php esc_html_e( 'Allow',  'limit-login-attempts-reloaded' ); ?></option>
-                                <option value="pass"><?php esc_html_e( 'Pass',  'limit-login-attempts-reloaded' ); ?></option>
-                            </select>
-                        </td>
-                        <td class="llar-app-acl-action-col"><button class="button llar-app-acl-add-rule" data-type="ip"><?php _e( 'Add', 'limit-login-attempts-reloaded' ); ?></button></td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th scope="col"><?php _e( 'Pattern', 'limit-login-attempts-reloaded' ); ?></th>
+                            <th scope="col"><?php _e( 'Rule', 'limit-login-attempts-reloaded' ); ?></th>
+                            <th class="llar-app-acl-action-col" scope="col"><?php _e( 'Action', 'limit-login-attempts-reloaded' ); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input class="input_border regular-text llar-app-acl-pattern"
+                                       type="text" placeholder="<?php esc_attr_e( 'Pattern', 'limit-login-attempts-reloaded' ); ?>">
+                            </td>
+                            <td>
+                                <select class="input_border llar-app-acl-rule">
+                                    <option value="deny" selected><?php esc_html_e( 'Deny',  'limit-login-attempts-reloaded' ); ?></option>
+                                    <option value="allow"><?php esc_html_e( 'Allow',  'limit-login-attempts-reloaded' ); ?></option>
+                                    <option value="pass"><?php esc_html_e( 'Pass',  'limit-login-attempts-reloaded' ); ?></option>
+                                </select>
+                            </td>
+                            <td class="llar-app-acl-action-col">
+                                <button class="button menu__item col button__transparent_orange llar-app-acl-add-rule" data-type="ip">
+                                    <?php _e( 'Add', 'limit-login-attempts-reloaded' ); ?>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
 	</div>
 
 	<script type="text/javascript">
-		;(function($){
+		(function($){
 
 			$(document).ready(function () {
 
@@ -74,12 +116,15 @@ if( !defined( 'ABSPATH' ) ) exit();
                     page_offset2 = '',
                     page_limit = 10;
 
-                $infinity_box1.on('scroll', function (){
+                $infinity_box1.on('scroll', function () {
+
                     if (!loading_data1 && $infinity_box1.get(0).scrollTop + $infinity_box1.get(0).clientHeight >= $infinity_box1.get(0).scrollHeight - 1) {
                         load_rules_data('login');
                     }
                 });
-                $infinity_box2.on('scroll', function (){
+
+                $infinity_box2.on('scroll', function () {
+
                     if (!loading_data2 && $infinity_box2.get(0).scrollTop + $infinity_box2.get(0).clientHeight >= $infinity_box2.get(0).scrollHeight - 1) {
                         load_rules_data('ip');
                     }
@@ -96,8 +141,7 @@ if( !defined( 'ABSPATH' ) ) exit();
                     load_rules_data('ip');
                 });
 
-				$app_acl_rules
-					.on('click', '.llar-app-acl-remove', function(e){
+				$app_acl_rules.on('click', '.llar-app-acl-remove', function(e) {
 						e.preventDefault();
 
 						if(!confirm('Are you sure?')) {
@@ -139,11 +183,8 @@ if( !defined( 'ABSPATH' ) ) exit();
 								})
 
 							}
-
 						});
-
-					})
-					.on('click', '.llar-app-acl-add-rule', function(e){
+					}).on('click', '.llar-app-acl-add-rule', function(e){
 						e.preventDefault();
 
 						var $this = $(this),
@@ -247,7 +288,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
                         if(response.success) {
 
-                            $('.llar-app-'+type+'-access-rules-table').append(response.data.html);
+                            $('.llar-app-'+type+'-access-rules-table').find('tbody').append(response.data.html);
 
                             if(type === 'login') {
 
