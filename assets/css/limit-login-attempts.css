@@ -1053,6 +1053,8 @@
   border-bottom: 1px solid currentColor;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list {
+  font-size: 16px;
+  color: #2A2F40;
   display: flex;
   flex-wrap: wrap;
   max-height: 400px;
@@ -1069,7 +1071,6 @@
   display: inline-block;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected {
-  font-size: 16px;
   display: inline;
   margin-left: 20px;
   vertical-align: middle;
@@ -1112,6 +1113,7 @@
   border-right: unset;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-list {
+  font-size: 14px;
   display: none;
   margin: 10px 0;
 }
