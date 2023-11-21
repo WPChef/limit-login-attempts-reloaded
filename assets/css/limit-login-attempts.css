@@ -1027,25 +1027,30 @@
   border-color: crimson;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section {
-  background-color: #fff;
-  padding: 15px;
-  border: 1px solid #b9b9b9;
-  border-top: 3px solid #3c8dbc;
+  padding: 40px 30px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode {
+  font-size: 16px;
+  color: #666D84;
   display: inline-block;
-  margin-right: 5px;
-  vertical-align: top;
+  vertical-align: middle;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode select {
   font-family: inherit;
+  min-width: 150px;
+  margin-right: 25px;
   background: #FDFDFD url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234ACAD8FF'%3e%3cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") no-repeat right 5px top 55%;
   background-size: 16px 16px;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-toggle-countries-list {
-  text-decoration-style: dotted;
+  font-size: 16px;
+  color: #4ACAD8;
+  text-decoration: none;
   vertical-align: middle;
-  line-height: 1.6;
+  border-bottom: 1px solid currentColor;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list {
   display: flex;
@@ -1064,18 +1069,47 @@
   display: inline-block;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected {
+  font-size: 16px;
   display: inline;
+  margin-left: 20px;
   vertical-align: middle;
   overflow: hidden;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country {
   margin-bottom: 0;
   display: inline-block;
-  margin-right: 10px;
+  margin-right: 20px;
+  padding-right: 20px;
+  border-right: 1px solid #E8E9EC;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country label {
+  color: #2A2F40;
   padding-bottom: 0;
   white-space: nowrap;
+}
+#llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox] {
+  background-color: #FDFDFD;
+  border: 1.5px solid #ABBFC1;
+  box-sizing: content-box;
+}
+#llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked {
+  background-color: #FF7C06;
+  border: 1.5px solid #FF7C06;
+}
+#llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked::before {
+  content: "✔";
+  font-size: 14px;
+  line-height: 1.1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  color: #FDFDFD;
+}
+#llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:focus {
+  box-shadow: unset;
+}
+#llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country:last-child {
+  border-right: unset;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-list {
   display: none;

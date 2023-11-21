@@ -20,14 +20,16 @@ if( !defined( 'ABSPATH' ) ) exit();
                     <span><?php _e( 'these countries:', 'limit-login-attempts-reloaded' ); ?></span>
                 </div>
                 <div class="llar-block-country-list llar-all-countries-selected"></div>
-                <a href="#" class="llar-toggle-countries-list"><?php _e( 'Add', 'limit-login-attempts-reloaded' ); ?></a>
+                <a href="#" class="llar-toggle-countries-list">
+                    <?php _e( 'Add', 'limit-login-attempts-reloaded' ); ?>
+                </a>
             </div>
             <div class="llar-block-country-list llar-all-countries-list"></div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-	;(function($){
+	(function($){
 		const countries = <?php echo json_encode( ( !empty( $countries_list ) ) ? $countries_list : array() ); ?>;
 		$(document).ready(function(){
 
