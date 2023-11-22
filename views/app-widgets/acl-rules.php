@@ -101,7 +101,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 	</div>
 
 	<script type="text/javascript">
-		(function($){
+		;(function($){
 
 			$(document).ready(function () {
 

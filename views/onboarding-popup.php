@@ -12,6 +12,9 @@ $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_opti
 $onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
 $setup_code = Config::get( 'app_setup_code' );
 
+$onboarding_popup_shown = 0;
+$setup_code = '';
+
 if( $onboarding_popup_shown || !empty( $setup_code ) ) return;
 
 ob_start(); ?>
@@ -65,7 +68,7 @@ ob_start(); ?>
 $popup_app_setup_content = ob_get_clean();
 ?>
 <script>
-    (function($){
+    ;(function($){
 
         $(document).ready(function(){
             const app_setup_popup = $.confirm({

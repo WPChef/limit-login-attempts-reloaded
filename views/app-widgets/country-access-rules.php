@@ -30,7 +30,7 @@ $countries_list = Helpers::get_countries_list();
     </div>
 </div>
 <script type="text/javascript">
-	(function($){
+	;(function($){
 		const countries = <?php echo json_encode( ( !empty( $countries_list ) ) ? $countries_list : array() ); ?>;
 		$(document).ready(function(){
 
