@@ -2264,6 +2264,9 @@
   margin-top: 10px;
 }
 
+.toplevel_page_limit-login-attempts {
+  font-family: CoFo Sans, arial;
+}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box {
   padding: 0 !important;
 }
@@ -2282,6 +2285,78 @@
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content {
   padding: 15px;
+  background: url("./images/onboarding-bg-min.webp") no-repeat center top;
+  background-size: 100%;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .logo {
+  width: 90px;
+  margin: 100px auto 50px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .logo img {
+  background: rgba(253, 253, 253, 0.4);
+  border-radius: 8px;
+  padding: 20px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line {
+  position: relative;
+  height: 2px;
+  width: 50%;
+  margin: 10px auto 60px;
+  background-color: #ABBFC1;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line .point__block {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  left: 0;
+  top: -30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: transparent;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line .point__block .point {
+  position: absolute;
+  top: 22px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #ABBFC1;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line .point__block .description {
+  position: absolute;
+  top: 60px;
+  font-size: 16px;
+  color: #666D84;
+  width: max-content;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line .point__block.active {
+  position: absolute;
+  background-color: rgba(74, 202, 216, 0.3019607843);
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line .point__block.active .point {
+  background-color: #4ACAD8;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line .point__block.active .description {
+  color: #2A2F40;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line .point__block[data-index=step_1] {
+  left: 0;
+  transform: translateX(-50%);
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line .point__block[data-index=step_2] {
+  left: 33.3333333333%;
+  transform: translateX(-50%);
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line .point__block[data-index=step_3] {
+  left: 66.6666666667%;
+  transform: translateX(-50%);
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .line .point__block[data-index=step_4] {
+  left: 100%;
+  transform: translateX(-50%);
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup-content .title {
   font-size: 16px;

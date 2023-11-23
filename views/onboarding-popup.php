@@ -19,7 +19,38 @@ if( $onboarding_popup_shown || !empty( $setup_code ) ) return;
 
 ob_start(); ?>
 <div class="llar-onboarding-popup-content">
-	<div class="title"><?php _e( 'Please tell us where Limit Login Attempts Reloaded should send security notifications for your website?', 'limit-login-attempts-reloaded' ); ?></div>
+    <div class="logo">
+        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/img/icon-logo-menu.png">
+    </div>
+    <div class="line">
+        <div class="point__block active" data-index="step_1">
+            <div class="point"></div>
+            <div class="description">
+                Welcome
+            </div>
+        </div>
+        <div class="point__block" data-index="step_2">
+            <div class="point"></div>
+            <div class="description">
+                Notifications
+            </div>
+        </div>
+        <div class="point__block" data-index="step_3">
+            <div class="point"></div>
+            <div class="description">
+                Limited Upgrade
+            </div>
+        </div>
+        <div class="point__block" data-index="step_4">
+            <div class="point"></div>
+            <div class="description">
+                Completion
+            </div>
+        </div>
+    </div>
+
+
+    <div class="title"><?php _e( 'Please tell us where Limit Login Attempts Reloaded should send security notifications for your website?', 'limit-login-attempts-reloaded' ); ?></div>
 	<div class="field-wrap">
 		<input type="email" id="llar-subscribe-email" placeholder="you@example.com" value="<?php esc_attr_e( $admin_email ); ?>">
 		<div class="field-desc"><?php _e( 'We do not use this email address for any other purpose unless you opt-in to receive other mailings. You can turn off alerts in the settings.', 'limit-login-attempts-reloaded' ); ?></div>
@@ -86,12 +117,15 @@ $popup_app_setup_content = ob_get_clean();
             });
 
             $.confirm({
-                title: '<?php _e( 'Complete Limit Login Attempts Reloaded Installation', 'limit-login-attempts-reloaded' ) ?>',
+                //title: '<?php //_e( 'Complete Limit Login Attempts Reloaded Installation', 'limit-login-attempts-reloaded' ) ?>//',
+                title: false,
                 content: `<?php echo trim( $popup_complete_install_content ); ?>`,
                 type: 'default',
                 typeAnimated: true,
                 draggable: false,
-                boxWidth: '40%',
+                offsetTop: 40,
+                offsetBottom: 40,
+                boxWidth: '85%',
                 bgOpacity: 0.9,
                 useBootstrap: false,
                 closeIcon: true,
