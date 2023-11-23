@@ -1,5 +1,8 @@
 .toplevel_page_limit-login-attempts {
+  font-family: $font-primary, $font-secondary;
+
   .jconfirm {
+
     .jconfirm-box {
       padding: 0 !important;
 
@@ -19,6 +22,92 @@
       }
       .llar-onboarding-popup-content {
         padding: 15px;
+        background: url("./images/onboarding-bg-min.webp") no-repeat center top;
+        background-size: 100%;
+
+        .logo {
+          width: 90px;
+          margin: 100px auto 50px;
+
+          img {
+            background: $background-body__transparent;
+            border-radius: $border-radius__min;
+            padding: 20px;
+          }
+        }
+
+        .line {
+          position: relative;
+          height: 2px;
+          width: 50%;
+          margin: 10px auto 60px;
+          background-color: $primary-colors__steel_blue;
+
+          .point__block {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            left: 0;
+            top: -30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: transparent;
+
+            .point {
+              position: absolute;
+              top: 22px;
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              background-color: $primary-colors__steel_blue;
+            }
+
+            .description {
+              position: absolute;
+              top: 60px;
+              font-size: 16px;
+              color: $typography-secondary;
+              width: max-content;
+            }
+
+            &.active {
+              position: absolute;
+              background-color: $primary-colors__turquoise_semi_back;
+
+              .point {
+                background-color: $primary-colors__turquoise;
+              }
+
+              .description {
+                color: $typography-primary;
+              }
+            }
+
+            &[data-index="step_1"] {
+              left: 0;
+              transform: translateX(-50%);
+            }
+
+            &[data-index="step_2"] {
+              left: 100% / 3 * 1;
+              transform: translateX(-50%);
+            }
+
+            &[data-index="step_3"] {
+              left: 100% / 3 * 2;
+              transform: translateX(-50%);
+            }
+
+            &[data-index="step_4"] {
+              left: 100%;
+              transform: translateX(-50%);
+            }
+          }
+        }
+
         .title {
           font-size: 16px;
           line-height: 22px;
