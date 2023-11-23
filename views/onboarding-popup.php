@@ -26,43 +26,55 @@ ob_start(); ?>
         <div class="point__block active" data-index="step_1">
             <div class="point"></div>
             <div class="description">
-                Welcome
+                <?php _e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
         <div class="point__block" data-index="step_2">
             <div class="point"></div>
             <div class="description">
-                Notifications
+                <?php _e( 'Notifications', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
         <div class="point__block" data-index="step_3">
             <div class="point"></div>
             <div class="description">
-                Limited Upgrade
+                <?php _e( 'Limited Upgrade', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
         <div class="point__block" data-index="step_4">
             <div class="point"></div>
             <div class="description">
-                Completion
+                <?php _e( 'Completion', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
     </div>
-
-
-    <div class="title"><?php _e( 'Please tell us where Limit Login Attempts Reloaded should send security notifications for your website?', 'limit-login-attempts-reloaded' ); ?></div>
-	<div class="field-wrap">
-		<input type="email" id="llar-subscribe-email" placeholder="you@example.com" value="<?php esc_attr_e( $admin_email ); ?>">
-		<div class="field-desc"><?php _e( 'We do not use this email address for any other purpose unless you opt-in to receive other mailings. You can turn off alerts in the settings.', 'limit-login-attempts-reloaded' ); ?></div>
-	</div>
-	<div class="security-alerts-options">
-		<div class="info"><?php _e( 'Would you also like to join our email newsletter to receive plugin updates, WordPress security news, and other relevant content?', 'limit-login-attempts-reloaded' ); ?></div>
-		<div class="buttons">
-			<span data-val="yes"><?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?></span>
-			<span data-val="no"><?php _e( 'No', 'limit-login-attempts-reloaded' ); ?></span>
-		</div>
-	</div>
+    <div class="title">
+        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/welcome.png">
+        <?php _e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
+    </div>
+    <div class="card mx-auto">
+        <div class="field-wrap">
+            <div class="field-title">
+                <?php _e( 'Add your license key', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+<!--            <input type="text" class="field-key" id="llar-subscribe-email" placeholder="Your key" value="--><?php //esc_attr_e( $admin_email ); ?><!--">-->
+            <div class="field-key">
+                <input type="text" class="input_border" id="llar-subscribe-email" placeholder="Your key" value="">
+                <button class="button menu__item button__orange">
+                    <?php _e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
+                    <span class="dashicons dashicons-arrow-right-alt"></span>
+                </button>
+            </div>
+            <div class="field-desc">
+                <?php _e( 'The license key can be found in your email if you have subscribed to premium', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+        </div>
+    </div>
+    <div class="card mx-auto">
+        test
+    </div>
 </div>
+
 <?php
 $popup_complete_install_content = ob_get_clean();
 ?>
