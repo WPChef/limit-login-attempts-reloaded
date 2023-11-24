@@ -71,13 +71,48 @@ ob_start(); ?>
         </div>
     </div>
     <div class="card mx-auto">
-        test
+        <div class="field-wrap">
+            <div class="field-title">
+                <?php _e( 'Not A Premium User?', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="field-desc-add">
+                <?php _e( 'We <b>highly recommend</b> upgrading to premium for the best protection against brute force attacks and unauthorized logins', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <ul class="field-list">
+                <li class="item">
+                    <?php _e( 'Detect, counter, and deny unauthorized logins with IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
+                </li>
+                <li class="item">
+                    <?php _e( 'Absorb failed login activity to improve site performance', 'limit-login-attempts-reloaded' ); ?>
+                </li>
+                <li class="item">
+                    <?php _e( 'Block IPs by country, premium support, and much more!', 'limit-login-attempts-reloaded' ); ?>
+                </li>
+            </ul>
+            <div class="field-video" id="video-play">
+                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/video-bg.webp" id="video-poster">
+                <div class="video__iframe">
+                    <div id="player" data-plyr-provider="youtube" data-plyr-embed-id="IsotthPWCPA"></div>
+                </div>
+            </div>
+            <div class="button_block">
+                <button class="button menu__item button__orange">
+                    <?php _e( 'Yes, show me plan options', 'limit-login-attempts-reloaded' ); ?>
+                </button>
+                <button class="button menu__item button__transparent_orange">
+                    <?php _e( 'No, I don’t want advanced protection', 'limit-login-attempts-reloaded' ); ?>
+                </button>
+            </div>
+        </div>
+        <button class="button menu__item button__transparent_grey">
+            <?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
+        </button>
     </div>
 </div>
-
 <?php
 $popup_complete_install_content = ob_get_clean();
 ?>
+
 <?php
 ob_start(); ?>
 <div class="llar-onboarding-popup-content llar-app-setup-popup">
@@ -128,16 +163,29 @@ $popup_app_setup_content = ob_get_clean();
                 closeIcon: true
             });
 
-            $.confirm({
+            // $.confirm({
+            $.dialog({
                 //title: '<?php //_e( 'Complete Limit Login Attempts Reloaded Installation', 'limit-login-attempts-reloaded' ) ?>//',
                 title: false,
                 content: `<?php echo trim( $popup_complete_install_content ); ?>`,
                 type: 'default',
                 typeAnimated: true,
                 draggable: false,
-                offsetTop: 40,
-                offsetBottom: 40,
-                boxWidth: '85%',
+                animationBounce: 1,
+                offsetTop: 0,
+                offsetBottom: 0,
+                boxWidth: '100%',
+                onContentReady: function () {
+                    let script = document.createElement('script');
+                    let style = document.createElement('link');
+                    script.src = 'https://cdn.plyr.io/3.7.8/plyr.js';
+                    style.href = 'https://cdn.plyr.io/3.7.8/plyr.css';
+                    style.rel = 'stylesheet';
+
+                    document.body.appendChild(script);
+                    document.body.appendChild(style);
+                    video_pleer_script();
+                },
                 bgOpacity: 0.9,
                 useBootstrap: false,
                 closeIcon: true,
@@ -147,24 +195,36 @@ $popup_app_setup_content = ob_get_clean();
                         sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
                     }, function(){});
                 },
-				buttons: {
-                    continue: {
-                        text: '<?php _e( 'Continue', 'limit-login-attempts-reloaded' ) ?>',
-                        btnClass: 'btn-blue',
-                        keys: ['enter'],
-                        action: function(){
+                buttons: {},
+                onOpenBefore: function () {
 
-                            app_setup_popup.open();
+                    app_setup_popup.open();
 
-                            $.post(ajaxurl, {
-                                action: 'subscribe_email',
-                                email: $('body').find('#llar-subscribe-email').val(),
-                                is_subscribe_yes: !!$('body').find('.security-alerts-options .buttons span[data-val="yes"].llar-act').length,
-                                sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
-                            }, function(){});
-                        }
-                    }
-				}
+                    $.post(ajaxurl, {
+                        action: 'subscribe_email',
+                        email: $('body').find('#llar-subscribe-email').val(),
+                        is_subscribe_yes: !!$('body').find('.security-alerts-options .buttons span[data-val="yes"].llar-act').length,
+                        sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+                    }, function(){});
+                }
+				//buttons: {
+                //    continue: {
+                //        text: '<?php //_e( 'Continue', 'limit-login-attempts-reloaded' ) ?>//',
+                //        btnClass: 'btn-blue',
+                //        keys: ['enter'],
+                //        action: function(){
+                //
+                //            app_setup_popup.open();
+                //
+                //            $.post(ajaxurl, {
+                //                action: 'subscribe_email',
+                //                email: $('body').find('#llar-subscribe-email').val(),
+                //                is_subscribe_yes: !!$('body').find('.security-alerts-options .buttons span[data-val="yes"].llar-act').length,
+                //                sec: '<?php //echo esc_js( wp_create_nonce( "llar-action" ) ); ?>//'
+                //            }, function(){});
+                //        }
+                //    }
+				//}
             });
 
 
@@ -220,6 +280,44 @@ $popup_app_setup_content = ob_get_clean();
                 app_setup_popup.close();
             });
         })
+
+        function video_pleer_script() {
+
+            let isPlyrInitialized = false;
+            let video_player = $('#video-play');
+            let script_loaded = false;
+            let style_loaded = false;
+            let player;
+
+
+            video_player.on('click', 'img', function () {
+
+                if (script_loaded) {
+
+                    script.onload = function() {
+                        script_loaded = true;
+
+                        if (!isPlyrInitialized) {
+
+                            player = new Plyr('#player');
+                            isPlyrInitialized = true;
+                        }
+                    };
+                }
+                else {
+
+                    if (!isPlyrInitialized) {
+                        player = new Plyr('#player');
+                        isPlyrInitialized = true;
+                    }
+                }
+
+                $('#video-poster').hide();
+                video_player.find('.video__iframe').addClass('play');
+
+            });
+
+        }
 
     })(jQuery)
 </script>

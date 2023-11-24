@@ -7,26 +7,19 @@
   }
 
   ul, ol {
+    @extend .llar_list;
     margin-left: 0;
-
-    &.list-unstyled {
-      padding-left: 32px;
-      list-style: none;
-    }
+    padding-left: 32px;
 
     li {
-      list-style-position: inside;
+      font-size: 16px;
+      color: $typography-secondary;
+      padding-left: 16px;
+      margin-bottom: 16px;
 
-      &.star {
-        padding-left: 16px;
-        margin-bottom: 16px;
-        color: $typography-secondary;
-
-        &::before {
-          content: "\2727";
-          color: $color-marker;
-          margin-left: -20px;
-        }
+      &::before {
+        color: $color-marker;
+        margin-left: -20px;
       }
     }
   }

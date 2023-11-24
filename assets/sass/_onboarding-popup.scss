@@ -5,6 +5,13 @@
 
     .jconfirm-box {
       padding: 0 !important;
+      background-color: transparent;
+
+      .jconfirm-content-pane {
+        display: block;
+        margin-bottom: 0;
+        border-radius: $border-radius__normal;
+      }
 
       .jconfirm-closeIcon {
         top: 17px !important;
@@ -17,13 +24,17 @@
         font-size: 16px !important;
         font-weight: bold;
       }
+
       .jconfirm-buttons {
         padding-right: 15px;
       }
+
       .llar-onboarding-popup-content {
         padding: 15px;
         background: url("./images/onboarding-bg-min.webp") no-repeat center top;
-        background-size: 100%;
+        //background-size: 100%;
+        background-size: cover;
+        border-radius: $border-radius__normal;
 
         .logo {
           width: 90px;
@@ -135,7 +146,18 @@
         .field {
 
           &-wrap {
-            margin-bottom: 20px;
+            margin-top: 23px;
+            margin-bottom: 30px;
+
+            .button_block {
+
+              button {
+                font-size: 18px;
+                margin-top: 20px;
+                padding: 11px 60px;
+                width: 70%;
+              }
+            }
           }
 
           &-title {
@@ -170,12 +192,52 @@
             }
           }
 
-          &-desc {
+          &-desc, &-desc-add {
             color: $typography-secondary;
             font-size: 18px;
+            line-height: 1.5;
             text-align: center;
             margin-top: 22px;
             padding: 0 25px;
+
+            &-add {
+              color: $typography-primary;
+            }
+          }
+
+          &-list {
+            @extend .llar_list;
+            line-height: 1.5;
+
+            .item {
+              font-size: 18px;
+              color: $typography-secondary;
+
+              &:before {
+                color: $color-marker;
+              }
+            }
+          }
+
+          &-video {
+            -webkit-box-flex: 1;
+            -ms-flex-positive: 1;
+            flex-grow: 1;
+            margin-top: 24px;
+            border-radius: $border-radius__normal;
+
+            .video__iframe {
+              display: none;
+              position: relative;
+              padding-bottom: 56.25%;
+              height: 0;
+              overflow: hidden;
+              border-radius: $border-radius__normal;
+
+              &.play {
+                display: block;
+              }
+            }
           }
         }
 
