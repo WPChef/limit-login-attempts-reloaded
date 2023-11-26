@@ -29,7 +29,8 @@
         padding-right: 15px;
       }
 
-      .llar-onboarding-popup-content {
+      .llar-onboarding-popup__content {
+        min-height: 930px;
         padding: 15px;
         background: url("./images/onboarding-bg-min.webp") no-repeat center top;
         //background-size: 100%;
@@ -47,7 +48,7 @@
           }
         }
 
-        .line {
+        .llar-onboarding__line {
           position: relative;
           height: 2px;
           width: 50%;
@@ -97,22 +98,22 @@
               }
             }
 
-            &[data-index="step_1"] {
+            &[data-step="1"] {
               left: 0;
               transform: translateX(-50%);
             }
 
-            &[data-index="step_2"] {
+            &[data-step="2"] {
               left: 100% / 3 * 1;
               transform: translateX(-50%);
             }
 
-            &[data-index="step_3"] {
+            &[data-step="3"] {
               left: 100% / 3 * 2;
               transform: translateX(-50%);
             }
 
-            &[data-index="step_4"] {
+            &[data-step="4"] {
               left: 100%;
               transform: translateX(-50%);
             }
@@ -143,30 +144,46 @@
           box-shadow: 2px 2px 9px 0 $box-shadow__light-transparent-gray;
         }
 
+        .button_block {
+
+          button {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 11px 60px;
+            width: 70%;
+          }
+
+          &-horizon {
+            margin-top: 20px;
+            text-align: center;
+
+            button {
+              font-size: 18px;
+              padding: 11px 60px;
+            }
+          }
+        }
+
         .field {
 
           &-wrap {
             margin-top: 23px;
             margin-bottom: 30px;
-
-            .button_block {
-
-              button {
-                font-size: 18px;
-                margin-top: 20px;
-                padding: 11px 60px;
-                width: 70%;
-              }
-            }
           }
 
           &-title {
             color: $typography-primary;
             font-size: 20px;
             font-weight: 500;
+
+            &-add {
+              color: $typography-secondary;
+              font-size: 18px;
+              font-weight: 400;
+            }
           }
 
-          &-key {
+          &-key, &-email {
             display: inline-block;
             font-size: 16px;
             line-height: 1.5;
@@ -192,7 +209,14 @@
             }
           }
 
-          &-desc, &-desc-add {
+          &-email {
+
+            .input_border {
+              min-width: 100%;
+            }
+          }
+
+          &-desc {
             color: $typography-secondary;
             font-size: 18px;
             line-height: 1.5;
@@ -201,7 +225,16 @@
             padding: 0 25px;
 
             &-add {
+              @extend .field-desc;
               color: $typography-primary;
+            }
+
+            &-additional {
+              color: $typography-additional;
+              font-size: 16px;
+              line-height: 1.5;
+              text-align: left;
+              margin-top: 12px;
             }
           }
 
@@ -237,6 +270,18 @@
               &.play {
                 display: block;
               }
+            }
+          }
+
+          &-checkbox {
+            display: inline-block;
+            color: $typography-secondary;
+            font-size: 14px;
+            margin-top: 15px;
+            text-align: left;
+
+            input {
+              margin-right: 16px;
             }
           }
         }
@@ -398,5 +443,9 @@
         }
       }
     }
+  }
+
+  input[type="checkbox"] {
+    @extend .llar_input_checkbox;
   }
 }
