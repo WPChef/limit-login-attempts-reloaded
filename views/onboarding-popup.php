@@ -203,20 +203,20 @@ ob_start(); ?>
             </div>
         </div>
         <div class="button_block-horizon">
-            <button class="button menu__item button__transparent_orange">
+            <button class="button menu__item button__transparent_orange orange-back">
                 <?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
             </button>
-            <button class="button next_step menu__item button__transparent_grey">
+            <button class="button next_step menu__item button__transparent_grey gray-back">
                 <?php _e( 'No', 'limit-login-attempts-reloaded' ); ?>
             </button>
         </div>
-        <div class="desc">
+        <div class="explanations">
             <?php echo sprintf(
-                __( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our <a class="llar_bold link__style_color_inherit" href="%s" target="_blank">terms of service</a> by participating in this program.', 'limit-login-attempts-reloaded' ),
+                __( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our <a class="link__style_color_inherit llar_turquoise" href="%s" target="_blank">terms of service</a> by participating in this program.', 'limit-login-attempts-reloaded' ),
                 'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
             ); ?>
         </div>
-        <div class="button_block">
+        <div class="button_block-single">
             <button class="button next_step menu__item button__transparent_grey">
                 <?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
             </button>
@@ -291,6 +291,9 @@ $content_step_3 = ob_get_clean();
                         }
                         else if (next_step === 3) {
                             html_body.replaceWith(<?php echo json_encode(trim($content_step_3), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+                        }
+                        else if (next_step === 4) {
+                            //html_body.replaceWith(<?php //echo json_encode(trim($content_step_4), JSON_HEX_QUOT | JSON_HEX_TAG); ?>//);
                         }
                     })
 
