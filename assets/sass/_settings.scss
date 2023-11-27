@@ -422,6 +422,10 @@ button {
     border: 1px solid currentColor!important;
     background: transparent!important;
 
+    &.orange-back {
+      background: $primary-colors__orange-back!important;
+    }
+
     &:hover {
       background: $primary-colors__orange-back!important;
       border: 1px solid currentColor!important;
@@ -435,6 +439,10 @@ button {
 
   &__transparent_grey {
     color: $typography-additional!important;
+
+    &.gray-back {
+      background: $typography-additional__light!important;
+    }
 
     &:hover {
       background: $typography-additional__light!important;

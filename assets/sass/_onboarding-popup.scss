@@ -142,6 +142,17 @@
           background-color: $background-body;
           border-radius: $border-radius;
           box-shadow: 2px 2px 9px 0 $box-shadow__light-transparent-gray;
+
+          .explanations {
+            font-size: 14px;
+            color: $typography-secondary;
+            margin-top: 15px;
+            padding: 0 35px;
+          }
+
+          .button_block {
+            @extend .button_block;
+          }
         }
 
         .button_block {
@@ -154,12 +165,24 @@
           }
 
           &-horizon {
+            display: flex;
+            justify-content: center;
             margin-top: 20px;
-            text-align: center;
+            gap: 10px;
 
             button {
               font-size: 18px;
               padding: 11px 60px;
+            }
+          }
+
+          &-single {
+            margin-top: 20px;
+
+            button {
+              font-size: 18px;
+              padding: 11px 60px;
+              width: fit-content;
             }
           }
         }
