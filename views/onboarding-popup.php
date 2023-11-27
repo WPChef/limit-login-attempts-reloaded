@@ -186,6 +186,47 @@ ob_start(); ?>
 $content_step_2 = ob_get_clean();
 ?>
 
+<?php
+ob_start(); ?>
+<div class="llar-onboarding__body">
+    <div class="title">
+        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/rocket-min.png">
+        <?php _e( 'Limited Upgrade (Free)', 'limit-login-attempts-reloaded' ); ?>
+    </div>
+    <div class="card mx-auto">
+        <div class="field-wrap">
+            <div class="field-desc-add">
+                <?php _e( 'Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP intelligence, and performance optimizer (up to 1,000 requests monthly)', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="field-desc-add">
+                <?php _e( '<b>Would you like to opt-in?</b>', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+        </div>
+        <div class="button_block-horizon">
+            <button class="button menu__item button__transparent_orange">
+                <?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
+            </button>
+            <button class="button next_step menu__item button__transparent_grey">
+                <?php _e( 'No', 'limit-login-attempts-reloaded' ); ?>
+            </button>
+        </div>
+        <div class="desc">
+            <?php echo sprintf(
+                __( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our <a class="llar_bold link__style_color_inherit" href="%s" target="_blank">terms of service</a> by participating in this program.', 'limit-login-attempts-reloaded' ),
+                'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+            ); ?>
+        </div>
+        <div class="button_block">
+            <button class="button next_step menu__item button__transparent_grey">
+                <?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
+            </button>
+        </div>
+    </div>
+</div>
+
+<?php
+$content_step_3 = ob_get_clean();
+?>
 
 <script>
     ;(function($){
@@ -233,17 +274,24 @@ $content_step_2 = ob_get_clean();
                 },
                 buttons: {},
                 onOpenBefore: function () {
+
                     let button_next = $('button.button.next_step');
 
-                    button_next.on('click', function() {
+                    // button_next.on('click', function() {
+                    $(document).on('click', button_next, function() {
+
+                        console.log('!!!!');
 
                         let next_step = next_step_line();
                         let html_body = $('.llar-onboarding__body');
 
-                        if (next_step) {
+
+                        if (next_step === 2) {
                             html_body.replaceWith(<?php echo json_encode(trim($content_step_2), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
                         }
-
+                        else if (next_step === 3) {
+                            html_body.replaceWith(<?php echo json_encode(trim($content_step_3), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+                        }
                     })
 
                 }
@@ -328,8 +376,9 @@ $content_step_2 = ob_get_clean();
 
             if (active_step < 4) {
                 step_line.filter('[data-step="' + active_step + '"]').removeClass('active');
-                step_line.filter('[data-step="' + (active_step + 1) + '"]').addClass('active');
-                return true;
+                active_step++;
+                step_line.filter('[data-step="' + active_step + '"]').addClass('active');
+                return active_step;
             }
             else {
                 return false;
