@@ -105,7 +105,6 @@ $border-radius__max: $border-radius * 2;
 
 .llar_typography-secondary {
   color: $typography-secondary;
-
 }
 
 .llar_orange {
@@ -160,6 +159,14 @@ $border-radius__max: $border-radius * 2;
 .mx-0_5 {
   margin-left: $text-font * .5 !important;
   margin-right: $text-font * .5 !important;
+}
+
+.llar-display-none {
+  display: none!important;
+}
+
+.llar-display-block {
+  display: block!important;
 }
 
 .mx-auto {
@@ -370,11 +377,6 @@ button {
   white-space: nowrap;
   vertical-align: baseline;
 
-  &:focus, &:focus-visible {
-    outline: none;
-    box-shadow: unset;
-  }
-
   &.menu__item {
     border-radius: $border-radius * .5;
     font-size: 16px;
@@ -392,6 +394,11 @@ button {
     @include _428 {
       padding: 5px 14px;
     }
+  }
+
+  &:focus {
+    outline: none!important;
+    box-shadow: unset!important;
   }
 }
 
@@ -481,5 +488,10 @@ button {
         background: $primary-colors__orange-back;
       }
     }
+  }
+
+  &:focus {
+    outline: none!important;
+    box-shadow: unset!important;
   }
 }

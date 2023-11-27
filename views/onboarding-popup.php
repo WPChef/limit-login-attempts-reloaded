@@ -23,7 +23,7 @@ ob_start(); ?>
         <img src="<?php echo LLA_PLUGIN_URL ?>/assets/img/icon-logo-menu.png">
     </div>
     <div class="llar-onboarding__line">
-        <div class="point__block active" data-step="1">
+        <div class="point__block visited active" data-step="1">
             <div class="point"></div>
             <div class="description">
                 <?php _e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
@@ -104,9 +104,11 @@ ob_start(); ?>
                     </button>
                 </div>
             </div>
-            <button class="button next_step menu__item button__transparent_grey">
-                <?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
-            </button>
+            <div class="button_block-single">
+                <button class="button next_step menu__item button__transparent_grey">
+                    <?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -173,7 +175,7 @@ ob_start(); ?>
         </div>
     </div>
     <div class="button_block-horizon">
-        <button class="button menu__item button__orange">
+        <button class="button next_step menu__item button__orange">
             <?php _e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
         </button>
         <button class="button next_step menu__item button__transparent_orange">
@@ -202,19 +204,25 @@ ob_start(); ?>
                 <?php _e( '<b>Would you like to opt-in?</b>', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
-        <div class="button_block-horizon">
-            <button class="button menu__item button__transparent_orange orange-back">
-                <?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
-            </button>
-            <button class="button next_step menu__item button__transparent_grey gray-back">
-                <?php _e( 'No', 'limit-login-attempts-reloaded' ); ?>
-            </button>
+        <div class="llar-upgrade-subscribe">
+            <div class="button_block-horizon">
+                <button class="button menu__item button__transparent_orange orange-back" id="llar-limited-upgrade-subscribe">
+                    <?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
+                </button>
+                <button class="button next_step menu__item button__transparent_grey gray-back">
+                    <?php _e( 'No', 'limit-login-attempts-reloaded' ); ?>
+                </button>
+            </div>
+            <div class="explanations">
+                <?php echo sprintf(
+                    __( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our <a class="link__style_color_inherit llar_turquoise" href="%s" target="_blank">terms of service</a> by participating in this program.', 'limit-login-attempts-reloaded' ),
+                    'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+                ); ?>
+            </div>
         </div>
-        <div class="explanations">
-            <?php echo sprintf(
-                __( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our <a class="link__style_color_inherit llar_turquoise" href="%s" target="_blank">terms of service</a> by participating in this program.', 'limit-login-attempts-reloaded' ),
-                'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
-            ); ?>
+        <div class="llar-upgrade-subscribe_notification">
+            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/start.png">
+            <?php _e( 'Instructions sent via email', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="button_block-single">
             <button class="button next_step menu__item button__transparent_grey">
@@ -226,6 +234,32 @@ ob_start(); ?>
 
 <?php
 $content_step_3 = ob_get_clean();
+?>
+
+<?php
+ob_start(); ?>
+<div class="llar-onboarding__body">
+    <div class="title">
+        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/like-min.png">
+        <?php _e( 'Thank you for completing the setup', 'limit-login-attempts-reloaded' ); ?>
+    </div>
+    <div class="card mx-auto">
+        <div class="field-image">
+            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/schema-ok-min.png">
+        </div>
+        <div class="field-desc">
+            <?php _e( 'This email will receive notifications of unauthorized access to your website. You may turn this off in your settings.', 'limit-login-attempts-reloaded' ); ?>
+        </div>
+        <div class="button_block-single">
+            <button class="button next_step menu__item button__orange">
+                <?php _e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); ?>
+            </button>
+        </div>
+    </div>
+</div>
+
+<?php
+$content_step_4 = ob_get_clean();
 ?>
 
 <script>
@@ -247,7 +281,7 @@ $content_step_3 = ob_get_clean();
             });
 
             // $.confirm({
-            $.dialog({
+            const ondoarding_modal = $.dialog({
                 //title: '<?php //_e( 'Complete Limit Login Attempts Reloaded Installation', 'limit-login-attempts-reloaded' ) ?>//',
                 title: false,
                 content: `<?php echo trim( $popup_complete_install_content ); ?>`,
@@ -275,9 +309,8 @@ $content_step_3 = ob_get_clean();
                 buttons: {},
                 onOpenBefore: function () {
 
-                    let button_next = $('button.button.next_step');
+                    let button_next = 'button.button.next_step';
 
-                    // button_next.on('click', function() {
                     $(document).on('click', button_next, function() {
 
                         console.log('!!!!');
@@ -291,9 +324,20 @@ $content_step_3 = ob_get_clean();
                         }
                         else if (next_step === 3) {
                             html_body.replaceWith(<?php echo json_encode(trim($content_step_3), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+
+                            $('#llar-limited-upgrade-subscribe').on('click', function () {
+
+                                $('.llar-upgrade-subscribe').addClass('llar-display-none');
+                                $('.llar-upgrade-subscribe_notification').addClass('llar-display-block');
+                                // send an email with instructions
+
+                            });
                         }
                         else if (next_step === 4) {
-                            //html_body.replaceWith(<?php //echo json_encode(trim($content_step_4), JSON_HEX_QUOT | JSON_HEX_TAG); ?>//);
+                            html_body.replaceWith(<?php echo json_encode(trim($content_step_4), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+                        }
+                        else if (!next_step) {
+                            ondoarding_modal.close();
                         }
                     })
 
@@ -381,6 +425,7 @@ $content_step_3 = ob_get_clean();
                 step_line.filter('[data-step="' + active_step + '"]').removeClass('active');
                 active_step++;
                 step_line.filter('[data-step="' + active_step + '"]').addClass('active');
+                step_line.filter('[data-step="' + active_step + '"]').addClass('visited');
                 return active_step;
             }
             else {

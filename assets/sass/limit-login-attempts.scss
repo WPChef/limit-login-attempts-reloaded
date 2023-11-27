@@ -200,7 +200,7 @@
   }
 }
 
-#llar-setting-page, #llar-setting-page-help, #llar-setting-page-premium {
+#llar-setting-page {
   color: $typography-primary;
   margin-top: 40px;
   line-height: 1.5;
@@ -645,6 +645,14 @@
       }
     }
   }
+}
+
+#llar-setting-page-help {
+  @extend #llar-setting-page;
+}
+
+#llar-setting-page-premium {
+  @extend #llar-setting-page;
 }
 
 #llar-setting-page-debug {
