@@ -59,12 +59,13 @@ ob_start(); ?>
                     <?php _e( 'Add your license key', 'limit-login-attempts-reloaded' ); ?>
                 </div>
                 <div class="field-key">
-                    <input type="text" class="input_border" id="llar-subscribe-key" placeholder="Your key" value="">
-                    <button class="button menu__item button__orange">
+                    <input type="text" class="input_border" id="llar-setup-code-field" placeholder="Your key" value="">
+                    <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
                         <?php _e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
                         <span class="dashicons dashicons-arrow-right-alt"></span>
                     </button>
                 </div>
+                <div class="field-error"></div>
                 <div class="field-desc">
                     <?php _e( 'The license key can be found in your email if you have subscribed to premium', 'limit-login-attempts-reloaded' ); ?>
                 </div>
@@ -175,7 +176,7 @@ ob_start(); ?>
         </div>
     </div>
     <div class="button_block-horizon">
-        <button class="button next_step menu__item button__orange">
+        <button class="button menu__item button__orange" id="llar-subscribe-email-button">
             <?php _e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
         </button>
         <button class="button next_step menu__item button__transparent_orange">
@@ -310,20 +311,66 @@ $content_step_4 = ob_get_clean();
                 onOpenBefore: function () {
 
                     let button_next = 'button.button.next_step';
+                    let $setup_code_key = $('#llar-setup-code-field');
+                    let $activate_button = $('#llar-app-install-btn');
+
+                    $setup_code_key.on('input', function() {
+
+                        if ($(this).val().trim() !== '') {
+                            $activate_button.removeClass('llar-disabled');
+                        } else {
+                            $activate_button.addClass('llar-disabled');
+                        }
+                    });
+
+                    $activate_button.on('click', function (e) {
+
+                        e.preventDefault();
+
+                        if($activate_button.hasClass('llar-disabled')) {
+                            return;
+                        }
+
+                        $activate_button.addClass('llar-disabled');
+
+                        activate_license_key($setup_code_key, $activate_button);
+                    })
 
                     $(document).on('click', button_next, function() {
 
-                        console.log('!!!!');
-
                         let next_step = next_step_line();
-                        let html_body = $('.llar-onboarding__body');
-
+                        let $html_body = $('.llar-onboarding__body');
 
                         if (next_step === 2) {
-                            html_body.replaceWith(<?php echo json_encode(trim($content_step_2), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+                            $html_body.replaceWith(<?php echo json_encode(trim($content_step_2), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+
+                            const $subscribe_email = $('#llar-subscribe-email');
+                            const $subscribe_email_button = $('#llar-subscribe-email-button');
+                            const $is_subscribe = !!$('.field-checkbox input[name="lockout_notify_email"]').prop('checked');
+
+                            $subscribe_email_button.on('click', function () {
+                                $.post(ajaxurl, {
+                                    action: 'subscribe_email',
+                                    email: $subscribe_email.val(),
+                                    is_subscribe_yes: $is_subscribe,
+                                    sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+                                }, function(response){
+
+                                    console.log('@@@@@@@@@@@@@@@@@@');
+                                    console.log(response);
+
+                                    // if(response.success) {
+                                    //     setTimeout(function(){
+                                    //         window.location = window.location + '&llar-cloud-activated';
+                                    //     }, 500);
+                                    // }
+                                });
+                            })
+
+
                         }
                         else if (next_step === 3) {
-                            html_body.replaceWith(<?php echo json_encode(trim($content_step_3), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+                            $html_body.replaceWith(<?php echo json_encode(trim($content_step_3), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
 
                             $('#llar-limited-upgrade-subscribe').on('click', function () {
 
@@ -334,7 +381,7 @@ $content_step_4 = ob_get_clean();
                             });
                         }
                         else if (next_step === 4) {
-                            html_body.replaceWith(<?php echo json_encode(trim($content_step_4), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+                            $html_body.replaceWith(<?php echo json_encode(trim($content_step_4), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
                         }
                         else if (!next_step) {
                             ondoarding_modal.close();
@@ -363,51 +410,84 @@ $content_step_4 = ob_get_clean();
             });
 
 
+            function activate_license_key($setup_code_key, $this) {
+
+                const $error = $('.field-error');
+                const $setup_code = $setup_code_key.val();
+
+                $error.text('').hide();
+
+                $.post(ajaxurl, {
+                    action: 'app_setup',
+                    code:   $setup_code,
+                    sec:    '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+                }, function(response){
+
+                    if(response.success) {
+                        setTimeout(function(){
+                            window.location = window.location + '&llar-cloud-activated';
+                        }, 500);
+                    }
+
+                    if(!response.success && response.data.msg) {
+                        $error.text(response.data.msg).show();
+
+                        setTimeout(function(){
+                            $error.text('').hide();
+                            $setup_code_key.val('');
+                        }, 3500);
+                    }
+
+                    $this.removeClass('llar-disabled');
+                });
+            }
+
+
             $('body').on('click', '.security-alerts-options .buttons span', function() {
                 const $this = $(this);
                 $this.parent().find('span').removeClass('llar-act');
                 $this.addClass('llar-act');
             });
 
-            $('body').on('click', '#llar-app-install-btn', function(e) {
-                e.preventDefault();
-
-                const $this = $(this);
-                const $error = $this.closest('.field-wrap').find('.error');
-
-                if($this.hasClass('button-disabled')) {
-                    return;
-                }
-
-                const setup_code = $this.closest('.field-wrap').find('input').val();
-
-                $error.text('').hide();
-                $this.addClass('button-disabled');
-
-                $.post(ajaxurl, {
-                    action: 'app_setup',
-                    code: setup_code,
-                    sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
-                }, function(response){
-
-                    if(response.success) {
-                        setTimeout(function(){
-
-                            window.location = window.location + '&llar-cloud-activated';
-
-                        }, 500);
-                    }
-
-                    if(!response.success && response.data.msg) {
-
-                        $error.text(response.data.msg).show();
-                    }
-
-                    $this.removeClass('button-disabled');
-
-                });
-
-            });
+            //$('body').on('click', '#llar-app-install-btn', function(e) {
+            //    e.preventDefault();
+            //
+            //    const $this = $(this);
+            //    const $error = $this.closest('.field-wrap').find('.error');
+            //
+            //    if($this.hasClass('button-disabled')) {
+            //        return;
+            //    }
+            //
+            //    const setup_code = $this.closest('.field-wrap').find('input').val();
+            //
+            //    $error.text('').hide();
+            //    $this.addClass('button-disabled');
+            //
+            //    $.post(ajaxurl, {
+            //        action: 'app_setup',
+            //        code: setup_code,
+            //        sec: '<?php //echo esc_js( wp_create_nonce( "llar-action" ) ); ?>//'
+            //    }, function(response){
+            //
+            //        if(response.success) {
+            //            setTimeout(function(){
+            //
+            //                window.location = window.location + '&llar-cloud-activated';
+            //
+            //            }, 500);
+            //        }
+            //
+            //        if(!response.success && response.data.msg) {
+            //
+            //            $error.text(response.data.msg).show();
+            //        }
+            //
+            //        $this.removeClass('button-disabled');
+            //
+            //    });
+            //
+            //});
 
             $('body').on('click', '#llar-popup-no-thanks-btn', function(e) {
                 e.preventDefault();
