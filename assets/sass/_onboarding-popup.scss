@@ -210,7 +210,6 @@
 
           &-wrap {
             margin-top: 23px;
-            margin-bottom: 30px;
           }
 
           &-title {
@@ -249,6 +248,12 @@
                 line-height: inherit;
               }
             }
+          }
+
+          &-error {
+            display: none;
+            color: red;
+            margin-top: 15px;
           }
 
           &-email {
@@ -395,11 +400,6 @@
 
             .field {
               flex: 1;
-
-              .error {
-                display: none;
-                color: red;
-              }
             }
 
             .button-col {

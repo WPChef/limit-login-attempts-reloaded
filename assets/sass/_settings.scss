@@ -177,6 +177,7 @@ $border-radius__max: $border-radius * 2;
 .llar-disabled {
   cursor: default !important;
   pointer-events: none;
+  filter: contrast(0.8);
 }
 
 .dashicons-secondary {
@@ -224,6 +225,11 @@ $border-radius__max: $border-radius * 2;
   @include _1599 {
     padding: 6px 8px 6px 12px;
     font-size: 14px;
+  }
+
+  &:focus {
+    box-shadow: unset;
+    outline: none;
   }
 }
 
@@ -380,7 +386,7 @@ button {
   &.menu__item {
     border-radius: $border-radius * .5;
     font-size: 16px;
-    line-height: 1.5;
+    line-height: 1.45;
     padding: 6px 18px;
 
     @include _1599 {
