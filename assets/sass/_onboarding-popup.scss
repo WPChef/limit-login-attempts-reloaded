@@ -135,6 +135,35 @@
           }
         }
 
+        .preloader-wrapper {
+          display: none;
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(white, 0.3);
+          align-items: center;
+          justify-content: center;
+
+          .spinner {
+            display: block;
+            position: relative;
+            float: none;
+            visibility: hidden;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0 auto;
+          }
+        }
+
+        .llar-disabled {
+
+          .preloader-wrapper {
+            display: block;
+          }
+        }
+
         .card {
           min-width: 768px;
           text-align: center;
@@ -238,6 +267,7 @@
             }
 
             button {
+              position: relative;
               display: inline-block;
               font-size: 18px;
               padding: 14px 30px;
@@ -380,114 +410,115 @@
           }
         }
 
-        &.llar-app-setup-popup {
-          .title {
-            font-size: 20px;
-            margin-bottom: 10px;
-          }
-          .desc {
-            text-align: center;
-            margin-bottom: 20px;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-            font-size: 16px;
-            line-height: 24px;
-          }
-          .field-wrap {
-            display: flex;
-            margin-bottom: 40px;
-
-            .field {
-              flex: 1;
-            }
-
-            .button-col {
-              button {
-                margin-left: 10px;
-                text-transform: uppercase;
-                position: relative;
-                height: 44px;
-
-                .preloader-wrapper {
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  background-color: rgba(#fff, 0.5);
-                  align-items: center;
-                  justify-content: center;
-                  display: none;
-                }
-
-                &.button-disabled {
-                  .preloader-wrapper {
-                    display: flex;
-
-                    span {
-                      visibility: visible;
-                    }
-                  }
-                }
-              }
-            }
-          }
-          .divider-line {
-            border-top: 1px solid #ccc;
-            height: 1px;
-            text-align: center;
-            margin-bottom: 20px;
-            margin-top: 20px;
-            position: relative;
-
-            span {
-              background-color: #fff;
-              display: inline-block;
-              top: -10px;
-              position: relative;
-              padding: 0 10px;
-              text-transform: uppercase;
-            }
-          }
-          .bottom-buttons {
-            text-align: center;
-
-            .text {
-              text-align: center;
-              margin-bottom: 20px;
-              font-size: 16px;
-            }
-            .buttons {
-              .button {
-                font-size: 14px;
-                text-transform: uppercase;
-                height: 40px;
-                margin: 0 5px;
-              }
-              .button-primary {
-                line-height: 40px;
-                background-color: #fcb40c;
-                border-color: #b07c04;
-
-                span {
-                  text-transform: none;
-                  display: block;
-                  font-size: 12px;
-                  line-height: 13px;
-                  margin-bottom: 2px;
-                }
-              }
-              .button-secondary {
-                line-height: 40px;
-              }
-              .button-link {
-                vertical-align: middle;
-                height: 40px;
-              }
-            }
-          }
-        }
+        //&.llar-app-setup-popup {
+        //  .title {
+        //    font-size: 20px;
+        //    margin-bottom: 10px;
+        //  }
+        //  .desc {
+        //    text-align: center;
+        //    margin-bottom: 20px;
+        //    max-width: 400px;
+        //    margin-left: auto;
+        //    margin-right: auto;
+        //    font-size: 16px;
+        //    line-height: 24px;
+        //  }
+        //  .field-wrap {
+        //    display: flex;
+        //    margin-bottom: 40px;
+        //
+        //    .field {
+        //      flex: 1;
+        //    }
+        //
+        //    .button-col {
+        //
+        //      button {
+        //        margin-left: 10px;
+        //        text-transform: uppercase;
+        //        position: relative;
+        //        height: 44px;
+        //
+        //        .preloader-wrapper {
+        //          position: absolute;
+        //          top: 0;
+        //          left: 0;
+        //          right: 0;
+        //          bottom: 0;
+        //          background-color: rgba(#fff, 0.5);
+        //          align-items: center;
+        //          justify-content: center;
+        //          display: none;
+        //        }
+        //
+        //        &.button-disabled {
+        //          .preloader-wrapper {
+        //            display: flex;
+        //
+        //            span {
+        //              visibility: visible;
+        //            }
+        //          }
+        //        }
+        //      }
+        //    }
+        //  }
+        //  .divider-line {
+        //    border-top: 1px solid #ccc;
+        //    height: 1px;
+        //    text-align: center;
+        //    margin-bottom: 20px;
+        //    margin-top: 20px;
+        //    position: relative;
+        //
+        //    span {
+        //      background-color: #fff;
+        //      display: inline-block;
+        //      top: -10px;
+        //      position: relative;
+        //      padding: 0 10px;
+        //      text-transform: uppercase;
+        //    }
+        //  }
+        //  .bottom-buttons {
+        //    text-align: center;
+        //
+        //    .text {
+        //      text-align: center;
+        //      margin-bottom: 20px;
+        //      font-size: 16px;
+        //    }
+        //    .buttons {
+        //      .button {
+        //        font-size: 14px;
+        //        text-transform: uppercase;
+        //        height: 40px;
+        //        margin: 0 5px;
+        //      }
+        //      .button-primary {
+        //        line-height: 40px;
+        //        background-color: #fcb40c;
+        //        border-color: #b07c04;
+        //
+        //        span {
+        //          text-transform: none;
+        //          display: block;
+        //          font-size: 12px;
+        //          line-height: 13px;
+        //          margin-bottom: 2px;
+        //        }
+        //      }
+        //      .button-secondary {
+        //        line-height: 40px;
+        //      }
+        //      .button-link {
+        //        vertical-align: middle;
+        //        height: 40px;
+        //      }
+        //    }
+        //  }
+        //}
       }
     }
   }
