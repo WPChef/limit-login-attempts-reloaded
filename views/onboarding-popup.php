@@ -63,6 +63,7 @@ ob_start(); ?>
                     <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
                         <?php _e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
                         <span class="dashicons dashicons-arrow-right-alt"></span>
+                        <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
                     </button>
                 </div>
                 <div class="field-error"></div>
@@ -106,7 +107,7 @@ ob_start(); ?>
                 </div>
             </div>
             <div class="button_block-single">
-                <button class="button next_step menu__item button__transparent_grey">
+                <button class="button next_step menu__item button__transparent_grey button-skip">
                     <?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
                 </button>
             </div>
@@ -116,40 +117,6 @@ ob_start(); ?>
 <?php
 $popup_complete_install_content = ob_get_clean();
 ?>
-
-<?php
-//ob_start(); ?>
-<!--<div class="llar-onboarding-popup-content llar-app-setup-popup">-->
-<!--    <div class="title">--><?php //_e( 'Activate Premium', 'limit-login-attempts-reloaded' ); ?><!--</div>-->
-<!--    <div class="desc">--><?php //_e( 'Enter your setup code to enable cloud protection. This will provide the highest level of security and performance during brute force attacks.', 'limit-login-attempts-reloaded' ); ?><!--</div>-->
-<!--    <div class="field-wrap">-->
-<!--        <div class="field">-->
-<!--            <input type="text" id="llar-setup-code-field" placeholder="--><?php //esc_attr_e( 'Enter Setup Code', 'limit-login-attempts-reloaded' ); ?><!--">-->
-<!--            <span class="error"></span>-->
-<!--        </div>-->
-<!--        <div class="button-col">-->
-<!--            <button class="button button-primary" id="llar-app-install-btn">-->
-<!--                --><?php //_e( 'Install', 'limit-login-attempts-reloaded' ); ?>
-<!--                <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>-->
-<!--            </button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div class="divider-line"><span>--><?php //_e( 'Or', 'limit-login-attempts-reloaded' ); ?><!--</span></div>-->
-<!--    <div class="bottom-buttons">-->
-<!--        <div class="text">--><?php //_e( 'If you don\'t have one, you can purchase one now.', 'limit-login-attempts-reloaded' ); ?><!--</div>-->
-<!--        <div class="buttons">-->
-<!--            <a href="https://checkout.limitloginattempts.com/plan?from=plugin-welcome" target="_blank"-->
-<!--               class="button button-primary size-medium">--><?php //_e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?><!--</a>-->
-<!--            <a href="https://www.limitloginattempts.com/features/?from=plugin-welcome" target="_blank"-->
-<!--               class="button button-secondary">--><?php //_e( 'Learn More', 'limit-login-attempts-reloaded' ); ?><!--</a>-->
-<!--            <button class="button-link" id="llar-popup-no-thanks-btn">--><?php //_e( 'No thanks', 'limit-login-attempts-reloaded' ); ?><!--</button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<?php
-//$popup_app_setup_content = ob_get_clean();
-//?>
-
 
 <?php
 ob_start(); ?>
@@ -177,9 +144,9 @@ ob_start(); ?>
     </div>
     <div class="button_block-horizon">
         <button class="button menu__item button__orange" id="llar-subscribe-email-button">
-            <?php _e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
+            <?php _e( 'Continue', 'limit-login-attempts-reloaded' ) ?><span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
         </button>
-        <button class="button next_step menu__item button__transparent_orange">
+        <button class="button next_step menu__item button__transparent_orange button-skip">
             <?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
         </button>
     </div>
@@ -226,7 +193,7 @@ ob_start(); ?>
             <?php _e( 'Instructions sent via email', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="button_block-single">
-            <button class="button next_step menu__item button__transparent_grey">
+            <button class="button next_step menu__item button__transparent_grey button-skip">
                 <?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
             </button>
         </div>
@@ -267,21 +234,7 @@ $content_step_4 = ob_get_clean();
     ;(function($){
 
         $(document).ready(function(){
-            //const app_setup_popup = $.confirm({
-            //    title: '<?php //_e( 'Please Complete Limit Login Attempts Reloaded Installation', 'limit-login-attempts-reloaded' ) ?>//',
-            //    content: `<?php //echo trim( $popup_app_setup_content ); ?>//`,
-            //    type: 'default',
-            //    typeAnimated: true,
-            //    draggable: false,
-            //    boxWidth: '40%',
-            //    bgOpacity: 0.9,
-            //    useBootstrap: false,
-            //    lazyOpen: true,
-            //    buttons: false,
-            //    closeIcon: true
-            //});
 
-            // $.confirm({
             const ondoarding_modal = $.dialog({
                 title: false,
                 content: `<?php echo trim( $popup_complete_install_content ); ?>`,
@@ -309,16 +262,19 @@ $content_step_4 = ob_get_clean();
                 buttons: {},
                 onOpenBefore: function () {
 
-                    let button_next = 'button.button.next_step';
-                    let $setup_code_key = $('#llar-setup-code-field');
-                    let $activate_button = $('#llar-app-install-btn');
+                    const button_next = 'button.button.next_step';
+                    const $setup_code_key = $('#llar-setup-code-field');
+                    const $activate_button = $('#llar-app-install-btn');
+                    const $spinner = $activate_button.find('.preloader-wrapper .spinner');
+                    const disabled = 'llar-disabled';
+                    const visibility = 'llar-visibility';
 
                     $setup_code_key.on('input', function() {
 
                         if ($(this).val().trim() !== '') {
-                            $activate_button.removeClass('llar-disabled');
+                            $activate_button.removeClass(disabled);
                         } else {
-                            $activate_button.addClass('llar-disabled');
+                            $activate_button.addClass(disabled);                            ;
                         }
                     });
 
@@ -326,29 +282,33 @@ $content_step_4 = ob_get_clean();
 
                         e.preventDefault();
 
-                        if($activate_button.hasClass('llar-disabled')) {
+                        if($activate_button.hasClass(disabled)) {
                             return;
                         }
 
-                        $activate_button.addClass('llar-disabled');
+                        $activate_button.addClass(disabled);
+                        $spinner.addClass(visibility);
 
-                        activate_license_key($setup_code_key, $activate_button);
+                        activate_license_key($setup_code_key, $activate_button, $spinner);
+
                     })
 
                     $(document).on('click', button_next, function() {
 
                         let next_step = next_step_line();
-                        let $html_body = $('.llar-onboarding__body');
+                        const $html_body = $('.llar-onboarding__body');
 
                         if (next_step === 2) {
                             $html_body.replaceWith(<?php echo json_encode(trim($content_step_2), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
 
                             const $subscribe_email = $('#llar-subscribe-email');
                             const $subscribe_email_button = $('#llar-subscribe-email-button');
+                            const $spinner = $subscribe_email_button.find('.preloader-wrapper .spinner');
                             const $is_subscribe = !!$('.field-checkbox input[name="lockout_notify_email"]').prop('checked');
 
                             $subscribe_email_button.on('click', function () {
-                                $subscribe_email_button.addClass('llar-disabled');
+                                $subscribe_email_button.addClass(disabled);
+                                $spinner.addClass(visibility);
 
                                 $.post(ajaxurl, {
                                     action: 'subscribe_email',
@@ -357,9 +317,7 @@ $content_step_4 = ob_get_clean();
                                     sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
                                 }, function(response){
 
-                                    // console.log('@@@@@@@@@@@@@@@@@@');
-                                    // console.log(response);
-                                    $subscribe_email_button.removeClass('llar-disabled');
+                                    $subscribe_email_button.removeClass(disabled);
                                     $(button_next).trigger('click');
                                 });
                             })
@@ -368,17 +326,19 @@ $content_step_4 = ob_get_clean();
                             $html_body.replaceWith(<?php echo json_encode(trim($content_step_3), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
 
                             const $limited_upgrade_subscribe = $('#llar-limited-upgrade-subscribe');
+                            const $button_skip = $('.button.next_step.button-skip');
+                            console.log($button_skip);
 
                             $limited_upgrade_subscribe.on('click', function () {
 
-                                $limited_upgrade_subscribe.addClass('llar-disabled');
+                                $button_skip.addClass('llar-disabled');
 
                                 $('.llar-upgrade-subscribe').addClass('llar-display-none');
                                 $('.llar-upgrade-subscribe_notification').addClass('llar-display-block');
                                 // send an email with instructions
 
                                 setTimeout(function () {
-                                    $limited_upgrade_subscribe.removeClass('llar-disabled');
+                                    $button_skip.removeClass('llar-disabled');
                                     $(button_next).trigger('click');
                                 }, 3000);
                             });
@@ -394,7 +354,7 @@ $content_step_4 = ob_get_clean();
             });
 
 
-            function activate_license_key($setup_code_key, $this) {
+            function activate_license_key($setup_code_key, $this, $spinner) {
 
                 const $error = $('.field-error');
                 const $setup_code = $setup_code_key.val();
@@ -408,6 +368,7 @@ $content_step_4 = ob_get_clean();
                 }, function(response){
 
                     if(response.success) {
+
                         setTimeout(function(){
                             window.location = window.location + '&llar-cloud-activated';
                         }, 500);
@@ -419,25 +380,12 @@ $content_step_4 = ob_get_clean();
                         setTimeout(function(){
                             $error.text('').hide();
                             $setup_code_key.val('');
-                        }, 3500);
-                    }
 
-                    $this.removeClass('llar-disabled');
+                        }, 3500);
+                        $spinner.removeClass('llar-visibility');
+                    }
                 });
             }
-
-
-            // $('body').on('click', '.security-alerts-options .buttons span', function() {
-            //     const $this = $(this);
-            //     $this.parent().find('span').removeClass('llar-act');
-            //     $this.addClass('llar-act');
-            // });
-            //
-            // $('body').on('click', '#llar-popup-no-thanks-btn', function(e) {
-            //     e.preventDefault();
-            //
-            //     app_setup_popup.close();
-            // });
         })
 
 
@@ -456,6 +404,7 @@ $content_step_4 = ob_get_clean();
                 return false;
             }
         }
+
 
         function video_player_load() {
 
@@ -500,7 +449,6 @@ $content_step_4 = ob_get_clean();
                 video_player.find('.video__iframe').addClass('play');
 
             });
-
         }
 
     })(jQuery)

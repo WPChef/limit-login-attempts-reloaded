@@ -169,6 +169,15 @@ $border-radius__max: $border-radius * 2;
   display: block!important;
 }
 
+.llar-visibility {
+  visibility: visible!important;
+}
+
+.llar-hidden {
+  visibility: hidden!important;
+}
+
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -177,7 +186,6 @@ $border-radius__max: $border-radius * 2;
 .llar-disabled {
   cursor: default !important;
   pointer-events: none;
-  filter: contrast(0.8);
 }
 
 .dashicons-secondary {
@@ -410,6 +418,7 @@ button {
 
 .button {
   @extend button;
+  position: relative;
   min-width: 175px;
   text-transform: inherit;
 
