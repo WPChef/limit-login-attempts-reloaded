@@ -12,6 +12,9 @@ $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_opti
 $onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
 $setup_code = Config::get( 'app_setup_code' );
 
+$onboarding_popup_shown = false;
+$setup_code = '';
+
 if( $onboarding_popup_shown || !empty( $setup_code ) ) return;
 
 ob_start(); ?>
@@ -125,7 +128,7 @@ ob_start(); ?>
     <div class="card mx-auto">
         <div class="field-wrap">
             <div class="field-title-add">
-                <?php _e( 'Site URL: https://tripshock.com', 'limit-login-attempts-reloaded' ); ?>
+                <?php echo sprintf(__( 'Site URL: %s', 'limit-login-attempts-reloaded' ), esc_url(get_site_url())); ?>
             </div>
             <div class="field-email">
                 <input type="text" class="input_border" id="llar-subscribe-email" placeholder="Your email" value="<?php esc_attr_e( $admin_email ); ?>">

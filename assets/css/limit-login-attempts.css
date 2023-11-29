@@ -2521,10 +2521,11 @@ button:focus, #llar-setting-page button:focus, #llar-setting-page-logs button:fo
   color: #666D84;
   font-size: 14px;
   margin-top: 15px;
+  margin-left: 35px;
   text-align: left;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-checkbox input {
-  margin-right: 16px;
+  margin-left: -32px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-image {
   width: 240px;
