@@ -138,7 +138,9 @@ ob_start(); ?>
             </div>
             <div class="field-checkbox">
                 <input type="checkbox" name="lockout_notify_email" checked value="email"/>
-                <?php _e( 'Sign me up for the LLAR newsletter to receive important security alerts, plugin updates, and helpful guides.', 'limit-login-attempts-reloaded' ); ?>
+                <span>
+                    <?php _e( 'Sign me up for the LLAR newsletter to receive important security alerts, plugin updates, and helpful guides.', 'limit-login-attempts-reloaded' ); ?>
+                </span>
             </div>
         </div>
     </div>
