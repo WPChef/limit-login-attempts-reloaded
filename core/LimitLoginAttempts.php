@@ -251,7 +251,7 @@ class LimitLoginAttempts {
 
                 $.post(ajaxUrlObj.toString(), {
                     action: 'get_remaining_attempts_message',
-                    sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+                    sec: '<?php echo wp_create_nonce( "llar-get-remaining-attempts-message" ); ?>'
                 }, function(response) {
                     if(response.success && response.data) {
                         $('#login_error').append("<br>" + response.data);
@@ -1707,7 +1707,7 @@ class LimitLoginAttempts {
                             $.post(ajaxurl, {
                                 action: 'dismiss_review_notice',
                                 type: type,
-                                sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+                                sec: '<?php echo wp_create_nonce( "llar-dismiss-review" ); ?>'
                             });
 
                             $(this).closest('.llar-notice-review').remove();
@@ -1795,7 +1795,7 @@ class LimitLoginAttempts {
                             $.post(ajaxurl, {
                                 action: 'dismiss_notify_notice',
                                 type: type,
-                                sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+                                sec: '<?php echo wp_create_nonce( "llar-dismiss-notify-notice" ); ?>'
                             });
 
                             $(this).closest('.llar-notice-notify').remove();
@@ -1810,7 +1810,7 @@ class LimitLoginAttempts {
 
 							$.post(ajaxurl, {
 								action: 'enable_notify',
-								sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+								sec: '<?php echo wp_create_nonce( "llar-enable-notify" ); ?>'
 							}, function(response){
 
 								if(response.success) {

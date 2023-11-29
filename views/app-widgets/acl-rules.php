@@ -167,7 +167,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 							action: 'app_acl_remove_rule',
 							pattern: pattern,
 							type: $this.data('type'),
-							sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+							sec: '<?php echo esc_js( wp_create_nonce( "llar-app-acl-remove-rule" ) ); ?>'
 						}, function(response){
 
                             if($this.data('type') === 'ip') {
@@ -225,7 +225,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 							pattern: pattern,
 							rule: rule,
 							type: type,
-							sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+							sec: '<?php echo esc_js( wp_create_nonce( "llar-app-acl-add-rule" ) ); ?>'
 						}, function(response){
 
                             if(type === 'ip') {
@@ -277,7 +277,7 @@ if( !defined( 'ABSPATH' ) ) exit();
                         type: type,
                         limit: page_limit,
                         offset: (type === 'login') ? page_offset1 : page_offset2,
-                        sec: '<?php echo wp_create_nonce( "llar-action" ); ?>'
+                        sec: '<?php echo wp_create_nonce( "llar-app-load-acl-rules" ); ?>'
                     }, function(response){
 
                         if(type === 'ip') {
