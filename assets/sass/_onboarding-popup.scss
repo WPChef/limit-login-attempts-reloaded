@@ -354,12 +354,20 @@
             display: inline-block;
             color: $typography-secondary;
             font-size: 14px;
-            margin-top: 15px;
-            margin-left: 35px;
+            margin-top: 10px;
+            margin-left: 25px;
             text-align: left;
 
             input {
-              margin-left: -32px;
+              margin-top: 15px;
+              margin-left: -25px;
+              vertical-align: top;
+            }
+
+            span {
+              display: inline-block;
+              margin-left: 15px;
+              margin-top: 10px;
             }
           }
 
