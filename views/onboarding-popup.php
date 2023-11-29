@@ -256,7 +256,7 @@ $content_step_4 = ob_get_clean();
                 onClose: function() {
                     $.post(ajaxurl, {
                         action: 'dismiss_onboarding_popup',
-                        sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+                        sec: '<?php echo esc_js( wp_create_nonce( "llar-dismiss-onboarding-popup" ) ); ?>'
                     }, function(){});
                 },
                 buttons: {},
@@ -314,7 +314,7 @@ $content_step_4 = ob_get_clean();
                                     action: 'subscribe_email',
                                     email: $subscribe_email.val(),
                                     is_subscribe_yes: $is_subscribe,
-                                    sec: '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+                                    sec: '<?php echo esc_js( wp_create_nonce( "llar-subscribe-email" ) ); ?>'
                                 }, function(response){
 
                                     $subscribe_email_button.removeClass(disabled);
@@ -364,7 +364,7 @@ $content_step_4 = ob_get_clean();
                 $.post(ajaxurl, {
                     action: 'app_setup',
                     code:   $setup_code,
-                    sec:    '<?php echo esc_js( wp_create_nonce( "llar-action" ) ); ?>'
+                    sec:    '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>'
                 }, function(response){
 
                     if(response.success) {

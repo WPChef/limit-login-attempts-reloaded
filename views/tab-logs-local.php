@@ -291,7 +291,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
 
                     $.post( ajaxurl, {
                         action: 'limit-login-unlock',
-                        sec: '<?php echo wp_create_nonce('limit-login-unlock') ?>',
+                        sec: '<?php echo wp_create_nonce('llar-unlock') ?>',
                         ip: btn.data('ip'),
                         username: btn.data('username')
                     } )
