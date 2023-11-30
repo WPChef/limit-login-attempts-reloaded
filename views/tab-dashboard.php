@@ -344,12 +344,12 @@ if( $active_app === 'local' ) {
             <div class="actions">
                 <div class="actions__buttons">
                     <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta" title="Upgrade To Premium" target="_blank" class="link__style_unlink">
-                        <button class="menu__item col button__transparent_orange">
+                        <button class="button menu__item col button__transparent_orange">
                             Learn More
                         </button>
                     </a>
                     <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta" title="Upgrade To Premium" target="_blank" class="link__style_unlink">
-                        <button class="menu__item col button__orange">
+                        <button class="button menu__item col button__orange">
                             Get Started
                         </button>
                     </a>
