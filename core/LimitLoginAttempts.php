@@ -662,7 +662,7 @@ class LimitLoginAttempts {
 
 		$admin_bar->add_node( array(
 			'id'    => $root_item_id,
-			'title' => __( 'LLAR', 'limit-login-attempts-reloaded' ),
+			'title' => __( 'LLAR', 'limit-login-attempts-reloaded' ) . $this->menu_alert_icon(),
 			'href'  => $this->get_options_page_uri(),
 		) );
 
