@@ -227,7 +227,7 @@ ul.llar_list li::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm
   display: block;
 }
 
-button, #llar-setting-page button, #llar-setting-page-logs button, #llar-setting-page-logs__active button, #llar-setting-page-debug button, #llar-setting-page-premium button, #llar-setting-page-help button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button, #llar-setting-page .button, .button, #llar-setting-page .button {
+button.llar_button, #llar-setting-page button.button, .llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
   font-family: inherit;
   background: #FDFDFD;
   border: 1px solid #2A2F40;
@@ -235,105 +235,106 @@ button, #llar-setting-page button, #llar-setting-page-logs button, #llar-setting
   white-space: nowrap;
   vertical-align: baseline;
 }
-button.menu__item, #llar-setting-page button.menu__item, #llar-setting-page-logs button.menu__item, #llar-setting-page-logs__active button.menu__item, #llar-setting-page-debug button.menu__item, #llar-setting-page-premium button.menu__item, #llar-setting-page-help button.menu__item, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button, #llar-setting-page .menu__item.button, .menu__item.button, #llar-setting-page .menu__item.button {
+button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
   border-radius: 10px;
   font-size: 16px;
   line-height: 1.45;
   padding: 6px 18px;
 }
 @media screen and (max-width: 1599.5px) {
-  button.menu__item, #llar-setting-page button.menu__item, #llar-setting-page-logs button.menu__item, #llar-setting-page-logs__active button.menu__item, #llar-setting-page-debug button.menu__item, #llar-setting-page-premium button.menu__item, #llar-setting-page-help button.menu__item, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button, #llar-setting-page .menu__item.button, .menu__item.button, #llar-setting-page .menu__item.button {
+  button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
     font-size: 14px;
   }
 }
 @media screen and (max-width: 991.5px) {
-  button.menu__item, #llar-setting-page button.menu__item, #llar-setting-page-logs button.menu__item, #llar-setting-page-logs__active button.menu__item, #llar-setting-page-debug button.menu__item, #llar-setting-page-premium button.menu__item, #llar-setting-page-help button.menu__item, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button, #llar-setting-page .menu__item.button, .menu__item.button, #llar-setting-page .menu__item.button {
+  button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
     padding: 5px 16px;
   }
 }
 @media screen and (max-width: 428px) {
-  button.menu__item, #llar-setting-page button.menu__item, #llar-setting-page-logs button.menu__item, #llar-setting-page-logs__active button.menu__item, #llar-setting-page-debug button.menu__item, #llar-setting-page-premium button.menu__item, #llar-setting-page-help button.menu__item, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button, #llar-setting-page .menu__item.button, .menu__item.button, #llar-setting-page .menu__item.button {
+  button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
     padding: 5px 14px;
   }
 }
-button:focus, #llar-setting-page button:focus, #llar-setting-page-logs button:focus, #llar-setting-page-logs__active button:focus, #llar-setting-page-debug button:focus, #llar-setting-page-premium button:focus, #llar-setting-page-help button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus, #llar-setting-page .button:focus, .button:focus, #llar-setting-page .button:focus {
+button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
   outline: none !important;
   box-shadow: unset !important;
 }
 
-.button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
+.llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
   position: relative;
   min-width: 175px;
   text-transform: inherit;
 }
-.button__orange {
+.llar_button.button__orange, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button, #llar-setting-page .button__orange.button, #llar-setting-page-logs .button__orange.button, #llar-setting-page-logs__active .button__orange.button, #llar-setting-page-debug .button__orange.button, #llar-setting-page-premium .button__orange.button, #llar-setting-page-help .button__orange.button {
   color: white !important;
   background: #FF7C06 !important;
   border: 1px solid #FF7C06 !important;
   box-shadow: 0 6px 12px 0 rgba(255, 124, 6, 0.4980392157) !important;
 }
-.button__orange:hover {
+.llar_button.button__orange:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button:hover, #llar-setting-page .button__orange.button:hover, #llar-setting-page-logs .button__orange.button:hover, #llar-setting-page-logs__active .button__orange.button:hover, #llar-setting-page-debug .button__orange.button:hover, #llar-setting-page-premium .button__orange.button:hover, #llar-setting-page-help .button__orange.button:hover {
   background: #F07200 !important;
 }
-.button__orange:disabled {
+.llar_button.button__orange:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button:disabled, #llar-setting-page .button__orange.button:disabled, #llar-setting-page-logs .button__orange.button:disabled, #llar-setting-page-logs__active .button__orange.button:disabled, #llar-setting-page-debug .button__orange.button:disabled, #llar-setting-page-premium .button__orange.button:disabled, #llar-setting-page-help .button__orange.button:disabled {
   border: 1px solid rgba(255, 124, 6, 0.4980392157) !important;
   background: rgba(255, 124, 6, 0.4980392157) !important;
   cursor: auto;
 }
-.button__transparent_orange, .button__transparent_grey {
+.llar_button.button__transparent_orange, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.button, #llar-setting-page .button__transparent_orange.button, #llar-setting-page-logs .button__transparent_orange.button, #llar-setting-page-logs__active .button__transparent_orange.button, #llar-setting-page-debug .button__transparent_orange.button, #llar-setting-page-premium .button__transparent_orange.button, #llar-setting-page-help .button__transparent_orange.button, .llar_button.button__transparent_grey, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button, #llar-setting-page .button__transparent_grey.button, #llar-setting-page-logs .button__transparent_grey.button, #llar-setting-page-logs__active .button__transparent_grey.button, #llar-setting-page-debug .button__transparent_grey.button, #llar-setting-page-premium .button__transparent_grey.button, #llar-setting-page-help .button__transparent_grey.button {
   color: #FF7C06 !important;
   border: 1px solid currentColor !important;
   background: transparent !important;
 }
-.button__transparent_orange.orange-back, .button__transparent_grey.orange-back {
+.llar_button.button__transparent_orange.orange-back, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.orange-back.button, #llar-setting-page .button__transparent_orange.orange-back.button, #llar-setting-page-logs .button__transparent_orange.orange-back.button, #llar-setting-page-logs__active .button__transparent_orange.orange-back.button, #llar-setting-page-debug .button__transparent_orange.orange-back.button, #llar-setting-page-premium .button__transparent_orange.orange-back.button, #llar-setting-page-help .button__transparent_orange.orange-back.button, .llar_button.button__transparent_grey.orange-back, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.orange-back.button, #llar-setting-page .button__transparent_grey.orange-back.button, #llar-setting-page-logs .button__transparent_grey.orange-back.button, #llar-setting-page-logs__active .button__transparent_grey.orange-back.button, #llar-setting-page-debug .button__transparent_grey.orange-back.button, #llar-setting-page-premium .button__transparent_grey.orange-back.button, #llar-setting-page-help .button__transparent_grey.orange-back.button {
   background: rgba(255, 124, 6, 0.0980392157) !important;
 }
-.button__transparent_orange:hover, .button__transparent_grey:hover {
+.llar_button.button__transparent_orange:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.button:hover, #llar-setting-page .button__transparent_orange.button:hover, #llar-setting-page-logs .button__transparent_orange.button:hover, #llar-setting-page-logs__active .button__transparent_orange.button:hover, #llar-setting-page-debug .button__transparent_orange.button:hover, #llar-setting-page-premium .button__transparent_orange.button:hover, #llar-setting-page-help .button__transparent_orange.button:hover, .llar_button.button__transparent_grey:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button:hover, #llar-setting-page .button__transparent_grey.button:hover, #llar-setting-page-logs .button__transparent_grey.button:hover, #llar-setting-page-logs__active .button__transparent_grey.button:hover, #llar-setting-page-debug .button__transparent_grey.button:hover, #llar-setting-page-premium .button__transparent_grey.button:hover, #llar-setting-page-help .button__transparent_grey.button:hover {
   background: rgba(255, 124, 6, 0.0980392157) !important;
   border: 1px solid currentColor !important;
 }
-.button__transparent_orange:disabled, .button__transparent_grey:disabled {
+.llar_button.button__transparent_orange:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.button:disabled, #llar-setting-page .button__transparent_orange.button:disabled, #llar-setting-page-logs .button__transparent_orange.button:disabled, #llar-setting-page-logs__active .button__transparent_orange.button:disabled, #llar-setting-page-debug .button__transparent_orange.button:disabled, #llar-setting-page-premium .button__transparent_orange.button:disabled, #llar-setting-page-help .button__transparent_orange.button:disabled, .llar_button.button__transparent_grey:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button:disabled, #llar-setting-page .button__transparent_grey.button:disabled, #llar-setting-page-logs .button__transparent_grey.button:disabled, #llar-setting-page-logs__active .button__transparent_grey.button:disabled, #llar-setting-page-debug .button__transparent_grey.button:disabled, #llar-setting-page-premium .button__transparent_grey.button:disabled, #llar-setting-page-help .button__transparent_grey.button:disabled {
   background: transparent;
   cursor: auto;
 }
-.button__transparent_grey {
+.llar_button.button__transparent_grey, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button, #llar-setting-page .button__transparent_grey.button, #llar-setting-page-logs .button__transparent_grey.button, #llar-setting-page-logs__active .button__transparent_grey.button, #llar-setting-page-debug .button__transparent_grey.button, #llar-setting-page-premium .button__transparent_grey.button, #llar-setting-page-help .button__transparent_grey.button {
   color: #A4A8B7 !important;
 }
-.button__transparent_grey.gray-back {
+.llar_button.button__transparent_grey.gray-back, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.gray-back.button, #llar-setting-page .button__transparent_grey.gray-back.button, #llar-setting-page-logs .button__transparent_grey.gray-back.button, #llar-setting-page-logs__active .button__transparent_grey.gray-back.button, #llar-setting-page-debug .button__transparent_grey.gray-back.button, #llar-setting-page-premium .button__transparent_grey.gray-back.button, #llar-setting-page-help .button__transparent_grey.gray-back.button {
   background: rgba(164, 168, 183, 0.2980392157) !important;
 }
-.button__transparent_grey:hover {
+.llar_button.button__transparent_grey:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button:hover, #llar-setting-page .button__transparent_grey.button:hover, #llar-setting-page-logs .button__transparent_grey.button:hover, #llar-setting-page-logs__active .button__transparent_grey.button:hover, #llar-setting-page-debug .button__transparent_grey.button:hover, #llar-setting-page-premium .button__transparent_grey.button:hover, #llar-setting-page-help .button__transparent_grey.button:hover {
   background: rgba(164, 168, 183, 0.2980392157) !important;
 }
-.button.tags, #llar-setting-page .tags.button, #llar-setting-page-logs .tags.button, #llar-setting-page-logs__active .tags.button, #llar-setting-page-debug .tags.button, #llar-setting-page-premium .tags.button, #llar-setting-page-help .tags.button {
+.llar_button.tags, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags.button, #llar-setting-page .tags.button, #llar-setting-page-logs .tags.button, #llar-setting-page-logs__active .tags.button, #llar-setting-page-debug .tags.button, #llar-setting-page-premium .tags.button, #llar-setting-page-help .tags.button {
   font-size: 16px;
   font-weight: 400;
   line-height: 1.7;
+  border-radius: 8px;
   border: 1px solid #FF7C06;
   width: fit-content;
   padding: 0 20px;
   z-index: 50;
 }
-.button.tags_basic, #llar-setting-page .tags_basic.button, #llar-setting-page-logs .tags_basic.button, #llar-setting-page-logs__active .tags_basic.button, #llar-setting-page-debug .tags_basic.button, #llar-setting-page-premium .tags_basic.button, #llar-setting-page-help .tags_basic.button {
+.llar_button.tags_basic, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic.button, #llar-setting-page .tags_basic.button, #llar-setting-page-logs .tags_basic.button, #llar-setting-page-logs__active .tags_basic.button, #llar-setting-page-debug .tags_basic.button, #llar-setting-page-premium .tags_basic.button, #llar-setting-page-help .tags_basic.button {
   color: #FF7C06;
   background: rgba(255, 124, 6, 0.0980392157);
 }
-.button.tags_basic.active, #llar-setting-page .tags_basic.active.button, #llar-setting-page-logs .tags_basic.active.button, #llar-setting-page-logs__active .tags_basic.active.button, #llar-setting-page-debug .tags_basic.active.button, #llar-setting-page-premium .tags_basic.active.button, #llar-setting-page-help .tags_basic.active.button, .button.tags_basic:hover, #llar-setting-page .tags_basic.button:hover, #llar-setting-page-logs .tags_basic.button:hover, #llar-setting-page-logs__active .tags_basic.button:hover, #llar-setting-page-debug .tags_basic.button:hover, #llar-setting-page-premium .tags_basic.button:hover, #llar-setting-page-help .tags_basic.button:hover {
+.llar_button.tags_basic.active, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic.active.button, #llar-setting-page .tags_basic.active.button, #llar-setting-page-logs .tags_basic.active.button, #llar-setting-page-logs__active .tags_basic.active.button, #llar-setting-page-debug .tags_basic.active.button, #llar-setting-page-premium .tags_basic.active.button, #llar-setting-page-help .tags_basic.active.button, .llar_button.tags_basic:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic.button:hover, #llar-setting-page .tags_basic.button:hover, #llar-setting-page-logs .tags_basic.button:hover, #llar-setting-page-logs__active .tags_basic.button:hover, #llar-setting-page-debug .tags_basic.button:hover, #llar-setting-page-premium .tags_basic.button:hover, #llar-setting-page-help .tags_basic.button:hover {
   color: #FDFDFD;
   background: #FF7C06;
 }
-.button.tags_add, #llar-setting-page .tags_add.button, #llar-setting-page-logs .tags_add.button, #llar-setting-page-logs__active .tags_add.button, #llar-setting-page-debug .tags_add.button, #llar-setting-page-premium .tags_add.button, #llar-setting-page-help .tags_add.button {
+.llar_button.tags_add, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_add.button, #llar-setting-page .tags_add.button, #llar-setting-page-logs .tags_add.button, #llar-setting-page-logs__active .tags_add.button, #llar-setting-page-debug .tags_add.button, #llar-setting-page-premium .tags_add.button, #llar-setting-page-help .tags_add.button {
   color: #A4A8B7;
   border: 1px solid #A4A8B7;
   background: rgba(164, 168, 183, 0.0784313725);
 }
-.button.tags_add a, #llar-setting-page .tags_add.button a, #llar-setting-page-logs .tags_add.button a, #llar-setting-page-logs__active .tags_add.button a, #llar-setting-page-debug .tags_add.button a, #llar-setting-page-premium .tags_add.button a, #llar-setting-page-help .tags_add.button a {
+.llar_button.tags_add a, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_add.button a, #llar-setting-page .tags_add.button a, #llar-setting-page-logs .tags_add.button a, #llar-setting-page-logs__active .tags_add.button a, #llar-setting-page-debug .tags_add.button a, #llar-setting-page-premium .tags_add.button a, #llar-setting-page-help .tags_add.button a {
   vertical-align: middle;
 }
-.button.tags_add:hover, #llar-setting-page .tags_add.button:hover, #llar-setting-page-logs .tags_add.button:hover, #llar-setting-page-logs__active .tags_add.button:hover, #llar-setting-page-debug .tags_add.button:hover, #llar-setting-page-premium .tags_add.button:hover, #llar-setting-page-help .tags_add.button:hover {
+.llar_button.tags_add:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_add.button:hover, #llar-setting-page .tags_add.button:hover, #llar-setting-page-logs .tags_add.button:hover, #llar-setting-page-logs__active .tags_add.button:hover, #llar-setting-page-debug .tags_add.button:hover, #llar-setting-page-premium .tags_add.button:hover, #llar-setting-page-help .tags_add.button:hover {
   background: rgba(255, 124, 6, 0.0980392157);
 }
-.button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
+.llar_button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
   outline: none !important;
   box-shadow: unset !important;
 }
@@ -821,7 +822,7 @@ button:focus, #llar-setting-page button:focus, #llar-setting-page-logs button:fo
   color: #2A2F40;
   transform: translateY(-50%);
 }
-#llar-setting-page .button_block, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .button_block, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card #llar-setting-page .button_block, #llar-setting-page-logs .button_block, #llar-setting-page-logs__active .button_block, #llar-setting-page-debug .button_block, #llar-setting-page-premium .button_block, #llar-setting-page-help .button_block {
+#llar-setting-page .button_block, #llar-setting-page-logs .button_block, #llar-setting-page-logs__active .button_block, #llar-setting-page-debug .button_block, #llar-setting-page-premium .button_block, #llar-setting-page-help .button_block {
   margin-top: 24px;
   display: flex;
   flex-wrap: nowrap;
@@ -1036,27 +1037,28 @@ button:focus, #llar-setting-page button:focus, #llar-setting-page-logs button:fo
   height: auto;
   border-radius: 4px;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td #llar-setting-page button, #llar-setting-page #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td #llar-setting-page .button, #llar-setting-page #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td #llar-setting-page-help button, #llar-setting-page-help #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td #llar-setting-page-help .button, #llar-setting-page-help #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td #llar-setting-page-premium button, #llar-setting-page-premium #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td #llar-setting-page-premium .button, #llar-setting-page-premium #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td #llar-setting-page-debug button, #llar-setting-page-debug #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td #llar-setting-page-debug .button, #llar-setting-page-debug #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td #llar-setting-page-logs button, #llar-setting-page-logs #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td #llar-setting-page-logs .button, #llar-setting-page-logs #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button {
   line-height: 1;
   margin-right: 5px;
+  border-radius: 8px;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button:last-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button:last-child {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button:last-child {
   margin-right: 0;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button .dashicons, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button .dashicons {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button .dashicons {
   vertical-align: middle;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button.llar-app-log-action-btn, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .llar-app-log-action-btn.button {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button.llar-app-log-action-btn {
   min-width: 45px;
   text-align: center;
   display: inline-block;
   line-height: 20px;
   cursor: pointer;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button.llar-app-log-action-btn i, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .llar-app-log-action-btn.button i {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button.llar-app-log-action-btn i {
   vertical-align: middle;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td button.llar-app-log-action-btn:hover i, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .llar-app-log-action-btn.button:hover i {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .button.llar-app-log-action-btn:hover i {
   color: #3c8dbc;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table .table-inline-preloader {
@@ -1145,9 +1147,10 @@ button:focus, #llar-setting-page button:focus, #llar-setting-page-logs button:fo
   min-width: 200px;
   margin-right: 0;
 }
-#llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .form-table tbody td button, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .form-table tbody td .button {
+#llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .form-table tbody td .button {
   min-width: 20px;
   margin-right: 20px;
+  border-radius: 8px;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .form-table tbody [class^=llar-app-rule] {
   margin-top: 10px;
@@ -2261,6 +2264,37 @@ button:focus, #llar-setting-page button:focus, #llar-setting-page-logs button:fo
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-buttons {
   padding-right: 15px;
 }
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 16px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block .button {
+  font-size: 18px;
+  margin-top: 20px;
+  padding: 11px 60px;
+  width: 70%;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon .button {
+  font-size: 18px;
+  padding: 11px 60px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-single {
+  margin-top: 20px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-single .button {
+  font-size: 18px;
+  padding: 11px 60px;
+  width: fit-content;
+}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content {
   min-height: 930px;
   padding: 15px;
@@ -2403,30 +2437,6 @@ button:focus, #llar-setting-page button:focus, #llar-setting-page-logs button:fo
   width: 12.5px;
   margin-right: 2px;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .button_block button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page .button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page-help button, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page-help .button, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page-premium button, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page-premium .button, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page-debug button, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page-debug .button, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page-logs button, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page-logs .button, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page-logs__active button, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block #llar-setting-page-logs__active .button, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block .button {
-  font-size: 18px;
-  margin-top: 20px;
-  padding: 11px 60px;
-  width: 70%;
-}
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 10px;
-}
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page .button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page-help button, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page-help .button, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page-premium button, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page-premium .button, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page-debug button, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page-debug .button, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page-logs button, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page-logs .button, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page-logs__active button, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon #llar-setting-page-logs__active .button, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon .button {
-  font-size: 18px;
-  padding: 11px 60px;
-}
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single {
-  margin-top: 20px;
-}
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page .button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page-help button, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page-help .button, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page-premium button, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page-premium .button, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page-debug button, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page-debug .button, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page-logs button, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page-logs .button, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page-logs__active button, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single #llar-setting-page-logs__active .button, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single .button {
-  font-size: 18px;
-  padding: 11px 60px;
-  width: fit-content;
-}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-wrap {
   margin-top: 23px;
 }
@@ -2442,23 +2452,23 @@ button:focus, #llar-setting-page button:focus, #llar-setting-page-logs button:fo
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email {
   display: inline-block;
-  font-size: 16px;
-  line-height: 1.5;
+  line-height: 25px;
   margin-top: 11px;
   width: 100%;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border {
+  font-size: 16px;
   min-width: 420px;
   padding: 15px 30px;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page .button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-help button, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-help .button, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-premium button, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-premium .button, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-debug button, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-debug .button, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-logs button, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-logs .button, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-logs__active button, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-logs__active .button, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page .button, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-help button, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-help .button, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-premium button, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-premium .button, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-debug button, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-debug .button, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-logs button, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-logs .button, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-logs__active button, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-logs__active .button, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button {
   position: relative;
   display: inline-block;
   font-size: 18px;
-  padding: 14px 30px;
+  padding: 14px 30px 15px;
   margin-left: -25px;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page button .dashicons, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page .button .dashicons, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-help button .dashicons, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-help .button .dashicons, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-premium button .dashicons, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-premium .button .dashicons, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-debug button .dashicons, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-debug .button .dashicons, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-logs button .dashicons, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-logs .button .dashicons, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-logs__active button .dashicons, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key #llar-setting-page-logs__active .button .dashicons, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page button .dashicons, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page .button .dashicons, #llar-setting-page .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-help button .dashicons, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-help .button .dashicons, #llar-setting-page-help .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-premium button .dashicons, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-premium .button .dashicons, #llar-setting-page-premium .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-debug button .dashicons, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-debug .button .dashicons, #llar-setting-page-debug .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-logs button .dashicons, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-logs .button .dashicons, #llar-setting-page-logs .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-logs__active button .dashicons, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email #llar-setting-page-logs__active .button .dashicons, #llar-setting-page-logs__active .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button .dashicons {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button .dashicons {
   margin-left: 15px;
   line-height: inherit;
 }
@@ -2749,19 +2759,19 @@ button:focus, #llar-setting-page button:focus, #llar-setting-page-logs button:fo
   width: 24px;
   height: 24px;
 }
-#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .button {
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .llar_button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .button {
   margin: 40px auto;
   padding-top: 12px;
   padding-bottom: 12px;
   width: 100%;
 }
 @media screen and (max-width: 1799.5px) {
-  #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .button {
+  #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .llar_button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .button {
     width: auto;
   }
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .button {
+  #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .llar_button, #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .button {
     min-width: 120px;
   }
 }
@@ -2814,20 +2824,20 @@ button:focus, #llar-setting-page button:focus, #llar-setting-page-logs button:fo
 .llar-help-page .section-1 .block .actions {
   text-align: center;
 }
-.llar-help-page .section-1 .block .actions .button, .llar-help-page .section-1 .block .actions #llar-setting-page .button, #llar-setting-page .llar-help-page .section-1 .block .actions .button, .llar-help-page .section-1 .block .actions #llar-setting-page-help .button, #llar-setting-page-help .llar-help-page .section-1 .block .actions .button, .llar-help-page .section-1 .block .actions #llar-setting-page-premium .button, #llar-setting-page-premium .llar-help-page .section-1 .block .actions .button, .llar-help-page .section-1 .block .actions #llar-setting-page-debug .button, #llar-setting-page-debug .llar-help-page .section-1 .block .actions .button, .llar-help-page .section-1 .block .actions #llar-setting-page-logs .button, #llar-setting-page-logs .llar-help-page .section-1 .block .actions .button, .llar-help-page .section-1 .block .actions #llar-setting-page-logs__active .button, #llar-setting-page-logs__active .llar-help-page .section-1 .block .actions .button {
+.llar-help-page .section-1 .block .actions .button {
   text-transform: uppercase;
   font-size: 18px;
   line-height: 1.4;
   padding: 4px 20px;
 }
-.llar-help-page .section-1 .block .actions .button span, .llar-help-page .section-1 .block .actions #llar-setting-page .button span, #llar-setting-page .llar-help-page .section-1 .block .actions .button span, .llar-help-page .section-1 .block .actions #llar-setting-page-help .button span, #llar-setting-page-help .llar-help-page .section-1 .block .actions .button span, .llar-help-page .section-1 .block .actions #llar-setting-page-premium .button span, #llar-setting-page-premium .llar-help-page .section-1 .block .actions .button span, .llar-help-page .section-1 .block .actions #llar-setting-page-debug .button span, #llar-setting-page-debug .llar-help-page .section-1 .block .actions .button span, .llar-help-page .section-1 .block .actions #llar-setting-page-logs .button span, #llar-setting-page-logs .llar-help-page .section-1 .block .actions .button span, .llar-help-page .section-1 .block .actions #llar-setting-page-logs__active .button span, #llar-setting-page-logs__active .llar-help-page .section-1 .block .actions .button span {
+.llar-help-page .section-1 .block .actions .button span {
   text-transform: none;
   display: block;
   font-size: 12px;
   line-height: 13px;
   margin-bottom: 2px;
 }
-.llar-help-page .section-1 .block .actions .button.button-secondary, .llar-help-page .section-1 .block .actions #llar-setting-page .button-secondary.button, #llar-setting-page .llar-help-page .section-1 .block .actions .button-secondary.button, .llar-help-page .section-1 .block .actions #llar-setting-page-help .button-secondary.button, #llar-setting-page-help .llar-help-page .section-1 .block .actions .button-secondary.button, .llar-help-page .section-1 .block .actions #llar-setting-page-premium .button-secondary.button, #llar-setting-page-premium .llar-help-page .section-1 .block .actions .button-secondary.button, .llar-help-page .section-1 .block .actions #llar-setting-page-debug .button-secondary.button, #llar-setting-page-debug .llar-help-page .section-1 .block .actions .button-secondary.button, .llar-help-page .section-1 .block .actions #llar-setting-page-logs .button-secondary.button, #llar-setting-page-logs .llar-help-page .section-1 .block .actions .button-secondary.button, .llar-help-page .section-1 .block .actions #llar-setting-page-logs__active .button-secondary.button, #llar-setting-page-logs__active .llar-help-page .section-1 .block .actions .button-secondary.button {
+.llar-help-page .section-1 .block .actions .button.button-secondary {
   min-height: 40px;
   line-height: 40px;
 }

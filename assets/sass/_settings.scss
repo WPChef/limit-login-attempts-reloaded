@@ -383,7 +383,7 @@ ul.llar_list {
   }
 }
 
-button {
+button.llar_button {
   font-family: inherit;
   background: $background-body;
   border: 1px solid $typography-primary;
@@ -416,58 +416,61 @@ button {
   }
 }
 
-.button {
+.llar_button {
   @extend button;
   position: relative;
   min-width: 175px;
   text-transform: inherit;
 
-  &__orange {
-    color: white!important;
-    background: $primary-colors__orange!important;
-    border: 1px solid $primary-colors__orange!important;
-    box-shadow: 0 6px 12px 0 $primary-colors__orange-semi_back!important;
+  &.button {
 
-    &:hover {
-      background: $secondary-colors__dark-orange!important;
+    &__orange {
+      color: white!important;
+      background: $primary-colors__orange!important;
+      border: 1px solid $primary-colors__orange!important;
+      box-shadow: 0 6px 12px 0 $primary-colors__orange-semi_back!important;
+
+      &:hover {
+        background: $secondary-colors__dark-orange!important;
+      }
+
+      &:disabled {
+        border: 1px solid $primary-colors__orange-semi_back!important;
+        background: $primary-colors__orange-semi_back!important;
+        cursor: auto;
+      }
     }
 
-    &:disabled {
-      border: 1px solid $primary-colors__orange-semi_back!important;
-      background: $primary-colors__orange-semi_back!important;
-      cursor: auto;
-    }
-  }
-
-  &__transparent_orange, &__transparent_grey {
-    color: $primary-colors__orange!important;
-    border: 1px solid currentColor!important;
-    background: transparent!important;
-
-    &.orange-back {
-      background: $primary-colors__orange-back!important;
-    }
-
-    &:hover {
-      background: $primary-colors__orange-back!important;
+    &__transparent_orange, &__transparent_grey {
+      color: $primary-colors__orange!important;
       border: 1px solid currentColor!important;
+      background: transparent!important;
+
+      &.orange-back {
+        background: $primary-colors__orange-back!important;
+      }
+
+      &:hover {
+        background: $primary-colors__orange-back!important;
+        border: 1px solid currentColor!important;
+      }
+
+      &:disabled {
+        background: transparent;
+        cursor: auto;
+      }
     }
 
-    &:disabled {
-      background: transparent;
-      cursor: auto;
-    }
-  }
+    &__transparent_grey {
+      color: $typography-additional!important;
 
-  &__transparent_grey {
-    color: $typography-additional!important;
+      &.gray-back {
+        background: $typography-additional__light!important;
+      }
 
-    &.gray-back {
-      background: $typography-additional__light!important;
-    }
-
-    &:hover {
-      background: $typography-additional__light!important;
+      &:hover {
+        background: $typography-additional__light!important;
+      }
     }
   }
 
@@ -475,6 +478,7 @@ button {
     font-size: 16px;
     font-weight: 400;
     line-height: 1.7;
+    border-radius: $border-radius__min;
     border: 1px solid $primary-colors__orange;
     width: fit-content;
     padding: 0 20px;

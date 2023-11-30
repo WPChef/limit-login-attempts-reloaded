@@ -29,6 +29,47 @@
         padding-right: 15px;
       }
 
+      .button {
+        @extend .llar_button;
+      }
+
+      .button_block {
+        margin-top: 24px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        column-gap: 16px;
+
+        .button {
+          font-size: 18px;
+          margin-top: 20px;
+          padding: 11px 60px;
+          width: 70%;
+        }
+
+        &-horizon {
+          display: flex;
+          justify-content: center;
+          margin-top: 20px;
+          gap: 10px;
+
+          .button {
+            font-size: 18px;
+            padding: 11px 60px;
+          }
+        }
+
+        &-single {
+          margin-top: 20px;
+
+          .button {
+            font-size: 18px;
+            padding: 11px 60px;
+            width: fit-content;
+          }
+        }
+      }
+
       .llar-onboarding-popup__content {
         min-height: 930px;
         padding: 15px;
@@ -181,10 +222,6 @@
             padding: 0 35px;
           }
 
-          .button_block {
-            @extend .button_block;
-          }
-
           .llar-upgrade-subscribe_notification {
             display: none;
             color: $typography-additional;
@@ -199,38 +236,6 @@
               display: inline-block;
               width: 12.5px;
               margin-right: 2px;
-            }
-          }
-        }
-
-        .button_block {
-
-          button {
-            font-size: 18px;
-            margin-top: 20px;
-            padding: 11px 60px;
-            width: 70%;
-          }
-
-          &-horizon {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            gap: 10px;
-
-            button {
-              font-size: 18px;
-              padding: 11px 60px;
-            }
-          }
-
-          &-single {
-            margin-top: 20px;
-
-            button {
-              font-size: 18px;
-              padding: 11px 60px;
-              width: fit-content;
             }
           }
         }
@@ -255,22 +260,22 @@
 
           &-key, &-email {
             display: inline-block;
-            font-size: 16px;
-            line-height: 1.5;
+            line-height: 25px;
             margin-top: 11px;
             width: 100%;
 
             .input_border {
               @extend .llar_input_border;
+              font-size: 16px;
               min-width: 420px;
               padding: 15px 30px;
             }
 
-            button {
+            .button {
               position: relative;
               display: inline-block;
               font-size: 18px;
-              padding: 14px 30px;
+              padding: 14px 30px 15px;
               margin-left: -25px;
 
               .dashicons {
@@ -418,116 +423,6 @@
             }
           }
         }
-
-        //&.llar-app-setup-popup {
-        //  .title {
-        //    font-size: 20px;
-        //    margin-bottom: 10px;
-        //  }
-        //  .desc {
-        //    text-align: center;
-        //    margin-bottom: 20px;
-        //    max-width: 400px;
-        //    margin-left: auto;
-        //    margin-right: auto;
-        //    font-size: 16px;
-        //    line-height: 24px;
-        //  }
-        //  .field-wrap {
-        //    display: flex;
-        //    margin-bottom: 40px;
-        //
-        //    .field {
-        //      flex: 1;
-        //    }
-        //
-        //    .button-col {
-        //
-        //      button {
-        //        margin-left: 10px;
-        //        text-transform: uppercase;
-        //        position: relative;
-        //        height: 44px;
-        //
-        //        .preloader-wrapper {
-        //          position: absolute;
-        //          top: 0;
-        //          left: 0;
-        //          right: 0;
-        //          bottom: 0;
-        //          background-color: rgba(#fff, 0.5);
-        //          align-items: center;
-        //          justify-content: center;
-        //          display: none;
-        //        }
-        //
-        //        &.button-disabled {
-        //          .preloader-wrapper {
-        //            display: flex;
-        //
-        //            span {
-        //              visibility: visible;
-        //            }
-        //          }
-        //        }
-        //      }
-        //    }
-        //  }
-        //  .divider-line {
-        //    border-top: 1px solid #ccc;
-        //    height: 1px;
-        //    text-align: center;
-        //    margin-bottom: 20px;
-        //    margin-top: 20px;
-        //    position: relative;
-        //
-        //    span {
-        //      background-color: #fff;
-        //      display: inline-block;
-        //      top: -10px;
-        //      position: relative;
-        //      padding: 0 10px;
-        //      text-transform: uppercase;
-        //    }
-        //  }
-        //  .bottom-buttons {
-        //    text-align: center;
-        //
-        //    .text {
-        //      text-align: center;
-        //      margin-bottom: 20px;
-        //      font-size: 16px;
-        //    }
-        //    .buttons {
-        //      .button {
-        //        font-size: 14px;
-        //        text-transform: uppercase;
-        //        height: 40px;
-        //        margin: 0 5px;
-        //      }
-        //      .button-primary {
-        //        line-height: 40px;
-        //        background-color: #fcb40c;
-        //        border-color: #b07c04;
-        //
-        //        span {
-        //          text-transform: none;
-        //          display: block;
-        //          font-size: 12px;
-        //          line-height: 13px;
-        //          margin-bottom: 2px;
-        //        }
-        //      }
-        //      .button-secondary {
-        //        line-height: 40px;
-        //      }
-        //      .button-link {
-        //        vertical-align: middle;
-        //        height: 40px;
-        //      }
-        //    }
-        //  }
-        //}
       }
     }
   }
