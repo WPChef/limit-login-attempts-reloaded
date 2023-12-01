@@ -12,6 +12,9 @@ $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_opti
 $onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
 $setup_code = Config::get( 'app_setup_code' );
 
+$onboarding_popup_shown = false;
+$setup_code = '';
+
 if( $onboarding_popup_shown || !empty( $setup_code ) ) return;
 
 ob_start(); ?>
@@ -285,11 +288,32 @@ $content_step_4 = ob_get_clean();
                             return;
                         }
 
+                        const $error = $('.field-error');
+
+                        $error.text('').hide();
                         $activate_button.addClass(disabled);
                         $spinner.addClass(visibility);
 
-                        activate_license_key($setup_code_key, $activate_button, $spinner);
+                        activate_license_key($setup_code_key)
+                            .then(function(response) {
+                                setTimeout(function() {
+                                    next_step_line(2);
+                                    $(button_next).trigger('click');
+                                }, 500);
+                            })
+                            .catch(function(response) {
 
+                                if (!response.success && response.data.msg) {
+                                   $error.text(response.data.msg).show();
+
+                                   setTimeout(function(){
+                                       $error.text('').hide();
+                                       $setup_code_key.val('');
+
+                                   }, 3500);
+                                   $spinner.removeClass('llar-visibility');
+                               }
+                            });
                     })
 
                     $(document).on('click', button_next, function() {
@@ -351,52 +375,43 @@ $content_step_4 = ob_get_clean();
                     })
                 }
             });
+        })
 
+        function activate_license_key($setup_code_key) {
 
-            function activate_license_key($setup_code_key, $this, $spinner) {
+            const $setup_code = $setup_code_key.val();
 
-                const $error = $('.field-error');
-                const $setup_code = $setup_code_key.val();
-
-                $error.text('').hide();
-
+            return new Promise(function(resolve, reject) {
                 $.post(ajaxurl, {
                     action: 'app_setup',
                     code:   $setup_code,
                     sec:    '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>'
-                }, function(response){
+                }, function(response) {
 
-                    if(response.success) {
-
-                        setTimeout(function(){
-                            window.location = window.location + '&llar-cloud-activated';
-                        }, 500);
-                    }
-
-                    if(!response.success && response.data.msg) {
-                        $error.text(response.data.msg).show();
-
-                        setTimeout(function(){
-                            $error.text('').hide();
-                            $setup_code_key.val('');
-
-                        }, 3500);
-                        $spinner.removeClass('llar-visibility');
+                    if (response.success) {
+                        resolve(response);
+                    } else {
+                        reject(response);
                     }
                 });
-            }
-        })
+            });
+        }
 
 
-        function next_step_line() {
+        function next_step_line(offset = 1) {
+
             let step_line = $('.llar-onboarding__line .point__block');
             let active_step = step_line.filter('.active').data('step');
 
             if (active_step < 4) {
                 step_line.filter('[data-step="' + active_step + '"]').removeClass('active');
-                active_step++;
+
+                for (let i = 1; i <= offset; i++) {
+                    active_step++;
+                    step_line.filter('[data-step="' + active_step + '"]').addClass('visited');
+                }
+
                 step_line.filter('[data-step="' + active_step + '"]').addClass('active');
-                step_line.filter('[data-step="' + active_step + '"]').addClass('visited');
                 return active_step;
             }
             else {
