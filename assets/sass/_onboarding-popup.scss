@@ -211,7 +211,7 @@
           margin-top: 37px;
           padding: 23px 63px 60px;
           border: unset;
-          background-color: $background-body;
+          background-color: $background__sky-blue;
           border-radius: $border-radius;
           box-shadow: 2px 2px 9px 0 $box-shadow__light-transparent-gray;
 
@@ -222,7 +222,7 @@
             padding: 0 35px;
           }
 
-          .llar-upgrade-subscribe_notification {
+          .llar-upgrade-subscribe_notification, .llar-upgrade-subscribe_notification__error {
             display: none;
             color: $typography-additional;
             font-size: 16px;
@@ -237,6 +237,11 @@
               width: 12.5px;
               margin-right: 2px;
             }
+          }
+
+          .llar-upgrade-subscribe_notification__error {
+            color: $state-color__error;
+            background-color: $state-color__error_back;
           }
         }
 

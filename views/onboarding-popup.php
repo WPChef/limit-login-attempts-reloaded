@@ -146,7 +146,8 @@ ob_start(); ?>
     </div>
     <div class="button_block-horizon">
         <button class="button menu__item button__orange" id="llar-subscribe-email-button">
-            <?php _e( 'Continue', 'limit-login-attempts-reloaded' ) ?><span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+            <?php _e( 'Continue', 'limit-login-attempts-reloaded' ) ?>
+            <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
         </button>
         <button class="button next_step menu__item button__transparent_orange button-skip">
             <?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
@@ -178,6 +179,7 @@ ob_start(); ?>
             <div class="button_block-horizon">
                 <button class="button menu__item button__transparent_orange orange-back" id="llar-limited-upgrade-subscribe">
                     <?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
+                    <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
                 </button>
                 <button class="button next_step menu__item button__transparent_grey gray-back">
                     <?php _e( 'No', 'limit-login-attempts-reloaded' ); ?>
@@ -193,6 +195,10 @@ ob_start(); ?>
         <div class="llar-upgrade-subscribe_notification">
             <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/start.png">
             <?php _e( 'Instructions sent via email', 'limit-login-attempts-reloaded' ); ?>
+        </div>
+        <div class="llar-upgrade-subscribe_notification__error">
+            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/start.png">
+            <?php _e( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="button_block-single">
             <button class="button next_step menu__item button__transparent_grey button-skip">
@@ -276,12 +282,11 @@ $content_step_4 = ob_get_clean();
                         if ($(this).val().trim() !== '') {
                             $activate_button.removeClass(disabled);
                         } else {
-                            $activate_button.addClass(disabled);                            ;
+                            $activate_button.addClass(disabled);
                         }
                     });
 
                     $activate_button.on('click', function (e) {
-
                         e.preventDefault();
 
                         if($activate_button.hasClass(disabled)) {
@@ -293,8 +298,9 @@ $content_step_4 = ob_get_clean();
                         $error.text('').hide();
                         $activate_button.addClass(disabled);
                         $spinner.addClass(visibility);
+                        const $setup_code = $setup_code_key.val();
 
-                        activate_license_key($setup_code_key)
+                        activate_license_key($setup_code)
                             .then(function(response) {
                                 setTimeout(function() {
                                     next_step_line(2);
@@ -311,7 +317,7 @@ $content_step_4 = ob_get_clean();
                                        $setup_code_key.val('');
 
                                    }, 3500);
-                                   $spinner.removeClass('llar-visibility');
+                                   $spinner.removeClass(visibility);
                                }
                             });
                     })
@@ -346,24 +352,63 @@ $content_step_4 = ob_get_clean();
                             })
                         }
                         else if (next_step === 3) {
+
                             $html_body.replaceWith(<?php echo json_encode(trim($content_step_3), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
 
                             const $limited_upgrade_subscribe = $('#llar-limited-upgrade-subscribe');
-                            const $button_skip = $('.button.next_step.button-skip');
-                            console.log($button_skip);
+                            const $block_upgrade_subscribe = $('.llar-upgrade-subscribe');
+                            const $subscribe_notification = $('.llar-upgrade-subscribe_notification');
+                            const $subscribe_notification_error = $('.llar-upgrade-subscribe_notification__error');
+                            const $button_skip = $('.button.next_step');
+                            const $spinner = $limited_upgrade_subscribe.find('.preloader-wrapper .spinner');
+
 
                             $limited_upgrade_subscribe.on('click', function () {
 
-                                $button_skip.addClass('llar-disabled');
+                                let email = '<?php esc_attr_e( $admin_email ); ?>';
 
-                                $('.llar-upgrade-subscribe').addClass('llar-display-none');
-                                $('.llar-upgrade-subscribe_notification').addClass('llar-display-block');
-                                // send an email with instructions
+                                $button_skip.addClass(disabled);
+                                $limited_upgrade_subscribe.addClass(disabled);
+                                $spinner.addClass(visibility);
 
-                                setTimeout(function () {
-                                    $button_skip.removeClass('llar-disabled');
-                                    $(button_next).trigger('click');
-                                }, 3000);
+                                activate_micro_cloud(email)
+                                    .then(function(response) {
+
+                                        if(response && response.setup_code) {
+
+                                            activate_license_key(response.setup_code)
+                                                .then(function(response) {
+
+                                                    $block_upgrade_subscribe.addClass('llar-display-none');
+
+                                                    if(response.data.msg && response.data.msg.trim() !== '') {
+
+                                                        $subscribe_notification.text(response.data.msg.trim());
+                                                    }
+
+                                                    $subscribe_notification.addClass('llar-display-block');
+
+                                                    setTimeout(function () {
+                                                        $button_skip.removeClass(disabled);
+                                                        $(button_next).trigger('click');
+                                                    }, 3000);
+                                                })
+                                                .catch(function() {
+                                                    $block_upgrade_subscribe.addClass('llar-display-none');
+                                                    $subscribe_notification_error.addClass('llar-display-block')
+                                                });
+
+                                        }
+                                        else {
+                                            $subscribe_notification_error.addClass('llar-display-block')
+
+                                        }
+                                    })
+                                    .catch(function(response) {
+                                        $block_upgrade_subscribe.addClass('llar-display-none');
+                                        $subscribe_notification_error.addClass('llar-display-block')
+                                    });
+
                             });
                         }
                         else if (next_step === 4) {
@@ -377,9 +422,7 @@ $content_step_4 = ob_get_clean();
             });
         })
 
-        function activate_license_key($setup_code_key) {
-
-            const $setup_code = $setup_code_key.val();
+        function activate_license_key($setup_code) {
 
             return new Promise(function(resolve, reject) {
                 $.post(ajaxurl, {
@@ -417,6 +460,37 @@ $content_step_4 = ob_get_clean();
             else {
                 return false;
             }
+        }
+
+        function activate_micro_cloud(email) {
+            url_api = 'https://api.limitloginattempts.com/checkout-staging/network';
+            // url_api = ''https://api.limitloginattempts.com/checkout/network'';
+
+            let form_data = [];
+            form_data.push({name: 'group', value: 'free'});
+            form_data.push({name: 'email', value: email});
+
+            let form_object = form_data.reduce(function(object, item) {
+                object[item.name] = item.value;
+                return object;
+            }, {});
+
+
+            return new Promise(function(resolve, reject) {
+                $.post({
+                    url: url_api,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(form_object),
+                }, function (response) {
+
+                    if (response) {
+                        resolve(response);
+                    } else {
+                        reject(response);
+                    }
+                });
+            });
         }
 
 
