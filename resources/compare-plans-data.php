@@ -21,10 +21,12 @@ $attribute = [];
 foreach ( $plans as $plan => $value ) {
 
     if ( $value <= $plans[$actual_plan] ) {
-        $attribute[$plan] = 'class="button menu__item button__transparent_orange llar-disabled"';
+        $attribute[$plan]['class'] = 'class="button menu__item button__transparent_orange llar-disabled"';
+        $attribute[$plan]['title'] = 'Installed';
     }
     else {
-        $attribute[$plan] = 'class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"';
+        $attribute[$plan]['class'] = 'class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"';
+        $attribute[$plan]['title'] =  $plan === 'Micro Cloud' ? 'Get Started (Free)' : 'Upgrade now';
     }
 }
 
@@ -33,11 +35,11 @@ $yes = '<span class="llar_orange">&#x2713;</span>';
 
 $compare_list = array(
     'buttons_header'                                => array(
-        'Free'          => '<a ' . $attribute['Free'] . '>' . __('Installed', 'limit-login-attempts-reloaded') . '</a>',
-        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud'] . '>' . __('Get Started (Free)', 'limit-login-attempts-reloaded') . '</a>',
-        'Premium'       => '<a ' . $attribute['Premium'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
-        'Premium +'     => '<a ' . $attribute['Premium +'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
-        'Professional'  => '<a ' . $attribute['Professional'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Free'          => '<a ' . $attribute['Free']['class'] . '>' . __($attribute['Free']['title'], 'limit-login-attempts-reloaded') . '</a>',
+        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['class'] . '>' . __($attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded') . '</a>',
+        'Premium'       => '<a ' . $attribute['Premium']['class'] . '>' . __($attribute['Premium']['title'], 'limit-login-attempts-reloaded') . '</a>',
+        'Premium +'     => '<a ' . $attribute['Premium +']['class'] . '>' . __($attribute['Premium +']['title'], 'limit-login-attempts-reloaded') . '</a>',
+        'Professional'  => '<a ' . $attribute['Professional']['class'] . '>' . __($attribute['Professional']['title'], 'limit-login-attempts-reloaded') . '</a>',
     ),
     'Limit Number of Retry Attempts'                => array(
         'Free'          => $yes,
@@ -126,11 +128,11 @@ $compare_list = array(
         'Professional'  => $yes,
     ),
     'buttons_footer'                                => array(
-        'Free'          => '<a ' . $attribute['Free'] . '>' . __('Installed', 'limit-login-attempts-reloaded') . '</a>',
-        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud'] . '>' . __('Get Started (Free)', 'limit-login-attempts-reloaded') . '</a>',
-        'Premium'       => '<a ' . $attribute['Premium'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
-        'Premium +'     => '<a ' . $attribute['Premium +'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
-        'Professional'  => '<a ' . $attribute['Professional'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Free'          => '<a ' . $attribute['Free']['class'] . '>' . __($attribute['Free']['title'], 'limit-login-attempts-reloaded') . '</a>',
+        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['class'] . '>' . __($attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded') . '</a>',
+        'Premium'       => '<a ' . $attribute['Premium']['class'] . '>' . __($attribute['Premium']['title'], 'limit-login-attempts-reloaded') . '</a>',
+        'Premium +'     => '<a ' . $attribute['Premium +']['class'] . '>' . __($attribute['Premium +']['title'], 'limit-login-attempts-reloaded') . '</a>',
+        'Professional'  => '<a ' . $attribute['Professional']['class'] . '>' . __($attribute['Professional']['title'], 'limit-login-attempts-reloaded') . '</a>',
     ),
 );
 
