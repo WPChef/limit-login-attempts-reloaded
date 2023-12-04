@@ -602,20 +602,12 @@ class LimitLoginAttempts {
 				'name'  => __( 'Help', 'limit-login-attempts-reloaded' ),
 				'url'   => $this->_options_page_slug . '&tab=help'
 			),
-//            array(
-//                'id'    => 'premium',
-//                'name'  => __( 'Premium', 'limit-login-attempts-reloaded' ),
-//                'url'   => $this->_options_page_slug . '&tab=premium'
-//            )
-		);
-
-		if( !$is_cloud_app_enabled ) {
-			$submenu_items[] = array(
+            array(
                 'id'    => 'premium',
-				'name'  => __( 'Premium', 'limit-login-attempts-reloaded' ),
-				'url'   => $this->_options_page_slug . '&tab=premium'
-			);
-		}
+                'name'  => __( 'Premium', 'limit-login-attempts-reloaded' ),
+                'url'   => $this->_options_page_slug . '&tab=premium'
+            )
+		);
 
 		return $submenu_items;
 	}

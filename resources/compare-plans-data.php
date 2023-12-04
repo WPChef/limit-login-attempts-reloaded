@@ -6,19 +6,38 @@
  *
  */
 
+$actual_plan = $active_app === 'custom' ? 'Premium' : 'Free';
+
+$plans = array(
+    'Free'          => 5,
+    'Micro Cloud'   => 10,
+    'Premium'       => 15,
+    'Premium +'     => 20,
+    'Professional'  => 25,
+);
+
+$attribute = [];
+
+foreach ( $plans as $plan => $value ) {
+
+    if ( $value <= $plans[$actual_plan] ) {
+        $attribute[$plan] = 'class="button menu__item button__transparent_orange llar-disabled"';
+    }
+    else {
+        $attribute[$plan] = 'class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"';
+    }
+}
 
 $lock = '<img src="' . LLA_PLUGIN_URL . '/assets/css/images/icon-lock-bw.png" class="icon-lock">';
 $yes = '<span class="llar_orange">&#x2713;</span>';
-$class_button_local = $active_app === 'local' ? ' button__transparent_orange llar-disabled' : ' button__orange';
-$class_button_custom = $active_app === 'custom' ? ' button__transparent_orange llar-disabled' : ' button__orange';
 
 $compare_list = array(
     'buttons_header'                                => array(
-        'Free'          => '<a class="button menu__item' . $class_button_local . '" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Installed', 'limit-login-attempts-reloaded') . '</a>',
-        'Micro Cloud'   => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Get Started (Free)', 'limit-login-attempts-reloaded') . '</a>',
-        'Premium'       => '<a class="button menu__item' . $class_button_custom . '" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
-        'Premium +'     => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
-        'Professional'  => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Free'          => '<a ' . $attribute['Free'] . '>' . __('Installed', 'limit-login-attempts-reloaded') . '</a>',
+        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud'] . '>' . __('Get Started (Free)', 'limit-login-attempts-reloaded') . '</a>',
+        'Premium'       => '<a ' . $attribute['Premium'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Premium +'     => '<a ' . $attribute['Premium +'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Professional'  => '<a ' . $attribute['Professional'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
     ),
     'Limit Number of Retry Attempts'                => array(
         'Free'          => $yes,
@@ -107,11 +126,11 @@ $compare_list = array(
         'Professional'  => $yes,
     ),
     'buttons_footer'                                => array(
-        'Free'          => '<a class="button menu__item' . $class_button_local . '" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Installed', 'limit-login-attempts-reloaded') . '</a>',
-        'Micro Cloud'   => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Get Started (Free)', 'limit-login-attempts-reloaded') . '</a>',
-        'Premium'       => '<a class="button menu__item' . $class_button_custom . '" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
-        'Premium +'     => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
-        'Professional'  => '<a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Free'          => '<a ' . $attribute['Free'] . '>' . __('Installed', 'limit-login-attempts-reloaded') . '</a>',
+        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud'] . '>' . __('Get Started (Free)', 'limit-login-attempts-reloaded') . '</a>',
+        'Premium'       => '<a ' . $attribute['Premium'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Premium +'     => '<a ' . $attribute['Premium +'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
+        'Professional'  => '<a ' . $attribute['Professional'] . '>' . __('Upgrade now', 'limit-login-attempts-reloaded') . '</a>',
     ),
 );
 
