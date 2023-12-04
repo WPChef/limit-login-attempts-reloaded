@@ -12,6 +12,9 @@ $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_opti
 $onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
 $setup_code = Config::get( 'app_setup_code' );
 
+//$onboarding_popup_shown = false;
+//$setup_code = '';
+
 if( $onboarding_popup_shown || !empty( $setup_code ) ) return;
 
 ob_start(); ?>
@@ -201,6 +204,9 @@ ob_start(); ?>
             <button class="button next_step menu__item button__transparent_grey button-skip">
                 <?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
             </button>
+            <button class="button next_step menu__item button__transparent_orange orange-back llar-display-none">
+                <?php _e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
+            </button>
         </div>
     </div>
 </div>
@@ -356,15 +362,19 @@ $content_step_4 = ob_get_clean();
                             const $block_upgrade_subscribe = $('.llar-upgrade-subscribe');
                             const $subscribe_notification = $('.llar-upgrade-subscribe_notification');
                             const $subscribe_notification_error = $('.llar-upgrade-subscribe_notification__error');
-                            const $button_skip = $('.button.next_step');
+                            const $button_next = $('.button.next_step');
+                            const $button_skip = $button_next.filter('.button-skip');
                             const $spinner = $limited_upgrade_subscribe.find('.preloader-wrapper .spinner');
+
+                            console.log($button_next);
+                            console.log($button_skip);
 
 
                             $limited_upgrade_subscribe.on('click', function () {
 
                                 let email = '<?php esc_attr_e( $admin_email ); ?>';
 
-                                $button_skip.addClass(disabled);
+                                $button_next.addClass(disabled);
                                 $limited_upgrade_subscribe.addClass(disabled);
                                 $spinner.addClass(visibility);
 
@@ -377,18 +387,10 @@ $content_step_4 = ob_get_clean();
                                                 .then(function(response) {
 
                                                     $block_upgrade_subscribe.addClass('llar-display-none');
-
-                                                    if(response.data.msg && response.data.msg.trim() !== '') {
-
-                                                        $subscribe_notification.text(response.data.msg.trim());
-                                                    }
-
                                                     $subscribe_notification.addClass('llar-display-block');
-
-                                                    setTimeout(function () {
-                                                        $button_skip.removeClass(disabled);
-                                                        $(button_next).trigger('click');
-                                                    }, 3000);
+                                                    $button_next.removeClass(disabled);
+                                                    $button_next.removeClass('llar-display-none');
+                                                    $button_skip.addClass('llar-display-none');
                                                 })
                                                 .catch(function() {
                                                     $block_upgrade_subscribe.addClass('llar-display-none');

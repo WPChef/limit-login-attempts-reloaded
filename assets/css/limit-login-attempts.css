@@ -2426,7 +2426,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: none;
   color: #A4A8B7;
   font-size: 16px;
-  margin: 0 auto;
+  margin: 15px auto 0;
   padding: 9px 70px;
   width: fit-content;
   border-radius: 8px;
