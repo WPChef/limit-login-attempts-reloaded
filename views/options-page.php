@@ -59,6 +59,7 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 
         <a href="<?php echo $this->get_options_page_uri('debug'); ?>" class="nav-tab <?php if($active_tab == 'debug'){echo 'nav-tab-active';} ?>"><?php _e('Debug', 'limit-login-attempts-reloaded'); ?></a>
         <a href="<?php echo $this->get_options_page_uri('help'); ?>" class="nav-tab <?php if($active_tab == 'help'){echo 'nav-tab-active';} ?>"><?php _e('Help', 'limit-login-attempts-reloaded'); ?></a>
+<!--        <a href="--><?php //echo $this->get_options_page_uri('premium'); ?><!--" class="nav-tab --><?php //if($active_tab == 'premium'){echo 'nav-tab-active';} ?><!--">--><?php //_e('Premium / Extensions', 'limit-login-attempts-reloaded'); ?><!--</a>-->
 
 	    <?php if( $active_app === 'local' ) : ?>
         <a href="<?php echo $this->get_options_page_uri('premium'); ?>" class="nav-tab <?php if($active_tab == 'premium'){echo 'nav-tab-active';} ?>"><?php _e('Premium / Extensions', 'limit-login-attempts-reloaded'); ?></a>
