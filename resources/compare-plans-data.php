@@ -6,15 +6,11 @@
  *
  */
 
-$actual_plan = $active_app === 'custom' ? 'Premium' : 'Free';
+use LLAR\Core\LimitLoginAttempts;
 
-$plans = array(
-    'Free'          => 5,
-    'Micro Cloud'   => 10,
-    'Premium'       => 15,
-    'Premium +'     => 20,
-    'Professional'  => 25,
-);
+$object_plan = new LimitLoginAttempts;
+$plans = $object_plan->array_name_plans();
+$actual_plan = $active_app === 'custom' ? $object_plan->info_sub_group() : 'Free';
 
 $attribute = [];
 

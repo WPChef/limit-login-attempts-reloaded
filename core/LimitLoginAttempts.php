@@ -38,6 +38,33 @@ class LimitLoginAttempts {
 	 */
 	public static $cloud_app = null;
 
+    private $match = array(
+        'default'       => array(
+            'name'          => 'Free',
+            'rate'          => 10,
+        ),
+        'free'          => array(
+            'name'          => 'Micro Cloud',
+            'rate'          => 20,
+        ),
+        'premium'       => array(
+            'name'          => 'Premium',
+            'rate'          => 30,
+        ),
+        'plus'          => array(
+            'name'          => 'Premium +',
+            'rate'          => 40,
+        ),
+        'pro'           => array(
+            'name'          => 'Professional',
+            'rate'          => 50,
+        ),
+        'agency_pro'    => array(
+            'name'          => 'Agency',
+            'rate'          => 60,
+        ),
+    );
+
 	public function __construct() {
 
 	    Config::init();
@@ -1657,6 +1684,38 @@ class LimitLoginAttempts {
     {
         return isset($arr[$k]) ? $arr[$k] : 0;
     }
+
+
+    private function plan_name_match($plan = 'default') {
+
+        if (!array_key_exists($plan, $this->match)) {
+            $plan = 'default';
+        }
+
+        return $this->match[$plan]['name'];
+    }
+
+
+    public function array_name_plans()
+    {
+        $palns = [];
+        foreach ($this->match as $plan) {
+            $palns[$plan['name']] = $plan['rate'];
+        }
+
+        return $palns;
+    }
+
+
+
+    public function info_sub_group()
+    {
+        $info_data = LimitLoginAttempts::$cloud_app->info();
+        $data = (!empty($info_data) && !empty($info_data['sub_group'])) ? $info_data['sub_group'] : '';
+
+        return $this->plan_name_match($data);
+    }
+
 
 	public function show_leave_review_notice() {
 
