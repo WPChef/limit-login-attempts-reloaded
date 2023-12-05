@@ -173,6 +173,15 @@ class CloudApp {
 		return $this->request( 'acl', 'get', $data );
 	}
 
+    /**
+     * @return bool|mixed
+     * @throws Exception
+     */
+    public function info() {
+
+        return $this->request( 'info' );
+    }
+
 	/**
 	 * @param $data
 	 *
