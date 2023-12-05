@@ -11,18 +11,22 @@ use LLAR\Core\LimitLoginAttempts;
 $object_plan = new LimitLoginAttempts;
 $plans = $object_plan->array_name_plans();
 $actual_plan = $active_app === 'custom' ? $object_plan->info_sub_group() : 'Free';
+$upgrade_link = $active_app === 'custom' ? $object_plan->info_upgrade_link() : 'https://www.limitloginattempts.com/info.php?from=plugin-premium-tab-upgrade';
 
 $attribute = [];
-
 foreach ( $plans as $plan => $value ) {
 
     if ( $value <= $plans[$actual_plan] ) {
         $attribute[$plan]['class'] = 'class="button menu__item button__transparent_orange llar-disabled"';
         $attribute[$plan]['title'] = 'Installed';
     }
+    elseif ($plan === 'Micro Cloud') {
+        $attribute[$plan]['class'] =  'class="button menu__item button__orange button_micro_cloud"';
+        $attribute[$plan]['title'] =  'Get Started (Free)';
+    }
     else {
-        $attribute[$plan]['class'] = 'class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank"';
-        $attribute[$plan]['title'] =  $plan === 'Micro Cloud' ? 'Get Started (Free)' : 'Upgrade now';
+        $attribute[$plan]['class'] =  'class="button menu__item button__orange" href="' . $upgrade_link . '" target="_blank"';
+        $attribute[$plan]['title'] =  'Upgrade now';
     }
 }
 
