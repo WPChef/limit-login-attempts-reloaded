@@ -125,3 +125,5 @@ $active_app = Config::get( 'active_app' );
     </section>
 </div>
 
+<?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php')?>
+

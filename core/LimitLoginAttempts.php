@@ -38,6 +38,8 @@ class LimitLoginAttempts {
 	 */
 	public static $cloud_app = null;
 
+    private $info_data = array();
+
     private $match = array(
         'default'       => array(
             'name'          => 'Free',
@@ -1710,11 +1712,19 @@ class LimitLoginAttempts {
 
     public function info_sub_group()
     {
-        $info_data = LimitLoginAttempts::$cloud_app->info();
-        $data = (!empty($info_data) && !empty($info_data['sub_group'])) ? $info_data['sub_group'] : '';
+        $this->info_data = LimitLoginAttempts::$cloud_app->info();
+        $data = (!empty($this->info_data) && !empty($this->info_data['sub_group'])) ? $this->info_data['sub_group'] : '';
 
         return $this->plan_name_match($data);
     }
+
+
+
+    public function info_upgrade_link()
+    {
+        return (!empty($this->info_data) && !empty($this->info_data['upgrade_link'])) ? $this->info_data['upgrade_link'] : '';
+    }
+
 
 
 	public function show_leave_review_notice() {
