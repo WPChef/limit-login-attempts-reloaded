@@ -39,8 +39,11 @@
               &.gdpr-information-link {
 
                 &:after {
+                  position: relative;
                   font-size: inherit;
+                  line-height: inherit;
                   right: 0;
+                  vertical-align: middle;
                   color: $typography-additional;
                 }
               }

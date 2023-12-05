@@ -2623,8 +2623,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   vertical-align: middle;
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .text .links li a.gdpr-information-link:after {
+  position: relative;
   font-size: inherit;
+  line-height: inherit;
   right: 0;
+  vertical-align: middle;
   color: #A4A8B7;
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .action {
