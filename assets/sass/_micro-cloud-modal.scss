@@ -1,0 +1,130 @@
+.toplevel_page_limit-login-attempts {
+  font-family: $font-primary, $font-secondary;
+
+  .jconfirm {
+
+    .jconfirm-box {
+      padding: 0 !important;
+      background-color: transparent;
+
+      .jconfirm-content-pane {
+        display: block;
+        margin-bottom: 0;
+        border-radius: $border-radius__normal;
+      }
+
+      .jconfirm-closeIcon {
+        top: 17px !important;
+      }
+
+      .jconfirm-buttons {
+        padding-right: 15px;
+      }
+
+      .button {
+        @extend .llar_button;
+      }
+
+      .micro_cloud_modal {
+
+        &__content {
+          min-height: 930px;
+          padding: 15px;
+          border-radius: $border-radius__normal;
+          background: url("./images/micro-cloud-bg.webp") no-repeat center top;
+          background-size: 100%;
+          background-color: $background-body;
+        }
+
+        &__body {
+          font-size: 18px;
+          font-weight: 400;
+          line-height: 1.5;
+          color: $typography-primary;
+          padding: 55px 60px;
+
+          &_header {
+            display: flex;
+            flex-direction: row;
+
+
+            .left_side {
+              width: 60%;
+            }
+
+            .right_side {
+              width: 40%;
+
+              img {
+                display: block;
+                width: 306px;
+                margin: 0 auto;
+              }
+            }
+
+            .title {
+              font-size: 44px;
+              font-weight: 500;
+              margin-right: 70px;
+              text-align: left;
+            }
+
+            .description {
+              margin-top: 10px;
+              color: $typography-secondary;
+
+              &-add {
+                font-size: 14px;
+                font-weight: 500;
+                color: $typography-secondary;
+                margin-top: 10px;
+                padding: 10px 20px;
+                background-color: $secondary-colors-light-blue;
+                border-radius: $border-radius__normal;
+              }
+            }
+          }
+
+          .card {
+            min-width: 100%;
+            text-align: center;
+            margin-top: 15px;
+            padding: 0;
+            border: unset;
+            background-color: $background__sky-blue;
+            border-radius: $border-radius;
+            box-shadow: 2px 2px 9px 0 $box-shadow__light-transparent-gray;
+
+            &-header {
+              color: $primary-colors__orange;
+              padding: 15px 63px;
+              margin-bottom: 0;
+              background-color: $primary-colors__orange-back;
+              border-bottom: 1px solid $primary-colors__orange;
+              border-top-left-radius: $border-radius__normal;
+              border-top-right-radius: $border-radius__normal;
+
+              .title {
+                font-size: 20px;
+                font-weight: 500;
+                text-align: left;
+
+                img {
+                  width: 22px;
+                  vertical-align: middle;
+                  margin-right: 15px;
+                }
+              }
+
+            }
+
+            &-body {
+              padding: 15px 63px;
+
+            }
+          }
+        }
+      }
+    }
+  }
+}
