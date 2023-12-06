@@ -25,10 +25,45 @@
         @extend .llar_button;
       }
 
+      .preloader-wrapper {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(white, 0.3);
+        align-items: center;
+        justify-content: center;
+
+        .spinner {
+          display: block;
+          position: relative;
+          float: none;
+          visibility: hidden;
+          top: 50%;
+          transform: translateY(-50%);
+          margin: 0 auto;
+        }
+      }
+
+      .llar-disabled {
+
+        .preloader-wrapper {
+          display: block;
+        }
+      }
+
+      .input_border {
+        @extend .llar_input_border;
+        font-size: 16px;
+        min-width: 420px;
+        padding: 15px 30px;
+      }
+
       .micro_cloud_modal {
 
         &__content {
-          min-height: 930px;
           padding: 15px;
           border-radius: $border-radius__normal;
           background: url("./images/micro-cloud-bg.webp") no-repeat center top;
@@ -120,7 +155,51 @@
 
             &-body {
               padding: 15px 63px;
+              text-align: left;
 
+              .description {
+                font-size: 16px;
+                color: $typography-secondary;
+                margin-top: 20px;
+              }
+
+              .url_site {
+                font-size: 16px;
+                color: $typography-additional;
+                width: fit-content;
+                margin-top: 10px;
+                padding: 5px 25px;
+                background-color: $primary-colors__orange-back;
+                border-radius: $border-radius__normal;
+              }
+
+              .field {
+
+                &-email {
+                  margin-top: 20px;
+                }
+
+                &-desc {
+                  color: $typography-secondary;
+                  font-size: 16px;
+                  margin-top: 20px;
+                }
+              }
+
+              .button_block-single {
+                text-align: left;
+                margin-bottom: 30px;
+
+                .description_add {
+                  font-size: 14px;
+                  color: $typography-additional;
+                  margin-top: 15px;
+                }
+
+                .llar-disabled {
+
+                }
+              }
             }
           }
         }
