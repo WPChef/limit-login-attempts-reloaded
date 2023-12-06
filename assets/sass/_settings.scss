@@ -493,6 +493,21 @@ button.llar_button {
         color: $background-body;
         background: $primary-colors__orange;
       }
+
+      &_add {
+        color: $primary-colors__turquoise;
+        min-width: fit-content;
+        border: 1px solid currentColor;
+        background: $primary-colors__turquoise_back;
+
+        a {
+          vertical-align: middle;
+        }
+
+        &:hover {
+          background: $primary-colors__orange-back;
+        }
+      }
     }
 
     &_add {
