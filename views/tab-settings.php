@@ -517,16 +517,6 @@ $active_app_config = Config::get( 'app_config' );
                                         <?php _e( 'Add this code to all websites in your network to sync protection (payment required for additional domains unless subscribed to Agency plan).', 'limit-login-attempts-reloaded' ) ?>
                                     </div>
                                 </div>
-
-                                <?php if( $active_app === 'local' ) : ?>
-                                    <div class="description-secondary p-0">
-                                        <?php echo sprintf(
-                                            __( 'Use the <a href="%s" class="link__style_color_inherit" target="_blank">premium app</a> that we offer or follow the instructions on <a href="%s" target="_blank">how to</a> create your own one.', 'limit-login-attempts-reloaded' ),
-                                            'https://www.limitloginattempts.com/info.php?from=plugin-settings',
-                                            'https://www.limitloginattempts.com/app/?from=plugin-settings' );
-                                        ?>
-                                    </div>
-                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php if( $active_app === 'custom' && $active_app_config ) : ?>
