@@ -2254,13 +2254,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-closeIcon {
   top: 17px !important;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-title-c {
-  background-color: #fcb40c;
-  color: #fff;
-  padding: 15px;
-  font-size: 16px !important;
-  font-weight: bold;
-}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-buttons {
   padding-right: 15px;
 }
@@ -2935,6 +2928,106 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .llar-help-page .documentation-section .top-list ol li a:hover {
   text-decoration: underline;
+}
+
+.toplevel_page_limit-login-attempts {
+  font-family: CoFo Sans, arial;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box {
+  padding: 0 !important;
+  background-color: transparent;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-content-pane {
+  display: block;
+  margin-bottom: 0;
+  border-radius: 16px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-closeIcon {
+  top: 17px !important;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-buttons {
+  padding-right: 15px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__content {
+  min-height: 930px;
+  padding: 15px;
+  border-radius: 16px;
+  background: url("./images/micro-cloud-bg.webp") no-repeat center top;
+  background-size: 100%;
+  background-color: #FDFDFD;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #2A2F40;
+  padding: 55px 60px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body_header {
+  display: flex;
+  flex-direction: row;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body_header .left_side {
+  width: 60%;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body_header .right_side {
+  width: 40%;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body_header .right_side img {
+  display: block;
+  width: 306px;
+  margin: 0 auto;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body_header .title {
+  font-size: 44px;
+  font-weight: 500;
+  margin-right: 70px;
+  text-align: left;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body_header .description {
+  margin-top: 10px;
+  color: #666D84;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body_header .description-add {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666D84;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #ECFAFB;
+  border-radius: 16px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card {
+  min-width: 100%;
+  text-align: center;
+  margin-top: 15px;
+  padding: 0;
+  border: unset;
+  background-color: #F6FBFF;
+  border-radius: 20px;
+  box-shadow: 2px 2px 9px 0 rgba(162, 180, 189, 0.2);
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-header {
+  color: #FF7C06;
+  padding: 15px 63px;
+  margin-bottom: 0;
+  background-color: rgba(255, 124, 6, 0.0980392157);
+  border-bottom: 1px solid #FF7C06;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-header .title {
+  font-size: 20px;
+  font-weight: 500;
+  text-align: left;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-header .title img {
+  width: 22px;
+  vertical-align: middle;
+  margin-right: 15px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body {
+  padding: 15px 63px;
 }
 
 /*# sourceMappingURL=limit-login-attempts.css.map */

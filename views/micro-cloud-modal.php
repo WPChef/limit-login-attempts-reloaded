@@ -14,92 +14,48 @@ if( !defined( 'ABSPATH' ) ) exit();
 //$setup_code = Config::get( 'app_setup_code' );
 
 ob_start(); ?>
-    <div class="llar-onboarding-popup__content">
-        <div class="logo">
-            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/img/icon-logo-menu.png">
-        </div>
-        <div class="llar-onboarding__line">
-            <div class="point__block visited active" data-step="1">
-                <div class="point"></div>
-                <div class="description">
-                    <?php _e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
-                </div>
-            </div>
-            <div class="point__block" data-step="2">
-                <div class="point"></div>
-                <div class="description">
-                    <?php _e( 'Notifications', 'limit-login-attempts-reloaded' ); ?>
-                </div>
-            </div>
-            <div class="point__block" data-step="3">
-                <div class="point"></div>
-                <div class="description">
-                    <?php _e( 'Limited Upgrade', 'limit-login-attempts-reloaded' ); ?>
-                </div>
-            </div>
-            <div class="point__block" data-step="4">
-                <div class="point"></div>
-                <div class="description">
-                    <?php _e( 'Completion', 'limit-login-attempts-reloaded' ); ?>
-                </div>
-            </div>
-        </div>
-        <div class="llar-onboarding__body">
-            <div class="title">
-                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/welcome.png">
-                <?php _e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
-            </div>
-            <div class="card mx-auto">
-                <div class="field-wrap">
-                    <div class="field-title">
-                        <?php _e( 'Add your license key', 'limit-login-attempts-reloaded' ); ?>
+    <div class="micro_cloud_modal__content">
+        <div class="micro_cloud_modal__body">
+            <div class="micro_cloud_modal__body_header">
+                <div class="left_side">
+                    <div class="title">
+                        <?php _e( 'Get Started with Micro Cloud for FREE', 'limit-login-attempts-reloaded' ); ?>
                     </div>
-                    <div class="field-key">
-                        <input type="text" class="input_border" id="llar-setup-code-field" placeholder="Your key" value="">
-                        <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
-                            <?php _e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
-                            <span class="dashicons dashicons-arrow-right-alt"></span>
-                            <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
-                        </button>
+                    <div class="description">
+                        <?php _e( 'Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP Intelligence, and performance optimizer.', 'limit-login-attempts-reloaded' ); ?>
                     </div>
-                    <div class="field-error"></div>
-                    <div class="field-desc">
-                        <?php _e( 'The license key can be found in your email if you have subscribed to premium', 'limit-login-attempts-reloaded' ); ?>
+                    <div class="description-add">
+                        <?php _e( 'Please note that some domains have very high brute force activity, which may cause Micro Cloud to run out of resources in under 24 hours. We will send an email when resources are fully utilized and the app reverts back to the free version. You may upgrade to one of our premium plans to prevent the app from reverting.', 'limit-login-attempts-reloaded' ); ?>
                     </div>
+                </div>
+                <div class="right_side">
+                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/micro-cloud-image-min.png">
                 </div>
             </div>
             <div class="card mx-auto">
-                <div class="field-wrap">
-                    <div class="field-title">
-                        <?php _e( 'Not A Premium User?', 'limit-login-attempts-reloaded' ); ?>
+                <div class="card-header">
+                    <div class="title">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/tools.png">
+                        <?php _e( 'How To Activate Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
                     </div>
-                    <div class="field-desc-add">
-                        <?php _e( 'We <b>highly recommend</b> upgrading to premium for the best protection against brute force attacks and unauthorized logins', 'limit-login-attempts-reloaded' ); ?>
-                    </div>
-                    <ul class="field-list">
-                        <li class="item">
-                            <?php _e( 'Detect, counter, and deny unauthorized logins with IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
-                        </li>
-                        <li class="item">
-                            <?php _e( 'Absorb failed login activity to improve site performance', 'limit-login-attempts-reloaded' ); ?>
-                        </li>
-                        <li class="item">
-                            <?php _e( 'Block IPs by country, premium support, and much more!', 'limit-login-attempts-reloaded' ); ?>
-                        </li>
-                    </ul>
-                    <div class="field-video" id="video-play">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/video-bg.webp" id="video-poster">
-                        <div class="video__iframe">
-                            <div id="player" data-plyr-provider="youtube" data-plyr-embed-id="IsotthPWCPA"></div>
+                </div>
+                <div class="card-body">
+                    <div class="field-wrap">
+                        <div class="field-title">
+                            <?php _e( 'Add your license key', 'limit-login-attempts-reloaded' ); ?>
                         </div>
-                    </div>
-                    <div class="button_block">
-                        <a href="https://www.limitloginattempts.com/info.php?from=plugin-onboarding-plans" class="button menu__item button__orange" target="_blank">
-                            <?php _e( 'Yes, show me plan options', 'limit-login-attempts-reloaded' ); ?>
-                        </a>
-                        <button class="button next_step menu__item button__transparent_orange">
-                            <?php _e( 'No, I don’t want advanced protection', 'limit-login-attempts-reloaded' ); ?>
-                        </button>
+                        <div class="field-key">
+                            <input type="text" class="input_border" id="llar-setup-code-field" placeholder="Your key" value="">
+                            <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
+                                <?php _e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="dashicons dashicons-arrow-right-alt"></span>
+                                <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+                            </button>
+                        </div>
+                        <div class="field-error"></div>
+                        <div class="field-desc">
+                            <?php _e( 'The license key can be found in your email if you have subscribed to premium', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
                     </div>
                 </div>
                 <div class="button_block-single">
@@ -135,9 +91,9 @@ $popup_complete_install_content = ob_get_clean();
                 draggable: false,
                 animation: 'top',
                 animationBounce: 1,
-                offsetTop: 0,
+                offsetTop: 50,
                 offsetBottom: 0,
-                boxWidth: '50%',
+                boxWidth: 1280,
                 containerFluid: true,
                 bgOpacity: 0.9,
                 useBootstrap: false,
