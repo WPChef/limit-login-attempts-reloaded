@@ -184,6 +184,11 @@
                   font-size: 16px;
                   margin-top: 20px;
                 }
+
+                &-image {
+                  width: 240px;
+                  margin: 0 auto;
+                }
               }
 
               .button_block-single {
@@ -198,6 +203,30 @@
 
                 .llar-disabled {
 
+                }
+              }
+
+              &.step-second {
+                text-align: center;
+
+                .button_block-single {
+                  text-align: center;
+                }
+              }
+
+              .llar-upgrade-subscribe_notification__error {
+                color: $state-color__error;
+                font-size: 16px;
+                margin: 15px auto 0;
+                padding: 9px 70px;
+                width: fit-content;
+                border-radius: $border-radius__min;
+                background-color: $state-color__error_back;
+
+                img {
+                  display: inline-block;
+                  width: 12.5px;
+                  margin-right: 2px;
                 }
               }
             }

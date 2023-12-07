@@ -12,9 +12,6 @@ $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_opti
 $onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
 $setup_code = Config::get( 'app_setup_code' );
 
-//$onboarding_popup_shown = false;
-//$setup_code = '';
-
 if( $onboarding_popup_shown || !empty( $setup_code ) ) return;
 
 ob_start(); ?>
@@ -279,6 +276,8 @@ $content_step_4 = ob_get_clean();
                     const $spinner = $activate_button.find('.preloader-wrapper .spinner');
                     const disabled = 'llar-disabled';
                     const visibility = 'llar-visibility';
+                    const sec_app_setup = '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>';
+                    let real_email = '<?php esc_attr_e( $admin_email ); ?>';
 
                     $setup_code_key.on('input', function() {
 
@@ -304,7 +303,7 @@ $content_step_4 = ob_get_clean();
                         const $setup_code = $setup_code_key.val();
 
                         activate_license_key($setup_code)
-                            .then(function(response) {
+                            .then(function() {
                                 setTimeout(function() {
                                     next_step_line(2);
                                     $(button_next).trigger('click');
@@ -338,16 +337,29 @@ $content_step_4 = ob_get_clean();
                             const $spinner = $subscribe_email_button.find('.preloader-wrapper .spinner');
                             const $is_subscribe = !!$('.field-checkbox input[name="lockout_notify_email"]').prop('checked');
 
+                            $subscribe_email.on('blur', function() {
+
+                                let email = $(this).val().trim();
+
+                                if (!is_valid_email(email)) {
+                                    $subscribe_email_button.addClass(disabled)
+                                }
+                                else {
+                                    $subscribe_email_button.removeClass(disabled)
+                                    real_email = email;
+                                }
+                            });
+
                             $subscribe_email_button.on('click', function () {
                                 $subscribe_email_button.addClass(disabled);
                                 $spinner.addClass(visibility);
 
                                 $.post(ajaxurl, {
                                     action: 'subscribe_email',
-                                    email: $subscribe_email.val(),
+                                    email: real_email,
                                     is_subscribe_yes: $is_subscribe,
                                     sec: '<?php echo esc_js( wp_create_nonce( "llar-subscribe-email" ) ); ?>'
-                                }, function(response){
+                                }, function(){
 
                                     $subscribe_email_button.removeClass(disabled);
                                     $(button_next).trigger('click');
@@ -368,29 +380,31 @@ $content_step_4 = ob_get_clean();
 
                              $limited_upgrade_subscribe.on('click', function () {
 
-                                let email = '<?php esc_attr_e( $admin_email ); ?>';
-
                                 $button_next.addClass(disabled);
                                 $limited_upgrade_subscribe.addClass(disabled);
                                 $spinner.addClass(visibility);
 
-                                activate_micro_cloud(email)
+                                activate_micro_cloud(real_email)
                                     .then(function(response) {
 
                                         if(response && response.setup_code) {
 
-                                            activate_license_key(response.setup_code)
-                                                .then(function(response) {
+                                            activate_license_key(ajaxurl, response.setup_code, sec_app_setup)
+                                                .then(function() {
 
-                                                    $block_upgrade_subscribe.addClass('llar-display-none');
                                                     $subscribe_notification.addClass('llar-display-block');
                                                     $button_next.removeClass(disabled);
                                                     $button_next.removeClass('llar-display-none');
                                                     $button_skip.addClass('llar-display-none');
                                                 })
-                                                .catch(function() {
-                                                    $block_upgrade_subscribe.addClass('llar-display-none');
+                                                .catch(function(response) {
+                                                    $subscribe_notification_error.text(response.data.msg)
                                                     $subscribe_notification_error.addClass('llar-display-block')
+                                                    $button_skip.removeClass(disabled);
+                                                })
+                                                .finally(function() {
+
+                                                    $block_upgrade_subscribe.addClass('llar-display-none');
                                                 });
 
                                         }
@@ -399,7 +413,7 @@ $content_step_4 = ob_get_clean();
 
                                         }
                                     })
-                                    .catch(function(response) {
+                                    .catch(function() {
                                         $block_upgrade_subscribe.addClass('llar-display-none');
                                         $subscribe_notification_error.addClass('llar-display-block')
                                     });
@@ -416,25 +430,6 @@ $content_step_4 = ob_get_clean();
                 }
             });
         })
-
-        function activate_license_key($setup_code) {
-
-            return new Promise(function(resolve, reject) {
-                $.post(ajaxurl, {
-                    action: 'app_setup',
-                    code:   $setup_code,
-                    sec:    '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>'
-                }, function(response) {
-
-                    if (response.success) {
-                        resolve(response);
-                    } else {
-                        reject(response);
-                    }
-                });
-            });
-        }
-
 
         function next_step_line(offset = 1) {
 
@@ -455,37 +450,6 @@ $content_step_4 = ob_get_clean();
             else {
                 return false;
             }
-        }
-
-        function activate_micro_cloud(email) {
-            url_api = 'https://api.limitloginattempts.com/checkout-staging/network';
-            // url_api = ''https://api.limitloginattempts.com/checkout/network'';
-
-            let form_data = [];
-            form_data.push({name: 'group', value: 'free'});
-            form_data.push({name: 'email', value: email});
-
-            let form_object = form_data.reduce(function(object, item) {
-                object[item.name] = item.value;
-                return object;
-            }, {});
-
-
-            return new Promise(function(resolve, reject) {
-                $.post({
-                    url: url_api,
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    data: JSON.stringify(form_object),
-                }, function (response) {
-
-                    if (response) {
-                        resolve(response);
-                    } else {
-                        reject(response);
-                    }
-                });
-            });
         }
 
 
