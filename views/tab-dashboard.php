@@ -10,6 +10,8 @@ if( !defined( 'ABSPATH' ) ) exit();
 $active_app = Config::get( 'active_app' );
 $active_app = ( $active_app === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 
+$setup_code = Config::get( 'app_setup_code' );
+
 $wp_locale = str_replace( '_', '-', get_locale() );
 
 $retries_chart_title = '';
@@ -321,7 +323,7 @@ if( $active_app === 'local' ) {
 
             </div>
         </div>
-        <?php if( $active_app === 'local' ) : ?>
+        <?php if( $active_app === 'local' && empty( $setup_code ) ) : ?>
 		<div class="info-box-3">
             <div class="section-title__new">
                 <div class="title"><?php _e( 'Enable Micro Cloud (FREE)', 'limit-login-attempts-reloaded' ); ?></div>
@@ -344,18 +346,38 @@ if( $active_app === 'local' ) {
             <div class="actions">
                 <div class="actions__buttons">
                     <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta" title="Upgrade To Premium" target="_blank" class="link__style_unlink">
-                        <button class="button menu__item col button__transparent_orange">
-                            Learn More
+                        <button class="button menu__item col button__transparent_orange button_micro_cloud">
+                            <?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?>
                         </button>
                     </a>
-                    <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta" title="Upgrade To Premium" target="_blank" class="link__style_unlink">
-                        <button class="button menu__item col button__orange">
-                            Get Started
+                    <a title="Upgrade To Micro Cloud" class="link__style_unlink">
+                        <button class="button menu__item col button__orange button_micro_cloud">
+                            <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
                         </button>
                     </a>
                 </div>
             </div>
         </div>
+        <?php elseif( $active_app === 'local' && !empty( $setup_code ) ) : ?>
+            <div class="info-box-3">
+                <div class="section-title__new">
+                    <div class="title"><?php _e( 'Premium Protection Disabled', 'limit-login-attempts-reloaded' ); ?></div>
+                </div>
+                <div class="section-content">
+                    <div class="desc">
+                        <?php _e( 'As a free user, your local server is absorbing the traffic brought on by brute force attacks, potentially slowing down your website. Upgrade to Premium today to outsource these attacks through our cloud app, and slow down future attacks with advanced throttling.', 'limit-login-attempts-reloaded' ); ?>
+                    </div>
+                </div>
+                <div class="actions">
+                    <div class="actions__buttons">
+                        <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta" title="Upgrade To Premium" target="_blank" class="link__style_unlink">
+                            <button class="button menu__item col button__orange">
+                                <?php _e( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
         <?php endif; ?>
 	</div>
 	<div class="dashboard-section-3">
@@ -589,3 +611,4 @@ if( $active_app === 'local' ) {
 </div>
 
 <?php require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php')?>
+<?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php')?>
