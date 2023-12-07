@@ -6,11 +6,15 @@
  *
  */
 
+use LLAR\Core\Config;
 use LLAR\Core\LimitLoginAttempts;
 
-$object_plan = new LimitLoginAttempts;
+$setup_code = Config::get( 'app_setup_code' );
+$min_plan = empty($setup_code) ? 'Free' : 'Micro Cloud';
+
+$object_plan = new LimitLoginAttempts();
 $plans = $object_plan->array_name_plans();
-$actual_plan = $active_app === 'custom' ? $object_plan->info_sub_group() : 'Free';
+$actual_plan = $active_app === 'custom' ? $object_plan->info_sub_group() : $min_plan;
 $upgrade_link = $active_app === 'custom' ? $object_plan->info_upgrade_link() : 'https://www.limitloginattempts.com/info.php?from=plugin-premium-tab-upgrade';
 
 $attribute = [];

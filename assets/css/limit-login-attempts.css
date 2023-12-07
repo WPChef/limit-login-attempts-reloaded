@@ -3091,6 +3091,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 16px;
   margin-top: 20px;
 }
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .field-image {
+  width: 240px;
+  margin: 0 auto;
+}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .button_block-single {
   text-align: left;
   margin-bottom: 30px;
@@ -3099,6 +3103,26 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 14px;
   color: #A4A8B7;
   margin-top: 15px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body.step-second {
+  text-align: center;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body.step-second .button_block-single {
+  text-align: center;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification__error {
+  color: #EC4652;
+  font-size: 16px;
+  margin: 15px auto 0;
+  padding: 9px 70px;
+  width: fit-content;
+  border-radius: 8px;
+  background-color: rgba(236, 70, 82, 0.1019607843);
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification__error img {
+  display: inline-block;
+  width: 12.5px;
+  margin-right: 2px;
 }
 
 /*# sourceMappingURL=limit-login-attempts.css.map */

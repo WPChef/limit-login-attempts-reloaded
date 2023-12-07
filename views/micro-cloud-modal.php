@@ -1,6 +1,5 @@
 <?php
 
-
 use LLAR\Core\Config;
 
 if( !defined( 'ABSPATH' ) ) exit();
@@ -9,12 +8,10 @@ if( !defined( 'ABSPATH' ) ) exit();
  * @var $this LLAR\Core\LimitLoginAttempts
  */
 
-//$admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
-//$onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
-//$setup_code = Config::get( 'app_setup_code' );
+$setup_code = Config::get( 'app_setup_code' );
+if( !empty( $setup_code ) ) return;
 
 $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
-
 $url_site = esc_url(get_site_url());
 
 ob_start(); ?>
@@ -43,9 +40,9 @@ ob_start(); ?>
                         <?php _e( 'How To Activate Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body step-first">
                     <div class="url_site">
-                        <?php echo sprintf(__( 'Site URL: <a href="%s" class="llar_orange">%s</a>', 'limit-login-attempts-reloaded' ), $url_site, $url_site); ?>
+                        <?php echo sprintf(__( 'Site URL: <a href="%s" class="link__style_unlink llar_orange">%s</a>', 'limit-login-attempts-reloaded' ), $url_site, $url_site); ?>
                     </div>
                     <div class="description">
                         <?php _e( 'Please enter the email that will receive setup instructions', 'limit-login-attempts-reloaded' ); ?>
@@ -65,6 +62,25 @@ ob_start(); ?>
                         </div>
                     </div>
                 </div>
+                <div class="card-body step-second llar-display-none">
+                    <div class="llar-upgrade-subscribe_notification__error llar-display-none">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/start.png">
+                        <?php _e( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ); ?>
+                    </div>
+                    <div class="llar-upgrade-subscribe_notification">
+                        <div class="field-image">
+                            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/schema-ok-min.png">
+                        </div>
+                        <div class="field-desc">
+                            <?php _e( 'This email will receive notifications of unauthorized access to your website. You may turn this off in your settings.', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
+                    </div>
+                    <div class="button_block-single">
+                        <button class="button next_step menu__item button__orange" id="llar-button_dashboard">
+                            <?php _e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); ?>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -78,13 +94,13 @@ $micro_cloud_popup_content = ob_get_clean();
         $(document).ready(function(){
 
             const $button_micro_cloud = $('.button.button_micro_cloud');
+            const sec_app_setup = '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>';
 
             $button_micro_cloud.on('click', function () {
-                console.log('@@@@@@@@@@@@@@@@@@');
-                ondoarding_modal.open();
+                micro_cloud_modal.open();
             })
 
-            const ondoarding_modal = $.dialog({
+            const micro_cloud_modal = $.dialog({
                 title: false,
                 content: `<?php echo trim( $micro_cloud_popup_content ); ?>`,
                 lazyOpen: true,
@@ -103,14 +119,19 @@ $micro_cloud_popup_content = ob_get_clean();
 
                     const $subscribe_email = $('#llar-subscribe-email');
                     const $button_subscribe_email = $('#llar-button_subscribe-email');
+                    const $card_body_first = $('.card-body.step-first');
+                    const $card_body_second = $('.card-body.step-second');
+                    const $button_dashboard = $('#llar-button_dashboard');
+                    const $subscribe_notification = $('.llar-upgrade-subscribe_notification');
+                    const $subscribe_notification_error = $('.llar-upgrade-subscribe_notification__error');
                     const $spinner = $button_subscribe_email.find('.preloader-wrapper .spinner');
                     const disabled = 'llar-disabled';
                     const visibility = 'llar-visibility';
-                    let real_email = '<?php esc_attr_e( $admin_email ); ?>';;
+                    let real_email = '<?php esc_attr_e( $admin_email ); ?>';
 
                     $subscribe_email.on('blur', function() {
 
-                        email = $(this).val();
+                        let email = $(this).val().trim();
 
                         if (!is_valid_email(email)) {
                             $button_subscribe_email.addClass(disabled)
@@ -123,7 +144,6 @@ $micro_cloud_popup_content = ob_get_clean();
 
                     $button_subscribe_email.on('click', function (e) {
                         e.preventDefault();
-                        console.log('###############');
 
                         if($button_subscribe_email.hasClass(disabled)) {
                             return;
@@ -137,95 +157,34 @@ $micro_cloud_popup_content = ob_get_clean();
 
                                 if(response && response.setup_code) {
 
-                                    activate_license_key(response.setup_code)
-                                        .then(function(response) {
+                                    activate_license_key(ajaxurl, response.setup_code, sec_app_setup)
+                                        .then(function() {
 
-                                            // $block_upgrade_subscribe.addClass('llar-display-none');
-                                            // $subscribe_notification.addClass('llar-display-block');
-                                            // $button_next.removeClass(disabled);
-                                            // $button_next.removeClass('llar-display-none');
-                                            // $button_skip.addClass('llar-display-none');
+                                            $button_subscribe_email.removeClass(disabled);
                                         })
                                         .catch(function() {
-                                            // $block_upgrade_subscribe.addClass('llar-display-none');
-                                            // $subscribe_notification_error.addClass('llar-display-block')
+
+                                            $subscribe_notification_error.removeClass('llar-display-none');
+                                            $subscribe_notification.addClass('llar-display-none');
+                                        })
+                                        .finally(function() {
+
+                                            $card_body_first.addClass('llar-display-none');
+                                            $card_body_second.removeClass('llar-display-none');
                                         });
 
                                 }
-                                else {
-                                    // $subscribe_notification_error.addClass('llar-display-block')
-
-                                }
-                            })
-                            .catch(function(response) {
-                                // $block_upgrade_subscribe.addClass('llar-display-none');
-                                // $subscribe_notification_error.addClass('llar-display-block')
                             });
 
-                    })
+                        $button_dashboard.on('click', function () {
+                            window.location = window.location + '&tab=dashboard';
 
-                    // $(document).on('click', button_next, function() {
-                    //
-                    //     // let next_step = next_step_line();
-                    //     const $html_body = $('.llar-onboarding__body');
-                    // })
+                        })
+
+                    })
                 }
             });
         })
-
-        function activate_license_key($setup_code) {
-
-            return new Promise(function(resolve, reject) {
-                $.post(ajaxurl, {
-                    action: 'app_setup',
-                    code:   $setup_code,
-                    sec:    '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>'
-                }, function(response) {
-
-                    if (response.success) {
-                        resolve(response);
-                    } else {
-                        reject(response);
-                    }
-                });
-            });
-        }
-
-        function activate_micro_cloud(email) {
-            let url_api = 'https://api.limitloginattempts.com/checkout-staging/network';
-            // url_api = ''https://api.limitloginattempts.com/checkout/network'';
-
-            let form_data = [];
-            form_data.push({name: 'group', value: 'free'});
-            form_data.push({name: 'email', value: email});
-
-            let form_object = form_data.reduce(function(object, item) {
-                object[item.name] = item.value;
-                return object;
-            }, {});
-
-
-            return new Promise(function(resolve, reject) {
-                $.post({
-                    url: url_api,
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    data: JSON.stringify(form_object),
-                }, function (response) {
-
-                    if (response) {
-                        resolve(response);
-                    } else {
-                        reject(response);
-                    }
-                });
-            });
-        }
-
-        function is_valid_email(email) {
-            let email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return email_regex.test(email);
-        }
 
     })(jQuery)
 </script>
