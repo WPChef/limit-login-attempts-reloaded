@@ -1809,6 +1809,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   line-height: 1.5;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .desc {
+  color: #666D84;
+  font-size: 16px;
+  line-height: 1.5;
   margin-bottom: 20px;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .title {
