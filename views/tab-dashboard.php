@@ -9,7 +9,6 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 $active_app = Config::get( 'active_app' );
 $active_app = ( $active_app === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
-
 $setup_code = Config::get( 'app_setup_code' );
 
 $wp_locale = str_replace( '_', '-', get_locale() );
@@ -66,7 +65,12 @@ if( $active_app === 'local' ) {
 	$retries_chart_desc = __( 'All failed login attempts have been neutralized in the cloud', 'limit-login-attempts-reloaded' );
 	$retries_chart_color = '#97F6C8';
 }
+
+if ($active_app === 'local' && empty($setup_code)) {
+    require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php');
+}
 ?>
+
 
 <div id="llar-dashboard-page">
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
@@ -104,7 +108,6 @@ if( $active_app === 'local' ) {
 						var llar_retries_chart = new Chart(ctx, {
 							type: 'doughnut',
 							data: {
-								// labels: ['Success', 'Warning', 'Warning', 'Fail'],
 								datasets: [{
 									data: [1],
 									value: <?php echo esc_js( $retries_count ); ?>,
@@ -358,6 +361,7 @@ if( $active_app === 'local' ) {
                 </div>
             </div>
         </div>
+        <?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php') ?>
         <?php elseif( $active_app === 'local' && !empty( $setup_code ) ) : ?>
             <div class="info-box-3">
                 <div class="section-title__new">
@@ -609,6 +613,3 @@ if( $active_app === 'local' ) {
     </div>
     <?php endif; ?>
 </div>
-
-<?php require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php')?>
-<?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php')?>
