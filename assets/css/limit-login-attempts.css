@@ -196,7 +196,7 @@ ul.llar_list li::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm
   display: none;
   position: absolute;
   background-color: #4ACAD8;
-  color: #fff;
+  color: white;
   padding: 12px 16px 12px 36px;
   width: 160px;
   border-radius: 20px;
@@ -2061,27 +2061,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
     gap: 8px;
   }
 }
-#llar-dashboard-page .dashboard-section-4 .section-title__new {
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .llar-label__date {
-  background-color: #F6FBFF;
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .llar-label__info {
-  background-color: unset;
-  color: #A4A8B7;
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .llar-label__circle-orange {
-  font-size: 64px;
-  vertical-align: middle;
-  color: #FF7C06;
-}
-#llar-dashboard-page .dashboard-section-4 .section-title__new .hint_tooltip-parent {
-  display: inline-block;
-  position: relative;
-}
 #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
   flex: 0 0 auto;
   width: calc(50% - 16px);
@@ -2103,6 +2082,30 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .dashboard-section-4 > [class^=info-box-]:last-child {
   margin-right: 0;
+}
+#llar-dashboard-page .dashboard-section-4 .hint_tooltip {
+  box-sizing: content-box;
+  padding-left: 0;
+}
+#llar-dashboard-page .dashboard-section-4 .hint_tooltip-content li {
+  font-size: 14px;
+  color: white;
+}
+#llar-dashboard-page .dashboard-section-4 .hint_tooltip-parent {
+  display: inline-block;
+  position: relative;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .llar-label__date {
+  background-color: #F6FBFF;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .llar-label__info {
+  background-color: unset;
+  color: #A4A8B7;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table {
   width: 100%;
@@ -2180,18 +2183,36 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-bottom: 0;
   float: right;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-2 .llar-chart-wrap {
-  width: 100%;
-  margin: 1rem auto;
-  clear: both;
+#llar-dashboard-page .dashboard-section-4 .info-box-2 {
+  line-height: 1.5;
+  padding-left: 45px;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-2 .llar-chart-wrap canvas {
-  min-height: 400px;
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title__new .title {
+  color: #2A2F40;
+  font-size: 20px;
+  font-weight: 500;
 }
-@media screen and (max-width: 1399.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-2 .llar-chart-wrap canvas {
-    min-height: 300px;
-  }
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title__new .desc {
+  color: #666D84;
+  font-size: 16px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content {
+  margin-top: 0;
+  padding-top: 5px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list {
+  color: #2A2F40;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 30px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input {
+  box-sizing: content-box;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list .desc {
+  color: #666D84;
+  font-weight: 400;
+  margin: 5px 25px;
 }
 
 #llar-admin-dashboard-widgets .widget-title {

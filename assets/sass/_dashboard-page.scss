@@ -492,35 +492,6 @@
       gap: 8px;
     }
 
-    .section-title__new {
-      display: flex;
-      justify-content: space-between;
-      position: relative;
-
-      .llar-label {
-
-        &__date {
-          background-color: $background__sky-blue;
-        }
-
-        &__info {
-          background-color: unset;
-          color: $typography-additional;
-        }
-
-        &__circle-orange {
-          font-size: 64px;
-          vertical-align: middle;
-          color: $primary-colors__orange;
-        }
-      }
-
-      .hint_tooltip-parent {
-        display: inline-block;
-        position: relative;
-      }
-    }
-
     > [class^="info-box-"] {
       flex: 0 0 auto;
       width: calc(50% - 16px);
@@ -543,7 +514,43 @@
       }
     }
 
+    .hint_tooltip {
+      box-sizing: content-box;
+      padding-left: 0;
+
+      &-content {
+
+        li {
+          font-size: 14px;
+          color: white;
+        }
+      }
+
+      &-parent {
+        display: inline-block;
+        position: relative;
+      }
+    }
+
     .info-box-1 {
+
+      .section-title__new {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+
+        .llar-label {
+
+          &__date {
+            background-color: $background__sky-blue;
+          }
+
+          &__info {
+            background-color: unset;
+            color: $typography-additional;
+          }
+        }
+      }
 
       .lockouts-by-country-table {
         width: 100%;
@@ -638,17 +645,44 @@
     }
 
     .info-box-2 {
+      line-height: 1.5;
+      padding-left: 45px;
 
-      .llar-chart-wrap {
-        width: 100%;
-        margin: 1rem auto;
-        clear: both;
+      .section {
 
-        canvas {
-          min-height: 400px;
+        &-title__new {
 
-          @include _1399 {
-            min-height: 300px;
+          .title {
+            color: $typography-primary;
+            font-size: 20px;
+            font-weight: 500;
+          }
+
+          .desc {
+            color: $typography-secondary;
+            font-size: 16px;
+          }
+        }
+
+        &-content {
+          margin-top: 0;
+          padding-top: 5px;
+
+          .list {
+            color: $typography-primary;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 30px;
+
+            input {
+              box-sizing: content-box;
+            }
+
+            .desc {
+              color: $typography-secondary;
+              font-weight: 400;
+              margin: 5px 25px;
+            }
           }
         }
       }
