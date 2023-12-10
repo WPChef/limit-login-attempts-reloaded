@@ -504,110 +504,61 @@ if ($active_app === 'local' && empty($setup_code)) {
 
         <div class="info-box-2">
             <div class="section-title__new">
-                <span class="llar-label">
-                    <?php _e( 'Total Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
-                </span>
-                <span class="llar-label llar-label__date">
-                    <span class="llar-label__circle-orange">&bull;</span>
-                    <?php _e( 'Total Attempts', 'limit-login-attempts-reloaded' ); ?>
-                </span>
-                <span class="llar-label llar-label__info">
-                    <?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
-                    <div class="hint_tooltip-parent">
-                    <span class="dashicons dashicons-editor-help"></span>
-                    <div class="hint_tooltip">
-                        <ul class="hint_tooltip-content">
-                            <li>
-                                <?php esc_attr_e( 'Failed logins for all users in the LLAR network.', 'limit-login-attempts-reloaded' ); ?>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="title">
+                    <?php _e( 'Login Security Checklist', 'limit-login-attempts-reloaded' ) ?>
                 </div>
-                </span>
+                <div class="desc">
+                    <?php _e( 'Recommended tasks to greatly improve the security of your website.', 'limit-login-attempts-reloaded' ) ?>
+                </div>
             </div>
             <div class="section-content">
-                <div class="llar-chart-wrap">
-                    <canvas id="llar-total-attacks-blocked-chart" style=""></canvas>
+                <div class="list">
+                    <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
+                    <?php echo __( 'Enable Lockout Email Notifications', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <div class="desc">
+                        <?php echo sprintf(
+                            __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Enable email notifications</a> to receive timely alerts and updates via email', 'limit-login-attempts-reloaded' ),
+                            'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+                        ); ?>
+                    </div>
                 </div>
-                <script type="text/javascript">
-                    (function(){
-
-                        var ctx = document.getElementById('llar-total-attacks-blocked-chart').getContext('2d');
-
-                        // Add a gradient fill below the graph
-                        const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                        gradient.addColorStop(0, '<?php echo esc_js( $chart3__color_gradient ); ?>');
-                        gradient.addColorStop(1, '<?php echo esc_js( '#FFFFFF00' ); ?>');
-
-                        var llar_total_attacks_blocked_chart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: <?php echo json_encode( $stats_global_dates ); ?>,
-                                datasets: [{
-                                    label: '<?php echo esc_js( __( 'Total Attempts', 'limit-login-attempts-reloaded' ) ); ?>',
-                                    data: <?php echo json_encode( $stats_global['attempts']['day']['count'] ); ?>,
-                                    backgroundColor: gradient,
-                                    borderColor: '<?php echo esc_js( $chart3__color ); ?>',
-                                    fill: true
-                                }]
-                            },
-                            options: {
-                                elements: {
-                                    point: {
-                                        pointStyle: 'circle',
-                                        radius: 3.5,
-                                        pointBackgroundColor: 'white',
-                                        pointBorderWidth: 1.5,
-                                        pointBorderColor: '<?php echo esc_js($chart3__color); ?>',
-                                    }
-                                },
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    tooltip: {
-                                        mode: 'index',
-                                        intersect: false,
-                                        callbacks: {
-                                            label: function (context) {
-                                                return context.raw.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
-                                            }
-                                        }
-                                    },
-                                    legend: {
-                                        display: false,
-                                    }
-                                },
-                                hover: {
-                                    mode: 'nearest',
-                                    intersect: true
-                                },
-                                scales: {
-                                    x: {
-                                        display: true,
-                                        scaleLabel: {
-                                            display: false
-                                        }
-                                    },
-                                    y: {
-                                        display: true,
-                                        scaleLabel: {
-                                            display: false
-                                        },
-                                        beginAtZero: true,
-                                        ticks: {
-                                            callback: function(label, index, labels) {
-                                                if (Math.floor(label) === label) {
-                                                    return label.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
-                                                }
-                                            },
-                                        }
-                                    }
-                                },
-                            }
-                        });
-
-                    })();
-                </script>
+                <div class="list">
+                    <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
+                    <?php echo __( 'Implement strong account policies', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <div class="desc">
+                        <?php echo sprintf(
+                            __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Read our guide</a> on implementing and enforcing strong password policies in your organization.', 'limit-login-attempts-reloaded' ),
+                            'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+                        ); ?>
+                    </div>
+                </div>
+                <div class="list">
+                    <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
+                    <?php echo __( 'Deny/Allow countries (Premium Users)', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <div class="desc">
+                        <?php echo sprintf(
+                            __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Allow or Deny countries</a> to ensure only legitimate users login.', 'limit-login-attempts-reloaded' ),
+                            'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+                        ); ?>
+                    </div>
+                </div>
+                <div class="list">
+                    <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
+                    <?php echo __( 'Turn on plugin auto-updates', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <div class="desc">
+                        <?php echo sprintf(
+                            __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Enable automatic updates</a> to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' ),
+                            'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+                        ); ?>
+                    </div>
+                </div>
+                <div class="list">
+                    <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
+                    <?php echo __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <div class="desc">
+                        <?php _e( 'Upgrade to our premium version for advanced protection.', 'limit-login-attempts-reloaded' ); ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
