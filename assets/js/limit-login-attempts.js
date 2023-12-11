@@ -11,44 +11,48 @@ function activate_micro_cloud(email) {
         return object;
     }, {});
 
+    let data = {
+        url: url_api,
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(form_object),
+    }
 
-    return new Promise(function(resolve, reject) {
-        jQuery.post({
-            url: url_api,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(form_object),
-        }, function (response) {
-
-            if (response) {
-                resolve(response);
-            } else {
-                reject(response);
-            }
-        });
-    });
+    return ajax_callback_post(data)
 }
+
 
 function activate_license_key(ajaxurl, $setup_code, sec) {
 
-    return new Promise(function(resolve, reject) {
-        jQuery.post(ajaxurl, {
-            action: 'app_setup',
-            code:   $setup_code,
-            sec:    sec,
-        }, function(response) {
+    let data = {
+        action: 'app_setup',
+        code:   $setup_code,
+        sec:    sec,
+    }
 
-            if (response.success) {
-                resolve(response);
-            } else {
-                reject(response);
-            }
-        });
-    });
+    return ajax_callback_post(ajaxurl, data)
 }
+
 
 function is_valid_email(email) {
 
     let email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return email_regex.test(email);
+}
+
+function ajax_callback_post(ajaxurl = null, data) {
+
+    return new Promise(function(resolve, reject) {
+        jQuery.post(ajaxurl, data, function(response) {
+
+            if ((response && ('success' in response) && response.success === false)) {
+                reject(response);
+            } else if (response.error) {
+                reject(response);
+            }
+            else  {
+                resolve(response);
+            }
+        });
+    });
 }

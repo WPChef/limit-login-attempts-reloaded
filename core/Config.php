@@ -36,6 +36,9 @@ class Config {
 		/* Notify on lockout. Values: '', 'log', 'email', 'log,email' */
 		'lockout_notify'     => 'email',
 
+        /* strong account policies */
+        'checklist'         => true,
+
 		/* If notify by email, do so after this number of lockouts */
 		'notify_email_after' => 3,
 
