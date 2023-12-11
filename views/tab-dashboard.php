@@ -585,7 +585,7 @@ if ($active_app === 'local' && empty($setup_code)) {
                     </div>
                 </div>
                 <div class="list">
-                    <input type="checkbox" name="use_global_options" <?php echo $upgrade_premium ?> disabled />
+                    <input type="checkbox" name="upgrade_premium" <?php echo $upgrade_premium ?> disabled />
                     <span>
                         <?php echo __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
                     </span>
