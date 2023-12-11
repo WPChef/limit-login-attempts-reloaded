@@ -453,6 +453,19 @@ if ($active_app === 'local' && empty($setup_code)) {
         $checklist = explode( ',', Config::get( 'checklist' ) );
         $is_checklist =  $checklist ? ' checked disabled' : '';
 
+        $object_plan = new LimitLoginAttempts();
+        $block_sub_group = $active_app === 'custom' ? $object_plan->info_sub_group() : false;
+
+        $min_plan = 'Premium';
+        $plans = $object_plan->array_name_plans();
+        $upgrade_premium = $plans[$block_sub_group] >= $plans[$min_plan] ? ' checked' : '';
+
+        $block_by_country = $block_sub_group ? $object_plan->info_block_by_country() : false;
+        $block_by_country_disabled = $block_sub_group ? '' : ' disabled';
+        $is_by_country =  $block_by_country ? ' checked disabled' : $block_by_country_disabled;
+        $auto_update_choice = Config::get( 'auto_update_choice' );
+        $is_auto_update_choice = $auto_update_choice ? ' checked' : '';
+
         ?>
         <div class="info-box-1">
             <div class="section-title__new">
@@ -544,30 +557,38 @@ if ($active_app === 'local' && empty($setup_code)) {
                     </div>
                 </div>
                 <div class="list">
-                    <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
+                    <input type="checkbox" name="block_by_country"<?php echo $is_by_country . $block_by_country_disabled?> />
                     <span>
                         <?php echo __( 'Deny/Allow countries (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
+                        <?php $link__allow_deny = $block_by_country
+                            ? 'http://limitloginattempts.localhost/wp-admin/admin.php?page=limit-login-attempts&tab=logs-custom'
+                            : 'https://www.limitloginattempts.com/info.php?id=2' ?>
                         <?php echo sprintf(
                             __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Allow or Deny countries</a> to ensure only legitimate users login.', 'limit-login-attempts-reloaded' ),
-                            'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+                            $link__allow_deny
                         ); ?>
                     </div>
                 </div>
                 <div class="list">
-                    <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
-                    <?php echo __( 'Turn on plugin auto-updates', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <input type="checkbox" name="auto_update_choice"<?php echo $is_auto_update_choice ?> disabled />
+                    <span>
+                        <?php echo __( 'Turn on plugin auto-updates', 'limit-login-attempts-reloaded' ); ?>
+                    </span>
                     <div class="desc">
-                        <?php echo sprintf(
-                            __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Enable automatic updates</a> to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' ),
-                            'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
-                        ); ?>
+                        <?php if ($auto_update_choice) :
+                            _e( 'Enable automatic updates to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' );
+                        else :
+                            _e( '<a class="link__style_unlink llar_turquoise" href="llar_auto_update_choice">Enable automatic updates</a> to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' );
+                        endif; ?>
                     </div>
                 </div>
                 <div class="list">
-                    <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
-                    <?php echo __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <input type="checkbox" name="use_global_options" <?php echo $upgrade_premium ?> disabled />
+                    <span>
+                        <?php echo __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
+                    </span>
                     <div class="desc">
                         <?php _e( 'Upgrade to our premium version for advanced protection.', 'limit-login-attempts-reloaded' ); ?>
                     </div>
@@ -580,6 +601,8 @@ if ($active_app === 'local' && empty($setup_code)) {
     <script>
         ;(function($){
             const $account_policies = $('input[name="strong_account_policies"]');
+            const $auto_update_choice = $('a[href="llar_auto_update_choice"]');
+            const $checkbox_auto_update_choice = $('input[name="auto_update_choice"]');
 
             $account_policies.on('change', function () {
 
@@ -592,21 +615,39 @@ if ($active_app === 'local' && empty($setup_code)) {
                 }
 
                 ajax_callback_post(ajaxurl, data)
-                    .then(function (response) {
-                        console.log('!!!!!!!!!!!!');
+                    .then(function () {
+
 
                     })
-                    .catch(function (response) {
-                        console.log('###########');
+                    .catch(function () {
+
                     })
 
+            })
 
-                if ($(this).is(':checked')) {
-                    console.log(this)
+
+            $auto_update_choice.on('click', function (e) {
+                e.preventDefault();
+
+                let link_text = $(this).text();
+
+                let checked = 'no';
+                if (!$checkbox_auto_update_choice.is('checked')) {
+
+                    $checkbox_auto_update_choice.prop('checked', true);
+                    checked = 'yes';
                 }
-                else {
-                    console.log('0')
+
+                let data = {
+                    action: 'toggle_auto_update',
+                    value: checked,
+                    sec: '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>'
                 }
+
+                ajax_callback_post(ajaxurl, data)
+                    .then(function () {
+                        $auto_update_choice.replaceWith(link_text);
+                    })
 
             })
 
