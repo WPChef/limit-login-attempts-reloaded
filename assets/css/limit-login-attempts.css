@@ -2206,6 +2206,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-weight: 500;
   margin-top: 30px;
 }
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list span.line-through {
+  text-decoration: line-through;
+}
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input {
   box-sizing: content-box;
 }

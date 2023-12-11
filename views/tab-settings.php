@@ -133,9 +133,9 @@ $active_app_config = Config::get( 'app_config' );
                         </span>
                     </th>
                     <td>
-                        <input type="checkbox" name="lockout_notify_email" <?php echo $email_checked; ?>
+                        <input type="checkbox" name="digest_email" <?php echo $email_checked; ?>
                                value="email"/> <?php echo __( 'Email to', 'limit-login-attempts-reloaded' ); ?>
-                        <input class="input_border" type="email" name="admin_notify_email"
+                        <input class="input_border" type="email" name="admin_digest_email"
                                value="<?php echo esc_attr( $admin_notify_email ) ?>"
                                placeholder="<?php echo esc_attr( $admin_email_placeholder ); ?>"/>
                         <div class="description-secondary">
@@ -145,7 +145,7 @@ $active_app_config = Config::get( 'app_config' );
                 </tr>
 
                 <tr>
-                    <th scope="row" valign="top"><?php echo __( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top" id="llar_lockout_notify"><?php echo __( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">

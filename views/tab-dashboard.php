@@ -446,6 +446,13 @@ if ($active_app === 'local' && empty($setup_code)) {
 		}
 
 		$countries_list = Helpers::get_countries_list();
+
+        $lockout_notify = explode( ',', Config::get( 'lockout_notify' ) );
+        $email_checked = in_array( 'email', $lockout_notify ) ? ' checked ' : '';
+
+        $checklist = explode( ',', Config::get( 'checklist' ) );
+        $is_checklist =  $checklist ? ' checked ' : '';
+
         ?>
         <div class="info-box-1">
             <div class="section-title__new">
@@ -513,22 +520,24 @@ if ($active_app === 'local' && empty($setup_code)) {
             </div>
             <div class="section-content">
                 <div class="list">
-                    <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
-                    <?php echo __( 'Enable Lockout Email Notifications', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <input type="checkbox" name="lockout_notify_email"<?php echo $email_checked ?> disabled />
+                    <span class="line-through">
+                        <?php echo __( 'Enable Lockout Email Notifications', 'limit-login-attempts-reloaded' ); ?><br/>
+                    </span>
                     <div class="desc">
                         <?php echo sprintf(
-                            __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Enable email notifications</a> to receive timely alerts and updates via email', 'limit-login-attempts-reloaded' ),
-                            'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+                            __( '<a class="link__style_unlink llar_turquoise" href="%s">Enable email notifications</a> to receive timely alerts and updates via email', 'limit-login-attempts-reloaded' ),
+                            'http://limitloginattempts.localhost/wp-admin/admin.php?page=limit-login-attempts&tab=settings#llar_lockout_notify'
                         ); ?>
                     </div>
                 </div>
                 <div class="list">
-                    <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
+                    <input type="checkbox" name="strong_account_policies"<?php echo $is_checklist ?> />
                     <?php echo __( 'Implement strong account policies', 'limit-login-attempts-reloaded' ); ?><br/>
                     <div class="desc">
                         <?php echo sprintf(
                             __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Read our guide</a> on implementing and enforcing strong password policies in your organization.', 'limit-login-attempts-reloaded' ),
-                            'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+                            'https://www.limitloginattempts.com/info.php?id=1'
                         ); ?>
                     </div>
                 </div>
@@ -563,4 +572,41 @@ if ($active_app === 'local' && empty($setup_code)) {
         </div>
     </div>
     <?php endif; ?>
+
+    <script>
+        ;(function($){
+            const $account_policies = $('input[name="strong_account_policies"]');
+
+            $account_policies.on('change', function () {
+
+                $is_checklist = !!$(this).prop('checked');
+
+                let data = {
+                    action: 'strong_account_policies',
+                    is_checklist: $is_checklist,
+                    sec: '<?php echo esc_js( wp_create_nonce( "llar-strong-account-policies" ) ); ?>'
+                }
+
+                ajax_callback_post(ajaxurl, data)
+                    .then(function (response) {
+                        console.log('!!!!!!!!!!!!');
+
+                    })
+                    .catch(function (response) {
+                        console.log('###########');
+                    })
+
+
+                if ($(this).is(':checked')) {
+                    console.log(this)
+                }
+                else {
+                    console.log('0')
+                }
+
+            })
+
+
+        })(jQuery)
+    </script>
 </div>

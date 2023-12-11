@@ -33,6 +33,7 @@ class Ajax {
 			'get_remaining_attempts_message_callback'
 		) );
 		add_action( 'wp_ajax_subscribe_email', array( $this, 'subscribe_email_callback' ) );
+        add_action( 'wp_ajax_strong_account_policies', array( $this, 'strong_account_policies_callback' ) );
 		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
 		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
 		add_action( 'wp_ajax_test_email_notifications', array( $this, 'test_email_notifications_callback' ) );
@@ -618,6 +619,7 @@ class Ajax {
 		}
 	}
 
+
 	public function subscribe_email_callback() {
 
 		if ( ! current_user_can( 'activate_plugins' ) ) {
@@ -668,6 +670,24 @@ class Ajax {
 		wp_send_json_error( array( 'email' => $email, 'is_subscribe_yes' => $is_subscribe_yes ) );
 		exit();
 	}
+
+
+    public function strong_account_policies_callback() {
+
+        if ( ! current_user_can( 'activate_plugins' ) ) {
+
+            wp_send_json_error( array() );
+        }
+
+        check_ajax_referer( 'llar-strong-account-policies', 'sec' );
+
+        $is_checklist = sanitize_text_field( trim( $_POST['is_checklist'] ) );
+
+        Config::update( 'checklist', $is_checklist );
+
+        wp_send_json_success();
+    }
+
 
 	public function dismiss_onboarding_popup_callback() {
 

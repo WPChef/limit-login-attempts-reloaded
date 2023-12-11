@@ -674,6 +674,12 @@
             font-weight: 500;
             margin-top: 30px;
 
+            span {
+              &.line-through {
+                text-decoration: line-through;
+              }
+            }
+
             input {
               box-sizing: content-box;
             }
