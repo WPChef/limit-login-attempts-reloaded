@@ -451,7 +451,7 @@ if ($active_app === 'local' && empty($setup_code)) {
         $email_checked = in_array( 'email', $lockout_notify ) ? ' checked ' : '';
 
         $checklist = explode( ',', Config::get( 'checklist' ) );
-        $is_checklist =  $checklist ? ' checked ' : '';
+        $is_checklist =  $checklist ? ' checked disabled' : '';
 
         ?>
         <div class="info-box-1">
@@ -521,8 +521,8 @@ if ($active_app === 'local' && empty($setup_code)) {
             <div class="section-content">
                 <div class="list">
                     <input type="checkbox" name="lockout_notify_email"<?php echo $email_checked ?> disabled />
-                    <span class="line-through">
-                        <?php echo __( 'Enable Lockout Email Notifications', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <span>
+                        <?php echo __( 'Enable Lockout Email Notifications', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
                         <?php echo sprintf(
@@ -533,7 +533,9 @@ if ($active_app === 'local' && empty($setup_code)) {
                 </div>
                 <div class="list">
                     <input type="checkbox" name="strong_account_policies"<?php echo $is_checklist ?> />
-                    <?php echo __( 'Implement strong account policies', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <span>
+                        <?php echo __( 'Implement strong account policies', 'limit-login-attempts-reloaded' ); ?>
+                    </span>
                     <div class="desc">
                         <?php echo sprintf(
                             __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Read our guide</a> on implementing and enforcing strong password policies in your organization.', 'limit-login-attempts-reloaded' ),
@@ -543,7 +545,9 @@ if ($active_app === 'local' && empty($setup_code)) {
                 </div>
                 <div class="list">
                     <input type="checkbox" name="use_global_options" checked value="1" class="use_global_options"/>
-                    <?php echo __( 'Deny/Allow countries (Premium Users)', 'limit-login-attempts-reloaded' ); ?><br/>
+                    <span>
+                        <?php echo __( 'Deny/Allow countries (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
+                    </span>
                     <div class="desc">
                         <?php echo sprintf(
                             __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Allow or Deny countries</a> to ensure only legitimate users login.', 'limit-login-attempts-reloaded' ),

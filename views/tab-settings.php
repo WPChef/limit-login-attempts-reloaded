@@ -119,30 +119,30 @@ $active_app_config = Config::get( 'app_config' );
                     </td>
                 </tr>
 
-                <tr>
-                    <th scope="row" valign="top"><?php echo __( 'Weekly Digest', 'limit-login-attempts-reloaded' ); ?>
-                        <span class="hint_tooltip-parent">
-                            <span class="dashicons dashicons-editor-help"></span>
-                            <div class="hint_tooltip">
-                                <ul class="hint_tooltip-content">
-                                    <li>
-                                        <?php echo generate_lorem_ipsum(50) ?>
-                                    </li>
-                                </ul>
-                            </div>
-                        </span>
-                    </th>
-                    <td>
-                        <input type="checkbox" name="digest_email" <?php echo $email_checked; ?>
-                               value="email"/> <?php echo __( 'Email to', 'limit-login-attempts-reloaded' ); ?>
-                        <input class="input_border" type="email" name="admin_digest_email"
-                               value="<?php echo esc_attr( $admin_notify_email ) ?>"
-                               placeholder="<?php echo esc_attr( $admin_email_placeholder ); ?>"/>
-                        <div class="description-secondary">
-                            <?php echo __( 'Receive a weekly digest that includes a recap of your failed logins and lockout notifications. Premium users will be able to see additional data such as countries and IPs with most failed logins.' ); ?>
-                        </div>
-                    </td>
-                </tr>
+<!--                <tr>-->
+<!--                    <th scope="row" valign="top">--><?php //echo __( 'Weekly Digest', 'limit-login-attempts-reloaded' ); ?>
+<!--                        <span class="hint_tooltip-parent">-->
+<!--                            <span class="dashicons dashicons-editor-help"></span>-->
+<!--                            <div class="hint_tooltip">-->
+<!--                                <ul class="hint_tooltip-content">-->
+<!--                                    <li>-->
+<!--                                        --><?php //echo generate_lorem_ipsum(50) ?>
+<!--                                    </li>-->
+<!--                                </ul>-->
+<!--                            </div>-->
+<!--                        </span>-->
+<!--                    </th>-->
+<!--                    <td>-->
+<!--                        <input type="checkbox" name="digest_email" --><?php //echo $email_checked; ?>
+<!--                               value="email"/> --><?php //echo __( 'Email to', 'limit-login-attempts-reloaded' ); ?>
+<!--                        <input class="input_border" type="email" name="admin_digest_email"-->
+<!--                               value="--><?php //echo esc_attr( $admin_notify_email ) ?><!--"-->
+<!--                               placeholder="--><?php //echo esc_attr( $admin_email_placeholder ); ?><!--"/>-->
+<!--                        <div class="description-secondary">-->
+<!--                            --><?php //echo __( 'Receive a weekly digest that includes a recap of your failed logins and lockout notifications. Premium users will be able to see additional data such as countries and IPs with most failed logins.' ); ?>
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                </tr>-->
 
                 <tr>
                     <th scope="row" valign="top" id="llar_lockout_notify"><?php echo __( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
