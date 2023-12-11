@@ -852,6 +852,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #2A2F40;
   font-weight: 500;
   font-size: 18px;
+  margin-top: 20px;
   padding: 31px 40px 31px;
   border: 1px solid #4ACAD8;
   border-bottom: 0;
@@ -2209,13 +2210,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input {
   box-sizing: content-box;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input:disabled {
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input:disabled, #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input:before {
   opacity: 1;
+  pointer-events: none;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input:disabled:before {
-  opacity: 1;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input:disabled + span {
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input:checked + span {
   text-decoration: line-through;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list .desc {

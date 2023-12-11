@@ -677,12 +677,12 @@
             input {
               box-sizing: content-box;
 
-              &:disabled {
+              &:disabled, &:before {
                 opacity: 1;
+                pointer-events: none;
+              }
 
-                &:before {
-                  opacity: 1;
-                }
+              &:checked {
 
                 + span {
                   text-decoration: line-through;

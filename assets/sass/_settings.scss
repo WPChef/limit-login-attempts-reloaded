@@ -31,35 +31,6 @@ $primary-colors__turquoise_back: #4ACAD819; //rgba(74, 202, 216, 0.1);
 $primary-colors__aero-blue: #97F6C8;
 
 $color-marker: #9762EF;
-
-
-
-
-//$conten-max-with: 1276px;
-//$border-radius: 20px;
-//$button-size: 12px;
-//$toolbar-height: 2.5rem;
-//$icon-size: 10px;
-//
-//$body-background: #FFFFFF;
-//$background-ash: #FDFDFD;
-
-//$background-gradient: #F3FBFF;
-//$body-background-transparent: rgba(255, 255, 255, 0.60);
-
-//$typography-secondary-gray: #6C6B6B;
-//$typography-additional: #A4A8B7;
-//$primary-colors-orange: #FF7C06;
-//$primary-colors-turquoise: #4ACAD8;
-//$primary-colors-red: #FF0000FF;
-//$primary-colors-turquoise-back: rgba(74, 202, 216, 0.3);
-//$primary-colors-turquoise-ligt: rgba(74, 202, 216, 0.1);
-//$primary-colors-orange-back: #FF7C0619; //rgba(255, 124, 6, 0.1);
-//$primary-colors-orange-fill: rgba(255, 124, 6, 0.3);
-//$secondary-colors-dark-orange: #F07200;
-//$secondary-colors-light-blue: #ECFAFB;
-
-
 $box-shadow__semi-transparent-gray: #72757B33; // rgba(114, 117, 123, 0.20);
 $box-shadow__light-transparent-gray: #A2B4BD33; //rgba(162, 180, 189, 0.20);
 
@@ -82,8 +53,6 @@ $border-radius: $text-font * 1.25;
 $border-radius__normal: $text-font;
 $border-radius__min: $border-radius__normal * .5;
 $border-radius__max: $border-radius * 2;
-
-
 
 .link__style_unlink, .link__style_color_inherit {
   text-decoration: none;

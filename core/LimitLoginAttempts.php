@@ -1708,21 +1708,46 @@ class LimitLoginAttempts {
         return $palns;
     }
 
+    private function info()
+    {
+        $this->info_data = LimitLoginAttempts::$cloud_app->info();
+
+        return $this->info_data;
+    }
 
 
     public function info_sub_group()
     {
-        $this->info_data = LimitLoginAttempts::$cloud_app->info();
+        if (empty($this->info_data)) {
+
+            $this->info_data = $this->info();
+        }
+
         $data = (!empty($this->info_data) && !empty($this->info_data['sub_group'])) ? $this->info_data['sub_group'] : '';
 
         return $this->plan_name_match($data);
     }
 
 
-
     public function info_upgrade_link()
     {
+        if (empty($this->info_data)) {
+
+            $this->info_data = $this->info();
+        }
+
         return (!empty($this->info_data) && !empty($this->info_data['upgrade_link'])) ? $this->info_data['upgrade_link'] : '';
+    }
+
+
+    public function info_block_by_country()
+    {
+        if (empty($this->info_data)) {
+
+            $this->info_data = $this->info();
+        }
+
+        return $this->info_data['block_by_country'];
     }
 
 
