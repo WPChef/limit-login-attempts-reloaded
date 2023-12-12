@@ -450,15 +450,15 @@ if ($active_app === 'local' && empty($setup_code)) {
         $lockout_notify = explode( ',', Config::get( 'lockout_notify' ) );
         $email_checked = in_array( 'email', $lockout_notify ) ? ' checked ' : '';
 
-        $checklist = explode( ',', Config::get( 'checklist' ) );
-        $is_checklist =  $checklist ? ' checked disabled' : '';
+        $checklist = Config::get( 'checklist' );
+                $is_checklist =  $checklist ? ' checked disabled' : '';
 
         $object_plan = new LimitLoginAttempts();
         $block_sub_group = $active_app === 'custom' ? $object_plan->info_sub_group() : false;
 
         $min_plan = 'Premium';
         $plans = $object_plan->array_name_plans();
-        $upgrade_premium = $plans[$block_sub_group] >= $plans[$min_plan] ? ' checked' : '';
+        $upgrade_premium = ($active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan]) ? ' checked' : '';
 
         $block_by_country = $block_sub_group ? $object_plan->info_block_by_country() : false;
         $block_by_country_disabled = $block_sub_group ? '' : ' disabled';
