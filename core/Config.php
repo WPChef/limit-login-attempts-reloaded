@@ -37,7 +37,7 @@ class Config {
 		'lockout_notify'     => 'email',
 
         /* strong account policies */
-        'checklist'         => true,
+        'checklist'         => false,
 
 		/* If notify by email, do so after this number of lockouts */
 		'notify_email_after' => 3,
