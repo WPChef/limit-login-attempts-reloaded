@@ -22,7 +22,7 @@ function activate_micro_cloud(email) {
 }
 
 
-function activate_license_key(ajaxurl, $setup_code, sec) {
+function activate_license_key( ajaxurl, $setup_code, sec ) {
 
     let data = {
         action: 'app_setup',
@@ -30,28 +30,28 @@ function activate_license_key(ajaxurl, $setup_code, sec) {
         sec:    sec,
     }
 
-    return ajax_callback_post(ajaxurl, data)
+    return ajax_callback_post( ajaxurl, data )
 }
 
 
-function is_valid_email(email) {
+function is_valid_email( email ) {
 
     let email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return email_regex.test(email);
+    return email_regex.test( email );
 }
 
-function ajax_callback_post(ajaxurl = null, data) {
+function ajax_callback_post( ajaxurl = null, data ) {
 
-    return new Promise(function(resolve, reject) {
-        jQuery.post(ajaxurl, data, function(response) {
+    return new Promise(function( resolve, reject ) {
+        jQuery.post( ajaxurl, data, function ( response ) {
 
-            if ((response && ('success' in response) && response.success === false)) {
-                reject(response);
-            } else if (response.error) {
-                reject(response);
+            if ( ( response && ( 'success' in response ) && response.success === false ) ) {
+                reject( response );
+            } else if ( response.error ) {
+                reject( response );
             }
             else  {
-                resolve(response);
+                resolve( response );
             }
         });
     });
@@ -60,27 +60,50 @@ function ajax_callback_post(ajaxurl = null, data) {
 
 let notice_popup_error_update;
 let hide_auto_update_option;
+let toggle_auto_update;
 
-(function($) {
+( function( $ ) {
 
-    $(document).ready(function() {
+    $( document ).ready(function() {
+
+        toggle_auto_update = function( value, sec, content ) {
+
+            let data = {
+               action: 'toggle_auto_update',
+               value: value,
+               sec: sec
+            }
+
+            ajax_callback_post( ajaxurl, data )
+               .then( function () {
+                   hide_auto_update_option();
+
+               } )
+               .catch( function ( response ) {
+                   notice_popup_error_update.content = content;
+                   notice_popup_error_update.msg = response.data.msg;
+                   notice_popup_error_update.open();
+               } )
+
+        };
+
 
         hide_auto_update_option = function () {
 
-            const $auto_update_notice = $('.llar-auto-update-notice');
-            const $checkbox_auto_update_choice = $('input[name="auto_update_choice"]');
-            const $auto_update_choice = $('a[href="llar_auto_update_choice"]');
+            const $auto_update_notice = $( '.llar-auto-update-notice' );
+            const $checkbox_auto_update_choice = $( 'input[name="auto_update_choice"]' );
+            const $auto_update_choice = $( 'a[href="llar_auto_update_choice"]' );
 
-            if ($auto_update_notice.length > 0 && $auto_update_notice.css('display') !== 'none') {
+            if ( $auto_update_notice.length > 0 && $auto_update_notice.css( 'display' ) !== 'none' ) {
 
                 $auto_update_notice.remove();
             }
 
-            if (!$checkbox_auto_update_choice.is('checked')) {
+            if ( ! $checkbox_auto_update_choice.is('checked') ) {
 
                 let link_text = $auto_update_choice.text();
-                $checkbox_auto_update_choice.prop('checked', true);
-                $auto_update_choice.replaceWith(link_text);
+                $checkbox_auto_update_choice.prop( 'checked', true );
+                $auto_update_choice.replaceWith( link_text );
             }
         }
 
@@ -100,9 +123,9 @@ let hide_auto_update_option;
             closeIcon: true,
             buttons: {},
             onOpenBefore: function () {
-                const $card_body = $('.card-body');
-                $card_body.text(this.msg);
+                const $card_body = $( '.card-body' );
+                $card_body.text( this.msg );
             }
-        });
-    });
-})(jQuery)
+        } );
+    } );
+} )(jQuery)
