@@ -629,8 +629,6 @@ if ($active_app === 'local' && empty($setup_code)) {
                 $auto_update_choice.on('click', function (e) {
                     e.preventDefault();
 
-                    // let link_text = $(this).text();
-
                     let checked = 'no';
                     if (!$checkbox_auto_update_choice.is('checked')) {
                         checked = 'yes';
@@ -645,8 +643,7 @@ if ($active_app === 'local' && empty($setup_code)) {
                     ajax_callback_post(ajaxurl, data)
                         .then(function () {
                             hide_auto_update_option();
-                            // $checkbox_auto_update_choice.prop('checked', true);
-                            // $auto_update_choice.replaceWith(link_text);
+
                         })
                         .catch(function (response) {
                             notice_popup_error_update.content = `<?php echo trim( $notice_popup_error_content); ?>`;
