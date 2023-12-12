@@ -71,7 +71,6 @@ if ($active_app === 'local' && empty($setup_code)) {
 }
 ?>
 
-
 <div id="llar-dashboard-page">
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
@@ -453,19 +452,15 @@ if ($active_app === 'local' && empty($setup_code)) {
         $checklist = Config::get( 'checklist' );
         $is_checklist =  $checklist ? ' checked disabled' : '';
 
+        $min_plan = 'Premium';
         $object_plan = new LimitLoginAttempts();
         $block_sub_group = $active_app === 'custom' ? $object_plan->info_sub_group() : false;
-
-        $min_plan = 'Premium';
         $plans = $object_plan->array_name_plans();
         $upgrade_premium = ($active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan]) ? ' checked' : '';
-
         $block_by_country = $block_sub_group ? $object_plan->info_block_by_country() : false;
         $block_by_country_disabled = $block_sub_group ? '' : ' disabled';
         $is_by_country =  $block_by_country ? ' checked disabled' : $block_by_country_disabled;
-        $auto_update_choice = Config::get( 'auto_update_choice' );
-        $is_auto_update_choice = $auto_update_choice ? ' checked' : '';
-
+        $is_auto_update_choice = (Helpers::is_auto_update_enabled() && !Helpers::is_block_automatic_update_disabled()) ? ' checked' : '';
         ?>
         <div class="info-box-1">
             <div class="section-title__new">
@@ -577,7 +572,7 @@ if ($active_app === 'local' && empty($setup_code)) {
                         <?php echo __( 'Turn on plugin auto-updates', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
-                        <?php if ($auto_update_choice) :
+                        <?php if (!empty($is_auto_update_choice)) :
                             _e( 'Enable automatic updates to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' );
                         else :
                             _e( '<a class="link__style_unlink llar_turquoise" href="llar_auto_update_choice">Enable automatic updates</a> to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' );
@@ -615,16 +610,11 @@ if ($active_app === 'local' && empty($setup_code)) {
                 }
 
                 ajax_callback_post(ajaxurl, data)
-                    .then(function () {
-
-
-                    })
                     .catch(function () {
-
+                        $account_policies.prop('checked', false);
                     })
 
             })
-
 
             $auto_update_choice.on('click', function (e) {
                 e.preventDefault();
@@ -650,7 +640,6 @@ if ($active_app === 'local' && empty($setup_code)) {
                     })
 
             })
-
 
         })(jQuery)
     </script>
