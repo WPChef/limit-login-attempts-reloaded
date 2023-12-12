@@ -593,54 +593,69 @@ if ($active_app === 'local' && empty($setup_code)) {
     </div>
     <?php endif; ?>
 
+
+    <?php
+    /**
+     * @var string $notice_popup_error_content
+     *
+     */
+    ?>
     <script>
         ;(function($){
-            const $account_policies = $('input[name="strong_account_policies"]');
-            const $auto_update_choice = $('a[href="llar_auto_update_choice"]');
-            const $checkbox_auto_update_choice = $('input[name="auto_update_choice"]');
 
-            $account_policies.on('change', function () {
+            $(document).ready(function() {
 
-                $is_checklist = !!$(this).prop('checked');
+                const $account_policies = $('input[name="strong_account_policies"]');
+                const $auto_update_choice = $('a[href="llar_auto_update_choice"]');
+                const $checkbox_auto_update_choice = $('input[name="auto_update_choice"]');
 
-                let data = {
-                    action: 'strong_account_policies',
-                    is_checklist: $is_checklist,
-                    sec: '<?php echo esc_js( wp_create_nonce( "llar-strong-account-policies" ) ); ?>'
-                }
+                $account_policies.on('change', function () {
 
-                ajax_callback_post(ajaxurl, data)
-                    .catch(function () {
-                        $account_policies.prop('checked', false);
-                    })
+                    $is_checklist = !!$(this).prop('checked');
 
+                    let data = {
+                        action: 'strong_account_policies',
+                        is_checklist: $is_checklist,
+                        sec: '<?php echo esc_js( wp_create_nonce( "llar-strong-account-policies" ) ); ?>'
+                    }
+
+                    ajax_callback_post(ajaxurl, data)
+                        .catch(function () {
+                            $account_policies.prop('checked', false);
+                        })
+
+                })
+
+                $auto_update_choice.on('click', function (e) {
+                    e.preventDefault();
+
+                    // let link_text = $(this).text();
+
+                    let checked = 'no';
+                    if (!$checkbox_auto_update_choice.is('checked')) {
+                        checked = 'yes';
+                    }
+
+                    let data = {
+                        action: 'toggle_auto_update',
+                        value: checked,
+                        sec: '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>'
+                    }
+
+                    ajax_callback_post(ajaxurl, data)
+                        .then(function () {
+                            hide_auto_update_option();
+                            // $checkbox_auto_update_choice.prop('checked', true);
+                            // $auto_update_choice.replaceWith(link_text);
+                        })
+                        .catch(function (response) {
+                            notice_popup_error_update.content = `<?php echo trim( $notice_popup_error_content); ?>`;
+                            notice_popup_error_update.msg = response.data.msg;
+                            notice_popup_error_update.open();
+                        })
+
+                })
             })
-
-            $auto_update_choice.on('click', function (e) {
-                e.preventDefault();
-
-                let link_text = $(this).text();
-
-                let checked = 'no';
-                if (!$checkbox_auto_update_choice.is('checked')) {
-
-                    $checkbox_auto_update_choice.prop('checked', true);
-                    checked = 'yes';
-                }
-
-                let data = {
-                    action: 'toggle_auto_update',
-                    value: checked,
-                    sec: '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>'
-                }
-
-                ajax_callback_post(ajaxurl, data)
-                    .then(function () {
-                        $auto_update_choice.replaceWith(link_text);
-                    })
-
-            })
-
         })(jQuery)
     </script>
 </div>

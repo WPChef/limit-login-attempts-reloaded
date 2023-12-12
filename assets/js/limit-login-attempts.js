@@ -56,3 +56,53 @@ function ajax_callback_post(ajaxurl = null, data) {
         });
     });
 }
+
+
+let notice_popup_error_update;
+let hide_auto_update_option;
+
+(function($) {
+
+    $(document).ready(function() {
+
+        hide_auto_update_option = function () {
+
+            const $auto_update_notice = $('.llar-auto-update-notice');
+            const $checkbox_auto_update_choice = $('input[name="auto_update_choice"]');
+            const $auto_update_choice = $('a[href="llar_auto_update_choice"]');
+
+            if ($auto_update_notice.length > 0 && $auto_update_notice.css('display') !== 'none') {
+
+                $auto_update_notice.remove();
+            }
+
+            if (!$checkbox_auto_update_choice.is('checked')) {
+
+                let link_text = $auto_update_choice.text();
+                $checkbox_auto_update_choice.prop('checked', true);
+                $auto_update_choice.replaceWith(link_text);
+            }
+        }
+
+
+        notice_popup_error_update = $.dialog({
+            title: false,
+            content: this.content,
+            lazyOpen: true,
+            type: 'default',
+            typeAnimated: true,
+            draggable: false,
+            animation: 'top',
+            animationBounce: 1,
+            boxWidth: '20%',
+            bgOpacity: 0.9,
+            useBootstrap: false,
+            closeIcon: true,
+            buttons: {},
+            onOpenBefore: function () {
+                const $card_body = $('.card-body');
+                $card_body.text(this.msg);
+            }
+        });
+    });
+})(jQuery)

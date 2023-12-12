@@ -3020,6 +3020,29 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   min-width: 420px;
   padding: 15px 30px;
 }
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .popup_error_content__content {
+  padding: 15px;
+  border-radius: 16px;
+  background-color: #FDFDFD;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .popup_error_content__body {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #2A2F40;
+  padding: 0 15px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .popup_error_content__body .card {
+  padding: 0;
+  border: unset;
+  box-shadow: unset;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .popup_error_content__body .card-header {
+  color: #EC4652;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .popup_error_content__body .card-body {
+  margin-top: 10px;
+}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__content {
   padding: 15px;
   border-radius: 16px;

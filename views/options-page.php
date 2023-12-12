@@ -43,6 +43,19 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 </div>
 <?php endif; ?>
 
+<?php ob_start(); ?>
+<div class="popup_error_content__content">
+    <div class="popup_error_content__body">
+        <div class="card mx-auto">
+            <div class="card-header">
+            </div>
+            <div class="card-body">
+            </div>
+        </div>
+    </div>
+</div>
+<?php $notice_popup_error_content = ob_get_clean(); ?>
+
 <div class="wrap limit-login-page-settings">
 
     <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/logo-llap.png">
@@ -78,12 +91,11 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
         <?php endif; ?>
     </div>
 
-
     <?php include_once(LLA_PLUGIN_DIR.'views/tab-'.$active_tab.'.php'); ?>
 </div>
 
 <script>
-    (function($) {
+    ;(function($) {
         const $auto_update_notice = $('.llar-auto-update-notice');
 
         $(document).ready(function() {
@@ -96,7 +108,13 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
                     sec: '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>'
                 }, function(response){
                     if(response.success) {
-                        $auto_update_notice.remove();
+
+                        hide_auto_update_option();
+                    }
+                    else {
+                        notice_popup_error_update.content = `<?php echo trim( $notice_popup_error_content); ?>`;
+                        notice_popup_error_update.msg = response.data.msg;
+                        notice_popup_error_update.open();
                     }
                 });
             })
