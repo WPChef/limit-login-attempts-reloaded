@@ -61,6 +61,38 @@
         padding: 15px 30px;
       }
 
+      .popup_error_content {
+
+        &__content {
+          padding: 15px;
+          border-radius: $border-radius__normal;
+          background-color: $background-body;
+        }
+
+        &__body {
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 1.5;
+          color: $typography-primary;
+          padding: 0 15px;
+
+          .card {
+            padding: 0;
+            border: unset;
+            box-shadow: unset;
+
+            &-header {
+              color: $state-color__error;
+            }
+
+            &-body {
+              margin-top: 10px;
+            }
+          }
+        }
+      }
+
+
       .micro_cloud_modal {
 
         &__content {

@@ -723,6 +723,11 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
+		if ( Helpers::is_block_automatic_update_disabled() ) {
+
+            wp_send_json_error( array( 'msg' => 'Can\'t turn auto-updates on. Please ask your hosting provider or developer for assistance.') );
+        }
+
 		check_ajax_referer('llar-toggle-auto-update', 'sec');
 
 		$value = sanitize_text_field( $_POST['value'] );
