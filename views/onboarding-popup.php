@@ -262,10 +262,14 @@ $content_step_4 = ob_get_clean();
                 useBootstrap: false,
                 closeIcon: true,
                 onClose: function() {
-                    $.post(ajaxurl, {
+                    let data = {
                         action: 'dismiss_onboarding_popup',
                         sec: '<?php echo esc_js( wp_create_nonce( "llar-dismiss-onboarding-popup" ) ); ?>'
-                    }, function(){});
+                    }
+                    ajax_callback_post(ajaxurl, data)
+                        .then(function () {
+                            window.location = window.location + '&tab=dashboard';
+                        })
                 },
                 buttons: {},
                 onOpenBefore: function () {
@@ -327,10 +331,10 @@ $content_step_4 = ob_get_clean();
                     $(document).on('click', button_next, function() {
 
                         let next_step = next_step_line();
-                        const $html_body = $('.llar-onboarding__body');
+                        const $html_onboarding_body = $('.llar-onboarding__body');
 
                         if (next_step === 2) {
-                            $html_body.replaceWith(<?php echo json_encode(trim($content_step_2), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+                            $html_onboarding_body.replaceWith(<?php echo json_encode(trim($content_step_2), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
 
                             const $subscribe_email = $('#llar-subscribe-email');
                             const $subscribe_email_button = $('#llar-subscribe-email-button');
@@ -354,21 +358,24 @@ $content_step_4 = ob_get_clean();
                                 $subscribe_email_button.addClass(disabled);
                                 $spinner.addClass(visibility);
 
-                                $.post(ajaxurl, {
+                                let data = {
                                     action: 'subscribe_email',
                                     email: real_email,
                                     is_subscribe_yes: $is_subscribe,
                                     sec: '<?php echo esc_js( wp_create_nonce( "llar-subscribe-email" ) ); ?>'
-                                }, function(){
+                                }
 
-                                    $subscribe_email_button.removeClass(disabled);
-                                    $(button_next).trigger('click');
-                                });
+                                ajax_callback_post(ajaxurl, data)
+                                    .then(function () {
+                                        $subscribe_email_button.removeClass(disabled);
+                                        $(button_next).trigger('click');
+                                    })
+
                             })
                         }
                         else if (next_step === 3) {
 
-                            $html_body.replaceWith(<?php echo json_encode(trim($content_step_3), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+                            $html_onboarding_body.replaceWith(<?php echo json_encode(trim($content_step_3), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
 
                             const $limited_upgrade_subscribe = $('#llar-limited-upgrade-subscribe');
                             const $block_upgrade_subscribe = $('.llar-upgrade-subscribe');
@@ -421,7 +428,7 @@ $content_step_4 = ob_get_clean();
                             });
                         }
                         else if (next_step === 4) {
-                            $html_body.replaceWith(<?php echo json_encode(trim($content_step_4), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
+                            $html_onboarding_body.replaceWith(<?php echo json_encode(trim($content_step_4), JSON_HEX_QUOT | JSON_HEX_TAG); ?>);
                         }
                         else if (!next_step) {
                             ondoarding_modal.close();
