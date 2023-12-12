@@ -95,28 +95,19 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 </div>
 
 <script>
-    ;(function($) {
-        const $auto_update_notice = $('.llar-auto-update-notice');
+    ;( function( $ ) {
+        const $auto_update_notice = $( '.llar-auto-update-notice' );
 
-        $(document).ready(function() {
-            $auto_update_notice.on('click', ' .auto-enable-update-option', function(e){
+        $( document ).ready( function() {
+            $auto_update_notice.on( 'click', ' .auto-enable-update-option', function( e ) {
                 e.preventDefault();
 
-                $.post(ajaxurl, {
-                    action: 'toggle_auto_update',
-                    value: $(this).data('val'),
-                    sec: '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>'
-                }, function(response){
-                    if(response.success) {
+                let value = $(this).data('val');
+                let sec = '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>';
+                let content = <?php echo json_encode( trim( $notice_popup_error_content ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?>;
 
-                        hide_auto_update_option();
-                    }
-                    else {
-                        notice_popup_error_update.content = `<?php echo trim( $notice_popup_error_content); ?>`;
-                        notice_popup_error_update.msg = response.data.msg;
-                        notice_popup_error_update.open();
-                    }
-                });
+                toggle_auto_update(value, sec, content) ;
+
             })
         })
     })(jQuery);

@@ -634,22 +634,10 @@ if ($active_app === 'local' && empty($setup_code)) {
                         checked = 'yes';
                     }
 
-                    let data = {
-                        action: 'toggle_auto_update',
-                        value: checked,
-                        sec: '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>'
-                    }
+                    let sec = '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>';
+                    let content = <?php echo json_encode( trim( $notice_popup_error_content ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?>;
 
-                    ajax_callback_post(ajaxurl, data)
-                        .then(function () {
-                            hide_auto_update_option();
-
-                        })
-                        .catch(function (response) {
-                            notice_popup_error_update.content = `<?php echo trim( $notice_popup_error_content); ?>`;
-                            notice_popup_error_update.msg = response.data.msg;
-                            notice_popup_error_update.open();
-                        })
+                    toggle_auto_update(checked, sec, content);
 
                 })
             })
