@@ -451,7 +451,7 @@ if ($active_app === 'local' && empty($setup_code)) {
         $email_checked = in_array( 'email', $lockout_notify ) ? ' checked ' : '';
 
         $checklist = Config::get( 'checklist' );
-                $is_checklist =  $checklist ? ' checked disabled' : '';
+        $is_checklist =  $checklist ? ' checked disabled' : '';
 
         $object_plan = new LimitLoginAttempts();
         $block_sub_group = $active_app === 'custom' ? $object_plan->info_sub_group() : false;
