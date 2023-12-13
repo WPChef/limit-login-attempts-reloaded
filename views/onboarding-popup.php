@@ -259,9 +259,6 @@ $content_step_4 = ob_get_clean();
                 offsetBottom: 0,
                 boxWidth: '100%',
                 containerFluid: true,
-                onContentReady: function() {
-                    video_player_load();
-                },
                 bgOpacity: 0.9,
                 useBootstrap: false,
                 closeIcon: true,
@@ -442,7 +439,7 @@ $content_step_4 = ob_get_clean();
             });
         })
 
-        function next_step_line(offset = 1) {
+        function next_step_line( offset = 1 ) {
 
             let step_line = $('.llar-onboarding__line .point__block');
             let active_step = step_line.filter('.active').data('step');
@@ -463,51 +460,5 @@ $content_step_4 = ob_get_clean();
             }
         }
 
-
-        function video_player_load() {
-
-            let isPlyrInitialized = false;
-            let video_player = $('#video-play');
-            let script_loaded = false;
-            let style_loaded = false;
-            let player;
-
-            let script = document.createElement('script');
-            let style = document.createElement('link');
-            script.src = 'https://cdn.plyr.io/3.7.8/plyr.js';
-            style.href = 'https://cdn.plyr.io/3.7.8/plyr.css';
-            style.rel = 'stylesheet';
-
-            document.body.appendChild(script);
-            document.body.appendChild(style);
-
-            video_player.on('click', 'img', function () {
-
-                if (script_loaded) {
-
-                    script.onload = function() {
-                        script_loaded = true;
-
-                        if (!isPlyrInitialized) {
-
-                            player = new Plyr('#player');
-                            isPlyrInitialized = true;
-                        }
-                    };
-                }
-                else {
-
-                    if (!isPlyrInitialized) {
-                        player = new Plyr('#player');
-                        isPlyrInitialized = true;
-                    }
-                }
-
-                $('#video-poster').hide();
-                video_player.find('.video__iframe').addClass('play');
-
-            });
-        }
-
-    })(jQuery)
+    } )(jQuery)
 </script>
