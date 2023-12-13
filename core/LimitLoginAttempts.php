@@ -570,7 +570,14 @@ class LimitLoginAttempts {
 	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
 		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css', array(), $plugin_data['Version'] );
+
+        $auto_update = wp_create_nonce('llar-toggle-auto-update');
+        $account_policies = wp_create_nonce('llar-strong-account-policies');
 		wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array('jquery'), $plugin_data['Version'], false );
+        wp_localize_script('lla-main', 'llar_vars', array(
+            'auto_update'       => $auto_update,
+            'account_policies'  => $account_policies,
+        ));
 
 		if( !empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_options_page_slug ) {
 

@@ -450,7 +450,7 @@ if ($active_app === 'local' && empty($setup_code)) {
         $email_checked = in_array( 'email', $lockout_notify ) ? ' checked ' : '';
 
         $checklist = Config::get( 'checklist' );
-        $is_checklist =  $checklist ? ' checked disabled' : '';
+        $is_checklist =  $checklist === 'true' ? ' checked disabled' : '';
 
         $min_plan = 'Premium';
         $object_plan = new LimitLoginAttempts();
@@ -592,55 +592,4 @@ if ($active_app === 'local' && empty($setup_code)) {
         </div>
     </div>
     <?php endif; ?>
-
-
-    <?php
-    /**
-     * @var string $notice_popup_error_content
-     *
-     */
-    ?>
-    <script>
-        ;(function($){
-
-            $(document).ready(function() {
-
-                const $account_policies = $('input[name="strong_account_policies"]');
-                const $auto_update_choice = $('a[href="llar_auto_update_choice"]');
-                const $checkbox_auto_update_choice = $('input[name="auto_update_choice"]');
-
-                $account_policies.on('change', function () {
-
-                    $is_checklist = !!$(this).prop('checked');
-
-                    let data = {
-                        action: 'strong_account_policies',
-                        is_checklist: $is_checklist,
-                        sec: '<?php echo esc_js( wp_create_nonce( "llar-strong-account-policies" ) ); ?>'
-                    }
-
-                    ajax_callback_post(ajaxurl, data)
-                        .catch(function () {
-                            $account_policies.prop('checked', false);
-                        })
-
-                })
-
-                $auto_update_choice.on('click', function (e) {
-                    e.preventDefault();
-
-                    let checked = 'no';
-                    if (!$checkbox_auto_update_choice.is('checked')) {
-                        checked = 'yes';
-                    }
-
-                    let sec = '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>';
-                    let content = <?php echo json_encode( trim( $notice_popup_error_content ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?>;
-
-                    toggle_auto_update(checked, sec, content);
-
-                })
-            })
-        })(jQuery)
-    </script>
 </div>
