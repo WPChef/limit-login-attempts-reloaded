@@ -66,7 +66,7 @@ if( $active_app === 'local' ) {
 	$retries_chart_color = '#97F6C8';
 }
 
-if ($active_app === 'local' && ! empty($setup_code)) {
+if ($active_app === 'local' && empty($setup_code)) {
     require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php');
 }
 ?>
