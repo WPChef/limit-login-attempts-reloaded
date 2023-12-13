@@ -58,20 +58,62 @@ function ajax_callback_post( ajaxurl = null, data ) {
 }
 
 
-let notice_popup_error_update;
-let hide_auto_update_option;
-let toggle_auto_update;
-
 ( function( $ ) {
 
     $( document ).ready(function() {
 
-        toggle_auto_update = function( value, sec, content ) {
+        const $account_policies = $( 'input[name="strong_account_policies"]' );
+        const $checkbox_auto_update_choice = $( 'input[name="auto_update_choice"]' );
+        const $auto_update_choice = $( 'a[href="llar_auto_update_choice"]' );
+        const $auto_update_notice = $( '.llar-auto-update-notice' );
+        const content_html = $( '#llar_popup_error_content' ).html();
+
+
+        $account_policies.on( 'change', function () {
+
+            $is_checklist = !! $( this ).prop( 'checked' );
+
+            let data = {
+                action: 'strong_account_policies',
+                is_checklist: $is_checklist,
+                sec: llar_vars.account_policies
+            }
+
+            ajax_callback_post( ajaxurl, data )
+                .catch( function () {
+                    $account_policies.prop( 'checked', false );
+                } )
+
+        } )
+
+        $auto_update_choice.on( 'click', function ( e ) {
+            e.preventDefault();
+
+            let checked = 'no';
+
+            if ( ! $checkbox_auto_update_choice.is( 'checked' ) ) {
+                checked = 'yes';
+            }
+
+            toggle_auto_update( checked, content_html );
+        } )
+
+
+        $auto_update_notice.on( 'click', ' .auto-enable-update-option', function( e ) {
+            e.preventDefault();
+
+            let value = $( this ).data( 'val' );
+
+            toggle_auto_update( value, content_html ) ;
+        })
+
+
+        function toggle_auto_update( value, content ) {
 
             let data = {
                action: 'toggle_auto_update',
                value: value,
-               sec: sec
+               sec: llar_vars.auto_update
             }
 
             ajax_callback_post( ajaxurl, data )
@@ -88,11 +130,7 @@ let toggle_auto_update;
         };
 
 
-        hide_auto_update_option = function () {
-
-            const $auto_update_notice = $( '.llar-auto-update-notice' );
-            const $checkbox_auto_update_choice = $( 'input[name="auto_update_choice"]' );
-            const $auto_update_choice = $( 'a[href="llar_auto_update_choice"]' );
+        function hide_auto_update_option() {
 
             if ( $auto_update_notice.length > 0 && $auto_update_notice.css( 'display' ) !== 'none' ) {
 
@@ -108,7 +146,7 @@ let toggle_auto_update;
         }
 
 
-        notice_popup_error_update = $.dialog({
+        const notice_popup_error_update = $.dialog({
             title: false,
             content: this.content,
             lazyOpen: true,
@@ -127,5 +165,7 @@ let toggle_auto_update;
                 $card_body.text( this.msg );
             }
         } );
+
     } );
+
 } )(jQuery)

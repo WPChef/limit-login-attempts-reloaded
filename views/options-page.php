@@ -43,18 +43,16 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 </div>
 <?php endif; ?>
 
-<?php ob_start(); ?>
-<div class="popup_error_content__content">
-    <div class="popup_error_content__body">
-        <div class="card mx-auto">
-            <div class="card-header">
-            </div>
-            <div class="card-body">
+<div id="llar_popup_error_content" style="display: none">
+    <div class="popup_error_content__content">
+        <div class="popup_error_content__body">
+            <div class="card mx-auto">
+                <div class="card-body">
+                </div>
             </div>
         </div>
     </div>
 </div>
-<?php $notice_popup_error_content = ob_get_clean(); ?>
 
 <div class="wrap limit-login-page-settings">
 
@@ -93,22 +91,3 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 
     <?php include_once(LLA_PLUGIN_DIR.'views/tab-'.$active_tab.'.php'); ?>
 </div>
-
-<script>
-    ;( function( $ ) {
-        const $auto_update_notice = $( '.llar-auto-update-notice' );
-
-        $( document ).ready( function() {
-            $auto_update_notice.on( 'click', ' .auto-enable-update-option', function( e ) {
-                e.preventDefault();
-
-                let value = $(this).data('val');
-                let sec = '<?php echo wp_create_nonce( "llar-toggle-auto-update" ); ?>';
-                let content = <?php echo json_encode( trim( $notice_popup_error_content ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?>;
-
-                toggle_auto_update(value, sec, content) ;
-
-            })
-        })
-    })(jQuery);
-</script>
