@@ -12,7 +12,7 @@ $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_opti
 $onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
 $setup_code = Config::get( 'app_setup_code' );
 
-if( $onboarding_popup_shown || !empty( $setup_code ) ) return;
+//if( $onboarding_popup_shown || !empty( $setup_code ) ) return;
 
 ob_start(); ?>
 <div class="llar-onboarding-popup__content">
@@ -89,9 +89,13 @@ ob_start(); ?>
                     </li>
                 </ul>
                 <div class="field-video" id="video-play">
-                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/video-bg.webp" id="video-poster">
-                    <div class="video__iframe">
-                        <div id="player" data-plyr-provider="youtube" data-plyr-embed-id="IsotthPWCPA"></div>
+                    <div class="video-container" id="video-container">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/video-bg.webp" id="video-poster">
+                        <iframe id="video-frame" width="560" height="315"
+                                src="https://www.youtube.com/embed/IsotthPWCPA?si=IwgQaDKMaQ5E1iVy"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen></iframe>
                     </div>
                 </div>
                 <div class="button_block">

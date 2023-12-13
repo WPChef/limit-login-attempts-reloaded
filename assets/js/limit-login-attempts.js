@@ -57,10 +57,16 @@ function ajax_callback_post( ajaxurl = null, data ) {
     });
 }
 
-
 ( function( $ ) {
 
     $( document ).ready(function() {
+
+        const poster = '#video-poster';
+
+        $( document ).on( 'click', poster, function () {
+
+            $( poster ).css( 'display', 'none' );
+        } )
 
         const $account_policies = $( 'input[name="strong_account_policies"]' );
         const $checkbox_auto_update_choice = $( 'input[name="auto_update_choice"]' );
