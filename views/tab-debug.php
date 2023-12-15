@@ -60,6 +60,27 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
                     <div><?php echo esc_html( $plugin_data['Version'] ); ?></div>
                 </td>
             </tr>
+            <tr>
+                <th scope="row" valign="top"><?php echo __( 'Start Over', 'limit-login-attempts-reloaded' ); ?>
+                    <span class="hint_tooltip-parent">
+                            <span class="dashicons dashicons-editor-help"></span>
+                            <div class="hint_tooltip">
+                                <ul class="hint_tooltip-content">
+                                    <li>
+                                        <?php esc_attr_e( 'You can start over the onboarding process by clicking this button. All existing data will remain unchanged.', 'limit-login-attempts-reloaded' ); ?>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                </th>
+                <td>
+                    <div class="button_block-single">
+                        <button class="button menu__item button__orange">
+                            <?php _e( 'Reset', 'limit-login-attempts-reloaded' ); ?>
+                        </button>
+                    </div>
+                </td>
+            </tr>
         </table>
     </div>
 </div>
