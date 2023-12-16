@@ -1,11 +1,16 @@
 <?php
 
 use LLAR\Core\Helpers;
+use LLAR\Core\Config;
+use LLAR\Core\LimitLoginAttempts;
 
 if( !defined( 'ABSPATH' ) ) exit();
 
-$debug_info = '';
+$active_app = Config::get( 'active_app' );
+$active_app = ( $active_app === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
+$setup_code = Config::get( 'app_setup_code' );
 
+$debug_info = '';
 $ips = $server = array();
 
 foreach ($_SERVER as $key => $value) {
@@ -40,6 +45,7 @@ foreach ($server as $server_key => $ips ) {
 $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
 ?>
 
+
 <div id="llar-setting-page-debug">
     <div class="llar-settings-wrap">
         <table class="form-table">
@@ -60,6 +66,7 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
                     <div><?php echo esc_html( $plugin_data['Version'] ); ?></div>
                 </td>
             </tr>
+            <?php if ( $active_app === 'local' && empty( $setup_code ) ) : ?>
             <tr>
                 <th scope="row" valign="top"><?php echo __( 'Start Over', 'limit-login-attempts-reloaded' ); ?>
                     <span class="hint_tooltip-parent">
@@ -75,12 +82,14 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
                 </th>
                 <td>
                     <div class="button_block-single">
-                        <button class="button menu__item button__orange">
+                        <button class="button menu__item button__transparent_orange" id="llar_onboarding_reset">
                             <?php _e( 'Reset', 'limit-login-attempts-reloaded' ); ?>
                         </button>
                     </div>
                 </td>
             </tr>
+            <?php endif; ?>
         </table>
     </div>
 </div>
+

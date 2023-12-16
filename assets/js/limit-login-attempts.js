@@ -133,7 +133,7 @@ function ajax_callback_post( ajaxurl = null, data ) {
                    notice_popup_error_update.open();
                } )
 
-        };
+        }
 
 
         function hide_auto_update_option() {
@@ -171,6 +171,24 @@ function ajax_callback_post( ajaxurl = null, data ) {
                 $card_body.text( this.msg );
             }
         } );
+
+        const $onboarding_reset = $( '#llar_onboarding_reset' );
+
+        $onboarding_reset.on( 'click', function ( e ) {
+
+            e.preventDefault();
+
+            let data = {
+                action: 'onboarding_reset',
+                sec: llar_vars.onboarding_reset
+            }
+
+            ajax_callback_post( ajaxurl, data )
+                .then( function () {
+                    window.location = window.location + '&tab=dashboard';
+                } )
+
+        } )
 
     } );
 

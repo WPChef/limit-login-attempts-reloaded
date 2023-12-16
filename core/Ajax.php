@@ -36,6 +36,7 @@ class Ajax {
         add_action( 'wp_ajax_strong_account_policies', array( $this, 'strong_account_policies_callback' ) );
 		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
 		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
+		add_action( 'wp_ajax_onboarding_reset', array( $this, 'onboarding_reset_callback' ) );
 		add_action( 'wp_ajax_test_email_notifications', array( $this, 'test_email_notifications_callback' ) );
 	}
 
@@ -716,6 +717,27 @@ class Ajax {
 		wp_send_json_success( $message );
 	}
 
+
+    public function onboarding_reset_callback() {
+
+        if ( ! current_user_can( 'update_plugins' ) ) {
+
+            wp_send_json_error( array() );
+        }
+
+        check_ajax_referer( 'llar-strong-onboarding-reset', 'sec' );
+
+        if ( Config::get( 'active_app' ) !== 'local' || ! empty( Config::get( 'app_setup_code' ) ) ) {
+
+            wp_send_json_error( array() );
+        }
+
+        Config::update( 'onboarding_popup_shown', 0 );
+
+        wp_send_json_success();
+    }
+
+
 	public function toggle_auto_update_callback() {
 
 		if ( ! current_user_can( 'update_plugins' ) ) {
@@ -728,7 +750,7 @@ class Ajax {
             wp_send_json_error( array( 'msg' => 'Can\'t turn auto-updates on. Please ask your hosting provider or developer for assistance.') );
         }
 
-		check_ajax_referer('llar-toggle-auto-update', 'sec');
+		check_ajax_referer( 'llar-toggle-auto-update', 'sec' );
 
 		$value = sanitize_text_field( $_POST['value'] );
 		$auto_update_plugins = get_site_option( 'auto_update_plugins', array() );

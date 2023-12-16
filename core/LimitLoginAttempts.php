@@ -571,12 +571,14 @@ class LimitLoginAttempts {
 
 		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css', array(), $plugin_data['Version'] );
 
-        $auto_update = wp_create_nonce('llar-toggle-auto-update');
-        $account_policies = wp_create_nonce('llar-strong-account-policies');
+        $auto_update        = wp_create_nonce( 'llar-toggle-auto-update' );
+        $account_policies   = wp_create_nonce( 'llar-strong-account-policies' );
+        $onboarding_reset   = wp_create_nonce( 'llar-strong-onboarding-reset' );
 		wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array('jquery'), $plugin_data['Version'], false );
         wp_localize_script('lla-main', 'llar_vars', array(
             'auto_update'       => $auto_update,
             'account_policies'  => $account_policies,
+            'onboarding_reset'  => $onboarding_reset,
         ));
 
 		if( !empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_options_page_slug ) {

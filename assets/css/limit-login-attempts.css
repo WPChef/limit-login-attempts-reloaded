@@ -905,6 +905,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-debug .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page-debug .llar-settings-wrap .form-table tr td .input_border textarea {
   color: #A4A8B7;
 }
+#llar-setting-page-debug .llar-settings-wrap .form-table tr td .description-secondary {
+  padding-left: 0;
+}
 
 #llar-setting-page-logs .add_block__under_table.image_plus, #llar-setting-page-logs__active .add_block__under_table.image_plus {
   box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
