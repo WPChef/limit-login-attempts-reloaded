@@ -398,37 +398,20 @@ $content_step_4 = ob_get_clean();
                                 $spinner.addClass(visibility);
 
                                 activate_micro_cloud(real_email)
-                                    .then(function (response) {
-
-                                        if (response && response.setup_code) {
-
-                                            activate_license_key(ajaxurl, response.setup_code, sec_app_setup)
-                                                .then(function () {
-
-                                                    $subscribe_notification.addClass('llar-display-block');
-                                                    $button_next.removeClass(disabled);
-                                                    $button_next.removeClass('llar-display-none');
-                                                    $button_skip.addClass('llar-display-none');
-                                                })
-                                                .catch(function (response) {
-                                                    $subscribe_notification_error.text(response.data.msg)
-                                                    $subscribe_notification_error.addClass('llar-display-block')
-                                                    $button_skip.removeClass(disabled);
-                                                })
-                                                .finally(function () {
-
-                                                    $block_upgrade_subscribe.addClass('llar-display-none');
-                                                });
-
-                                        } else {
-                                            $subscribe_notification_error.addClass('llar-display-block')
-
-                                        }
+                                    .then(function () {
+                                        $subscribe_notification.addClass('llar-display-block');
+                                        $button_next.removeClass(disabled);
+                                        $button_next.removeClass('llar-display-none');
+                                        $button_skip.addClass('llar-display-none');
                                     })
-                                    .catch(function () {
-                                        $block_upgrade_subscribe.addClass('llar-display-none');
+                                    .catch(function (response) {
+                                        $subscribe_notification_error.text(response.data.msg)
                                         $subscribe_notification_error.addClass('llar-display-block')
-                                    });
+                                        $button_skip.removeClass(disabled);
+                                    })
+                                    .finally(function () {
+                                        $block_upgrade_subscribe.addClass('llar-display-none');
+                                    } )
 
                             });
                         } else if (next_step === 4) {

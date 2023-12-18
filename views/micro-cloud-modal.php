@@ -9,7 +9,7 @@ if( !defined( 'ABSPATH' ) ) exit();
  */
 
 $setup_code = Config::get( 'app_setup_code' );
-if( !empty( $setup_code ) ) return;
+//if( !empty( $setup_code ) ) return;
 
 $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 $url_site = esc_url(get_site_url());
@@ -155,25 +155,17 @@ $micro_cloud_popup_content = ob_get_clean();
                         activate_micro_cloud(real_email)
                             .then(function(response) {
 
-                                if(response && response.setup_code) {
+                                $button_subscribe_email.removeClass(disabled);
+                            })
+                            .catch(function() {
 
-                                    activate_license_key(ajaxurl, response.setup_code, sec_app_setup)
-                                        .then(function() {
+                                $subscribe_notification_error.removeClass('llar-display-none');
+                                $subscribe_notification.addClass('llar-display-none');
+                            })
+                            .finally(function() {
 
-                                            $button_subscribe_email.removeClass(disabled);
-                                        })
-                                        .catch(function() {
-
-                                            $subscribe_notification_error.removeClass('llar-display-none');
-                                            $subscribe_notification.addClass('llar-display-none');
-                                        })
-                                        .finally(function() {
-
-                                            $card_body_first.addClass('llar-display-none');
-                                            $card_body_second.removeClass('llar-display-none');
-                                        });
-
-                                }
+                                $card_body_first.addClass('llar-display-none');
+                                $card_body_second.removeClass('llar-display-none');
                             });
 
                         $button_dashboard.on('click', function () {

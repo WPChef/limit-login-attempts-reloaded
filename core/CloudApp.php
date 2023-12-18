@@ -128,6 +128,32 @@ class CloudApp {
 		return $return;
 	}
 
+	public static function activate_license_key($setup_code) {
+
+		$link = strrev( $setup_code );
+		$setup_result = self::setup( $link );
+
+		if ( $setup_result['success'] ) {
+
+			if ( $setup_result['app_config'] ) {
+
+				Helpers::cloud_app_update_config( $setup_result['app_config'], true );
+
+				Config::update( 'active_app', 'custom' );
+				Config::update( 'app_setup_code', $setup_code );
+
+				return ! empty( $key_result['app_config']['messages']['setup_success'] )
+					? $key_result['app_config']['messages']['setup_success']
+					: __( 'The app has been successfully imported.', 'limit-login-attempts-reloaded' );
+			}
+		} else {
+
+			return $setup_result['error'];
+		}
+
+		return $setup_result;
+	}
+
 	/**
 	 * @return bool|mixed
 	 * @throws Exception
