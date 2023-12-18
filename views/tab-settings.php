@@ -435,8 +435,7 @@ $active_app_config = Config::get( 'app_config' );
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"
-                                valign="top"><?php echo __( 'Trusted IP Origins', 'limit-login-attempts-reloaded' ); ?>
+                            <th scope="row" valign="top"><?php echo __( 'Trusted IP Origins', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
@@ -516,9 +515,8 @@ $active_app_config = Config::get( 'app_config' );
                 <div class="custom-app-tab">
                     <table class="form-table">
                         <tr>
-                            <th scope="row"
-                                valign="top"><?php echo __( 'Setup Code', 'limit-login-attempts-reloaded' ); ?>
-                                <span class="hint_tooltip-parent">
+                            <th scope="row" valign="top"><?php echo __( 'Setup Code', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="hint_tooltip-parent" id="llar_reset_setup_code">
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <ul class="hint_tooltip-content">
@@ -677,7 +675,7 @@ $active_app_config = Config::get( 'app_config' );
                         $app_config_field.val( pretty );
                     }
 
-                    $( '#limit-login-app-setup' ).on('click', function ( e  {
+                    $( '#limit-login-app-setup' ).on('click', function ( e ) {
                         e.preventDefault();
 
                         $app_ajax_msg.text( '' ).removeClass( 'success error' );
@@ -776,5 +774,3 @@ $active_app_config = Config::get( 'app_config' );
         </p>
     </form>
 </div>
-
-

@@ -36,8 +36,10 @@ class Ajax {
         add_action( 'wp_ajax_strong_account_policies', array( $this, 'strong_account_policies_callback' ) );
 		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
 		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
-		add_action( 'wp_ajax_onboarding_reset', array( $this, 'onboarding_reset_callback' ) );
+		add_action( 'wp_ajax_activate_micro_cloud', array( $this, 'activate_micro_cloud_callback' ) );
 		add_action( 'wp_ajax_test_email_notifications', array( $this, 'test_email_notifications_callback' ) );
+
+		add_action( 'wp_ajax_reset_setup_code', array( $this, 'reset_setup_code_callback' ) );
 	}
 
 	public function ajax_unlock() {
@@ -159,39 +161,33 @@ class Ajax {
 		if ( ! empty( $_POST['code'] ) ) {
 
 			$setup_code = sanitize_text_field( $_POST['code'] );
-			$link       = strrev( $setup_code );
 
-			if ( $setup_result = CloudApp::setup( $link ) ) {
+			if ( $key_result = CloudApp::activate_license_key( $setup_code ) ) {
 
-				if ( $setup_result['success'] ) {
+			    if ( $key_result['success'] ) {
 
-					if ( $setup_result['app_config'] ) {
+				    wp_send_json_success( array(
+					    'msg' => ( $key_result )
+				    ) );
+                } else {
 
-						Helpers::cloud_app_update_config( $setup_result['app_config'], true );
+				    wp_send_json_error( array(
+					    'msg' => ( $key_result )
+				    ) );
+                }
+            } else {
 
-						Config::update( 'active_app', 'custom' );
-						Config::update( 'app_setup_code', $setup_code );
-
-						wp_send_json_success( array(
-							'msg' => ( ! empty( $setup_result['app_config']['messages']['setup_success'] ) )
-								? $setup_result['app_config']['messages']['setup_success']
-								: __( 'The app has been successfully imported.', 'limit-login-attempts-reloaded' )
-						) );
-					}
-
-				} else {
-
-					wp_send_json_error( array(
-						'msg' => $setup_result['error']
-					) );
-				}
-			}
+                wp_send_json_error( array(
+                    'msg' => $key_result['error']
+                ) );
+            }
 		}
 
 		wp_send_json_error( array(
 			'msg' => __( 'Please specify the Setup Code', 'limit-login-attempts-reloaded' )
 		) );
 	}
+
 
 	public function app_log_action_callback() {
 
@@ -725,7 +721,7 @@ class Ajax {
             wp_send_json_error( array() );
         }
 
-        check_ajax_referer( 'llar-strong-onboarding-reset', 'sec' );
+        check_ajax_referer( 'llar-action-onboarding-reset', 'sec' );
 
         if ( Config::get( 'active_app' ) !== 'local' || ! empty( Config::get( 'app_setup_code' ) ) ) {
 
@@ -735,6 +731,68 @@ class Ajax {
         Config::update( 'onboarding_popup_shown', 0 );
 
         wp_send_json_success();
+    }
+
+
+    public function activate_micro_cloud_callback() {
+
+        if ( ! current_user_can( 'update_plugins' ) ) {
+
+            wp_send_json_error( array('msg' => 'Wrong country code.') );
+        }
+
+        check_ajax_referer( 'llar-activate-micro-cloud', 'sec' );
+	    $email = sanitize_text_field( trim( $_POST['email'] ) );
+	    $real_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
+
+	    if ( ! empty( $email ) ) {
+
+		     $url_api = 'https://api.limitloginattempts.com/checkout-staging/network';
+//		     $url_api = ''https://api.limitloginattempts.com/checkout/network'';
+
+            $data = [
+                'group' => 'free',
+                'email' => $real_email
+            ];
+
+            $response = Http::post( $url_api, array(
+                'data' => $data
+            ) );
+
+            if ( !empty( $response['error'] ) ) {
+
+                wp_send_json_error( $response['error'] );
+
+            } else {
+
+                $response_body = json_decode( $response['data'], true );
+
+                if ( ! empty( $response_body['setup_code'] ) ) {
+
+	                if ( $key_result = CloudApp::activate_license_key( $response_body['setup_code'] ) ) {
+
+		                if ( $key_result['success'] ) {
+
+			                wp_send_json_success( array(
+				                'msg' => ( $key_result )
+			                ) );
+		                } else {
+
+			                wp_send_json_error( array(
+				                'msg' => ( $key_result )
+			                ) );
+		                }
+	                } else {
+
+		                wp_send_json_error( array(
+			                'msg' => $key_result['error']
+		                ) );
+	                }
+                }
+            }
+        }
+
+	    wp_send_json_error( array() );
     }
 
 
@@ -800,5 +858,10 @@ class Ajax {
 
 			wp_send_json_error();
 		}
+	}
+
+	public function reset_setup_code_callback() {
+		Config::update( 'app_setup_code', '' );
+		wp_send_json_success();
 	}
 }

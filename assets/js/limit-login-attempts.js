@@ -1,24 +1,12 @@
 function activate_micro_cloud(email) {
-    let url_api = 'https://api.limitloginattempts.com/checkout-staging/network';
-    // let url_api = ''https://api.limitloginattempts.com/checkout/network'';
-
-    let form_data = [];
-    form_data.push({name: 'group', value: 'free'});
-    form_data.push({name: 'email', value: email});
-
-    let form_object = form_data.reduce(function(object, item) {
-        object[item.name] = item.value;
-        return object;
-    }, {});
 
     let data = {
-        url: url_api,
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(form_object),
+        action: 'activate_micro_cloud',
+        email: email,
+        sec: llar_vars.activate_micro_cloud,
     }
 
-    return ajax_callback_post(data)
+    return ajax_callback_post( ajaxurl, data )
 }
 
 
@@ -44,6 +32,8 @@ function ajax_callback_post( ajaxurl = null, data ) {
 
     return new Promise(function( resolve, reject ) {
         jQuery.post( ajaxurl, data, function ( response ) {
+
+            console.log(response);
 
             if ( ( response && ( 'success' in response ) && response.success === false ) ) {
                 reject( response );
@@ -73,7 +63,6 @@ function ajax_callback_post( ajaxurl = null, data ) {
         const $auto_update_choice = $( 'a[href="llar_auto_update_choice"]' );
         const $auto_update_notice = $( '.llar-auto-update-notice' );
         const content_html = $( '#llar_popup_error_content' ).html();
-
 
         $account_policies.on( 'change', function () {
 
@@ -151,7 +140,6 @@ function ajax_callback_post( ajaxurl = null, data ) {
             }
         }
 
-
         const notice_popup_error_update = $.dialog({
             title: false,
             content: this.content,
@@ -188,6 +176,21 @@ function ajax_callback_post( ajaxurl = null, data ) {
                     window.location = window.location + '&tab=dashboard';
                 } )
 
+        } )
+
+
+        const $reset_setup_code = $( '#llar_reset_setup_code' );
+
+        $reset_setup_code.on( 'click', function ( e ) {
+            e.preventDefault();
+
+            console.log('!!!!!!!!!!!');
+
+            let data = {
+                action: 'reset_setup_code',
+            }
+
+            ajax_callback_post( ajaxurl, data )
         } )
 
     } );
