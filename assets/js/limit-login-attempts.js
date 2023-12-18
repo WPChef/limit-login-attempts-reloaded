@@ -33,8 +33,6 @@ function ajax_callback_post( ajaxurl = null, data ) {
     return new Promise(function( resolve, reject ) {
         jQuery.post( ajaxurl, data, function ( response ) {
 
-            console.log(response);
-
             if ( ( response && ( 'success' in response ) && response.success === false ) ) {
                 reject( response );
             } else if ( response.error ) {
@@ -183,8 +181,6 @@ function ajax_callback_post( ajaxurl = null, data ) {
 
         $reset_setup_code.on( 'click', function ( e ) {
             e.preventDefault();
-
-            console.log('!!!!!!!!!!!');
 
             let data = {
                 action: 'reset_setup_code',
