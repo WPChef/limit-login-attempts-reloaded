@@ -504,7 +504,7 @@ $active_app_config = Config::get( 'app_config' );
                                     <span class="spinner llar-app-ajax-spinner"></span><br>
                                     <span class="llar-app-ajax-msg"></span>
                                     <div class="description-secondary mt-0_5 p-0">
-										<?php _e( 'Add this code to all websites in your network to sync protection (payment required for additional domains unless subscribed to Agency plan).', 'limit-login-attempts-reloaded' ) ?>
+										<?php _e( 'Add this code to all websites in your network to sync protection (payment required for additional domains unless it\'s with an Agency plan\'s first tier).', 'limit-login-attempts-reloaded' ) ?>
                                     </div>
                                 </div>
                             </td>

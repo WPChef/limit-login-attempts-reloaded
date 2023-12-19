@@ -103,7 +103,9 @@ $active_app = Config::get( 'active_app' );
                 <?php foreach ($compare_list as $category => $list) : ?>
                     <tr>
                         <td>
-                            <?php echo ($category === 'buttons_header' || $category === 'buttons_footer') ? '' : $category ?>
+                            <div class="category">
+	                            <?php echo ($category === 'buttons_header' || $category === 'buttons_footer') ? '' : $category ?>
+                            </div>
                             <div class="description">
                                 <?php echo !empty($list['description']) ? $list['description'] : '' ?>
                             </div>

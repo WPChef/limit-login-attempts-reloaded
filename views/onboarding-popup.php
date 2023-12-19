@@ -134,7 +134,7 @@ ob_start(); ?>
     <div class="card mx-auto">
         <div class="field-wrap">
             <div class="field-title-add">
-				<?php echo sprintf( __( 'Site URL: %s', 'limit-login-attempts-reloaded' ), esc_url( get_site_url() ) ); ?>
+				<?php echo sprintf( __( 'Site URL: %s', 'limit-login-attempts-reloaded' ), wp_parse_url( home_url(), PHP_URL_HOST ) ); ?>
             </div>
             <div class="field-email">
                 <input type="text" class="input_border" id="llar-subscribe-email" placeholder="Your email"
@@ -144,7 +144,7 @@ ob_start(); ?>
 				<?php _e( 'This email will receive notifications of unauthorized access to your website. You may turn this off in your settings.', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="field-checkbox">
-                <input type="checkbox" name="lockout_notify_email" checked value="email"/>
+                <input type="checkbox" name="lockout_notify_email" value="email"/>
                 <span>
                     <?php _e( 'Sign me up for the LLAR newsletter to receive important security alerts, plugin updates, and helpful guides.', 'limit-login-attempts-reloaded' ); ?>
                 </span>
