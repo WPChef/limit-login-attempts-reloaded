@@ -21,7 +21,7 @@ if ( $onboarding_popup_shown || ! empty( $setup_code ) ) {
 ob_start(); ?>
 <div class="llar-onboarding-popup__content">
     <div class="logo">
-        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/img/icon-logo-menu.png">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/img/icon-logo-menu.png">
     </div>
     <div class="llar-onboarding__line">
         <div class="point__block visited active" data-step="1">
@@ -51,7 +51,7 @@ ob_start(); ?>
     </div>
     <div class="llar-onboarding__body">
         <div class="title">
-            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/welcome.png">
+            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/welcome.png">
 			<?php _e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="card mx-auto">
@@ -94,7 +94,7 @@ ob_start(); ?>
                 </ul>
                 <div class="field-video" id="video-play">
                     <div class="video-container" id="video-container">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/video-bg.webp" id="video-poster">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/video-bg.webp" id="video-poster">
                         <iframe id="video-frame" width="560" height="315"
                                 src="https://www.youtube.com/embed/IsotthPWCPA?si=IwgQaDKMaQ5E1iVy"
                                 title="YouTube video player" frameborder="0"
@@ -128,7 +128,7 @@ $popup_complete_install_content = ob_get_clean();
 ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
-        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/email.png">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/email.png">
 		<?php _e( 'Notification Settings', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <div class="card mx-auto">
@@ -170,7 +170,7 @@ $content_step_2 = ob_get_clean();
 ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
-        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/rocket-min.png">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/rocket-min.png">
 		<?php _e( 'Limited Upgrade (Free)', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <div class="card mx-auto">
@@ -201,11 +201,11 @@ ob_start(); ?>
             </div>
         </div>
         <div class="llar-upgrade-subscribe_notification">
-            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/start.png">
+            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
 			<?php _e( 'Instructions sent via email', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="llar-upgrade-subscribe_notification__error">
-            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/start.png">
+            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
 			<?php _e( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="button_block-single">
@@ -227,12 +227,12 @@ $content_step_3 = ob_get_clean();
 ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
-        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/like-min.png">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/like-min.png">
 		<?php _e( 'Thank you for completing the setup', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <div class="card mx-auto">
         <div class="field-image">
-            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/schema-ok-min.png">
+            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/schema-ok-min.png">
         </div>
         <div class="field-desc">
 			<?php _e( 'This email will receive notifications of unauthorized access to your website. You may turn this off in your settings.', 'limit-login-attempts-reloaded' ); ?>

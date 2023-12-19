@@ -4,7 +4,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 <div class="llar-table-header">
     <h3 class="title_page">
-        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-exploitation.png">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-exploitation.png">
         <?php echo __( 'Active Lockouts', 'limit-login-attempts-reloaded' ); ?>
     </h3>
     <span class="right-link">

@@ -100,7 +100,7 @@
 }
 
 .dashicons-secondary {
-  margin-left: 0.5rem;
+  margin-left: 8px;
   font-size: 170%;
   line-height: inherit;
   position: relative;
@@ -205,7 +205,7 @@ ul.llar_list li::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm
   z-index: 955;
 }
 .hint_tooltip-content {
-  font-size: 14px;
+  font-size: 12px;
   white-space: initial;
   text-align: left;
   margin-top: 0;
@@ -1644,6 +1644,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-left: -20px;
 }
 #llar-dashboard-page .section-title__new {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  gap: 20px;
   font-size: 16px;
   text-align: left;
 }
@@ -1654,6 +1658,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .section-title__new .llar-label {
   color: #2A2F40;
+  min-width: 220px;
   padding: 2px 16px;
   border-radius: 8px;
   background-color: rgba(10, 172, 208, 0.08);
@@ -1664,10 +1669,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   }
 }
 #llar-dashboard-page .section-title__new .llar-label__url {
-  float: right;
   color: #A4A8B7;
   font-size: 87.5%;
   margin-right: 18px;
+  overflow: hidden;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-dashboard-page .section-title__new .llar-label__url {
@@ -2089,9 +2094,8 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .dashboard-section-4 .hint_tooltip {
   box-sizing: content-box;
-  padding-left: 0;
 }
-#llar-dashboard-page .dashboard-section-4 .hint_tooltip-content li {
+#llar-dashboard-page .dashboard-section-4 .hint_tooltip-content {
   font-size: 14px;
   color: white;
 }
@@ -2100,9 +2104,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   position: relative;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new {
-  display: flex;
-  justify-content: space-between;
   position: relative;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .llar-label {
+  min-width: unset;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .llar-label__date {
   background-color: #F6FBFF;

@@ -30,13 +30,13 @@ ob_start(); ?>
                     </div>
                 </div>
                 <div class="right_side">
-                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/micro-cloud-image-min.png">
+                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/micro-cloud-image-min.png">
                 </div>
             </div>
             <div class="card mx-auto">
                 <div class="card-header">
                     <div class="title">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/tools.png">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/tools.png">
                         <?php _e( 'How To Activate Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </div>
@@ -64,12 +64,12 @@ ob_start(); ?>
                 </div>
                 <div class="card-body step-second llar-display-none">
                     <div class="llar-upgrade-subscribe_notification__error llar-display-none">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/start.png">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
                         <?php _e( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <div class="llar-upgrade-subscribe_notification">
                         <div class="field-image">
-                            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/schema-ok-min.png">
+                            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/schema-ok-min.png">
                         </div>
                         <div class="field-desc">
                             <?php _e( 'This email will receive notifications of unauthorized access to your website. You may turn this off in your settings.', 'limit-login-attempts-reloaded' ); ?>

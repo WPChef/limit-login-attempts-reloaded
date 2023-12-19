@@ -10,7 +10,7 @@ $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.co
 ?>
 <div class="llar-table-header">
     <h3 class="title_page">
-        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-pre-install.png">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-pre-install.png">
         <?php _e( 'Event Log', 'limit-login-attempts-reloaded' ); ?>
     </h3>
 	<?php if( $full_log_url ): ?>

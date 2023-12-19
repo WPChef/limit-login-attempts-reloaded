@@ -29,7 +29,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
 
 <div id="llar-setting-page-logs">
     <h3 class="title_page">
-        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-check.png">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-check.png">
         <?php echo __( 'Statistics', 'limit-login-attempts-reloaded' ); ?>
     </h3>
 
@@ -149,25 +149,25 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
             </div>
             <div class="add_block__list">
                 <div class="item">
-                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/identify-counter-min.png">
+                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/identify-counter-min.png">
                     <div class="name">
                         <?php _e( 'Identify & Counter New Threats With IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </div>
                 <div class="item">
-                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/actibe-ip-min.png">
+                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/actibe-ip-min.png">
                     <div class="name">
                         <?php _e( 'Access Active Databases Of Malicious IPs To Bolster Defenses', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </div>
                 <div class="item">
-                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/unblock-min.png">
+                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/unblock-min.png">
                     <div class="name">
                         <?php _e( 'Unblock The Blocked Admin With Ease', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </div>
                 <div class="item">
-                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/deny-ip-min.png">
+                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/deny-ip-min.png">
                     <div class="name">
                         <?php _e( 'Deny IPs By Country', 'limit-login-attempts-reloaded' ); ?>
                     </div>
@@ -183,7 +183,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
 
     if( is_array( $log ) && ! empty( $log ) ) : ?>
         <h3 class="title_page">
-            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-pre-install.png">
+            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-pre-install.png">
             <?php echo __( 'Lockout log', 'limit-login-attempts-reloaded' ); ?>
         </h3>
 
@@ -254,25 +254,25 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && !empty( $black_li
                 </div>
                 <div class="add_block__list">
                     <div class="item">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/enhanced-logs-min.png">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/enhanced-logs-min.png">
                         <div class="name">
                             <?php _e( 'Enhanced Logs Tell You Exactly Which IPs Are Attempting Logins', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                     </div>
                     <div class="item">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/new-threats-min.png">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/new-threats-min.png">
                         <div class="name">
                             <?php _e( 'Identify & Counter New Threats With Ease', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                     </div>
                     <div class="item">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/deny-list-min.png">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/deny-list-min.png">
                         <div class="name">
                             <?php _e( 'Automatically Add Malicious IPs To Your Deny List', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                     </div>
                     <div class="item">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/unblock-min.png">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/unblock-min.png">
                         <div class="name">
                             <?php _e( 'Unblock The Blocked Admins Effortlessly', 'limit-login-attempts-reloaded' ); ?>
                         </div>

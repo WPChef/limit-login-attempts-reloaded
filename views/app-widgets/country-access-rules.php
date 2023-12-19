@@ -10,7 +10,7 @@ $countries_list = Helpers::get_countries_list();
 <div class="llar-block-country-wrap" style="display:none;">
     <div class="llar-table-header">
         <h3 class="title_page">
-            <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-filter.png">
+            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-filter.png">
             <?php _e( 'Country Access Rules', 'limit-login-attempts-reloaded' ); ?>
         </h3>
     </div>

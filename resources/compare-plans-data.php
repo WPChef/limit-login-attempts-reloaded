@@ -34,7 +34,7 @@ foreach ( $plans as $plan => $value ) {
     }
 }
 
-$lock = '<img src="' . LLA_PLUGIN_URL . '/assets/css/images/icon-lock-bw.png" class="icon-lock">';
+$lock = '<img src="' . LLA_PLUGIN_URL . 'assets/css/images/icon-lock-bw.png" class="icon-lock">';
 $yes = '<span class="llar_orange">&#x2713;</span>';
 
 $compare_list = array(
