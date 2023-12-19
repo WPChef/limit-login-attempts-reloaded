@@ -23,11 +23,11 @@ if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-c
 $auto_update_choice = Config::get( 'auto_update_choice' );
 ?>
 
-<?php if( $active_app === 'local' ) : ?>
+<?php if( $active_app !== 'local' ) : ?>
 <div id="llar-header-upgrade-message">
     <p>
         <span class="dashicons dashicons-info"></span>
-        <?php echo sprintf( __( '<a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to premium</a> to access our powerful login firewall, which detects, counters and neutralizes attacks in the cloud ', 'limit-login-attempts-reloaded' ),
+        <?php echo sprintf( __( 'Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
             'https://www.limitloginattempts.com/info.php?from=plugin-'.( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
         ); ?>
     </p>

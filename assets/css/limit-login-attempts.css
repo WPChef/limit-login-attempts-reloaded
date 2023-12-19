@@ -686,7 +686,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page .llar-settings-wrap .form-table tr td select.input_border, #llar-setting-page-logs .llar-settings-wrap .form-table tr td select.input_border, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td select.input_border, #llar-setting-page-debug .llar-settings-wrap .form-table tr td select.input_border, #llar-setting-page-premium .llar-settings-wrap .form-table tr td select.input_border, #llar-setting-page-help .llar-settings-wrap .form-table tr td select.input_border {
-    padding-right: 12px;
+    padding-right: 35px;
   }
 }
 #llar-setting-page .llar-settings-wrap .form-table tr td .input_border, #llar-setting-page-logs .llar-settings-wrap .form-table tr td .input_border, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td .input_border, #llar-setting-page-debug .llar-settings-wrap .form-table tr td .input_border, #llar-setting-page-premium .llar-settings-wrap .form-table tr td .input_border, #llar-setting-page-help .llar-settings-wrap .form-table tr td .input_border {
