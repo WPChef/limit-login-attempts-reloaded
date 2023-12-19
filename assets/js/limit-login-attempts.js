@@ -98,6 +98,7 @@ function ajax_callback_post( ajaxurl = null, data ) {
             let value = $( this ).data( 'val' );
 
             toggle_auto_update( value, content_html ) ;
+
         })
 
 
@@ -111,7 +112,7 @@ function ajax_callback_post( ajaxurl = null, data ) {
 
             ajax_callback_post( ajaxurl, data )
                .then( function () {
-                   hide_auto_update_option();
+                   hide_auto_update_option( value );
 
                } )
                .catch( function ( response ) {
@@ -123,14 +124,14 @@ function ajax_callback_post( ajaxurl = null, data ) {
         }
 
 
-        function hide_auto_update_option() {
+        function hide_auto_update_option( value ) {
 
             if ( $auto_update_notice.length > 0 && $auto_update_notice.css( 'display' ) !== 'none' ) {
 
                 $auto_update_notice.remove();
             }
 
-            if ( ! $checkbox_auto_update_choice.is('checked') ) {
+            if ( value === 'yes' && ! $checkbox_auto_update_choice.is('checked') ) {
 
                 let link_text = $auto_update_choice.text();
                 $checkbox_auto_update_choice.prop( 'checked', true );
@@ -157,6 +158,7 @@ function ajax_callback_post( ajaxurl = null, data ) {
                 $card_body.text( this.msg );
             }
         } );
+
 
         const $onboarding_reset = $( '#llar_onboarding_reset' );
 

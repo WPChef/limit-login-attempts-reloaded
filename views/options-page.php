@@ -38,7 +38,13 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 <div class="notice notice-error llar-auto-update-notice">
     <p>
         <?php _e( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', 'limit-login-attempts-reloaded' ); ?>
-        <a href="#" class="auto-enable-update-option" data-val="yes"><?php _e( 'Yes, enable auto-update', 'limit-login-attempts-reloaded' ); ?></a> | <a href="#" class="auto-enable-update-option" data-val="no"><?php _e( 'No thanks', 'limit-login-attempts-reloaded' ); ?></a>
+        <a href="#" class="auto-enable-update-option" data-val="yes">
+            <?php _e( 'Yes, enable auto-update', 'limit-login-attempts-reloaded' ); ?>
+        </a>
+        |
+        <a href="#" class="auto-enable-update-option" data-val="no">
+            <?php _e( 'No thanks', 'limit-login-attempts-reloaded' ); ?>
+        </a>
     </p>
 </div>
 <?php endif; ?>
