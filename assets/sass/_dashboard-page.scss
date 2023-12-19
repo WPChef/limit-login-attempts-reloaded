@@ -38,7 +38,7 @@
 
     .llar-label {
       color: $typography-primary;
-      min-width: 220px;
+      min-width: 180px;
       padding: 2px 16px;
       border-radius: $border-radius__min;
       background-color: rgba(10, 172, 208, 0.08);
@@ -97,7 +97,7 @@
       }
 
       @include _1399 {
-        width: calc(50% - 8px /2);
+        width: calc(50% - 8px / 2);
         min-height: 272px;
       }
 
@@ -115,6 +115,10 @@
         color: $typography-secondary;
         font-size: 16px;
         line-height: 1.5;
+
+        &-big {
+          font-size: 20px;
+        }
       }
     }
 
@@ -281,6 +285,11 @@
               &:hover {
                 background: $secondary-colors__dark-orange;
               }
+            }
+
+            &:focus {
+              outline: none!important;
+              box-shadow: unset!important;
             }
           }
         }
