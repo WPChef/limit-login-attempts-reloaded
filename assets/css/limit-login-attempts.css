@@ -2847,6 +2847,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
     min-width: 120px;
   }
 }
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .category {
+  font-weight: 500;
+}
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td .description {
   display: block;
   margin-top: 5px;

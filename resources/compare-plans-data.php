@@ -20,11 +20,15 @@ $upgrade_link = $active_app === 'custom' ? $object_plan->info_upgrade_link() : '
 $attribute = [];
 foreach ( $plans as $plan => $value ) {
 
-    if ( $value <= $plans[$actual_plan] ) {
-        $attribute[$plan]['class'] = 'class="button menu__item button__transparent_orange llar-disabled"';
-        $attribute[$plan]['title'] = 'Installed';
+    if ( $value < $plans[$actual_plan] ) {
+        $attribute[$plan]['class'] = '';
+        $attribute[$plan]['title'] = '';
     }
-    elseif ($plan === 'Micro Cloud') {
+    elseif ( $value === $plans[$actual_plan] ) {
+	    $attribute[$plan]['class'] =  'class="button menu__item button__transparent_orange llar-disabled"';
+	    $attribute[$plan]['title'] =  'Installed';
+    }
+    elseif ( $plan === 'Micro Cloud' ) {
         $attribute[$plan]['class'] =  'class="button menu__item button__orange button_micro_cloud"';
         $attribute[$plan]['title'] =  'Get Started (Free)';
     }
