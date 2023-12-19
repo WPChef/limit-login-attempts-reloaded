@@ -64,7 +64,6 @@ if( $active_app === 'local' ) {
     }
 
 	$retries_chart_title = __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
-//	$retries_chart_desc = __( 'All failed login attempts have been neutralized in the cloud', 'limit-login-attempts-reloaded' );
 	$retries_chart_color = '#97F6C8';
 }
 
