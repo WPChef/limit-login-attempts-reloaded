@@ -158,7 +158,7 @@ $border-radius__max: $border-radius * 2;
 }
 
 .dashicons-secondary {
-  margin-left: .5rem;
+  margin-left: 8px;
   font-size: 170%;
   line-height: inherit;
   position: relative;
@@ -269,7 +269,7 @@ ul.llar_list {
 
   &-content {
     @extend .llar_list;
-    font-size: 14px;
+    font-size: 12px;
     white-space: initial;
     text-align: left;
     margin-top: 0;

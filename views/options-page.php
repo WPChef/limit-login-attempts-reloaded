@@ -56,7 +56,7 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 
 <div class="wrap limit-login-page-settings">
 
-    <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/logo-llap.png">
+    <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/logo-llap.png">
 
     <div class="nav-tab-wrapper">
         <a href="<?php echo $this->get_options_page_uri('dashboard'); ?>" class="nav-tab <?php if($active_tab == 'dashboard'){echo 'nav-tab-active';} ?> "><?php _e('Dashboard', 'limit-login-attempts-reloaded'); ?></a>

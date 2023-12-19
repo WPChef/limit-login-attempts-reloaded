@@ -6,7 +6,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 	<div class="app-rules-col">
         <div class="llar-table-header">
             <h3 class="title_page">
-                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-grow-clients.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-grow-clients.png">
                 <?php _e( 'Login Access Rules', 'limit-login-attempts-reloaded' ); ?>
             </h3>
             <span class="help-link">
@@ -55,7 +55,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 	<div class="app-rules-col">
         <div class="llar-table-header">
             <h3 class="title_page">
-                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-ip.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-ip.png">
                 <?php _e( 'IP Access Rules', 'limit-login-attempts-reloaded' ); ?>
             </h3>
             <span class="help-link">

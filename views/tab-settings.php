@@ -57,7 +57,7 @@ $active_app_config = Config::get( 'app_config' );
 
 <div id="llar-setting-page">
     <h3 class="title_page">
-        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-exploitation.png">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-exploitation.png">
 		<?php echo __( 'General Settings', 'limit-login-attempts-reloaded' ); ?>
     </h3>
     <div class="description-page">
@@ -98,8 +98,7 @@ $active_app_config = Config::get( 'app_config' );
         <div class="llar-settings-wrap">
             <table class="form-table">
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'GDPR compliance', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th scope="row" valign="top"><?php echo __( 'GDPR compliance', 'limit-login-attempts-reloaded' ); ?></th>
                     <td>
                         <input type="checkbox" name="gdpr" value="1" <?php if ( $gdpr ): ?> checked <?php endif; ?>/>
 						<?php echo __( 'this makes the plugin <a href="https://gdpr-info.eu/" class="unlink link__style_unlink" target="_blank">GDPR</a> compliant by showing a message on the login page. <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-settings-gdpr" class="unlink llar-label" target="_blank">Read more</a>', 'limit-login-attempts-reloaded' ); ?>
@@ -111,18 +110,15 @@ $active_app_config = Config::get( 'app_config' );
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
-                                <ul class="hint_tooltip-content">
-                                    <li>
-                                        <?php esc_attr_e( 'This message will appear at the bottom of the login page.', 'limit-login-attempts-reloaded' ); ?>
-                                    </li>
-                                </ul>
+                                <div class="hint_tooltip-content">
+                                    <?php esc_attr_e( 'This message will appear at the bottom of the login page.', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
                             </div>
                         </span>
                     </th>
                     <td>
                         <div class="textarea_border">
-                            <textarea name="gdpr_message"
-                                      cols="85"><?php echo esc_textarea( stripslashes( $gdpr_message ) ); ?></textarea>
+                            <textarea name="gdpr_message" cols="85"><?php echo esc_textarea( stripslashes( $gdpr_message ) ); ?></textarea>
                         </div>
                         <div class="description-additional">
 							<?php echo __( 'You can use a shortcode here to insert links, for example, a link to your Privacy Policy page. <br>The shortcode is: [llar-link url="https://example.com" text="Privacy Policy"]', 'limit-login-attempts-reloaded' ); ?>
@@ -135,11 +131,9 @@ $active_app_config = Config::get( 'app_config' );
                 <!--                        <span class="hint_tooltip-parent">-->
                 <!--                            <span class="dashicons dashicons-editor-help"></span>-->
                 <!--                            <div class="hint_tooltip">-->
-                <!--                                <ul class="hint_tooltip-content">-->
-                <!--                                    <li>-->
-                <!--                                        --><?php //echo generate_lorem_ipsum(50) ?>
-                <!--                                    </li>-->
-                <!--                                </ul>-->
+                <!--                                <div class="hint_tooltip-content">-->
+            <!--                                        --><?php //echo generate_lorem_ipsum(50) ?>
+                <!--                                </div>-->
                 <!--                            </div>-->
                 <!--                        </span>-->
                 <!--                    </th>-->
@@ -157,16 +151,13 @@ $active_app_config = Config::get( 'app_config' );
                 <!--                </tr>-->
 
                 <tr>
-                    <th scope="row" valign="top"
-                        id="llar_lockout_notify"><?php echo __( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top" id="llar_lockout_notify"><?php echo __( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
-                                <ul class="hint_tooltip-content">
-                                    <li>
-                                        <?php esc_attr_e( 'Email address to which lockout notifications will be sent.', 'limit-login-attempts-reloaded' ); ?>
-                                    </li>
-                                </ul>
+                                <div class="hint_tooltip-content">
+                                    <?php esc_attr_e( 'Email address to which lockout notifications will be sent.', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
                             </div>
                         </span>
                     </th>
@@ -195,55 +186,46 @@ $active_app_config = Config::get( 'app_config' );
                 </tr>
 
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Display top menu item', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top"><?php echo __( 'Display top menu item', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
-                                <ul class="hint_tooltip-content">
-                                    <li>
-                                        <?php esc_attr_e( 'The LLAR plugin displays its item on the top navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>
-                                    </li>
-                                </ul>
+                                <div class="hint_tooltip-content">
+                                    <?php esc_attr_e( 'The LLAR plugin displays its item on the top navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
                             </div>
                         </span>
                     </th>
                     <td>
-                        <input type="checkbox"
-                               name="show_top_bar_menu_item" <?php checked( $show_top_bar_menu_item ); ?>> <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
+                        <input type="checkbox" name="show_top_bar_menu_item" <?php checked( $show_top_bar_menu_item ); ?> >
+                        <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
                     </td>
                 </tr>
 
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Display left menu item', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top"><?php echo __( 'Display left menu item', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
-                                <ul class="hint_tooltip-content">
-                                    <li>
-                                        <?php esc_attr_e( 'The LLAR plugin displays its item on the left navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>
-                                    </li>
-                                </ul>
+                                <div class="hint_tooltip-content">
+                                    <?php esc_attr_e( 'The LLAR plugin displays its item on the left navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
                             </div>
                         </span>
                     </th>
                     <td>
-                        <input type="checkbox"
-                               name="show_top_level_menu_item" <?php checked( $show_top_level_menu_item ); ?>> <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
+                        <input type="checkbox" name="show_top_level_menu_item" <?php checked( $show_top_level_menu_item ); ?> >
+                        <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Hide Dashboard Widget', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top"><?php echo __( 'Hide Dashboard Widget', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
-                                <ul class="hint_tooltip-content">
-                                    <li>
-                                        <?php esc_attr_e( 'The LLAR dashboard widget provides a quick glance of your daily failed login activity on the main WordPress dashboard. You may hide this widget by checking this box.', 'limit-login-attempts-reloaded' ); ?>
-                                    </li>
-                                </ul>
+                                <div class="hint_tooltip-content">
+                                    <?php esc_attr_e( 'The LLAR dashboard widget provides a quick glance of your daily failed login activity on the main WordPress dashboard. You may hide this widget by checking this box.', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
                             </div>
                         </span>
                     </th>
@@ -252,29 +234,25 @@ $active_app_config = Config::get( 'app_config' );
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"
-                        valign="top"><?php echo __( 'Display Menu Warning Icon', 'limit-login-attempts-reloaded' ); ?>
-                        &nbsp;
+                    <th scope="row" valign="top"><?php echo __( 'Display Menu Warning Icon', 'limit-login-attempts-reloaded' ); ?>                        &nbsp;
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
-                                <ul class="hint_tooltip-content">
-                                    <li>
-                                        <?php esc_attr_e( 'The warning badge is a red bubble icon displayed next to the LLAR logo on the main vertical navigation menu. It displays a warning if there were more than 100 attempts for a day.', 'limit-login-attempts-reloaded' ); ?>
-                                    </li>
-                                </ul>
+                                <div class="hint_tooltip-content">
+                                    <?php esc_attr_e( 'The warning badge is a red bubble icon displayed next to the LLAR logo on the main vertical navigation menu. It displays a warning if there were more than 100 attempts for a day.', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
                             </div>
                         </span>
                     </th>
                     <td>
-                        <input type="checkbox"
-                               name="show_warning_badge" <?php checked( $show_warning_badge ); ?>> <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
+                        <input type="checkbox" name="show_warning_badge" <?php checked( $show_warning_badge ); ?> >
+                        <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
                     </td>
                 </tr>
             </table>
 
             <h3 class="title_page">
-                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-gears.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-gears.png">
 				<?php echo __( 'App Settings', 'limit-login-attempts-reloaded' ); ?>
             </h3>
             <div class="description-page">
@@ -287,11 +265,9 @@ $active_app_config = Config::get( 'app_config' );
                             <span class="hint_tooltip-parent">
                                 <span class="dashicons dashicons-editor-help"></span>
                                 <div class="hint_tooltip">
-                                    <ul class="hint_tooltip-content">
-                                        <li>
-                                            <?php echo generate_lorem_ipsum( 50 ) ?>
-                                        </li>
-                                    </ul>
+                                    <div class="hint_tooltip-content">
+                                        <?php echo generate_lorem_ipsum( 50 ) ?>
+                                    </div>
                                 </div>
                             </span>
                         </th>
@@ -315,11 +291,9 @@ $active_app_config = Config::get( 'app_config' );
                             <span class="hint_tooltip-parent">
                                 <span class="dashicons dashicons-editor-help"></span>
                                 <div class="hint_tooltip">
-                                    <ul class="hint_tooltip-content">
-                                        <li>
-                                            <?php esc_attr_e( 'Switches from free version (local) to premium (cloud).', 'limit-login-attempts-reloaded' ); ?>
-                                        </li>
-                                    </ul>
+                                    <div class="hint_tooltip-content">
+                                        <?php esc_attr_e( 'Switches from free version (local) to premium (cloud).', 'limit-login-attempts-reloaded' ); ?>
+                                    </div>
                                 </div>
                             </span>
                         </th>
@@ -351,11 +325,9 @@ $active_app_config = Config::get( 'app_config' );
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
-                                        <ul class="hint_tooltip-content">
-                                            <li>
-                                                <?php esc_attr_e( 'Set lockout limits based on failed attempts.', 'limit-login-attempts-reloaded' ); ?>
-                                            </li>
-                                        </ul>
+                                        <div class="hint_tooltip-content">
+                                            <?php esc_attr_e( 'Set lockout limits based on failed attempts.', 'limit-login-attempts-reloaded' ); ?>
+                                        </div>
                                     </div>
                                 </span>
                             </th>
@@ -367,11 +339,9 @@ $active_app_config = Config::get( 'app_config' );
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
-                                        <ul class="hint_tooltip-content">
-                                            <li>
-                                                <?php esc_attr_e( 'Number of failed attempts allowed before locking out.', 'limit-login-attempts-reloaded' ); ?>
-                                            </li>
-                                        </ul>
+                                        <div class="hint_tooltip-content">
+                                            <?php esc_attr_e( 'Number of failed attempts allowed before locking out.', 'limit-login-attempts-reloaded' ); ?>
+                                        </div>
                                     </div>
                                 </span>
                                 <br/>
@@ -382,11 +352,9 @@ $active_app_config = Config::get( 'app_config' );
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
-                                        <ul class="hint_tooltip-content">
-                                            <li>
-                                                <?php esc_attr_e( 'Lockout time in minutes.', 'limit-login-attempts-reloaded' ); ?>
-                                            </li>
-                                        </ul>
+                                        <div class="hint_tooltip-content">
+                                            <?php esc_attr_e( 'Lockout time in minutes.', 'limit-login-attempts-reloaded' ); ?>
+                                        </div>
                                     </div>
                                 </span>
                                 <br/>
@@ -400,11 +368,9 @@ $active_app_config = Config::get( 'app_config' );
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
-                                        <ul class="hint_tooltip-content">
-                                            <li>
-                                                <?php esc_attr_e( 'After the specified number of lockouts the lockout time will increase by specified hours.', 'limit-login-attempts-reloaded' ); ?>
-                                            </li>
-                                        </ul>
+                                        <div class="hint_tooltip-content">
+                                            <?php esc_attr_e( 'After the specified number of lockouts the lockout time will increase by specified hours.', 'limit-login-attempts-reloaded' ); ?>
+                                        </div>
                                     </div>
                                 </span>
                                 <br/>
@@ -415,11 +381,9 @@ $active_app_config = Config::get( 'app_config' );
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
-                                        <ul class="hint_tooltip-content">
-                                            <li>
-                                                <?php esc_attr_e( 'Time in hours before blocks are removed.', 'limit-login-attempts-reloaded' ); ?>
-                                            </li>
-                                        </ul>
+                                        <div class="hint_tooltip-content">
+                                            <?php esc_attr_e( 'Time in hours before blocks are removed.', 'limit-login-attempts-reloaded' ); ?>
+                                        </div>
                                     </div>
                                 </span>
                                 <div class="description-secondary mt-0_5 p-0">
@@ -439,11 +403,9 @@ $active_app_config = Config::get( 'app_config' );
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
-                                        <ul class="hint_tooltip-content">
-                                            <li>
-                                                <?php esc_attr_e( 'Server variables containing IP addresses.', 'limit-login-attempts-reloaded' ); ?>
-                                            </li>
-                                        </ul>
+                                        <div class="hint_tooltip-content">
+                                            <?php esc_attr_e( 'Server variables containing IP addresses.', 'limit-login-attempts-reloaded' ); ?>
+                                        </div>
                                     </div>
                                 </span>
                             </th>
@@ -465,41 +427,41 @@ $active_app_config = Config::get( 'app_config' );
                         </div>
                         <div class="add_block__list">
                             <div class="item">
-                                <img class="icon" src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-lock-bg.png">
+                                <img class="icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-lock-bg.png">
                                 <div class="name">
 									<?php _e( 'Absorb site load caused by attacks', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
-                                <img class="icon" src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-ip-bg.png">
+                                <img class="icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-ip-bg.png">
                                 <div class="name">
 									<?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
                                 <img class="icon"
-                                     src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-blocklist-bg.png">
+                                     src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-blocklist-bg.png">
                                 <div class="name">
 									<?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
                                 <img class="icon"
-                                     src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-tech-support-bg.png">
+                                     src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-tech-support-bg.png">
                                 <div class="name">
 									<?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
                                 <img class="icon"
-                                     src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-backup-bg.png">
+                                     src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-backup-bg.png">
                                 <div class="name">
 									<?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
                                 <img class="icon"
-                                     src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-cancellation-bg.png">
+                                     src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-cancellation-bg.png">
                                 <div class="name">
 									<?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
@@ -519,11 +481,9 @@ $active_app_config = Config::get( 'app_config' );
                                 <span class="hint_tooltip-parent" id="llar_reset_setup_code">
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
-                                        <ul class="hint_tooltip-content">
-                                            <li>
-                                                <?php esc_attr_e( 'This is the code you receive via email once you subscribe to the LLAR premium cloud app. (example xxxxxxxxxxxxx=yek?putes/1v/moc.stpmettanigoltimil.ipa)', 'limit-login-attempts-reloaded' ); ?>
-                                            </li>
-                                        </ul>
+                                        <div class="hint_tooltip-content">
+                                            <?php esc_attr_e( 'This is the code you receive via email once you subscribe to the LLAR premium cloud app. (example xxxxxxxxxxxxx=yek?putes/1v/moc.stpmettanigoltimil.ipa)', 'limit-login-attempts-reloaded' ); ?>
+                                        </div>
                                     </div>
                                 </span>
                             </th>
@@ -551,8 +511,7 @@ $active_app_config = Config::get( 'app_config' );
                         </tr>
 						<?php if ( $active_app === 'custom' && $active_app_config ) : ?>
                             <tr class="app-form-field">
-                                <th scope="row"
-                                    valign="top"><?php echo __( 'Configuration', 'limit-login-attempts-reloaded' ); ?></th>
+                                <th scope="row" valign="top"><?php echo __( 'Configuration', 'limit-login-attempts-reloaded' ); ?></th>
                                 <td>
                                     <div class="field-col">
                                         <div class="textarea_border">
@@ -572,11 +531,9 @@ $active_app_config = Config::get( 'app_config' );
                                         <span class="hint_tooltip-parent">
                                             <span class="dashicons dashicons-editor-help"></span>
                                             <div class="hint_tooltip">
-                                                <ul class="hint_tooltip-content">
-                                                    <li>
-                                                        <?php echo esc_attr( $setting_params['description'] ); ?>
-                                                    </li>
-                                                </ul>
+                                                <div class="hint_tooltip-content">
+                                                    <?php echo esc_attr( $setting_params['description'] ); ?>
+                                                </div>
                                             </div>
                                         </span>
                                     </th>
@@ -614,37 +571,37 @@ $active_app_config = Config::get( 'app_config' );
                             </div>
                             <div class="add_block__list">
                                 <div class="item">
-                                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/shield-min.png">
+                                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/shield-min.png">
                                     <div class="name">
 										<?php _e( 'Absorb site load caused by attacks', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
                                 </div>
                                 <div class="item">
-                                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/ip-min.png">
+                                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/ip-min.png">
                                     <div class="name">
 										<?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
                                 </div>
                                 <div class="item">
-                                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/cross-min.png">
+                                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/cross-min.png">
                                     <div class="name">
 										<?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
                                 </div>
                                 <div class="item">
-                                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/call-min.png">
+                                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/call-min.png">
                                     <div class="name">
 										<?php _e( 'Get premium support', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
                                 </div>
                                 <div class="item">
-                                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/backup-min.png">
+                                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/backup-min.png">
                                     <div class="name">
 										<?php _e( 'Run auto backups of access control lists, lockouts and logs', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
                                 </div>
                                 <div class="item">
-                                    <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/anytime-min.png">
+                                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/anytime-min.png">
                                     <div class="name">
 										<?php _e( 'No contract - cancel anytime', 'limit-login-attempts-reloaded' ); ?>
                                     </div>

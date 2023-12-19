@@ -25,6 +25,10 @@
   }
 
   .section-title__new {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 20px;
     font-size: 16px;
     text-align: left;
 
@@ -34,6 +38,7 @@
 
     .llar-label {
       color: $typography-primary;
+      min-width: 220px;
       padding: 2px 16px;
       border-radius: $border-radius__min;
       background-color: rgba(10, 172, 208, 0.08);
@@ -43,10 +48,10 @@
       }
 
       &__url {
-        float: right;
         color: $typography-additional;
         font-size: 87.5%;
         margin-right: 18px;
+        overflow: hidden;
 
         @include _1599 {
           margin-right: 4px;
@@ -516,14 +521,10 @@
 
     .hint_tooltip {
       box-sizing: content-box;
-      padding-left: 0;
 
       &-content {
-
-        li {
-          font-size: 14px;
-          color: white;
-        }
+        font-size: 14px;
+        color: white;
       }
 
       &-parent {
@@ -535,11 +536,10 @@
     .info-box-1 {
 
       .section-title__new {
-        display: flex;
-        justify-content: space-between;
         position: relative;
 
         .llar-label {
+          min-width: unset;
 
           &__date {
             background-color: $background__sky-blue;

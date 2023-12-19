@@ -71,7 +71,7 @@ $active_app = Config::get( 'active_app' );
     <?php endif ?>
 
     <h3 class="title_page">
-        <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-magnifier.png">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-magnifier.png">
         <?php _e( 'Features comparison', 'limit-login-attempts-reloaded' ); ?>
     </h3>
 

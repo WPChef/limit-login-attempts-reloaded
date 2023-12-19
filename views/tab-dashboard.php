@@ -147,7 +147,7 @@ if ($active_app === 'local' && empty($setup_code)) {
                     <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
                 </span>
                 <span class="llar-label__url">
-                    <a href="<?php echo home_url( '/' ) ?>" class="link__style_unlink">
+                    <a class="link__style_unlink">
                         <?php echo wp_parse_url( home_url(), PHP_URL_HOST ) ?>
                     </a>
                 </span>
@@ -386,7 +386,7 @@ if ($active_app === 'local' && empty($setup_code)) {
 	<div class="dashboard-section-3">
         <div class="info-box-1">
             <div class="info-box-icon">
-                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-exploitation.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-exploitation.png">
             </div>
             <div class="info-box-content">
                 <div class="title"><a href="<?php echo $this->get_options_page_uri('logs-'.$active_app); ?>" class="link__style_unlink">
@@ -400,7 +400,7 @@ if ($active_app === 'local' && empty($setup_code)) {
         </div>
         <div class="info-box-1">
             <div class="info-box-icon">
-                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-help.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-help.png">
             </div>
             <div class="info-box-content">
                 <div class="title">
@@ -415,7 +415,7 @@ if ($active_app === 'local' && empty($setup_code)) {
         </div>
         <div class="info-box-1">
             <div class="info-box-icon">
-                <img src="<?php echo LLA_PLUGIN_URL ?>/assets/css/images/icon-web.png">
+                <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-web.png">
             </div>
             <div class="info-box-content">
                 <div class="title">
@@ -475,11 +475,9 @@ if ($active_app === 'local' && empty($setup_code)) {
                     <div class="hint_tooltip-parent">
                     <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                     <div class="hint_tooltip">
-                        <ul class="hint_tooltip-content">
-                            <li>
-                                <?php esc_attr_e( 'Failed logins for all users in the LLAR network.', 'limit-login-attempts-reloaded' ); ?>
-                            </li>
-                        </ul>
+                        <div class="hint_tooltip-content">
+                            <?php esc_attr_e( 'Failed logins for all users in the LLAR network.', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
                     </div>
                 </div>
                 </span>
@@ -498,7 +496,7 @@ if ($active_app === 'local' && empty($setup_code)) {
                         <tr>
                             <td>
                                 <?php if( $country_code !== 'ZZ' ) : ?>
-                                    <img class="flag-icon" src="<?php echo LLA_PLUGIN_URL; ?>/assets/img/flags/<?php echo esc_attr( $country_data['code'] ); ?>.png">
+                                    <img class="flag-icon" src="<?php echo LLA_PLUGIN_URL; ?>assets/img/flags/<?php echo esc_attr( strtolower( $country_code ) ); ?>.png">
                                 <?php endif; ?>
                                 <?php echo esc_html( $country_name ); ?>
                             </td>
