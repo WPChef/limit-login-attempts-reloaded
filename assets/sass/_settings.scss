@@ -384,6 +384,11 @@ button.llar_button {
         background: $typography-additional__light!important;
       }
     }
+
+    &:focus {
+      outline: none!important;
+      box-shadow: unset!important;
+    }
   }
 
   &.tags {
@@ -440,4 +445,8 @@ button.llar_button {
     outline: none!important;
     box-shadow: unset!important;
   }
+}
+
+.button_micro_cloud {
+  cursor: pointer;
 }

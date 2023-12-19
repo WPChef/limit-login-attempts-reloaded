@@ -48,7 +48,9 @@ if( $active_app === 'local' ) {
     } else {
 
 		$retries_chart_title = __( 'Warning: Your site has experienced over 100 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = sprintf(__('Your site is currently at a high risk for brute force activity. Consider <a href="%s" class="link__style_color_inherit llar_orange" target="_blank">premium protection</a> if frequent attacks persist or website performance is degraded', 'limit-login-attempts-reloaded'), 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-status');
+		$retries_chart_desc = sprintf(
+		        __('Your site is currently at a higher risk for brute force activity. We recommend our <a class="llar_orange %s" target="_blank">free Micro Cloud upgrade</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded'),
+                'button_micro_cloud');
 		$retries_chart_color = '#FF6633';
     }
 
@@ -62,7 +64,7 @@ if( $active_app === 'local' ) {
     }
 
 	$retries_chart_title = __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
-	$retries_chart_desc = __( 'All failed login attempts have been neutralized in the cloud', 'limit-login-attempts-reloaded' );
+//	$retries_chart_desc = __( 'All failed login attempts have been neutralized in the cloud', 'limit-login-attempts-reloaded' );
 	$retries_chart_color = '#97F6C8';
 }
 
@@ -135,7 +137,7 @@ if ($active_app === 'local' && empty($setup_code)) {
 
 					})();
                 </script>
-                <div class="title"><?php echo esc_html( $retries_chart_title ); ?></div>
+                <div class="title<?php echo $active_app !== 'local' ? ' title-big' : ''?>"><?php echo esc_html( $retries_chart_title ); ?></div>
                 <div class="desc"><?php echo $retries_chart_desc; ?></div>
             </div>
         </div>
@@ -348,12 +350,12 @@ if ($active_app === 'local' && empty($setup_code)) {
             <div class="actions">
                 <div class="actions__buttons">
                     <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta" title="Upgrade To Premium" target="_blank" class="link__style_unlink">
-                        <button class="button menu__item col button__transparent_orange button_micro_cloud">
+                        <button class="button menu__item button__transparent_orange">
                             <?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?>
                         </button>
                     </a>
                     <a title="Upgrade To Micro Cloud" class="link__style_unlink">
-                        <button class="button menu__item col button__orange button_micro_cloud">
+                        <button class="button menu__item button__orange button_micro_cloud">
                             <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
                         </button>
                     </a>

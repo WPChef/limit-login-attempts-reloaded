@@ -93,7 +93,7 @@ $micro_cloud_popup_content = ob_get_clean();
 
         $(document).ready(function(){
 
-            const $button_micro_cloud = $('.button.button_micro_cloud');
+            const $button_micro_cloud = $('.button.button_micro_cloud, a.button_micro_cloud');
             const sec_app_setup = '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>';
 
             $button_micro_cloud.on('click', function () {
