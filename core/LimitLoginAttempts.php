@@ -1663,8 +1663,8 @@ class LimitLoginAttempts {
                         }
                     }
                 }
-
                 $this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
+	            $this->cloud_app_init();
             }
 		}
 
@@ -1721,7 +1721,9 @@ class LimitLoginAttempts {
 
     private function info()
     {
-        $this->info_data = LimitLoginAttempts::$cloud_app->info();
+        if (self::$cloud_app) {
+	        $this->info_data = self::$cloud_app->info();
+        }
 
         return $this->info_data;
     }

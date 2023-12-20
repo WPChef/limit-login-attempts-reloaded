@@ -46,8 +46,8 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && ! empty( $trusted_ip_
 $active_app        = Config::get( 'active_app' );
 $app_setup_code    = Config::get( 'app_setup_code' );
 $active_app_config = Config::get( 'app_config' );
-
 ?>
+
 <?php if ( isset( $_GET['llar-cloud-activated'] ) && ! empty( $active_app_config['messages']['setup_success'] ) ) : ?>
     <div class="llar-app-notice success">
         <p><?php echo $active_app_config['messages']['setup_success']; ?></p>

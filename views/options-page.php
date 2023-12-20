@@ -21,9 +21,11 @@ if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-c
 }
 
 $auto_update_choice = Config::get( 'auto_update_choice' );
+
+$actual_plan = $active_app === 'custom' ? $this->info_sub_group() : '';
 ?>
 
-<?php if( $active_app !== 'local' ) : ?>
+<?php if( $active_app !== 'local' && $actual_plan === 'Micro Cloud' ) : ?>
 <div id="llar-header-upgrade-message">
     <p>
         <span class="dashicons dashicons-info"></span>

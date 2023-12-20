@@ -606,7 +606,7 @@
     font-weight: inherit;
     line-height: inherit;
     border-radius: $border-radius;
-    background-color: $background-body;
+    background-color: $background__sky-blue;
 
     .ui-accordion-header {
       color: $typography-primary;
@@ -632,7 +632,7 @@
       }
 
       &.ui-accordion-header-active {
-        background: unset;
+        background: white;
       }
     }
 
