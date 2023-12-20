@@ -139,6 +139,9 @@ By default, you will need to copy and paste the lists to each site manually. For
 
 = 2.25.27 =
 * Security improvement: Better shortcode escaping.
+* Fixed date formatting on the logs page.
+* Fixed top menu links on the front-end.
+* Badge added to the top menu.
 
 = 2.25.26 =
 * Security improvement: Different nonce for each AJAX action.
