@@ -874,7 +874,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-weight: inherit;
   line-height: inherit;
   border-radius: 20px;
-  background-color: #FDFDFD;
+  background-color: #F6FBFF;
 }
 #llar-setting-page .llar-accordion .ui-accordion-header, #llar-setting-page-logs .llar-accordion .ui-accordion-header, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header, #llar-setting-page-debug .llar-accordion .ui-accordion-header, #llar-setting-page-premium .llar-accordion .ui-accordion-header, #llar-setting-page-help .llar-accordion .ui-accordion-header {
   color: #2A2F40;
@@ -900,7 +900,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
 }
 #llar-setting-page .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-logs .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-debug .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-premium .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-help .llar-accordion .ui-accordion-header.ui-accordion-header-active {
-  background: unset;
+  background: white;
 }
 #llar-setting-page .llar-accordion .ui-accordion-content, #llar-setting-page-logs .llar-accordion .ui-accordion-content, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content, #llar-setting-page-debug .llar-accordion .ui-accordion-content, #llar-setting-page-premium .llar-accordion .ui-accordion-content, #llar-setting-page-help .llar-accordion .ui-accordion-content {
   padding-top: 0;
