@@ -865,6 +865,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   flex-wrap: nowrap;
   column-gap: 16px;
 }
+#llar-setting-page .button_block a.button.menu__item, #llar-setting-page-logs .button_block a.button.menu__item, #llar-setting-page-logs__active .button_block a.button.menu__item, #llar-setting-page-debug .button_block a.button.menu__item, #llar-setting-page-premium .button_block a.button.menu__item, #llar-setting-page-help .button_block a.button.menu__item {
+  text-align: center;
+}
 #llar-setting-page .llar-accordion, #llar-setting-page-logs .llar-accordion, #llar-setting-page-logs__active .llar-accordion, #llar-setting-page-debug .llar-accordion, #llar-setting-page-premium .llar-accordion, #llar-setting-page-help .llar-accordion {
   font-family: inherit;
   font-size: inherit;
@@ -1662,7 +1665,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 16px;
   color: #666D84;
   padding-left: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 #llar-dashboard-page ul li::before, #llar-dashboard-page ol li::before {
   color: #9762EF;
@@ -1856,9 +1859,8 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 18px;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions {
-  position: absolute;
+  position: relative;
   width: fit-content;
-  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -1871,6 +1873,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   text-transform: uppercase;
   font-size: 16px;
   margin-bottom: 5px;
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons a.button.menu__item {
+  text-transform: none;
+  text-align: center;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item {
   min-width: 200px;
@@ -1906,6 +1912,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item:focus {
   outline: none !important;
   box-shadow: unset !important;
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .remark {
+  font-size: 14px;
+  color: #666D84;
+  margin-top: 10px;
 }
 #llar-dashboard-page .dashboard-section-1.custom .info-box-2 {
   flex: 0 0 calc(66.666% - 16px);
@@ -2334,6 +2345,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: block;
   margin-bottom: 0;
   border-radius: 16px;
+  overflow-y: auto;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-closeIcon {
   top: 17px !important;
@@ -3033,6 +3045,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: block;
   margin-bottom: 0;
   border-radius: 16px;
+  overflow-y: hidden;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-closeIcon {
   top: 17px !important;
