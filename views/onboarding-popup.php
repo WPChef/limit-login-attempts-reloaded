@@ -289,7 +289,7 @@ $content_step_4 = ob_get_clean();
                     const disabled = 'llar-disabled';
                     const visibility = 'llar-visibility';
                     const sec_app_setup = '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>';
-                    let real_email = '<?php esc_attr_e( $admin_email ); ?>';
+                    let real_email = '<?php esc_js( $admin_email ); ?>';
 
                     $setup_code_key.on('input', function () {
 

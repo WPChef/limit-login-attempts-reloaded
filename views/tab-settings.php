@@ -620,6 +620,7 @@ $active_app_config = Config::get( 'app_config' );
 
                     $( "#llar-apps-accordion" ).accordion( {
                         heightStyle: "content",
+                        collapsible: true,
                         active: <?php echo ( $active_app === 'local' ) ? 0 : 1; ?>
                     } );
 
