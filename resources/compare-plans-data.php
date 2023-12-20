@@ -3,6 +3,7 @@
  * Array for plans comparison block
  *
  * @var string $active_app
+ * @var LimitLoginAttempts $this
  *
  */
 
