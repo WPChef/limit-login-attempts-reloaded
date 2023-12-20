@@ -905,9 +905,32 @@
   }
 }
 
-#menu-settings {
+#menu-settings,
+#wpadminbar {
   li {
     position: relative;
+    .llar-alert-icon {
+      .plugin-count {
+        background-color: #d63638;
+        color: #fff;
+        display: inline-block;
+        vertical-align: top;
+        box-sizing: border-box;
+        margin: 1px 0 -1px 2px;
+        padding: 0 5px;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 9px;
+        font-size: 11px;
+        line-height: 1.6;
+        text-align: center;
+      }
+    }
+  }
+}
+
+#menu-settings {
+  li {
     .llar-alert-icon {
       position: absolute;
       right: 5px;
@@ -915,6 +938,17 @@
       min-width: 15px;
       line-height: 15px;
       height: 15px;
+    }
+  }
+}
+
+#wpadminbar {
+  li {
+    .llar-alert-icon {
+      .plugin-count {
+        vertical-align: middle;
+        margin-top: -3px;
+      }
     }
   }
 }
