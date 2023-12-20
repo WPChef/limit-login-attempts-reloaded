@@ -338,26 +338,29 @@ if ($active_app === 'local' && empty($setup_code)) {
                             <?php _e( 'Help us secure our network by providing access to your login IP data.', 'limit-login-attempts-reloaded' ); ?>
                         </li>
                         <li class="star">
-                            <?php _e( 'In return, receive access to our premium features up to 1,000 requests per month!', 'limit-login-attempts-reloaded' ); ?>
+                            <?php _e( 'In return, receive access to our premium features up to 1,000 requests per month, and 100 for each subsequent month.', 'limit-login-attempts-reloaded' ); ?>
                         </li>
                         <li class="star">
-                            <?php _e( 'Once 1,000 requests are reached each month, the premium app will switch back to the free version and reset the follow month.', 'limit-login-attempts-reloaded' ); ?>
+                            <?php _e( 'Once the allocated requests are consumed, the premium app will switch back to the free version and reset the following month.', 'limit-login-attempts-reloaded' ); ?>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="actions">
                 <div class="actions__buttons">
-                    <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta" title="Upgrade To Premium" target="_blank" class="link__style_unlink">
-                        <button class="button menu__item button__transparent_orange">
-                            <?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?>
-                        </button>
+                    <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta"
+                       title="Upgrade To Premium"
+                       target="_blank"
+                       class="button menu__item button__transparent_orange link__style_unlink">
+                        <?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?>
                     </a>
-                    <a title="Upgrade To Micro Cloud" class="link__style_unlink">
-                        <button class="button menu__item button__orange button_micro_cloud">
-                            <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
-                        </button>
+                    <a title="Upgrade To Micro Cloud"
+                       class="button menu__item button__orange button_micro_cloud link__style_unlink">
+                        <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
                     </a>
+                </div>
+                <div class="remark">
+	                <?php _e( '*A request is utilized when our cloud app validates an IP before it is able to perform a login attempt.', 'limit-login-attempts-reloaded' ); ?>
                 </div>
             </div>
         </div>

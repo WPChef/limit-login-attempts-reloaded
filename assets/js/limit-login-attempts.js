@@ -163,7 +163,6 @@ function ajax_callback_post( ajaxurl = null, data ) {
         const $onboarding_reset = $( '#llar_onboarding_reset' );
 
         $onboarding_reset.on( 'click', function ( e ) {
-
             e.preventDefault();
 
             let data = {

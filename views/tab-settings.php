@@ -260,6 +260,7 @@ $active_app_config = Config::get( 'app_config' );
             </div>
             <div class="llar-settings-wrap">
                 <table class="form-table">
+	                <?php if ( $active_app === 'local' ) : ?>
                     <tr>
                         <th scope="row" valign="top"><?php echo __( 'Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
                             <span class="hint_tooltip-parent">
@@ -276,15 +277,21 @@ $active_app_config = Config::get( 'app_config' );
 								<?php echo __( 'Help us secure our network by sharing your login IP data. In return, receive limited access to our premium features up to 1,000 requests per month! Once 1,000 requests are reached each month, the premium app wil switch to FREE and reset the following month.' ) ?>
                             </div>
                             <div class="button_block">
-                                <button class="button menu__item col button__transparent_orange">
-									<?php echo __( 'Learn More', 'limit-login-attempts-reloaded' ); ?>
-                                </button>
-                                <button class="button menu__item col button__orange">
-									<?php echo __( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
-                                </button>
+                                <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta"
+                                   title="Upgrade To Premium"
+                                   target="_blank"
+                                   class="button menu__item button__transparent_orange link__style_unlink">
+		                            <?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?>
+                                </a>
+                                <a title="Upgrade To Micro Cloud"
+                                   class="button menu__item button__orange button_micro_cloud link__style_unlink">
+		                            <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
+                                </a>
                             </div>
                         </td>
                     </tr>
+		            <?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php') ?>
+	                <?php endif; ?>
 
                     <tr>
                         <th scope="row" valign="top"><?php echo __( 'Active App', 'limit-login-attempts-reloaded' ); ?>

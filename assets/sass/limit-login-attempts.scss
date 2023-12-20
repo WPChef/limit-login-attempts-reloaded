@@ -591,6 +591,13 @@
     display: flex;
     flex-wrap: nowrap;
     column-gap: 16px;
+
+    a {
+
+      &.button.menu__item {
+        text-align: center;
+      }
+    }
   }
 
   .llar-accordion {
