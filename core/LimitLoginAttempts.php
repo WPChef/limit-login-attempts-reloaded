@@ -699,7 +699,7 @@ class LimitLoginAttempts {
 
 		$admin_bar->add_node( array(
 			'id'    => $root_item_id,
-			'title' => __( 'LLAR', 'limit-login-attempts-reloaded' ),
+			'title' => __( 'LLAR', 'limit-login-attempts-reloaded' ) . $this->menu_alert_icon(),
 			'href'  => $this->get_options_page_uri(),
 		) );
 
@@ -775,7 +775,7 @@ class LimitLoginAttempts {
 		if ( is_network_admin() )
 			$uri = network_admin_url( 'settings.php?page=' . $this->_options_page_slug );
 		else
-		    $uri = menu_page_url( $this->_options_page_slug, false );
+		    $uri = admin_url( 'admin.php?page=' . $this->_options_page_slug );
 
 		if( !empty( $tab ) ) {
 

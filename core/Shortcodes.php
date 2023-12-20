@@ -28,7 +28,7 @@ class Shortcodes {
 			'text' 	=> 'Link'
 		), $attr );
 
-		return '<a href="' . esc_attr( $attr['url'] ) . '" target="_blank">' . esc_html( $attr['text'] ) . '</a>';
+		return '<a href="' . esc_url( $attr['url'] ) . '" target="_blank">' . esc_html( $attr['text'] ) . '</a>';
 	}
 
 }
