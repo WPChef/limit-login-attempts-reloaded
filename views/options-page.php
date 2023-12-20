@@ -66,7 +66,7 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
         <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/logo-llap.png">
 
 	    <?php if( $active_app !== 'local' ) : ?>
-            <a href="https://my.limitloginattempts.com/user/login" class="link__style_unlink" target="_blank">
+            <a href="https://my.limitloginattempts.com/" class="link__style_unlink" target="_blank">
                 Account Login
                 <div class="info-box-icon">
                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-backup-big-bw.png">

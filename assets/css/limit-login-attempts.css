@@ -3045,7 +3045,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: block;
   margin-bottom: 0;
   border-radius: 16px;
-  overflow-y: hidden;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-closeIcon {
   top: 17px !important;
