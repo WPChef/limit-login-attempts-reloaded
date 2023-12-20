@@ -1916,7 +1916,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .remark {
   font-size: 14px;
   color: #666D84;
-  margin-top: 10px;
+  margin: 15px 16px 0;
 }
 #llar-dashboard-page .dashboard-section-1.custom .info-box-2 {
   flex: 0 0 calc(66.666% - 16px);
