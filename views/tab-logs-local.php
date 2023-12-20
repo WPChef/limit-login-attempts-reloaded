@@ -131,10 +131,12 @@ if( is_array( $log ) && ! empty( $log ) ) { ?>
                 <th scope="col"><?php _e( 'Gateway', 'limit-login-attempts-reloaded' ); ?></th>
                 <th>
             </tr>
-
+            <?php
+            $date_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+            ?>
 			<?php foreach ( $log as $date => $user_info ) : ?>
                 <tr>
-                    <td class="limit-login-date"><?php echo date_i18n(__( 'F d, Y H:i', 'limit-login-attempts-reloaded' ), $date ); ?></td>
+                    <td class="limit-login-date"><?php echo get_date_from_gmt( date( 'Y-m-d H:i:s', $date ), $date_format ); ?></td>
                     <td class="limit-login-ip">
 						<?php echo esc_html( $user_info['ip'] ); ?>
                     </td>
