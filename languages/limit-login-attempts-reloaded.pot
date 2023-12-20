@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.25.26\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.25.27\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-11-01T16:28:39+03:00\n"
+"POT-Creation-Date: 2023-12-20T11:46:21+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -889,19 +889,15 @@ msgstr ""
 msgid "Tried to log in as"
 msgstr ""
 
-#: views/tab-logs-local.php:137
-msgid "F d, Y H:i"
-msgstr ""
-
-#: views/tab-logs-local.php:141
+#: views/tab-logs-local.php:143
 msgid " lockouts"
 msgstr ""
 
-#: views/tab-logs-local.php:145
+#: views/tab-logs-local.php:147
 msgid "Unlock"
 msgstr ""
 
-#: views/tab-logs-local.php:147
+#: views/tab-logs-local.php:149
 msgid "Unlocked"
 msgstr ""
 
