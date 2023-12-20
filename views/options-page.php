@@ -62,7 +62,20 @@ $auto_update_choice = Config::get( 'auto_update_choice' );
 
 <div class="wrap limit-login-page-settings">
 
-    <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/logo-llap.png">
+    <div class="limit-login-page-settings__logo_block">
+        <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/logo-llap.png">
+
+	    <?php if( $active_app !== 'local' ) : ?>
+            <a href="https://my.limitloginattempts.com/user/login" class="link__style_unlink" target="_blank">
+                Account Login
+                <div class="info-box-icon">
+                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-backup-big-bw.png">
+                </div>
+            </a>
+	    <?php endif; ?>
+
+    </div>
+
 
     <div class="nav-tab-wrapper">
         <a href="<?php echo $this->get_options_page_uri('dashboard'); ?>" class="nav-tab <?php if($active_tab == 'dashboard'){echo 'nav-tab-active';} ?> "><?php _e('Dashboard', 'limit-login-attempts-reloaded'); ?></a>

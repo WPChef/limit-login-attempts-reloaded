@@ -375,6 +375,22 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
     margin: 8px 16px 8px 0;
   }
 }
+.limit-login-page-settings__logo_block {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 18px;
+  margin-right: 20px;
+}
+.limit-login-page-settings__logo_block .info-box-icon {
+  display: inline-block;
+  margin-left: 5px;
+}
+.limit-login-page-settings__logo_block .info-box-icon img {
+  width: 15px;
+  vertical-align: middle;
+}
 .limit-login-page-settings__logo {
   margin-top: 21px;
   margin-left: 4px;
@@ -383,6 +399,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .limit-login-page-settings .nav-tab-wrapper {
   position: relative;
   border-bottom: unset;
+  margin-top: 20px;
 }
 .limit-login-page-settings .nav-tab-wrapper .nav-tab {
   border: unset;

@@ -19,6 +19,25 @@
     margin: 8px 16px 8px 0;
   }
 
+  &__logo_block {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 18px;
+    margin-right: 20px;
+
+    .info-box-icon {
+      display: inline-block;
+      margin-left: 5px;
+
+      img {
+        width: 15px;
+        vertical-align: middle;
+      }
+    }
+  }
+
   &__logo {
     margin-top: 21px;
     margin-left: 4px;
@@ -28,6 +47,7 @@
   .nav-tab-wrapper {
     position: relative;
     border-bottom: unset;
+    margin-top: 20px;
 
     .nav-tab {
       border: unset;
