@@ -148,7 +148,7 @@ class CloudApp {
 			}
 		} else {
 
-			return $setup_result['error'];
+			return $setup_result;
 		}
 
 		return $setup_result;

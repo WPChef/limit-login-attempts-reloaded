@@ -1,34 +1,38 @@
-function activate_micro_cloud(email) {
+function llar_activate_micro_cloud( email ) {
 
     let data = {
         action: 'activate_micro_cloud',
         email: email,
-        sec: llar_vars.activate_micro_cloud,
+        sec: llar_vars.nonce_activate_micro_cloud,
     }
 
-    return ajax_callback_post( ajaxurl, data )
+    return llar_ajax_callback_post( ajaxurl, data )
 }
 
 
-function activate_license_key( ajaxurl, $setup_code, sec ) {
+function llar_activate_license_key( $setup_code ) {
 
     let data = {
         action: 'app_setup',
         code:   $setup_code,
-        sec:    sec,
+        sec: llar_vars.nonce_app_setup,
     }
 
-    return ajax_callback_post( ajaxurl, data )
+    return llar_ajax_callback_post( ajaxurl, data )
 }
 
 
-function is_valid_email( email ) {
+function llar_is_valid_email( email ) {
+
+    if ( email === null ) {
+        return false;
+    }
 
     let email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return email_regex.test( email );
 }
 
-function ajax_callback_post( ajaxurl = null, data ) {
+function llar_ajax_callback_post( ajaxurl = null, data ) {
 
     return new Promise(function( resolve, reject ) {
         jQuery.post( ajaxurl, data, function ( response ) {
@@ -69,10 +73,10 @@ function ajax_callback_post( ajaxurl = null, data ) {
             let data = {
                 action: 'strong_account_policies',
                 is_checklist: $is_checklist,
-                sec: llar_vars.account_policies
+                sec: llar_vars.nonce_account_policies
             }
 
-            ajax_callback_post( ajaxurl, data )
+            llar_ajax_callback_post( ajaxurl, data )
                 .catch( function () {
                     $account_policies.prop( 'checked', false );
                 } )
@@ -107,10 +111,10 @@ function ajax_callback_post( ajaxurl = null, data ) {
             let data = {
                action: 'toggle_auto_update',
                value: value,
-               sec: llar_vars.auto_update
+               sec: llar_vars.nonce_auto_update
             }
 
-            ajax_callback_post( ajaxurl, data )
+            llar_ajax_callback_post( ajaxurl, data )
                .then( function () {
                    hide_auto_update_option( value );
 
@@ -167,10 +171,10 @@ function ajax_callback_post( ajaxurl = null, data ) {
 
             let data = {
                 action: 'onboarding_reset',
-                sec: llar_vars.onboarding_reset
+                sec: llar_vars.nonce_onboarding_reset
             }
 
-            ajax_callback_post( ajaxurl, data )
+            llar_ajax_callback_post( ajaxurl, data )
                 .then( function () {
                     window.location = window.location + '&tab=dashboard';
                 } )
@@ -187,7 +191,7 @@ function ajax_callback_post( ajaxurl = null, data ) {
                 action: 'reset_setup_code',
             }
 
-            ajax_callback_post( ajaxurl, data )
+            llar_ajax_callback_post( ajaxurl, data )
         } )
 
     } );

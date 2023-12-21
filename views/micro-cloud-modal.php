@@ -9,10 +9,10 @@ if( !defined( 'ABSPATH' ) ) exit();
  */
 
 $setup_code = Config::get( 'app_setup_code' );
-//if( !empty( $setup_code ) ) return;
+if( ! empty( $setup_code ) ) return;
 
 $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
-$url_site = esc_url(get_site_url());
+$url_site = esc_url( get_site_url() );
 
 ob_start(); ?>
     <div class="micro_cloud_modal__content">
@@ -89,18 +89,18 @@ $micro_cloud_popup_content = ob_get_clean();
 ?>
 
 <script>
-    ;(function($){
+    ;( function( $ ) {
 
-        $(document).ready(function(){
+        $( document ).ready( function() {
 
-            const $button_micro_cloud = $('.button.button_micro_cloud, a.button_micro_cloud');
+            const $button_micro_cloud = $( '.button.button_micro_cloud, a.button_micro_cloud' );
             const sec_app_setup = '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>';
 
-            $button_micro_cloud.on('click', function () {
+            $button_micro_cloud.on( 'click', function () {
                 micro_cloud_modal.open();
-            })
+            } )
 
-            const micro_cloud_modal = $.dialog({
+            const micro_cloud_modal = $.dialog( {
                 title: false,
                 content: `<?php echo trim( $micro_cloud_popup_content ); ?>`,
                 lazyOpen: true,
@@ -117,66 +117,67 @@ $micro_cloud_popup_content = ob_get_clean();
                 buttons: {},
                 onOpenBefore: function () {
 
-                    const $subscribe_email = $('#llar-subscribe-email');
-                    const $button_subscribe_email = $('#llar-button_subscribe-email');
-                    const $card_body_first = $('.card-body.step-first');
-                    const $card_body_second = $('.card-body.step-second');
-                    const $button_dashboard = $('#llar-button_dashboard');
-                    const $subscribe_notification = $('.llar-upgrade-subscribe_notification');
-                    const $subscribe_notification_error = $('.llar-upgrade-subscribe_notification__error');
-                    const $spinner = $button_subscribe_email.find('.preloader-wrapper .spinner');
+                    const $subscribe_email = $( '#llar-subscribe-email' );
+                    const $button_subscribe_email = $( '#llar-button_subscribe-email' );
+                    const $card_body_first = $( '.card-body.step-first' );
+                    const $card_body_second = $( '.card-body.step-second' );
+                    const $button_dashboard = $( '#llar-button_dashboard' );
+                    const $subscribe_notification = $( '.llar-upgrade-subscribe_notification' );
+                    const $subscribe_notification_error = $( '.llar-upgrade-subscribe_notification__error' );
+                    const $spinner = $button_subscribe_email.find( '.preloader-wrapper .spinner' );
                     const disabled = 'llar-disabled';
                     const visibility = 'llar-visibility';
-                    let real_email = '<?php esc_attr_e( $admin_email ); ?>';
+                    const real_email = '<?php echo esc_js( $admin_email ); ?>';
 
-                    $subscribe_email.on('blur', function() {
+                    let email = $subscribe_email.val().trim();
 
-                        let email = $(this).val().trim();
+                    $subscribe_email.on( 'blur', function() {
 
-                        if (!is_valid_email(email)) {
-                            $button_subscribe_email.addClass(disabled)
+                        email = $( this ).val().trim();
+
+                        if ( ! llar_is_valid_email( email ) ) {
+                            $button_subscribe_email.addClass( disabled )
                         }
                         else {
-                            $button_subscribe_email.removeClass(disabled)
-                            real_email = email;
+                            $button_subscribe_email.removeClass( disabled )
                         }
-                    });
+                    } );
 
-                    $button_subscribe_email.on('click', function (e) {
+                    $button_subscribe_email.on( 'click', function ( e ) {
                         e.preventDefault();
 
-                        if($button_subscribe_email.hasClass(disabled)) {
+                        if ( $button_subscribe_email.hasClass( disabled ) ) {
                             return;
                         }
 
-                        $button_subscribe_email.addClass(disabled);
-                        $spinner.addClass(visibility);
+                        $button_subscribe_email.addClass( disabled );
+                        $spinner.addClass( visibility );
 
-                        activate_micro_cloud(real_email)
-                            .then(function(response) {
+                        llar_activate_micro_cloud( real_email )
+                            .then( function() {
 
-                                $button_subscribe_email.removeClass(disabled);
-                            })
-                            .catch(function() {
+                                $button_subscribe_email.removeClass( disabled );
+                            } )
+                            .catch( function() {
 
-                                $subscribe_notification_error.removeClass('llar-display-none');
-                                $subscribe_notification.addClass('llar-display-none');
-                            })
-                            .finally(function() {
+                                $subscribe_notification_error.removeClass( 'llar-display-none' );
+                                $subscribe_notification.addClass( 'llar-display-none' );
+                            } )
+                            .finally( function() {
 
-                                $card_body_first.addClass('llar-display-none');
-                                $card_body_second.removeClass('llar-display-none');
-                            });
+                                $card_body_first.addClass( 'llar-display-none' );
+                                $card_body_second.removeClass( 'llar-display-none' );
+                            } );
 
-                        $button_dashboard.on('click', function () {
+                        $button_dashboard.on( 'click', function () {
                             window.location = window.location + '&tab=dashboard';
 
-                        })
+                        } )
 
-                    })
+                    } )
                 }
-            });
-        })
+            } );
+        } )
 
-    })(jQuery)
+    } )( jQuery )
 </script>
