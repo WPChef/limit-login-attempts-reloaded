@@ -28,7 +28,7 @@ $actual_plan = $active_app === 'custom' ? $this->info_sub_group() : '';
 <?php if( $active_app !== 'local' && $actual_plan === 'Micro Cloud' ) : ?>
 <div id="llar-header-upgrade-message">
     <p>
-        <span class="dashicons dashicons-info"></span>
+        <span class="dashicons dashicons-superhero"></span>
         <?php echo sprintf( __( 'Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
             'https://www.limitloginattempts.com/info.php?from=plugin-'.( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
         ); ?>

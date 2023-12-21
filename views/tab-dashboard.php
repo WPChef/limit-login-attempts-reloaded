@@ -457,11 +457,10 @@ if ($active_app === 'local' && empty($setup_code)) {
         $is_checklist =  $checklist === 'true' ? ' checked disabled' : '';
 
         $min_plan = 'Premium';
-        $object_plan = new LimitLoginAttempts();
-        $block_sub_group = $active_app === 'custom' ? $object_plan->info_sub_group() : false;
-        $plans = $object_plan->array_name_plans();
+        $plans = $this->array_name_plans();
+        $block_sub_group = $active_app === 'custom' ? $this->info_sub_group() : false;
         $upgrade_premium = ($active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan]) ? ' checked' : '';
-        $block_by_country = $block_sub_group ? $object_plan->info_block_by_country() : false;
+        $block_by_country = $block_sub_group ? $this->info_block_by_country() : false;
         $block_by_country_disabled = $block_sub_group ? '' : ' disabled';
         $is_by_country =  $block_by_country ? ' checked disabled' : $block_by_country_disabled;
         $is_auto_update_choice = (Helpers::is_auto_update_enabled() && !Helpers::is_block_automatic_update_disabled()) ? ' checked' : '';
