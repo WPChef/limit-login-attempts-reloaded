@@ -50,7 +50,7 @@ $active_app_config = Config::get( 'app_config' );
 $min_plan = 'Premium';
 $plans = $this->array_name_plans();
 $block_sub_group = $active_app === 'custom' ? $this->info_sub_group() : false;
-$is_premium = ($active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan]);
+$is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan] );
 ?>
 
 <?php if ( isset( $_GET['llar-cloud-activated'] ) && ! empty( $active_app_config['messages']['setup_success'] ) ) : ?>

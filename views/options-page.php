@@ -21,22 +21,21 @@ if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-c
 }
 
 $auto_update_choice = Config::get( 'auto_update_choice' );
-
 $actual_plan = $active_app === 'custom' ? $this->info_sub_group() : '';
 ?>
 
-<?php if( $active_app !== 'local' && $actual_plan === 'Micro Cloud' ) : ?>
+<?php if ( $active_app !== 'local' && $actual_plan === 'Micro Cloud' ) : ?>
 <div id="llar-header-upgrade-message">
     <p>
         <span class="dashicons dashicons-superhero"></span>
         <?php echo sprintf( __( 'Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
-            'https://www.limitloginattempts.com/info.php?from=plugin-'.( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
+            'https://www.limitloginattempts.com/info.php?from=plugin-' . ( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
         ); ?>
     </p>
 </div>
 <?php endif; ?>
 
-<?php if( ( $auto_update_choice || $auto_update_choice === null ) && !Helpers::is_auto_update_enabled() ) : ?>
+<?php if ( ( $auto_update_choice || $auto_update_choice === null ) && !Helpers::is_auto_update_enabled() ) : ?>
 <div class="notice notice-error llar-auto-update-notice">
     <p>
         <?php _e( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', 'limit-login-attempts-reloaded' ); ?>
@@ -67,7 +66,7 @@ $actual_plan = $active_app === 'custom' ? $this->info_sub_group() : '';
     <div class="limit-login-page-settings__logo_block">
         <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/logo-llap.png">
 
-	    <?php if( $active_app !== 'local' ) : ?>
+	    <?php if ( $active_app !== 'local' ) : ?>
             <a href="https://my.limitloginattempts.com/" class="link__style_unlink" target="_blank">
                 Account Login
                 <div class="info-box-icon">
@@ -78,37 +77,58 @@ $actual_plan = $active_app === 'custom' ? $this->info_sub_group() : '';
 
     </div>
 
-
+    <?php $nav_tab_active = ' nav-tab-active'; ?>
     <div class="nav-tab-wrapper">
-        <a href="<?php echo $this->get_options_page_uri('dashboard'); ?>" class="nav-tab <?php if($active_tab == 'dashboard'){echo 'nav-tab-active';} ?> "><?php _e('Dashboard', 'limit-login-attempts-reloaded'); ?></a>
-        <a href="<?php echo $this->get_options_page_uri('settings'); ?>" class="nav-tab <?php if($active_tab == 'settings'){echo 'nav-tab-active';} ?> "><?php _e('Settings', 'limit-login-attempts-reloaded'); ?></a>
+        <a href="<?php echo $this->get_options_page_uri( 'dashboard' ); ?>"
+           class="nav-tab<?php echo $active_tab === 'dashboard' ? $nav_tab_active : '' ?>">
+            <?php _e( 'Dashboard', 'limit-login-attempts-reloaded' ); ?>
+        </a>
+        <a href="<?php echo $this->get_options_page_uri( 'settings' ); ?>"
+           class="nav-tab<?php echo $active_tab === 'settings' ? $nav_tab_active : '' ?>">
+            <?php _e( 'Settings', 'limit-login-attempts-reloaded' ); ?>
+        </a>
 
         <?php if( $active_app === 'custom' ) : ?>
-            <a href="<?php echo $this->get_options_page_uri('logs-custom'); ?>" class="nav-tab <?php if($active_tab == 'logs-custom'){echo 'nav-tab-active';} ?> "><?php _e('Login Firewall', 'limit-login-attempts-reloaded'); ?></a>
+            <a href="<?php echo $this->get_options_page_uri( 'logs-custom' ); ?>"
+               class="nav-tab<?php echo $active_tab === 'logs-custom' ? $nav_tab_active : '' ?>">
+                <?php _e( 'Login Firewall', 'limit-login-attempts-reloaded' ); ?>
+            </a>
         <?php else : ?>
-            <a href="<?php echo $this->get_options_page_uri('logs-local'); ?>" class="nav-tab <?php if($active_tab == 'logs-local'){echo 'nav-tab-active';} ?> "><?php _e('Logs', 'limit-login-attempts-reloaded'); ?></a>
+            <a href="<?php echo $this->get_options_page_uri( 'logs-local' ); ?>"
+               class="nav-tab<?php echo $active_tab === 'logs-local' ? $nav_tab_active : '' ?>">
+                <?php _e( 'Logs', 'limit-login-attempts-reloaded' ); ?>
+            </a>
 		<?php endif; ?>
 
-        <a href="<?php echo $this->get_options_page_uri('debug'); ?>" class="nav-tab <?php if($active_tab == 'debug'){echo 'nav-tab-active';} ?>"><?php _e('Debug', 'limit-login-attempts-reloaded'); ?></a>
-        <a href="<?php echo $this->get_options_page_uri('help'); ?>" class="nav-tab <?php if($active_tab == 'help'){echo 'nav-tab-active';} ?>"><?php _e('Help', 'limit-login-attempts-reloaded'); ?></a>
-        <a href="<?php echo $this->get_options_page_uri('premium'); ?>" class="nav-tab <?php if($active_tab == 'premium'){echo 'nav-tab-active';} ?>"><?php _e('Premium / Extensions', 'limit-login-attempts-reloaded'); ?></a>
-
-        <?php if($active_tab == 'logs-custom') : ?>
-        <a class="unlink llar-label llar-failover-link" href="<?php echo $this->get_options_page_uri('logs-local'); ?>">
-            <?php _e( 'Failover', 'limit-login-attempts-reloaded' ); ?>
-            <span class="hint_tooltip-parent">
-                <span class="dashicons dashicons-editor-help"></span>
-                <div class="hint_tooltip">
-                    <ul class="hint_tooltip-content">
-                        <li>
-                            <?php esc_attr_e( 'Server variables containing IP addresses.' ); ?>
-                        </li>
-                    </ul>
-                </div>
-            </span>
+        <a href="<?php echo $this->get_options_page_uri( 'debug' ); ?>"
+           class="nav-tab<?php echo $active_tab === 'debug' ? $nav_tab_active : '' ?>">
+            <?php _e( 'Debug', 'limit-login-attempts-reloaded' ); ?>
         </a>
+        <a href="<?php echo $this->get_options_page_uri( 'help' ); ?>"
+           class="nav-tab<?php echo $active_tab === 'help' ? $nav_tab_active : '' ?>">
+            <?php _e( 'Help', 'limit-login-attempts-reloaded' ); ?>
+        </a>
+        <a href="<?php echo $this->get_options_page_uri( 'premium' ); ?>"
+           class="nav-tab<?php echo $active_tab === 'premium' ? $nav_tab_active : '' ?>">
+            <?php _e( 'Premium / Extensions', 'limit-login-attempts-reloaded' ); ?>
+        </a>
+
+        <?php if ( $active_tab === 'logs-custom' ) : ?>
+            <a class="unlink llar-label llar-failover-link" href="<?php echo $this->get_options_page_uri( 'logs-local' ); ?>">
+                <?php _e( 'Failover', 'limit-login-attempts-reloaded' ); ?>
+                <span class="hint_tooltip-parent">
+                    <span class="dashicons dashicons-editor-help"></span>
+                    <div class="hint_tooltip">
+                        <ul class="hint_tooltip-content">
+                            <li>
+                                <?php esc_attr_e( 'Server variables containing IP addresses.' ); ?>
+                            </li>
+                        </ul>
+                    </div>
+                </span>
+            </a>
         <?php endif; ?>
     </div>
 
-    <?php include_once(LLA_PLUGIN_DIR.'views/tab-'.$active_tab.'.php'); ?>
+    <?php include_once( LLA_PLUGIN_DIR.'views/tab-'.$active_tab.'.php' ); ?>
 </div>

@@ -173,7 +173,7 @@ class Ajax {
                 } else {
 
 				    wp_send_json_error( array(
-					    'msg' => ( $key_result )
+					    'msg' => ( $key_result['error'] )
 				    ) );
                 }
             } else {
@@ -627,11 +627,8 @@ class Ajax {
 
 		check_ajax_referer( 'llar-subscribe-email', 'sec' );
 
-		Config::update( 'onboarding_popup_shown', true );
-
 		$email            = sanitize_text_field( trim( $_POST['email'] ) );
 		$is_subscribe_yes = sanitize_text_field( $_POST['is_subscribe_yes'] ) === 'true';
-
 		$admin_email   = ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 
 		if ( ! empty( $email ) && is_email( $email ) ) {
@@ -660,13 +657,15 @@ class Ajax {
 					wp_send_json_success();
 				}
 			}
+
+			wp_send_json_success( array( 'email' => $email, 'is_subscribe_yes' => $is_subscribe_yes ) );
+
 		} else if ( empty( $email ) ) {
 			Config::update( 'admin_notify_email', $admin_email );
 			Config::update( 'lockout_notify', '' );
 		}
 
 		wp_send_json_error( array( 'email' => $email, 'is_subscribe_yes' => $is_subscribe_yes ) );
-		exit();
 	}
 
 
@@ -744,7 +743,7 @@ class Ajax {
 
         check_ajax_referer( 'llar-activate-micro-cloud', 'sec' );
 	    $email = sanitize_text_field( trim( $_POST['email'] ) );
-	    $real_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
+	    $real_email = ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 
 	    if ( ! empty( $email ) ) {
 

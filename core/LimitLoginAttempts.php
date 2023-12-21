@@ -76,8 +76,8 @@ class LimitLoginAttempts {
 		$this->setup();
         $this->cloud_app_init();
 
-		(new Shortcodes())->register();
-		(new Ajax())->register();
+		( new Shortcodes() )->register();
+		( new Ajax() )->register();
 	}
 
 	/**
@@ -122,7 +122,7 @@ class LimitLoginAttempts {
 	 */
 	public function activation() {
 
-		if( !Config::get( 'activation_timestamp' ) ) {
+		if( ! Config::get( 'activation_timestamp' ) ) {
 
             set_transient( 'llar_dashboard_redirect', true, 30 );
 		}
@@ -130,18 +130,18 @@ class LimitLoginAttempts {
 
 	public function setup_cookie() {
 
-		if (empty($_GET['page']) || $_GET['page'] !== $this->_options_page_slug) return;
+		if ( empty( $_GET['page'] ) || $_GET['page'] !== $this->_options_page_slug ) return;
 
 		$cookie_name = 'llar_menu_alert_icon_shown';
 
-		if (empty($_COOKIE[$cookie_name])) {
-			setcookie($cookie_name, '1', strtotime( 'tomorrow' ));
+		if ( empty( $_COOKIE[$cookie_name] ) ) {
+			setcookie( $cookie_name, '1', strtotime( 'tomorrow' ) );
 		}
 	}
 
 	public function register_dashboard_widgets() {
 
-	    if( !current_user_can( 'manage_options' ) ) return;
+	    if( ! current_user_can( 'manage_options' ) ) return;
 
 		wp_add_dashboard_widget(
             'llar_stats_widget',
@@ -571,16 +571,22 @@ class LimitLoginAttempts {
 
 		wp_enqueue_style( 'lla-main', LLA_PLUGIN_URL . 'assets/css/limit-login-attempts.css', array(), $plugin_data['Version'] );
 
-        $auto_update        = wp_create_nonce( 'llar-toggle-auto-update' );
-        $account_policies   = wp_create_nonce( 'llar-strong-account-policies' );
-        $onboarding_reset   = wp_create_nonce( 'llar-action-onboarding-reset' );
-        $activate_micro_cloud   = wp_create_nonce( 'llar-activate-micro-cloud' );
+        $auto_update                = wp_create_nonce( 'llar-toggle-auto-update' );
+        $app_setup                  = wp_create_nonce( 'llar-app-setup' );
+        $account_policies           = wp_create_nonce( 'llar-strong-account-policies' );
+        $onboarding_reset           = wp_create_nonce( 'llar-action-onboarding-reset' );
+        $dismiss_onboarding_popup   = wp_create_nonce( 'llar-dismiss-onboarding-popup' );
+        $activate_micro_cloud       = wp_create_nonce( 'llar-activate-micro-cloud' );
+        $subscribe_email            = wp_create_nonce( 'llar-subscribe-email' );
 		wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array('jquery'), $plugin_data['Version'], false );
         wp_localize_script('lla-main', 'llar_vars', array(
-            'auto_update'       => $auto_update,
-            'account_policies'  => $account_policies,
-            'onboarding_reset'  => $onboarding_reset,
-            'activate_micro_cloud'  => $activate_micro_cloud,
+            'nonce_auto_update'               => $auto_update,
+            'nonce_app_setup'                 => $app_setup,
+            'nonce_account_policies'          => $account_policies,
+            'nonce_onboarding_reset'          => $onboarding_reset,
+            'nonce_dismiss_onboarding_popup'  => $dismiss_onboarding_popup,
+            'nonce_activate_micro_cloud'      => $activate_micro_cloud,
+            'nonce_subscribe_email'           => $subscribe_email,
         ));
 
 		if( !empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_options_page_slug ) {
@@ -663,7 +669,7 @@ class LimitLoginAttempts {
                 'manage_options',
                 $this->_options_page_slug,
                 array( $this, 'options_page' ),
-				'data:image/svg+xml;base64,' . base64_encode($this->get_svg_logo_content()),
+				'data:image/svg+xml;base64,' . base64_encode( $this->get_svg_logo_content() ),
                 74
             );
 
