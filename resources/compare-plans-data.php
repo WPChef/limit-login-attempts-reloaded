@@ -24,16 +24,16 @@ foreach ( $plans as $plan => $value ) {
         $attribute[$plan]['title'] = '';
     }
     elseif ( $value === $plans[$actual_plan] ) {
-	    $attribute[$plan]['class'] =  'class="button menu__item button__transparent_orange llar-disabled"';
-	    $attribute[$plan]['title'] =  'Installed';
+	    $attribute[$plan]['class'] = 'class="button menu__item button__transparent_orange llar-disabled"';
+	    $attribute[$plan]['title'] = 'Installed';
     }
     elseif ( $plan === 'Micro Cloud' ) {
-        $attribute[$plan]['class'] =  'class="button menu__item button__orange button_micro_cloud"';
-        $attribute[$plan]['title'] =  'Get Started (Free)';
+        $attribute[$plan]['class'] = 'class="button menu__item button__orange button_micro_cloud"';
+        $attribute[$plan]['title'] = 'Get Started (Free)';
     }
     else {
-        $attribute[$plan]['class'] =  'class="button menu__item button__orange" href="' . $upgrade_link . '" target="_blank"';
-        $attribute[$plan]['title'] =  'Upgrade now';
+        $attribute[$plan]['class'] = 'class="button menu__item button__orange" href="' . $upgrade_link . '" target="_blank"';
+        $attribute[$plan]['title'] = 'Upgrade now';
     }
 }
 
