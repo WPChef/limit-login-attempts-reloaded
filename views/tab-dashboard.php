@@ -434,7 +434,7 @@ if ($active_app === 'local' && empty($setup_code)) {
         </div>
     </div>
 
-    <?php if( $stats_global = CloudApp::stats_global() ) : ?>
+    <?php if( $stats_global = CloudApp::stats_global() && false ) : ?>
 	<div class="dashboard-section-4">
         <?php
 		$stats_global_dates = array();
