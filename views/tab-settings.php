@@ -46,6 +46,11 @@ $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && ! empty( $trusted_ip_
 $active_app        = Config::get( 'active_app' );
 $app_setup_code    = Config::get( 'app_setup_code' );
 $active_app_config = Config::get( 'app_config' );
+
+$min_plan = 'Premium';
+$plans = $this->array_name_plans();
+$block_sub_group = $active_app === 'custom' ? $this->info_sub_group() : false;
+$is_premium = ($active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan]);
 ?>
 
 <?php if ( isset( $_GET['llar-cloud-activated'] ) && ! empty( $active_app_config['messages']['setup_success'] ) ) : ?>
@@ -566,6 +571,7 @@ $active_app_config = Config::get( 'app_config' );
 							<?php endforeach; ?>
 						<?php endif; ?>
                     </table>
+	                <?php if ( ! $is_premium ) : ?>
                     <div class="add_block__under_table image_plus">
                         <div class="row__list">
                             <div class="add_block__title">
@@ -616,6 +622,7 @@ $active_app_config = Config::get( 'app_config' );
                             </div>
                         </div>
                     </div>
+	                <?php endif; ?>
                 </div>
             </div>
         </div>
