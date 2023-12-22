@@ -3,6 +3,10 @@
 
 .toplevel_page_limit-login-attempts { // top level css
 
+  #wpwrap {
+    background-color: $background__sky-blue;
+  }
+
   #wpcontent {
     background-color: $background__sky-blue;
     font-family: $font-primary, $font-secondary;
@@ -645,6 +649,7 @@
       border: 1px solid $primary-colors__turquoise;
       border-top: 0;
       background-color: $background-body;
+      overflow: hidden;
 
       a {
         color: inherit;
