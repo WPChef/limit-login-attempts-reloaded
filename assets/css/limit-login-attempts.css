@@ -359,6 +359,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   cursor: pointer;
 }
 
+.toplevel_page_limit-login-attempts #wpwrap {
+  background-color: #F6FBFF;
+}
 .toplevel_page_limit-login-attempts #wpcontent {
   background-color: #F6FBFF;
   font-family: CoFo Sans, arial;
@@ -911,6 +914,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   border: 1px solid #4ACAD8;
   border-top: 0;
   background-color: #FDFDFD;
+  overflow: hidden;
 }
 #llar-setting-page .llar-accordion .ui-accordion-content a, #llar-setting-page-logs .llar-accordion .ui-accordion-content a, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content a, #llar-setting-page-debug .llar-accordion .ui-accordion-content a, #llar-setting-page-premium .llar-accordion .ui-accordion-content a, #llar-setting-page-help .llar-accordion .ui-accordion-content a {
   color: inherit;

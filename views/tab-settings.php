@@ -266,7 +266,7 @@ $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$
             </div>
             <div class="llar-settings-wrap">
                 <table class="form-table">
-	                <?php if ( $active_app === 'local' ) : ?>
+	                <?php if ( $active_app === 'local' && !empty( $setup_code ) ) : ?>
                     <tr>
                         <th scope="row" valign="top"><?php echo __( 'Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
                             <span class="hint_tooltip-parent">
