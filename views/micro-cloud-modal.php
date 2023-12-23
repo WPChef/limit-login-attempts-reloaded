@@ -9,7 +9,7 @@ if( !defined( 'ABSPATH' ) ) exit();
  */
 
 $setup_code = Config::get( 'app_setup_code' );
-if( ! empty( $setup_code ) ) return;
+//if( ! empty( $setup_code ) ) return;
 
 $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 $url_site = esc_url( get_site_url() );
