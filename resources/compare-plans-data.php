@@ -10,7 +10,7 @@
 use LLAR\Core\Config;
 
 $setup_code = Config::get( 'app_setup_code' );
-$min_plan = empty( $setup_code ) ? 'Free' : 'Micro Cloud';
+$min_plan = $active_app === 'custom' ? 'Micro Cloud' : 'Free';
 
 $plans = $this->array_name_plans();
 $actual_plan = $active_app === 'custom' ? $this->info_sub_group() : $min_plan;

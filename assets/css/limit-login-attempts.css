@@ -197,7 +197,7 @@ ul.llar_list li::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm
   position: absolute;
   background-color: #4ACAD8;
   color: white;
-  padding: 12px 16px 12px 36px;
+  padding: 12px 20px;
   width: 160px;
   border-radius: 20px;
   top: 26px;
