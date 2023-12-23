@@ -121,9 +121,10 @@ if( $active_app === 'local' ) {
         <div class="info-box-2">
             <div class="section-content">
                 <?php
-                $chart2_label = '';
                 $chart2_labels = array();
 				$chart2_datasets = array();
+				$chart2_requests_scale_max = 0;
+				$chart2_attempts_scale_max = 0;
 
                 if( $active_app === 'custom' ) {
 
@@ -132,28 +133,50 @@ if( $active_app === 'local' ) {
                     $date_format = trim( get_option( 'date_format' ), ' yY,._:;-/\\' );
                     $date_format = str_replace( 'F', 'M', $date_format );
 
-					$dataset = array(
-						'label' => __('Failed Login Attempts', 'limit-login-attempts-reloaded'),
-						'data' => [],
-						'backgroundColor' => 'rgb(54, 162, 235)',
-						'borderColor' => 'rgb(54, 162, 235)',
-						'fill' => false,
+					$attempts_dataset = array(
+						'label'             => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
+						'data'              => array(),
+						'backgroundColor'   => 'rgba(54, 162, 235, 0.3)',
+						'borderColor'       => 'rgb(54, 162, 235)',
+						'fill'              => true,
 					);
 
-                    if( $api_stats && !empty( $api_stats['attempts'] ) ) {
+					$requests_dataset = array(
+						'label'             => __( 'Requests', 'limit-login-attempts-reloaded' ),
+						'data'              => array(),
+						'backgroundColor'   => 'rgba(255, 124, 124, 0.2)',
+						'borderColor'       => 'rgba(255, 124, 124, 0.5)',
+						'fill'              => true,
+						'yAxisID'           => 'requests'
+					);
 
-                        foreach ($api_stats['attempts']['at'] as $timest) {
+                    if( $api_stats ) {
 
-                            $stats_dates[] = date( $date_format, $timest );
+                        if( !empty( $api_stats['attempts'] ) ) {
+
+	                        foreach ( $api_stats['attempts']['at'] as $timestamp ) {
+
+		                        $stats_dates[] = date( $date_format, $timestamp );
+	                        }
+
+	                        $chart2_labels = $stats_dates;
+	                        $attempts_dataset['data'] = $api_stats['attempts']['count'];
                         }
 
-                        $chart2_label = __('Requests', 'limit-login-attempts-reloaded');
-                        $chart2_labels = $stats_dates;
+                        if( !empty( $api_stats['requests'] ) ) {
 
-                        $dataset['data'] = $api_stats['attempts']['count'];
+	                        $requests_dataset['data'] = $api_stats['requests']['count'];
+                        }
+
+	                    if( !empty( $api_stats['attempts_y'] ) )
+		                    $chart2_attempts_scale_max = (int) $api_stats['attempts_y'];
+
+	                    if( !empty( $api_stats['requests_y'] ) )
+		                    $chart2_requests_scale_max = (int) $api_stats['requests_y'];
                     }
 
-					$chart2_datasets[] = $dataset;
+					$chart2_datasets[] = $attempts_dataset;
+					$chart2_datasets[] = $requests_dataset;
 
                 } else {
 
@@ -172,7 +195,7 @@ if( $active_app === 'local' ) {
 							new DateTime('-1 day')
 						);
 
-						$retries_per_day = [];
+						$retries_per_day = array();
 						foreach ( $retries_stats as $key => $count ) {
 
 						    $date = is_numeric( $key ) ? date_i18n( 'Y-m-d', $key ) : $key;
@@ -185,27 +208,24 @@ if( $active_app === 'local' ) {
 						}
 
 						$chart2_data = array();
-						foreach ($daterange as $date) {
-
+						foreach ( $daterange as $date ) {
 							$chart2_labels[] = $date->format( $date_format );
-							$chart2_data[] = (!empty($retries_per_day[$date->format("Y-m-d")])) ? $retries_per_day[$date->format("Y-m-d")] : 0;
+							$chart2_data[] = ( !empty($retries_per_day[ $date->format("Y-m-d")] ) ) ? $retries_per_day[ $date->format("Y-m-d") ] : 0;
 						}
                     } else {
 
-						$chart2_labels[] = (new DateTime())->format( $date_format );
+						$chart2_labels[] = ( new DateTime())->format( $date_format );
 						$chart2_data[] = 0;
                     }
 
-
                     $chart2_datasets[] = array(
-						'label' => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
-						'data' => $chart2_data,
-						'backgroundColor' => 'rgb(54, 162, 235)',
-						'borderColor' => 'rgb(54, 162, 235)',
-						'fill' => false,
+						'label'             => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
+						'data'              => $chart2_data,
+						'backgroundColor'   => 'rgb(54, 162, 235)',
+						'borderColor'       => 'rgb(54, 162, 235)',
+						'fill'              => false,
                     );
 				}
-
                 ?>
 
                 <div class="llar-chart-wrap">
@@ -252,15 +272,34 @@ if( $active_app === 'local' ) {
 										scaleLabel: {
 											display: false
 										},
+                                        title: {
+                                            display: <?php echo esc_js( $active_app === 'custom' ? 'true' : 'false' ); ?>,
+                                            text: '<?php echo esc_js( __( 'Attempts', 'limit-login-attempts-reloaded' ) ); ?>',
+                                        },
                                         beginAtZero: true,
+                                        position: 'left',
+                                        suggestedMax: <?php echo esc_js( $chart2_attempts_scale_max ); ?>,
                                         ticks: {
-                                            callback: function(label, index, labels) {
-												if (Math.floor(label) === label) {
+                                            callback: function(label) {
+                                                if (Math.floor(label) === label) {
 													return label.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
 												}
 											},
 										}
-									}
+									},
+                                    requests: {
+                                        display: <?php echo esc_js( $active_app === 'custom' ? 'true' : 'false' ); ?>,
+                                        title: {
+                                            display: true,
+                                            text: '<?php echo esc_js( __( 'Requests', 'limit-login-attempts-reloaded' ) ); ?>',
+                                        },
+                                        position: 'right',
+                                        beginAtZero: true,
+                                        suggestedMax: <?php echo esc_js( $chart2_requests_scale_max ); ?>,
+                                        scaleLabel: {
+                                            display: false
+                                        }
+                                    },
 								}
 							}
 						});
