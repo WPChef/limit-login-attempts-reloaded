@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.25.27\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.25.28\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-12-20T11:46:21+03:00\n"
+"POT-Creation-Date: 2023-12-23T21:28:58+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -92,7 +92,7 @@ msgid "Settings"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:278
-#: views/tab-dashboard.php:279
+#: views/tab-dashboard.php:318
 msgid "Upgrade to Premium"
 msgstr ""
 
@@ -135,7 +135,7 @@ msgstr ""
 
 #: core/LimitLoginAttempts.php:602
 #: views/options-page.php:58
-#: views/tab-dashboard.php:300
+#: views/tab-dashboard.php:339
 msgid "Help"
 msgstr ""
 
@@ -282,13 +282,14 @@ msgstr ""
 #: views/admin-dashboard-widgets.php:123
 #: views/admin-dashboard-widgets.php:190
 #: views/tab-dashboard.php:76
-#: views/tab-dashboard.php:136
-#: views/tab-dashboard.php:201
+#: views/tab-dashboard.php:137
+#: views/tab-dashboard.php:222
 msgid "Failed Login Attempts"
 msgstr ""
 
 #: views/admin-dashboard-widgets.php:137
-#: views/tab-dashboard.php:150
+#: views/tab-dashboard.php:145
+#: views/tab-dashboard.php:294
 msgid "Requests"
 msgstr ""
 
@@ -618,68 +619,69 @@ msgstr ""
 msgid "Cloud protection enabled"
 msgstr ""
 
-#: views/tab-dashboard.php:276
-msgid "Premium Protection Disabled"
-msgstr ""
-
 #: views/tab-dashboard.php:277
-msgid "As a free user, your local server is absorbing the traffic brought on by brute force attacks, potentially slowing down your website. Upgrade to Premium today to outsource these attacks through our cloud app, and slow down future attacks with advanced throttling."
-msgstr ""
-
-#: views/tab-dashboard.php:291
-msgid "Tools"
-msgstr ""
-
-#: views/tab-dashboard.php:292
-msgid "View lockouts logs, block or whitelist usernames or IPs, and more."
-msgstr ""
-
-#: views/tab-dashboard.php:301
-msgid "Find the documentation and help you need."
-msgstr ""
-
-#: views/tab-dashboard.php:309
-msgid "Global Options"
-msgstr ""
-
-#: views/tab-dashboard.php:310
-msgid "Many options such as notifications, alerts, premium status, and more."
-msgstr ""
-
-#: views/tab-dashboard.php:330
-msgid "Failed Login Attempts By Country"
-msgstr ""
-
-#: views/tab-dashboard.php:331
-#: views/tab-dashboard.php:365
-msgid "Global Network (Premium Users)"
-msgstr ""
-
-#: views/tab-dashboard.php:332
-msgid "Failed logins for all users in the LLAR network."
-msgstr ""
-
-#: views/tab-dashboard.php:339
-msgid "Country"
-msgstr ""
-
-#: views/tab-dashboard.php:340
+#: views/tab-dashboard.php:379
 msgid "Attempts"
 msgstr ""
 
-#: views/tab-dashboard.php:357
+#: views/tab-dashboard.php:315
+msgid "Premium Protection Disabled"
+msgstr ""
+
+#: views/tab-dashboard.php:316
+msgid "As a free user, your local server is absorbing the traffic brought on by brute force attacks, potentially slowing down your website. Upgrade to Premium today to outsource these attacks through our cloud app, and slow down future attacks with advanced throttling."
+msgstr ""
+
+#: views/tab-dashboard.php:330
+msgid "Tools"
+msgstr ""
+
+#: views/tab-dashboard.php:331
+msgid "View lockouts logs, block or whitelist usernames or IPs, and more."
+msgstr ""
+
+#: views/tab-dashboard.php:340
+msgid "Find the documentation and help you need."
+msgstr ""
+
+#: views/tab-dashboard.php:348
+msgid "Global Options"
+msgstr ""
+
+#: views/tab-dashboard.php:349
+msgid "Many options such as notifications, alerts, premium status, and more."
+msgstr ""
+
+#: views/tab-dashboard.php:369
+msgid "Failed Login Attempts By Country"
+msgstr ""
+
+#: views/tab-dashboard.php:370
+#: views/tab-dashboard.php:404
+msgid "Global Network (Premium Users)"
+msgstr ""
+
+#: views/tab-dashboard.php:371
+msgid "Failed logins for all users in the LLAR network."
+msgstr ""
+
+#: views/tab-dashboard.php:378
+msgid "Country"
+msgstr ""
+
+#: views/tab-dashboard.php:396
 msgid "today"
 msgstr ""
 
-#: views/tab-dashboard.php:358
+#: views/tab-dashboard.php:397
 msgid "Block by country feature available with <a href=\"https://www.limitloginattempts.com/info.php?from=plugin-dashboard-country\" target=\"_blank\">premium plus plan</a>."
 msgstr ""
 
-#: views/tab-dashboard.php:364
+#: views/tab-dashboard.php:403
 msgid "Total Failed Login Attempts"
 msgstr ""
 
-#: views/tab-dashboard.php:380
+#: views/tab-dashboard.php:419
 msgid "Total Attempts"
 msgstr ""
 
