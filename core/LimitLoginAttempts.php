@@ -674,7 +674,7 @@ class LimitLoginAttempts
     {
 		global $submenu;
 
-		if( Config::get( 'show_top_level_menu_item' ) ) {
+		if ( Config::get( 'show_top_level_menu_item' ) ) {
 
 			add_menu_page(
                 'Limit Login Attempts',
@@ -702,7 +702,7 @@ class LimitLoginAttempts
 
 			remove_submenu_page( $this->_options_page_slug, $this->_options_page_slug );
 
-			if( !$is_cloud_app_enabled && isset( $submenu[$this->_options_page_slug] ) ) {
+			if ( ! $is_cloud_app_enabled && isset( $submenu[$this->_options_page_slug] ) ) {
 				$submenu[$this->_options_page_slug][6][4] = 'llar-submenu-premium-item';
 			}
 
