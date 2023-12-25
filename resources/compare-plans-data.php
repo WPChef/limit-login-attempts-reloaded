@@ -17,13 +17,13 @@ $actual_plan = $active_app === 'custom' ? $this->info_sub_group() : $min_plan;
 $upgrade_link = $active_app === 'custom' ? $this->info_upgrade_link() : 'https://www.limitloginattempts.com/info.php?from=plugin-premium-tab-upgrade';
 
 $attribute = [];
-foreach ( $plans as $plan => $value ) {
+foreach ( $plans as $plan => $rate ) {
 
-    if ( $value < $plans[$actual_plan] ) {
+    if ( $rate < $plans[$actual_plan] ) {
         $attribute[$plan]['class'] = '';
         $attribute[$plan]['title'] = '';
     }
-    elseif ( $value === $plans[$actual_plan] ) {
+    elseif ( $rate === $plans[$actual_plan] ) {
 	    $attribute[$plan]['class'] = 'class="button menu__item button__transparent_orange llar-disabled"';
 	    $attribute[$plan]['title'] = 'Installed';
     }
