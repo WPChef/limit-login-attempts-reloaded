@@ -1833,9 +1833,11 @@ class LimitLoginAttempts
 			@setcookie( 'llar_review_notice_shown', '', time() - 3600, '/' );
 		}
 
-        if ( ! current_user_can('manage_options' ) ||
-            Config::get( 'review_notice_shown' ) ||
-            !in_array( $screen->base, array( 'dashboard', 'plugins', 'toplevel_page_limit-login-attempts' ) ) ) return;
+        if ( ! current_user_can('manage_options' )
+             || Config::get( 'review_notice_shown' )
+             || ! in_array( $screen->base, array( 'dashboard', 'plugins', 'toplevel_page_limit-login-attempts' ) ) ) {
+	        return;
+        }
 
         $activation_timestamp = Config::get( 'activation_timestamp' );
 
@@ -1912,17 +1914,21 @@ class LimitLoginAttempts
 		$active_app = Config::get( 'active_app' );
 		$notify_methods = explode( ',', Config::get( 'lockout_notify' ) );
 
-        if ( $active_app !== 'local' ||
-             in_array( 'email', $notify_methods ) ||
-             !current_user_can('manage_options') ||
-             Config::get('enable_notify_notice_shown') ||
-             $screen->parent_base === 'edit' ) return;
+        if ( $active_app !== 'local'
+             || in_array( 'email', $notify_methods )
+             || ! current_user_can('manage_options')
+             || Config::get('enable_notify_notice_shown')
+             || $screen->parent_base === 'edit' ) {
+
+	        return;
+        }
 
         $activation_timestamp = Config::get('notice_enable_notify_timestamp');
 
 		if ( $activation_timestamp && $activation_timestamp < strtotime("-1 month") ) {
 
 			$review_activation_timestamp = Config::get('activation_timestamp');
+
 			if ( $review_activation_timestamp && $review_activation_timestamp < strtotime("-1 month") ) {
 				Config::update( 'activation_timestamp', time() );
             }
