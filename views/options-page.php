@@ -4,14 +4,14 @@ use LLAR\Core\Config;
 use LLAR\Core\Helpers;
 use LLAR\Core\LimitLoginAttempts;
 
-if( !defined( 'ABSPATH' ) ) exit();
+if ( ! defined( 'ABSPATH' ) ) exit();
 
 $active_tab = "dashboard";
 $active_app = Config::get( 'active_app' );
 
-if( !empty($_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help' ) ) ) {
+if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help' ) ) ) {
 
-	if( !LimitLoginAttempts::$cloud_app && $_GET['tab'] === 'logs-custom' ) {
+	if ( ! LimitLoginAttempts::$cloud_app && $_GET['tab'] === 'logs-custom' ) {
 
 		$active_tab = 'logs-local';
 	} else {

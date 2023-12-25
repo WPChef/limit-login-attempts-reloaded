@@ -77,11 +77,13 @@ class Config {
 
 	private static $use_local_options = true;
 
-	public static function get_default_options() {
+	public static function get_default_options()
+	{
 		return self::$default_options || array();
 	}
 
-	public static function use_local_options( $value ) {
+	public static function use_local_options( $value )
+	{
 		self::$use_local_options = $value;
 	}
 
