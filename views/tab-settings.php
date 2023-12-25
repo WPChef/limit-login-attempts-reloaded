@@ -434,6 +434,7 @@ $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$
                             </td>
                         </tr>
                     </table>
+                    <?php if ( empty( $app_setup_code ) ) : ?>
                     <div class="add_block__under_table">
                         <div class="description">
 							<?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
@@ -484,6 +485,7 @@ $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$
 							<?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
                         </button>
                     </div>
+	                <?php endif; ?>
                 </div>
 
                 <h3><?php echo ( $active_app_config ) ? $active_app_config['name'] : __( 'Custom App', 'limit-login-attempts-reloaded' ); ?></h3>
