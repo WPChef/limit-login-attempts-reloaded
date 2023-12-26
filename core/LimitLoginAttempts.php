@@ -693,6 +693,7 @@ class LimitLoginAttempts
 			$is_cloud_app_enabled = Config::get( 'active_app' ) === 'custom';
             $submenu_items = $this->get_submenu_items();
 
+            $index = 1;
 			foreach ( $submenu_items as $item ) {
 				add_submenu_page(
 					$this->_options_page_slug,
@@ -702,6 +703,11 @@ class LimitLoginAttempts
 					$item['url'],
 					array( $this, 'options_page' )
 				);
+
+				if ( ! empty( $_GET['tab'] ) && $_GET['tab'] === $item['id'] ) {
+					$submenu[$this->_options_page_slug][$index][4] = 'current';
+				}
+				$index++;
 			}
 
 			remove_submenu_page( $this->_options_page_slug, $this->_options_page_slug );
@@ -712,7 +718,13 @@ class LimitLoginAttempts
 
         } else {
 
-			add_options_page( 'Limit Login Attempts', 'Limit Login Attempts' . $this->menu_alert_icon(), 'manage_options', $this->_options_page_slug, array( $this, 'options_page' ) );
+			add_options_page(
+			        'Limit Login Attempts',
+                    'Limit Login Attempts' . $this->menu_alert_icon(),
+                    'manage_options',
+                    $this->_options_page_slug,
+                    array( $this, 'options_page' )
+            );
 		}
 	}
 
