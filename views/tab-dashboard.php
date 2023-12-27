@@ -19,16 +19,16 @@ $retries_chart_color = '';
 
 $api_stats = false;
 $retries_count = 0;
-if( $active_app === 'local' ) {
+if ( $active_app === 'local' ) {
 
 	$retries_stats = Config::get( 'retries_stats' );
 
-	if( $retries_stats ) {
+	if ( $retries_stats ) {
 		foreach ( $retries_stats as $key => $count ) {
-		    if( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
+		    if ( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
 			    $retries_count += $count;
             }
-		    elseif( !is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+		    elseif ( ! is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
 			    $retries_count += $count;
             }
         }
@@ -58,7 +58,7 @@ if( $active_app === 'local' ) {
 
 	$api_stats = LimitLoginAttempts::$cloud_app->stats();
 
-	if( $api_stats && !empty( $api_stats['attempts']['count'] )) {
+	if( $api_stats && ! empty( $api_stats['attempts']['count'] )) {
 
 		$retries_count = (int) end( $api_stats['attempts']['count'] );
     }
@@ -176,7 +176,7 @@ if ($active_app === 'local' && empty($setup_code)) {
 						'fill' => false,
 					);
 
-                    if( $api_stats && !empty( $api_stats['attempts'] ) ) {
+                    if( $api_stats && ! empty( $api_stats['attempts'] ) ) {
 
                         foreach ($api_stats['attempts']['at'] as $timest) {
 
@@ -213,18 +213,20 @@ if ($active_app === 'local' && empty($setup_code)) {
 
 						    $date = is_numeric( $key ) ? date_i18n( 'Y-m-d', $key ) : $key;
 
-						    if( empty( $retries_per_day[$date] ) ) {
-							    $retries_per_day[$date] = 0;
+						    if ( empty( $retries_per_day[ $date ] ) ) {
+							    $retries_per_day[ $date ] = 0;
                             }
 
-							$retries_per_day[$date] += $count;
+							$retries_per_day[ $date ] += $count;
 						}
 
 						$chart2_data = array();
-						foreach ($daterange as $date) {
+						foreach ( $daterange as $date ) {
 
 							$chart2_labels[] = $date->format( $date_format );
-							$chart2_data[] = (!empty($retries_per_day[$date->format("Y-m-d")])) ? $retries_per_day[$date->format("Y-m-d")] : 0;
+							$chart2_data[] = ( ! empty( $retries_per_day[ $date->format("Y-m-d") ] ) )
+                                ? $retries_per_day[ $date->format("Y-m-d") ]
+                                : 0;
 						}
                     } else {
 
