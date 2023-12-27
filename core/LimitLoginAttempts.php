@@ -871,24 +871,24 @@ class LimitLoginAttempts
 
 		$_SESSION['login_attempts_left'] = 0;
 
-		if( self::$cloud_app && $response = self::$cloud_app->lockout_check( array(
+		if ( self::$cloud_app && $response = self::$cloud_app->lockout_check( array(
 				'ip'        => Helpers::get_all_ips(),
 				'login'     => $username,
                 'gateway'   => Helpers::detect_gateway()
             ) ) ) {
 
-		    if( $response['result'] === 'allow' ) {
+		    if ( $response['result'] === 'allow' ) {
 
 				$_SESSION['login_attempts_left'] = intval( $response['attempts_left'] );
 
-            } elseif( $response['result'] === 'deny' ) {
+            } elseif ( $response['result'] === 'deny' ) {
 
 		        global $limit_login_just_lockedout;
 		        $limit_login_just_lockedout = true;
 
 		        $err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
-		        $time_left = ( !empty( $response['time_left'] ) ) ? $response['time_left'] : 0;
+		        $time_left = ( ! empty( $response['time_left'] ) ) ? $response['time_left'] : 0;
 				if ( $time_left > 60 ) {
 					$time_left = ceil( $time_left / 60 );
 					$err .= ' ' . sprintf( _n( 'Please try again in %d hour.', 'Please try again in %d hours.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
@@ -935,12 +935,12 @@ class LimitLoginAttempts
 			}
 
 			$date_key = strtotime( date( 'Y-m-d H:00:00' ) );
-            if(!empty($retries_stats[$date_key])) {
+            if ( ! empty( $retries_stats[ $date_key ] ) ) {
 
-				$retries_stats[$date_key]++;
+				$retries_stats[ $date_key ]++;
 			} else {
 
-				$retries_stats[$date_key] = 1;
+				$retries_stats[ $date_key ] = 1;
             }
 			Config::update( 'retries_stats', $retries_stats );
 
@@ -983,7 +983,7 @@ class LimitLoginAttempts
 				$limit_login_just_lockedout = true;
 
 				/* setup lockout, reset retries as needed */
-				if ( (isset($retries[ $ip ]) ? $retries[ $ip ] : 0) >= $retries_long ) {
+				if ( ( isset($retries[ $ip ]) ? $retries[ $ip ] : 0 ) >= $retries_long ) {
 					/* long lockout */
 					$lockouts[ $ip ] = time() + Config::get( 'long_duration' );
 					unset( $retries[ $ip ] );
@@ -1159,13 +1159,13 @@ class LimitLoginAttempts
 		$ip = $this->get_address();
 
 		/* can be written much simpler, if you do not mind php warnings */
-		if ( !isset( $log[ $ip ] ) )
+		if ( ! isset( $log[ $ip ] ) )
 			$log[ $ip ] = array();
 
-		if ( !isset( $log[ $ip ][ $user_login ] ) )
+		if ( ! isset( $log[ $ip ][ $user_login ] ) )
 			$log[ $ip ][ $user_login ] = array( 'counter' => 0 );
 
-		elseif ( !is_array( $log[ $ip ][ $user_login ] ) )
+		elseif ( ! is_array( $log[ $ip ][ $user_login ] ) )
 			$log[ $ip ][ $user_login ] = array(
 				'counter' => $log[ $ip ][ $user_login ],
 			);
