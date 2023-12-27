@@ -8,7 +8,11 @@
     text-align: left;
   }
   .widget-content {
-    overflow: hidden;
+    //overflow: hidden;
+
+    .llar-attempts-chart-legend {
+      margin-bottom: 10px;
+    }
   }
 
   .llar-widget {

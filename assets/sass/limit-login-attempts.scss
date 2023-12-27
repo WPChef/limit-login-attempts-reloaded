@@ -957,6 +957,50 @@
   display: block !important;
 }
 
+.llar-attempts-chart-legend {
+  > div {
+    margin-right: 10px;
+    color: #60666d;
+    display: inline-block;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &:before {
+      content: "";
+      display: inline-block;
+      width: 37px;
+      height: 9px;
+      border: 3px solid;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    &.legend-1 {
+      &:before {
+        border-color: rgba(54, 162, 235, 1);
+        background-color: rgba(54, 162, 235, 0.3)
+      }
+    }
+
+    &.legend-2 {
+      &:before {
+        border-color: rgba(174, 174, 174, 0.7);
+        background-color: rgba(174, 174, 174, 0.2)
+      }
+
+      .llar-tooltip {
+        &:before {
+          left: auto;
+          right: 0;
+        }
+      }
+    }
+
+  }
+}
+
 @import "dashboard-page";
 @import "admin-dashboard-widgets";
 @import "onboarding-popup";

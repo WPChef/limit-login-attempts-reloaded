@@ -125,7 +125,9 @@
       }
     }
     .info-box-2 {
-
+      .section-content {
+        overflow: visible;
+      }
       .llar-chart-wrap {
         width: 100%;
         max-width: 80%;
