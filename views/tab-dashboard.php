@@ -74,7 +74,7 @@ if( $active_app === 'local' ) {
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
             <div class="section-title"><?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
-                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'Number of failed login attempts for today.', 'limit-login-attempts-reloaded' ); ?>">
+                <i class="llar-tooltip" data-text="<?php esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' ); ?>">
                     <span class="dashicons dashicons-editor-help"></span>
                 </i>
                 <?php echo $active_app === 'custom' ? '<span class="llar-premium-label"><span class="dashicons dashicons-yes-alt"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>' : ''; ?></div>
@@ -144,8 +144,8 @@ if( $active_app === 'local' ) {
 					$requests_dataset = array(
 						'label'             => __( 'Requests', 'limit-login-attempts-reloaded' ),
 						'data'              => array(),
-						'backgroundColor'   => 'rgba(255, 124, 124, 0.2)',
-						'borderColor'       => 'rgba(255, 124, 124, 0.5)',
+						'backgroundColor'   => 'rgba(174, 174, 174, 0.2)',
+						'borderColor'       => 'rgba(174, 174, 174, 0.7)',
 						'fill'              => true,
 						'yAxisID'           => 'requests'
 					);
@@ -228,6 +228,22 @@ if( $active_app === 'local' ) {
 				}
                 ?>
 
+                <div class="llar-attempts-chart-legend">
+                    <div class="legend-1">
+                        <?php esc_html_e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+                        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' ); ?>">
+                            <span class="dashicons dashicons-editor-help"></span>
+                        </i>
+                    </div>
+                    <?php if( $active_app === 'custom' ) : ?>
+                    <div class="legend-2">
+                        <?php esc_html_e( 'Requests', 'limit-login-attempts-reloaded' ); ?>
+                        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'A request is utilized when the cloud validates whether an IP address is allowed to attempt a login, which also includes denied logins.', 'limit-login-attempts-reloaded' ); ?>">
+                            <span class="dashicons dashicons-editor-help"></span>
+                        </i>
+                    </div>
+                    <?php endif; ?>
+                </div>
                 <div class="llar-chart-wrap">
                     <canvas id="llar-api-requests-chart" style=""></canvas>
                 </div>
@@ -246,6 +262,9 @@ if( $active_app === 'local' ) {
 								responsive: true,
 								maintainAspectRatio: false,
                                 plugins: {
+                                    legend: {
+                                        display: false
+                                    },
                                     tooltip: {
                                         mode: 'index',
                                         intersect: false,
