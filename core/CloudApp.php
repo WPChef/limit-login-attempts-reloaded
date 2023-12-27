@@ -35,6 +35,11 @@ class CloudApp {
 	public $last_response_code = null;
 
 	/**
+	 * @var array
+	 */
+	private $stats_cache = array();
+
+	/**
 	 * App constructor.
 	 * @param array $config
 	 */
@@ -134,7 +139,10 @@ class CloudApp {
 	 */
 	public function stats() {
 
-		return $this->request( 'stats', 'get' );
+		if( empty( $this->stats_cache ) )
+			$this->stats_cache = $this->request( 'stats' );
+
+		return $this->stats_cache;
 	}
 
 	/**
