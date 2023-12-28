@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.25.27\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.25.28\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-12-20T11:46:21+03:00\n"
+"POT-Creation-Date: 2023-12-27T23:38:59+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -71,7 +71,7 @@ msgstr ""
 msgid "The email notifications work correctly."
 msgstr ""
 
-#: core/CloudApp.php:124
+#: core/CloudApp.php:129
 msgid "The endpoint is not responding. Please contact your app provider to settle that."
 msgstr ""
 
@@ -92,7 +92,7 @@ msgid "Settings"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:278
-#: views/tab-dashboard.php:279
+#: views/tab-dashboard.php:40
 msgid "Upgrade to Premium"
 msgstr ""
 
@@ -135,7 +135,7 @@ msgstr ""
 
 #: core/LimitLoginAttempts.php:602
 #: views/options-page.php:58
-#: views/tab-dashboard.php:300
+#: views/tab-dashboard.php:61
 msgid "Help"
 msgstr ""
 
@@ -235,61 +235,6 @@ msgstr ""
 
 #: core/LimitLoginAttempts.php:1782
 msgid "Don't show this message again"
-msgstr ""
-
-#: views/admin-dashboard-widgets.php:36
-#: views/tab-dashboard.php:38
-msgid "Hooray! Zero failed login attempts (past 24 hrs)"
-msgstr ""
-
-#: views/admin-dashboard-widgets.php:40
-#: views/tab-dashboard.php:43
-msgid "%d failed login attempt "
-msgid_plural "%d failed login attempts "
-msgstr[0] ""
-msgstr[1] ""
-
-#: views/admin-dashboard-widgets.php:41
-#: views/tab-dashboard.php:44
-msgid "(past 24 hrs)"
-msgstr ""
-
-#: views/admin-dashboard-widgets.php:42
-#: views/tab-dashboard.php:45
-msgid "Your site is currently at a low risk for brute force activity"
-msgstr ""
-
-#: views/admin-dashboard-widgets.php:46
-#: views/tab-dashboard.php:49
-msgid "Warning: Your site has experienced over 100 failed login attempts in the past 24 hours"
-msgstr ""
-
-#: views/admin-dashboard-widgets.php:47
-#: views/tab-dashboard.php:50
-msgid "Your site is currently at a high risk for brute force activity. Consider <a href=\"%s\" target=\"_blank\">premium protection</a> if frequent attacks persist or website performance is degraded"
-msgstr ""
-
-#: views/admin-dashboard-widgets.php:60
-#: views/tab-dashboard.php:63
-msgid "Failed Login Attempts Today"
-msgstr ""
-
-#: views/admin-dashboard-widgets.php:61
-#: views/tab-dashboard.php:64
-msgid "All failed login attempts have been neutralized in the cloud"
-msgstr ""
-
-#: views/admin-dashboard-widgets.php:123
-#: views/admin-dashboard-widgets.php:190
-#: views/tab-dashboard.php:76
-#: views/tab-dashboard.php:136
-#: views/tab-dashboard.php:201
-msgid "Failed Login Attempts"
-msgstr ""
-
-#: views/admin-dashboard-widgets.php:137
-#: views/tab-dashboard.php:150
-msgid "Requests"
 msgstr ""
 
 #: views/app-widgets/acl-rules.php:7
@@ -418,6 +363,67 @@ msgstr ""
 
 #: views/app-widgets/event-log.php:46
 msgid "Loading older events, skipping ACL events. <a href=\"%s\" target=\"_blank\">Full logs</a>"
+msgstr ""
+
+#: views/chart-circle-failed-attempts-today.php:34
+msgid "Hooray! Zero failed login attempts (past 24 hrs)"
+msgstr ""
+
+#: views/chart-circle-failed-attempts-today.php:39
+msgid "%d failed login attempt "
+msgid_plural "%d failed login attempts "
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/chart-circle-failed-attempts-today.php:40
+msgid "(past 24 hrs)"
+msgstr ""
+
+#: views/chart-circle-failed-attempts-today.php:41
+msgid "Your site is currently at a low risk for brute force activity"
+msgstr ""
+
+#: views/chart-circle-failed-attempts-today.php:45
+msgid "Warning: Your site has experienced over 100 failed login attempts in the past 24 hours"
+msgstr ""
+
+#: views/chart-circle-failed-attempts-today.php:46
+msgid "Your site is currently at a high risk for brute force activity. Consider <a href=\"%s\" target=\"_blank\">premium protection</a> if frequent attacks persist or website performance is degraded"
+msgstr ""
+
+#: views/chart-circle-failed-attempts-today.php:59
+msgid "Failed Login Attempts Today"
+msgstr ""
+
+#: views/chart-circle-failed-attempts-today.php:60
+msgid "All failed login attempts have been neutralized in the cloud"
+msgstr ""
+
+#: views/chart-failed-attempts.php:25
+#: views/chart-failed-attempts.php:112
+#: views/chart-failed-attempts.php:123
+#: views/tab-dashboard.php:20
+msgid "Failed Login Attempts"
+msgstr ""
+
+#: views/chart-failed-attempts.php:33
+#: views/chart-failed-attempts.php:130
+#: views/chart-failed-attempts.php:203
+msgid "Requests"
+msgstr ""
+
+#: views/chart-failed-attempts.php:124
+#: views/tab-dashboard.php:21
+msgid "An IP that hasn't been previously denied by the cloud app, but has made an unsuccessful login attempt on your website."
+msgstr ""
+
+#: views/chart-failed-attempts.php:131
+msgid "A request is utilized when the cloud validates whether an IP address is allowed to attempt a login, which also includes denied logins."
+msgstr ""
+
+#: views/chart-failed-attempts.php:186
+#: views/tab-dashboard.php:101
+msgid "Attempts"
 msgstr ""
 
 #: views/emails/failed-login.php:243
@@ -606,80 +612,72 @@ msgstr ""
 msgid "Failover"
 msgstr ""
 
-#: views/tab-dashboard.php:72
+#: views/tab-dashboard.php:16
 msgid "Limit Login Attempts Reloaded Dashboard"
 msgstr ""
 
-#: views/tab-dashboard.php:77
-msgid "Number of failed login attempts for today."
-msgstr ""
-
-#: views/tab-dashboard.php:80
+#: views/tab-dashboard.php:24
 msgid "Cloud protection enabled"
 msgstr ""
 
-#: views/tab-dashboard.php:276
+#: views/tab-dashboard.php:37
 msgid "Premium Protection Disabled"
 msgstr ""
 
-#: views/tab-dashboard.php:277
+#: views/tab-dashboard.php:38
 msgid "As a free user, your local server is absorbing the traffic brought on by brute force attacks, potentially slowing down your website. Upgrade to Premium today to outsource these attacks through our cloud app, and slow down future attacks with advanced throttling."
 msgstr ""
 
-#: views/tab-dashboard.php:291
+#: views/tab-dashboard.php:52
 msgid "Tools"
 msgstr ""
 
-#: views/tab-dashboard.php:292
+#: views/tab-dashboard.php:53
 msgid "View lockouts logs, block or whitelist usernames or IPs, and more."
 msgstr ""
 
-#: views/tab-dashboard.php:301
+#: views/tab-dashboard.php:62
 msgid "Find the documentation and help you need."
 msgstr ""
 
-#: views/tab-dashboard.php:309
+#: views/tab-dashboard.php:70
 msgid "Global Options"
 msgstr ""
 
-#: views/tab-dashboard.php:310
+#: views/tab-dashboard.php:71
 msgid "Many options such as notifications, alerts, premium status, and more."
 msgstr ""
 
-#: views/tab-dashboard.php:330
+#: views/tab-dashboard.php:91
 msgid "Failed Login Attempts By Country"
 msgstr ""
 
-#: views/tab-dashboard.php:331
-#: views/tab-dashboard.php:365
+#: views/tab-dashboard.php:92
+#: views/tab-dashboard.php:126
 msgid "Global Network (Premium Users)"
 msgstr ""
 
-#: views/tab-dashboard.php:332
+#: views/tab-dashboard.php:93
 msgid "Failed logins for all users in the LLAR network."
 msgstr ""
 
-#: views/tab-dashboard.php:339
+#: views/tab-dashboard.php:100
 msgid "Country"
 msgstr ""
 
-#: views/tab-dashboard.php:340
-msgid "Attempts"
-msgstr ""
-
-#: views/tab-dashboard.php:357
+#: views/tab-dashboard.php:118
 msgid "today"
 msgstr ""
 
-#: views/tab-dashboard.php:358
+#: views/tab-dashboard.php:119
 msgid "Block by country feature available with <a href=\"https://www.limitloginattempts.com/info.php?from=plugin-dashboard-country\" target=\"_blank\">premium plus plan</a>."
 msgstr ""
 
-#: views/tab-dashboard.php:364
+#: views/tab-dashboard.php:125
 msgid "Total Failed Login Attempts"
 msgstr ""
 
-#: views/tab-dashboard.php:380
+#: views/tab-dashboard.php:141
 msgid "Total Attempts"
 msgstr ""
 
