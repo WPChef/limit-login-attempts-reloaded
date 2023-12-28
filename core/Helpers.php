@@ -365,4 +365,8 @@ class Helpers {
 			$phpmailer->AddEmbeddedImage( $logo_path, 'logo' );
 		}
 	}
+
+	public static function wp_locale() {
+		return str_replace( '_', '-', get_locale() );
+	}
 }
