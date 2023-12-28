@@ -14,11 +14,9 @@ $chart2_datasets = array();
 $chart2_requests_scale_max = 0;
 $chart2_attempts_scale_max = 0;
 
-
-//
 $chart2__color = '#58C3FF';
 $chart2__color_gradient = '#58C3FFB3';
-//
+
 
 if( $is_active_app_custom ) {
 
