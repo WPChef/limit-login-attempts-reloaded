@@ -5,67 +5,16 @@ use LLAR\Core\Config;
 use LLAR\Core\Helpers;
 use LLAR\Core\LimitLoginAttempts;
 
-if( !defined( 'ABSPATH' ) ) exit();
+if ( ! defined( 'ABSPATH' ) ) exit();
 
 $active_app = Config::get( 'active_app' );
 $active_app = ( $active_app === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
+
+
 $setup_code = Config::get( 'app_setup_code' );
 
 $wp_locale = str_replace( '_', '-', get_locale() );
 
-$retries_chart_title = '';
-$retries_chart_desc = '';
-$retries_chart_color = '';
-
-$api_stats = false;
-$retries_count = 0;
-if ( $active_app === 'local' ) {
-
-	$retries_stats = Config::get( 'retries_stats' );
-
-	if ( $retries_stats ) {
-		foreach ( $retries_stats as $key => $count ) {
-		    if ( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
-			    $retries_count += $count;
-            }
-		    elseif ( ! is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
-			    $retries_count += $count;
-            }
-        }
-	}
-
-    if( $retries_count === 0 ) {
-
-		$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
-		$retries_chart_color = '#97F6C8';
-    }
-    else if ( $retries_count < 100 ) {
-
-		$retries_chart_title = sprintf( _n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
-		$retries_chart_title .= __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
-		$retries_chart_color = '#FFCC66';
-    } else {
-
-		$retries_chart_title = __( 'Warning: Your site has experienced over 100 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = sprintf(
-		        __('Your site is currently at a higher risk for brute force activity. We recommend our <a class="llar_orange %s" target="_blank">free Micro Cloud upgrade</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded'),
-                'button_micro_cloud');
-		$retries_chart_color = '#FF6633';
-    }
-
-} else {
-
-	$api_stats = LimitLoginAttempts::$cloud_app->stats();
-
-	if( $api_stats && ! empty( $api_stats['attempts']['count'] )) {
-
-		$retries_count = (int) end( $api_stats['attempts']['count'] );
-    }
-
-	$retries_chart_title = __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
-	$retries_chart_color = '#97F6C8';
-}
 
 if ($active_app === 'local' && empty($setup_code)) {
     require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php');
@@ -84,60 +33,7 @@ if ($active_app === 'local' && empty($setup_code)) {
                     : ''; ?>
             </div>
             <div class="section-content">
-                <div class="chart">
-                    <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
-                    <span class="llar-retries-count"><?php echo esc_html( Helpers::short_number( $retries_count ) ); ?></span>
-                </div>
-                <script type="text/javascript">
-					(function(){
-
-						var ctx = document.getElementById('llar-attack-velocity-chart').getContext('2d');
-
-                        // Add a shadow on the graph
-                        let shadow_fill = ctx.fill;
-                        ctx.fill = function () {
-                            ctx.save();
-                            ctx.shadowColor = '<?php echo esc_js( $retries_chart_color ) ?>';
-                            ctx.shadowBlur = 10;
-                            ctx.shadowOffsetX = 0;
-                            ctx.shadowOffsetY = 3;
-                            shadow_fill.apply(this, arguments)
-                            ctx.restore();
-                        };
-
-						var llar_retries_chart = new Chart(ctx, {
-							type: 'doughnut',
-							data: {
-								datasets: [{
-									data: [1],
-									value: <?php echo esc_js( $retries_count ); ?>,
-									backgroundColor: ['<?php echo esc_js( $retries_chart_color ); ?>'],
-									borderWidth: 0,
-								}]
-							},
-							options: {
-                                layout: {
-                                    padding: {
-                                        bottom: 10,
-                                    },
-                                },
-								responsive: true,
-								cutout: 65,
-								title: {
-									display: false,
-								},
-                                plugins: {
-                                    tooltip: {
-                                        enabled: false,
-                                    }
-                                },
-							}
-						});
-
-					})();
-                </script>
-                <div class="title<?php echo $active_app !== 'local' ? ' title-big' : ''?>"><?php echo esc_html( $retries_chart_title ); ?></div>
-                <div class="desc"><?php echo $retries_chart_desc; ?></div>
+	            <?php include_once( LLA_PLUGIN_DIR . 'views/chart-circle-failed-attempts-today.php'); ?>
             </div>
         </div>
 
@@ -154,178 +50,7 @@ if ($active_app === 'local' && empty($setup_code)) {
                 </span>
             </div>
             <div class="section-content">
-                <?php
-                $chart2_label = '';
-                $chart2_labels = array();
-				$chart2_datasets = array();
-                $chart2__color = '#58C3FF';
-                $chart2__color_gradient = '#58C3FFB3';
-
-                if( $active_app === 'custom' ) {
-
-                    $stats_dates = array();
-                    $stats_values = array();
-                    $date_format = trim( get_option( 'date_format' ), ' yY,._:;-/\\' );
-                    $date_format = str_replace( 'F', 'M', $date_format );
-
-					$dataset = array(
-						'label' => __('Failed Login Attempts', 'limit-login-attempts-reloaded'),
-						'data' => [],
-						'backgroundColor' => 'white',
-						'borderColor' => $chart2__color,
-						'fill' => false,
-					);
-
-                    if( $api_stats && ! empty( $api_stats['attempts'] ) ) {
-
-                        foreach ($api_stats['attempts']['at'] as $timest) {
-
-                            $stats_dates[] = date( $date_format, $timest );
-                        }
-
-                        $chart2_label = __('Requests', 'limit-login-attempts-reloaded');
-                        $chart2_labels = $stats_dates;
-
-                        $dataset['data'] = $api_stats['attempts']['count'];
-                    }
-
-					$chart2_datasets[] = $dataset;
-
-                } else {
-
-					$date_format = trim( get_option( 'date_format' ), ' yY,._:;-/\\' );
-					$date_format = str_replace( 'F', 'M', $date_format );
-
-					$retries_stats = Config::get( 'retries_stats' );
-
-					if( is_array( $retries_stats ) && $retries_stats ) {
-                        $key = key( $retries_stats );
-                        $start = is_numeric( $key ) ? date_i18n( 'Y-m-d', $key ) : $key;
-
-						$daterange = new DatePeriod(
-							new DateTime( $start ),
-							new DateInterval('P1D'),
-							new DateTime('-1 day')
-						);
-
-						$retries_per_day = [];
-						foreach ( $retries_stats as $key => $count ) {
-
-						    $date = is_numeric( $key ) ? date_i18n( 'Y-m-d', $key ) : $key;
-
-						    if ( empty( $retries_per_day[ $date ] ) ) {
-							    $retries_per_day[ $date ] = 0;
-                            }
-
-							$retries_per_day[ $date ] += $count;
-						}
-
-						$chart2_data = array();
-						foreach ( $daterange as $date ) {
-
-							$chart2_labels[] = $date->format( $date_format );
-							$chart2_data[] = ( ! empty( $retries_per_day[ $date->format("Y-m-d") ] ) )
-                                ? $retries_per_day[ $date->format("Y-m-d") ]
-                                : 0;
-						}
-                    } else {
-
-						$chart2_labels[] = (new DateTime())->format( $date_format );
-						$chart2_data[] = 0;
-                    }
-
-
-                    $chart2_datasets[] = array(
-						'label' => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
-						'data' => $chart2_data,
-						'borderColor' => $chart2__color,
-						'fill' => false,
-                    );
-				}
-                ?>
-
-                <div class="llar-chart-wrap">
-                    <canvas id="llar-api-requests-chart" style=""></canvas>
-                </div>
-
-                <script type="text/javascript">
-					(function(){
-
-						let ctx = document.getElementById('llar-api-requests-chart').getContext('2d');
-
-						// Add a gradient fill below the graph
-                        const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                        gradient.addColorStop(0, '<?php echo esc_js( $chart2__color_gradient ); ?>');
-                        gradient.addColorStop(1, '<?php echo esc_js( '#FFFFFF00' ); ?>');
-
-                        let new_array = <?php echo json_encode($chart2_datasets); ?>;
-
-                        new_array[0].fill = true;
-                        new_array[0].backgroundColor = gradient;
-
-                        let llar_stat_chart = new Chart(ctx, {
-							type: 'line',
-							data: {
-								labels: <?php echo json_encode( $chart2_labels ); ?>,
-                                datasets: new_array,
-							},
-							options: {
-                                elements: {
-                                    point: {
-                                        pointStyle: 'circle',
-                                        radius: 3.5,
-                                        pointBackgroundColor: 'white',
-                                        pointBorderWidth: 1.5,
-                                        pointBorderColor: '<?php echo esc_js( $chart2__color ); ?>',
-                                    }
-                                },
-								responsive: true,
-								maintainAspectRatio: false,
-                                plugins: {
-                                    tooltip: {
-                                        mode: 'index',
-                                        intersect: false,
-                                        callbacks: {
-                                            label: function (context) {
-                                                return context.raw.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
-                                            }
-                                        }
-                                    },
-                                    legend: {
-                                        display: false,
-                                    }
-                                },
-								hover: {
-									mode: 'nearest',
-									intersect: true
-								},
-								scales: {
-									x: {
-										display: true,
-										scaleLabel: {
-											display: false
-										}
-									},
-									y: {
-										display: true,
-										scaleLabel: {
-											display: false
-										},
-                                        beginAtZero: true,
-                                        ticks: {
-                                            callback: function(label, index, labels) {
-												if (Math.floor(label) === label) {
-													return label.toLocaleString('<?php echo esc_js( $wp_locale ); ?>');
-												}
-											},
-										}
-									}
-								}
-							}
-						});
-					})();
-                </script>
-
+	            <?php include_once( LLA_PLUGIN_DIR . 'views/chart-failed-attempts.php'); ?>
             </div>
         </div>
         <?php if( $active_app === 'local' && empty( $setup_code ) ) : ?>
