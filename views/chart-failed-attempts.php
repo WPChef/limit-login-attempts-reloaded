@@ -4,7 +4,7 @@ use LLAR\Core\Config;
 use LLAR\Core\Helpers;
 use LLAR\Core\LimitLoginAttempts;
 
-if (!defined('ABSPATH')) exit();
+if ( ! defined( 'ABSPATH' ) ) exit();
 
 $active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $is_active_app_custom = $active_app === 'custom';
@@ -13,6 +13,12 @@ $chart2_labels = array();
 $chart2_datasets = array();
 $chart2_requests_scale_max = 0;
 $chart2_attempts_scale_max = 0;
+
+
+//
+$chart2__color = '#58C3FF';
+$chart2__color_gradient = '#58C3FFB3';
+//
 
 if( $is_active_app_custom ) {
 
@@ -109,30 +115,29 @@ if( $is_active_app_custom ) {
 	}
 
 	$chart2_datasets[] = array(
-		'label'             => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
-		'data'              => $chart2_data,
-		'backgroundColor'   => 'rgb(54, 162, 235)',
-		'borderColor'       => 'rgb(54, 162, 235)',
-		'fill'              => false,
+		'label' => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
+		'data' => $chart2_data,
+		'borderColor' => $chart2__color,
+		'fill' => false,
 	);
 }
 ?>
 
 <div class="llar-attempts-chart-legend">
-	<div class="legend-1">
-		<?php esc_html_e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
-		<i class="llar-tooltip" data-text="<?php esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' ); ?>">
-			<span class="dashicons dashicons-editor-help"></span>
-		</i>
-	</div>
-	<?php if( $is_active_app_custom ) : ?>
-		<div class="legend-2">
-			<?php esc_html_e( 'Requests', 'limit-login-attempts-reloaded' ); ?>
-			<i class="llar-tooltip" data-text="<?php esc_attr_e( 'A request is utilized when the cloud validates whether an IP address is allowed to attempt a login, which also includes denied logins.', 'limit-login-attempts-reloaded' ); ?>">
-				<span class="dashicons dashicons-editor-help"></span>
-			</i>
-		</div>
-	<?php endif; ?>
+<!--	<div class="legend-1">-->
+<!--		--><?php //esc_html_e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+<!--		<i class="llar-tooltip" data-text="--><?php //esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' ); ?><!--">-->
+<!--			<span class="dashicons dashicons-editor-help"></span>-->
+<!--		</i>-->
+<!--	</div>-->
+<!--	--><?php //if( $is_active_app_custom ) : ?>
+<!--		<div class="legend-2">-->
+<!--			--><?php //esc_html_e( 'Requests', 'limit-login-attempts-reloaded' ); ?>
+<!--			<i class="llar-tooltip" data-text="--><?php //esc_attr_e( 'A request is utilized when the cloud validates whether an IP address is allowed to attempt a login, which also includes denied logins.', 'limit-login-attempts-reloaded' ); ?><!--">-->
+<!--				<span class="dashicons dashicons-editor-help"></span>-->
+<!--			</i>-->
+<!--		</div>-->
+<!--	--><?php //endif; ?>
 </div>
 <div class="llar-chart-wrap">
 	<canvas id="llar-api-requests-chart" style=""></canvas>
@@ -142,13 +147,34 @@ if( $is_active_app_custom ) {
     (function(){
 
         var ctx = document.getElementById('llar-api-requests-chart').getContext('2d');
+
+        // Add a gradient fill below the graph
+        const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+        gradient.addColorStop(0, '<?php echo esc_js( $chart2__color_gradient ); ?>');
+        gradient.addColorStop(1, '<?php echo esc_js( '#FFFFFF00' ); ?>');
+
+        let new_array = <?php echo json_encode($chart2_datasets); ?>;
+
+        new_array[0].fill = true;
+        new_array[0].backgroundColor = gradient;
+
+
         var llar_stat_chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: <?php echo json_encode( $chart2_labels ); ?>,
-                datasets: <?php echo json_encode( $chart2_datasets ); ?>
+                datasets: new_array,
             },
             options: {
+                elements: {
+                    point: {
+                        pointStyle: 'circle',
+                        radius: 3.5,
+                        pointBackgroundColor: 'white',
+                        pointBorderWidth: 1.5,
+                        pointBorderColor: '<?php echo esc_js( $chart2__color ); ?>',
+                    }
+                },
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {

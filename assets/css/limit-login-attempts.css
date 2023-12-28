@@ -1654,6 +1654,45 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   height: 15px;
 }
 
+#wpadminbar li .llar-alert-icon .plugin-count {
+  vertical-align: middle;
+  margin-top: -3px;
+}
+
+.llar-auto-update-notice {
+  display: block !important;
+}
+
+.llar-attempts-chart-legend > div {
+  margin-right: 10px;
+  color: #60666d;
+  display: inline-block;
+}
+.llar-attempts-chart-legend > div:last-child {
+  margin-right: 0;
+}
+.llar-attempts-chart-legend > div:before {
+  content: "";
+  display: inline-block;
+  width: 37px;
+  height: 9px;
+  border: 3px solid;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.llar-attempts-chart-legend > div.legend-1:before {
+  border-color: rgb(54, 162, 235);
+  background-color: rgba(54, 162, 235, 0.3);
+}
+.llar-attempts-chart-legend > div.legend-2:before {
+  border-color: rgba(174, 174, 174, 0.7);
+  background-color: rgba(174, 174, 174, 0.2);
+}
+.llar-attempts-chart-legend > div.legend-2 .llar-tooltip:before {
+  left: auto;
+  right: 0;
+}
+
 #llar-dashboard-page {
   font-family: CoFo Sans, arial;
   margin-top: 40px;
@@ -1823,6 +1862,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .actions {
   margin-top: 5px;
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-2 .section-content {
+  overflow: visible;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-2 .llar-chart-wrap {
   width: 100%;
@@ -2284,8 +2326,8 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 14px;
   text-align: left;
 }
-#llar-admin-dashboard-widgets .widget-content {
-  overflow: hidden;
+#llar-admin-dashboard-widgets .widget-content .llar-attempts-chart-legend {
+  margin-bottom: 10px;
 }
 #llar-admin-dashboard-widgets .llar-widget {
   margin-bottom: 20px;

@@ -1,4 +1,104 @@
+@import
+"settings";
+
+.toplevel_page_limit-login-attempts { // top level css
+
+  #wpwrap {
+    background-color: $background__sky-blue;
+  }
+
+  #wpcontent {
+    background-color: $background__sky-blue;
+    font-family: $font-primary, $font-secondary;
+    font-style: $text-font-style;
+    font-weight: $text-font-weight;
+    color: $typography-primary;
+  }
+}
+
 .limit-login-page-settings {
+  margin: 8px 50px;
+
+  @include _1799 {
+    margin: 8px 16px 8px 0;
+  }
+
+  &__logo_block {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 18px;
+    margin-right: 20px;
+
+    .info-box-icon {
+      display: inline-block;
+      margin-left: 5px;
+
+      img {
+        width: 15px;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  &__logo {
+    margin-top: 21px;
+    margin-left: 4px;
+    max-width: 172px;
+  }
+
+  .nav-tab-wrapper {
+    position: relative;
+    border-bottom: unset;
+    margin-top: 20px;
+
+    .nav-tab {
+      border: unset;
+      background-color: unset;
+      font-size: 16px;
+      color: $typography-primary;
+      font-weight: $text-font-weight;
+      margin-left: 0;
+      margin-right: 35px;
+      padding: 4px 5px 6px;
+
+      &-active {
+        border-bottom: 4px solid $primary-colors__turquoise;
+      }
+
+      @include _991 {
+        margin-right: 20px;
+      }
+
+      @include _767 {
+        font-size: 14px;
+        margin-right: .87em;
+      }
+
+      @include _575 {
+        font-size: 12px;
+        margin-right: .5em;
+      }
+    }
+
+    .llar-failover-link {
+      color: $primary-colors__turquoise;
+      font-size: 14px;
+      float: right;
+      padding: 7px 15px ;
+
+
+      .llar-tooltip {
+
+        &:before {
+          right: 0;
+          left: auto;
+        }
+      }
+    }
+  }
+
   .field-col {
     display: inline-block;
     margin-right: 20px;
@@ -825,21 +925,22 @@
                 vertical-align: middle;
               }
 
-            &.llar-app-log-action-btn {
-              min-width: 45px;
-              text-align: center;
-              display: inline-block;
-              line-height: 20px;
-              cursor: pointer;
-
-              i {
-                vertical-align: middle;
-              }
-
-              &:hover {
+              &.llar-app-log-action-btn {
+                min-width: 45px;
+                text-align: center;
+                display: inline-block;
+                line-height: 20px;
+                cursor: pointer;
 
                 i {
-                  color: #3c8dbc;
+                  vertical-align: middle;
+                }
+
+                &:hover {
+
+                  i {
+                    color: #3c8dbc;
+                  }
                 }
               }
             }
