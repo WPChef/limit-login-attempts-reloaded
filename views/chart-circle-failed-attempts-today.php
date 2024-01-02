@@ -29,6 +29,7 @@ if( $active_app === 'local' ) {
 		}
 	}
 
+	$retries_count = 438;
 	if( $retries_count === 0 ) {
 
 		$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
@@ -98,4 +99,4 @@ if( $active_app === 'local' ) {
     })();
 </script>
 <div class="title"><?php echo esc_html( $retries_chart_title ); ?></div>
-<div class="desc"><?php echo esc_html( $retries_chart_desc ); ?></div>
+<div class="desc"><?php echo $retries_chart_desc ?></div>
