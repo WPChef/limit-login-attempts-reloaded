@@ -18,12 +18,12 @@ if( $active_app === 'local' ) {
 
 	$retries_stats = Config::get( 'retries_stats' );
 
-	if( $retries_stats ) {
+	if ( $retries_stats ) {
 		foreach ( $retries_stats as $key => $count ) {
 			if( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
 				$retries_count += $count;
 			}
-            elseif( !is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+            elseif ( ! is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
 				$retries_count += $count;
 			}
 		}
@@ -98,4 +98,4 @@ if( $active_app === 'local' ) {
     })();
 </script>
 <div class="title"><?php echo esc_html( $retries_chart_title ); ?></div>
-<div class="desc"><?php echo esc_html( $retries_chart_desc ); ?></div>
+<div class="desc"><?php echo $retries_chart_desc ?></div>
