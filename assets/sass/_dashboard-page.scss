@@ -38,13 +38,18 @@
 
     .llar-label {
       color: $typography-primary;
-      min-width: 180px;
+      min-width: fit-content;
       padding: 2px 16px;
       border-radius: $border-radius__min;
       background-color: rgba(10, 172, 208, 0.08);
 
       @include _1599 {
         padding: 2px 5px;
+      }
+
+      &-group {
+        display: flex;
+        column-gap: 20px;
       }
 
       &__url {
@@ -62,6 +67,17 @@
         font-size: 64px;
         vertical-align: middle;
         color: #58C3FF;
+      }
+
+      &__circle-grey {
+        font-size: 64px;
+        vertical-align: middle;
+        color: #AEAEAEB2;
+      }
+
+      .dashicons {
+        color: #4ACAD8;
+        line-height: inherit;
       }
     }
   }
