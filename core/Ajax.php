@@ -341,9 +341,15 @@ class Ajax {
                         <td class="llar-col-nowrap"><?php echo get_date_from_gmt( date( 'Y-m-d H:i:s', $item['created_at'] ), $date_format ); ?></td>
                         <td>
                             <div class="llar-log-country-flag">
-                                <span class="llar-tooltip" data-text="<?php echo esc_attr( $country_name ); ?>">
+                                <span class="hint_tooltip-parent">
                                     <img src="<?php echo LLA_PLUGIN_URL . 'assets/img/flags/' . esc_attr( strtolower( $item['country_code'] ) ) . '.png' ?>">
-                                </span>&nbsp;<span><?php echo esc_html( $item['ip'] ); ?></span></div>
+                                    <div class="hint_tooltip">
+                                        <div class="hint_tooltip-content">
+                                            <?php echo esc_attr( $country_name ) ?>
+                                        </div>
+                                    </div>
+                                </span>
+                                <span><?php echo esc_html( $item['ip'] ); ?></span></div>
                         </td>
                         <td><?php echo esc_html( $item['gateway'] ); ?></td>
                         <td><?php echo ( is_null( $item['login'] ) ) ? '-' : esc_html( $item['login'] ); ?></td>

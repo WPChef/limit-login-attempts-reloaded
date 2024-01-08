@@ -1077,6 +1077,16 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   white-space: nowrap;
   gap: 3px;
 }
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .llar-log-country-flag .hint_tooltip {
+  width: fit-content;
+  top: 33px;
+}
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .llar-log-country-flag .hint_tooltip:before {
+  right: 55%;
+}
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .llar-log-country-flag .hint_tooltip-content {
+  font-size: 14px;
+}
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .llar-log-country-flag .llar-tooltip:before {
   width: auto !important;
 }

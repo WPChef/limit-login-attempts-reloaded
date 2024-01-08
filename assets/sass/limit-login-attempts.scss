@@ -899,6 +899,20 @@
               white-space: nowrap;
               gap: 3px;
 
+              .hint_tooltip {
+                width: fit-content;
+                top: 33px;
+
+                &:before {
+                  right: 55%;
+                }
+
+                &-content {
+                  font-size: 14px;
+
+                }
+              }
+
               .llar-tooltip {
                 &:before {
                   width: auto !important;
