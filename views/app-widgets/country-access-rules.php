@@ -10,10 +10,6 @@ if( !defined( 'ABSPATH' ) ) exit();
 
     <?php
     $countries_list = Helpers::get_countries_list();
-    array_walk($countries_list, function (&$country, $key) {
-	    $country = __( $country, 'limit-login-attempts-reloaded' );
-    });
-
     ?>
     <div class="llar-preloader-wrap">
         <div class="llar-block-country-section">

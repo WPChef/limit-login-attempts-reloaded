@@ -110,7 +110,7 @@ $active_app = ( $active_app === 'custom' && LimitLoginAttempts::$cloud_app ) ? '
                                 <?php if( $country_code !== 'ZZ' ) : ?>
                                 <img class="flag-icon" src="<?php echo LLA_PLUGIN_URL; ?>/assets/img/flags/<?php echo esc_attr( $country_data['code'] ); ?>.png">
                                 <?php endif; ?>
-                            <?php echo esc_html( __( $country_name, 'limit-login-attempts-reloaded' ) ); ?></td>
+                            <?php echo esc_html( $country_name ); ?></td>
                             <td><?php echo esc_html( number_format_i18n( $country_data['attempts'] ) ); ?></td>
                         </tr>
                     <?php endforeach; ?>
