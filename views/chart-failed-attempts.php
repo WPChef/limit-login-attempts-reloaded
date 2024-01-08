@@ -9,14 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) exit();
 $active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $is_active_app_custom = $active_app === 'custom';
 
+$chart2_label = '';
 $chart2_labels = array();
 $chart2_datasets = array();
 $chart2_requests_scale_max = 0;
 $chart2_attempts_scale_max = 0;
 
-$chart2__color = '#58C3FF';
-$chart2__color_gradient = '#58C3FFB3';
-
+$chart2__color_attempts = '#58C3FF';
+$chart2__color_gradient_attempts = '#58C3FF4D';
+$chart2__color_requests = '#AEAEAEB2';
+$chart2__color_gradient_requests = '#AEAEAE33';
 
 if( $is_active_app_custom ) {
 
@@ -28,18 +30,18 @@ if( $is_active_app_custom ) {
 	$attempts_dataset = array(
 		'label'             => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
 		'data'              => array(),
-		'backgroundColor'   => 'rgba(54, 162, 235, 0.3)',
-		'borderColor'       => 'rgb(54, 162, 235)',
+		'backgroundColor'   => $chart2__color_gradient_attempts,
+		'borderColor'       => $chart2__color_attempts,
 		'fill'              => true,
 	);
 
 	$requests_dataset = array(
 		'label'             => __( 'Requests', 'limit-login-attempts-reloaded' ),
 		'data'              => array(),
-		'backgroundColor'   => 'rgba(174, 174, 174, 0.2)',
-		'borderColor'       => 'rgba(174, 174, 174, 0.7)',
+		'backgroundColor'   => $chart2__color_gradient_requests,
+		'borderColor'       => $chart2__color_requests,
 		'fill'              => true,
-		'yAxisID'           => 'requests'
+		'yAxisID'           => 'requests',
 	);
 
 	$api_stats = LimitLoginAttempts::$cloud_app->stats();
@@ -115,28 +117,9 @@ if( $is_active_app_custom ) {
 	$chart2_datasets[] = array(
 		'label' => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
 		'data' => $chart2_data,
-		'borderColor' => $chart2__color,
-		'fill' => false,
 	);
 }
 ?>
-
-<div class="llar-attempts-chart-legend">
-<!--	<div class="legend-1">-->
-<!--		--><?php //esc_html_e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
-<!--		<i class="llar-tooltip" data-text="--><?php //esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' ); ?><!--">-->
-<!--			<span class="dashicons dashicons-editor-help"></span>-->
-<!--		</i>-->
-<!--	</div>-->
-<!--	--><?php //if( $is_active_app_custom ) : ?>
-<!--		<div class="legend-2">-->
-<!--			--><?php //esc_html_e( 'Requests', 'limit-login-attempts-reloaded' ); ?>
-<!--			<i class="llar-tooltip" data-text="--><?php //esc_attr_e( 'A request is utilized when the cloud validates whether an IP address is allowed to attempt a login, which also includes denied logins.', 'limit-login-attempts-reloaded' ); ?><!--">-->
-<!--				<span class="dashicons dashicons-editor-help"></span>-->
-<!--			</i>-->
-<!--		</div>-->
-<!--	--><?php //endif; ?>
-</div>
 <div class="llar-chart-wrap">
 	<canvas id="llar-api-requests-chart" style=""></canvas>
 </div>
@@ -146,22 +129,11 @@ if( $is_active_app_custom ) {
 
         var ctx = document.getElementById('llar-api-requests-chart').getContext('2d');
 
-        // Add a gradient fill below the graph
-        const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-        gradient.addColorStop(0, '<?php echo esc_js( $chart2__color_gradient ); ?>');
-        gradient.addColorStop(1, '<?php echo esc_js( '#FFFFFF00' ); ?>');
-
-        let new_array = <?php echo json_encode($chart2_datasets); ?>;
-
-        new_array[0].fill = true;
-        new_array[0].backgroundColor = gradient;
-
-
         var llar_stat_chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: <?php echo json_encode( $chart2_labels ); ?>,
-                datasets: new_array,
+                datasets: <?php echo json_encode($chart2_datasets); ?>,
             },
             options: {
                 elements: {
@@ -170,15 +142,11 @@ if( $is_active_app_custom ) {
                         radius: 3.5,
                         pointBackgroundColor: 'white',
                         pointBorderWidth: 1.5,
-                        pointBorderColor: '<?php echo esc_js( $chart2__color ); ?>',
                     }
                 },
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    },
                     tooltip: {
                         mode: 'index',
                         intersect: false,
@@ -187,6 +155,9 @@ if( $is_active_app_custom ) {
                                 return context.raw.toLocaleString('<?php echo esc_js( Helpers::wp_locale() ); ?>');
                             }
                         }
+                    },
+                    legend: {
+                        display: false
                     },
                 },
                 hover: {

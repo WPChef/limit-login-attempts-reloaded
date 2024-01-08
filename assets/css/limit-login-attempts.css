@@ -1729,7 +1729,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .section-title__new .llar-label {
   color: #2A2F40;
-  min-width: 180px;
+  min-width: fit-content;
   padding: 2px 16px;
   border-radius: 8px;
   background-color: rgba(10, 172, 208, 0.08);
@@ -1738,6 +1738,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   #llar-dashboard-page .section-title__new .llar-label {
     padding: 2px 5px;
   }
+}
+#llar-dashboard-page .section-title__new .llar-label-group {
+  display: flex;
+  column-gap: 20px;
 }
 #llar-dashboard-page .section-title__new .llar-label__url {
   color: #A4A8B7;
@@ -1754,6 +1758,15 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 64px;
   vertical-align: middle;
   color: #58C3FF;
+}
+#llar-dashboard-page .section-title__new .llar-label__circle-grey {
+  font-size: 64px;
+  vertical-align: middle;
+  color: rgba(174, 174, 174, 0.6980392157);
+}
+#llar-dashboard-page .section-title__new .llar-label .dashicons {
+  color: #4ACAD8;
+  line-height: inherit;
 }
 #llar-dashboard-page .section-content {
   margin-top: 16px;
