@@ -42,7 +42,10 @@ ob_start(); ?>
                 </div>
                 <div class="card-body step-first">
                     <div class="url_site">
-                        <?php echo sprintf(__( 'Site URL: <a href="%s" class="link__style_unlink llar_orange">%s</a>', 'limit-login-attempts-reloaded' ), $url_site, $url_site); ?>
+                        <?php echo sprintf(
+                            __( 'Site URL: <a href="%s" class="link__style_unlink llar_orange">%s</a>', 'limit-login-attempts-reloaded' ),
+                            $url_site, $url_site);
+                        ?>
                     </div>
                     <div class="description">
                         <?php _e( 'Please enter the email that will receive setup instructions', 'limit-login-attempts-reloaded' ); ?>
@@ -58,7 +61,10 @@ ob_start(); ?>
                             <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
                         </button>
                         <div class="description_add">
-                            <?php _e( 'By signing up you agree to our terms of service and privacy policy.', 'limit-login-attempts-reloaded' ); ?>
+                            <?php echo sprintf(
+                                __( 'By signing up you agree to our <a href="%s" class="llar_turquoise">terms of service</a> and <a href="%s" class="llar_turquoise">privacy policy.</a>', 'limit-login-attempts-reloaded' ),
+                                'https://www.limitloginattempts.com/terms/', 'https://www.limitloginattempts.com/privacy-policy/' );
+                            ?>
                         </div>
                     </div>
                 </div>

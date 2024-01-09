@@ -49,8 +49,10 @@ $active_app_config = Config::get( 'app_config' );
 
 $min_plan = 'Premium';
 $plans = $this->array_name_plans();
-$block_sub_group = $active_app === 'custom' ? $this->info_sub_group() : false;
+$block_sub_group = ( $active_app === 'custom' ) ? $this->info_sub_group() : false;
 $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan] );
+$url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
+$url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url() : $url_try_for_free . 'settings-cloud-block';
 ?>
 
 <?php if ( isset( $_GET['llar-cloud-activated'] ) && ! empty( $active_app_config['messages']['setup_success'] ) ) : ?>
@@ -481,9 +483,9 @@ $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$
                                 </div>
                             </div>
                         </div>
-                        <button class="button menu__item button__transparent_orange" id="">
+                        <a href="<?php echo $url_try_for_free . 'settings-local-block' ?>" class="button menu__item button__transparent_orange" target="_blank">
 							<?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
-                        </button>
+                        </a>
                     </div>
 	                <?php endif; ?>
                 </div>
@@ -581,9 +583,15 @@ $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$
                                 <div class="description mt-1_5">
 									<?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
-                                <button class="button menu__item button__transparent_orange mt-1_5" id="">
-									<?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
-                                </button>
+                                <a href="<?php echo $url_try_for_free_cloud ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
+                                    <?php
+                                    if ( $block_sub_group === 'Micro Cloud' ) :
+	                                    echo __( 'Get Started', 'limit-login-attempts-reloaded' );
+	                                else :
+									    echo __( 'Try For FREE', 'limit-login-attempts-reloaded' );
+                                    endif;
+                                    ?>
+                                </a>
                             </div>
                             <div class="add_block__list">
                                 <div class="item">

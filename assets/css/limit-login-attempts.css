@@ -33,7 +33,12 @@
 .llar_turquoise, #llar-setting-page-logs .description-page .description-secondary a.unlink, #llar-setting-page-logs__active .description-page .description-secondary a.unlink, #llar-setting-page .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-logs .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-debug .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-help .llar-settings-wrap .form-table tr td a.unlink {
   color: #4ACAD8;
 }
-.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-secondary a.unlink:hover, #llar-setting-page-logs__active .description-page .description-secondary a.unlink:hover, #llar-setting-page .llar-settings-wrap .form-table tr td a.unlink:hover, #llar-setting-page-logs .llar-settings-wrap .form-table tr td a.unlink:hover, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td a.unlink:hover, #llar-setting-page-debug .llar-settings-wrap .form-table tr td a.unlink:hover, #llar-setting-page-premium .llar-settings-wrap .form-table tr td a.unlink:hover, #llar-setting-page-help .llar-settings-wrap .form-table tr td a.unlink:hover {
+
+a.llar_turquoise, #llar-setting-page-logs .description-page .description-secondary a.unlink, #llar-setting-page-logs__active .description-page .description-secondary a.unlink, #llar-setting-page .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-logs .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-debug .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-help .llar-settings-wrap .form-table tr td a.unlink {
+  text-decoration: none;
+}
+a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-secondary a.unlink:hover, #llar-setting-page-logs__active .description-page .description-secondary a.unlink:hover, #llar-setting-page .llar-settings-wrap .form-table tr td a.unlink:hover, #llar-setting-page-logs .llar-settings-wrap .form-table tr td a.unlink:hover, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td a.unlink:hover, #llar-setting-page-debug .llar-settings-wrap .form-table tr td a.unlink:hover, #llar-setting-page-premium .llar-settings-wrap .form-table tr td a.unlink:hover, #llar-setting-page-help .llar-settings-wrap .form-table tr td a.unlink:hover {
+  text-decoration: none;
   color: #4ACAD8;
   border-bottom: 1px solid currentColor;
 }
@@ -240,6 +245,7 @@ button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .lla
   font-size: 16px;
   line-height: 1.45;
   padding: 6px 18px;
+  text-align: center;
 }
 @media screen and (max-width: 1599.5px) {
   button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {

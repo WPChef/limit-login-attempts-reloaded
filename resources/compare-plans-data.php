@@ -129,7 +129,7 @@ $compare_list = array(
     'Premium Support'                               => array(
         'description'   =>  __( 'Receive 1 on 1 technical support via email for any issues. Free support availabe in the <a href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/" target="_blank">WordPress support forum</a>.', 'limit-login-attempts-reloaded' ),
         'Free'          => $lock,
-        'Micro Cloud'   => $yes,
+        'Micro Cloud'   => $lock,
         'Premium'       => $yes,
         'Premium +'     => $yes,
         'Professional'  => $yes,

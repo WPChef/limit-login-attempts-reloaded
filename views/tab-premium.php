@@ -2,7 +2,7 @@
 
 use LLAR\Core\Config;
 
-if( !defined( 'ABSPATH' ) ) exit();
+if ( ! defined( 'ABSPATH' ) ) exit();
 
 $active_app = Config::get( 'active_app' );
 ?>
@@ -50,9 +50,9 @@ $active_app = Config::get( 'active_app' );
         <div class="section-1__internal">
             <?php if( $active_app === 'local' ) : ?>
                 <?php _e( 'You are currently using the free version of <strong>Limit Login Attempts Reloaded</strong>.', 'limit-login-attempts-reloaded' ); ?>
-                <a href="https://www.limitloginattempts.com/activate/?from=plugin-premium-tab" class="link__style_unlink llar_turquoise" target="_blank">
+                <span class="llar_turquoise">
                     <?php _e( 'If you purchased a premium plan, check your email for setup instructions (key included)', 'limit-login-attempts-reloaded' ); ?>
-                </a>
+                </span>
             <?php elseif( $active_app === 'custom' ) : ?>
                 <?php _e( 'You are currently using the premium version of Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded' ); ?>
             <?php endif ?>
@@ -65,7 +65,7 @@ $active_app = Config::get( 'active_app' );
                 <?php _e( 'Why Should I Consider Premium?', 'limit-login-attempts-reloaded' ); ?>
             </h2>
             <div class="description-secondary">
-                <?php _e( 'Although the free version offers great protection, the premium version includes an important feature called <b>IP Intelligence</b>. With IP intelligence, your website will be able to identify malicious IPs before they attempt a login, and absorb them into the cloud to save system resources. Your site will not only be more secure, but will operate at its optimal performance.', 'limit-login-attempts-reloaded' ); ?>
+                <?php _e( 'Although the free version offers basic protection, the premium version includes an important feature called <b>IP Intelligence</b>. With IP intelligence, your website will be able to identify malicious IPs before they attempt a login, and absorb them into the cloud to save system resources. Your site will not only be more secure, but will operate at its optimal performance.', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
     <?php endif ?>
