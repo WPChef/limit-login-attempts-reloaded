@@ -7,16 +7,14 @@ use LLAR\Core\LimitLoginAttempts;
 
 if ( ! defined( 'ABSPATH' ) ) exit();
 
-$active_app = Config::get( 'active_app' );
-$active_app = ( $active_app === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
+$active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $is_active_app_custom = $active_app === 'custom';
 
 $setup_code = Config::get( 'app_setup_code' );
 
 $wp_locale = str_replace( '_', '-', get_locale() );
 
-
-if ($active_app === 'local' && empty($setup_code)) {
+if ( ! $is_active_app_custom && empty( $setup_code ) ) {
     require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php');
 }
 ?>
@@ -24,60 +22,17 @@ if ($active_app === 'local' && empty($setup_code)) {
 <div id="llar-dashboard-page">
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
-            <div class="section-title__new">
-                <span class="llar-label">
-                    <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
-                </span>
-                <?php echo $active_app === 'custom'
-                    ? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>'
-                    : ''; ?>
-            </div>
             <div class="section-content">
 	            <?php include_once( LLA_PLUGIN_DIR . 'views/chart-circle-failed-attempts-today.php'); ?>
             </div>
         </div>
 
         <div class="info-box-2">
-            <div class="section-title__new">
-                <div class="llar-label-group">
-                    <span class="llar-label">
-                        <span class="llar-label__circle-blue">&bull;</span>
-                        <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
-                        <span class="hint_tooltip-parent">
-                            <span class="dashicons dashicons-editor-help"></span>
-                            <div class="hint_tooltip">
-                                <div class="hint_tooltip-content">
-                                    <?php esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' ); ?>
-                                </div>
-                            </div>
-                        </span>
-                    </span>
-                    <?php if( $is_active_app_custom ) : ?>
-                        <span class="llar-label">
-                            <span class="llar-label__circle-grey">&bull;</span>
-                                <?php _e( 'Requests', 'limit-login-attempts-reloaded' ); ?>
-                            <span class="hint_tooltip-parent">
-                                <span class="dashicons dashicons-editor-help"></span>
-                                <div class="hint_tooltip">
-                                    <div class="hint_tooltip-content">
-                                        <?php esc_attr_e( 'A request is utilized when the cloud validates whether an IP address is allowed to attempt a login, which also includes denied logins.', 'limit-login-attempts-reloaded' ); ?>
-                                    </div>
-                                </div>
-                            </span>
-                        </span>
-	                <?php endif; ?>
-                </div>
-                <span class="llar-label__url">
-                    <a class="link__style_unlink">
-                        <?php echo wp_parse_url( home_url(), PHP_URL_HOST ) ?>
-                    </a>
-                </span>
-            </div>
             <div class="section-content">
 	            <?php include_once( LLA_PLUGIN_DIR . 'views/chart-failed-attempts.php'); ?>
             </div>
         </div>
-        <?php if( $active_app === 'local' && empty( $setup_code ) ) : ?>
+        <?php if ( ! $is_active_app_custom && empty( $setup_code ) ) : ?>
 		<div class="info-box-3">
             <div class="section-title__new">
                 <div class="title"><?php _e( 'Enable Micro Cloud (FREE)', 'limit-login-attempts-reloaded' ); ?></div>
@@ -116,7 +71,7 @@ if ($active_app === 'local' && empty($setup_code)) {
             </div>
         </div>
         <?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php') ?>
-        <?php elseif( $active_app === 'local' && !empty( $setup_code ) ) : ?>
+        <?php elseif ( ! $is_active_app_custom && ! empty( $setup_code ) ) : ?>
             <div class="info-box-3">
                 <div class="section-title__new">
                     <div class="title"><?php _e( 'Premium Protection Disabled', 'limit-login-attempts-reloaded' ); ?></div>
@@ -209,8 +164,8 @@ if ($active_app === 'local' && empty($setup_code)) {
 
         $min_plan = 'Premium';
         $plans = $this->array_name_plans();
-        $block_sub_group = $active_app === 'custom' ? $this->info_sub_group() : false;
-        $upgrade_premium = ($active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan]) ? ' checked' : '';
+        $block_sub_group = $is_active_app_custom ? $this->info_sub_group() : false;
+        $upgrade_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min_plan]) ? ' checked' : '';
         $block_by_country = $block_sub_group ? $this->info_block_by_country() : false;
         $block_by_country_disabled = $block_sub_group ? '' : ' disabled';
         $is_by_country =  $block_by_country ? ' checked disabled' : $block_by_country_disabled;

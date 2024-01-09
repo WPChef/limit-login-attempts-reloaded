@@ -1,13 +1,19 @@
 <?php
 
+/**
+ * Chart failed attempts
+ *
+ * @var string $active_app
+ * @var string $is_active_app_custom
+ * @var LimitLoginAttempts $this
+ *
+ */
+
 use LLAR\Core\Config;
 use LLAR\Core\Helpers;
 use LLAR\Core\LimitLoginAttempts;
 
 if ( ! defined( 'ABSPATH' ) ) exit();
-
-$active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
-$is_active_app_custom = $active_app === 'custom';
 
 $chart2_label = '';
 $chart2_labels = array();
@@ -120,6 +126,41 @@ if( $is_active_app_custom ) {
 	);
 }
 ?>
+<div class="section-title__new">
+    <div class="llar-label-group">
+        <span class="llar-label">
+            <span class="llar-label__circle-blue">&bull;</span>
+            <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+            <span class="hint_tooltip-parent">
+                <span class="dashicons dashicons-editor-help"></span>
+                <div class="hint_tooltip">
+                    <div class="hint_tooltip-content">
+                        <?php esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' ); ?>
+                    </div>
+                </div>
+            </span>
+        </span>
+		<?php if( $is_active_app_custom ) : ?>
+            <span class="llar-label">
+                <span class="llar-label__circle-grey">&bull;</span>
+                    <?php _e( 'Requests', 'limit-login-attempts-reloaded' ); ?>
+                <span class="hint_tooltip-parent">
+                    <span class="dashicons dashicons-editor-help"></span>
+                    <div class="hint_tooltip">
+                        <div class="hint_tooltip-content">
+                            <?php esc_attr_e( 'A request is utilized when the cloud validates whether an IP address is allowed to attempt a login, which also includes denied logins.', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
+                    </div>
+                </span>
+            </span>
+		<?php endif; ?>
+    </div>
+    <span class="llar-label__url">
+        <a class="link__style_unlink">
+            <?php echo wp_parse_url( home_url(), PHP_URL_HOST ) ?>
+        </a>
+    </span>
+</div>
 <div class="llar-chart-wrap">
 	<canvas id="llar-api-requests-chart" style=""></canvas>
 </div>
