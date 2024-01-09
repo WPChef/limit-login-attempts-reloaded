@@ -1,12 +1,19 @@
 <?php
 
+/**
+ * Chart circle failed attempts today
+ *
+ * @var string $active_app
+ * @var string $is_active_app_custom
+ * @var LimitLoginAttempts $this
+ *
+ */
+
 use LLAR\Core\Config;
 use LLAR\Core\Helpers;
 use LLAR\Core\LimitLoginAttempts;
 
 if ( ! defined('ABSPATH' ) ) exit();
-
-$active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 
 $retries_chart_title = '';
 $retries_chart_desc = '';
@@ -62,7 +69,14 @@ if( $active_app === 'local' ) {
 	$retries_chart_color = '#97F6C8';
 }
 ?>
-
+<div class="section-title__new">
+    <span class="llar-label">
+        <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+    </span>
+	<?php echo $is_active_app_custom
+		? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>'
+		: ''; ?>
+</div>
 <div class="chart">
     <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
     <span class="llar-retries-count"><?php echo esc_html( Helpers::short_number( $retries_count ) ); ?></span>
