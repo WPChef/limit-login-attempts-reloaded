@@ -25,14 +25,17 @@ $actual_plan = $active_app === 'custom' ? $this->info_sub_group() : '';
 ?>
 
 <?php if ( $active_app !== 'local' && $actual_plan === 'Micro Cloud' ) : ?>
-<div id="llar-header-upgrade-message">
-    <p>
-        <span class="dashicons dashicons-superhero"></span>
-        <?php echo sprintf( __( 'Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
-            'https://www.limitloginattempts.com/info.php?from=plugin-' . ( ( substr( $active_tab, 0, 4 ) === 'logs' ) ? 'logs' : $active_tab )
-        ); ?>
-    </p>
-</div>
+
+	<?php $upgrade_premium_url = $this->info_upgrade_url(); ?>
+    <div id="llar-header-upgrade-message">
+        <p>
+            <span class="dashicons dashicons-warning"></span>
+            <?php echo sprintf(
+                __( '<a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> to access our powerful <strong>login firewall,</strong> which detects, counters and neutralizes attacks in the cloud', 'limit-login-attempts-reloaded' ),
+                $upgrade_premium_url );
+            ?>
+        </p>
+    </div>
 <?php endif; ?>
 
 <?php if ( ( $auto_update_choice || $auto_update_choice === null ) && !Helpers::is_auto_update_enabled() ) : ?>

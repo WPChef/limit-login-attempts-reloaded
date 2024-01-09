@@ -58,8 +58,8 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
             </div>
             <div class="actions">
                 <div class="actions__buttons">
-                    <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta"
-                       title="Upgrade To Premium"
+                    <a href="https://www.limitloginattempts.com/premium-security-zero-cost-discover-the-benefits-of-micro-cloud/"
+                       title="Learn More"
                        target="_blank"
                        class="button menu__item button__transparent_orange link__style_unlink">
                         <?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?>
@@ -87,7 +87,10 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                 </div>
                 <div class="actions">
                     <div class="actions__buttons">
-                        <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta" title="Upgrade To Premium" target="_blank" class="link__style_unlink">
+                        <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta"
+                           title="Upgrade To Premium"
+                           target="_blank"
+                           class="link__style_unlink">
                             <button class="button menu__item col button__orange">
                                 <?php _e( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
                             </button>

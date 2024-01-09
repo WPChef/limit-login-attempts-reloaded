@@ -87,11 +87,15 @@ $border-radius__max: $border-radius * 2;
 
 .llar_turquoise {
   color: $primary-colors__turquoise;
+}
+
+a.llar_turquoise {
+  text-decoration: none;
 
   &:hover {
+    text-decoration: none;
     color: $primary-colors__turquoise;
     border-bottom: 1px solid currentColor;
-
   }
 }
 
@@ -308,6 +312,7 @@ button.llar_button {
     font-size: 16px;
     line-height: 1.45;
     padding: 6px 18px;
+    text-align: center;
 
     @include _1599 {
       font-size: 14px;
