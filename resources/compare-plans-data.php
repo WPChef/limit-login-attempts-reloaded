@@ -14,25 +14,25 @@ $min_plan = $active_app === 'custom' ? 'Micro Cloud' : 'Free';
 
 $plans = $this->array_name_plans();
 $actual_plan = $active_app === 'custom' ? $this->info_sub_group() : $min_plan;
-$upgrade_link = $active_app === 'custom' ? $this->info_upgrade_link() : 'https://www.limitloginattempts.com/info.php?from=plugin-premium-tab-upgrade';
+$upgrade_url = $active_app === 'custom' ? $this->info_upgrade_url() : 'https://www.limitloginattempts.com/info.php?from=plugin-premium-tab-upgrade';
 
 $attribute = [];
 foreach ( $plans as $plan => $rate ) {
 
     if ( $rate < $plans[$actual_plan] ) {
-        $attribute[$plan]['class'] = '';
+        $attribute[$plan]['attr'] = '';
         $attribute[$plan]['title'] = '';
     }
     elseif ( $rate === $plans[$actual_plan] ) {
-	    $attribute[$plan]['class'] = 'class="button menu__item button__transparent_orange llar-disabled"';
+	    $attribute[$plan]['attr'] = 'class="button menu__item button__transparent_orange llar-disabled"';
 	    $attribute[$plan]['title'] = 'Installed';
     }
     elseif ( $plan === 'Micro Cloud' ) {
-        $attribute[$plan]['class'] = 'class="button menu__item button__orange button_micro_cloud"';
+        $attribute[$plan]['attr'] = 'class="button menu__item button__orange button_micro_cloud"';
         $attribute[$plan]['title'] = 'Get Started (Free)';
     }
     else {
-        $attribute[$plan]['class'] = 'class="button menu__item button__orange" href="' . $upgrade_link . '" target="_blank"';
+        $attribute[$plan]['attr'] = 'class="button menu__item button__orange" href="' . $upgrade_url . '" target="_blank"';
         $attribute[$plan]['title'] = 'Upgrade now';
     }
 }
@@ -42,11 +42,11 @@ $yes = '<span class="llar_orange">&#x2713;</span>';
 
 $compare_list = array(
     'buttons_header'                                => array(
-        'Free'          => '<a ' . $attribute['Free']['class'] . '>' . __( $attribute['Free']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['class'] . '>' . __( $attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Premium'       => '<a ' . $attribute['Premium']['class'] . '>' . __( $attribute['Premium']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Premium +'     => '<a ' . $attribute['Premium +']['class'] . '>' . __( $attribute['Premium +']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Professional'  => '<a ' . $attribute['Professional']['class'] . '>' . __( $attribute['Professional']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+        'Free'          => '<a ' . $attribute['Free']['attr'] . '>' . __( $attribute['Free']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['attr'] . '>' . __( $attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+        'Premium'       => '<a ' . $attribute['Premium']['attr'] . '>' . __( $attribute['Premium']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+        'Premium +'     => '<a ' . $attribute['Premium +']['attr'] . '>' . __( $attribute['Premium +']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+        'Professional'  => '<a ' . $attribute['Professional']['attr'] . '>' . __( $attribute['Professional']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
     ),
     'Limit Number of Retry Attempts'                => array(
         'Free'          => $yes,
@@ -135,11 +135,11 @@ $compare_list = array(
         'Professional'  => $yes,
     ),
     'buttons_footer'                                => array(
-        'Free'          => '<a ' . $attribute['Free']['class'] . '>' . __( $attribute['Free']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['class'] . '>' . __( $attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Premium'       => '<a ' . $attribute['Premium']['class'] . '>' . __( $attribute['Premium']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Premium +'     => '<a ' . $attribute['Premium +']['class'] . '>' . __( $attribute['Premium +']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Professional'  => '<a ' . $attribute['Professional']['class'] . '>' . __( $attribute['Professional']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+        'Free'          => '<a ' . $attribute['Free']['attr'] . '>' . __( $attribute['Free']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['attr'] . '>' . __( $attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+        'Premium'       => '<a ' . $attribute['Premium']['attr'] . '>' . __( $attribute['Premium']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+        'Premium +'     => '<a ' . $attribute['Premium +']['attr'] . '>' . __( $attribute['Premium +']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+        'Professional'  => '<a ' . $attribute['Professional']['attr'] . '>' . __( $attribute['Professional']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
     ),
 );
 
