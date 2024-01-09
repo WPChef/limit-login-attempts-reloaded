@@ -1,19 +1,15 @@
 <?php
-
 /**
  * Chart failed attempts
  *
  * @var string $active_app
  * @var string $is_active_app_custom
- * @var LimitLoginAttempts $this
+ * @var bool|mixed $api_stats
  *
  */
 
 use LLAR\Core\Config;
 use LLAR\Core\Helpers;
-use LLAR\Core\LimitLoginAttempts;
-
-if ( ! defined( 'ABSPATH' ) ) exit();
 
 $chart2_label = '';
 $chart2_labels = array();
@@ -26,7 +22,7 @@ $chart2__color_gradient_attempts = '#58C3FF4D';
 $chart2__color_requests = '#AEAEAEB2';
 $chart2__color_gradient_requests = '#AEAEAE33';
 
-if( $is_active_app_custom ) {
+if ( $is_active_app_custom ) {
 
 	$stats_dates = array();
 	$stats_values = array();
@@ -50,11 +46,9 @@ if( $is_active_app_custom ) {
 		'yAxisID'           => 'requests',
 	);
 
-	$api_stats = LimitLoginAttempts::$cloud_app->stats();
+	if ( $api_stats ) {
 
-	if( $api_stats ) {
-
-		if( !empty( $api_stats['attempts'] ) ) {
+		if ( !empty( $api_stats['attempts'] ) ) {
 
 			foreach ( $api_stats['attempts']['at'] as $timestamp ) {
 
@@ -65,15 +59,15 @@ if( $is_active_app_custom ) {
 			$attempts_dataset['data'] = $api_stats['attempts']['count'];
 		}
 
-		if( !empty( $api_stats['requests'] ) ) {
+		if ( !empty( $api_stats['requests'] ) ) {
 
 			$requests_dataset['data'] = $api_stats['requests']['count'];
 		}
 
-		if( !empty( $api_stats['attempts_y'] ) )
+		if ( !empty( $api_stats['attempts_y'] ) )
 			$chart2_attempts_scale_max = (int) $api_stats['attempts_y'];
 
-		if( !empty( $api_stats['requests_y'] ) )
+		if ( !empty( $api_stats['requests_y'] ) )
 			$chart2_requests_scale_max = (int) $api_stats['requests_y'];
 	}
 
@@ -87,7 +81,7 @@ if( $is_active_app_custom ) {
 
 	$retries_stats = Config::get( 'retries_stats' );
 
-	if( is_array( $retries_stats ) && $retries_stats ) {
+	if ( is_array( $retries_stats ) && $retries_stats ) {
 		$key = key( $retries_stats );
 		$start = is_numeric( $key ) ? date_i18n( 'Y-m-d', $key ) : $key;
 
@@ -126,6 +120,7 @@ if( $is_active_app_custom ) {
 	);
 }
 ?>
+
 <div class="section-title__new">
     <div class="llar-label-group">
         <span class="llar-label">
@@ -161,8 +156,10 @@ if( $is_active_app_custom ) {
         </a>
     </span>
 </div>
-<div class="llar-chart-wrap">
-	<canvas id="llar-api-requests-chart" style=""></canvas>
+<div class="section-content">
+    <div class="llar-chart-wrap">
+        <canvas id="llar-api-requests-chart" style=""></canvas>
+    </div>
 </div>
 
 <script type="text/javascript">

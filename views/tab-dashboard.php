@@ -1,4 +1,11 @@
 <?php
+/**
+ * Dashboard
+ *
+ * @var string $active_app
+ * @var string $is_active_app_custom
+ *
+ */
 
 use LLAR\Core\CloudApp;
 use LLAR\Core\Config;
@@ -9,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit();
 
 $active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $is_active_app_custom = $active_app === 'custom';
+$api_stats = $is_active_app_custom ? LimitLoginAttempts::$cloud_app->stats() : false;
 
 $setup_code = Config::get( 'app_setup_code' );
 
@@ -22,15 +30,11 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 <div id="llar-dashboard-page">
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
-            <div class="section-content">
-	            <?php include_once( LLA_PLUGIN_DIR . 'views/chart-circle-failed-attempts-today.php'); ?>
-            </div>
+            <?php include_once( LLA_PLUGIN_DIR . 'views/chart-circle-failed-attempts-today.php'); ?>
         </div>
 
         <div class="info-box-2">
-            <div class="section-content">
-	            <?php include_once( LLA_PLUGIN_DIR . 'views/chart-failed-attempts.php'); ?>
-            </div>
+            <?php include_once( LLA_PLUGIN_DIR . 'views/chart-failed-attempts.php'); ?>
         </div>
         <?php if ( ! $is_active_app_custom && empty( $setup_code ) ) : ?>
 		<div class="info-box-3">
