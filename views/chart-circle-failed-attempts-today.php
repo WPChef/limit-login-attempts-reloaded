@@ -1,33 +1,28 @@
 <?php
-
 /**
  * Chart circle failed attempts today
  *
  * @var string $active_app
  * @var string $is_active_app_custom
- * @var LimitLoginAttempts $this
+ * @var bool|mixed $api_stats
  *
  */
 
 use LLAR\Core\Config;
 use LLAR\Core\Helpers;
-use LLAR\Core\LimitLoginAttempts;
-
-if ( ! defined('ABSPATH' ) ) exit();
 
 $retries_chart_title = '';
 $retries_chart_desc = '';
 $retries_chart_color = '';
 
-$api_stats = false;
 $retries_count = 0;
-if( $active_app === 'local' ) {
+if ( $active_app === 'local' ) {
 
 	$retries_stats = Config::get( 'retries_stats' );
 
-	if( $retries_stats ) {
+	if ( $retries_stats ) {
 		foreach ( $retries_stats as $key => $count ) {
-			if( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
+			if ( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
 				$retries_count += $count;
 			}
             elseif( !is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
@@ -36,7 +31,7 @@ if( $active_app === 'local' ) {
 		}
 	}
 
-	if( $retries_count === 0 ) {
+	if ( $retries_count === 0 ) {
 
 		$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#97F6C8';
@@ -58,9 +53,7 @@ if( $active_app === 'local' ) {
 
 } else {
 
-	$api_stats = LimitLoginAttempts::$cloud_app->stats();
-
-	if( $api_stats && ! empty( $api_stats['attempts']['count'] )) {
+	if ( $api_stats && ! empty( $api_stats['attempts']['count'] )) {
 
 		$retries_count = (int) end( $api_stats['attempts']['count'] );
 	}
@@ -69,6 +62,7 @@ if( $active_app === 'local' ) {
 	$retries_chart_color = '#97F6C8';
 }
 ?>
+
 <div class="section-title__new">
     <span class="llar-label">
         <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
@@ -77,10 +71,13 @@ if( $active_app === 'local' ) {
 		? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>'
 		: ''; ?>
 </div>
-<div class="chart">
-    <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
-    <span class="llar-retries-count"><?php echo esc_html( Helpers::short_number( $retries_count ) ); ?></span>
+<div class="section-content">
+    <div class="chart">
+        <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
+        <span class="llar-retries-count"><?php echo esc_html( Helpers::short_number( $retries_count ) ); ?></span>
+    </div>
 </div>
+
 <script type="text/javascript">
     ( function() {
 
