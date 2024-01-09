@@ -1815,14 +1815,14 @@ class LimitLoginAttempts
     }
 
 
-    public function info_upgrade_link()
+    public function info_upgrade_url()
     {
         if ( empty( $this->info_data ) ) {
 
             $this->info_data = $this->info();
         }
 
-        return ( ! empty($this->info_data ) && ! empty( $this->info_data['upgrade_link'] ) ) ? $this->info_data['upgrade_link'] : '';
+        return ( ! empty($this->info_data ) && ! empty( $this->info_data['upgrade_url'] ) ) ? $this->info_data['upgrade_url'] : '';
     }
 
 
