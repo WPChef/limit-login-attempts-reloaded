@@ -41,19 +41,23 @@ ob_start(); ?>
                     </div>
                 </div>
                 <div class="card-body step-first">
-                    <div class="url_site">
-                        <?php echo sprintf(
-                            __( 'Site URL: <a href="%s" class="link__style_unlink llar_orange">%s</a>', 'limit-login-attempts-reloaded' ),
-                            $url_site, $url_site);
-                        ?>
-                    </div>
                     <div class="description">
-                        <?php _e( 'Please enter the email that will receive setup instructions', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Please enter the email that will receive setup information', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <div class="field-wrap">
                         <div class="field-email">
                             <input type="text" class="input_border" id="llar-subscribe-email" placeholder="Your email" value="<?php esc_attr_e( $admin_email ); ?>">
                         </div>
+                    </div>
+                    <div class="field-checkbox">
+                        <input type="checkbox" id="mc_consent_registering"/>
+                        <span>
+                            <?php echo sprintf(
+	                            __( 'I consent to registering my domain name, %s with the Limit Login Attempts Reloaded cloud service', 'limit-login-attempts-reloaded' ),
+	                            $url_site);
+                            ?>
+
+                        </span>
                     </div>
                     <div class="button_block-single">
                         <button class="button menu__item button__orange" id="llar-button_subscribe-email">
@@ -128,6 +132,7 @@ $micro_cloud_popup_content = ob_get_clean();
                     const $card_body_first = $( '.card-body.step-first' );
                     const $card_body_second = $( '.card-body.step-second' );
                     const $button_dashboard = $( '#llar-button_dashboard' );
+                    const $consent_registering = $( '#mc_consent_registering' );
                     const $subscribe_notification = $( '.llar-upgrade-subscribe_notification' );
                     const $subscribe_notification_error = $( '.llar-upgrade-subscribe_notification__error' );
                     const $spinner = $button_subscribe_email.find( '.preloader-wrapper .spinner' );
@@ -136,6 +141,8 @@ $micro_cloud_popup_content = ob_get_clean();
                     const real_email = '<?php echo esc_js( $admin_email ); ?>';
 
                     let email = $subscribe_email.val().trim();
+
+                    $button_subscribe_email.addClass( disabled );
 
                     $subscribe_email.on( 'blur', function() {
 
@@ -146,6 +153,17 @@ $micro_cloud_popup_content = ob_get_clean();
                         }
                         else {
                             $button_subscribe_email.removeClass( disabled )
+                        }
+                    } );
+
+                    $consent_registering.on( 'change', function () {
+
+                        const is_checked = $( this ).prop( 'checked' );
+
+                        if( is_checked ) {
+                            $button_subscribe_email.removeClass( disabled );
+                        } else {
+                            $button_subscribe_email.addClass( disabled );
                         }
                     } );
 

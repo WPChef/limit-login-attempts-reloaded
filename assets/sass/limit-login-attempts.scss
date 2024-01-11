@@ -253,7 +253,7 @@
     color: $typography-secondary;
     padding: 30px 44px;
     border-radius: $border-radius;
-    background: $background-body;
+    background: #ABBFC10B;
     box-shadow: 4px 4px 18px 0 $box-shadow__light-transparent-gray;
 
     @include _1599 {
@@ -313,8 +313,11 @@
           }
 
           .dashicons {
-            color: $primary-colors__turquoise;
-            line-height: inherit;
+            @extend .dashicons-secondary;
+            font-size: 140%;
+            width: 14px;
+            height: 14px;
+            margin-left: 2px;
 
             @include _1599 {
               font-size: 16px;
@@ -1336,20 +1339,6 @@
       font-weight: bold;
       font-size: 16px;
       color: #4d4d4d;
-    }
-
-    ul {
-
-      li {
-
-        .dashicons {
-          color: #3ab54a;
-          font-size: 25px;
-          width: 25px;
-          top: -2px;
-          position: relative;
-        }
-      }
     }
   }
 }

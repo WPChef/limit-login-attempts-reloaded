@@ -11,6 +11,10 @@
         display: block;
         margin-bottom: 0;
         border-radius: $border-radius__normal;
+
+        &::-webkit-scrollbar {
+          width: 0px;
+        }
       }
 
       .jconfirm-closeIcon {
@@ -195,19 +199,15 @@
                 margin-top: 20px;
               }
 
-              .url_site {
-                font-size: 16px;
-                color: $typography-additional;
-                width: fit-content;
-                margin-top: 10px;
-                padding: 5px 25px;
-                background-color: $primary-colors__orange-back;
-                border-radius: $border-radius__normal;
-              }
-
               .field {
 
                 &-email {
+                  margin-top: 20px;
+                }
+
+                &-checkbox {
+                  color: $typography-secondary;
+                  font-size: 16px;
                   margin-top: 20px;
                 }
 

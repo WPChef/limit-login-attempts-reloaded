@@ -70,7 +70,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                     </a>
                 </div>
                 <div class="remark">
-	                <?php _e( '*A request is utilized when our cloud app validates an IP before it is able to perform a login attempt.', 'limit-login-attempts-reloaded' ); ?>
+	                <?php _e( '* A request is utilized when our cloud app validates an IP before it is able to perform a login attempt.', 'limit-login-attempts-reloaded' ); ?>
                 </div>
             </div>
         </div>
