@@ -48,7 +48,7 @@ $active_app = Config::get( 'active_app' );
 		<?php _e( 'GDPR Information', 'limit-login-attempts-reloaded' ); ?>
     </a>
 
-    <a href="#" class="description-page gdpr-information-link all-doc-title mt-1_5" target="_blank">
+    <a href="https://docs.limitloginattempts.com/" class="description-page gdpr-information-link all-doc-title mt-1_5" target="_blank">
 		<?php _e( 'Software Documentation', 'limit-login-attempts-reloaded' ); ?>
     </a>
 
