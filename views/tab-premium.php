@@ -38,20 +38,16 @@ $active_app = Config::get( 'active_app' );
                 </ul>
             </div>
             <div class="action">
-                <a class="button menu__item button__orange" href="https://checkout.limitloginattempts.com/plan?from=plugin-premium-tab" target="_blank">
+                <a class="button menu__item button__orange" href="https://www.limitloginattempts.com/info.php?from=plugin-premium-tab" target="_blank">
                     <?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?>
                 </a>
-                <div class="label">
-                    <span class="dashicons dashicons-external"></span>
-                    <?php _e( 'Goes to LLAR checkout page', 'limit-login-attempts-reloaded' ); ?>
-                </div>
             </div>
         </div>
         <div class="section-1__internal">
             <?php if( $active_app === 'local' ) : ?>
                 <?php _e( 'You are currently using the free version of <strong>Limit Login Attempts Reloaded</strong>.', 'limit-login-attempts-reloaded' ); ?>
                 <span class="llar_turquoise">
-                    <?php _e( 'If you purchased a premium plan, check your email for setup instructions (key included)', 'limit-login-attempts-reloaded' ); ?>
+                    <?php _e( 'If you purchased a premium plan, check your email for setup instructions (Setup Code included)', 'limit-login-attempts-reloaded' ); ?>
                 </span>
             <?php elseif( $active_app === 'custom' ) : ?>
                 <?php _e( 'You are currently using the premium version of Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded' ); ?>

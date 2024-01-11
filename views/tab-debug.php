@@ -78,11 +78,9 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
-                                <ul class="hint_tooltip-content">
-                                    <li>
-                                        <?php esc_attr_e( 'You can start over the onboarding process by clicking this button. All existing data will remain unchanged.', 'limit-login-attempts-reloaded' ); ?>
-                                    </li>
-                                </ul>
+                                <div class="hint_tooltip-content">
+                                    <?php esc_attr_e( 'You can start over the onboarding process by clicking this button. All existing data will remain unchanged.', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
                             </div>
                         </span>
                     </th>

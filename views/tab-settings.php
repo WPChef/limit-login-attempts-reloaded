@@ -324,7 +324,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 								<?php endif; ?>
                             </select>
 							<?php if ( $active_app === 'local' ) : ?>
-                                <span class="llar-protect-notice"><?php _e( 'Get advanced protection by <a href="#" class="unlink llar-upgrade-to-cloud">upgrading to our Cloud App.</a>', 'limit-login-attempts-reloaded' ); ?></span>
+                                <span class="llar-protect-notice"><?php _e( 'Get advanced protection by <a href="#" class="unlink llar-upgrade-to-cloud">upgrading to our Cloud App</a>.', 'limit-login-attempts-reloaded' ); ?></span>
 							<?php endif; ?>
                         </td>
                     </tr>
