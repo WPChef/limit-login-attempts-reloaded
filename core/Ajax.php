@@ -659,8 +659,6 @@ class Ajax {
 					if ( ! empty( $response_body['key'] ) ) {
 						Config::update( 'cloud_key', $response_body['key'] );
 					}
-
-					wp_send_json_success();
 				}
 			}
 
