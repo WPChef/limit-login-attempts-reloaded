@@ -21,7 +21,7 @@ if ( $onboarding_popup_shown || ! empty( $setup_code ) ) {
 ob_start(); ?>
 <div class="llar-onboarding-popup__content">
     <div class="logo">
-        <img src="<?php echo LLA_PLUGIN_URL ?>assets/img/icon-logo-menu.png">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/img/icon-logo-menu-dark.png">
     </div>
     <div class="llar-onboarding__line">
         <div class="point__block visited active" data-step="1">
@@ -57,7 +57,7 @@ ob_start(); ?>
         <div class="card mx-auto">
             <div class="field-wrap">
                 <div class="field-title">
-					<?php _e( 'Add your license key', 'limit-login-attempts-reloaded' ); ?>
+					<?php _e( 'Add your Setup Code', 'limit-login-attempts-reloaded' ); ?>
                 </div>
                 <div class="field-key">
                     <input type="text" class="input_border" id="llar-setup-code-field" placeholder="Your key" value="">
@@ -133,9 +133,6 @@ ob_start(); ?>
     </div>
     <div class="card mx-auto">
         <div class="field-wrap">
-            <div class="field-title-add">
-				<?php echo sprintf( __( 'Site URL: %s', 'limit-login-attempts-reloaded' ), wp_parse_url( home_url(), PHP_URL_HOST ) ); ?>
-            </div>
             <div class="field-email">
                 <input type="text" class="input_border" id="llar-subscribe-email" placeholder="Your email"
                        value="<?php esc_attr_e( $admin_email ); ?>">
@@ -174,7 +171,7 @@ ob_start(); ?>
 		<?php _e( 'Limited Upgrade (Free)', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <div class="card mx-auto">
-        <div class="field-wrap">
+        <div class="field-wrap" id="llar-description-step-3">
             <div class="field-desc-add">
 				<?php _e( 'Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP intelligence, and performance optimizer (up to 1,000 requests monthly)', 'limit-login-attempts-reloaded' ); ?>
             </div>
@@ -196,13 +193,13 @@ ob_start(); ?>
             <div class="explanations">
 				<?php echo sprintf(
 					__( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our <a class="link__style_color_inherit llar_turquoise" href="%s" target="_blank">terms of service</a> by participating in this program.', 'limit-login-attempts-reloaded' ),
-					'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+					'https://www.limitloginattempts.com/terms/'
 				); ?>
             </div>
         </div>
         <div class="llar-upgrade-subscribe_notification">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
-			<?php _e( 'Instructions sent via email', 'limit-login-attempts-reloaded' ); ?>
+			<?php _e( 'Congrats! Your website is now activated for Micro Cloud. Account information has been emailed to you for your reference.', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="llar-upgrade-subscribe_notification__error">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
@@ -233,9 +230,6 @@ ob_start(); ?>
     <div class="card mx-auto">
         <div class="field-image">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/schema-ok-min.png">
-        </div>
-        <div class="field-desc">
-			<?php _e( 'This email will receive notifications of unauthorized access to your website. You may turn this off in your settings.', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="button_block-single">
             <button class="button next_step menu__item button__orange">
@@ -391,6 +385,7 @@ $content_step_4 = ob_get_clean();
                             const $button_next = $( '.button.next_step' );
                             const $button_skip = $button_next.filter( '.button-skip' );
                             const $spinner = $limited_upgrade_subscribe.find( '.preloader-wrapper .spinner' );
+                            const $description = $( '#llar-description-step-3' ).find( '.field-desc-add' );
 
                             console.log(real_email);
 
@@ -402,6 +397,7 @@ $content_step_4 = ob_get_clean();
 
                                 llar_activate_micro_cloud( real_email )
                                     .then( function () {
+                                        $description.addClass( 'llar-display-none' );
                                         $subscribe_notification.addClass( 'llar-display-block' );
                                         $button_next.removeClass( disabled );
                                         $button_next.removeClass( 'llar-display-none' );

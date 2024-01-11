@@ -217,8 +217,9 @@
 
           .llar-upgrade-subscribe_notification, .llar-upgrade-subscribe_notification__error {
             display: none;
-            color: $typography-additional;
-            font-size: 16px;
+            color: $typography-secondary;
+            font-size: 18px;
+            line-height: 1.5;
             margin: 15px auto 0;
             padding: 9px 70px;
             width: fit-content;
