@@ -76,8 +76,10 @@
       }
 
       .dashicons {
-        color: #4ACAD8;
-        line-height: inherit;
+        @extend .dashicons-secondary;
+        font-size: 140%;
+        width: 14px;
+        height: 14px;
       }
     }
   }
