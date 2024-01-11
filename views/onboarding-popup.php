@@ -345,7 +345,6 @@ $content_step_4 = ob_get_clean();
                             const $subscribe_email = $( '#llar-subscribe-email' );
                             const $subscribe_email_button = $( '#llar-subscribe-email-button' );
                             const $spinner = $subscribe_email_button.find( '.preloader-wrapper .spinner' );
-                            const $is_subscribe = !! $( '.field-checkbox input[name="lockout_notify_email"]' ).prop( 'checked' );
 
                             let email = $subscribe_email.val().trim();
 
@@ -361,6 +360,8 @@ $content_step_4 = ob_get_clean();
                             });
 
                             $subscribe_email_button.on( 'click', function () {
+
+                                const $is_subscribe = !! $( '.field-checkbox input[name="lockout_notify_email"]' ).prop( 'checked' );
 
                                 $subscribe_email_button.addClass( disabled );
                                 $spinner.addClass( visibility );
