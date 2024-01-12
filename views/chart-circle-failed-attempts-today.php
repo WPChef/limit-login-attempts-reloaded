@@ -59,7 +59,6 @@ if ( $active_app === 'local' ) {
 } else {
 
 	if ( $api_stats && ! empty( $api_stats['attempts']['count'] )) {
-
 		$retries_count = (int) end( $api_stats['attempts']['count'] );
 	}
 
