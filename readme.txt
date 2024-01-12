@@ -17,7 +17,7 @@ The plugin functions by automatically preventing further attempts from a particu
 By default, WordPress permits an unlimited number of login attempts, posing a vulnerability where passwords can be easily deciphered through brute force methods.
 
 **Limit Login Attempts Reloaded Premium (Try For 7 Days)**
-Upgrade to our <a href="https://www.limitloginattempts.com/upgrade/">premium version</a> to extend cloud-based protection to the Limit Login Attempts Reloaded plugin, thereby enhancing your login security. The premium version includes a range of highly beneficial features, including <a href="https://www.limitloginattempts.com/features/ip-intelligence/">IP intelligence</a> to **detect, counter and deny malicious login attempts**. Your <a href="https://www.limitloginattempts.com/failed-login-attempts-in-wordpress/">failed login attempts</a> will be safely neutralized in the cloud so your website can function at its optimal performance during an attack. 
+Upgrade to <a href="https://www.limitloginattempts.com/plans/">Limit Login Attempts Reloaded Premium</a> to extend cloud-based protection to the Limit Login Attempts Reloaded plugin, thereby enhancing your login security. The premium version includes a range of highly beneficial features, including <a href="https://www.limitloginattempts.com/features/ip-intelligence/">IP intelligence</a> to **detect, counter and deny malicious login attempts**. Your <a href="https://www.limitloginattempts.com/failed-login-attempts-in-wordpress/">failed login attempts</a> will be safely neutralized in the cloud so your website can function at its optimal performance during an attack. 
 
 https://www.youtube.com/watch?v=JfkvIiQft14
 
@@ -53,7 +53,7 @@ https://www.youtube.com/watch?v=JfkvIiQft14
 * **Supports IPV6 Ranges For Safelist/Denylist** 
 * **Unlock The Locked Admin** - Easily <a href="https://www.limitloginattempts.com/how-to-unlock-your-site-if-you-are-locked-out-by-limit-login-attempts-reloaded/">unlock the locked admin</a> through the cloud.
 
-*Some features require higher level plans. Please <a href="https://www.limitloginattempts.com/plans/?from=wp-details">view our plans</a> for a full list of pricing and features.  
+*Some features require higher level plans.   
 
 
 = Upgrading from the old Limit Login Attempts plugin? =
