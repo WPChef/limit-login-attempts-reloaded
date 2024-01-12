@@ -161,6 +161,7 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   background-color: #FDFDFD;
   border: 1.5px solid #ABBFC1;
   box-sizing: content-box;
+  margin: -0.25rem 0.25rem 0 0;
 }
 .llar_input_checkbox:checked, .toplevel_page_limit-login-attempts input[type=checkbox]:checked, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked, #llar-setting-page .llar-settings-wrap .form-table tr td input[type=checkbox]:checked, #llar-setting-page-logs .llar-settings-wrap .form-table tr td input[type=checkbox]:checked, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td input[type=checkbox]:checked, #llar-setting-page-debug .llar-settings-wrap .form-table tr td input[type=checkbox]:checked, #llar-setting-page-premium .llar-settings-wrap .form-table tr td input[type=checkbox]:checked, #llar-setting-page-help .llar-settings-wrap .form-table tr td input[type=checkbox]:checked {
   background-color: #FF7C06;
