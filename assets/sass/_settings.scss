@@ -218,6 +218,7 @@ a.llar_turquoise {
   background-color: $background-body;
   border: 1.5px solid $primary-colors__steel_blue;
   box-sizing: content-box;
+  margin: -0.25rem 0.25rem 0 0;
 
   &:checked {
     background-color: $primary-colors__orange;

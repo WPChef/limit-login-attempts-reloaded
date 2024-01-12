@@ -73,7 +73,7 @@ $compare_list = array(
     'Performance Optimizer'                         => array(
         'description'   =>  __( 'Absorb failed login attempts from brute force bots in the cloud to keep your website at its optimal performance.', 'limit-login-attempts-reloaded' ),
         'Free'          => $lock,
-        'Micro Cloud'   => $yes . '<span class="description">1k requests per month</span>',
+        'Micro Cloud'   => $yes . '<span class="description">1k for first month<br>(100 per month after)</span>',
         'Premium'       => $yes . '<span class="description">100k requests per month</span>',
         'Premium +'     => $yes . '<span class="description">200k requests per month</span>',
         'Professional'  => $yes . '<span class="description">300k requests per month</span>',
