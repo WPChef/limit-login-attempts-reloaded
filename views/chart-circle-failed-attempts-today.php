@@ -3,6 +3,7 @@
  * Chart circle failed attempts today
  *
  * @var string $active_app
+ * @var string $setup_code
  * @var string $is_active_app_custom
  * @var bool|mixed $api_stats
  *
@@ -45,9 +46,13 @@ if ( $active_app === 'local' ) {
 	} else {
 
 		$retries_chart_title = __( 'Warning: Your site has experienced over 100 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = sprintf(
-			__('Your site is currently at a higher risk for brute force activity. We recommend our <a class="llar_orange %s" target="_blank">free Micro Cloud upgrade</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded'),
-			'button_micro_cloud');
+
+		if ( empty( $setup_code ) ) {
+			$retries_chart_desc = sprintf(
+				__('Your site is currently at a higher risk for brute force activity. We recommend our <a class="llar_orange %s" target="_blank">free Micro Cloud upgrade</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded'),
+				'button_micro_cloud');
+        }
+
 		$retries_chart_color = '#FF6633';
 	}
 
