@@ -574,7 +574,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #666D84;
   padding: 30px 44px;
   border-radius: 20px;
-  background: rgba(171, 191, 193, 0.0431372549);
+  background: rgba(232, 253, 255, 0.02);
   box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
 }
 @media screen and (max-width: 1599.5px) {
