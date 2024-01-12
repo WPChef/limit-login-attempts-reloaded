@@ -16,7 +16,6 @@ $retries_chart_desc = '';
 $retries_chart_color = '';
 
 $retries_count = 0;
-$retries_count = 102;
 if ( $active_app === 'local' ) {
 
 	$retries_stats = Config::get( 'retries_stats' );
