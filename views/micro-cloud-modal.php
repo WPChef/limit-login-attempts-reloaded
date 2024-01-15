@@ -42,7 +42,7 @@ ob_start(); ?>
                 </div>
                 <div class="card-body step-first">
                     <div class="description">
-                        <?php _e( 'Please enter the email that will receive setup information', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Please enter the email that will receive activation confirmation', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <div class="field-wrap">
                         <div class="field-email">
