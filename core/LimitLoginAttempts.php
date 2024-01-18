@@ -658,6 +658,8 @@ class LimitLoginAttempts {
 
 	public function admin_bar_menu( $admin_bar ) {
 
+		if ( ! current_user_can( 'manage_options' ) ) return;
+
 	    $root_item_id = 'llar-root';
 
 		$admin_bar->add_node( array(
