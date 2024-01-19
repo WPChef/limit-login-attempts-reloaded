@@ -2461,8 +2461,8 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content {
   min-height: 930px;
   padding: 15px;
-  background: url("./images/onboarding-bg-min.webp") no-repeat center top;
-  background-size: cover;
+  background: url("./images/onboarding-bg-big.webp") no-repeat center top;
+  background-size: 100%;
   border-radius: 16px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .logo {
