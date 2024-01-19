@@ -12,7 +12,7 @@ $setup_code = Config::get( 'app_setup_code' );
 //if( ! empty( $setup_code ) ) return;
 
 $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
-$url_site = esc_url( get_site_url() );
+$url_site = parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
 
 ob_start(); ?>
     <div class="micro_cloud_modal__content">
@@ -53,10 +53,9 @@ ob_start(); ?>
                         <input type="checkbox" id="mc_consent_registering"/>
                         <span>
                             <?php echo sprintf(
-	                            __( 'I consent to registering my domain name, %s with the Limit Login Attempts Reloaded cloud service', 'limit-login-attempts-reloaded' ),
+	                            __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service', 'limit-login-attempts-reloaded' ),
 	                            $url_site);
                             ?>
-
                         </span>
                     </div>
                     <div class="button_block-single">
@@ -80,9 +79,6 @@ ob_start(); ?>
                     <div class="llar-upgrade-subscribe_notification">
                         <div class="field-image">
                             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/schema-ok-min.png">
-                        </div>
-                        <div class="field-desc">
-                            <?php _e( 'This email will receive notifications of unauthorized access to your website. You may turn this off in your settings.', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                     </div>
                     <div class="button_block-single">

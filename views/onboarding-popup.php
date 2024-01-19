@@ -14,6 +14,8 @@ $admin_email            = ( ! is_multisite() ) ? get_option( 'admin_email' ) : g
 $onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
 $setup_code             = Config::get( 'app_setup_code' );
 
+$url_site = parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
+
 if ( $onboarding_popup_shown || ! empty( $setup_code ) ) {
 	return;
 }
@@ -60,7 +62,7 @@ ob_start(); ?>
 					<?php _e( 'Add your Setup Code', 'limit-login-attempts-reloaded' ); ?>
                 </div>
                 <div class="field-key">
-                    <input type="text" class="input_border" id="llar-setup-code-field" placeholder="Your key" value="">
+                    <input type="text" class="input_border" id="llar-setup-code-field" placeholder="<?php _e('Your Setup Code', 'limit-login-attempts-reloaded' ) ?>" value="">
                     <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
 						<?php _e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
                         <span class="dashicons dashicons-arrow-right-alt"></span>
@@ -69,7 +71,7 @@ ob_start(); ?>
                 </div>
                 <div class="field-error"></div>
                 <div class="field-desc">
-					<?php _e( 'The license key can be found in your email if you have subscribed to premium', 'limit-login-attempts-reloaded' ); ?>
+					<?php _e( 'The Setup Code can be found in your email if you have subscribed to premium', 'limit-login-attempts-reloaded' ); ?>
                 </div>
             </div>
         </div>
@@ -96,7 +98,7 @@ ob_start(); ?>
                     <div class="video-container" id="video-container">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/video-bg.webp" id="video-poster">
                         <iframe id="video-frame" width="560" height="315"
-                                src="https://www.youtube.com/embed/IsotthPWCPA?si=IwgQaDKMaQ5E1iVy"
+                                src="https://www.youtube.com/embed/JfkvIiQft14"
                                 title="YouTube video player" frameborder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 allowfullscreen></iframe>
@@ -178,6 +180,15 @@ ob_start(); ?>
             <div class="field-desc-add">
 				<?php _e( '<b>Would you like to opt-in?</b>', 'limit-login-attempts-reloaded' ); ?>
             </div>
+            <div class="field-checkbox">
+                <input type="checkbox" id="onboarding_consent_registering"/>
+                <span>
+                    <?php echo sprintf(
+                        __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service', 'limit-login-attempts-reloaded' ),
+                        $url_site);
+                    ?>
+                </span>
+            </div>
         </div>
         <div class="llar-upgrade-subscribe">
             <div class="button_block-horizon">
@@ -192,7 +203,7 @@ ob_start(); ?>
             </div>
             <div class="explanations">
 				<?php echo sprintf(
-					__( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our <a class="link__style_color_inherit llar_turquoise" href="%s" target="_blank">terms of service</a> by participating in this program.', 'limit-login-attempts-reloaded' ),
+					__( 'You may opt-out of this program at any time. You accept our <a class="link__style_color_inherit llar_turquoise" href="%s" target="_blank">terms of service</a> by participating in this program.', 'limit-login-attempts-reloaded' ),
 					'https://www.limitloginattempts.com/terms/'
 				); ?>
             </div>
@@ -382,12 +393,24 @@ $content_step_4 = ob_get_clean();
                             const $block_upgrade_subscribe = $( '.llar-upgrade-subscribe' );
                             const $subscribe_notification = $( '.llar-upgrade-subscribe_notification' );
                             const $subscribe_notification_error = $( '.llar-upgrade-subscribe_notification__error' );
+                            const $consent_registering = $( '#onboarding_consent_registering' );
                             const $button_next = $( '.button.next_step' );
                             const $button_skip = $button_next.filter( '.button-skip' );
                             const $spinner = $limited_upgrade_subscribe.find( '.preloader-wrapper .spinner' );
-                            const $description = $( '#llar-description-step-3' ).find( '.field-desc-add' );
+                            // const $description = $( '#llar-description-step-3' ).find( '.field-desc-add' );
+                            const $description = $( '#llar-description-step-3' );
 
-                            console.log(real_email);
+                            $limited_upgrade_subscribe.addClass( disabled );
+                            $consent_registering.on( 'change', function () {
+
+                                const is_checked = $( this ).prop( 'checked' );
+
+                                if( is_checked ) {
+                                    $limited_upgrade_subscribe.removeClass( disabled );
+                                } else {
+                                    $limited_upgrade_subscribe.addClass( disabled );
+                                }
+                            } );
 
                             $limited_upgrade_subscribe.on( 'click', function () {
 
@@ -397,6 +420,7 @@ $content_step_4 = ob_get_clean();
 
                                 llar_activate_micro_cloud( real_email )
                                     .then( function () {
+                                        // $consent_registering.addClass( 'llar-display-none' );
                                         $description.addClass( 'llar-display-none' );
                                         $subscribe_notification.addClass( 'llar-display-block' );
                                         $button_next.removeClass( disabled );

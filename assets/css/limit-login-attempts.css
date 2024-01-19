@@ -1451,6 +1451,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   }
 }
 #llar-header-upgrade-message p {
+  font-size: 16px;
   margin: 0;
 }
 #llar-header-upgrade-message p .dashicons {
@@ -1840,6 +1841,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   float: right;
   margin-right: 18px;
   color: #666D84;
+  text-wrap: nowrap;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label .dashicons {
   width: unset;
@@ -2586,7 +2588,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .llar-upgrade-subscribe_notification, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .llar-upgrade-subscribe_notification__error {
   display: none;
   color: #666D84;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.5;
   margin: 15px auto 0;
   padding: 9px 70px;

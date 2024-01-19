@@ -5,6 +5,11 @@ use LLAR\Core\Config;
 if ( ! defined( 'ABSPATH' ) ) exit();
 
 $active_app = Config::get( 'active_app' );
+
+$min_plan = 'Premium';
+$plans = $this->array_name_plans();
+$block_sub_group = $active_app === 'custom' ? $this->info_sub_group() : false;
+$is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan] );
 ?>
 
 <div id="llar-setting-page-premium" class="llar-premium-page-wrapper">
@@ -37,11 +42,13 @@ $active_app = Config::get( 'active_app' );
                     </li>
                 </ul>
             </div>
-            <div class="action">
-                <a class="button menu__item button__orange" href="https://www.limitloginattempts.com/info.php?from=plugin-premium-tab" target="_blank">
-                    <?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?>
-                </a>
-            </div>
+            <?php if ( ! $is_premium ) : ?>
+                <div class="action">
+                    <a class="button menu__item button__orange" href="https://www.limitloginattempts.com/info.php?from=plugin-premium-tab" target="_blank">
+                        <?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?>
+                    </a>
+                </div>
+	        <?php endif; ?>
         </div>
         <div class="section-1__internal">
             <?php if( $active_app === 'local' ) : ?>
