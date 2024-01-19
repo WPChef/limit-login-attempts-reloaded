@@ -148,6 +148,7 @@
           float: right;
           margin-right: 18px;
           color: $typography-secondary;
+          text-wrap: nowrap;
 
           .dashicons {
             width: unset;

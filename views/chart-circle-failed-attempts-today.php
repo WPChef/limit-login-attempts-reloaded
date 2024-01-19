@@ -85,7 +85,9 @@ if ( $active_app === 'local' ) {
 </div>
 <div class="section-content">
     <div class="chart">
-        <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
+        <div class="doughnut-chart-wrap" style="width: 200px">
+            <canvas id="llar-attack-velocity-chart"></canvas>
+        </div>
         <span class="llar-retries-count"><?php echo esc_html( Helpers::short_number( $retries_count ) ); ?></span>
     </div>
 </div>

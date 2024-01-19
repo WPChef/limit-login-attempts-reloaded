@@ -108,7 +108,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                     <th scope="row" valign="top"><?php echo __( 'GDPR compliance', 'limit-login-attempts-reloaded' ); ?></th>
                     <td>
                         <input type="checkbox" name="gdpr" value="1" <?php if ( $gdpr ): ?> checked <?php endif; ?>/>
-						<?php echo __( 'this makes the plugin <a href="https://gdpr-info.eu/" class="unlink link__style_unlink" target="_blank">GDPR</a> compliant by showing a message on the login page. <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-settings-gdpr" class="unlink llar-label" target="_blank">Read more</a>', 'limit-login-attempts-reloaded' ); ?>
+						<?php echo __( 'This makes the plugin <a href="https://gdpr-info.eu/" class="unlink link__style_unlink" target="_blank">GDPR</a> compliant by showing a message on the login page. <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-settings-gdpr" class="unlink llar-label" target="_blank">Read more</a>', 'limit-login-attempts-reloaded' ); ?>
                         <br/>
                     </td>
                 </tr>
