@@ -47,12 +47,14 @@ $active_app        = Config::get( 'active_app' );
 $app_setup_code    = Config::get( 'app_setup_code' );
 $active_app_config = Config::get( 'app_config' );
 
+$is_local_empty_setup_code = ( $active_app === 'local' && empty( $app_setup_code ) );
+
 $min_plan = 'Premium';
 $plans = $this->array_name_plans();
 $block_sub_group = ( $active_app === 'custom' ) ? $this->info_sub_group() : false;
 $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan] );
 $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
-$url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url() : $url_try_for_free . 'settings-cloud-block';
+$url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url() : '';
 ?>
 
 <?php if ( isset( $_GET['llar-cloud-activated'] ) && ! empty( $active_app_config['messages']['setup_success'] ) ) : ?>
@@ -268,7 +270,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
             </div>
             <div class="llar-settings-wrap">
                 <table class="form-table">
-	                <?php if ( $active_app === 'local' && !empty( $setup_code ) ) : ?>
+	                <?php if ( $is_local_empty_setup_code && false ) : ?>
                     <tr>
                         <th scope="row" valign="top"><?php echo __( 'Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
                             <span class="hint_tooltip-parent">
@@ -298,7 +300,6 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                             </div>
                         </td>
                     </tr>
-		            <?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php') ?>
 	                <?php endif; ?>
 
                     <tr>
@@ -436,7 +437,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                             </td>
                         </tr>
                     </table>
-                    <?php if ( empty( $app_setup_code ) ) : ?>
+	                <?php if ( $active_app === 'local' || ! $is_premium ) : ?>
                     <div class="add_block__under_table">
                         <div class="description">
 							<?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
@@ -483,9 +484,20 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                 </div>
                             </div>
                         </div>
-                        <a href="<?php echo $url_try_for_free . 'settings-local-block' ?>" class="button menu__item button__transparent_orange" target="_blank">
-							<?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
-                        </a>
+	                    <?php if ( $is_local_empty_setup_code ) : ?>
+		                    <?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php') ?>
+                            <a class="button menu__item button_micro_cloud button__transparent_orange" target="_blank">
+			                    <?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+                            </a>
+                        <?php elseif ( $block_sub_group === 'Micro Cloud' ) : ?>
+                            <a href="<?php echo $url_try_for_free_cloud ?>" class="button menu__item button__transparent_orange" target="_blank">
+			                    <?php echo __( 'Upgrade', 'limit-login-attempts-reloaded' ); ?>
+                            </a>
+	                    <?php else : ?>
+                            <a href="<?php echo $url_try_for_free . 'settings-local-block' ?>" class="button menu__item button__transparent_orange" target="_blank">
+			                    <?php echo __( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
+                            </a>
+	                    <?php endif; ?>
                     </div>
 	                <?php endif; ?>
                 </div>
@@ -576,22 +588,26 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 							<?php endforeach; ?>
 						<?php endif; ?>
                     </table>
-	                <?php if ( ! $is_premium ) : ?>
+	                <?php if ( $active_app === 'local' || ! $is_premium ) : ?>
                     <div class="add_block__under_table image_plus">
                         <div class="row__list">
                             <div class="add_block__title">
                                 <div class="description mt-1_5">
 									<?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
-                                <a href="<?php echo $url_try_for_free_cloud ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
-                                    <?php
-                                    if ( $block_sub_group === 'Micro Cloud' ) :
-	                                    echo __( 'Get Started', 'limit-login-attempts-reloaded' );
-	                                else :
-									    echo __( 'Try For FREE', 'limit-login-attempts-reloaded' );
-                                    endif;
-                                    ?>
-                                </a>
+	                            <?php if ( $is_local_empty_setup_code ) : ?>
+                                    <a class="button menu__item button_micro_cloud button__transparent_orange mt-1_5" target="_blank">
+			                            <?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+                                    </a>
+	                            <?php elseif ( $block_sub_group === 'Micro Cloud' ) : ?>
+                                    <a href="<?php echo $url_try_for_free_cloud ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
+			                            <?php echo __( 'Upgrade', 'limit-login-attempts-reloaded' ); ?>
+                                    </a>
+	                            <?php else : ?>
+                                    <a href="<?php echo $url_try_for_free . 'settings-cloud-block' ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
+			                            <?php echo __( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
+                                    </a>
+	                            <?php endif; ?>
                             </div>
                             <div class="add_block__list">
                                 <div class="item">
