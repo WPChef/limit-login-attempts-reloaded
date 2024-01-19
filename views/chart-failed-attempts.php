@@ -130,7 +130,10 @@ if ( $is_active_app_custom ) {
                 <span class="dashicons dashicons-editor-help"></span>
                 <div class="hint_tooltip">
                     <div class="hint_tooltip-content">
-                        <?php esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' ); ?>
+                        <?php $is_active_app_custom
+	                        ? esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' )
+	                        : esc_attr_e( 'An IP that has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' );
+                        ?>
                     </div>
                 </div>
             </span>
