@@ -66,9 +66,8 @@
       .llar-onboarding-popup__content {
         min-height: 930px;
         padding: 15px;
-        background: url("./images/onboarding-bg-min.webp") no-repeat center top;
-        //background-size: 100%;
-        background-size: cover;
+        background: url("./images/onboarding-bg-big.webp") no-repeat center top;
+        background-size: 100%;
         border-radius: $border-radius__normal;
 
         .logo {
