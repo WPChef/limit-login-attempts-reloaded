@@ -112,7 +112,7 @@ class LimitLoginAttempts {
 
 	public function register_dashboard_widgets() {
 
-	    if( !current_user_can( 'manage_options' ) ) return;
+	    if ( ! current_user_can( 'manage_options' ) ) return;
 
 		wp_add_dashboard_widget(
             'llar_stats_widget',
@@ -218,6 +218,15 @@ class LimitLoginAttempts {
 		add_action( 'authenticate', array( $this, 'authenticate_filter_errors_fix' ), 35, 3 );
 
 		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
+
+		if ( ! get_role( 'llar_admin' ) ) {
+
+			$additional_capabilities = array(
+				'manage_options' => true
+			);
+
+			add_role( 'llar_admin', 'LLAR Administrator', $additional_capabilities );
+		}
 	}
 
 	public function login_page_gdpr_message() {
