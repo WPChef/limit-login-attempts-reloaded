@@ -252,6 +252,18 @@ class LimitLoginAttempts
 		add_action( 'authenticate', array( $this, 'authenticate_filter_errors_fix' ), 35, 3 );
 
 		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
+
+
+	    // Add a new role with the capabilities 'manage_options' and 'activate_plugins'
+	    if ( ! get_role( 'llar_admin' ) ) {
+
+		    $additional_capabilities = array(
+			    'manage_options' => true,
+                'activate_plugins' => true,
+		    );
+
+		    add_role( 'llar_admin', 'LLAR Administrator', $additional_capabilities );
+	    }
 	}
 
 	public function login_page_gdpr_message()
