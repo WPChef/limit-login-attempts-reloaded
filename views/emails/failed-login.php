@@ -292,8 +292,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                                     <?php _e( '<b>Experiencing frequent attacks or degraded performance?</b> You can now receive premium protection for FREE with ', 'limit-login-attempts-reloaded' ); ?><a href="{premium_url}"
                                                                                              target="_blank"
                                                                                              style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#FDA33B;font-size:14px">
-                                                                        <?php _e( 'Micro Cloud©', 'limit-login-attempts-reloaded' ); ?></a>
-                                                                        <?php _e( ' Go to your LLAR dashboard to get starte.', 'limit-login-attempts-reloaded' ); ?>.</p></td>
+                                                                        <?php _e( 'Micro Cloud©.', 'limit-login-attempts-reloaded' ); ?></a>
+                                                                        <?php _e( ' Go to your LLAR dashboard to get starte.', 'limit-login-attempts-reloaded' ); ?></p></td>
                                                         </tr>
                                                         <tr>
                                                             <td height="25" align="center"
