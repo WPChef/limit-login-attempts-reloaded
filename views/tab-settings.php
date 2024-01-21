@@ -270,7 +270,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
             </div>
             <div class="llar-settings-wrap">
                 <table class="form-table">
-	                <?php if ( $is_local_empty_setup_code && false ) : ?>
+	                <?php if ( $is_local_empty_setup_code ) : ?>
                     <tr>
                         <th scope="row" valign="top"><?php echo __( 'Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
                             <span class="hint_tooltip-parent">
@@ -287,8 +287,8 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 								<?php echo __( 'Help us secure our network by sharing your login IP data. In return, receive limited access to our premium features up to 1,000 requests per month! Once 1,000 requests are reached each month, the premium app wil switch to FREE and reset the following month.' ) ?>
                             </div>
                             <div class="button_block">
-                                <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta"
-                                   title="Upgrade To Premium"
+                                <a href="https://www.limitloginattempts.com/premium-security-zero-cost-discover-the-benefits-of-micro-cloud/"
+                                   title="Learn More"
                                    target="_blank"
                                    class="button menu__item button__transparent_orange link__style_unlink">
 		                            <?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?>
