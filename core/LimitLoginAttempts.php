@@ -1122,7 +1122,7 @@ class LimitLoginAttempts
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
 		$subject = sprintf(
-			__( "Failed login by IP %s", 'limit-login-attempts-reloaded' ),
+			__( "Failed login by IP %s www.limitloginattempts.com", 'limit-login-attempts-reloaded' ),
 			$ip
 		);
 
