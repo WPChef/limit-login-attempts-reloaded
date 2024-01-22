@@ -4,9 +4,10 @@ namespace LLAR\Core;
 
 use LLAR\Core\Http\Http;
 
-if( !defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class Ajax {
+class Ajax
+{
 
 	/**
 	 * Register all ajax requests & handlers
@@ -40,10 +41,7 @@ class Ajax {
 
 	public function ajax_unlock() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-unlock', 'sec' );
 		$ip = (string) @$_POST['ip'];
@@ -77,10 +75,7 @@ class Ajax {
 
 	public function dismiss_review_notice_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-dismiss-review', 'sec' );
 
@@ -101,10 +96,7 @@ class Ajax {
 
 	public function dismiss_notify_notice_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-dismiss-notify-notice', 'sec' );
 
@@ -125,10 +117,7 @@ class Ajax {
 
 	public function enable_notify_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-enable-notify', 'sec' );
 
@@ -147,10 +136,7 @@ class Ajax {
 
 	public function app_setup_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-setup', 'sec' );
 
@@ -193,10 +179,7 @@ class Ajax {
 
 	public function app_log_action_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-log', 'sec' );
 
@@ -233,10 +216,7 @@ class Ajax {
 
 	public function app_acl_add_rule_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-acl-add-rule', 'sec' );
 
@@ -278,10 +258,7 @@ class Ajax {
 
 	public function app_acl_remove_rule_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-acl-remove-rule', 'sec' );
 
@@ -314,10 +291,7 @@ class Ajax {
 
 	public function app_load_log_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-load-log', 'sec' );
 
@@ -397,10 +371,7 @@ class Ajax {
 
 	public function app_load_lockouts_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-load-lockouts', 'sec' );
 
@@ -457,10 +428,7 @@ class Ajax {
 
 	public function app_load_acl_rules_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-load-acl-rules', 'sec' );
 
@@ -513,10 +481,7 @@ class Ajax {
 
 	public function app_load_country_access_rules_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-load-country-access-rules', 'sec' );
 
@@ -535,10 +500,7 @@ class Ajax {
 
 	public function app_toggle_country_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-toggle-country', 'sec' );
 
@@ -580,10 +542,7 @@ class Ajax {
 
 	public function app_country_rule_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-country-rule', 'sec' );
 
@@ -613,10 +572,7 @@ class Ajax {
 
 	public function subscribe_email_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-subscribe-email', 'sec' );
 
@@ -664,10 +620,7 @@ class Ajax {
 
 	public function dismiss_onboarding_popup_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-dismiss-onboarding-popup', 'sec' );
 
@@ -719,10 +672,7 @@ class Ajax {
 
 	public function test_email_notifications_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer('llar-test-email-notifications', 'sec');
 
@@ -745,6 +695,18 @@ class Ajax {
 		} else {
 
 			wp_send_json_error();
+		}
+	}
+
+
+	/**
+	 * Access capabilities checks
+	 */
+	private function check_user_capabilities() {
+
+		if ( ! LimitLoginAttempts::$instance->has_capability ) {
+
+			wp_send_json_error( array() );
 		}
 	}
 }
