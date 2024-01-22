@@ -644,10 +644,7 @@ class Ajax
 
 	public function toggle_auto_update_callback() {
 
-		if ( ! current_user_can( 'update_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer('llar-toggle-auto-update', 'sec');
 
