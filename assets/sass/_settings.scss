@@ -212,6 +212,11 @@ a.llar_turquoise {
     box-shadow: unset;
     outline: none;
   }
+
+  &::placeholder {
+    color:inherit;
+    opacity: 0.5;
+  }
 }
 
 .llar_input_checkbox {

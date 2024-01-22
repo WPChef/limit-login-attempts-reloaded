@@ -10,7 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var $this LLAR\Core\LimitLoginAttempts
  */
 
-$admin_email            = ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
+$admin_notify_email      = Config::get( 'admin_notify_email' );
+$admin_email             = ! empty($admin_notify_email)
+                               ? $admin_notify_email
+                               : ( ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' ) );
 $onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
 $setup_code             = Config::get( 'app_setup_code' );
 
@@ -293,7 +296,7 @@ $content_step_4 = ob_get_clean();
                     const $spinner = $activate_button.find( '.preloader-wrapper .spinner' );
                     const disabled = 'llar-disabled';
                     const visibility = 'llar-visibility';
-                    const real_email = '<?php echo esc_js( $admin_email ); ?>';
+                    let email;
 
                     $setup_code_key.on( 'input', function () {
 
@@ -351,7 +354,7 @@ $content_step_4 = ob_get_clean();
                             const $subscribe_email_button = $( '#llar-subscribe-email-button' );
                             const $spinner = $subscribe_email_button.find( '.preloader-wrapper .spinner' );
 
-                            let email = $subscribe_email.val().trim();
+                            email = $subscribe_email.val().trim();
 
                             $subscribe_email.on( 'blur', function () {
 
@@ -397,9 +400,9 @@ $content_step_4 = ob_get_clean();
                             const $button_next = $( '.button.next_step' );
                             const $button_skip = $button_next.filter( '.button-skip' );
                             const $spinner = $limited_upgrade_subscribe.find( '.preloader-wrapper .spinner' );
-                            // const $description = $( '#llar-description-step-3' ).find( '.field-desc-add' );
                             const $description = $( '#llar-description-step-3' );
 
+                            console.log(email);
                             $limited_upgrade_subscribe.addClass( disabled );
                             $consent_registering.on( 'change', function () {
 
@@ -418,9 +421,8 @@ $content_step_4 = ob_get_clean();
                                 $limited_upgrade_subscribe.addClass( disabled );
                                 $spinner.addClass( visibility );
 
-                                llar_activate_micro_cloud( real_email )
+                                llar_activate_micro_cloud( email )
                                     .then( function () {
-                                        // $consent_registering.addClass( 'llar-display-none' );
                                         $description.addClass( 'llar-display-none' );
                                         $subscribe_notification.addClass( 'llar-display-block' );
                                         $button_next.removeClass( disabled );

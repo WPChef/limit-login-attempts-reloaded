@@ -134,7 +134,6 @@ $micro_cloud_popup_content = ob_get_clean();
                     const $spinner = $button_subscribe_email.find( '.preloader-wrapper .spinner' );
                     const disabled = 'llar-disabled';
                     const visibility = 'llar-visibility';
-                    const real_email = '<?php echo esc_js( $admin_email ); ?>';
 
                     let email = $subscribe_email.val().trim();
 
@@ -173,7 +172,7 @@ $micro_cloud_popup_content = ob_get_clean();
                         $button_subscribe_email.addClass( disabled );
                         $spinner.addClass( visibility );
 
-                        llar_activate_micro_cloud( real_email )
+                        llar_activate_micro_cloud( email )
                             .then( function() {
 
                                 $button_subscribe_email.removeClass( disabled );

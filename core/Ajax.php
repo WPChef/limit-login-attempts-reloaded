@@ -747,23 +747,22 @@ class Ajax {
 
         check_ajax_referer( 'llar-activate-micro-cloud', 'sec' );
 	    $email = sanitize_text_field( trim( $_POST['email'] ) );
-	    $real_email = ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 
-	    if ( ! empty( $email ) ) {
+	    if ( ! empty( $email ) && is_email( $email ) ) {
 
 		     $url_api = 'https://api.limitloginattempts.com/checkout-staging/network';
 //		     $url_api = ''https://api.limitloginattempts.com/checkout/network'';
 
             $data = [
                 'group' => 'free',
-                'email' => $real_email
+                'email' => $email
             ];
 
             $response = Http::post( $url_api, array(
                 'data' => $data
             ) );
 
-            if ( !empty( $response['error'] ) ) {
+            if ( ! empty( $response['error'] ) ) {
 
                 wp_send_json_error( $response['error'] );
 
