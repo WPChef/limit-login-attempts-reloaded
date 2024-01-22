@@ -38,7 +38,6 @@ $hide_dashboard_widget    = Config::get( 'hide_dashboard_widget' );
 $show_warning_badge       = Config::get( 'show_warning_badge' );
 
 $admin_notify_email      = Config::get( 'admin_notify_email' );
-$admin_email_placeholder = ( ! is_network_admin() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 
 $trusted_ip_origins = Config::get( 'trusted_ip_origins' );
 $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && ! empty( $trusted_ip_origins ) ) ? implode( ", ", $trusted_ip_origins ) : 'REMOTE_ADDR';
@@ -149,10 +148,10 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                     </th>
                     <td>
                         <input type="checkbox" name="digest_email" <?php echo $email_checked; ?>
-                               value="email"/> <?php echo __( 'Email to', 'limit-login-attempts-reloaded' ); ?>
+                               value="email"/> <?php _e( 'Email to', 'limit-login-attempts-reloaded' ); ?>
                         <input class="input_border" type="email" name="admin_digest_email"
-                               value="<?php echo esc_attr( $admin_notify_email ) ?>"
-                               placeholder="<?php echo esc_attr( $admin_email_placeholder ); ?>"/>
+                               value="<?php esc_attr_e( $admin_notify_email ) ?>"
+                               placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"/>
                         <div class="description-secondary">
                             <?php echo __( 'Receive a weekly digest that includes a recap of your failed logins and lockout notifications. Premium users will be able to see additional data such as countries and IPs with most failed logins.' ); ?>
                         </div>
@@ -173,15 +172,15 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                     </th>
                     <td>
                         <input type="checkbox" name="lockout_notify_email" <?php echo $email_checked; ?>
-                               value="email"/> <?php echo __( 'Email to', 'limit-login-attempts-reloaded' ); ?>
+                               value="email"/> <?php _e( 'Email to', 'limit-login-attempts-reloaded' ); ?>
                         <input class="input_border" type="email" name="admin_notify_email"
-                               value="<?php echo esc_attr( $admin_notify_email ) ?>"
-                               placeholder="<?php echo esc_attr( $admin_email_placeholder ); ?>"/> <?php echo __( 'after', 'limit-login-attempts-reloaded' ); ?>
+                               value="<?php esc_attr_e( $admin_notify_email ) ?>"
+                               placeholder="<?php esc_attr_e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"/> <?php _e( 'after', 'limit-login-attempts-reloaded' ); ?>
                         <input class="input_border" type="text" size="3" maxlength="4"
                                value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
-                               name="email_after"/> <?php echo __( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
+                               name="email_after"/> <?php _e( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
                         <button class="button menu__item col llar-test-email-notification-btn button__transparent_orange">
-							<?php echo __( 'Test Email Notifications', 'limit-login-attempts-reloaded' ); ?>
+							<?php _e( 'Test Email Notifications', 'limit-login-attempts-reloaded' ); ?>
                         </button>
                         <span class="preloader-wrapper llar-test-email-notification-loader">
                         <span class="spinner llar-app-ajax-spinner"></span>
