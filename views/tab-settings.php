@@ -271,19 +271,22 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                 <table class="form-table">
 	                <?php if ( $is_local_empty_setup_code ) : ?>
                     <tr>
-                        <th scope="row" valign="top"><?php echo __( 'Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
+                        <th scope="row" valign="top"><?php _e( 'Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
                             <span class="hint_tooltip-parent">
                                 <span class="dashicons dashicons-editor-help"></span>
                                 <div class="hint_tooltip">
                                     <div class="hint_tooltip-content">
-                                        <?php echo generate_lorem_ipsum( 50 ) ?>
+                                        <?php _e( 'Micro Cloud is a limited upgrade to our cloud app that provides complimentary access to our premium features', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
                                 </div>
                             </span>
                         </th>
                         <td>
                             <div class="description-secondary p-0">
-								<?php echo __( 'Help us secure our network by sharing your login IP data. In return, receive limited access to our premium features up to 1,000 requests per month! Once 1,000 requests are reached each month, the premium app wil switch to FREE and reset the following month.' ) ?>
+								<?php _e( 'Help us secure our network by sharing your login IP data. In return, receive limited access to our premium features up to 1,000 requests for the first month, and 100 requests each subsequent month. Once requests are exceeded for a given month, the premium app will switch to FREE and reset the following month.', 'limit-login-attempts-reloaded' ) ?>
+                            </div>
+                            <div class="description-additional p-0 pt-1_5">
+		                        <?php _e( '* Requests are utilized when the cloud app validates an IP address before it is able to perform a login.', 'limit-login-attempts-reloaded' ) ?>
                             </div>
                             <div class="button_block">
                                 <a href="https://www.limitloginattempts.com/premium-security-zero-cost-discover-the-benefits-of-micro-cloud/"
