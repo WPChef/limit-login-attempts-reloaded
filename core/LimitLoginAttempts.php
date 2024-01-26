@@ -474,14 +474,20 @@ class LimitLoginAttempts
 						exit;
 					}
                 }
-                else if( $response['result'] === 'pass' ) {
+                elseif( $response['result'] === 'pass' ) {
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
                 }
+            }
+		    elseif ( self::$cloud_app && self::$cloud_app->last_response_code === 403 ) {
 
-            } else {
+			    remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
+			    remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+			    remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
+		    }
+		    else {
 
 				$ip = $this->get_address();
 
