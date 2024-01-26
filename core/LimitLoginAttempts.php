@@ -432,13 +432,13 @@ class LimitLoginAttempts
 
 		if ( ! empty( $username ) && ! empty( $password ) ) {
 
-		    if( self::$cloud_app && $response = self::$cloud_app->acl_check( array(
+		    if ( self::$cloud_app && $response = self::$cloud_app->acl_check( array(
 				    'ip'        => Helpers::get_all_ips(),
 				    'login'     => $username,
 				    'gateway'   => Helpers::detect_gateway()
 			    ) ) ) {
 
-			    if( $response['result'] === 'deny' ) {
+			    if ( $response['result'] === 'deny' ) {
 
 					unset($_SESSION['login_attempts_left']);
 
@@ -453,7 +453,7 @@ class LimitLoginAttempts
 					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
 					$time_left = ( !empty( $acl_result['time_left'] ) ) ? $acl_result['time_left'] : 0;
-					if( $time_left ) {
+					if ( $time_left ) {
 
 						if ( $time_left > 60 ) {
 							$time_left = ceil( $time_left / 60 );
@@ -473,27 +473,19 @@ class LimitLoginAttempts
 						header('HTTP/1.0 403 Forbidden');
 						exit;
 					}
-                }
-                elseif( $response['result'] === 'pass' ) {
+                } elseif ( $response['result'] === 'pass' ) {
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
                 }
-            }
-		    elseif ( self::$cloud_app && self::$cloud_app->last_response_code === 403 ) {
-
-			    remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
-			    remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
-			    remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
-		    }
-		    else {
+            } else {
 
 				$ip = $this->get_address();
 
 				// Check if username is blacklisted
-				if ( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) &&
-					( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
+				if ( ( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) )
+                      && ( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
 				) {
 
 				    unset($_SESSION['login_attempts_left']);
@@ -521,6 +513,8 @@ class LimitLoginAttempts
 					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 
+				} elseif ( self::$cloud_app && self::$cloud_app->last_response_code === 403 ) {
+					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 				}
             }
 		}
