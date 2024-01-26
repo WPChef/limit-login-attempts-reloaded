@@ -1847,6 +1847,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label {
   float: right;
   margin-right: 18px;
+  padding-top: 2px;
   color: #666D84;
   text-wrap: nowrap;
 }

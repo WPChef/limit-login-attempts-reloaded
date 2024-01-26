@@ -168,7 +168,10 @@ class LimitLoginAttempts
 	 */
 	public function dashboard_page_redirect()
     {
-	    if ( ! get_transient( 'llar_dashboard_redirect' ) || isset( $_GET['activate-multi'] ) || is_network_admin() ) {
+	    if (
+	            ! get_transient( 'llar_dashboard_redirect' )
+                || isset( $_GET['activate-multi'] ) || is_network_admin()
+        ) {
 	        return;
         }
 
@@ -217,7 +220,7 @@ class LimitLoginAttempts
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
 
-			if( Config::get( 'show_warning_badge' ) )
+			if ( Config::get( 'show_warning_badge' ) )
 			    add_action( 'network_admin_menu', array( $this, 'network_setting_menu_alert_icon' ) );
 		}
 
@@ -270,16 +273,20 @@ class LimitLoginAttempts
     {
 	    global $limit_login_just_lockedout;
 
-	    if ( $limit_login_just_lockedout ||
-            ( Config::get( 'active_app' ) === 'local' && ! $this->is_limit_login_ok() ) ||
-            ( self::$cloud_app && !empty( self::$cloud_app->get_errors() ) )
-        ) return;
+	    if (
+	            $limit_login_just_lockedout
+                || ( Config::get( 'active_app' ) === 'local' && ! $this->is_limit_login_ok() )
+                || ( self::$cloud_app && !empty( self::$cloud_app->get_errors() ) )
+        ) {
+	        return;
+	    }
 
 	    $is_wp_login_page = isset( $_POST['log'] );
 	    $is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
 	    $is_um_login_page = ( function_exists( 'um_is_core_page' ) && um_is_core_page( 'login' ) && !empty( $_POST ) );
 
-		if( ( $is_wp_login_page || $is_woo_login_page || $is_um_login_page ) ) : ?>
+		if ( ( $is_wp_login_page || $is_woo_login_page || $is_um_login_page ) ) : ?>
+
         <script>
             ;( function( $ ) {
                 var ajaxUrlObj = new URL( '<?php echo admin_url( 'admin-ajax.php' ); ?>' );
@@ -297,8 +304,7 @@ class LimitLoginAttempts
                 } )
             } )(jQuery)
         </script>
-        <?php
-        endif;
+        <?php endif;
     }
 
 	public function add_action_links( $actions )
@@ -409,6 +415,7 @@ class LimitLoginAttempts
 		* unknown user or empty password).
 		*/
 		if ( empty( $_POST ) && ! $this->is_limit_login_ok() && ! $limit_login_just_lockedout ) {
+
 			if ( is_account_page() ) {
 				wc_add_notice( $this->error_msg(), 'error' );
 			}
@@ -440,7 +447,7 @@ class LimitLoginAttempts
 
 			    if ( $response['result'] === 'deny' ) {
 
-					unset($_SESSION['login_attempts_left']);
+					unset( $_SESSION['login_attempts_left'] );
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
@@ -452,7 +459,7 @@ class LimitLoginAttempts
 
 					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
-					$time_left = ( !empty( $acl_result['time_left'] ) ) ? $acl_result['time_left'] : 0;
+					$time_left = ( ! empty( $acl_result['time_left'] ) ) ? $acl_result['time_left'] : 0;
 					if ( $time_left ) {
 
 						if ( $time_left > 60 ) {
@@ -468,9 +475,9 @@ class LimitLoginAttempts
 					$user = new WP_Error();
 					$user->add( 'username_blacklisted', $err );
 
-					if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
+					if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
 
-						header('HTTP/1.0 403 Forbidden');
+						header('HTTP/1.0 403 Forbidden' );
 						exit;
 					}
                 } elseif ( $response['result'] === 'pass' ) {
@@ -484,11 +491,12 @@ class LimitLoginAttempts
 				$ip = $this->get_address();
 
 				// Check if username is blacklisted
-				if ( ( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) )
-                      && ( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
+				if (
+				        ( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) )
+                        && ( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
 				) {
 
-				    unset($_SESSION['login_attempts_left']);
+				    unset( $_SESSION['login_attempts_left'] );
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
@@ -532,30 +540,28 @@ class LimitLoginAttempts
 	 */
 	public function authenticate_filter_errors_fix( $user, $username, $password )
     {
-
 		if ( ! empty( $username ) && ! empty( $password ) ) {
 
-		    if ( is_wp_error($user) ) {
+		    if ( is_wp_error( $user ) ) {
 
 		        // BuddyPress errors
                 if ( in_array('bp_account_not_activated', $user->get_error_codes() ) ) {
 
 					$this->other_login_errors[] = $user->get_error_message('bp_account_not_activated');
-				}
-                // Wordfence errors
-                elseif ( in_array('wfls_captcha_verify', $user->get_error_codes() ) ) {
+				} elseif ( in_array('wfls_captcha_verify', $user->get_error_codes() ) ) { // Wordfence errors
 
-					$this->other_login_errors[] = $user->get_error_message('wfls_captcha_verify');
+					$this->other_login_errors[] = $user->get_error_message( 'wfls_captcha_verify' );
 				}
             }
-
 		}
 		return $user;
 	}
 
 	public function ultimate_member_register_error_codes( $codes )
     {
-	    if ( ! is_array( $codes ) ) return $codes;
+	    if ( ! is_array( $codes ) ) {
+	        return $codes;
+	    }
 
 		$codes[] = 'too_many_retries';
 		$codes[] = 'username_blacklisted';
@@ -569,8 +575,8 @@ class LimitLoginAttempts
 	private function check_original_installed()
 	{
 		require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
-		if ( is_plugin_active('limit-login-attempts/limit-login-attempts.php') )
-		{
+		if ( is_plugin_active('limit-login-attempts/limit-login-attempts.php') ) {
+
 			deactivate_plugins( 'limit-login-attempts/limit-login-attempts.php', true );
 			//add_action('plugins_loaded', 'limit_login_setup', 99999);
 			remove_action( 'plugins_loaded', 'limit_login_setup', 99999 );
@@ -668,6 +674,7 @@ class LimitLoginAttempts
 		);
 
 	    if ( ! $is_cloud_app_enabled ) {
+
 	        $submenu_items[] = array(
 		        'id'    => 'premium',
 		        'name'  => __( 'Premium', 'limit-login-attempts-reloaded' ),
@@ -717,6 +724,7 @@ class LimitLoginAttempts
 			remove_submenu_page( $this->_options_page_slug, $this->_options_page_slug );
 
 			if ( ! $is_cloud_app_enabled && isset( $submenu[$this->_options_page_slug] ) ) {
+
 				$submenu[$this->_options_page_slug][6][4] =
                     ! empty($submenu[$this->_options_page_slug][6][4])
                     ? $submenu[$this->_options_page_slug][6][4] . ' llar-submenu-premium-item'
@@ -767,9 +775,11 @@ class LimitLoginAttempts
     private function menu_alert_icon()
     {
 
-		if ( ! empty( $_COOKIE['llar_menu_alert_icon_shown'] )
-             || Config::get( 'active_app' ) !== 'local'
-             || ! Config::get( 'show_warning_badge' ) ) {
+		if (
+		        ! empty( $_COOKIE['llar_menu_alert_icon_shown'] )
+                || Config::get( 'active_app' ) !== 'local'
+                || ! Config::get( 'show_warning_badge' )
+        ) {
 			return '';
 		}
 
@@ -782,8 +792,7 @@ class LimitLoginAttempts
 
 			    if ( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
 				    $retries_count += $count;
-			    }
-                elseif ( ! is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+			    } elseif ( ! is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
 				    $retries_count += $count;
 			    }
 		    }
@@ -799,6 +808,7 @@ class LimitLoginAttempts
     public function setting_menu_alert_icon()
     {
 		global $menu;
+
 		if ( ! Config::get( 'show_top_level_menu_item' ) && ! empty( $menu[80][0] ) ) {
 
 			$menu[80][0] .= $this->menu_alert_icon();
@@ -853,7 +863,7 @@ class LimitLoginAttempts
 		/* lockout active? */
 		$lockouts = Config::get( 'lockouts' );
 
-		return ( ! is_array( $lockouts ) || ! isset( $lockouts[$ip] ) || time() >= $lockouts[$ip] );
+		return ( ! is_array( $lockouts ) || ! isset( $lockouts[ $ip ] ) || time() >= $lockouts[ $ip ] );
 	}
 
 	/**
@@ -893,7 +903,9 @@ class LimitLoginAttempts
 		        $err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
 		        $time_left = ( ! empty( $response['time_left'] ) ) ? $response['time_left'] : 0;
+
 				if ( $time_left > 60 ) {
+
 					$time_left = ceil( $time_left / 60 );
 					$err .= ' ' . sprintf( _n( 'Please try again in %d hour.', 'Please try again in %d hours.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
 				} else {
@@ -924,16 +936,19 @@ class LimitLoginAttempts
 			$retries_stats = Config::get( 'retries_stats' );
 
 			if ( ! is_array( $retries ) ) {
+
 				$retries = array();
 				Config::add( 'retries', $retries );
 			}
 
 			if ( ! is_array( $valid ) ) {
+
 				$valid = array();
 				Config::add( 'retries_valid', $valid );
 			}
 
 			if ( ! is_array( $retries_stats ) ) {
+
 				$retries_stats = array();
 				Config::add( 'retries_stats', $retries_stats );
 			}
@@ -949,9 +964,11 @@ class LimitLoginAttempts
 			Config::update( 'retries_stats', $retries_stats );
 
 			/* Check validity and add one to retries */
-			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ]) {
+			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ] ) {
+
 				$retries[ $ip ] ++;
 			} else {
+
 				$retries[ $ip ] = 1;
 			}
 			$valid[ $ip ] = time() + Config::get( 'valid_duration' );
@@ -978,21 +995,26 @@ class LimitLoginAttempts
 			* done as usual for whitelisted ips , but no lockout is done.
 			*/
 			if ( $whitelisted ) {
+
 				if ( $retries[ $ip ] >= $retries_long ) {
+
 					unset( $retries[ $ip ] );
 					unset( $valid[ $ip ] );
 				}
 			} else {
+
 				global $limit_login_just_lockedout;
 				$limit_login_just_lockedout = true;
 
 				/* setup lockout, reset retries as needed */
 				if ( ( isset($retries[ $ip ]) ? $retries[ $ip ] : 0 ) >= $retries_long ) {
+
 					/* long lockout */
 					$lockouts[ $ip ] = time() + Config::get( 'long_duration' );
 					unset( $retries[ $ip ] );
 					unset( $valid[ $ip ] );
 				} else {
+
 					/* normal lockout */
 					$lockouts[ $ip ] = time() + Config::get( 'lockout_duration' );
 				}
@@ -1007,8 +1029,10 @@ class LimitLoginAttempts
 			/* increase statistics */
 			$total = Config::get( 'lockouts_total' );
 			if ( $total === false || ! is_numeric( $total ) ) {
+
 				Config::add( 'lockouts_total', 1 );
 			} else {
+
 				Config::update( 'lockouts_total', $total + 1 );
 			}
 		}
@@ -1022,7 +1046,7 @@ class LimitLoginAttempts
 	 */
 	public function notify( $user ) {
 
-		if( is_object( $user ) ) {
+		if ( is_object( $user ) ) {
             return false;
 		}
 
@@ -1034,7 +1058,7 @@ class LimitLoginAttempts
 			return;
 		}
 
-		if( in_array( 'email', $args ) ) {
+		if ( in_array( 'email', $args ) ) {
 			$this->notify_email( $user );
 		}
 	}
@@ -1054,15 +1078,16 @@ class LimitLoginAttempts
 		}
 
 		/* check if we are at the right nr to do notification */
-		if ( isset( $retries[$ip] )
-                &&
-            ( ( intval($retries[$ip]) / Config::get( 'allowed_retries' ) ) % Config::get( 'notify_email_after' ) ) != 0 ) {
-
+		if (
+		        isset( $retries[ $ip ] )
+                && ( ( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % Config::get( 'notify_email_after' ) ) != 0
+        ) {
 			return;
 		}
 
 		/* Format message. First current lockout duration */
-		if ( ! isset( $retries[$ip] ) ) {
+		if ( ! isset( $retries[ $ip ] ) ) {
+
 			/* longer lockout */
 			$count    = Config::get( 'allowed_retries' )
 						* Config::get( 'allowed_lockouts' );
@@ -1070,8 +1095,9 @@ class LimitLoginAttempts
 			$time     = round( Config::get( 'long_duration' ) / 3600 );
 			$when     = sprintf( _n( '%d hour', '%d hours', $time, 'limit-login-attempts-reloaded' ), $time );
 		} else {
+
 			/* normal lockout */
-			$count    = $retries[$ip];
+			$count    = $retries[ $ip ];
 			$lockouts = floor( ( $count ) / Config::get( 'allowed_retries' ) );
 			$time     = round( Config::get( 'lockout_duration' ) / 60 );
 			$when     = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
@@ -1157,22 +1183,24 @@ class LimitLoginAttempts
 		}
 
 		$log = $option = Config::get( 'logged' );
+
 		if ( ! is_array( $log ) ) {
 			$log = array();
 		}
 		$ip = $this->get_address();
 
 		/* can be written much simpler, if you do not mind php warnings */
-		if ( ! isset( $log[ $ip ] ) )
+		if ( ! isset( $log[ $ip ] ) ) {
 			$log[ $ip ] = array();
+		}
 
-		if ( ! isset( $log[ $ip ][ $user_login ] ) )
+		if ( ! isset( $log[ $ip ][ $user_login ] ) ) {
+
 			$log[ $ip ][ $user_login ] = array( 'counter' => 0 );
+		} elseif ( ! is_array( $log[ $ip ][ $user_login ] ) ) {
 
-		elseif ( ! is_array( $log[ $ip ][ $user_login ] ) )
-			$log[ $ip ][ $user_login ] = array(
-				'counter' => $log[ $ip ][ $user_login ],
-			);
+			$log[ $ip ][ $user_login ] = array( 'counter' => $log[ $ip ][ $user_login ] );
+		}
 
 		$log[ $ip ][ $user_login ]['counter']++;
 		$log[ $ip ][ $user_login ]['date'] = time();
@@ -1180,8 +1208,10 @@ class LimitLoginAttempts
 		$log[ $ip ][ $user_login ]['gateway'] = Helpers::detect_gateway();
 
 		if ( $option === false ) {
+
 			Config::add( 'logged', $log );
 		} else {
+
 			Config::update( 'logged', $log );
 		}
 	}
@@ -1266,16 +1296,18 @@ class LimitLoginAttempts
 	    $user_login = '';
 
 	    if ( is_a( $user, 'WP_User' ) ) {
+
 	        $user_login = $user->user_login;
-        } else if( ! empty($user) && !is_wp_error( $user ) ) {
+        } elseif( ! empty( $user ) && !is_wp_error( $user ) ) {
+
             $user_login = $user;
         }
 
-		if ( $this->check_whitelist_ips( false, $this->get_address() ) ||
-			$this->check_whitelist_usernames( false, $user_login ) ||
-			$this->is_limit_login_ok()
-		) {
-
+		if (
+		        $this->check_whitelist_ips( false, $this->get_address() )
+                || $this->check_whitelist_usernames( false, $user_login )
+                || $this->is_limit_login_ok()
+        ) {
 			return $user;
 		}
 
@@ -1285,8 +1317,10 @@ class LimitLoginAttempts
 		$limit_login_my_error_shown = true;
 
 		if ( $this->is_username_blacklisted( $user_login ) || $this->is_ip_blacklisted( $this->get_address() ) ) {
+
 			$error->add( 'username_blacklisted', "<strong>ERROR:</strong> Too many failed login attempts." );
 		} else {
+
 			// This error should be the same as in "shake it" filter below
 			$error->add( 'too_many_retries', $this->error_msg() );
 		}
@@ -1331,15 +1365,15 @@ class LimitLoginAttempts
     {
 		$ip       = $this->get_address();
 		$lockouts = Config::get( 'lockouts' );
-        $a = $this->checkKey($lockouts, $ip);
-        $b = $this->checkKey($lockouts, $this->getHash($ip));
+        $a        = $this->checkKey($lockouts, $ip);
+        $b        = $this->checkKey($lockouts, $this->getHash($ip));
 
 		$msg = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' ) . ' ';
 
 		if (
-            ! is_array( $lockouts ) ||
-            ( ! isset( $lockouts[ $ip ] ) && ! isset( $lockouts[$this->getHash($ip)]) ) ||
-            (time() >= $a && time() >= $b)
+		        ! is_array( $lockouts )
+                || ( ! isset( $lockouts[ $ip ] ) && ! isset( $lockouts[ $this->getHash( $ip ) ] ) )
+                || ( time() >= $a && time() >= $b )
         ){
 			/* Huh? No timeout active? */
 			$msg .= __( 'Please try again later.', 'limit-login-attempts-reloaded' );
@@ -1349,9 +1383,11 @@ class LimitLoginAttempts
 
 		$when = ceil( ( ($a > $b ? $a : $b) - time() ) / 60 );
 		if ( $when > 60 ) {
+
 			$when = ceil( $when / 60 );
 			$msg .= sprintf( _n( 'Please try again in %d hour.', 'Please try again in %d hours.', $when, 'limit-login-attempts-reloaded' ), $when );
 		} else {
+
 			$msg .= sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $when, 'limit-login-attempts-reloaded' ), $when );
 		}
 
@@ -1375,18 +1411,20 @@ class LimitLoginAttempts
 
 			$content = '';
 
-		    if($this->other_login_errors) {
+		    if ( $this->other_login_errors ) {
 
-                foreach ($this->other_login_errors as $msg) {
+                foreach ( $this->other_login_errors as $msg ) {
                     $content .= $msg . "<br />\n";
                 }
 
-            } else if( !$limit_login_just_lockedout ) {
+            } elseif ( ! $limit_login_just_lockedout ) {
 
 				/* Replace error message, including ours if necessary */
-				if( !empty( $_REQUEST['log'] ) && is_email( $_REQUEST['log'] ) ) {
+				if ( ! empty( $_REQUEST['log'] ) && is_email( $_REQUEST['log'] ) ) {
+
 					$content = __( '<strong>ERROR</strong>: Incorrect email address or password.', 'limit-login-attempts-reloaded' ) . "<br />\n";
-				} else{
+				} else {
+
 					$content = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' ) . "<br />\n";
 				}
             }
@@ -1415,24 +1453,23 @@ class LimitLoginAttempts
     {
 
 	    if ( self::$cloud_app ) {
+
 		    $app_errors = self::$cloud_app->get_errors();
-
 	        return ! empty( $app_errors ) ? implode( '<br>', $app_errors ) : '';
-        } else {
-
-			/* Check external whitelist */
-			if ( $this->is_ip_whitelisted() ) {
-				return '';
-			}
-
-			/* Is lockout in effect? */
-			if ( ! $this->is_limit_login_ok() ) {
-				return $this->error_msg();
-			}
-
-			return '';
         }
-	}
+
+	    /* Check external whitelist */
+	    if ( $this->is_ip_whitelisted() ) {
+            return '';
+        }
+
+	    /* Is lockout in effect? */
+	    if ( ! $this->is_limit_login_ok() ) {
+            return $this->error_msg();
+        }
+
+	    return '';
+    }
 
 	private function calculate_retries_remaining()
     {
@@ -1452,23 +1489,23 @@ class LimitLoginAttempts
 			return $remaining;
 		}
 		if (
-			( ! isset( $retries[ $ip ] ) && ! isset( $retries[ $this->getHash($ip) ] )) ||
-			( ! isset( $valid[ $ip ] ) && ! isset( $valid[ $this->getHash($ip) ] )) ||
-			( time() > $c && time() > $d )
+		        ( ! isset( $retries[ $ip ] ) && ! isset( $retries[ $this->getHash($ip) ] ))
+             || ( ! isset( $valid[ $ip ] ) && ! isset( $valid[ $this->getHash($ip) ] ))
+             || ( time() > $c && time() > $d )
 		) {
 			/* no: no valid retries */
 			return $remaining;
 		}
 		if (
-			( $a % Config::get( 'allowed_retries' ) ) == 0 &&
-			( $b % Config::get( 'allowed_retries' ) ) == 0
+		        ( $a % Config::get( 'allowed_retries' ) ) == 0
+             && ( $b % Config::get( 'allowed_retries' ) ) == 0
 		) {
 			/* no: already been locked out for these retries */
 			return $remaining;
 		}
 
 		$remaining = max( ( Config::get( 'allowed_retries' ) - ( ($a + $b) % Config::get( 'allowed_retries' ) ) ), 0 );
-        return intval($remaining);
+        return (int) $remaining;
 	}
 
 	/**
@@ -1505,8 +1542,9 @@ class LimitLoginAttempts
 					if( is_array( $log ) && isset( $log[ $ip ] ) ) {
 						foreach ( $log[ $ip ] as $user_login => &$data ) {
 
-						    if( !is_array( $data ) ) $data = array();
-
+						    if ( !is_array( $data ) ) {
+						        $data = array();
+						    }
 							$data['unlocked'] = true;
 						}
 					}
@@ -1520,12 +1558,15 @@ class LimitLoginAttempts
 		/* remove retries that are no longer valid */
 		$valid   = ! is_null( $valid ) ? $valid : Config::get( 'retries_valid' );
 		$retries = ! is_null( $retries ) ? $retries : Config::get( 'retries' );
+
 		if ( ! is_array( $valid ) || ! is_array( $retries ) ) {
 			return;
 		}
 
 		foreach ( $valid as $ip => $lockout ) {
+
 			if ( $lockout < $now ) {
+
 				unset( $valid[ $ip ] );
 				unset( $retries[ $ip ] );
 			}
@@ -1533,6 +1574,7 @@ class LimitLoginAttempts
 
 		/* go through retries directly, if for some reason they've gone out of sync */
 		foreach ( $retries as $ip => $retry ) {
+
 			if ( ! isset( $valid[ $ip ] ) ) {
 				unset( $retries[ $ip ] );
 			}
@@ -1544,8 +1586,10 @@ class LimitLoginAttempts
 
 			foreach( $retries_stats as $key => $count ) {
 
-				if( ( is_numeric( $key ) && $key < strtotime( '-8 day' ) ) ||
-                    ( !is_numeric( $key ) && strtotime( $key ) < strtotime( '-8 day' ) ) ) {
+				if (
+				        ( is_numeric( $key ) && $key < strtotime( '-8 day' ) )
+                        || ( ! is_numeric( $key ) && strtotime( $key ) < strtotime( '-8 day' ) )
+                ) {
 					unset($retries_stats[$key]);
 				}
 			}
@@ -1607,7 +1651,9 @@ class LimitLoginAttempts
                 $white_list_ips = ( ! empty( $_POST['lla_whitelist_ips'] ) ) ? explode("\n", str_replace("\r", "", stripslashes( $_POST['lla_whitelist_ips'] ) ) ) : array();
 
                 if ( ! empty( $white_list_ips ) ) {
+
                     foreach( $white_list_ips as $key => $ip ) {
+
                         if( '' == $ip ) {
                             unset( $white_list_ips[ $key ] );
                         }
@@ -1638,9 +1684,10 @@ class LimitLoginAttempts
                     foreach( $black_list_ips as $key => $ip ) {
 
                         $range = array_map('trim', explode( '-', $ip ) );
+
                         if ( count( $range ) > 1 && ( float )sprintf( "%u", ip2long( $range[0] ) ) > ( float )sprintf( "%u",ip2long( $range[1] ) ) ) {
 
-                            $this->show_message( sprintf ( __( 'The %s IP range is invalid', 'limit-login-attempts-reloaded' ) ,$ip ) );
+                            $this->show_message( sprintf ( __( 'The %s IP range is invalid', 'limit-login-attempts-reloaded' ), $ip ) );
                         }
 
                         if ( '' == $ip ) {
@@ -1655,7 +1702,9 @@ class LimitLoginAttempts
                 $black_list_usernames = ( ! empty( $_POST['lla_blacklist_usernames'] ) ) ? explode("\n", str_replace("\r", "", stripslashes( $_POST['lla_blacklist_usernames'] ) ) ) : array();
 
                 if ( ! empty( $black_list_usernames ) ) {
+
                     foreach( $black_list_usernames as $key => $ip ) {
+
                         if ( '' == $ip ) {
                             unset( $black_list_usernames[ $key ] );
                         }
@@ -1666,8 +1715,8 @@ class LimitLoginAttempts
 	            Config::sanitize_options();
 
                 $this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
-            }
-            elseif ( isset( $_POST[ 'llar_update_settings' ] ) ) {
+
+            } elseif ( isset( $_POST[ 'llar_update_settings' ] ) ) {
 
                 /* Should we support GDPR */
                 if ( isset( $_POST[ 'gdpr' ] ) ) {
@@ -1698,7 +1747,7 @@ class LimitLoginAttempts
                     ? array_map( 'trim', explode( ',', sanitize_text_field( $_POST['lla_trusted_ip_origins'] ) ) )
                     : array();
 
-                if( ! in_array( 'REMOTE_ADDR', $trusted_ip_origins ) ) {
+                if ( ! in_array( 'REMOTE_ADDR', $trusted_ip_origins ) ) {
 
                     $trusted_ip_origins[] = 'REMOTE_ADDR';
                 }
@@ -1772,7 +1821,7 @@ class LimitLoginAttempts
      */
     private function checkKey( $arr, $k )
     {
-        return isset( $arr[$k] ) ? $arr[$k] : 0;
+        return isset( $arr[ $k ] ) ? $arr[ $k ] : 0;
     }
 
 
@@ -1782,15 +1831,17 @@ class LimitLoginAttempts
             $plan = 'default';
         }
 
-        return $this->plans[$plan]['name'];
+        return $this->plans[ $plan ]['name'];
     }
 
 
     public function array_name_plans()
     {
         $plans = [];
+
         foreach ( $this->plans as $plan ) {
-            $plans[$plan['name']] = $plan['rate'];
+
+            $plans[ $plan['name'] ] = $plan['rate'];
         }
 
         return $plans;
@@ -1813,7 +1864,7 @@ class LimitLoginAttempts
             $this->info_data = $this->info();
         }
 
-        $data = ( ! empty($this->info_data) && ! empty($this->info_data['sub_group'] ) ) ? $this->info_data['sub_group'] : '';
+        $data = ( ! empty($this->info_data) && ! empty( $this->info_data['sub_group'] ) ) ? $this->info_data['sub_group'] : '';
 
         return $this->plan_name_match( $data );
     }
@@ -1852,15 +1903,17 @@ class LimitLoginAttempts
 			@setcookie( 'llar_review_notice_shown', '', time() - 3600, '/' );
 		}
 
-        if ( ! current_user_can('manage_options' )
-             || Config::get( 'review_notice_shown' )
-             || ! in_array( $screen->base, array( 'dashboard', 'plugins', 'toplevel_page_limit-login-attempts' ) ) ) {
+        if (
+                ! current_user_can('manage_options' )
+                || Config::get( 'review_notice_shown' )
+                || ! in_array( $screen->base, array( 'dashboard', 'plugins', 'toplevel_page_limit-login-attempts' ) )
+        ) {
 	        return;
         }
 
         $activation_timestamp = Config::get( 'activation_timestamp' );
 
-		if ( $activation_timestamp && $activation_timestamp < strtotime("-1 month") ) { ?>
+		if ( $activation_timestamp && $activation_timestamp < strtotime("-1 month") ) : ?>
 
 			<div id="message" class="updated fade notice is-dismissible llar-notice-review">
                 <div class="llar-review-image">
@@ -1916,8 +1969,7 @@ class LimitLoginAttempts
 
                 } )(jQuery);
             </script>
-			<?php
-		}
+        <?php endif;
 	}
 
 	public function show_enable_notify_notice()
@@ -1933,11 +1985,13 @@ class LimitLoginAttempts
 		$active_app = Config::get( 'active_app' );
 		$notify_methods = explode( ',', Config::get( 'lockout_notify' ) );
 
-        if ( $active_app !== 'local'
-             || in_array( 'email', $notify_methods )
-             || ! current_user_can('manage_options')
-             || Config::get('enable_notify_notice_shown')
-             || $screen->parent_base === 'edit' ) {
+        if (
+                $active_app !== 'local'
+                || in_array( 'email', $notify_methods )
+                || ! current_user_can('manage_options')
+                || Config::get('enable_notify_notice_shown')
+                || $screen->parent_base === 'edit'
+        ) {
 
 	        return;
         }
