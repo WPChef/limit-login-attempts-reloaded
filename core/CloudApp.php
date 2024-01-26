@@ -373,9 +373,9 @@ class CloudApp {
 
 		$this->last_response_code = !empty( $response['status'] ) ? $response['status'] : 0;
 
-		if( $response['status'] !== 200 ) return false;
-
+		if( $response['status'] !== 200 ) {
+			return false;
+		}
 		return json_decode( sanitize_textarea_field( stripslashes( $response['data'] ) ), true );
 	}
-
 }
