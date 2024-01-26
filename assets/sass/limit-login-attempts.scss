@@ -151,6 +151,10 @@
     min-width: 243px;
   }
 
+  input[name="lla_trusted_ip_origins"] {
+    min-width: 400px;
+  }
+
   .llar-test-email-notification-btn {
     text-decoration: none;
     margin-left: 16px;

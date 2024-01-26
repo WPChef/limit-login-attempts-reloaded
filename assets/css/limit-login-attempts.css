@@ -494,6 +494,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .limit-login-page-settings input[name=admin_notify_email] {
   min-width: 243px;
 }
+.limit-login-page-settings input[name=lla_trusted_ip_origins] {
+  min-width: 400px;
+}
 .limit-login-page-settings .llar-test-email-notification-btn {
   text-decoration: none;
   margin-left: 16px;

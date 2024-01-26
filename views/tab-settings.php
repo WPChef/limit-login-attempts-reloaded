@@ -7,21 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-
-/**
- * Temporary function to generate lorem ipsum
- *
- * @param $length
- *
- * @return false|string
- */
-function generate_lorem_ipsum( $length ) {
-
-	$lorem_ipsum = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-
-	return substr( $lorem_ipsum, 0, $length );
-}
-
 /**
  * @var $this LLAR\Core\LimitLoginAttempts
  */
@@ -30,7 +15,7 @@ $gdpr         = Config::get( 'gdpr' );
 $gdpr_message = Config::get( 'gdpr_message' );
 
 $v             = explode( ',', Config::get( 'lockout_notify' ) );
-$email_checked = in_array( 'email', $v ) ? ' checked ' : '';
+$email_checked = in_array( 'email', $v );
 
 $show_top_level_menu_item = Config::get( 'show_top_level_menu_item' );
 $show_top_bar_menu_item   = Config::get( 'show_top_bar_menu_item' );
@@ -51,12 +36,14 @@ $is_local_empty_setup_code = ( $active_app === 'local' && empty( $app_setup_code
 $min_plan = 'Premium';
 $plans = $this->array_name_plans();
 $block_sub_group = ( $active_app === 'custom' ) ? $this->info_sub_group() : false;
-$is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan] );
+$is_premium = ( $active_app === 'custom' && $plans[ $block_sub_group ] >= $plans[ $min_plan ] );
+
 $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
 $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url() : '';
 ?>
 
 <?php if ( isset( $_GET['llar-cloud-activated'] ) && ! empty( $active_app_config['messages']['setup_success'] ) ) : ?>
+
     <div class="llar-app-notice success">
         <p><?php echo $active_app_config['messages']['setup_success']; ?></p>
     </div>
@@ -66,24 +53,25 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 <div id="llar-setting-page">
     <h3 class="title_page">
         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-exploitation.png">
-		<?php echo __( 'General Settings', 'limit-login-attempts-reloaded' ); ?>
+		<?php _e( 'General Settings', 'limit-login-attempts-reloaded' ); ?>
     </h3>
     <div class="description-page">
-		<?php echo __( 'These settings are independent of the apps (see below).', 'limit-login-attempts-reloaded' ); ?>
+		<?php _e( 'These settings are independent of the apps (see below).', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <form action="<?php echo $this->get_options_page_uri( 'settings' ); ?>" method="post">
 
 		<?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
+		<?php if ( is_network_admin() ) : ?>
 
-		<?php if ( is_network_admin() ): ?>
         <input type="checkbox"
                name="allow_local_options" <?php echo Config::get( 'allow_local_options' ) ? 'checked' : '' ?>
-               value="1"/> <?php esc_html_e( 'Let network sites use their own settings', 'limit-login-attempts-reloaded' ); ?>
-            <p class="description"><?php esc_html_e( 'If disabled, the global settings will be forcibly applied to the entire network.', 'limit-login-attempts-reloaded' ) ?></p>
+               value="1"/> <?php _e( 'Let network sites use their own settings', 'limit-login-attempts-reloaded' ); ?>
+            <p class="description"><?php _e( 'If disabled, the global settings will be forcibly applied to the entire network.', 'limit-login-attempts-reloaded' ) ?></p>
 		<?php elseif ( Helpers::is_network_mode() ): ?>
+
         <input type="checkbox"
                name="use_global_options" <?php echo Config::get( 'use_local_options' ) ? '' : 'checked' ?> value="1"
-               class="use_global_options"/> <?php echo __( 'Use global settings', 'limit-login-attempts-reloaded' ); ?>
+               class="use_global_options"/> <?php _e( 'Use global settings', 'limit-login-attempts-reloaded' ); ?>
         <br/>
             <script>
                 jQuery( function ( $ ) {
@@ -92,10 +80,11 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                         var form = $( '.llar-settings-wrap' );
                         form.stop();
 
-                        if ( this.checked )
+                        if ( this.checked ) {
                             first ? form.hide() : form.fadeOut();
-                        else
+                        } else {
                             first ? form.show() : form.fadeIn();
+                        }
 
                         first = false;
                     } ).change();
@@ -106,20 +95,23 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
         <div class="llar-settings-wrap">
             <table class="form-table">
                 <tr>
-                    <th scope="row" valign="top"><?php echo __( 'GDPR compliance', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th scope="row" valign="top"><?php _e( 'GDPR compliance', 'limit-login-attempts-reloaded' ); ?></th>
                     <td>
                         <input type="checkbox" name="gdpr" value="1" <?php if ( $gdpr ): ?> checked <?php endif; ?>/>
-						<?php echo __( 'This makes the plugin <a href="https://gdpr-info.eu/" class="unlink link__style_unlink" target="_blank">GDPR</a> compliant by showing a message on the login page. <a href="https://www.limitloginattempts.com/gdpr-qa/?from=plugin-settings-gdpr" class="unlink llar-label" target="_blank">Read more</a>', 'limit-login-attempts-reloaded' ); ?>
+						<?php echo sprintf(
+                                __( 'This makes the plugin <a href="%s" class="unlink link__style_unlink" target="_blank">GDPR</a> compliant by showing a message on the login page. <a href="%s" class="unlink llar-label" target="_blank">Read more</a>', 'limit-login-attempts-reloaded' ),
+							'https://gdpr-info.eu/', 'https://www.limitloginattempts.com/gdpr-qa/?from=plugin-settings-gdpr' );
+						?>
                         <br/>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" valign="top"><?php echo __( 'GDPR message', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top"><?php _e( 'GDPR message', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
                                 <div class="hint_tooltip-content">
-                                    <?php esc_attr_e( 'This message will appear at the bottom of the login page.', 'limit-login-attempts-reloaded' ); ?>
+                                    <?php _e( 'This message will appear at the bottom of the login page.', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                         </span>
@@ -129,53 +121,53 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                             <textarea name="gdpr_message" cols="85"><?php echo esc_textarea( stripslashes( $gdpr_message ) ); ?></textarea>
                         </div>
                         <div class="description-additional">
-							<?php echo __( 'You can use a shortcode here to insert links, for example, a link to your Privacy Policy page. <br>The shortcode is: [llar-link url="https://example.com" text="Privacy Policy"]', 'limit-login-attempts-reloaded' ); ?>
+							<?php _e( 'You can use a shortcode here to insert links, for example, a link to your Privacy Policy page. <br>The shortcode is: [llar-link url="https://example.com" text="Privacy Policy"]', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                     </td>
                 </tr>
 
                 <?php if ( false ) : // temporarily removed ?>
                 <tr>
-                    <th scope="row" valign="top"><?php echo __( 'Weekly Digest', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top"><?php _e( 'Weekly Digest', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
                                 <div class="hint_tooltip-content">
-                                    <?php echo generate_lorem_ipsum(50) ?>
+                                    <?php _e( 'Weekly Digest', 'limit-login-attempts-reloaded'  ) ?>
                                 </div>
                             </div>
                         </span>
                     </th>
                     <td>
-                        <input type="checkbox" name="digest_email" <?php echo $email_checked; ?>
+                        <input type="checkbox" name="digest_email" <?php checked ( $email_checked ) ?>
                                value="email"/> <?php _e( 'Email to', 'limit-login-attempts-reloaded' ); ?>
                         <input class="input_border" type="email" name="admin_digest_email"
                                value="<?php esc_attr_e( $admin_notify_email ) ?>"
                                placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"/>
                         <div class="description-secondary">
-                            <?php echo __( 'Receive a weekly digest that includes a recap of your failed logins and lockout notifications. Premium users will be able to see additional data such as countries and IPs with most failed logins.' ); ?>
+                            <?php _e( 'Receive a weekly digest that includes a recap of your failed logins and lockout notifications. Premium users will be able to see additional data such as countries and IPs with most failed logins.' ); ?>
                         </div>
                     </td>
                 </tr>
 	            <?php endif; ?>
 
                 <tr>
-                    <th scope="row" valign="top" id="llar_lockout_notify"><?php echo __( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top" id="llar_lockout_notify"><?php _e( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
                                 <div class="hint_tooltip-content">
-                                    <?php esc_attr_e( 'Email address to which lockout notifications will be sent.', 'limit-login-attempts-reloaded' ); ?>
+                                    <?php _e( 'Email address to which lockout notifications will be sent.', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                         </span>
                     </th>
                     <td>
-                        <input type="checkbox" name="lockout_notify_email" <?php echo $email_checked; ?>
+                        <input type="checkbox" name="lockout_notify_email" <?php checked ( $email_checked ); ?>
                                value="email"/> <?php _e( 'Email to', 'limit-login-attempts-reloaded' ); ?>
                         <input class="input_border" type="email" name="admin_notify_email"
                                value="<?php esc_attr_e( $admin_notify_email ) ?>"
-                               placeholder="<?php esc_attr_e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"/> <?php _e( 'after', 'limit-login-attempts-reloaded' ); ?>
+                               placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"/> <?php _e( 'after', 'limit-login-attempts-reloaded' ); ?>
                         <input class="input_border" type="text" size="3" maxlength="4"
                                value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
                                name="email_after"/> <?php _e( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
@@ -195,12 +187,12 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                 </tr>
 
                 <tr>
-                    <th scope="row" valign="top"><?php echo __( 'Display top menu item', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top"><?php _e( 'Display top menu item', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
                                 <div class="hint_tooltip-content">
-                                    <?php esc_attr_e( 'The LLAR plugin displays its item on the top navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>
+                                    <?php _e( 'The LLAR plugin displays its item on the top navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                         </span>
@@ -212,12 +204,12 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                 </tr>
 
                 <tr>
-                    <th scope="row" valign="top"><?php echo __( 'Display left menu item', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top"><?php _e( 'Display left menu item', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
                                 <div class="hint_tooltip-content">
-                                    <?php esc_attr_e( 'The LLAR plugin displays its item on the left navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>
+                                    <?php _e( 'The LLAR plugin displays its item on the left navigation menu, which provides a shortcut to the plugin.', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                         </span>
@@ -228,12 +220,12 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" valign="top"><?php echo __( 'Hide Dashboard Widget', 'limit-login-attempts-reloaded' ); ?>
+                    <th scope="row" valign="top"><?php _e( 'Hide Dashboard Widget', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
                                 <div class="hint_tooltip-content">
-                                    <?php esc_attr_e( 'The LLAR dashboard widget provides a quick glance of your daily failed login activity on the main WordPress dashboard. You may hide this widget by checking this box.', 'limit-login-attempts-reloaded' ); ?>
+                                    <?php _e( 'The LLAR dashboard widget provides a quick glance of your daily failed login activity on the main WordPress dashboard. You may hide this widget by checking this box.', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                         </span>
@@ -243,12 +235,12 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" valign="top"><?php echo __( 'Display Menu Warning Icon', 'limit-login-attempts-reloaded' ); ?>                        &nbsp;
+                    <th scope="row" valign="top"><?php _e( 'Display Menu Warning Icon', 'limit-login-attempts-reloaded' ); ?>                        &nbsp;
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
                                 <div class="hint_tooltip-content">
-                                    <?php esc_attr_e( 'The warning badge is a red bubble icon displayed next to the LLAR logo on the main vertical navigation menu. It displays a warning if there were more than 100 attempts for a day.', 'limit-login-attempts-reloaded' ); ?>
+                                    <?php _e( 'The warning badge is a red bubble icon displayed next to the LLAR logo on the main vertical navigation menu. It displays a warning if there were more than 100 attempts for a day.', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                         </span>
@@ -262,10 +254,10 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 
             <h3 class="title_page">
                 <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-gears.png">
-				<?php echo __( 'App Settings', 'limit-login-attempts-reloaded' ); ?>
+				<?php _e( 'App Settings', 'limit-login-attempts-reloaded' ); ?>
             </h3>
             <div class="description-page">
-				<?php echo __( 'The app absorbs the main load caused by brute-force attacks, analyzes login attempts, and blocks unwanted visitors. It provides other service functions as well.', 'limit-login-attempts-reloaded' ); ?>
+				<?php _e( 'The app absorbs the main load caused by brute-force attacks, analyzes login attempts, and blocks unwanted visitors. It provides other service functions as well.', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="llar-settings-wrap">
                 <table class="form-table">
@@ -283,10 +275,10 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                         </th>
                         <td>
                             <div class="description-secondary p-0">
-								<?php _e( 'Help us secure our network by sharing your login IP data. In return, receive limited access to our premium features up to 1,000 requests for the first month, and 100 requests each subsequent month. Once requests are exceeded for a given month, the premium app will switch to FREE and reset the following month.', 'limit-login-attempts-reloaded' ) ?>
+								<?php _e('Help us secure our network by sharing your login IP data. In return, receive limited access to our premium features up to 1,000 requests for the first month, and 100 requests each subsequent month. Once requests are exceeded for a given month, the premium app will switch to FREE and reset the following month.', 'limit-login-attempts-reloaded' ) ?>
                             </div>
                             <div class="description-additional p-0 pt-1_5">
-		                        <?php _e( '* Requests are utilized when the cloud app validates an IP address before it is able to perform a login.', 'limit-login-attempts-reloaded' ) ?>
+		                        <?php _e('* Requests are utilized when the cloud app validates an IP address before it is able to perform a login.', 'limit-login-attempts-reloaded' ) ?>
                             </div>
                             <div class="button_block">
                                 <a href="https://www.limitloginattempts.com/premium-security-zero-cost-discover-the-benefits-of-micro-cloud/"
@@ -305,12 +297,12 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 	                <?php endif; ?>
 
                     <tr>
-                        <th scope="row" valign="top"><?php echo __( 'Active App', 'limit-login-attempts-reloaded' ); ?>
+                        <th scope="row" valign="top"><?php _e( 'Active App', 'limit-login-attempts-reloaded' ); ?>
                             <span class="hint_tooltip-parent">
                                 <span class="dashicons dashicons-editor-help"></span>
                                 <div class="hint_tooltip">
                                     <div class="hint_tooltip-content">
-                                        <?php esc_attr_e( 'Switches from free version (local) to premium (cloud).', 'limit-login-attempts-reloaded' ); ?>
+                                        <?php _e( 'Switches from free version (local) to premium (cloud).', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
                                 </div>
                             </span>
@@ -318,16 +310,22 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                         <td>
                             <select class="input_border" name="active_app" id="">
                                 <option value="local" <?php selected( $active_app, 'local' ); ?>>
-									<?php echo __( 'Local', 'limit-login-attempts-reloaded' ); ?>
+									<?php _e( 'Local', 'limit-login-attempts-reloaded' ); ?>
                                 </option>
 								<?php if ( $active_app_config ) : ?>
+
                                     <option value="custom" <?php selected( $active_app, 'custom' ); ?>>
-										<?php echo esc_html( $active_app_config['name'] ); ?>
+										<?php esc_html_e( $active_app_config['name'] ); ?>
                                     </option>
 								<?php endif; ?>
                             </select>
 							<?php if ( $active_app === 'local' ) : ?>
-                                <span class="llar-protect-notice"><?php _e( 'Get advanced protection by <a href="#" class="unlink llar-upgrade-to-cloud">upgrading to our Cloud App</a>.', 'limit-login-attempts-reloaded' ); ?></span>
+                                <span class="llar-protect-notice">
+                                    <?php echo sprintf(
+		                                __( 'Get advanced protection by <a href="%s" class="unlink llar-upgrade-to-cloud">upgrading to our Cloud App</a>.', 'limit-login-attempts-reloaded' ),
+                                '#' );
+                                ?>
+                                    </span>
 							<?php endif; ?>
                         </td>
                     </tr>
@@ -335,16 +333,16 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
             </div>
 
             <div id="llar-apps-accordion" class="llar-accordion">
-                <h3><?php echo __( 'Local App', 'limit-login-attempts-reloaded' ); ?></h3>
+                <h3><?php _e( 'Local App', 'limit-login-attempts-reloaded' ); ?></h3>
                 <div>
                     <table class="form-table">
                         <tr>
-                            <th scope="row" valign="top"><?php echo __( 'Lockout', 'limit-login-attempts-reloaded' ); ?>
+                            <th scope="row" valign="top"><?php _e( 'Lockout', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php esc_attr_e( 'Set lockout limits based on failed attempts.', 'limit-login-attempts-reloaded' ); ?>
+                                            <?php _e( 'Set lockout limits based on failed attempts.', 'limit-login-attempts-reloaded' ); ?>
                                         </div>
                                     </div>
                                 </span>
@@ -353,12 +351,12 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                 <input class="input_border" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'allowed_retries' ) ); ?>"
                                        name="allowed_retries"/>
-								<?php echo __( 'allowed retries', 'limit-login-attempts-reloaded' ); ?>
+								<?php _e( 'allowed retries', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php esc_attr_e( 'Number of failed attempts allowed before locking out.', 'limit-login-attempts-reloaded' ); ?>
+                                            <?php _e( 'Number of failed attempts allowed before locking out.', 'limit-login-attempts-reloaded' ); ?>
                                         </div>
                                     </div>
                                 </span>
@@ -366,28 +364,28 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                 <input class="input_border mt-0_5" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'lockout_duration' ) / 60 ); ?>"
                                        name="lockout_duration"/>
-								<?php echo __( 'minutes lockout', 'limit-login-attempts-reloaded' ); ?>
+								<?php _e( 'minutes lockout', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php esc_attr_e( 'Lockout time in minutes.', 'limit-login-attempts-reloaded' ); ?>
+                                            <?php _e( 'Lockout time in minutes.', 'limit-login-attempts-reloaded' ); ?>
                                         </div>
                                     </div>
                                 </span>
                                 <br/>
                                 <input class="input_border mt-0_5" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'allowed_lockouts' ) ); ?>"
-                                       name="allowed_lockouts"/> <?php echo __( 'lockouts increase lockout time to', 'limit-login-attempts-reloaded' ); ?>
+                                       name="allowed_lockouts"/> <?php _e( 'lockouts increase lockout time to', 'limit-login-attempts-reloaded' ); ?>
                                 <input class="input_border" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'long_duration' ) / 3600 ); ?>"
                                        name="long_duration"/>
-								<?php echo __( 'hours', 'limit-login-attempts-reloaded' ); ?>
+								<?php _e( 'hours', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php esc_attr_e( 'After the specified number of lockouts the lockout time will increase by specified hours.', 'limit-login-attempts-reloaded' ); ?>
+                                            <?php _e( 'After the specified number of lockouts the lockout time will increase by specified hours.', 'limit-login-attempts-reloaded' ); ?>
                                         </div>
                                     </div>
                                 </span>
@@ -395,12 +393,12 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                 <input class="input_border mt-0_5" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'valid_duration' ) / 3600 ); ?>"
                                        name="valid_duration"/>
-								<?php echo __( 'hours until retries are reset', 'limit-login-attempts-reloaded' ); ?>
+								<?php _e( 'hours until retries are reset', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php esc_attr_e( 'Time in hours before blocks are removed.', 'limit-login-attempts-reloaded' ); ?>
+                                            <?php _e( 'Time in hours before blocks are removed.', 'limit-login-attempts-reloaded' ); ?>
                                         </div>
                                     </div>
                                 </span>
@@ -417,21 +415,20 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row" valign="top"><?php echo __( 'Trusted IP Origins', 'limit-login-attempts-reloaded' ); ?>
+                            <th scope="row" valign="top"><?php _e( 'Trusted IP Origins', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php esc_attr_e( 'Server variables containing IP addresses.', 'limit-login-attempts-reloaded' ); ?>
+                                            <?php _e( 'Server variables containing IP addresses.', 'limit-login-attempts-reloaded' ); ?>
                                         </div>
                                     </div>
                                 </span>
                             </th>
                             <td>
                                 <div class="field-col">
-                                    <input class="input_border" ype="text" class="regular-text"
-                                           style="width: 100%;max-width: 431px;" name="lla_trusted_ip_origins"
-                                           value="<?php echo esc_attr( $trusted_ip_origins ); ?>">
+                                    <input class="input_border regular-text" type="text" name="lla_trusted_ip_origins"
+                                           value="<?php esc_attr_e( $trusted_ip_origins ); ?>">
                                     <div class="description-secondary mt-0_5 p-0">
 										<?php _e( 'Specify the origins you trust in order of priority, separated by commas. We strongly recommend that you <b>do not</b> use anything other than REMOTE_ADDR since other origins can be easily faked. Examples: HTTP_X_FORWARDED_FOR, HTTP_CF_CONNECTING_IP, HTTP_X_SUCURI_CLIENTIP', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
@@ -489,31 +486,30 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 	                    <?php if ( $is_local_empty_setup_code ) : ?>
 		                    <?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php') ?>
                             <a class="button menu__item button_micro_cloud button__transparent_orange" target="_blank">
-			                    <?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+			                    <?php _e( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
                             </a>
                         <?php elseif ( $block_sub_group === 'Micro Cloud' ) : ?>
-                            <a href="<?php echo $url_try_for_free_cloud ?>" class="button menu__item button__transparent_orange" target="_blank">
-			                    <?php echo __( 'Upgrade', 'limit-login-attempts-reloaded' ); ?>
+                            <a href="<?php echo esc_url( $url_try_for_free_cloud ) ?>" class="button menu__item button__transparent_orange" target="_blank">
+			                    <?php _e( 'Upgrade', 'limit-login-attempts-reloaded' ); ?>
                             </a>
 	                    <?php else : ?>
-                            <a href="<?php echo $url_try_for_free . 'settings-local-block' ?>" class="button menu__item button__transparent_orange" target="_blank">
-			                    <?php echo __( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
+                            <a href="<?php echo esc_url( $url_try_for_free )  . 'settings-local-block' ?>" class="button menu__item button__transparent_orange" target="_blank">
+			                    <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
                             </a>
 	                    <?php endif; ?>
                     </div>
 	                <?php endif; ?>
                 </div>
-
-                <h3><?php echo ( $active_app_config ) ? $active_app_config['name'] : __( 'Custom App', 'limit-login-attempts-reloaded' ); ?></h3>
+                <h3><?php ( $active_app_config ) ? esc_html_e( $active_app_config['name'] ) : _e( 'Custom App', 'limit-login-attempts-reloaded' ); ?></h3>
                 <div class="custom-app-tab">
                     <table class="form-table">
                         <tr>
-                            <th scope="row" valign="top"><?php echo __( 'Setup Code', 'limit-login-attempts-reloaded' ); ?>
+                            <th scope="row" valign="top"><?php _e( 'Setup Code', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent" id="llar_reset_setup_code">
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php esc_attr_e( 'This is the code you receive via email once you subscribe to the LLAR premium cloud app. (example xxxxxxxxxxxxx=yek?putes/1v/moc.stpmettanigoltimil.ipa)', 'limit-login-attempts-reloaded' ); ?>
+                                            <?php _e( 'This is the code you receive via email once you subscribe to the LLAR premium cloud app. (example xxxxxxxxxxxxx=yek?putes/1v/moc.stpmettanigoltimil.ipa)', 'limit-login-attempts-reloaded' ); ?>
                                         </div>
                                     </div>
                                 </span>
@@ -524,13 +520,13 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 										<?php _e( 'Edit', 'limit-login-attempts-reloaded' ); ?>
                                     </a>
 								<?php endif; ?>
-                                <div class="setup-code-wrap <?php echo ( $active_app === 'local' || ! $active_app_config ) ? 'active' : ''; ?>">
+                                <div class="setup-code-wrap<?php echo ( $active_app === 'local' || ! $active_app_config ) ? ' active' : ''; ?>">
                                     <input class="input_border full_area regular-text" type="text"
                                            id="limit-login-app-setup-code"
                                            value="<?php echo ( ! empty( $app_setup_code ) ) ? esc_attr( $app_setup_code ) : ''; ?>">
                                     <button class="button menu__item button__transparent_orange"
                                             id="limit-login-app-setup">
-										<?php echo __( 'Submit', 'limit-login-attempts-reloaded' ); ?>
+										<?php _e( 'Submit', 'limit-login-attempts-reloaded' ); ?>
                                     </button>
                                     <span class="spinner llar-app-ajax-spinner"></span><br>
                                     <span class="llar-app-ajax-msg"></span>
@@ -542,7 +538,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                         </tr>
 						<?php if ( $active_app === 'custom' && $active_app_config ) : ?>
                             <tr class="app-form-field">
-                                <th scope="row" valign="top"><?php echo __( 'Configuration', 'limit-login-attempts-reloaded' ); ?></th>
+                                <th scope="row" valign="top"><?php _e( 'Configuration', 'limit-login-attempts-reloaded' ); ?></th>
                                 <td>
                                     <div class="field-col">
                                         <div class="textarea_border">
@@ -563,7 +559,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                             <span class="dashicons dashicons-editor-help"></span>
                                             <div class="hint_tooltip">
                                                 <div class="hint_tooltip-content">
-                                                    <?php echo esc_attr( $setting_params['description'] ); ?>
+                                                    <?php esc_attr_e( $setting_params['description'] ); ?>
                                                 </div>
                                             </div>
                                         </span>
@@ -574,16 +570,16 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                                 <select class="input_border"
                                                         name="llar_app_settings[<?php echo $setting_name; ?>]">
 													<?php foreach ( $setting_params['options'] as $option ) : ?>
-                                                        <option value="<?php echo esc_attr( $option ); ?>" <?php selected( $option, $setting_params['value'] ); ?>><?php echo esc_html( $option ); ?></option>
+                                                        <option value="<?php esc_attr_e( $option ); ?>" <?php selected( $option, $setting_params['value'] ); ?>><?php esc_html_e( $option ); ?></option>
 													<?php endforeach; ?>
                                                 </select>
 											<?php else : ?>
                                                 <input class="input_border" type="text" class="regular-text"
-                                                       name="llar_app_settings[<?php echo esc_attr( $setting_name ); ?>]"
-                                                       value="<?php echo esc_attr( $setting_params['value'] ); ?>">
+                                                       name="llar_app_settings[<?php esc_attr_e( $setting_name ); ?>]"
+                                                       value="<?php esc_attr_e( $setting_params['value'] ); ?>">
 											<?php endif; ?>
 
-                                            <p class="description"><?php echo esc_html( $setting_params['description'] ); ?></p>
+                                            <p class="description"><?php esc_html_e( $setting_params['description'] ); ?></p>
                                         </div>
                                     </td>
                                 </tr>
@@ -599,15 +595,15 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                 </div>
 	                            <?php if ( $is_local_empty_setup_code ) : ?>
                                     <a class="button menu__item button_micro_cloud button__transparent_orange mt-1_5" target="_blank">
-			                            <?php echo __( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+			                            <?php _e( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
                                     </a>
 	                            <?php elseif ( $block_sub_group === 'Micro Cloud' ) : ?>
-                                    <a href="<?php echo $url_try_for_free_cloud ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
-			                            <?php echo __( 'Upgrade', 'limit-login-attempts-reloaded' ); ?>
+                                    <a href="<?php echo esc_url( $url_try_for_free_cloud ) ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
+			                            <?php _e( 'Upgrade', 'limit-login-attempts-reloaded' ); ?>
                                     </a>
 	                            <?php else : ?>
-                                    <a href="<?php echo $url_try_for_free . 'settings-cloud-block' ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
-			                            <?php echo __( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
+                                    <a href="<?php echo esc_url( $url_try_for_free ) . 'settings-cloud-block' ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
+			                            <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
                                     </a>
 	                            <?php endif; ?>
                             </div>
@@ -770,7 +766,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 
         <p class="submit">
             <input class="button menu__item col button__orange" name="llar_update_settings"
-                   value="<?php echo __( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
+                   value="<?php _e( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
                    type="submit"/>
         </p>
     </form>
