@@ -316,9 +316,16 @@ class LimitLoginAttempts
 
 		if ( Config::get( 'active_app' ) === 'local' ) {
 
-			$actions = array_merge( array(
-				'<a href="https://www.limitloginattempts.com/info.php?from=plugin-plugins" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
-			), $actions );
+		    if ( empty( Config::get( 'app_setup_code' ) ) ) {
+
+			    $actions = array_merge( array(
+				    '<a href="http://limitloginattempts.localhost/wp-admin/admin.php?page=limit-login-attempts&tab=dashboard#modal_micro_cloud" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+			    ), $actions );
+		    } else {
+			    $actions = array_merge( array(
+				    '<a href="https://www.limitloginattempts.com/info.php?from=plugin-plugins" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
+			    ), $actions );
+		    }
 		}
 
 		return $actions;

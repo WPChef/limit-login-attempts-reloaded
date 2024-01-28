@@ -296,7 +296,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                 <div class="list">
                     <input type="checkbox" name="upgrade_premium" <?php echo $upgrade_premium ?> disabled />
                     <span>
-                        <?php echo __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
                         <?php _e( 'Upgrade to our premium version for advanced protection.', 'limit-login-attempts-reloaded' ); ?>
