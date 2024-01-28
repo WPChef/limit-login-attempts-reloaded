@@ -9,7 +9,10 @@ if( !defined( 'ABSPATH' ) ) exit();
  */
 
 $setup_code = Config::get( 'app_setup_code' );
-//if( ! empty( $setup_code ) ) return;
+
+if ( ! empty( $setup_code ) ) {
+	return;
+}
 
 $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 $url_site = parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
@@ -100,7 +103,7 @@ $micro_cloud_popup_content = ob_get_clean();
         $( document ).ready( function() {
 
             const $button_micro_cloud = $( '.button.button_micro_cloud, a.button_micro_cloud' );
-            const sec_app_setup = '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>';
+            const target_hash = '#modal_micro_cloud';
 
             $button_micro_cloud.on( 'click', function () {
                 micro_cloud_modal.open();
@@ -189,13 +192,19 @@ $micro_cloud_popup_content = ob_get_clean();
                             } );
 
                         $button_dashboard.on( 'click', function () {
-                            window.location = window.location + '&tab=dashboard';
+                            let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                            window.location = clear_url + '?page=limit-login-attempts&tab=dashboard';
 
                         } )
 
                     } )
                 }
             } );
+
+            if ( window.location.hash && window.location.hash === target_hash ) {
+                $button_micro_cloud.click();
+            }
+
         } )
 
     } )( jQuery )
