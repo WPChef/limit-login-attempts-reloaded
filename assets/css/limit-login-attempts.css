@@ -1750,6 +1750,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .section-title__new .llar-label {
   color: #2A2F40;
   min-width: fit-content;
+  text-wrap: nowrap;
   padding: 2px 16px;
   border-radius: 8px;
   background-color: rgba(10, 172, 208, 0.08);

@@ -39,6 +39,7 @@
     .llar-label {
       color: $typography-primary;
       min-width: fit-content;
+      text-wrap: nowrap;
       padding: 2px 16px;
       border-radius: $border-radius__min;
       background-color: rgba(10, 172, 208, 0.08);
