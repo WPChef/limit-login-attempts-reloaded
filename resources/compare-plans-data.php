@@ -9,7 +9,6 @@
 
 use LLAR\Core\Config;
 
-$setup_code = Config::get( 'app_setup_code' );
 $min_plan = $active_app === 'custom' ? 'Micro Cloud' : 'Free';
 
 $plans = $this->array_name_plans();
@@ -41,13 +40,13 @@ $lock = '<img src="' . LLA_PLUGIN_URL . 'assets/css/images/icon-lock-bw.png" cla
 $yes = '<span class="llar_orange">&#x2713;</span>';
 
 $compare_list = array(
-    'buttons_header'                                => array(
-        'Free'          => '<a ' . $attribute['Free']['attr'] . '>' . __( $attribute['Free']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['attr'] . '>' . __( $attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Premium'       => '<a ' . $attribute['Premium']['attr'] . '>' . __( $attribute['Premium']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Premium +'     => '<a ' . $attribute['Premium +']['attr'] . '>' . __( $attribute['Premium +']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Professional'  => '<a ' . $attribute['Professional']['attr'] . '>' . __( $attribute['Professional']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-    ),
+	'buttons_header'                                => array(
+		'Free'          => '<a ' . $attribute['Free']['attr'] . '>' . esc_html__( $attribute['Free']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+		'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['attr'] . '>' . esc_html__( $attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+		'Premium'       => '<a ' . $attribute['Premium']['attr'] . '>' . esc_html__( $attribute['Premium']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+		'Premium +'     => '<a ' . $attribute['Premium +']['attr'] . '>' . esc_html__( $attribute['Premium +']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+		'Professional'  => '<a ' . $attribute['Professional']['attr'] . '>' . esc_html__( $attribute['Professional']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+	),
     'Limit Number of Retry Attempts'                => array(
         'Free'          => $yes,
         'Micro Cloud'   => $yes,
@@ -127,7 +126,9 @@ $compare_list = array(
         'Professional'  => $yes,
     ),
     'Premium Support'                               => array(
-        'description'   =>  __( 'Receive 1 on 1 technical support via email for any issues. Free support availabe in the <a href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/" target="_blank">WordPress support forum</a>.', 'limit-login-attempts-reloaded' ),
+        'description'   =>  sprintf(
+        	__( 'Receive 1 on 1 technical support via email for any issues. Free support availabe in the <a href="%s" target="_blank">WordPress support forum</a>.', 'limit-login-attempts-reloaded' ),
+	        'https://wordpress.org/support/plugin/limit-login-attempts-reloaded/'),
         'Free'          => $lock,
         'Micro Cloud'   => $lock,
         'Premium'       => $yes,
@@ -135,11 +136,11 @@ $compare_list = array(
         'Professional'  => $yes,
     ),
     'buttons_footer'                                => array(
-        'Free'          => '<a ' . $attribute['Free']['attr'] . '>' . __( $attribute['Free']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['attr'] . '>' . __( $attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Premium'       => '<a ' . $attribute['Premium']['attr'] . '>' . __( $attribute['Premium']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Premium +'     => '<a ' . $attribute['Premium +']['attr'] . '>' . __( $attribute['Premium +']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-        'Professional'  => '<a ' . $attribute['Professional']['attr'] . '>' . __( $attribute['Professional']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+	    'Free'          => '<a ' . $attribute['Free']['attr'] . '>' . esc_html__( $attribute['Free']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+	    'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['attr'] . '>' . esc_html__( $attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+	    'Premium'       => '<a ' . $attribute['Premium']['attr'] . '>' . esc_html__( $attribute['Premium']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+	    'Premium +'     => '<a ' . $attribute['Premium +']['attr'] . '>' . esc_html__( $attribute['Premium +']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
+	    'Professional'  => '<a ' . $attribute['Professional']['attr'] . '>' . esc_html__( $attribute['Professional']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
     ),
 );
 
