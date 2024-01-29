@@ -505,7 +505,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                     <table class="form-table">
                         <tr>
                             <th scope="row" valign="top"><?php _e( 'Setup Code', 'limit-login-attempts-reloaded' ); ?>
-                                <span class="hint_tooltip-parent" id="llar_reset_setup_code">
+                                <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">

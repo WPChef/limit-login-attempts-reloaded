@@ -182,19 +182,6 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
 
         } )
 
-
-        const $reset_setup_code = $( '#llar_reset_setup_code' );
-
-        $reset_setup_code.on( 'click', function ( e ) {
-            e.preventDefault();
-
-            let data = {
-                action: 'reset_setup_code',
-            }
-
-            llar_ajax_callback_post( ajaxurl, data )
-        } )
-
     } );
 
 } )(jQuery)
