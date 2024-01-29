@@ -39,8 +39,6 @@ class Ajax {
 		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
 		add_action( 'wp_ajax_activate_micro_cloud', array( $this, 'activate_micro_cloud_callback' ) );
 		add_action( 'wp_ajax_test_email_notifications', array( $this, 'test_email_notifications_callback' ) );
-
-		add_action( 'wp_ajax_reset_setup_code', array( $this, 'reset_setup_code_callback' ) );
 	}
 
 	public function ajax_unlock() {
@@ -861,10 +859,5 @@ class Ajax {
 
 			wp_send_json_error();
 		}
-	}
-
-	public function reset_setup_code_callback() {
-		Config::update( 'app_setup_code', '' );
-		wp_send_json_success();
 	}
 }
