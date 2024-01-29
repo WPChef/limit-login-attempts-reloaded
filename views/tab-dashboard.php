@@ -21,6 +21,7 @@ $api_stats = $is_active_app_custom ? LimitLoginAttempts::$cloud_app->stats() : f
 $setup_code = Config::get( 'app_setup_code' );
 
 $wp_locale = str_replace( '_', '-', get_locale() );
+$is_tab_dashboard = true;
 
 if ( ! $is_active_app_custom && empty( $setup_code ) ) {
     require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php');
