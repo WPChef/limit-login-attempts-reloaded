@@ -2362,6 +2362,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 14px;
   text-align: left;
 }
+#llar-admin-dashboard-widgets .widget-content {
+  font-family: CoFo Sans, arial;
+}
 #llar-admin-dashboard-widgets .widget-content .llar-attempts-chart-legend {
   margin-bottom: 10px;
 }
@@ -2370,16 +2373,64 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: #fff;
   text-align: center;
 }
+#llar-admin-dashboard-widgets .llar-widget .section-title__new {
+  font-size: 12px;
+  line-height: 150%;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  text-align: left;
+}
+#llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label {
+  color: #2A2F40;
+  min-width: fit-content;
+  padding: 0.125rem 0.75rem;
+  border-radius: 8px;
+  background-color: rgba(10, 172, 208, 0.08);
+}
+#llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label-group {
+  display: flex;
+  column-gap: 30px;
+}
+#llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label__circle-blue {
+  font-size: 44px;
+  vertical-align: middle;
+  color: #58C3FF;
+}
+#llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label__circle-grey {
+  font-size: 44px;
+  vertical-align: middle;
+  color: rgba(174, 174, 174, 0.6980392157);
+}
+#llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label .hint_tooltip {
+  left: -100%;
+}
+#llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label .hint_tooltip:before {
+  right: 82%;
+}
+#llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-premium-label .dashicons {
+  width: unset;
+  height: unset;
+  background-color: #97F6C8;
+  border-radius: 4px;
+  color: #FDFDFD;
+  margin-right: 5px;
+  margin-top: 3px;
+  font-size: inherit;
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-premium-label .dashicons {
+    margin-right: 2px;
+  }
+}
 #llar-admin-dashboard-widgets .llar-widget .chart {
   max-width: 300px;
   position: relative;
-  margin-bottom: 15px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 15px auto;
 }
 #llar-admin-dashboard-widgets .llar-widget .chart .doughnut-chart-wrap {
   position: relative;
-  width: 150px;
+  width: 200px;
   height: auto;
   margin: 0 auto;
 }
