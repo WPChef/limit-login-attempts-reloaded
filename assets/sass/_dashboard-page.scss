@@ -2,10 +2,6 @@
   font-family: $font-primary, $font-secondary;
   margin-top: 40px;
 
-  * {
-    box-sizing: border-box;
-  }
-
   ul, ol {
     @extend .llar_list;
     margin-left: 0;
@@ -34,6 +30,7 @@
 
     @include _1599 {
       font-size: 14px;
+      gap: 10px;
     }
 
     .llar-label {
@@ -115,6 +112,10 @@
         padding: 30px 26px 16px;
       }
 
+      @include _1599 {
+        padding: 30px 16px;
+      }
+
       @include _1399 {
         width: calc(50% - 8px / 2);
         min-height: 272px;
@@ -160,6 +161,10 @@
             color: $background-body;
             margin-right: 5px;
             font-size: inherit;
+
+            @include _1599 {
+              margin-top: 2px;
+            }
 
             @include _1199 {
               margin-right: 2px;

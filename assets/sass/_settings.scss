@@ -54,6 +54,14 @@ $border-radius__normal: $text-font;
 $border-radius__min: $border-radius__normal * .5;
 $border-radius__max: $border-radius * 2;
 
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
 .link__style_unlink, .link__style_color_inherit {
   text-decoration: none;
   color: inherit;
@@ -274,7 +282,7 @@ ul.llar_list {
   width: 160px;
   border-radius: $border-radius;
   top: 26px;
-  right: -100%;
+  right: -20px;
   z-index: 955;
 
   &-content {

@@ -1,5 +1,5 @@
 <?php
-if( !defined( 'ABSPATH' ) ) exit();
+if ( !defined( 'ABSPATH' ) ) exit();
 ?>
 
 <div class="llar-table-header">
@@ -38,7 +38,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 			var $log_table = $('.llar-table-app-lockouts'),
 			    $log_table_body = $log_table.find('tbody'),
                 $preloader_wrap = $log_table.closest('.llar-preloader-wrap'),
-                $log_table_empty = $log_table.html();
+                $log_table_empty = $log_table_body.html(),
                 $infinity_box = $('.llar-app-lockouts-infinity-scroll'),
                 loading_data = false,
                 page_offset = '',
@@ -52,7 +52,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
             $log_table.on('llar:refresh', function () {
                 page_offset = '';
-                $log_table.html($log_table_empty);
+                $log_table_body.html($log_table_empty);
                 load_lockouts_data();
             });
 
@@ -60,7 +60,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
             $('.llar-global-reload-btn').on('click', function() {
                 page_offset = '';
-                $log_table.html($log_table_empty);
+                $log_table_body.html($log_table_empty);
                 load_lockouts_data();
             });
 
