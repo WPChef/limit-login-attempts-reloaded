@@ -318,12 +318,19 @@ class LimitLoginAttempts
 
 		    if ( empty( Config::get( 'app_setup_code' ) ) ) {
 
+		        $slug = '/wp-admin/admin.php?page=limit-login-attempts&tab=dashboard#modal_micro_cloud';
+			    $url_site =  is_multisite() ? network_site_url( $slug ) : site_url( $slug );
+
 			    $actions = array_merge( array(
-				    '<a href="http://limitloginattempts.localhost/wp-admin/admin.php?page=limit-login-attempts&tab=dashboard#modal_micro_cloud" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+				    '<a href="'. $url_site .'" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
 			    ), $actions );
 		    } else {
+
+			    $slug = '/info.php?from=plugin-plugins';
+			    $url_site =  is_multisite() ? network_site_url( $slug ) : site_url( $slug );
+
 			    $actions = array_merge( array(
-				    '<a href="https://www.limitloginattempts.com/info.php?from=plugin-plugins" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
+				    '<a href="'. $url_site .'" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
 			    ), $actions );
 		    }
 		}
