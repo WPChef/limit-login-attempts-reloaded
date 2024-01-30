@@ -23,6 +23,8 @@ $setup_code = Config::get( 'app_setup_code' );
 $wp_locale = str_replace( '_', '-', get_locale() );
 $is_tab_dashboard = true;
 
+$url_site =  is_multisite() ? network_site_url() : site_url();
+
 if ( ! $is_active_app_custom && empty( $setup_code ) ) {
     require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php');
 }
@@ -250,7 +252,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                     <div class="desc">
                         <?php echo sprintf(
                             __( '<a class="link__style_unlink llar_turquoise" href="%s">Enable email notifications</a> to receive timely alerts and updates via email', 'limit-login-attempts-reloaded' ),
-                            'http://limitloginattempts.localhost/wp-admin/admin.php?page=limit-login-attempts&tab=settings#llar_lockout_notify'
+	                        $url_site . '/wp-admin/admin.php?page=limit-login-attempts&tab=settings#llar_lockout_notify'
                         ); ?>
                     </div>
                 </div>
@@ -262,7 +264,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                     <div class="desc">
                         <?php echo sprintf(
                             __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Read our guide</a> on implementing and enforcing strong password policies in your organization.', 'limit-login-attempts-reloaded' ),
-                            'https://www.limitloginattempts.com/info.php?id=1'
+	                        'https://www.limitloginattempts.com/info.php?id=1'
                         ); ?>
                     </div>
                 </div>
@@ -273,7 +275,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                     </span>
                     <div class="desc">
                         <?php $link__allow_deny = $block_by_country
-                            ? 'http://limitloginattempts.localhost/wp-admin/admin.php?page=limit-login-attempts&tab=logs-custom'
+                            ? $url_site . '/wp-admin/admin.php?page=limit-login-attempts&tab=logs-custom'
                             : 'https://www.limitloginattempts.com/info.php?id=2' ?>
                         <?php echo sprintf(
                             __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Allow or Deny countries</a> to ensure only legitimate users login.', 'limit-login-attempts-reloaded' ),
