@@ -326,8 +326,7 @@ class LimitLoginAttempts
 			    ), $actions );
 		    } else {
 
-			    $slug = '/info.php?from=plugin-plugins';
-			    $url_site =  is_multisite() ? network_site_url( $slug ) : site_url( $slug );
+			    $url_site = 'https://www.limitloginattempts.com/info.php?from=plugin-plugins';
 
 			    $actions = array_merge( array(
 				    '<a href="'. $url_site .'" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
