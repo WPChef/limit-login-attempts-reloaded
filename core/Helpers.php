@@ -124,6 +124,16 @@ class Helpers {
 		return is_array( $auto_update_plugins ) && in_array( LLA_PLUGIN_BASENAME, $auto_update_plugins );
 	}
 
+	public static function is_block_automatic_update_disabled() {
+
+        if ( ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS )
+            || ( defined( 'DOING_CRON' ) && DOING_CRON ) ) {
+            return true;
+        }
+
+        return apply_filters( 'automatic_updater_disabled', false ) || !apply_filters( 'auto_update_plugin', true );
+	}
+
 	public static function get_wordpress_version() {
 		global $wp_version;
 		return $wp_version;

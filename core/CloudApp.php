@@ -5,10 +5,10 @@ namespace LLAR\Core;
 use Exception;
 use LLAR\Core\Http\Http;
 
-if( !defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class CloudApp {
-
+class CloudApp
+{
 	/**
 	 * @var null|string
 	 */
@@ -43,9 +43,9 @@ class CloudApp {
 	 * App constructor.
 	 * @param array $config
 	 */
-	public function __construct( array $config ) {
-
-		if( empty( $config ) ) {
+	public function __construct( array $config )
+	{
+		if ( empty( $config ) ) {
 			return false;
 		}
 
@@ -58,9 +58,11 @@ class CloudApp {
 	 * @param $error
 	 * @return bool
 	 */
-	public function add_error( $error ) {
-
-		if( !$error ) return false;
+	public function add_error( $error )
+	{
+		if ( ! $error ) {
+			return false;
+		}
 
 		$this->login_errors[] = $error;
 	}
@@ -68,22 +70,24 @@ class CloudApp {
 	/**
 	 * @return array
 	 */
-	public function get_errors() {
-
+	public function get_errors()
+	{
 		return $this->login_errors;
 	}
 
 	/**
 	 * @return null|string
 	 */
-	public function get_id() {
+	public function get_id()
+	{
 		return $this->id;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function get_config() {
+	public function get_config()
+	{
 		return $this->config;
 	}
 
@@ -91,14 +95,13 @@ class CloudApp {
 	 * @param $link
 	 * @return false[]
 	 */
-	public static function setup( $link ) {
-
+	public static function setup( $link )
+	{
 		$return = array(
 			'success' => false,
 		);
 
-		if( empty( $link ) ) {
-
+		if ( empty( $link ) ) {
 			return $return;
 		}
 
@@ -113,34 +116,62 @@ class CloudApp {
 		$setup_response = Http::get( $link );
 		$setup_response_body = json_decode( $setup_response['data'], true );
 
-		if( !empty( $setup_response['error'] ) ) {
+		if ( ! empty( $setup_response['error'] ) ) {
 
 			$return['error'] = $setup_response['error'];
 
-		} else if( $setup_response['status'] === 200 ) {
+		} elseif( $setup_response['status'] === 200 ) {
 
 			$return['success'] = true;
 			$return['app_config'] = $setup_response_body;
 
 		} else {
 
-			$return['error'] = ( !empty( $setup_response_body['message'] ) )
+			$return['error'] = ( ! empty( $setup_response_body['message'] ) )
 								? $setup_response_body['message']
 								: __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
+
 			$return['response_code'] = $setup_response['status'];
 		}
 
 		return $return;
 	}
 
+	public static function activate_license_key( $setup_code )
+	{
+		$link = strrev( $setup_code );
+		$setup_result = self::setup( $link );
+
+		if ( $setup_result['success'] ) {
+
+			if ( $setup_result['app_config'] ) {
+
+				Helpers::cloud_app_update_config( $setup_result['app_config'], true );
+
+				Config::update( 'active_app', 'custom' );
+				Config::update( 'app_setup_code', $setup_code );
+
+				return ! empty( $key_result['app_config']['messages']['setup_success'] )
+					? $key_result['app_config']['messages']['setup_success']
+					: __( 'The app has been successfully imported.', 'limit-login-attempts-reloaded' );
+			}
+		} else {
+
+			return $setup_result;
+		}
+
+		return $setup_result;
+	}
+
 	/**
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function stats() {
-
-		if( empty( $this->stats_cache ) )
+	public function stats()
+	{
+		if ( empty( $this->stats_cache ) ) {
 			$this->stats_cache = $this->request( 'stats' );
+		}
 
 		return $this->stats_cache;
 	}
@@ -148,11 +179,13 @@ class CloudApp {
 	/**
 	 * @return bool|mixed
 	 */
-	public static function stats_global() {
-
+	public static function stats_global()
+	{
 		$response = Http::get( 'https://api.limitloginattempts.com/v1/global-stats' );
 
-		if( $response['status'] !== 200 ) return false;
+		if ( $response['status'] !== 200 ) {
+			return false;
+		}
 
 		return json_decode( $response['data'], true );
 	}
@@ -163,8 +196,8 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function acl_check( $data ) {
-
+	public function acl_check( $data )
+	{
 		$this->prepare_settings( 'acl', $data );
 
 		return $this->request( 'acl', 'post', $data );
@@ -176,10 +209,19 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function acl( $data ) {
-
+	public function acl( $data )
+	{
 		return $this->request( 'acl', 'get', $data );
 	}
+
+    /**
+     * @return bool|mixed
+     * @throws Exception
+     */
+    public function info()
+    {
+        return $this->request( 'info' );
+    }
 
 	/**
 	 * @param $data
@@ -187,8 +229,8 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function acl_create( $data ) {
-
+	public function acl_create( $data )
+	{
 		return $this->request( 'acl/create', 'post', $data );
 	}
 
@@ -198,8 +240,8 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function acl_delete( $data ) {
-
+	public function acl_delete( $data )
+	{
 		return $this->request( 'acl/delete', 'post', $data );
 	}
 
@@ -207,8 +249,8 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function country() {
-
+	public function country()
+	{
 		return $this->request( 'country', 'get' );
 	}
 
@@ -217,8 +259,8 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function country_add( $data ) {
-
+	public function country_add( $data )
+	{
 		return $this->request( 'country/add', 'post', $data );
 	}
 
@@ -227,8 +269,8 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function country_remove( $data ) {
-
+	public function country_remove( $data )
+	{
 		return $this->request( 'country/remove', 'post', $data );
 	}
 
@@ -238,8 +280,8 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function country_rule( $data ) {
-
+	public function country_rule( $data )
+	{
 		return $this->request( 'country/rule', 'post', $data );
 	}
 
@@ -249,8 +291,8 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function lockout_check( $data ) {
-
+	public function lockout_check( $data )
+	{
 		$this->prepare_settings( 'lockout', $data );
 
 		return $this->request( 'lockout', 'post', $data );
@@ -263,8 +305,8 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function log($limit = 25, $offset = '') {
-
+	public function log($limit = 25, $offset = '')
+	{
 		$data = array();
 
 		$data['limit'] = $limit;
@@ -281,8 +323,8 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function get_lockouts($limit = 25, $offset = '') {
-
+	public function get_lockouts($limit = 25, $offset = '')
+	{
 		$data = array();
 
 		$data['limit'] = $limit;
@@ -296,23 +338,23 @@ class CloudApp {
 	 *
 	 * @param $method
 	 */
-	public function prepare_settings( $method, &$data ) {
-
+	public function prepare_settings( $method, &$data )
+	{
 		$settings = array();
 
-		if( !empty( $this->config['settings'] ) ) {
+		if ( ! empty( $this->config['settings'] ) ) {
 
 			foreach ( $this->config['settings'] as $setting_name => $setting_data ) {
 
-				if( in_array( $method, $setting_data['methods'] ) ) {
-
+				if ( in_array( $method, $setting_data['methods'] ) ) {
 					$settings[$setting_name] = $setting_data['value'];
 				}
 			}
 		}
 
-		if( $settings )
+		if ( $settings ) {
 			$data['settings'] = $settings;
+		}
 	}
 
 	/**
@@ -322,9 +364,9 @@ class CloudApp {
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function request( $method, $type = 'get', $data = null ) {
-
-		if( !$method ) {
+	public function request( $method, $type = 'get', $data = null )
+	{
+		if ( ! $method ) {
 			throw new Exception( 'You must specify API method.' );
 		}
 
@@ -338,9 +380,10 @@ class CloudApp {
 
 		$this->last_response_code = !empty( $response['status'] ) ? $response['status'] : 0;
 
-		if( $response['status'] !== 200 ) return false;
+		if ( $response['status'] !== 200 ) {
+			return false;
+		}
 
 		return json_decode( sanitize_textarea_field( stripslashes( $response['data'] ) ), true );
 	}
-
 }
