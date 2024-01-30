@@ -215,7 +215,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                 <table class="form-table">
                     <tr>
                         <th scope="col"><?php _e( "Date", 'limit-login-attempts-reloaded' ); ?></th>
-                        <th scope="col"><?php _e( "IP", "Internet address", 'limit-login-attempts-reloaded' ); ?></th>
+                        <th scope="col"><?php echo _x( "IP", "Internet address", 'limit-login-attempts-reloaded' ); ?></th>
                         <th scope="col"><?php _e( 'Tried to log in as', 'limit-login-attempts-reloaded' ); ?></th>
                         <th scope="col"><?php _e( 'Gateway', 'limit-login-attempts-reloaded' ); ?></th>
                         <th>
@@ -228,7 +228,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                                 <?php esc_html_e( $user_info['ip'] ); ?>
                             </td>
                             <td class="limit-login-max">
-                                <?php esc_html_e( $user_info['username'] ) . ' (' . esc_html_e( $user_info['counter'] ) . _e( ' lockouts', 'limit-login-attempts-reloaded' ) . ')'; ?>
+                                <?php echo esc_html__( $user_info['username'] ) . ' (' . esc_html__( $user_info['counter'] ) . __( ' lockouts', 'limit-login-attempts-reloaded' ) . ')'; ?>
                             </td>
                             <td class="limit-login-gateway">
                                 <?php esc_html_e( $user_info['gateway'] ); ?>

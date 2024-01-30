@@ -1,5 +1,13 @@
 @charset "UTF-8";
 @import "../css/fonts/stylesheet.css";
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
 .link__style_unlink, .llar-label, .link__style_color_inherit {
   text-decoration: none;
   color: inherit;
@@ -211,7 +219,7 @@ ul.llar_list li::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm
   width: 160px;
   border-radius: 20px;
   top: 26px;
-  right: -100%;
+  right: -20px;
   z-index: 955;
 }
 .hint_tooltip-content {
@@ -689,6 +697,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: #FDFDFD;
   padding-right: 24px;
   border: unset;
+  scrollbar-width: thin;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page-logs .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page-debug .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page-premium .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page-help .llar-settings-wrap .form-table tr td .textarea_border textarea, #llar-setting-page .llar-settings-wrap .form-table tr td .input_border textarea, #llar-setting-page-logs .llar-settings-wrap .form-table tr td .input_border textarea, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td .input_border textarea, #llar-setting-page-debug .llar-settings-wrap .form-table tr td .input_border textarea, #llar-setting-page-premium .llar-settings-wrap .form-table tr td .input_border textarea, #llar-setting-page-help .llar-settings-wrap .form-table tr td .input_border textarea {
@@ -1026,6 +1035,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: white;
   box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
   overflow-y: auto;
+  scrollbar-width: thin;
+}
+#llar-setting-page-logs__active .llar-table-scroll-wrap::-webkit-scrollbar {
+  width: 4px;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table {
   position: relative;
@@ -1076,6 +1089,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td.llar-col-nowrap {
   white-space: nowrap;
+}
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td.llar-app-log-actions {
+  display: flex;
+  justify-content: center;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td input.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td select.input_border {
   color: #A4A8B7;
@@ -1195,9 +1212,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  column-gap: 15px;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col {
-  flex: 0 0 49%;
+  flex: 1 0 49%;
+  min-width: 590px;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .help-link {
   color: #4ACAD8;
@@ -1717,9 +1737,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-family: CoFo Sans, arial;
   margin-top: 40px;
 }
-#llar-dashboard-page * {
-  box-sizing: border-box;
-}
 #llar-dashboard-page ul, #llar-dashboard-page ol {
   margin-left: 0;
   padding-left: 32px;
@@ -1745,6 +1762,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 @media screen and (max-width: 1599.5px) {
   #llar-dashboard-page .section-title__new {
     font-size: 14px;
+    gap: 10px;
   }
 }
 #llar-dashboard-page .section-title__new .llar-label {
@@ -1821,6 +1839,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
     padding: 30px 26px 16px;
   }
 }
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
+    padding: 30px 16px;
+  }
+}
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
     width: calc(50% - 4px);
@@ -1860,6 +1883,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #FDFDFD;
   margin-right: 5px;
   font-size: inherit;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label .dashicons {
+    margin-top: 2px;
+  }
 }
 @media screen and (max-width: 1199.5px) {
   #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label .dashicons {
@@ -2480,6 +2508,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-bottom: 0;
   border-radius: 16px;
   overflow-y: auto;
+  scrollbar-width: none;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-closeIcon {
   top: 17px !important;
@@ -3085,6 +3114,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .llar-help-page .documentation-section {
   display: flex;
+  flex-wrap: wrap;
 }
 .llar-help-page .documentation-section .questions {
   flex: 1 0 auto;
@@ -3123,7 +3153,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #666D84;
 }
 .llar-help-page .documentation-section .top-list {
-  flex: 0 0 500px;
+  flex: 1 0 500px;
   margin-left: 20px;
 }
 .llar-help-page .documentation-section .top-list .list__block {
@@ -3179,6 +3209,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: block;
   margin-bottom: 0;
   border-radius: 16px;
+  scrollbar-width: none;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-content-pane::-webkit-scrollbar {
   width: 0px;

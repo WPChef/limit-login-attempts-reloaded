@@ -66,6 +66,7 @@
 
   .documentation-section {
     display: flex;
+    flex-wrap: wrap;
 
     .questions {
       flex: 1 0 auto;
@@ -111,7 +112,7 @@
     }
 
     .top-list {
-      flex: 0 0 500px;
+      flex: 1 0 500px;
       margin-left: 20px;
 
       .list__block {
