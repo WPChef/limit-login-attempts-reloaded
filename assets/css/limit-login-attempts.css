@@ -1884,6 +1884,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-right: 5px;
   font-size: inherit;
 }
+#llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label .dashicons.disabled {
+  background-color: #EC4652;
+}
 @media screen and (max-width: 1599.5px) {
   #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label .dashicons {
     margin-top: 2px;
@@ -2447,6 +2450,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: 3px;
   font-size: inherit;
 }
+#llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-premium-label .dashicons.disabled {
+  background-color: #EC4652;
+}
 @media screen and (max-width: 1199.5px) {
   #llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-premium-label .dashicons {
     margin-right: 2px;
@@ -2550,7 +2556,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content {
   min-height: 930px;
   padding: 15px;
-  background: url("./images/onboarding-bg-big.webp") no-repeat center top;
+  background: url("./images/onboarding-bg-big.webp") center top;
   background-size: 100%;
   border-radius: 16px;
 }
@@ -3117,14 +3123,19 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   flex-wrap: wrap;
 }
 .llar-help-page .documentation-section .questions {
-  flex: 1 0 auto;
   display: flex;
+  flex: 1 1 calc(100% - 550px);
   flex-direction: column;
 }
 .llar-help-page .documentation-section .questions__block {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
-  flex: 1 0 auto;
+}
+@media screen and (max-width: 1399.5px) {
+  .llar-help-page .documentation-section .questions__block {
+    flex: 1 1 100%;
+  }
 }
 .llar-help-page .documentation-section .questions__block .question {
   display: block;
@@ -3153,8 +3164,13 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #666D84;
 }
 .llar-help-page .documentation-section .top-list {
-  flex: 1 0 500px;
+  flex: 0 0 500px;
   margin-left: 20px;
+}
+@media screen and (max-width: 1399.5px) {
+  .llar-help-page .documentation-section .top-list {
+    flex: 0 0 100%;
+  }
 }
 .llar-help-page .documentation-section .top-list .list__block {
   padding: 30px 35px;

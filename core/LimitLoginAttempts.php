@@ -691,12 +691,16 @@ class LimitLoginAttempts
 
 	    if ( ! $is_cloud_app_enabled ) {
 
+		    $slug = '/wp-admin/admin.php?page=limit-login-attempts&tab=dashboard#modal_micro_cloud';
+		    $url_site =  is_multisite() ? network_site_url( $slug ) : site_url( $slug );
+
             $name_item = $is_local_empty_setup_code ? 'Try For FREE' : 'Premium';
+            $url_item = $is_local_empty_setup_code ? $url_site : $this->_options_page_slug . '&tab=premium';
 
 		    $submenu_items[] = array(
 			    'id'    => 'premium',
 			    'name'  => __( $name_item, 'limit-login-attempts-reloaded' ),
-			    'url'   => $this->_options_page_slug . '&tab=premium'
+			    'url'   => $url_item
 		    );
 	    }
 
