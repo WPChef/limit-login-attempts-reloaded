@@ -195,13 +195,10 @@ ob_start(); ?>
         </div>
         <div class="llar-upgrade-subscribe">
             <div class="button_block-horizon">
-                <button class="button menu__item button__transparent_orange orange-back"
+                <button class="button menu__item button__transparent_grey gray-back"
                         id="llar-limited-upgrade-subscribe">
-					<?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
+					<?php _e( 'Sign Me Up', 'limit-login-attempts-reloaded' ); ?>
                     <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
-                </button>
-                <button class="button next_step menu__item button__transparent_grey gray-back">
-					<?php _e( 'No', 'limit-login-attempts-reloaded' ); ?>
                 </button>
             </div>
             <div class="explanations">
@@ -411,8 +408,12 @@ $content_step_4 = ob_get_clean();
 
                                 if( is_checked ) {
                                     $limited_upgrade_subscribe.removeClass( disabled );
+                                    $limited_upgrade_subscribe.removeClass( 'button__transparent_grey gray-back' );
+                                    $limited_upgrade_subscribe.addClass( 'button__orange' );
                                 } else {
                                     $limited_upgrade_subscribe.addClass( disabled );
+                                    $limited_upgrade_subscribe.addClass( 'button__transparent_grey gray-back' );
+                                    $limited_upgrade_subscribe.removeClass( 'button__orange' );
                                 }
                             } );
 
