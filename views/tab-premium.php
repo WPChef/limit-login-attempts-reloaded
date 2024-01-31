@@ -46,7 +46,7 @@ $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$
             </div>
             <?php if ( ! $is_premium ) : ?>
                 <div class="action">
-                    <a class="button menu__item button__orange" href="https://www.limitloginattempts.com/info.php?from=plugin-premium-tab" target="_blank">
+                    <a class="button menu__item button__orange" href="https://www.limitloginattempts.com/plans/" target="_blank">
                         <?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>

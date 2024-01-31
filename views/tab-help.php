@@ -1,16 +1,19 @@
 <?php
-
-use LLAR\Core\Config;
+/**
+ * Dashboard
+ *
+ * @var string $active_app
+ * @var string $actual_plan
+ *
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
-
-$active_app = Config::get( 'active_app' );
 ?>
 
 <div id="llar-setting-page-help" class="llar-help-page">
-	<?php if ( $active_app === 'local' ) : ?>
+	<?php if ( $active_app === 'local' || $actual_plan === 'Micro Cloud' ) : ?>
         <div class="section-1">
             <div class="block">
                 <div class="title">
@@ -21,7 +24,7 @@ $active_app = Config::get( 'active_app' );
                 </div>
                 <div class="actions mt-1_5">
                     <a class="button menu__item button__orange"
-                       href="https://checkout.limitloginattempts.com/plan?from=plugin-help-tab" target="_blank">
+                       href="https://www.limitloginattempts.com/plans/" target="_blank">
 						<?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>
@@ -131,7 +134,7 @@ $active_app = Config::get( 'active_app' );
                     <li>
                         <a href="https://www.limitloginattempts.com/the-logs-tab-how-system-works/?from=plugin-help-tab"
                            target="_blank">
-							<?php _e( 'The Logs tab: How the system works', 'limit-login-attempts-reloaded' ); ?>
+							<?php _e( 'How does the login firewall work', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li>
@@ -163,7 +166,7 @@ $active_app = Config::get( 'active_app' );
         </div>
     </div>
 
-	<?php if ( $active_app === 'custom' ) : ?>
+	<?php if ( $active_app === 'custom' && $actual_plan !== 'Micro Cloud') : ?>
         <div class="section-1 mt-1_5">
             <div class="block">
                 <div class="title">
