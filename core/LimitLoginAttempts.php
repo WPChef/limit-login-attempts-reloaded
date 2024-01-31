@@ -1874,6 +1874,16 @@ class LimitLoginAttempts
         return $this->info_data;
     }
 
+	public function info_is_exhausted()
+	{
+		if ( empty( $this->info_data ) ) {
+
+			$this->info_data = $this->info();
+		}
+
+		return ( ! empty($this->info_data) && ! empty( $this->info_data['exhausted'] ) && $this->info_data['exhausted'] === true ) ? true : false;
+	}
+
 
     public function info_sub_group()
     {

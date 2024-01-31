@@ -74,6 +74,10 @@
             margin-top: 3px;
             font-size: inherit;
 
+            &.disabled {
+              background-color: $state-color__error;
+            }
+
             @include _1199 {
               margin-right: 2px;
             }

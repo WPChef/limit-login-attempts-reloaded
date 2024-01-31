@@ -16,6 +16,9 @@ $retries_chart_title = '';
 $retries_chart_desc = '';
 $retries_chart_color = '';
 
+// Class for displaying exhausted text
+$exhausted = 'enabled';
+
 $retries_count = 0;
 if ( $active_app === 'local' ) {
 
@@ -62,6 +65,7 @@ if ( $active_app === 'local' ) {
 		$retries_count = (int) end( $api_stats['attempts']['count'] );
 	}
 
+	$exhausted = ( $active_app === 'custom' && $this->info_is_exhausted() === false ) ? 'enabled' : 'disabled';
 	$retries_chart_title = __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
 	$retries_chart_color = '#97F6C8';
 }
@@ -88,7 +92,7 @@ if ( $active_app === 'local' ) {
         </span>
 	<?php endif; ?>
 	<?php echo $is_active_app_custom
-		? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>'
+		? '<span class="llar-premium-label"><span class="dashicons dashicons-saved ' . $exhausted . '"></span>' . sprintf(__( 'Cloud protection %s', 'limit-login-attempts-reloaded' ), $exhausted ) . '</span>'
 		: ''; ?>
 </div>
 <div class="section-content">
