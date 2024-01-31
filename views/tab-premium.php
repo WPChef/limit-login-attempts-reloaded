@@ -19,7 +19,11 @@ $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$
         <div class="section-1">
             <div class="text">
                 <div class="title">
-                    <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
+                    <?php if ( $block_sub_group && $block_sub_group === 'Micro Cloud' ) : ?>
+                        <?php _e( 'Limit Login Attempts Reloaded <strong>Micro Cloud</strong>', 'limit-login-attempts-reloaded' ); ?>
+                    <?php else : ?>
+	                    <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
+                    <?php endif; ?>
                 </div>
                 <ul class="links mt-1_5">
                     <li class="button tags tags_add">

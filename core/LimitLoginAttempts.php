@@ -650,7 +650,10 @@ class LimitLoginAttempts
 
 	private function get_submenu_items()
     {
-		$is_cloud_app_enabled = Config::get( 'active_app' ) === 'custom';
+	    $active_app        = Config::get( 'active_app' );
+	    $app_setup_code    = Config::get( 'app_setup_code' );
+		$is_cloud_app_enabled = $active_app === 'custom';
+	    $is_local_empty_setup_code = ( $active_app === 'local' && empty( $app_setup_code ) );
 
 		$submenu_items = array(
 			array(
@@ -688,11 +691,13 @@ class LimitLoginAttempts
 
 	    if ( ! $is_cloud_app_enabled ) {
 
-	        $submenu_items[] = array(
-		        'id'    => 'premium',
-		        'name'  => __( 'Premium', 'limit-login-attempts-reloaded' ),
-		        'url'   => $this->_options_page_slug . '&tab=premium'
-	        );
+            $name_item = $is_local_empty_setup_code ? 'Try For FREE' : 'Premium';
+
+		    $submenu_items[] = array(
+			    'id'    => 'premium',
+			    'name'  => __( $name_item, 'limit-login-attempts-reloaded' ),
+			    'url'   => $this->_options_page_slug . '&tab=premium'
+		    );
 	    }
 
 		return $submenu_items;

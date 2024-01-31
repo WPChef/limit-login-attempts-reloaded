@@ -68,20 +68,25 @@ if ( $active_app === 'local' ) {
 ?>
 
 <div class="section-title__new">
-    <span class="llar-label">
-        <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
-        <span class="hint_tooltip-parent">
-            <span class="dashicons dashicons-editor-help"></span>
-            <div class="hint_tooltip">
-                <div class="hint_tooltip-content">
-                    <?php $is_active_app_custom
-                    ? esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' )
-                    : esc_attr_e( 'An IP that has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' );
-                    ?>
+	<?php if ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) : ?>
+        <span class="llar-label">
+            <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+            <span class="hint_tooltip-parent">
+                <span class="dashicons dashicons-editor-help"></span>
+                <div class="hint_tooltip">
+                    <div class="hint_tooltip-content">
+                        <?php $is_active_app_custom
+	                        ? esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' )
+	                        : esc_attr_e( 'An IP that has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' );
+                        ?>
+                    </div>
                 </div>
-            </div>
+            </span>
         </span>
-    </span>
+	<?php else : ?>
+        <span class="llar-label__url">
+        </span>
+	<?php endif; ?>
 	<?php echo $is_active_app_custom
 		? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>'
 		: ''; ?>
