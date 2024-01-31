@@ -109,7 +109,8 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                 <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-exploitation.png">
             </div>
             <div class="info-box-content">
-                <div class="title"><a href="<?php echo $this->get_options_page_uri('logs-'.$active_app); ?>" class="link__style_unlink">
+                <div class="title">
+                    <a href="<?php echo $this->get_options_page_uri('logs-'.$active_app); ?>" class="link__style_unlink">
                         <?php _e( 'Tools', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>

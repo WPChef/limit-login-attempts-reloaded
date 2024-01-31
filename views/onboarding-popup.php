@@ -178,7 +178,7 @@ ob_start(); ?>
     <div class="card mx-auto">
         <div class="field-wrap" id="llar-description-step-3">
             <div class="field-desc-add">
-				<?php _e( 'Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP intelligence, and performance optimizer (up to 1,000 requests monthly)', 'limit-login-attempts-reloaded' ); ?>
+				<?php _e( 'Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP intelligence, and performance optimizer (up to 1,000 requests monthly).', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="field-desc-add">
 				<?php _e( '<b>Would you like to opt-in?</b>', 'limit-login-attempts-reloaded' ); ?>
@@ -187,7 +187,7 @@ ob_start(); ?>
                 <input type="checkbox" id="onboarding_consent_registering"/>
                 <span>
                     <?php echo sprintf(
-                        __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service', 'limit-login-attempts-reloaded' ),
+                        __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service.', 'limit-login-attempts-reloaded' ),
                         $url_site);
                     ?>
                 </span>
