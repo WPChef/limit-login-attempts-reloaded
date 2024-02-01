@@ -142,15 +142,19 @@ $micro_cloud_popup_content = ob_get_clean();
 
                     $button_subscribe_email.addClass( disabled );
 
+                    $subscribe_email.on( 'input', function () {
+                        $consent_registering.prop( 'checked', false );
+                        $consent_registering.trigger( 'change' );
+                    } );
+
                     $subscribe_email.on( 'blur', function() {
 
                         email = $( this ).val().trim();
 
-                        if ( ! llar_is_valid_email( email ) ) {
-                            $button_subscribe_email.addClass( disabled )
-                        }
-                        else {
-                            $button_subscribe_email.removeClass( disabled )
+                        if ( email === '' || email === null || ! llar_is_valid_email( email ) ) {
+                            $consent_registering.prop( 'disabled', true );
+                        } else {
+                            $consent_registering.prop( 'disabled', false );
                         }
                     } );
 
