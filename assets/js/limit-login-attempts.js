@@ -24,8 +24,9 @@ function llar_activate_license_key( $setup_code ) {
 
 function llar_is_valid_email( email ) {
 
-    if ( email === null ) {
-        return false;
+    // Allow empty email
+    if ( email === null || email === '' ) {
+        return true;
     }
 
     let email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

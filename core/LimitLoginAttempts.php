@@ -694,7 +694,7 @@ class LimitLoginAttempts
 		    $slug = '/wp-admin/admin.php?page=limit-login-attempts&tab=dashboard#modal_micro_cloud';
 		    $url_site =  is_multisite() ? network_site_url( $slug ) : site_url( $slug );
 
-            $name_item = $is_local_empty_setup_code ? 'Try For FREE' : 'Premium';
+            $name_item = $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' );
             $url_item = $is_local_empty_setup_code ? $url_site : $this->_options_page_slug . '&tab=premium';
 
 		    $submenu_items[] = array(
@@ -1885,7 +1885,7 @@ class LimitLoginAttempts
 			$this->info_data = $this->info();
 		}
 
-		return ( ! empty($this->info_data) && ! empty( $this->info_data['exhausted'] ) && $this->info_data['exhausted'] === true ) ? true : false;
+		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['exhausted'] ) && $this->info_data['exhausted'] === true );
 	}
 
 
@@ -1896,7 +1896,7 @@ class LimitLoginAttempts
             $this->info_data = $this->info();
         }
 
-        $data = ( ! empty($this->info_data) && ! empty( $this->info_data['sub_group'] ) ) ? $this->info_data['sub_group'] : '';
+        $data = ( ! empty( $this->info_data ) && ! empty( $this->info_data['sub_group'] ) ) ? $this->info_data['sub_group'] : '';
 
         return $this->plan_name_match( $data );
     }
@@ -1909,7 +1909,7 @@ class LimitLoginAttempts
             $this->info_data = $this->info();
         }
 
-        return ( ! empty($this->info_data ) && ! empty( $this->info_data['upgrade_url'] ) ) ? $this->info_data['upgrade_url'] : '';
+        return ( ! empty( $this->info_data ) && ! empty( $this->info_data['upgrade_url'] ) ) ? $this->info_data['upgrade_url'] : '';
     }
 
 

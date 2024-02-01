@@ -299,7 +299,7 @@
 
           &-desc {
             color: $typography-secondary;
-            font-size: 18px;
+            font-size: 16px;
             line-height: 1.5;
             text-align: center;
             margin-top: 22px;
@@ -307,6 +307,7 @@
 
             &-add {
               @extend .field-desc;
+              font-size: 18px;
               color: $typography-primary;
             }
 

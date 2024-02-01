@@ -2745,13 +2745,14 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-add {
   color: #666D84;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.5;
   text-align: center;
   margin-top: 22px;
   padding: 0 25px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-add {
+  font-size: 18px;
   color: #2A2F40;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-additional {
