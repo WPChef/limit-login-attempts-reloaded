@@ -416,7 +416,6 @@ $content_step_4 = ob_get_clean();
                             $subscribe_mc_email.val(email);
                             $limited_upgrade_subscribe.addClass( disabled );
 
-
                             $subscribe_mc_email.on( 'input', function () {
                                 $consent_registering.prop( 'checked', false );
                                 $consent_registering.trigger( 'change' );
