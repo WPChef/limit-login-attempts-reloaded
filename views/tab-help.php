@@ -134,7 +134,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <li>
                         <a href="https://www.limitloginattempts.com/the-logs-tab-how-system-works/?from=plugin-help-tab"
                            target="_blank">
-							<?php _e( 'How does the login firewall work', 'limit-login-attempts-reloaded' ); ?>
+							<?php _e( 'How does the login firewall work?', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li>

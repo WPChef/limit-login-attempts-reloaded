@@ -158,7 +158,7 @@ ob_start(); ?>
 			<?php _e( 'Continue', 'limit-login-attempts-reloaded' ) ?>
             <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
         </button>
-        <button class="button next_step menu__item button__transparent_orange button-skip">
+        <button class="button next_step menu__item button__transparent_orange button-skip" style="display: none">
 			<?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
         </button>
     </div>
@@ -182,6 +182,13 @@ ob_start(); ?>
             </div>
             <div class="field-desc-add">
 				<?php _e( '<b>Would you like to opt-in?</b>', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="field-desc">
+		        <?php _e( 'Please enter the email that will receive activation confirmation', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="field-email">
+                <input type="text" class="input_border" id="llar-subscribe-mc-email" placeholder="Your email"
+                       value="">
             </div>
             <div class="field-checkbox">
                 <input type="checkbox" id="onboarding_consent_registering"/>
@@ -399,9 +406,33 @@ $content_step_4 = ob_get_clean();
                             const $button_skip = $button_next.filter( '.button-skip' );
                             const $spinner = $limited_upgrade_subscribe.find( '.preloader-wrapper .spinner' );
                             const $description = $( '#llar-description-step-3' );
+                            const $subscribe_mc_email = $( '#llar-subscribe-mc-email' );
 
-                            console.log(email);
+
+                            if ( email === '' || email === null ) {
+                                email = '<?php esc_attr_e( $admin_email ); ?>'
+                            }
+
+                            $subscribe_mc_email.val(email);
                             $limited_upgrade_subscribe.addClass( disabled );
+
+
+                            $subscribe_mc_email.on( 'input', function () {
+                                $consent_registering.prop( 'checked', false );
+                                $consent_registering.trigger( 'change' );
+                            } );
+
+                            $subscribe_mc_email.on( 'blur', function () {
+
+                                email = $ ( this ).val().trim();
+
+                                if ( email === '' || email === null || ! llar_is_valid_email( email ) ) {
+                                    $consent_registering.prop( 'disabled', true );
+                                } else {
+                                    $consent_registering.prop( 'disabled', false );
+                                }
+                            });
+
                             $consent_registering.on( 'change', function () {
 
                                 const is_checked = $( this ).prop( 'checked' );
