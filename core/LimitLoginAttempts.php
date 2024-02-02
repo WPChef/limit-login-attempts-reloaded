@@ -690,7 +690,7 @@ class LimitLoginAttempts
 
 	    if ( ! $is_cloud_app_enabled ) {
 
-		    $slug       = '&tab=dashboard/#modal_micro_cloud';
+		    $slug       = '&tab=dashboard#modal_micro_cloud';
             $name_item  = $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' );
             $url_item   = $is_local_empty_setup_code ? $slug : '&tab=premium';
 

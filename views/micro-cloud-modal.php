@@ -205,8 +205,18 @@ $micro_cloud_popup_content = ob_get_clean();
                 }
             } );
 
-            if ( window.location.hash && window.location.hash === target_hash ) {
-                $button_micro_cloud.click();
+            $(window).on('hashchange', function() {
+                micro_cloude_hash( window.location.hash, target_hash );
+
+            })
+
+            micro_cloude_hash( window.location.hash, target_hash );
+
+            function micro_cloude_hash( current_hash, target_hash ) {
+
+                if ( current_hash && current_hash === target_hash ) {
+                    $button_micro_cloud.click();
+                }
             }
 
         } )
