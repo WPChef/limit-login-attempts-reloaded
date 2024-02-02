@@ -205,12 +205,12 @@ $micro_cloud_popup_content = ob_get_clean();
                 }
             } );
 
-            $(window).on('hashchange', function() {
-                micro_cloude_hash( window.location.hash, target_hash );
-
-            })
 
             micro_cloude_hash( window.location.hash, target_hash );
+
+            $( window ).on( 'hashchange', function() {
+                micro_cloude_hash( window.location.hash, target_hash );
+            } );
 
             function micro_cloude_hash( current_hash, target_hash ) {
 
