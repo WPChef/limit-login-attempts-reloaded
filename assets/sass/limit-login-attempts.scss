@@ -294,14 +294,14 @@
           line-height: inherit;
           border-radius: $border-radius;
           background-color: unset;
-          padding: 29px 44px 32px;
+          padding: 29px 5px 32px 44px;
 
           @include _1599 {
-            padding: 12px 25px;
+            padding: 12px 5px 12px 25px;
           }
 
           @include _1399 {
-            padding: 12px 15px;
+            padding-left: 15px;
           }
         }
 
@@ -310,21 +310,21 @@
           font-weight: 400;
           border-top-right-radius: unset;
           border-bottom-right-radius: unset;
-          width: 250px;
+          width: 300px;
 
           @include _1399 {
-            width: 230px;
+            width: 260px;
           }
 
           .dashicons {
             @extend .dashicons-secondary;
             font-size: 140%;
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             margin-left: 2px;
 
             @include _1599 {
-              font-size: 16px;
+              font-size: 20px;
             }
           }
 
