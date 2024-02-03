@@ -139,7 +139,7 @@ ob_start(); ?>
     <div class="card mx-auto">
         <div class="field-wrap">
             <div class="field-email">
-                <input type="text" class="input_border" id="llar-subscribe-email" placeholder="Your email"
+                <input type="text" class="input_border" id="llar-subscribe-email" placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"
                        value="<?php esc_attr_e( $admin_email ); ?>">
             </div>
             <div class="field-desc-additional">
@@ -187,8 +187,7 @@ ob_start(); ?>
 		        <?php _e( 'Please enter the email that will receive activation confirmation', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="field-email">
-                <input type="text" class="input_border" id="llar-subscribe-mc-email" placeholder="Your email"
-                       value="">
+                <input type="text" class="input_border" id="llar-subscribe-mc-email" placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>" value="">
             </div>
             <div class="field-checkbox">
                 <input type="checkbox" id="onboarding_consent_registering"/>

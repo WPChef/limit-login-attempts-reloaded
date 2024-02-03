@@ -49,7 +49,9 @@ ob_start(); ?>
                     </div>
                     <div class="field-wrap">
                         <div class="field-email">
-                            <input type="text" class="input_border" id="llar-subscribe-email" placeholder="Your email" value="<?php esc_attr_e( $admin_email ); ?>">
+                            <input type="text" class="input_border" id="llar-subscribe-email"
+                                   placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"
+                                   value="<?php esc_attr_e( $admin_email ); ?>">
                         </div>
                     </div>
                     <div class="field-checkbox">
