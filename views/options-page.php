@@ -128,7 +128,7 @@ $actual_plan = $active_app === 'custom' ? $this->info_sub_group() : '';
                     <span class="dashicons dashicons-editor-help"></span>
                     <div class="hint_tooltip">
                         <div class="hint_tooltip-content">
-                            <?php esc_attr_e( 'Server variables containing IP addresses.' ); ?>
+                            <?php _e( 'Automatic switch to free version when premium stops working (usually due to non-payment or exceeding monthly resource budget).', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                     </div>
                 </span>
