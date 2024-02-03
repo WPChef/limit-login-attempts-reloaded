@@ -216,7 +216,7 @@ ul.llar_list li::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm
   background-color: #4ACAD8;
   color: white;
   padding: 12px 20px;
-  width: 160px;
+  width: 180px;
   border-radius: 20px;
   top: 26px;
   right: -20px;
@@ -627,16 +627,16 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   line-height: inherit;
   border-radius: 20px;
   background-color: unset;
-  padding: 29px 44px 32px;
+  padding: 29px 5px 32px 44px;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page .llar-settings-wrap .form-table tr th, #llar-setting-page-logs .llar-settings-wrap .form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr th, #llar-setting-page-debug .llar-settings-wrap .form-table tr th, #llar-setting-page-premium .llar-settings-wrap .form-table tr th, #llar-setting-page-help .llar-settings-wrap .form-table tr th, #llar-setting-page .llar-settings-wrap .form-table tr td, #llar-setting-page-logs .llar-settings-wrap .form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td, #llar-setting-page-debug .llar-settings-wrap .form-table tr td, #llar-setting-page-premium .llar-settings-wrap .form-table tr td, #llar-setting-page-help .llar-settings-wrap .form-table tr td {
-    padding: 12px 25px;
+    padding: 12px 5px 12px 25px;
   }
 }
 @media screen and (max-width: 1399.5px) {
   #llar-setting-page .llar-settings-wrap .form-table tr th, #llar-setting-page-logs .llar-settings-wrap .form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr th, #llar-setting-page-debug .llar-settings-wrap .form-table tr th, #llar-setting-page-premium .llar-settings-wrap .form-table tr th, #llar-setting-page-help .llar-settings-wrap .form-table tr th, #llar-setting-page .llar-settings-wrap .form-table tr td, #llar-setting-page-logs .llar-settings-wrap .form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td, #llar-setting-page-debug .llar-settings-wrap .form-table tr td, #llar-setting-page-premium .llar-settings-wrap .form-table tr td, #llar-setting-page-help .llar-settings-wrap .form-table tr td {
-    padding: 12px 15px;
+    padding-left: 15px;
   }
 }
 #llar-setting-page .llar-settings-wrap .form-table tr th, #llar-setting-page-logs .llar-settings-wrap .form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr th, #llar-setting-page-debug .llar-settings-wrap .form-table tr th, #llar-setting-page-premium .llar-settings-wrap .form-table tr th, #llar-setting-page-help .llar-settings-wrap .form-table tr th {
@@ -644,22 +644,22 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-weight: 400;
   border-top-right-radius: unset;
   border-bottom-right-radius: unset;
-  width: 250px;
+  width: 300px;
 }
 @media screen and (max-width: 1399.5px) {
   #llar-setting-page .llar-settings-wrap .form-table tr th, #llar-setting-page-logs .llar-settings-wrap .form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr th, #llar-setting-page-debug .llar-settings-wrap .form-table tr th, #llar-setting-page-premium .llar-settings-wrap .form-table tr th, #llar-setting-page-help .llar-settings-wrap .form-table tr th {
-    width: 230px;
+    width: 260px;
   }
 }
 #llar-setting-page .llar-settings-wrap .form-table tr th .dashicons, #llar-setting-page-logs .llar-settings-wrap .form-table tr th .dashicons, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr th .dashicons, #llar-setting-page-debug .llar-settings-wrap .form-table tr th .dashicons, #llar-setting-page-premium .llar-settings-wrap .form-table tr th .dashicons, #llar-setting-page-help .llar-settings-wrap .form-table tr th .dashicons {
   font-size: 140%;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   margin-left: 2px;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page .llar-settings-wrap .form-table tr th .dashicons, #llar-setting-page-logs .llar-settings-wrap .form-table tr th .dashicons, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr th .dashicons, #llar-setting-page-debug .llar-settings-wrap .form-table tr th .dashicons, #llar-setting-page-premium .llar-settings-wrap .form-table tr th .dashicons, #llar-setting-page-help .llar-settings-wrap .form-table tr th .dashicons {
-    font-size: 16px;
+    font-size: 20px;
   }
 }
 #llar-setting-page .llar-settings-wrap .form-table tr th .hint_tooltip, #llar-setting-page-logs .llar-settings-wrap .form-table tr th .hint_tooltip, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr th .hint_tooltip, #llar-setting-page-debug .llar-settings-wrap .form-table tr th .hint_tooltip, #llar-setting-page-premium .llar-settings-wrap .form-table tr th .hint_tooltip, #llar-setting-page-help .llar-settings-wrap .form-table tr th .hint_tooltip {
