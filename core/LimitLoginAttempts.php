@@ -321,14 +321,14 @@ class LimitLoginAttempts
 		        $slug = $this->get_options_page_uri('dashboard#modal_micro_cloud');
 
 			    $actions = array_merge( array(
-				    '<a href="'. $slug .'" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+				    '<a href="' . esc_html( $slug ) . '" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
 			    ), $actions );
 		    } else {
 
 			    $url_site = 'https://www.limitloginattempts.com/info.php?from=plugin-plugins';
 
 			    $actions = array_merge( array(
-				    '<a href="'. $url_site .'" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
+				    '<a href="' . esc_html( $url_site ) . '" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
 			    ), $actions );
 		    }
 		}
