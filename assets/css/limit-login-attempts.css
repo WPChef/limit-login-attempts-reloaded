@@ -2922,6 +2922,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: #F6FBFF;
   padding: 27px 0;
 }
+@media screen and (max-width: 1599.5px) {
+  #llar-setting-page-premium .llar-premium-page-promo .section-1__internal .llar_turquoise, #llar-setting-page .llar-settings-wrap .form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-help .llar-settings-wrap .form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-premium .llar-premium-page-promo .section-1__internal .llar-settings-wrap .form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .form-table tr td .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-debug .llar-settings-wrap .form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-logs .llar-settings-wrap .form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-premium .llar-premium-page-promo .section-1__internal #llar-setting-page-logs .description-page .description-secondary a.unlink, #llar-setting-page-logs .description-page .description-secondary #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-premium .llar-premium-page-promo .section-1__internal #llar-setting-page-logs__active .description-page .description-secondary a.unlink, #llar-setting-page-logs__active .description-page .description-secondary #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink {
+    display: block;
+  }
+}
 #llar-setting-page-premium .text-block-1 {
   margin-bottom: 20px;
 }
@@ -3406,16 +3411,22 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body.step-second .button_block-single {
   text-align: center;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification__error {
-  color: #EC4652;
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification {
   font-size: 16px;
   margin: 15px auto 0;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification .field-image img {
+  width: 240px;
+  margin: 0 auto;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification__error {
+  color: #EC4652;
   padding: 9px 70px;
   width: fit-content;
   border-radius: 8px;
   background-color: rgba(236, 70, 82, 0.1019607843);
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification__error img {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification img {
   display: inline-block;
   width: 12.5px;
   margin-right: 2px;

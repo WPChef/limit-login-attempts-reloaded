@@ -127,11 +127,9 @@ $actual_plan = $active_app === 'custom' ? $this->info_sub_group() : '';
                 <span class="hint_tooltip-parent">
                     <span class="dashicons dashicons-editor-help"></span>
                     <div class="hint_tooltip">
-                        <ul class="hint_tooltip-content">
-                            <li>
-                                <?php esc_attr_e( 'Server variables containing IP addresses.' ); ?>
-                            </li>
-                        </ul>
+                        <div class="hint_tooltip-content">
+                            <?php esc_attr_e( 'Server variables containing IP addresses.' ); ?>
+                        </div>
                     </div>
                 </span>
             </a>

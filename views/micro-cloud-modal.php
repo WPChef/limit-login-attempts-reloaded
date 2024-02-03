@@ -85,6 +85,10 @@ ob_start(); ?>
                         <div class="field-image">
                             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/schema-ok-min.png">
                         </div>
+                        <div class="description_add">
+                            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
+	                        <?php _e( 'Micro Cloud has been activated', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
                     </div>
                     <div class="button_block-single">
                         <button class="button next_step menu__item button__orange" id="llar-button_dashboard">
@@ -105,7 +109,6 @@ $micro_cloud_popup_content = ob_get_clean();
         $( document ).ready( function() {
 
             const $button_micro_cloud = $( '.button.button_micro_cloud, a.button_micro_cloud' );
-            const target_hash = '#modal_micro_cloud';
 
             $button_micro_cloud.on( 'click', function () {
                 micro_cloud_modal.open();
@@ -208,13 +211,15 @@ $micro_cloud_popup_content = ob_get_clean();
             } );
 
 
-            micro_cloude_hash( window.location.hash, target_hash );
+            micro_cloude_hash( window.location.hash );
 
             $( window ).on( 'hashchange', function() {
-                micro_cloude_hash( window.location.hash, target_hash );
+                micro_cloude_hash( window.location.hash );
             } );
 
-            function micro_cloude_hash( current_hash, target_hash ) {
+            function micro_cloude_hash( current_hash ) {
+
+                const target_hash = '#modal_micro_cloud';
 
                 if ( current_hash && current_hash === target_hash ) {
                     $button_micro_cloud.click();
