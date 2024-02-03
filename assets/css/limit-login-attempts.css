@@ -3412,7 +3412,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   text-align: center;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification {
-  font-size: 16px;
+  font-size: 18px;
   margin: 15px auto 0;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification .field-image img {
