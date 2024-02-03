@@ -87,7 +87,7 @@ ob_start(); ?>
                         </div>
                         <div class="description_add">
                             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
-	                        <?php _e( 'Micro Cloud has been activated', 'limit-login-attempts-reloaded' ); ?>
+	                        <?php _e( 'Micro Cloud has been activated!', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                     </div>
                     <div class="button_block-single">
