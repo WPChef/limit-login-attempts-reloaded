@@ -49,7 +49,9 @@ ob_start(); ?>
                     </div>
                     <div class="field-wrap">
                         <div class="field-email">
-                            <input type="text" class="input_border" id="llar-subscribe-email" placeholder="Your email" value="<?php esc_attr_e( $admin_email ); ?>">
+                            <input type="text" class="input_border" id="llar-subscribe-email"
+                                   placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"
+                                   value="<?php esc_attr_e( $admin_email ); ?>">
                         </div>
                     </div>
                     <div class="field-checkbox">
@@ -83,6 +85,10 @@ ob_start(); ?>
                         <div class="field-image">
                             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/schema-ok-min.png">
                         </div>
+                        <div class="description_add">
+                            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
+	                        <?php _e( 'Micro Cloud has been activated!', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
                     </div>
                     <div class="button_block-single">
                         <button class="button next_step menu__item button__orange" id="llar-button_dashboard">
@@ -103,7 +109,6 @@ $micro_cloud_popup_content = ob_get_clean();
         $( document ).ready( function() {
 
             const $button_micro_cloud = $( '.button.button_micro_cloud, a.button_micro_cloud' );
-            const target_hash = '#modal_micro_cloud';
 
             $button_micro_cloud.on( 'click', function () {
                 micro_cloud_modal.open();
@@ -142,15 +147,19 @@ $micro_cloud_popup_content = ob_get_clean();
 
                     $button_subscribe_email.addClass( disabled );
 
+                    $subscribe_email.on( 'input', function () {
+                        $consent_registering.prop( 'checked', false );
+                        $consent_registering.trigger( 'change' );
+                    } );
+
                     $subscribe_email.on( 'blur', function() {
 
                         email = $( this ).val().trim();
 
-                        if ( ! llar_is_valid_email( email ) ) {
-                            $button_subscribe_email.addClass( disabled )
-                        }
-                        else {
-                            $button_subscribe_email.removeClass( disabled )
+                        if ( email === '' || email === null || ! llar_is_valid_email( email ) ) {
+                            $consent_registering.prop( 'disabled', true );
+                        } else {
+                            $consent_registering.prop( 'disabled', false );
                         }
                     } );
 
@@ -201,8 +210,20 @@ $micro_cloud_popup_content = ob_get_clean();
                 }
             } );
 
-            if ( window.location.hash && window.location.hash === target_hash ) {
-                $button_micro_cloud.click();
+
+            micro_cloude_hash( window.location.hash );
+
+            $( window ).on( 'hashchange', function() {
+                micro_cloude_hash( window.location.hash );
+            } );
+
+            function micro_cloude_hash( current_hash ) {
+
+                const target_hash = '#modal_micro_cloud';
+
+                if ( current_hash && current_hash === target_hash ) {
+                    $button_micro_cloud.click();
+                }
             }
 
         } )

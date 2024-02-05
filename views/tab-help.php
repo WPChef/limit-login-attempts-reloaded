@@ -1,16 +1,19 @@
 <?php
-
-use LLAR\Core\Config;
+/**
+ * Dashboard
+ *
+ * @var string $active_app
+ * @var string $actual_plan
+ *
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
-
-$active_app = Config::get( 'active_app' );
 ?>
 
 <div id="llar-setting-page-help" class="llar-help-page">
-	<?php if ( $active_app === 'local' ) : ?>
+	<?php if ( $active_app === 'local' || $actual_plan === 'Micro Cloud' ) : ?>
         <div class="section-1">
             <div class="block">
                 <div class="title">
@@ -21,7 +24,7 @@ $active_app = Config::get( 'active_app' );
                 </div>
                 <div class="actions mt-1_5">
                     <a class="button menu__item button__orange"
-                       href="https://checkout.limitloginattempts.com/plan?from=plugin-help-tab" target="_blank">
+                       href="https://www.limitloginattempts.com/plans/" target="_blank">
 						<?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>
@@ -111,7 +114,7 @@ $active_app = Config::get( 'active_app' );
                         </a>
                     </li>
                     <li>
-                        <a href="https://www.limitloginattempts.com/services/technical-questions/?from=plugin-help-tab#1499254962846-5ae4b44a-7b13"
+                        <a href="https://www.limitloginattempts.com/help-center/technical-questions/#what-do-i-do-if-the-admin-gets-blocked"
                            target="_blank">
 							<?php _e( 'What do I do if the admin gets blocked?', 'limit-login-attempts-reloaded' ); ?>
                         </a>
@@ -131,29 +134,29 @@ $active_app = Config::get( 'active_app' );
                     <li>
                         <a href="https://www.limitloginattempts.com/the-logs-tab-how-system-works/?from=plugin-help-tab"
                            target="_blank">
-							<?php _e( 'The Logs tab: How the system works', 'limit-login-attempts-reloaded' ); ?>
+							<?php _e( 'How does the login firewall work?', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li>
-                        <a href="https://www.limitloginattempts.com/services/accounts/?from=plugin-help-tab#1499254962846-5ae4b44a-7b13"
+                        <a href="https://www.limitloginattempts.com/help-center/accounts-billing/#what-happens-if-my-site-exceeds-the-request-limits-in-the-plan"
                            target="_blank">
 							<?php _e( 'What happens if my site exceeds the request limits in the plan?', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li>
-                        <a href="https://www.limitloginattempts.com/services/technical-questions/?from=plugin-help-tab#1499254962814-d0468adc-2d49"
+                        <a href="https://www.limitloginattempts.com/help-center/technical-questions/#what-do-i-do-if-all-users-get-blocked"
                            target="_blank">
 							<?php _e( 'What do I do if all users get blocked?', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li>
-                        <a href="https://www.limitloginattempts.com/services/technical-questions/?from=plugin-help-tab#1499255188068-f47985cb-d829"
+                        <a href="https://www.limitloginattempts.com/help-center/technical-questions/#i-just-installed-llar-and-im-already-getting-several-failed-login-attempts"
                            target="_blank">
 							<?php _e( 'I just installed LLAR and I\'m already getting several failed login attempts', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li>
-                        <a href="https://www.limitloginattempts.com/services/technical-questions/?from=plugin-help-tab#1499255188068-f47985cb-d842"
+                        <a href="https://www.limitloginattempts.com/help-center/technical-questions/#what-urls-are-being-attacked-and-protected"
                            target="_blank">
 							<?php _e( 'What URLs are being attacked and protected?', 'limit-login-attempts-reloaded' ); ?>
                         </a>
@@ -163,7 +166,7 @@ $active_app = Config::get( 'active_app' );
         </div>
     </div>
 
-	<?php if ( $active_app === 'custom' ) : ?>
+	<?php if ( $active_app === 'custom' && $actual_plan !== 'Micro Cloud') : ?>
         <div class="section-1 mt-1_5">
             <div class="block">
                 <div class="title">

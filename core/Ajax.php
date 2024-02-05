@@ -665,6 +665,8 @@ class Ajax {
 		} else if ( empty( $email ) ) {
 			Config::update( 'admin_notify_email', $admin_email );
 			Config::update( 'lockout_notify', '' );
+
+			wp_send_json_success( array( 'email' => $admin_email, 'is_subscribe_yes' => '' ) );
 		}
 
 		wp_send_json_error( array( 'email' => $email, 'is_subscribe_yes' => $is_subscribe_yes ) );

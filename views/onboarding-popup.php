@@ -139,7 +139,7 @@ ob_start(); ?>
     <div class="card mx-auto">
         <div class="field-wrap">
             <div class="field-email">
-                <input type="text" class="input_border" id="llar-subscribe-email" placeholder="Your email"
+                <input type="text" class="input_border" id="llar-subscribe-email" placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"
                        value="<?php esc_attr_e( $admin_email ); ?>">
             </div>
             <div class="field-desc-additional">
@@ -158,7 +158,7 @@ ob_start(); ?>
 			<?php _e( 'Continue', 'limit-login-attempts-reloaded' ) ?>
             <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
         </button>
-        <button class="button next_step menu__item button__transparent_orange button-skip">
+        <button class="button next_step menu__item button__transparent_orange button-skip" style="display: none">
 			<?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
         </button>
     </div>
@@ -178,16 +178,22 @@ ob_start(); ?>
     <div class="card mx-auto">
         <div class="field-wrap" id="llar-description-step-3">
             <div class="field-desc-add">
-				<?php _e( 'Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP intelligence, and performance optimizer (up to 1,000 requests monthly)', 'limit-login-attempts-reloaded' ); ?>
+				<?php _e( 'Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP intelligence, and performance optimizer (up to 1,000 requests monthly).', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="field-desc-add">
 				<?php _e( '<b>Would you like to opt-in?</b>', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="field-desc">
+		        <?php _e( 'Please enter the email that will receive activation confirmation', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="field-email">
+                <input type="text" class="input_border" id="llar-subscribe-mc-email" placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>" value="">
             </div>
             <div class="field-checkbox">
                 <input type="checkbox" id="onboarding_consent_registering"/>
                 <span>
                     <?php echo sprintf(
-                        __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service', 'limit-login-attempts-reloaded' ),
+                        __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service.', 'limit-login-attempts-reloaded' ),
                         $url_site);
                     ?>
                 </span>
@@ -195,13 +201,10 @@ ob_start(); ?>
         </div>
         <div class="llar-upgrade-subscribe">
             <div class="button_block-horizon">
-                <button class="button menu__item button__transparent_orange orange-back"
+                <button class="button menu__item button__transparent_grey gray-back"
                         id="llar-limited-upgrade-subscribe">
-					<?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
+					<?php _e( 'Sign Me Up', 'limit-login-attempts-reloaded' ); ?>
                     <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
-                </button>
-                <button class="button next_step menu__item button__transparent_grey gray-back">
-					<?php _e( 'No', 'limit-login-attempts-reloaded' ); ?>
                 </button>
             </div>
             <div class="explanations">
@@ -402,17 +405,44 @@ $content_step_4 = ob_get_clean();
                             const $button_skip = $button_next.filter( '.button-skip' );
                             const $spinner = $limited_upgrade_subscribe.find( '.preloader-wrapper .spinner' );
                             const $description = $( '#llar-description-step-3' );
+                            const $subscribe_mc_email = $( '#llar-subscribe-mc-email' );
 
-                            console.log(email);
+
+                            if ( email === '' || email === null ) {
+                                email = '<?php esc_attr_e( $admin_email ); ?>'
+                            }
+
+                            $subscribe_mc_email.val(email);
                             $limited_upgrade_subscribe.addClass( disabled );
+
+                            $subscribe_mc_email.on( 'input', function () {
+                                $consent_registering.prop( 'checked', false );
+                                $consent_registering.trigger( 'change' );
+                            } );
+
+                            $subscribe_mc_email.on( 'blur', function () {
+
+                                email = $ ( this ).val().trim();
+
+                                if ( email === '' || email === null || ! llar_is_valid_email( email ) ) {
+                                    $consent_registering.prop( 'disabled', true );
+                                } else {
+                                    $consent_registering.prop( 'disabled', false );
+                                }
+                            });
+
                             $consent_registering.on( 'change', function () {
 
                                 const is_checked = $( this ).prop( 'checked' );
 
                                 if( is_checked ) {
                                     $limited_upgrade_subscribe.removeClass( disabled );
+                                    $limited_upgrade_subscribe.removeClass( 'button__transparent_grey gray-back' );
+                                    $limited_upgrade_subscribe.addClass( 'button__orange' );
                                 } else {
                                     $limited_upgrade_subscribe.addClass( disabled );
+                                    $limited_upgrade_subscribe.addClass( 'button__transparent_grey gray-back' );
+                                    $limited_upgrade_subscribe.removeClass( 'button__orange' );
                                 }
                             } );
 
