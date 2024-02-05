@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.0\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-02-05T13:07:44+03:00\n"
+"POT-Creation-Date: 2024-02-05T16:35:12+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -54,15 +54,15 @@ msgid_plural "<strong>%d</strong> attempts remaining."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/Ajax.php:849
+#: core/Ajax.php:848
 msgid "Wrong email format."
 msgstr ""
 
-#: core/Ajax.php:855
+#: core/Ajax.php:854
 msgid "LLAR Security Notifications [TEST]"
 msgstr ""
 
-#: core/Ajax.php:856
+#: core/Ajax.php:855
 msgid "Your email notifications for Limit Login Attempts Reloaded are working correctly. If this email is going to spam, please be sure to add this address to your safelist."
 msgstr ""
 
