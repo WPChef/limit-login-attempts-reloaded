@@ -5,7 +5,6 @@
  * @var string $active_app
  * @var string $is_active_app_custom
  * @var bool|mixed $api_stats
- * @var bool $is_tab_dashboard
  *
  */
 
@@ -154,13 +153,6 @@ if ( $is_active_app_custom ) {
             </span>
 		<?php endif; ?>
     </div>
-    <?php if ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) : ?>
-    <span class="llar-label__url">
-        <a class="link__style_unlink">
-            <?php echo wp_parse_url( home_url(), PHP_URL_HOST ) ?>
-        </a>
-    </span>
-	<?php endif; ?>
 </div>
 <div class="section-content">
     <div class="llar-chart-wrap">
