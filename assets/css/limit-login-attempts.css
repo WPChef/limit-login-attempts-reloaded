@@ -1,13 +1,69 @@
 @charset "UTF-8";
 @import "../css/fonts/stylesheet.css";
-* {
+.llar_hint_tooltip, #llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label .hint_tooltip, .toplevel_page_limit-login-attempts .hint_tooltip {
+  display: none;
+  position: absolute;
+  background-color: #4ACAD8;
+  color: white;
+  padding: 12px 20px;
+  width: 180px;
+  border-radius: 20px;
+  top: 26px;
+  right: -20px;
+  z-index: 955;
+}
+.llar_hint_tooltip-content, #llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label .hint_tooltip-content, .toplevel_page_limit-login-attempts .hint_tooltip-content {
+  font-size: 12px;
+  white-space: initial;
+  text-align: left;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.llar_hint_tooltip::before, #llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label .hint_tooltip::before, .toplevel_page_limit-login-attempts .hint_tooltip::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  right: 12%;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent #4ACAD8 transparent;
+}
+.llar_hint_tooltip-parent, #llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label .hint_tooltip-parent, .toplevel_page_limit-login-attempts .hint_tooltip-parent {
+  position: relative;
+}
+.llar_hint_tooltip-parent:hover .hint_tooltip, #llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label .hint_tooltip-parent:hover .hint_tooltip, .toplevel_page_limit-login-attempts .hint_tooltip-parent:hover .hint_tooltip {
+  display: block;
+}
+
+.toplevel_page_limit-login-attempts * {
   margin: 0;
   padding: 0;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-
+.toplevel_page_limit-login-attempts .p-0 {
+  padding: 0 !important;
+}
+.toplevel_page_limit-login-attempts .pt-0_5 {
+  padding-top: 8px !important;
+}
+.toplevel_page_limit-login-attempts .pt-1_5 {
+  padding-top: 24px !important;
+}
+.toplevel_page_limit-login-attempts .mt-0_5 {
+  margin-top: 8px !important;
+}
+.toplevel_page_limit-login-attempts .mt-1_5 {
+  margin-top: 24px !important;
+}
+.toplevel_page_limit-login-attempts .mx-0_5 {
+  margin-left: 8px !important;
+  margin-right: 8px !important;
+}
+.toplevel_page_limit-login-attempts .button_micro_cloud {
+  cursor: pointer;
+}
 .link__style_unlink, .llar-label, .link__style_color_inherit {
   text-decoration: none;
   color: inherit;
@@ -59,31 +115,6 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
 
 .llar_bold {
   font-weight: bold;
-}
-
-.p-0 {
-  padding: 0 !important;
-}
-
-.pt-0_5 {
-  padding-top: 8px !important;
-}
-
-.pt-1_5 {
-  padding-top: 24px !important;
-}
-
-.mt-0_5 {
-  margin-top: 8px !important;
-}
-
-.mt-1_5 {
-  margin-top: 24px !important;
-}
-
-.mx-0_5 {
-  margin-left: 8px !important;
-  margin-right: 8px !important;
 }
 
 .llar-display-none {
@@ -192,57 +223,22 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   box-shadow: unset;
 }
 
-ul.llar_list, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content ul.field-list, #llar-dashboard-page ul, ul.hint_tooltip-content {
+ul.llar_list, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content ul.field-list, #llar-dashboard-page ul, ul.llar_hint_tooltip-content, #llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label ul.hint_tooltip-content, .toplevel_page_limit-login-attempts ul.hint_tooltip-content {
   list-style: none;
 }
-ul.llar_list li, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content ul.field-list li, #llar-dashboard-page ul li, ul.hint_tooltip-content li {
+ul.llar_list li, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content ul.field-list li, #llar-dashboard-page ul li, ul.llar_hint_tooltip-content li, #llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label ul.hint_tooltip-content li, .toplevel_page_limit-login-attempts ul.hint_tooltip-content li {
   position: relative;
   list-style: none;
   font-size: 12px;
   white-space: initial;
 }
-ul.llar_list li::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content ul.field-list li::before, #llar-dashboard-page ul li::before, ul.hint_tooltip-content li::before {
+ul.llar_list li::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content ul.field-list li::before, #llar-dashboard-page ul li::before, ul.llar_hint_tooltip-content li::before, #llar-admin-dashboard-widgets .llar-widget .section-title__new .llar-label ul.hint_tooltip-content li::before, .toplevel_page_limit-login-attempts ul.hint_tooltip-content li::before {
   position: absolute;
   box-sizing: inherit;
   content: "✧";
   color: #FDFDFD;
   margin-left: -18px;
   top: 0;
-}
-
-.hint_tooltip {
-  display: none;
-  position: absolute;
-  background-color: #4ACAD8;
-  color: white;
-  padding: 12px 20px;
-  width: 180px;
-  border-radius: 20px;
-  top: 26px;
-  right: -20px;
-  z-index: 955;
-}
-.hint_tooltip-content {
-  font-size: 12px;
-  white-space: initial;
-  text-align: left;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-.hint_tooltip::before {
-  content: "";
-  position: absolute;
-  top: -12px;
-  right: 12%;
-  border-width: 6px;
-  border-style: solid;
-  border-color: transparent transparent #4ACAD8 transparent;
-}
-.hint_tooltip-parent {
-  position: relative;
-}
-.hint_tooltip-parent:hover .hint_tooltip {
-  display: block;
 }
 
 button.llar_button, #llar-setting-page button.button, .llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
@@ -372,10 +368,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .llar_button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
   outline: none !important;
   box-shadow: unset !important;
-}
-
-.button_micro_cloud {
-  cursor: pointer;
 }
 
 .toplevel_page_limit-login-attempts #wpwrap {
