@@ -750,8 +750,7 @@ class Ajax {
 
 	    if ( ! empty( $email ) && is_email( $email ) ) {
 
-		     $url_api = 'https://api.limitloginattempts.com/checkout-staging/network';
-//		     $url_api = ''https://api.limitloginattempts.com/checkout/network'';
+		    $url_api = 'https://api.limitloginattempts.com/checkout/network';
 
             $data = [
                 'group' => 'free',
