@@ -20,11 +20,9 @@ $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.co
                 <span class="hint_tooltip-parent">
                     <span class="dashicons dashicons-editor-help"></span>
                     <div class="hint_tooltip">
-                        <ul class="hint_tooltip-content">
-                            <li>
-                                <?php esc_attr_e( 'All attempts blocked by access rules are hidden by default. You can see the full log at this link.' ); ?>
-                            </li>
-                        </ul>
+                        <div class="hint_tooltip-content">
+                            <?php esc_attr_e( 'All attempts blocked by access rules are hidden by default. You can see the full log at this link.' ); ?>
+                        </div>
                     </div>
                 </span>
             </a>

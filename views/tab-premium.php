@@ -19,7 +19,11 @@ $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$
         <div class="section-1">
             <div class="text">
                 <div class="title">
-                    <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
+                    <?php if ( $block_sub_group && $block_sub_group === 'Micro Cloud' ) : ?>
+                        <?php _e( 'Limit Login Attempts Reloaded <strong>Micro Cloud</strong>', 'limit-login-attempts-reloaded' ); ?>
+                    <?php else : ?>
+	                    <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
+                    <?php endif; ?>
                 </div>
                 <ul class="links mt-1_5">
                     <li class="button tags tags_add">
@@ -46,7 +50,7 @@ $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$
             </div>
             <?php if ( ! $is_premium ) : ?>
                 <div class="action">
-                    <a class="button menu__item button__orange" href="https://www.limitloginattempts.com/info.php?from=plugin-premium-tab" target="_blank">
+                    <a class="button menu__item button__orange" href="https://www.limitloginattempts.com/plans/" target="_blank">
                         <?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>
@@ -58,8 +62,12 @@ $is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$
                 <span class="llar_turquoise">
                     <?php _e( 'If you purchased a premium plan, check your email for setup instructions (Setup Code included)', 'limit-login-attempts-reloaded' ); ?>
                 </span>
-            <?php elseif( $active_app === 'custom' ) : ?>
-                <?php _e( 'You are currently using the premium version of Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded' ); ?>
+            <?php elseif( $block_sub_group ) : ?>
+                <?php if( $block_sub_group === 'Micro Cloud' ) : ?>
+                    <?php _e( 'You are currently using Micro Cloud, which provides access to premium cloud app on a limited basis. To prevent interruption, upgrade to one of our paid plans below.', 'limit-login-attempts-reloaded' ); ?>
+                <?php else : ?>
+                    <?php _e( 'You are currently using the premium version of Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded' ); ?>
+	            <?php endif ?>
             <?php endif ?>
         </div>
     </div>

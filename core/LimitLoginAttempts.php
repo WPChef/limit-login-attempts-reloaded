@@ -318,12 +318,17 @@ class LimitLoginAttempts
 
 		    if ( empty( Config::get( 'app_setup_code' ) ) ) {
 
+		        $slug = $this->get_options_page_uri('dashboard#modal_micro_cloud');
+
 			    $actions = array_merge( array(
-				    '<a href="http://limitloginattempts.localhost/wp-admin/admin.php?page=limit-login-attempts&tab=dashboard#modal_micro_cloud" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+				    '<a href="' . esc_html( $slug ) . '" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
 			    ), $actions );
 		    } else {
+
+			    $url_site = 'https://www.limitloginattempts.com/info.php?from=plugin-plugins';
+
 			    $actions = array_merge( array(
-				    '<a href="https://www.limitloginattempts.com/info.php?from=plugin-plugins" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
+				    '<a href="' . esc_html( $url_site ) . '" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
 			    ), $actions );
 		    }
 		}
@@ -644,49 +649,56 @@ class LimitLoginAttempts
 
 	private function get_submenu_items()
     {
-		$is_cloud_app_enabled = Config::get( 'active_app' ) === 'custom';
+	    $active_app        = Config::get( 'active_app' );
+	    $app_setup_code    = Config::get( 'app_setup_code' );
+		$is_cloud_app_enabled = $active_app === 'custom';
+	    $is_local_empty_setup_code = ( $active_app === 'local' && empty( $app_setup_code ) );
 
 		$submenu_items = array(
 			array(
                 'id'    => 'dashboard',
 				'name'  => __( 'Dashboard', 'limit-login-attempts-reloaded' ),
-				'url'   => $this->_options_page_slug . '&tab=dashboard'
+				'url'   => '&tab=dashboard'
 			),
 			array(
 				'id'    => 'settings',
 				'name'  => __( 'Settings', 'limit-login-attempts-reloaded' ),
-				'url'   => $this->_options_page_slug . '&tab=settings'
+				'url'   => '&tab=settings'
 			),
 			$is_cloud_app_enabled
 				? array(
 				'id'    => 'logs-custom',
 				'name'  => __( 'Login Firewall', 'limit-login-attempts-reloaded' ),
-				'url'   => $this->_options_page_slug . '&tab=logs-custom'
+				'url'   => '&tab=logs-custom'
 			)
 				: array(
 				'id'    => 'logs-local',
 				'name'  => __( 'Logs', 'limit-login-attempts-reloaded' ),
-				'url'   => $this->_options_page_slug . '&tab=logs-local'
+				'url'   => '&tab=logs-local'
 			),
 			array(
 				'id'    => 'debug',
 				'name'  => __( 'Debug', 'limit-login-attempts-reloaded' ),
-				'url'   => $this->_options_page_slug . '&tab=debug'
+				'url'   => '&tab=debug'
 			),
 			array(
 				'id'    => 'help',
 				'name'  => __( 'Help', 'limit-login-attempts-reloaded' ),
-				'url'   => $this->_options_page_slug . '&tab=help'
+				'url'   => '&tab=help'
 			)
 		);
 
 	    if ( ! $is_cloud_app_enabled ) {
 
-	        $submenu_items[] = array(
-		        'id'    => 'premium',
-		        'name'  => __( 'Premium', 'limit-login-attempts-reloaded' ),
-		        'url'   => $this->_options_page_slug . '&tab=premium'
-	        );
+		    $slug       = '&tab=dashboard#modal_micro_cloud';
+            $name_item  = $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' );
+            $url_item   = $is_local_empty_setup_code ? $slug : '&tab=premium';
+
+		    $submenu_items[] = array(
+			    'id'    => 'premium',
+			    'name'  => __( $name_item, 'limit-login-attempts-reloaded' ),
+			    'url'   => $url_item,
+		    );
 	    }
 
 		return $submenu_items;
@@ -718,7 +730,7 @@ class LimitLoginAttempts
 					$item['name'],
 					$item['name'],
 					'manage_options',
-					$item['url'],
+					$this->_options_page_slug . $item['url'],
 					array( $this, 'options_page' )
 				);
 
@@ -753,11 +765,12 @@ class LimitLoginAttempts
 	public function admin_bar_menu( $admin_bar )
     {
 	    $root_item_id = 'llar-root';
+	    $href = $this->get_options_page_uri();
 
 		$admin_bar->add_node( array(
 			'id'    => $root_item_id,
 			'title' => __( 'LLAR', 'limit-login-attempts-reloaded' ) . $this->menu_alert_icon(),
-			'href'  => $this->get_options_page_uri(),
+			'href'  => $href,
 		) );
 
 		$submenu_items = $this->get_submenu_items();
@@ -768,7 +781,7 @@ class LimitLoginAttempts
                 'parent'    => $root_item_id,
                 'id'        => $root_item_id . '-' . $item['id'],
 				'title'     => $item['name'],
-				'href'      => $this->get_options_page_uri( $item['id'] ),
+				'href'      => $href . $item['url'],
 			) );
 		}
 
@@ -1863,6 +1876,16 @@ class LimitLoginAttempts
         return $this->info_data;
     }
 
+	public function info_is_exhausted()
+	{
+		if ( empty( $this->info_data ) ) {
+
+			$this->info_data = $this->info();
+		}
+
+		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['exhausted'] ) && $this->info_data['exhausted'] === true );
+	}
+
 
     public function info_sub_group()
     {
@@ -1871,7 +1894,7 @@ class LimitLoginAttempts
             $this->info_data = $this->info();
         }
 
-        $data = ( ! empty($this->info_data) && ! empty( $this->info_data['sub_group'] ) ) ? $this->info_data['sub_group'] : '';
+        $data = ( ! empty( $this->info_data ) && ! empty( $this->info_data['sub_group'] ) ) ? $this->info_data['sub_group'] : '';
 
         return $this->plan_name_match( $data );
     }
@@ -1884,7 +1907,7 @@ class LimitLoginAttempts
             $this->info_data = $this->info();
         }
 
-        return ( ! empty($this->info_data ) && ! empty( $this->info_data['upgrade_url'] ) ) ? $this->info_data['upgrade_url'] : '';
+        return ( ! empty( $this->info_data ) && ! empty( $this->info_data['upgrade_url'] ) ) ? $this->info_data['upgrade_url'] : '';
     }
 
 
