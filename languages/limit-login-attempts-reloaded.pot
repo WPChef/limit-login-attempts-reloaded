@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.1\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-02-05T16:35:12+03:00\n"
+"POT-Creation-Date: 2024-02-06T15:02:16+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -80,13 +80,13 @@ msgstr ""
 
 #: core/LimitLoginAttempts.php:313
 #: core/LimitLoginAttempts.php:660
-#: views/options-page.php:92
+#: views/options-page.php:87
 msgid "Dashboard"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:314
 #: core/LimitLoginAttempts.php:665
-#: views/options-page.php:96
+#: views/options-page.php:91
 msgid "Settings"
 msgstr ""
 
@@ -124,22 +124,22 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: core/LimitLoginAttempts.php:671
-#: views/options-page.php:102
+#: views/options-page.php:97
 msgid "Login Firewall"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:676
-#: views/options-page.php:107
+#: views/options-page.php:102
 msgid "Logs"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:681
-#: views/options-page.php:113
+#: views/options-page.php:108
 msgid "Debug"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:686
-#: views/options-page.php:117
+#: views/options-page.php:112
 #: views/tab-dashboard.php:129
 msgid "Help"
 msgstr ""
@@ -436,20 +436,20 @@ msgid "Failed Login Attempts Today"
 msgstr ""
 
 #: views/chart-circle-failed-attempts-today.php:77
-#: views/chart-failed-attempts.php:34
-#: views/chart-failed-attempts.php:119
-#: views/chart-failed-attempts.php:129
+#: views/chart-failed-attempts.php:33
+#: views/chart-failed-attempts.php:118
+#: views/chart-failed-attempts.php:128
 #: views/tab-dashboard.php:188
 msgid "Failed Login Attempts"
 msgstr ""
 
 #: views/chart-circle-failed-attempts-today.php:83
-#: views/chart-failed-attempts.php:135
+#: views/chart-failed-attempts.php:134
 msgid "An IP that hasn't been previously denied by the cloud app, but has made an unsuccessful login attempt on your website."
 msgstr ""
 
 #: views/chart-circle-failed-attempts-today.php:84
-#: views/chart-failed-attempts.php:136
+#: views/chart-failed-attempts.php:135
 msgid "An IP that has made an unsuccessful login attempt on your website."
 msgstr ""
 
@@ -457,17 +457,17 @@ msgstr ""
 msgid "Cloud protection %s"
 msgstr ""
 
-#: views/chart-failed-attempts.php:42
-#: views/chart-failed-attempts.php:145
-#: views/chart-failed-attempts.php:242
+#: views/chart-failed-attempts.php:41
+#: views/chart-failed-attempts.php:144
+#: views/chart-failed-attempts.php:234
 msgid "Requests"
 msgstr ""
 
-#: views/chart-failed-attempts.php:150
+#: views/chart-failed-attempts.php:149
 msgid "A request is utilized when the cloud validates whether an IP address is allowed to attempt a login, which also includes denied logins."
 msgstr ""
 
-#: views/chart-failed-attempts.php:225
+#: views/chart-failed-attempts.php:217
 #: views/tab-dashboard.php:209
 msgid "Attempts"
 msgstr ""
@@ -744,27 +744,27 @@ msgstr ""
 msgid "Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href=\"%s\" class=\"link__style_color_inherit\" target=\"_blank\">Upgrade to Premium</a> today"
 msgstr ""
 
-#: views/options-page.php:49
+#: views/options-page.php:44
 msgid "Do you want Limit Login Attempts Reloaded to provide the latest version automatically?"
 msgstr ""
 
-#: views/options-page.php:51
+#: views/options-page.php:46
 msgid "Yes, enable auto-update"
 msgstr ""
 
-#: views/options-page.php:55
+#: views/options-page.php:50
 msgid "No thanks"
 msgstr ""
 
-#: views/options-page.php:121
+#: views/options-page.php:116
 msgid "Premium / Extensions"
 msgstr ""
 
-#: views/options-page.php:126
+#: views/options-page.php:121
 msgid "Failover"
 msgstr ""
 
-#: views/options-page.php:131
+#: views/options-page.php:126
 msgid "Automatic switch to free version when premium stops working (usually due to non-payment or exceeding monthly resource budget)."
 msgstr ""
 
