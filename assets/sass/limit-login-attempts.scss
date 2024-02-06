@@ -1,6 +1,4 @@
-@import
-"settings";
-
+@import "settings";
 .toplevel_page_limit-login-attempts { // top level css
 
   #wpwrap {
@@ -16,7 +14,10 @@
   }
 }
 
+
+
 .limit-login-page-settings {
+
   margin: 8px 50px;
 
   @include _1799 {
@@ -86,7 +87,7 @@
       color: $primary-colors__turquoise;
       font-size: 14px;
       float: right;
-      padding: 7px 15px ;
+      padding: 7px 15px;
 
 
       .llar-tooltip {
@@ -125,7 +126,7 @@
 
   .llar-app-notice {
     background-color: #fff;
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
     padding: 15px;
     border-radius: 3px;
     margin-top: 20px;
@@ -177,6 +178,7 @@
 
     .msg {
       margin-left: 5px;
+
       &.success {
         color: #71c21b;
       }
@@ -198,6 +200,7 @@
   .llar-toggle-setup-field {
     color: #2271b1;
     text-decoration-style: dashed;
+
     &:hover {
       color: #222;
     }
@@ -835,7 +838,7 @@
           width: 100%;
           height: 100%;
           background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJtYXJnaW46YXV0bztiYWNrZ3JvdW5kOjAgMCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQiIGRpc3BsYXk9ImJsb2NrIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlM2UzZTMiIHN0cm9rZS13aWR0aD0iNSIgcj0iMzIiIHN0cm9rZS1kYXNoYXJyYXk9IjE1MC43OTY0NDczNzIzMTAwNyA1Mi4yNjU0ODI0NTc0MzY2OSIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0LjAxIDUwIDUwKSI+PGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiB2YWx1ZXM9IjAgNTAgNTA7MzYwIDUwIDUwIiBrZXlUaW1lcz0iMDsxIi8+PC9jaXJjbGU+PC9zdmc+');
-          background-color: rgba(255,255,255,0.7);
+          background-color: rgba(255, 255, 255, 0.7);
           background-repeat: no-repeat;
           background-position: center center;
           z-index: 999;
@@ -1056,7 +1059,7 @@
           width: 100%;
           height: 100%;
           background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJtYXJnaW46YXV0bztiYWNrZ3JvdW5kOjAgMCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQiIGRpc3BsYXk9ImJsb2NrIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlM2UzZTMiIHN0cm9rZS13aWR0aD0iNSIgcj0iMzIiIHN0cm9rZS1kYXNoYXJyYXk9IjE1MC43OTY0NDczNzIzMTAwNyA1Mi4yNjU0ODI0NTc0MzY2OSIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0LjAxIDUwIDUwKSI+PGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiB2YWx1ZXM9IjAgNTAgNTA7MzYwIDUwIDUwIiBrZXlUaW1lcz0iMDsxIi8+PC9jaXJjbGU+PC9zdmc+');
-          background-color: rgba(255,255,255,0.7);
+          background-color: rgba(255, 255, 255, 0.7);
           background-repeat: no-repeat;
           background-position: center center;
           z-index: 999;
@@ -1295,6 +1298,7 @@
       margin-top: 10px;
       margin-bottom: 20px;
     }
+
     span {
       font-size: 80px;
       color: orange;
@@ -1303,6 +1307,7 @@
       margin-bottom: 20px;
     }
   }
+
   .llar-review-info {
     flex: 1;
     margin-left: 30px;
@@ -1325,9 +1330,11 @@
 
 .custom-app-tab {
   position: relative;
+
   .spinner {
     float: none;
   }
+
   .llar-app-ajax-msg {
     font-size: 13px;
     margin-top: 5px;
@@ -1336,10 +1343,12 @@
     &.error {
       color: red;
     }
+
     &.success {
       color: green;
     }
   }
+
   .llar-delete-app {
     color: #dc3232;
     position: absolute;
@@ -1350,6 +1359,7 @@
       opacity: 0.8;
     }
   }
+
   .llar-why-use-premium-text {
     margin-top: 20px;
 
@@ -1426,7 +1436,6 @@
 }
 
 
-
 .settings_page_limit-login-attempts {
   .update-nag {
     display: none;
@@ -1478,6 +1487,7 @@
         color: #444;
       }
     }
+
     .llar-welcome-page-video-wrap {
       img {
         width: 100%;
@@ -1518,6 +1528,7 @@
         background-color: #ecedef;
         color: #979aaa;
       }
+
       &:after {
         position: absolute;
         content: '';
@@ -1537,11 +1548,13 @@
       .llar-feature-image {
         margin-bottom: 15px;
       }
+
       .llar-feature-info {
         .llar-feature-title {
           font-weight: bold;
           margin-bottom: 15px;
         }
+
         .llar-feature-desc {
           color: #979aaa;
         }
@@ -1552,6 +1565,7 @@
       display: block;
     }
   }
+
   .llar-why-recommend {
     text-align: left;
     font-size: 17px;
@@ -1569,6 +1583,7 @@
       }
     }
   }
+
   .llar-welcome-list {
     font-size: 17px;
     text-align: left;
@@ -1586,8 +1601,10 @@
       }
     }
   }
+
   .llar-upgrade-btn-wrap {
     padding: 20px;
+
     a {
       display: inline-block;
       background-color: #e27800;
@@ -1602,6 +1619,7 @@
       }
     }
   }
+
   .llar-upgrade-questions {
     font-size: 17px;
   }
@@ -1613,6 +1631,7 @@
   .notice:not(.llar-notice-review) {
     display: none;
   }
+
   .video-container {
     position: relative;
     padding-bottom: 56.1%;
@@ -1724,13 +1743,13 @@
         }
       }
     }
-
   }
 }
-
 @import "dashboard-page";
 @import "admin-dashboard-widgets";
 @import "onboarding-popup";
 @import "premium-tab";
 @import "help-page";
 @import "micro-cloud-modal";
+
+

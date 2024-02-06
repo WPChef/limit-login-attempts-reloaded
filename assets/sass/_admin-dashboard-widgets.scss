@@ -54,6 +54,18 @@
           }
 
           .hint_tooltip {
+            @extend .llar_hint_tooltip;
+          }
+
+          .hint_tooltip-content {
+            @extend .llar_hint_tooltip-content;
+          }
+
+          .hint_tooltip-parent {
+            @extend .llar_hint_tooltip-parent;
+          }
+
+          .hint_tooltip {
             left: -100%;
 
             &:before {
