@@ -238,6 +238,7 @@
 
   .title_page {
     margin-top: 40px;
+    margin-bottom: 15px;
     color: inherit;
     font-size: 20px;
     font-weight: 500;
@@ -814,12 +815,20 @@
 
   .llar-table-scroll-wrap {
     max-height: 400px;
-    padding: 0 30px 30px;
+    padding: 0 20px 30px;
     border-radius: $border-radius__normal;
     background-color: white;
     box-shadow: 4px 4px 18px 0 $box-shadow__light-transparent-gray;
     overflow-y: auto;
     scrollbar-width: thin;
+
+    @include _1599 {
+      padding: 0 15px 20px;
+    }
+
+    @include _1399 {
+      padding: 0 10px 10px;
+    }
 
     &::-webkit-scrollbar {
       width: 4px;
@@ -828,7 +837,7 @@
     .form-table {
       position: relative;
       border-collapse: separate;
-      border-spacing: 0 5px;
+      border-spacing: 0 3px;
 
       &.llar-preloader {
 
@@ -856,7 +865,16 @@
             color: $typography-primary;
             font-size: 16px;
             font-weight: 500;
-            padding: 20px 27px;
+            padding: 20px 18px;
+
+            @include _1599 {
+              font-size: 15px;
+              padding: 15px;
+            }
+
+            @include _1399 {
+              font-size: 12px;
+            }
           }
         }
       }
@@ -874,6 +892,14 @@
               font-size: 16px;
               font-weight: 400;
 
+              @include _1599 {
+                font-size: 14px;
+              }
+
+              @include _1399 {
+                font-size: 14px;
+              }
+
               &:first-child {
                 border-top-left-radius: $border-radius__normal;
                 border-bottom-left-radius: $border-radius__normal;
@@ -887,7 +913,15 @@
           }
 
           td {
-            padding: 22px 27px;
+            padding: 18px;
+
+            @include _1599 {
+              padding: 14px;
+            }
+
+            @include _1399 {
+              padding: 12px;
+            }
 
             &.llar-col-nowrap {
               white-space: nowrap;
@@ -944,6 +978,15 @@
                 width: 34px;
                 height: auto;
                 border-radius: $border-radius__min * .5;
+                vertical-align: middle;
+
+                @include _1599 {
+                  width: 30px;
+                }
+
+                @include _1399 {
+                  width: 25px;
+                }
               }
             }
 
@@ -961,7 +1004,7 @@
               }
 
               &.llar-app-log-action-btn {
-                min-width: 45px;
+                min-width: 35px;
                 text-align: center;
                 display: inline-block;
                 line-height: 20px;
@@ -1103,6 +1146,14 @@
 
             td {
               font-size: 16px;
+
+              @include _1599 {
+                font-size: 15px;
+              }
+
+              @include _1399 {
+                font-size: 14px;
+              }
             }
 
             .llar-app-acl-action-col {
@@ -1116,8 +1167,16 @@
               font-size: 16px;
               padding-right: 5px;
 
+              @include _1599 {
+                font-size: 15px;
+              }
+
+              @include _1399 {
+                font-size: 14px;
+              }
+
               input {
-                min-width: 280px;
+                min-width: 195px;
               }
 
               select {
