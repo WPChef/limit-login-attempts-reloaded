@@ -177,7 +177,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </div>
                 <div class="actions mt-1_5">
                     <a class="button menu__item button__orange"
-                       href="https://checkout.limitloginattempts.com/plan?from=plugin-help-tab" target="_blank">
+                       href="https://www.limitloginattempts.com/contact-us/?from=plugin-help-tab" target="_blank">
 						<?php _e( 'Contact Support', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>
