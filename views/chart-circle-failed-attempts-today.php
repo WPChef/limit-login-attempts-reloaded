@@ -1,38 +1,44 @@
 <?php
+/**
+ * Chart circle failed attempts today
+ *
+ * @var string $active_app
+ * @var string $setup_code
+ * @var string $is_active_app_custom
+ * @var bool|mixed $api_stats
+ *
+ */
 
 use LLAR\Core\Config;
 use LLAR\Core\Helpers;
-use LLAR\Core\LimitLoginAttempts;
-
-if (!defined('ABSPATH')) exit();
-
-$active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 
 $retries_chart_title = '';
 $retries_chart_desc = '';
 $retries_chart_color = '';
 
-$api_stats = false;
+// Class for displaying exhausted text
+$exhausted = 'enabled';
+
 $retries_count = 0;
-if( $active_app === 'local' ) {
+if ( $active_app === 'local' ) {
 
 	$retries_stats = Config::get( 'retries_stats' );
 
 	if ( $retries_stats ) {
 		foreach ( $retries_stats as $key => $count ) {
-			if( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
+			if ( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
 				$retries_count += $count;
 			}
-            elseif ( ! is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+            elseif( !is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
 				$retries_count += $count;
 			}
 		}
 	}
 
-	if( $retries_count === 0 ) {
+	if ( $retries_count === 0 ) {
 
 		$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
-		$retries_chart_color = '#66CC66';
+		$retries_chart_color = '#97F6C8';
 	}
 	else if ( $retries_count < 100 ) {
 
@@ -43,59 +49,109 @@ if( $active_app === 'local' ) {
 	} else {
 
 		$retries_chart_title = __( 'Warning: Your site has experienced over 100 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = sprintf(__('Your site is currently at a high risk for brute force activity. Consider <a href="%s" target="_blank">premium protection</a> if frequent attacks persist or website performance is degraded', 'limit-login-attempts-reloaded'), 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-status');
+
+		if ( empty( $setup_code ) ) {
+			$retries_chart_desc = sprintf(
+				__('Your site is currently at a higher risk for brute force activity. We recommend our <a class="llar_orange %s" target="_blank">free Micro Cloud upgrade</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded'),
+				'button_micro_cloud');
+        }
+
 		$retries_chart_color = '#FF6633';
 	}
 
 } else {
 
-	$api_stats = LimitLoginAttempts::$cloud_app->stats();
-
-	if( $api_stats && !empty( $api_stats['attempts']['count'] )) {
-
+	if ( $api_stats && ! empty( $api_stats['attempts']['count'] )) {
 		$retries_count = (int) end( $api_stats['attempts']['count'] );
 	}
 
+	$exhausted = ( $active_app === 'custom' && $this->info_is_exhausted() === false ) ? 'enabled' : 'disabled';
 	$retries_chart_title = __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
-	$retries_chart_desc = __( 'All failed login attempts have been neutralized in the cloud', 'limit-login-attempts-reloaded' );
-	$retries_chart_color = '#66CC66';
+	$retries_chart_color = '#97F6C8';
 }
 ?>
 
-<div class="chart">
-    <div class="doughnut-chart-wrap"><canvas id="llar-attack-velocity-chart"></canvas></div>
-    <span class="llar-retries-count"><?php echo esc_html( Helpers::short_number( $retries_count ) ); ?></span>
+<div class="section-title__new">
+	<?php if ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) : ?>
+        <span class="llar-label">
+            <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
+            <span class="hint_tooltip-parent">
+                <span class="dashicons dashicons-editor-help"></span>
+                <div class="hint_tooltip">
+                    <div class="hint_tooltip-content">
+                        <?php $is_active_app_custom
+	                        ? esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' )
+	                        : esc_attr_e( 'An IP that has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' );
+                        ?>
+                    </div>
+                </div>
+            </span>
+        </span>
+	<?php else : ?>
+        <span class="llar-label__url">
+        </span>
+	<?php endif; ?>
+	<?php echo $is_active_app_custom
+		? '<span class="llar-premium-label"><span class="dashicons dashicons-saved ' . $exhausted . '"></span>' . sprintf(__( 'Cloud protection %s', 'limit-login-attempts-reloaded' ), $exhausted ) . '</span>'
+		: ''; ?>
 </div>
-<script type="text/javascript">
-    (function(){
+<div class="section-content">
+    <div class="chart">
+        <div class="doughnut-chart-wrap">
+            <canvas id="llar-attack-velocity-chart"></canvas>
+        </div>
+        <span class="llar-retries-count"><?php echo esc_html( Helpers::short_number( $retries_count ) ); ?></span>
+    </div>
+</div>
 
-        var ctx = document.getElementById('llar-attack-velocity-chart').getContext('2d');
-        var llar_retries_chart = new Chart(ctx, {
+<script type="text/javascript">
+    ( function() {
+
+        var ctx = document.getElementById( 'llar-attack-velocity-chart' ).getContext( '2d' );
+
+        // Add a shadow on the graph
+        let shadow_fill = ctx.fill;
+        ctx.fill = function () {
+            ctx.save();
+            ctx.shadowColor = '<?php echo esc_js( $retries_chart_color ) ?>';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 3;
+            shadow_fill.apply( this, arguments )
+            ctx.restore();
+        };
+
+        let llar_retries_chart = new Chart( ctx, {
             type: 'doughnut',
             data: {
-                // labels: ['Success', 'Warning', 'Warning', 'Fail'],
                 datasets: [{
                     data: [1],
                     value: <?php echo esc_js( $retries_count ); ?>,
                     backgroundColor: ['<?php echo esc_js( $retries_chart_color ); ?>'],
-                    borderWidth: [0],
+                    borderWidth: 0,
                 }]
             },
             options: {
+                layout: {
+                    padding: {
+                        bottom: 10,
+                    },
+                },
                 responsive: true,
-                cutout: 50,
+                cutout: 65,
                 title: {
                     display: false,
                 },
                 plugins: {
                     tooltip: {
-                        enabled: false
+                        enabled: false,
                     }
-                }
+                },
             }
-        });
+        } );
 
-    })();
+    } )();
 </script>
-<div class="title"><?php echo esc_html( $retries_chart_title ); ?></div>
-<div class="desc"><?php echo $retries_chart_desc ?></div>
+<div class="title<?php echo $active_app !== 'local' ? ' title-big' : ''?>"><?php echo esc_html( $retries_chart_title ); ?></div>
+<div class="desc"><?php echo $retries_chart_desc; ?></div>
+

@@ -3,14 +3,17 @@
 use LLAR\Core\Helpers;
 
 if( !defined( 'ABSPATH' ) ) exit();
+
+$countries_list = Helpers::get_countries_list();
 ?>
 
 <div class="llar-block-country-wrap" style="display:none;">
-    <h3><?php _e( 'Country Access Rules', 'limit-login-attempts-reloaded' ); ?></h3>
-
-    <?php
-    $countries_list = Helpers::get_countries_list();
-    ?>
+    <div class="llar-table-header">
+        <h3 class="title_page">
+            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-filter.png">
+            <?php _e( 'Country Access Rules', 'limit-login-attempts-reloaded' ); ?>
+        </h3>
+    </div>
     <div class="llar-preloader-wrap">
         <div class="llar-block-country-section">
             <div class="llar-block-country-selected-wrap">
@@ -18,7 +21,9 @@ if( !defined( 'ABSPATH' ) ) exit();
                     <span><?php _e( 'these countries:', 'limit-login-attempts-reloaded' ); ?></span>
                 </div>
                 <div class="llar-block-country-list llar-all-countries-selected"></div>
-                <a href="#" class="llar-toggle-countries-list"><?php _e( 'Add', 'limit-login-attempts-reloaded' ); ?></a>
+                <a href="#" class="llar-toggle-countries-list">
+                    <?php _e( 'Add', 'limit-login-attempts-reloaded' ); ?>
+                </a>
             </div>
             <div class="llar-block-country-list llar-all-countries-list"></div>
         </div>
@@ -45,7 +50,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
 				    const rule = response.data.rule || 'deny';
 
-				    $('.llar-block-country-mode').prepend(`<select>
+				    $('.llar-block-country-mode').prepend(`<select class="input_border">
                         <option value="deny"`+(rule === 'deny' ? 'selected' : '')+`>Deny</option>
                         <option value="allow"`+(rule === 'allow' ? 'selected' : '')+`>Allow only</option>
                     </select>`);
