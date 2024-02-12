@@ -9,13 +9,24 @@ $app_config = Config::get( 'app_config' );
 $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.com/logs?key=' . esc_attr( $app_config['key'] ) : false;
 ?>
 <div class="llar-table-header">
-    <h3><?php _e( 'Event Log', 'limit-login-attempts-reloaded' ); ?></h3>
+    <h3 class="title_page">
+        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-pre-install.png">
+        <?php _e( 'Event Log', 'limit-login-attempts-reloaded' ); ?>
+    </h3>
 	<?php if( $full_log_url ): ?>
-        <span class="right-link"><a href="<?php echo esc_attr( $full_log_url ); ?>" target="_blank"><?php _e( 'Full Logs', 'limit-login-attempts-reloaded' ); ?></a>
-        <i class="llar-tooltip" data-text="<?php esc_attr_e( 'All attempts blocked by access rules are hidden by default. You can see the full log at this link.' ); ?>">
-            <span class="dashicons dashicons-editor-help"></span>
-        </i>
-    </span>
+        <span class="right-link">
+            <a href="<?php echo esc_attr( $full_log_url ); ?>" class="button menu__item col button__transparent_orange" target="_blank">
+                <?php _e( 'Full Logs', 'limit-login-attempts-reloaded' ); ?>
+                <span class="hint_tooltip-parent">
+                    <span class="dashicons dashicons-editor-help"></span>
+                    <div class="hint_tooltip">
+                        <div class="hint_tooltip-content">
+                            <?php esc_attr_e( 'All attempts blocked by access rules are hidden by default. You can see the full log at this link.' ); ?>
+                        </div>
+                    </div>
+                </span>
+            </a>
+        </span>
 	<?php endif; ?>
 </div>
 
@@ -39,14 +50,18 @@ $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.co
         <tfoot class="table-inline-preloader">
             <tr>
                 <td colspan="100%">
-                    <div class="load-more-button"><a href="#"><?php _e( "Load older events", 'limit-login-attempts-reloaded' ); ?></a></div>
+                    <div class="load-more-button"><a href="#">
+                            <?php _e( "Load older events", 'limit-login-attempts-reloaded' ); ?>
+                        </a>
+                    </div>
                     <div class="preloader-row">
                         <span class="preloader-icon"></span>
-                        <span class="preloader-text"><?php echo sprintf(
+                        <span class="preloader-text">
+                            <?php echo sprintf(
 								__( 'Loading older events, skipping ACL events. <a href="%s" target="_blank">Full logs</a>', 'limit-login-attempts-reloaded' ),
-								$full_log_url
-							);
-							?></span>
+								$full_log_url);
+							?>
+                        </span>
                     </div>
                 </td>
             </tr>
