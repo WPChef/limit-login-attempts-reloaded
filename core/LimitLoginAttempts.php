@@ -211,7 +211,7 @@ class LimitLoginAttempts
 		// Setup default plugin options
 		//$this->sanitize_options();
 
-		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ), 1 );
 		add_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999, 2 );
 
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
@@ -945,6 +945,7 @@ class LimitLoginAttempts
 			if ( ! is_array( $lockouts ) ) {
 				$lockouts = array();
 			}
+			$time = time();
 
 			if ( isset( $lockouts[ $ip ] ) && time() < $lockouts[ $ip ] ) {
 				return;
