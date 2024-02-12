@@ -534,7 +534,7 @@ class LimitLoginAttempts
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 
 				} elseif ( self::$cloud_app && self::$cloud_app->last_response_code === 403 ) {
-					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+					self::$cloud_app = null;
 				}
             }
 		}
