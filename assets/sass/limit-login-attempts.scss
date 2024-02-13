@@ -1452,6 +1452,7 @@
 
 // new design
 #llar-header-upgrade-message {
+
   margin: 1.25rem auto;
   width: fit-content;
   color: $primary-colors__orange_light;
@@ -1462,6 +1463,10 @@
   border: 1px solid $border-element__red_sand;
   background-color: $background-element__almond;
   box-shadow: 0 .25rem 1.125rem 0 $box-shadow__semi_transparent_gray;
+
+  @include _1799 {
+    margin-right: 1rem;
+  }
 
   @include _991 {
     padding: .32rem .875rem;
@@ -1481,7 +1486,7 @@
       width: 2rem;
       height: 2rem;
       font-size: 2rem;
-      color: $primary-colors__orange_light;
+      color: inherit;
       vertical-align: middle;
       margin-right: 5px;
 
@@ -1491,6 +1496,13 @@
         font-size: 1rem;
       }
     }
+  }
+
+  &.exhausted {
+    color: $state-color__error;
+    font-weight: 400;
+    background-color: $state-color__error_back;
+    border: 1px solid currentColor;
   }
 }
 
