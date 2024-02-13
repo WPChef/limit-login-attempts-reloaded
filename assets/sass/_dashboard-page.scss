@@ -79,6 +79,15 @@
         width: 14px;
         height: 14px;
       }
+
+      &.exhausted {
+        color: $state-color__error;
+        background-color: $state-color__error_back;
+      }
+
+      &.request {
+        background-color: unset;
+      }
     }
   }
 

@@ -5,6 +5,9 @@
  * @var string $active_app
  * @var string $is_active_app_custom
  * @var bool|mixed $api_stats
+ * @var bool $is_agency
+ * @var array $requests
+ * @var bool|string $is_exhausted
  *
  */
 
@@ -153,6 +156,11 @@ if ( $is_active_app_custom ) {
             </span>
 		<?php endif; ?>
     </div>
+    <?php if ( ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) && $is_active_app_custom && ! $is_agency ) : ?>
+     <span class="llar-label request <?php echo  $is_exhausted  ? 'exhausted' : '' ?>">
+         <?php echo $requests ? 'Monthly Usage: ' . $requests['usage'] . '/' . $requests['quota'] : '' ?>
+     </span>
+    <?php endif; ?>
 </div>
 <div class="section-content">
     <div class="llar-chart-wrap">

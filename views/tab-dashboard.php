@@ -4,6 +4,7 @@
  *
  * @var string $active_app
  * @var string $is_active_app_custom
+ * @var string $block_sub_group
  *
  */
 
@@ -14,8 +15,6 @@ use LLAR\Core\LimitLoginAttempts;
 
 if ( ! defined( 'ABSPATH' ) ) exit();
 
-$active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
-$is_active_app_custom = $active_app === 'custom';
 $api_stats = $is_active_app_custom ? LimitLoginAttempts::$cloud_app->stats() : false;
 
 $setup_code = Config::get( 'app_setup_code' );
@@ -175,7 +174,6 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
         $min_plan = 'Premium';
         $plans = $this->array_name_plans();
-        $block_sub_group = $is_active_app_custom ? $this->info_sub_group() : false;
         $upgrade_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min_plan]) ? ' checked' : '';
         $block_by_country = $block_sub_group ? $this->info_block_by_country() : false;
         $block_by_country_disabled = $block_sub_group ? '' : ' disabled';

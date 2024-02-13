@@ -7,7 +7,8 @@ use LLAR\Core\LimitLoginAttempts;
 if ( ! defined( 'ABSPATH' ) ) exit();
 
 $active_tab = "dashboard";
-$active_app = Config::get( 'active_app' );
+$active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
+$is_active_app_custom = $active_app === 'custom';
 
 if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help' ) ) ) {
 
@@ -21,21 +22,49 @@ if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'log
 }
 
 $auto_update_choice = Config::get( 'auto_update_choice' );
-$actual_plan = $active_app === 'custom' ? $this->info_sub_group() : '';
+$is_agency = false;
+
+if ( $is_active_app_custom ) {
+
+	$block_sub_group = $this->info_sub_group();
+	$upgrade_premium_url = $this->info_upgrade_url();
+	$is_agency = $block_sub_group === 'Agency';
+	$requests = ! $is_agency ? $this->info_requests() : false;
+	$is_exhausted = ! $is_agency ? $this->info_is_exhausted() : false;
+} else {
+
+	$is_exhausted = false;
+	$block_sub_group = '';
+	$upgrade_premium_url = '';
+}
 ?>
 
-<?php if ( $active_app !== 'local' && $actual_plan === 'Micro Cloud' ) : ?>
+<?php if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' ) : ?>
 
 	<?php $upgrade_premium_url = $this->info_upgrade_url(); ?>
-    <div id="llar-header-upgrade-message">
-        <p>
-            <span class="dashicons dashicons-superhero"></span>
-	        <?php echo sprintf(
-	                __( 'Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
-		        $upgrade_premium_url );
-	        ?>
-        </p>
-    </div>
+    <?php if ( $is_exhausted ) : ?>
+        <div id="llar-header-upgrade-message" class="exhausted">
+            <p>
+                <span class="dashicons dashicons-superhero"></span>
+				<?php echo sprintf(
+					__( 'You have exhausted your monthly quota of free Micro Cloud requests. The plugin has now reverted to the free version. <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to the premium</a> version today to maintain cloud protection and advanced features.', 'limit-login-attempts-reloaded' ),
+					$upgrade_premium_url );
+				?>
+            </p>
+        </div>
+    <?php else : ?>
+        <div id="llar-header-upgrade-message">
+            <p>
+                <span class="dashicons dashicons-superhero"></span>
+				<?php echo sprintf(
+					__( 'Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
+					$upgrade_premium_url );
+				?>
+            </p>
+        </div>
+
+    <?php endif; ?>
+
 <?php endif; ?>
 
 <?php if ( ( $auto_update_choice || $auto_update_choice === null ) && !Helpers::is_auto_update_enabled() ) : ?>

@@ -1530,6 +1530,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: #FFEFD6;
   box-shadow: 0 0.25rem 1.125rem 0 rgba(114, 117, 123, 0.2);
 }
+@media screen and (max-width: 1799.5px) {
+  #llar-header-upgrade-message {
+    margin-right: 1rem;
+  }
+}
 @media screen and (max-width: 991.5px) {
   #llar-header-upgrade-message {
     padding: 0.32rem 0.875rem;
@@ -1550,7 +1555,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   width: 2rem;
   height: 2rem;
   font-size: 2rem;
-  color: #FF9800;
+  color: inherit;
   vertical-align: middle;
   margin-right: 5px;
 }
@@ -1560,6 +1565,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
     height: 1rem;
     font-size: 1rem;
   }
+}
+#llar-header-upgrade-message.exhausted {
+  color: #EC4652;
+  font-weight: 400;
+  background-color: rgba(236, 70, 82, 0.1019607843);
+  border: 1px solid currentColor;
 }
 
 .settings_page_limit-login-attempts .update-nag {
@@ -1872,6 +1883,13 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 140%;
   width: 14px;
   height: 14px;
+}
+#llar-dashboard-page .section-title__new .llar-label.exhausted {
+  color: #EC4652;
+  background-color: rgba(236, 70, 82, 0.1019607843);
+}
+#llar-dashboard-page .section-title__new .llar-label.request {
+  background-color: unset;
 }
 #llar-dashboard-page .section-content {
   margin-top: 16px;
