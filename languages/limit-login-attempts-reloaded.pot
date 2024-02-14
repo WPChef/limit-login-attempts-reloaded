@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-02-14T17:42:49+03:00\n"
+"POT-Creation-Date: 2024-02-14T18:19:00+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -1436,7 +1436,7 @@ msgid "Your site is currently at a higher risk for brute force activity. We reco
 msgstr ""
 
 #: views/chart-circle-failed-attempts-today.php:72
-msgid "Your site is currently at a higher risk for brute force activity. We recommend our <a href=\"%s\" class=\"llar_orange\" target=\"_blank\">Upgrade to the premium</a> to access our login firewall and other premium features."
+msgid "Your site is currently at a higher risk for brute force activity. We recommend <a href=\"%s\" class=\"llar_orange\" target=\"_blank\">upgrading to premium</a> to access our login firewall and other premium features."
 msgstr ""
 
 #: views/chart-circle-failed-attempts-today.php:77

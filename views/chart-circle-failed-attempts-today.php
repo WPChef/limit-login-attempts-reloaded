@@ -69,7 +69,7 @@ if ( ! $is_active_app_custom ) {
 
 		$upgrade_premium_url = ! empty ( $upgrade_premium_url ) ? $upgrade_premium_url : '';
 		$retries_chart_desc = sprintf(
-			__( 'Your site is currently at a higher risk for brute force activity. We recommend our <a href="%s" class="llar_orange" target="_blank">Upgrade to the premium</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded' ),
+			__( 'Your site is currently at a higher risk for brute force activity. We recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded' ),
 			$upgrade_premium_url );
 		$retries_chart_color = '#FFCC66';
 
