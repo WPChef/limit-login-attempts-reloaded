@@ -1883,7 +1883,21 @@ class LimitLoginAttempts
 			$this->info_data = $this->info();
 		}
 
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['exhausted'] ) && $this->info_data['exhausted'] === true );
+		return ( ! empty( $this->info_data )
+            && ! empty( $this->info_data['requests'] )
+            && isset( $this->info_data['requests']['exhausted'] )
+            && $this->info_data['requests']['exhausted'] === true );
+	}
+
+
+	public function info_requests()
+	{
+		if ( empty( $this->info_data ) ) {
+
+			$this->info_data = $this->info();
+		}
+
+		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['requests'] ) ) ? $this->info_data['requests'] : '';
 	}
 
 
@@ -1918,9 +1932,8 @@ class LimitLoginAttempts
             $this->info_data = $this->info();
         }
 
-        return $this->info_data['block_by_country'];
+	    return ( ! empty( $this->info_data ) && ! empty( $this->info_data['block_by_country'] ) ) ? $this->info_data['block_by_country'] : '';
     }
-
 
 
 	public function show_leave_review_notice()
