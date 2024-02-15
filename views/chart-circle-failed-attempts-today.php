@@ -65,13 +65,21 @@ if ( ! $is_active_app_custom ) {
 		$retries_count = (int) end( $api_stats['attempts']['count'] );
 	}
 
-	if ( $is_exhausted && $retries_count > 100 && $block_sub_group === 'Micro Cloud' ) {
+	if ( $is_exhausted && $block_sub_group === 'Micro Cloud' ) {
 
-		$upgrade_premium_url = ! empty ( $upgrade_premium_url ) ? $upgrade_premium_url : '';
-		$retries_chart_desc = sprintf(
-			__( 'Your site is currently at a higher risk for brute force activity. We recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded' ),
-			$upgrade_premium_url );
-		$retries_chart_color = '#FFCC66';
+		if ( $retries_count === 0 ) {
+			$retries_chart_color = '#97F6C8';
+
+        } elseif ( $retries_count < 100 ) {
+			$retries_chart_color = '#FFCC66';
+
+        } else {
+			$upgrade_premium_url = ! empty ( $upgrade_premium_url ) ? $upgrade_premium_url : '';
+			$retries_chart_desc = sprintf(
+				__( 'Your site is currently at a higher risk for brute force activity. We recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded' ),
+				$upgrade_premium_url );
+			$retries_chart_color = '#FF6633';
+        }
 
     } else {
 		$retries_chart_title = __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );

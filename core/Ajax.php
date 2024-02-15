@@ -36,6 +36,7 @@ class Ajax {
         add_action( 'wp_ajax_strong_account_policies', array( $this, 'strong_account_policies_callback' ) );
 		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
 		add_action( 'wp_ajax_onboarding_reset', array( $this, 'onboarding_reset_callback' ) );
+		add_action( 'wp_ajax_close_premium_message', array( $this, 'close_premium_message' ) );
 		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
 		add_action( 'wp_ajax_activate_micro_cloud', array( $this, 'activate_micro_cloud_callback' ) );
 		add_action( 'wp_ajax_test_email_notifications', array( $this, 'test_email_notifications_callback' ) );
@@ -735,6 +736,16 @@ class Ajax {
         Config::update( 'onboarding_popup_shown', 0 );
 
         wp_send_json_success();
+    }
+
+
+    public function close_premium_message() {
+
+	    check_ajax_referer( 'llar-close-premium-message', 'sec' );
+
+	    Config::update( 'notifications_message_shown', 1 );
+
+	    wp_send_json_success();
     }
 
 
