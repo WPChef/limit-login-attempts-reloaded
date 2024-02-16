@@ -99,6 +99,8 @@ class LimitLoginAttempts
 		// TODO: Temporary turn off the holiday warning.
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
 
+	    add_action( 'template_redirect', array( $this, 'email_redirect_page' ) );
+
 		add_action( 'admin_notices', array( $this, 'show_leave_review_notice' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -112,11 +114,55 @@ class LimitLoginAttempts
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
 		add_action( 'wp_footer', array( $this, 'login_page_render_js' ), 9999 );
 
+
 		if( !Config::get( 'hide_dashboard_widget' ) )
 		    add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
+
+
+	function email_redirect_page()
+    {
+        if
+        (
+            isset( $_GET['llar_page'] )
+            && isset( $_GET['llar_tab'] )
+            && isset( $_GET['llar_hash'] )
+            && $_GET['llar_page'] === 'limit-login-attempts'
+        ) {
+
+	        if ( ! defined( 'AUTH_SALT' ) ) {
+		        define( 'AUTH_SALT', 'llar' );
+	        }
+
+	        if ( ! defined( 'NONCE_SALT' ) ) {
+		        define( 'NONCE_SALT', 'llar' );
+	        }
+
+            $hash = wp_hash('AUTH_SALT' . AUTH_SALT . 'NONCE_SALT' . NONCE_SALT );
+
+            $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
+
+            if ( $hash === $_GET['llar_hash'] && $_GET['llar_tab'] === 'llar_premium' ) {
+
+                $redirect_url = 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'];
+
+            } elseif ( $hash === $_GET['llar_hash'] && $_GET['llar_tab'] === 'llar_url' ) {
+
+                $redirect_url = 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'];
+
+            } else {
+
+                $redirect_url = home_url();
+
+            }
+
+            wp_redirect($redirect_url);
+            exit;
+        }
+	}
+
 
 	/**
 	 * Runs when the plugin is activated
@@ -1165,6 +1211,8 @@ class LimitLoginAttempts
 		include LLA_PLUGIN_DIR . 'views/emails/failed-login.php';
 		$email_body = ob_get_clean();
 
+	    $hash = wp_hash('AUTH_SALT' . AUTH_SALT . 'NONCE_SALT' . NONCE_SALT );
+
 		$placeholders = array(
             '{name}'                => $admin_name,
             '{domain}'              => $site_domain,
@@ -1174,8 +1222,8 @@ class LimitLoginAttempts
             '{username}'            => $user,
             '{blocked_duration}'    => $when,
             '{dashboard_url}'       => admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
-            '{premium_url}'         => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
-            '{llar_url}'            => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
+            '{premium_url}'         => home_url( '?' . 'llar_page=' . $this->_options_page_slug . '&' . 'llar_tab=' . 'llar_premium' . '&' . 'llar_hash=' . $hash ),
+            '{llar_url}'            => home_url( '?' . 'llar_page=' . $this->_options_page_slug . '&' . 'llar_tab=' . 'llar_url' . '&' . 'llar_hash=' . $hash ),
             '{unsubscribe_url}'     => admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' ),
         );
 
