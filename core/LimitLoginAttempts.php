@@ -122,7 +122,19 @@ class LimitLoginAttempts
 	}
 
 
-	function email_redirect_page()
+	public function get_hash() {
+
+        if ( ! defined( 'AUTH_SALT' ) ) {
+            define( 'AUTH_SALT', 'llar' );
+        }
+
+		$timestamp = Config::get( 'activation_timestamp' );
+
+		return wp_hash( AUTH_SALT . $timestamp );
+    }
+
+
+	public function email_redirect_page()
     {
         if
         (
@@ -132,15 +144,7 @@ class LimitLoginAttempts
             && $_GET['llar_page'] === 'limit-login-attempts'
         ) {
 
-	        if ( ! defined( 'AUTH_SALT' ) ) {
-		        define( 'AUTH_SALT', 'llar' );
-	        }
-
-	        if ( ! defined( 'NONCE_SALT' ) ) {
-		        define( 'NONCE_SALT', 'llar' );
-	        }
-
-            $hash = wp_hash('AUTH_SALT' . AUTH_SALT . 'NONCE_SALT' . NONCE_SALT );
+            $hash = $this->get_hash();
 
             $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
@@ -1211,7 +1215,7 @@ class LimitLoginAttempts
 		include LLA_PLUGIN_DIR . 'views/emails/failed-login.php';
 		$email_body = ob_get_clean();
 
-	    $hash = wp_hash('AUTH_SALT' . AUTH_SALT . 'NONCE_SALT' . NONCE_SALT );
+	    $hash = $this->get_hash();
 
 		$placeholders = array(
             '{name}'                => $admin_name,
