@@ -128,31 +128,27 @@ class LimitLoginAttempts
             define( 'AUTH_SALT', 'llar' );
         }
 
-		$timestamp = Config::get( 'activation_timestamp' );
+		if ( ! defined( 'NONCE_SALT' ) ) {
+			define( 'NONCE_SALT', 'llar' );
+		}
 
-		return wp_hash( AUTH_SALT . $timestamp );
+		return wp_hash( AUTH_SALT . NONCE_SALT );
     }
 
 
 	public function email_redirect_page()
     {
-        if
-        (
-            isset( $_GET['llar_page'] )
-            && isset( $_GET['llar_tab'] )
-            && isset( $_GET['llar_hash'] )
-            && $_GET['llar_page'] === 'limit-login-attempts'
-        ) {
+        if ( isset( $_GET['llar-info'] ) && isset( $_GET['secure'] ) ) {
 
             $hash = $this->get_hash();
 
             $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
-            if ( $hash === $_GET['llar_hash'] && $_GET['llar_tab'] === 'llar_premium' ) {
+            if ( $hash === $_GET['secure'] && $_GET['llar-info'] === '1' ) {
 
                 $redirect_url = 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'];
 
-            } elseif ( $hash === $_GET['llar_hash'] && $_GET['llar_tab'] === 'llar_url' ) {
+            } elseif ( $hash === $_GET['secure'] && $_GET['llar-info'] === '2' ) {
 
                 $redirect_url = 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'];
 
@@ -1226,8 +1222,8 @@ class LimitLoginAttempts
             '{username}'            => $user,
             '{blocked_duration}'    => $when,
             '{dashboard_url}'       => admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
-            '{premium_url}'         => home_url( '?' . 'llar_page=' . $this->_options_page_slug . '&' . 'llar_tab=' . 'llar_premium' . '&' . 'llar_hash=' . $hash ),
-            '{llar_url}'            => home_url( '?' . 'llar_page=' . $this->_options_page_slug . '&' . 'llar_tab=' . 'llar_url' . '&' . 'llar_hash=' . $hash ),
+            '{premium_url}'         => home_url( '?llar_info=1&secure=' . $hash ),
+            '{llar_url}'            => home_url( '?llar_info=2&secure=' . $hash ),
             '{unsubscribe_url}'     => admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' ),
         );
 
