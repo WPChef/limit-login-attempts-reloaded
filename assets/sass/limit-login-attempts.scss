@@ -180,7 +180,11 @@
       margin-left: 5px;
 
       &.success {
-        color: #71c21b;
+        color: $state-color__success;
+      }
+
+      &.error {
+        color: $state-color__error;
       }
     }
   }
