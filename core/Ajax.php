@@ -633,12 +633,30 @@ class Ajax {
 
 		$email            = sanitize_text_field( trim( $_POST['email'] ) );
 		$is_subscribe_yes = sanitize_text_field( $_POST['is_subscribe_yes'] ) === 'true';
-		$admin_email   = ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 
-		if ( ! empty( $email ) && is_email( $email ) ) {
+		if ( empty( $email ) || is_email( $email ) ) {
 
-			Config::update( 'admin_notify_email', $email );
-			Config::update( 'lockout_notify', 'email' );
+		    // Get all email addresses and place the received $email first in the array.
+			$admin_email    = $email;
+			$lockout_notify = 'email';
+
+			if ( empty( $email ) ) {
+				$admin_email      = ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
+				$lockout_notify = '';
+            }
+
+			$get_array_email    = json_decode( Config::get( 'admin_notify_email' ), true );
+			$notify_array_email = is_array( $get_array_email ) ? $get_array_email : [];
+
+			$notify_array_email = array_filter( $notify_array_email, function( $element ) use ( $admin_email ) {
+				return $element !== $admin_email;
+			} );
+
+			array_unshift( $notify_array_email, $admin_email );
+			$email_json = wp_json_encode( $notify_array_email, JSON_FORCE_OBJECT );
+
+			Config::update( 'admin_notify_email', $email_json );
+			Config::update( 'lockout_notify', $lockout_notify );
 
 			if ( $is_subscribe_yes ) {
 				$response = Http::post( 'https://api.limitloginattempts.com/my/key', array(
@@ -647,7 +665,7 @@ class Ajax {
 					)
 				) );
 
-				if ( !empty( $response['error'] ) ) {
+				if ( ! empty( $response['error'] ) ) {
 
 					wp_send_json_error( $response['error'] );
 				} else {
@@ -662,11 +680,6 @@ class Ajax {
 
 			wp_send_json_success( array( 'email' => $email, 'is_subscribe_yes' => $is_subscribe_yes ) );
 
-		} else if ( empty( $email ) ) {
-			Config::update( 'admin_notify_email', $admin_email );
-			Config::update( 'lockout_notify', '' );
-
-			wp_send_json_success( array( 'email' => $admin_email, 'is_subscribe_yes' => '' ) );
 		}
 
 		wp_send_json_error( array( 'email' => $email, 'is_subscribe_yes' => $is_subscribe_yes ) );
@@ -840,17 +853,25 @@ class Ajax {
 
 		check_ajax_referer('llar-test-email-notifications', 'sec');
 
-		$to = sanitize_email( $_POST['email'] );
+		$array_email_sanitized = array_map( function( $email ) {
 
-		if( empty( $to ) || !is_email( $to ) ) {
+			$sanitized_email = sanitize_email( trim( $email ) );
+			return ! empty( $sanitized_email ) ? $sanitized_email : false;
+		}, explode(',', $_POST['email'] ) );
 
-			wp_send_json_error( array(
-                'msg' => __( 'Wrong email format.', 'limit-login-attempts-reloaded' ),
-            ) );
-		}
+		$array_email_sanitized = array_filter($array_email_sanitized);
+
+		foreach ( $array_email_sanitized as $email ) {
+			if  ( ! is_email( $email ) ) {
+
+				wp_send_json_error( array(
+					'msg' => __( 'Wrong email format.', 'limit-login-attempts-reloaded' ),
+				) );
+			}
+        }
 
 		if( wp_mail(
-            $to,
+			$array_email_sanitized,
             __( 'LLAR Security Notifications [TEST]', 'limit-login-attempts-reloaded' ),
             __( 'Your email notifications for Limit Login Attempts Reloaded are working correctly. If this email is going to spam, please be sure to add this address to your safelist.', 'limit-login-attempts-reloaded' )
         ) ) {

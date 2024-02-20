@@ -11,27 +11,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var $this LLAR\Core\LimitLoginAttempts
  */
 
-$gdpr         = Config::get( 'gdpr' );
-$gdpr_message = Config::get( 'gdpr_message' );
+$gdpr                       = Config::get( 'gdpr' );
+$gdpr_message               = Config::get( 'gdpr_message' );
 
-$v             = explode( ',', Config::get( 'lockout_notify' ) );
-$email_checked = in_array( 'email', $v );
+$v                          = explode( ',', Config::get( 'lockout_notify' ) );
+$email_checked              = in_array( 'email', $v );
 
-$show_top_level_menu_item = Config::get( 'show_top_level_menu_item' );
-$show_top_bar_menu_item   = Config::get( 'show_top_bar_menu_item' );
-$hide_dashboard_widget    = Config::get( 'hide_dashboard_widget' );
-$show_warning_badge       = Config::get( 'show_warning_badge' );
+$show_top_level_menu_item   = Config::get( 'show_top_level_menu_item' );
+$show_top_bar_menu_item     = Config::get( 'show_top_bar_menu_item' );
+$hide_dashboard_widget      = Config::get( 'hide_dashboard_widget' );
+$show_warning_badge         = Config::get( 'show_warning_badge' );
 
-$admin_notify_email      = Config::get( 'admin_notify_email' );
+// Get list all email addresses
+$array_email                = json_decode( Config::get( 'admin_notify_email' ), true );
+$admin_notify_email         = is_array( $array_email ) ? implode(', ', $array_email ) : '';
 
-$trusted_ip_origins = Config::get( 'trusted_ip_origins' );
-$trusted_ip_origins = ( is_array( $trusted_ip_origins ) && ! empty( $trusted_ip_origins ) ) ? implode( ", ", $trusted_ip_origins ) : 'REMOTE_ADDR';
+$trusted_ip_origins         = Config::get( 'trusted_ip_origins' );
+$trusted_ip_origins         = ( is_array( $trusted_ip_origins ) && ! empty( $trusted_ip_origins ) ) ? implode( ", ", $trusted_ip_origins ) : 'REMOTE_ADDR';
 
-$active_app        = Config::get( 'active_app' );
-$app_setup_code    = Config::get( 'app_setup_code' );
-$active_app_config = Config::get( 'app_config' );
+$active_app                 = Config::get( 'active_app' );
+$app_setup_code             = Config::get( 'app_setup_code' );
+$active_app_config          = Config::get( 'app_config' );
 
-$is_local_empty_setup_code = ( $active_app === 'local' && empty( $app_setup_code ) );
+$is_local_empty_setup_code  = ( $active_app === 'local' && empty( $app_setup_code ) );
 
 $min_plan = 'Premium';
 $plans = $this->array_name_plans();
@@ -165,7 +167,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                     <td>
                         <input type="checkbox" name="lockout_notify_email" <?php checked ( $email_checked ); ?>
                                value="email"/> <?php _e( 'Email to', 'limit-login-attempts-reloaded' ); ?>
-                        <input class="input_border" type="email" name="admin_notify_email"
+                        <input class="input_border" type="text" name="admin_notify_email"
                                value="<?php esc_attr_e( $admin_notify_email ) ?>"
                                placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"/> <?php _e( 'after', 'limit-login-attempts-reloaded' ); ?>
                         <input class="input_border" type="text" size="3" maxlength="4"
@@ -747,17 +749,23 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 
                         $test_email_loader.toggleClass( 'loading' );
 
-                        $.post( ajaxurl, {
+                        let data = {
                             action: 'test_email_notifications',
-                            email: $email_input.val() || $email_input.attr( 'placeholder' ),
+                            email: $email_input.val(),
                             sec: '<?php echo esc_js( wp_create_nonce( "llar-test-email-notifications" ) ); ?>',
-                        }, function ( res ) {
-                            if ( res?.success ) {
-                                $test_email_loader_msg.addClass( 'success' ).text( '<?php echo esc_js( __( 'Test email has been sent!', 'limit-login-attempts-reloaded' ) ) ?>' )
-                            }
+                            // sec: llar_vars.nonce_dismiss_onboarding_popup
+                        }
+                        llar_ajax_callback_post( ajaxurl, data )
+                            .then( function () {
+                                $test_email_loader_msg.addClass( 'success' ).text( '<?php _e( 'Test email has been sent!', 'limit-login-attempts-reloaded' ) ?>' )
+                            } )
+                            .catch( function () {
+                                $test_email_loader_msg.addClass( 'error' ).text( '<?php _e( 'Wrong email format!', 'limit-login-attempts-reloaded' ) ?>' )
+                            })
+                            .finally( function () {
+                                $test_email_loader.toggleClass( 'loading' );
+                            } )
 
-                            $test_email_loader.toggleClass( 'loading' );
-                        } );
                     } )
                 } );
 

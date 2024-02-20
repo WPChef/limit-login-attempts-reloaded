@@ -517,6 +517,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .limit-login-page-settings .llar-test-email-notification-loader .msg.success {
   color: #71c21b;
 }
+.limit-login-page-settings .llar-test-email-notification-loader .msg.error {
+  color: #EC4652;
+}
 .limit-login-page-settings .llar-protect-notice {
   font-size: 15px;
   color: #848484;

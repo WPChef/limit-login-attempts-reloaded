@@ -10,14 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var $this LLAR\Core\LimitLoginAttempts
  */
 
-$admin_notify_email      = Config::get( 'admin_notify_email' );
-$admin_email             = ! empty($admin_notify_email)
-                               ? $admin_notify_email
-                               : ( ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' ) );
+// Get the primary email address from the array of email addresses.
+$array_email            = json_decode( Config::get( 'admin_notify_email' ), true );
+$notify_array_email     = is_array( $array_email ) ? $array_email : [];
+$admin_email            = ! empty ( $notify_array_email[0] ) ? $notify_array_email[0] : get_site_option( 'admin_email' );
+
 $onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
 $setup_code             = Config::get( 'app_setup_code' );
 
-$url_site = parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
+$url_site               = parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
 
 if ( $onboarding_popup_shown || ! empty( $setup_code ) ) {
 	return;

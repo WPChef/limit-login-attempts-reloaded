@@ -1123,32 +1123,36 @@ class LimitLoginAttempts
 			$when     = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
 		}
 
-		if ( $custom_admin_email = Config::get( 'admin_notify_email' ) ) {
+		// Get the primary email address from the array of email addresses.
+	    $array_email = json_decode( Config::get( 'admin_notify_email' ), true );
+	    $notify_array_email = is_array( $array_email ) ? $array_email : [];
 
-			$admin_email = $custom_admin_email;
-		} else {
+	    $admin_name = '';
 
-			$admin_email = get_site_option( 'admin_email' );
-		}
+	    if ( count( $notify_array_email ) === 1 ) {
 
-		$admin_name = '';
+		    $admin_email = ! empty ( $notify_array_email[0] ) ? $notify_array_email[0] : get_site_option( 'admin_email' );
 
-		global $wpdb;
+		    global $wpdb;
 
-		$res = $wpdb->get_col( $wpdb->prepare( "
+		    $res = $wpdb->get_col( $wpdb->prepare( "
                 SELECT u.display_name
                 FROM $wpdb->users AS u
                 LEFT JOIN $wpdb->usermeta AS m ON u.ID = m.user_id
                 WHERE u.user_email = %s
                 AND m.meta_key LIKE 'wp_capabilities'
                 AND m.meta_value LIKE '%administrator%'",
-                $admin_email
-            )
-        );
+			    $admin_email
+		    )
+		    );
 
-		if ( $res ) {
-		    $admin_name = $res[0];
-        }
+		    if ( $res ) {
+			    $admin_name = $res[0];
+		    }
+
+		    $notify_array_email = $admin_email;
+	    }
+
 
         $site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
 		$blogname = Helpers::use_local_options() ? get_option( 'blogname' ) : get_site_option( 'site_name' );
@@ -1185,7 +1189,7 @@ class LimitLoginAttempts
             $email_body
         );
 
-		Helpers::send_mail_with_logo( $admin_email, $subject, $email_body );
+		Helpers::send_mail_with_logo( $notify_array_email, $subject, $email_body );
 	}
 
 	/**
@@ -1759,7 +1763,22 @@ class LimitLoginAttempts
                 Config::update('long_duration',      (int)$_POST['long_duration'] * 3600 );
                 Config::update('notify_email_after', (int)$_POST['email_after'] );
                 Config::update('gdpr_message',       sanitize_textarea_field( Helpers::deslash( $_POST['gdpr_message'] ) ) );
-                Config::update('admin_notify_email', sanitize_email( $_POST['admin_notify_email'] ) );
+
+                // Receive list all email addresses for saving in the database.
+                if ( isset( $_POST['admin_notify_email'] ) ) {
+
+	                $array_email_sanitized = array_map( function( $email ) {
+
+		                $sanitized_email = sanitize_email( trim( $email ) );
+		                return ! empty( $sanitized_email ) ? $sanitized_email : null;
+	                }, explode(',', $_POST['admin_notify_email'] ) );
+
+	                $array_email_sanitized = array_filter($array_email_sanitized);
+
+	                $email_json = wp_json_encode( $array_email_sanitized, JSON_FORCE_OBJECT );
+
+	                Config::update('admin_notify_email', $email_json );
+                }
 
 	            Config::update('active_app', sanitize_text_field( $_POST['active_app'] ) );
 
