@@ -66,6 +66,7 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
         const $auto_update_choice = $( 'a[href="llar_auto_update_choice"]' );
         const $auto_update_notice = $( '.llar-auto-update-notice' );
         const content_html = $( '#llar_popup_error_content' ).html();
+        const $upgrade_premium_message = $( '#llar-header-upgrade-premium-message' );
 
         $account_policies.on( 'change', function () {
 
@@ -83,6 +84,22 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
                 } )
 
         } )
+
+        $upgrade_premium_message.on( 'click', '.close', function () {
+
+            $upgrade_premium_message.addClass( 'llar-display-none' );
+
+            let data = {
+                action: 'close_premium_message',
+                sec: llar_vars.nonce_close_premium_message
+            }
+
+            llar_ajax_callback_post( ajaxurl, data )
+                .catch( function () {
+                    $upgrade_premium_message.addClass( 'llar-display-none' );
+                } )
+        } )
+
 
         $auto_update_choice.on( 'click', function ( e ) {
             e.preventDefault();

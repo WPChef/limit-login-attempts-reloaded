@@ -37,13 +37,16 @@ if ( $is_active_app_custom ) {
 	$block_sub_group = '';
 	$upgrade_premium_url = '';
 }
-?>
 
-<?php if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' ) : ?>
 
-	<?php $upgrade_premium_url = $this->info_upgrade_url(); ?>
-    <?php if ( $is_exhausted ) : ?>
-        <div id="llar-header-upgrade-message" class="exhausted">
+if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' ) :
+
+	$notifications_message_shown = Config::get( 'notifications_message_shown' );
+	$upgrade_premium_url = $this->info_upgrade_url();
+
+    if ( $is_exhausted && ! $notifications_message_shown ) : ?>
+
+        <div id="llar-header-upgrade-premium-message" class="exhausted">
             <p>
                 <span class="dashicons dashicons-superhero"></span>
 				<?php echo sprintf(
@@ -51,9 +54,12 @@ if ( $is_active_app_custom ) {
 					$upgrade_premium_url );
 				?>
             </p>
+            <div class="close">
+                <span class="dashicons dashicons-no-alt"></span>
+            </div>
         </div>
     <?php else : ?>
-        <div id="llar-header-upgrade-message">
+        <div id="llar-header-upgrade-mc-message">
             <p>
                 <span class="dashicons dashicons-superhero"></span>
 				<?php echo sprintf(
