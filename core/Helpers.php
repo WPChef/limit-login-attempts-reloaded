@@ -134,7 +134,6 @@ class Helpers {
         return apply_filters( 'automatic_updater_disabled', false ) || ! apply_filters( 'auto_update_plugin', true, 10, 2 );
 	}
 
-
 	public static function get_wordpress_version() {
 		global $wp_version;
 		return $wp_version;
