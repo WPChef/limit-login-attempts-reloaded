@@ -131,7 +131,7 @@ class Helpers {
             return true;
         }
 
-        return has_action( 'automatic_updater_disabled' ) || ! apply_filters( 'auto_update_plugin', true, 10, 2 );
+        return apply_filters( 'automatic_updater_disabled', false ) || ! apply_filters( 'auto_update_plugin', true, 10, 2 );
 	}
 
 
