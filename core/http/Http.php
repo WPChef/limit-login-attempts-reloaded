@@ -14,16 +14,15 @@ class Http {
 	 */
 	public static function init() {
 
-		if( function_exists( 'fopen' ) && ini_get( 'allow_url_fopen' ) === '1' ) {
-			self::$transport = new HttpTransportFopen();
-		} else if( function_exists( 'wp_remote_get' ) ) {
+		if ( function_exists( 'wp_remote_get' ) ) {
 			self::$transport = new HttpTransportWp();
-		} else if( function_exists( 'curl_version' ) ) {
+		} elseif ( function_exists( 'fopen' ) && ini_get( 'allow_url_fopen' ) === '1' ) {
+			self::$transport = new HttpTransportFopen();
+		} elseif ( function_exists( 'curl_version' ) ) {
 			self::$transport = new HttpTransportCurl();
 		} else {
 			throw new \Exception( 'Unable to determine HTTP transport.' );
 		}
-
 	}
 
 	/**
