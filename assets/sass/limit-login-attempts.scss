@@ -1451,81 +1451,84 @@
 
 
 // new design
-#llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
+.header_massage {
+  margin-right: 20px;
 
-  position: relative;
-  margin: 20px auto;
-  width: fit-content;
-  color: $primary-colors__orange_light;
-  font-weight: $text-font-weight-bold;
-  padding: 14px 32px;
-  text-align: center;
-  border-radius: $border-radius__max;
-  border: 1px solid $border-element__red_sand;
-  background-color: $background-element__almond;
-  box-shadow: 0 4px 18px 0 $box-shadow__semi_transparent_gray;
+  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
 
-  @include _1799 {
-    margin-right: 20px;
-  }
+    position: relative;
+    margin: 20px auto;
+    width: fit-content;
+    color: $primary-colors__orange_light;
+    font-weight: $text-font-weight-bold;
+    padding: 14px 32px;
+    text-align: center;
+    border-radius: $border-radius__max;
+    border: 1px solid $border-element__red_sand;
+    background-color: $background-element__almond;
+    box-shadow: 0 4px 18px 0 $box-shadow__semi_transparent_gray;
 
-  @include _991 {
-    padding: 5px 14px;
-    font-size: 11px;
-  }
+    @include _991 {
+      padding: 5px 14px;
+      font-size: 11px;
+    }
 
-  @include _767 {
-    margin-left: 16px;
-    margin-right: 16px;
-  }
+    @include _767 {
+      margin-left: 16px;
+      margin-right: 16px;
+    }
 
-  p {
-    font-size: 16px;
-    margin: 0;
+    p {
+      font-size: 16px;
+      margin: 0;
 
-    .dashicons {
-      width: 32px;
-      height: 32px;
-      font-size: 32px;
-      color: inherit;
-      vertical-align: middle;
-      margin-right: 5px;
+      .dashicons {
+        width: 32px;
+        height: 32px;
+        font-size: 32px;
+        color: inherit;
+        vertical-align: middle;
+        margin-right: 5px;
 
-      @include _991 {
-        width: 16px;
-        height: 16px;
-        font-size: 16px;
+        @include _991 {
+          width: 16px;
+          height: 16px;
+          font-size: 16px;
+        }
       }
     }
-  }
 
-  &.exhausted {
-    color: $state-color__error;
-    font-weight: 400;
-    padding: 12px 25px;
-    background-color: $state-color__error_back;
-    border: 1px solid currentColor;
-  }
+    &.exhausted {
+      color: $state-color__error;
+      font-weight: 400;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 12px 25px;
+      background-color: $state-color__error_back;
+      border: 1px solid currentColor;
+    }
 
-  .close {
-    position: absolute;
-    top: -6px;
-    right: -9px;
-    cursor: pointer;
+    .close {
+      position: absolute;
+      top: -6px;
+      right: -9px;
+      cursor: pointer;
 
-    .dashicons {
-      width: 16px;
-      height: 24px;
-      font-size: 24px;
-
-      @include _991 {
+      .dashicons {
         width: 16px;
-        height: 18px;
-        font-size: 18px;
+        height: 24px;
+        font-size: 24px;
+
+        @include _991 {
+          width: 16px;
+          height: 18px;
+          font-size: 18px;
+        }
       }
     }
   }
 }
+
 
 
 .settings_page_limit-login-attempts {
