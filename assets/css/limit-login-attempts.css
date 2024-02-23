@@ -1833,6 +1833,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-family: CoFo Sans, arial;
   margin-top: 40px;
 }
+#llar-dashboard-page * {
+  box-sizing: border-box;
+}
 #llar-dashboard-page ul, #llar-dashboard-page ol {
   margin-left: 0;
   padding-left: 32px;

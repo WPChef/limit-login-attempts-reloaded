@@ -2,6 +2,10 @@
   font-family: $font-primary, $font-secondary;
   margin-top: 40px;
 
+  * {
+    box-sizing: border-box;
+  }
+
   ul, ol {
     @extend .llar_list;
     margin-left: 0;
