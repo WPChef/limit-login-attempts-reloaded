@@ -14,10 +14,12 @@ class Http {
 	 */
 	public static function init() {
 
-		if ( function_exists( 'wp_remote_get' ) ) {
-			self::$transport = new HttpTransportWp();
-		} elseif ( function_exists( 'fopen' ) && ini_get( 'allow_url_fopen' ) === '1' ) {
+		$proxy = getenv('http_proxy') || getenv('https_proxy') || isset($_SERVER['HTTP_PROXY']) || isset($_SERVER['HTTP_X_FORWARDED_FOR']);
+
+		if ( ! $proxy && function_exists( 'fopen' ) && ini_get( 'allow_url_fopen' ) === '1' ) {
 			self::$transport = new HttpTransportFopen();
+		} elseif ( function_exists( 'wp_remote_get' ) ) {
+			self::$transport = new HttpTransportWp();
 		} elseif ( function_exists( 'curl_version' ) ) {
 			self::$transport = new HttpTransportCurl();
 		} else {
