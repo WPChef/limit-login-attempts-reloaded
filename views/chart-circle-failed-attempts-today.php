@@ -52,12 +52,12 @@ if ( ! $is_active_app_custom ) {
 
 		if ( ! empty( $setup_code ) ) {
 			$retries_chart_desc = sprintf(
-				__( 'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
-				'button_micro_cloud' );
-		} else {
-			$retries_chart_desc = sprintf(
 				__( 'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
 				$upgrade_premium_url );
+		} else {
+			$retries_chart_desc = sprintf(
+				__( 'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
+				'button_micro_cloud' );
         }
 
 		$retries_chart_color = '#FF6633';
