@@ -959,6 +959,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding-left: 0;
 }
 
+#llar-setting-page-logs .add_block__under_table, #llar-setting-page-logs__active .add_block__under_table {
+  margin-top: 20px;
+}
 #llar-setting-page-logs .add_block__under_table.image_plus, #llar-setting-page-logs__active .add_block__under_table.image_plus {
   box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
 }
@@ -1518,7 +1521,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   transition: width 0.4s;
 }
 
-#llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
+#llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message, #llar-header-login-custom-message {
   position: relative;
   margin: 20px auto;
   width: fit-content;
@@ -1532,27 +1535,27 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   box-shadow: 0 4px 18px 0 rgba(114, 117, 123, 0.2);
 }
 @media screen and (max-width: 1799.5px) {
-  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
+  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message, #llar-header-login-custom-message {
     margin-right: 20px;
   }
 }
 @media screen and (max-width: 991.5px) {
-  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
+  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message, #llar-header-login-custom-message {
     padding: 5px 14px;
     font-size: 11px;
   }
 }
 @media screen and (max-width: 767.5px) {
-  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
+  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message, #llar-header-login-custom-message {
     margin-left: 16px;
     margin-right: 16px;
   }
 }
-#llar-header-upgrade-mc-message p, #llar-header-upgrade-premium-message p {
+#llar-header-upgrade-mc-message p, #llar-header-upgrade-premium-message p, #llar-header-login-custom-message p {
   font-size: 16px;
   margin: 0;
 }
-#llar-header-upgrade-mc-message p .dashicons, #llar-header-upgrade-premium-message p .dashicons {
+#llar-header-upgrade-mc-message p .dashicons, #llar-header-upgrade-premium-message p .dashicons, #llar-header-login-custom-message p .dashicons {
   width: 32px;
   height: 32px;
   font-size: 32px;
@@ -1561,36 +1564,138 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-right: 5px;
 }
 @media screen and (max-width: 991.5px) {
-  #llar-header-upgrade-mc-message p .dashicons, #llar-header-upgrade-premium-message p .dashicons {
+  #llar-header-upgrade-mc-message p .dashicons, #llar-header-upgrade-premium-message p .dashicons, #llar-header-login-custom-message p .dashicons {
     width: 16px;
     height: 16px;
     font-size: 16px;
   }
 }
-#llar-header-upgrade-mc-message.exhausted, #llar-header-upgrade-premium-message.exhausted {
+#llar-header-upgrade-mc-message.exhausted, #llar-header-upgrade-premium-message.exhausted, #llar-header-login-custom-message.exhausted {
   color: #EC4652;
   font-weight: 400;
   padding: 12px 25px;
   background-color: rgba(236, 70, 82, 0.1019607843);
   border: 1px solid currentColor;
 }
-#llar-header-upgrade-mc-message .close, #llar-header-upgrade-premium-message .close {
+#llar-header-upgrade-mc-message .close, #llar-header-upgrade-premium-message .close, #llar-header-login-custom-message .close {
   position: absolute;
   top: -6px;
   right: -9px;
   cursor: pointer;
 }
-#llar-header-upgrade-mc-message .close .dashicons, #llar-header-upgrade-premium-message .close .dashicons {
+#llar-header-upgrade-mc-message .close .dashicons, #llar-header-upgrade-premium-message .close .dashicons, #llar-header-login-custom-message .close .dashicons {
   width: 16px;
   height: 24px;
   font-size: 24px;
 }
 @media screen and (max-width: 991.5px) {
-  #llar-header-upgrade-mc-message .close .dashicons, #llar-header-upgrade-premium-message .close .dashicons {
+  #llar-header-upgrade-mc-message .close .dashicons, #llar-header-upgrade-premium-message .close .dashicons, #llar-header-login-custom-message .close .dashicons {
     width: 16px;
     height: 18px;
     font-size: 18px;
   }
+}
+
+#llar-header-login-custom-message {
+  width: 900px;
+  font-size: 16px;
+  border-radius: 20px;
+}
+@media screen and (max-width: 1799.5px) {
+  #llar-header-login-custom-message {
+    margin-right: auto;
+  }
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-header-login-custom-message {
+    width: 795px;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-header-login-custom-message {
+    width: 710px;
+    font-size: 95%;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  #llar-header-login-custom-message {
+    font-size: 90%;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+@media screen and (max-width: 575.5px) {
+  #llar-header-login-custom-message {
+    width: 400px;
+  }
+}
+#llar-header-login-custom-message .message-flex {
+  display: flex;
+}
+#llar-header-login-custom-message .message-flex .col-first img {
+  width: 150px;
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-header-login-custom-message .message-flex .col-first img {
+    width: 130px;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  #llar-header-login-custom-message .message-flex .col-first img {
+    width: 100px;
+  }
+}
+#llar-header-login-custom-message .message-flex .col-second {
+  width: 30%;
+  line-height: 1.7;
+  color: #2A2F40;
+  margin: 16px 25px;
+  text-align: left;
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-header-login-custom-message .message-flex .col-second {
+    margin: 16px 10px;
+  }
+}
+#llar-header-login-custom-message .message-flex .col-third {
+  width: 45%;
+  margin: 16px 25px;
+  font-size: 87.5%;
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-header-login-custom-message .message-flex .col-third {
+    margin: 16px 10px;
+  }
+}
+#llar-header-login-custom-message .message-flex .col-third .row-first {
+  color: #666D84;
+  font-weight: 400;
+}
+#llar-header-login-custom-message .message-flex .col-third .row-second {
+  position: relative;
+  margin: 5px 10px;
+  color: #A4A8B7;
+}
+#llar-header-login-custom-message .message-flex .col-third .row-second hr {
+  background-color: rgba(255, 124, 6, 0.0980392157);
+  display: inline-block;
+  width: calc(50% - 50px);
+  border: 0;
+  height: 2px;
+  vertical-align: middle;
+}
+#llar-header-login-custom-message .message-flex .col-third .row-second span {
+  display: inline-flex;
+  width: 50px;
+  justify-content: center;
+}
+#llar-header-login-custom-message .message-flex .col-third .row-third {
+  font-weight: 500;
+  margin: 10px;
+  padding: 5px 10px;
+  background-color: rgba(255, 124, 6, 0.0980392157);
+  border-radius: 10px;
 }
 
 .settings_page_limit-login-attempts .update-nag {
