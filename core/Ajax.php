@@ -743,7 +743,7 @@ class Ajax {
 
 	    check_ajax_referer( 'llar-close-premium-message', 'sec' );
 
-	    Config::update( 'notifications_message_shown', 1 );
+	    Config::update( 'notifications_message_shown', strtotime( '+1 day' ) );
 
 	    wp_send_json_success();
     }
