@@ -3,7 +3,7 @@
  * Dashboard
  *
  * @var string $active_app
- * @var string $is_active_app_custom
+ * @var bool $is_active_app_custom
  * @var string $block_sub_group
  *
  */

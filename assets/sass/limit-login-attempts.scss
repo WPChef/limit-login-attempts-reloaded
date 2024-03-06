@@ -727,6 +727,7 @@
   @extend #llar-setting-page;
 
   .add_block__under_table {
+    margin-top: 20px;
 
     &.image_plus {
       box-shadow: 3px 5px 23px 0 $box-shadow__light-transparent-gray;
@@ -1449,10 +1450,7 @@
   }
 }
 
-
-// new design
-#llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
-
+#llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message, #llar-header-login-custom-message {
   position: relative;
   margin: 20px auto;
   width: fit-content;
@@ -1522,6 +1520,112 @@
         width: 16px;
         height: 18px;
         font-size: 18px;
+      }
+    }
+  }
+}
+
+#llar-header-login-custom-message {
+  width: 900px;
+  font-size: 16px;
+  border-radius: $border-radius;
+
+  @include _1799 {
+    margin-right: auto;
+  }
+
+  @include _1199 {
+    width: 795px;
+  }
+
+  @include _991 {
+    width: 710px;
+    font-size: 95%
+  }
+
+  @include _767 {
+    font-size: 90%;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  @include _575 {
+    width: 400px;
+  }
+
+
+  .message-flex {
+    display: flex;
+
+    .col-first {
+
+      img {
+        width: 150px;
+
+        @include _1199 {
+          width: 130px;
+        }
+
+        @include _767 {
+          width: 100px;
+        }
+      }
+    }
+
+    .col-second {
+      width: 30%;
+      line-height: 1.7;
+      color: $typography-primary;
+      margin: 16px 25px;
+      text-align: left;
+
+      @include _1199 {
+        margin: 16px 10px;
+      }
+    }
+
+    .col-third {
+      width: 45%;
+      margin: 16px 25px;
+      font-size: 87.5%;
+
+      @include _1199 {
+        margin: 16px 10px;
+      }
+
+      .row-first {
+        color: $typography-secondary;
+        font-weight: 400;
+      }
+
+      .row-second {
+        position: relative;
+        margin: 5px 10px;
+        color: $typography-additional;
+
+        hr {
+          background-color: $primary-colors__orange-back;
+          display: inline-block;
+          width: calc(100% / 2 - 50px);
+          border: 0;
+          height: 2px;
+          vertical-align: middle;
+        }
+
+        span {
+          display: inline-flex;
+          width: 50px;
+          justify-content: center;
+        }
+      }
+
+      .row-third {
+        font-weight: 500;
+        margin: 10px;
+        padding: 5px 10px;
+        background-color: $primary-colors__orange-back;
+        border-radius: 10px;
       }
     }
   }
