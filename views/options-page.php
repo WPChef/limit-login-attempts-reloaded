@@ -135,7 +135,7 @@ if ( $is_active_app_custom ) {
             <a href="<?php echo $this->get_options_page_uri( 'logs-custom' ); ?>"
                class="nav-tab<?php echo $active_tab === 'logs-custom' ? $nav_tab_active : '' ?>">
                 <?php _e( 'Login Firewall', 'limit-login-attempts-reloaded' ); ?>
-                <?php echo $is_exhausted ? '<span class="llar-alert-icon">!</span>' : '' ?>
+                <?php echo ( $is_exhausted && $block_sub_group === 'Micro Cloud' ) ? '<span class="llar-alert-icon">!</span>' : '' ?>
             </a>
         <?php else : ?>
             <a href="<?php echo $this->get_options_page_uri( 'logs-local' ); ?>"
