@@ -32,9 +32,12 @@
     font-size: 16px;
     text-align: left;
 
+    @include _1799 {
+      gap: 10px;
+    }
+
     @include _1599 {
       font-size: 14px;
-      gap: 10px;
     }
 
     .llar-label {
@@ -122,7 +125,7 @@
       box-shadow: 4px 4px 18px 0 $box-shadow__light_transparent_gray;
 
       @include _1799 {
-        padding: 30px 26px 16px;
+        padding: 30px 16px 16px;
       }
 
       @include _1599 {
