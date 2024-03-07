@@ -2,8 +2,8 @@
 /**
  * Dashboard
  *
- * @var string $active_app
- * @var string $actual_plan
+ * @var bool $is_active_app_custom
+ * @var string $block_sub_group
  *
  */
 
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div id="llar-setting-page-help" class="llar-help-page">
-	<?php if ( $active_app === 'local' || $actual_plan === 'Micro Cloud' ) : ?>
+	<?php if ( ! $is_active_app_custom || $block_sub_group === 'Micro Cloud' ) : ?>
         <div class="section-1">
             <div class="block">
                 <div class="title">
