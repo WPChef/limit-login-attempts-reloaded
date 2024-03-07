@@ -23,12 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) exit();
                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/micro-cloud-image-min.png">
                 </div>
                 <div class="col-second">
-	                <?php _e( 'Your Micro Cloud plan has exhausted its requests for the month, which is required to operate the Login Firewall', 'limit-login-attempts-reloaded' ) ?>
+	                <?php _e( 'Your Micro Cloud plan has exhausted its requests for the month, which is required to operate the Login Firewall.', 'limit-login-attempts-reloaded' ) ?>
                 </div>
                 <div class="col-third">
                     <div class="row-first">
 	                    <?php echo sprintf(
-		                    __( 'You can <a href="%s" class="link__style_color_inherit llar_bold" target="_blank">Upgrade to Premium</a> to increase requests', 'limit-login-attempts-reloaded' ),
+		                    __( 'You can <a href="%s" class="link__style_color_inherit llar_bold" target="_blank">Upgrade to Premium</a> to increase requests.', 'limit-login-attempts-reloaded' ),
 		                    $upgrade_premium_url );
 	                    ?>
                     </div>
@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) exit();
                         <hr><span><?php _e( 'Or', 'limit-login-attempts-reloaded' ) ?></span><hr>
                     </div>
                     <div class="row-third">
-	                    <?php _e( 'Switch to the failover to access IP management tools with the free version', 'limit-login-attempts-reloaded' ) ?>
+	                    <?php _e( 'Switch to the failover to access IP management tools with the free version.', 'limit-login-attempts-reloaded' ) ?>
                     </div>
                 </div>
             </div>
