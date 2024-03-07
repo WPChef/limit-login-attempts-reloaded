@@ -36,10 +36,11 @@ if ( $is_active_app_custom ) {
 	$is_exhausted = false;
 	$block_sub_group = '';
 	$upgrade_premium_url = '';
-}
+}?>
 
-
-if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' ) :
+<div class="header_massage">
+    <?php
+    if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' ) :
 
 	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
 	$upgrade_premium_url = $this->info_upgrade_url();
@@ -72,9 +73,10 @@ if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' ) :
             </p>
         </div>
 
-    <?php endif; ?>
+        <?php endif; ?>
 
-<?php endif; ?>
+    <?php endif; ?>
+</div>
 
 <?php if ( ( $auto_update_choice || $auto_update_choice === null ) && !Helpers::is_auto_update_enabled() ) : ?>
 <div class="notice notice-error llar-auto-update-notice">
