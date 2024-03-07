@@ -2,6 +2,10 @@
   font-family: $font-primary, $font-secondary;
   margin-top: 40px;
 
+  * {
+    box-sizing: border-box;
+  }
+
   ul, ol {
     @extend .llar_list;
     margin-left: 0;
@@ -126,11 +130,11 @@
       }
 
       @include _1399 {
-        width: calc(50% - 8px / 2);
+        width: calc(40% - 8px / 2);
         min-height: 272px;
       }
 
-      @include _991 {
+      @include _1199 {
         width: 100%;
         min-height: 294px;
       }
@@ -228,6 +232,15 @@
     }
 
     .info-box-2 {
+
+      @include _1399 {
+        width: calc(60% - 4px);
+      }
+
+      @include _1199 {
+        width: 100%;
+      }
+
       .section-content {
         overflow: visible;
       }
