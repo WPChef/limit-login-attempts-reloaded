@@ -425,6 +425,21 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-right: 35px;
   padding: 4px 5px 6px;
 }
+.limit-login-page-settings .nav-tab-wrapper .nav-tab .llar-alert-icon {
+  display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box;
+  margin: -2px 0 0;
+  padding: 0 1px 4px 2px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background-color: #d63638;
+  color: white;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+}
 .limit-login-page-settings .nav-tab-wrapper .nav-tab-active {
   border-bottom: 4px solid #4ACAD8;
 }
