@@ -58,7 +58,7 @@ ob_start(); ?>
                         <input type="checkbox" id="mc_consent_registering"/>
                         <span>
                             <?php echo sprintf(
-	                            __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service', 'limit-login-attempts-reloaded' ),
+	                            __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service.', 'limit-login-attempts-reloaded' ),
 	                            $url_site);
                             ?>
                         </span>
