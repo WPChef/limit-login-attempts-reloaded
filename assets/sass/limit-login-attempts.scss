@@ -1531,6 +1531,18 @@
 }
 
 #llar-header-login-custom-message {
+  position: relative;
+  margin: 20px auto;
+  width: fit-content;
+  color: $primary-colors__orange_light;
+  font-weight: $text-font-weight-bold;
+  padding: 14px 32px;
+  text-align: center;
+  border-radius: $border-radius__max;
+  border: 1px solid $border-element__red_sand;
+  background-color: $background-element__almond;
+  box-shadow: 0 4px 18px 0 $box-shadow__semi_transparent_gray;
+
   width: 900px;
   font-size: 16px;
   border-radius: $border-radius;
