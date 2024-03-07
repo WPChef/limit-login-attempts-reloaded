@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-03-06T20:13:31+03:00\n"
+"POT-Creation-Date: 2024-03-07T18:21:16+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -80,13 +80,13 @@ msgstr ""
 
 #: core/LimitLoginAttempts.php:313
 #: core/LimitLoginAttempts.php:662
-#: views/options-page.php:125
+#: views/options-page.php:127
 msgid "Dashboard"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:314
 #: core/LimitLoginAttempts.php:667
-#: views/options-page.php:129
+#: views/options-page.php:131
 msgid "Settings"
 msgstr ""
 
@@ -124,22 +124,22 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: core/LimitLoginAttempts.php:673
-#: views/options-page.php:135
+#: views/options-page.php:137
 msgid "Login Firewall"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:678
-#: views/options-page.php:140
+#: views/options-page.php:142
 msgid "Logs"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:683
-#: views/options-page.php:146
+#: views/options-page.php:148
 msgid "Debug"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:688
-#: views/options-page.php:150
+#: views/options-page.php:152
 #: views/tab-dashboard.php:128
 msgid "Help"
 msgstr ""
@@ -1611,7 +1611,8 @@ msgid "Your email"
 msgstr ""
 
 #: views/micro-cloud-modal.php:61
-msgid "I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service"
+#: views/onboarding-popup.php:196
+msgid "I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service."
 msgstr ""
 
 #: views/micro-cloud-modal.php:68
@@ -1729,10 +1730,6 @@ msgstr ""
 msgid "<b>Would you like to opt-in?</b>"
 msgstr ""
 
-#: views/onboarding-popup.php:196
-msgid "I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service."
-msgstr ""
-
 #: views/onboarding-popup.php:206
 msgid "Sign Me Up"
 msgstr ""
@@ -1749,35 +1746,35 @@ msgstr ""
 msgid "Thank you for completing the setup"
 msgstr ""
 
-#: views/options-page.php:54
+#: views/options-page.php:55
 msgid "You have exhausted your monthly quota of free Micro Cloud requests. The plugin has now reverted to the free version. <a href=\"%s\" class=\"link__style_color_inherit\" target=\"_blank\">Upgrade to the premium</a> version today to maintain cloud protection and advanced features."
 msgstr ""
 
-#: views/options-page.php:69
+#: views/options-page.php:70
 msgid "Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href=\"%s\" class=\"link__style_color_inherit\" target=\"_blank\">Upgrade to Premium</a> today"
 msgstr ""
 
-#: views/options-page.php:82
+#: views/options-page.php:84
 msgid "Do you want Limit Login Attempts Reloaded to provide the latest version automatically?"
 msgstr ""
 
-#: views/options-page.php:84
+#: views/options-page.php:86
 msgid "Yes, enable auto-update"
 msgstr ""
 
-#: views/options-page.php:88
+#: views/options-page.php:90
 msgid "No thanks"
 msgstr ""
 
-#: views/options-page.php:154
+#: views/options-page.php:156
 msgid "Premium / Extensions"
 msgstr ""
 
-#: views/options-page.php:159
+#: views/options-page.php:161
 msgid "Failover"
 msgstr ""
 
-#: views/options-page.php:164
+#: views/options-page.php:166
 msgid "Automatic switch to free version when premium stops working (usually due to non-payment or exceeding monthly resource budget)."
 msgstr ""
 
