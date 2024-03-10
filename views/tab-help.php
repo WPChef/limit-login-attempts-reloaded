@@ -1,6 +1,6 @@
 <?php
 /**
- * Dashboard
+ * Help Page
  *
  * @var bool $is_active_app_custom
  * @var string $block_sub_group
@@ -166,7 +166,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
     </div>
 
-	<?php if ( $active_app === 'custom' && $actual_plan !== 'Micro Cloud') : ?>
+	<?php if ( $is_active_app_custom && $block_sub_group !== 'Micro Cloud') : ?>
         <div class="section-1 mt-1_5">
             <div class="block">
                 <div class="title">

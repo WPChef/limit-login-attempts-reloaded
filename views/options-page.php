@@ -4,7 +4,9 @@ use LLAR\Core\Config;
 use LLAR\Core\Helpers;
 use LLAR\Core\LimitLoginAttempts;
 
-if ( ! defined( 'ABSPATH' ) ) exit();
+if ( ! defined( 'ABSPATH' ) ) {
+    exit();
+}
 
 $active_tab = "dashboard";
 $active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
@@ -109,7 +111,7 @@ if ( $is_active_app_custom ) {
     <div class="limit-login-page-settings__logo_block">
         <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/logo-llap.png">
 
-	    <?php if ( $active_app !== 'local' ) : ?>
+	    <?php if ( $is_active_app_custom ) : ?>
             <a href="https://my.limitloginattempts.com/" class="link__style_unlink" target="_blank">
                 Account Login
                 <div class="info-box-icon">
@@ -172,5 +174,5 @@ if ( $is_active_app_custom ) {
         <?php endif; ?>
     </div>
 
-    <?php include_once( LLA_PLUGIN_DIR.'views/tab-'.$active_tab.'.php' ); ?>
+    <?php include_once( LLA_PLUGIN_DIR . 'views/tab-' . $active_tab . '.php' ); ?>
 </div>
