@@ -1,17 +1,24 @@
 <?php
+/**
+ * Premium Page
+ *
+ * @var bool $is_active_app_custom
+ * @var string $block_sub_group
+ *
+ */
 
 use LLAR\Core\Config;
 
-if ( ! defined( 'ABSPATH' ) ) exit();
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 
-$active_app = Config::get( 'active_app' );
 $setup_code = Config::get( 'app_setup_code' );
-$is_local_no_empty_setup_code = ( $active_app === 'local' && ! empty( $setup_code ) );
+$is_local_no_empty_setup_code = ( ! $is_active_app_custom && ! empty( $setup_code ) );
 
 $min_plan = 'Premium';
 $plans = $this->array_name_plans();
-$block_sub_group = $active_app === 'custom' ? $this->info_sub_group() : false;
-$is_premium = ( $active_app === 'custom' && $plans[$block_sub_group] >= $plans[$min_plan] );
+$is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min_plan] );
 ?>
 
 <div id="llar-setting-page-premium" class="llar-premium-page-wrapper">
