@@ -280,6 +280,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   position: relative;
   min-width: 175px;
   text-transform: inherit;
+  text-decoration: none;
 }
 .llar_button.button__orange, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button, #llar-setting-page .button__orange.button, #llar-setting-page-logs .button__orange.button, #llar-setting-page-logs__active .button__orange.button, #llar-setting-page-debug .button__orange.button, #llar-setting-page-premium .button__orange.button, #llar-setting-page-help .button__orange.button {
   color: white !important;
@@ -424,6 +425,21 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-left: 0;
   margin-right: 35px;
   padding: 4px 5px 6px;
+}
+.limit-login-page-settings .nav-tab-wrapper .nav-tab .llar-alert-icon {
+  display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box;
+  margin: -2px 0 0;
+  padding: 0 1px 4px 2px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background-color: #d63638;
+  color: white;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
 }
 .limit-login-page-settings .nav-tab-wrapper .nav-tab-active {
   border-bottom: 4px solid #4ACAD8;
@@ -959,6 +975,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding-left: 0;
 }
 
+#llar-setting-page-logs .add_block__under_table, #llar-setting-page-logs__active .add_block__under_table {
+  margin-top: 20px;
+}
 #llar-setting-page-logs .add_block__under_table.image_plus, #llar-setting-page-logs__active .add_block__under_table.image_plus {
   box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
 }
@@ -1518,7 +1537,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   transition: width 0.4s;
 }
 
-#llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
+.header_massage {
+  margin-right: 20px;
+}
+.header_massage #llar-header-upgrade-mc-message, .header_massage #llar-header-upgrade-premium-message {
   position: relative;
   margin: 20px auto;
   width: fit-content;
@@ -1531,28 +1553,23 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: #FFEFD6;
   box-shadow: 0 4px 18px 0 rgba(114, 117, 123, 0.2);
 }
-@media screen and (max-width: 1799.5px) {
-  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
-    margin-right: 20px;
-  }
-}
 @media screen and (max-width: 991.5px) {
-  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
+  .header_massage #llar-header-upgrade-mc-message, .header_massage #llar-header-upgrade-premium-message {
     padding: 5px 14px;
     font-size: 11px;
   }
 }
 @media screen and (max-width: 767.5px) {
-  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
+  .header_massage #llar-header-upgrade-mc-message, .header_massage #llar-header-upgrade-premium-message {
     margin-left: 16px;
     margin-right: 16px;
   }
 }
-#llar-header-upgrade-mc-message p, #llar-header-upgrade-premium-message p {
+.header_massage #llar-header-upgrade-mc-message p, .header_massage #llar-header-upgrade-premium-message p {
   font-size: 16px;
   margin: 0;
 }
-#llar-header-upgrade-mc-message p .dashicons, #llar-header-upgrade-premium-message p .dashicons {
+.header_massage #llar-header-upgrade-mc-message p .dashicons, .header_massage #llar-header-upgrade-premium-message p .dashicons {
   width: 32px;
   height: 32px;
   font-size: 32px;
@@ -1561,36 +1578,151 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-right: 5px;
 }
 @media screen and (max-width: 991.5px) {
-  #llar-header-upgrade-mc-message p .dashicons, #llar-header-upgrade-premium-message p .dashicons {
+  .header_massage #llar-header-upgrade-mc-message p .dashicons, .header_massage #llar-header-upgrade-premium-message p .dashicons {
     width: 16px;
     height: 16px;
     font-size: 16px;
   }
 }
-#llar-header-upgrade-mc-message.exhausted, #llar-header-upgrade-premium-message.exhausted {
+.header_massage #llar-header-upgrade-mc-message.exhausted, .header_massage #llar-header-upgrade-premium-message.exhausted {
   color: #EC4652;
   font-weight: 400;
+  margin-left: auto;
+  margin-right: auto;
   padding: 12px 25px;
   background-color: rgba(236, 70, 82, 0.1019607843);
   border: 1px solid currentColor;
 }
-#llar-header-upgrade-mc-message .close, #llar-header-upgrade-premium-message .close {
+.header_massage #llar-header-upgrade-mc-message .close, .header_massage #llar-header-upgrade-premium-message .close {
   position: absolute;
   top: -6px;
   right: -9px;
   cursor: pointer;
 }
-#llar-header-upgrade-mc-message .close .dashicons, #llar-header-upgrade-premium-message .close .dashicons {
+.header_massage #llar-header-upgrade-mc-message .close .dashicons, .header_massage #llar-header-upgrade-premium-message .close .dashicons {
   width: 16px;
   height: 24px;
   font-size: 24px;
 }
 @media screen and (max-width: 991.5px) {
-  #llar-header-upgrade-mc-message .close .dashicons, #llar-header-upgrade-premium-message .close .dashicons {
+  .header_massage #llar-header-upgrade-mc-message .close .dashicons, .header_massage #llar-header-upgrade-premium-message .close .dashicons {
     width: 16px;
     height: 18px;
     font-size: 18px;
   }
+}
+
+#llar-header-login-custom-message {
+  position: relative;
+  margin: 20px auto;
+  width: fit-content;
+  color: #FF9800;
+  font-weight: 500;
+  padding: 14px 32px;
+  text-align: center;
+  border-radius: 40px;
+  border: 1px solid #EBB35A;
+  background-color: #FFEFD6;
+  box-shadow: 0 4px 18px 0 rgba(114, 117, 123, 0.2);
+  width: 900px;
+  font-size: 16px;
+  border-radius: 20px;
+}
+@media screen and (max-width: 1799.5px) {
+  #llar-header-login-custom-message {
+    margin-right: auto;
+  }
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-header-login-custom-message {
+    width: 795px;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-header-login-custom-message {
+    width: 710px;
+    font-size: 95%;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  #llar-header-login-custom-message {
+    font-size: 90%;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+@media screen and (max-width: 575.5px) {
+  #llar-header-login-custom-message {
+    width: 400px;
+  }
+}
+#llar-header-login-custom-message .message-flex {
+  display: flex;
+}
+#llar-header-login-custom-message .message-flex .col-first img {
+  width: 150px;
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-header-login-custom-message .message-flex .col-first img {
+    width: 130px;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  #llar-header-login-custom-message .message-flex .col-first img {
+    width: 100px;
+  }
+}
+#llar-header-login-custom-message .message-flex .col-second {
+  width: 30%;
+  line-height: 1.7;
+  color: #2A2F40;
+  margin: 16px 25px;
+  text-align: left;
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-header-login-custom-message .message-flex .col-second {
+    margin: 16px 10px;
+  }
+}
+#llar-header-login-custom-message .message-flex .col-third {
+  width: 45%;
+  margin: 16px 25px;
+  font-size: 87.5%;
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-header-login-custom-message .message-flex .col-third {
+    margin: 16px 10px;
+  }
+}
+#llar-header-login-custom-message .message-flex .col-third .row-first {
+  color: #666D84;
+  font-weight: 400;
+}
+#llar-header-login-custom-message .message-flex .col-third .row-second {
+  position: relative;
+  margin: 5px 10px;
+  color: #A4A8B7;
+}
+#llar-header-login-custom-message .message-flex .col-third .row-second hr {
+  background-color: rgba(255, 124, 6, 0.0980392157);
+  display: inline-block;
+  width: calc(50% - 50px);
+  border: 0;
+  height: 2px;
+  vertical-align: middle;
+}
+#llar-header-login-custom-message .message-flex .col-third .row-second span {
+  display: inline-flex;
+  width: 50px;
+  justify-content: center;
+}
+#llar-header-login-custom-message .message-flex .col-third .row-third {
+  font-weight: 500;
+  margin: 10px;
+  padding: 5px 10px;
+  background-color: rgba(255, 124, 6, 0.0980392157);
+  border-radius: 10px;
 }
 
 .settings_page_limit-login-attempts .update-nag {
@@ -1833,6 +1965,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-family: CoFo Sans, arial;
   margin-top: 40px;
 }
+#llar-dashboard-page * {
+  box-sizing: border-box;
+}
 #llar-dashboard-page ul, #llar-dashboard-page ol {
   margin-left: 0;
   padding-left: 32px;
@@ -1855,10 +1990,14 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 16px;
   text-align: left;
 }
+@media screen and (max-width: 1799.5px) {
+  #llar-dashboard-page .section-title__new {
+    gap: 10px;
+  }
+}
 @media screen and (max-width: 1599.5px) {
   #llar-dashboard-page .section-title__new {
     font-size: 14px;
-    gap: 10px;
   }
 }
 #llar-dashboard-page .section-title__new .llar-label {
@@ -1939,7 +2078,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 @media screen and (max-width: 1799.5px) {
   #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
-    padding: 30px 26px 16px;
+    padding: 30px 16px 16px;
   }
 }
 @media screen and (max-width: 1599.5px) {
@@ -1949,11 +2088,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
-    width: calc(50% - 4px);
+    width: calc(40% - 4px);
     min-height: 272px;
   }
 }
-@media screen and (max-width: 991.5px) {
+@media screen and (max-width: 1199.5px) {
   #llar-dashboard-page .dashboard-section-1 > [class^=info-box-] {
     width: 100%;
     min-height: 294px;
@@ -2033,6 +2172,16 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .actions {
   margin-top: 5px;
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-1 .info-box-2 {
+    width: calc(60% - 4px);
+  }
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-dashboard-page .dashboard-section-1 .info-box-2 {
+    width: 100%;
+  }
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-2 .section-content {
   overflow: visible;

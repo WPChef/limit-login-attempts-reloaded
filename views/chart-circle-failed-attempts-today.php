@@ -52,7 +52,11 @@ if ( ! $is_active_app_custom ) {
 
 		if ( ! empty( $setup_code ) ) {
 			$retries_chart_desc = sprintf(
-				__( 'Your site is currently at a higher risk for brute force activity. We recommend our <a class="llar_orange %s" target="_blank">free Micro Cloud upgrade</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded' ),
+				__( 'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
+				$upgrade_premium_url );
+		} else {
+			$retries_chart_desc = sprintf(
+				__( 'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
 				'button_micro_cloud' );
         }
 
@@ -76,7 +80,7 @@ if ( ! $is_active_app_custom ) {
         } else {
 			$upgrade_premium_url = ! empty ( $upgrade_premium_url ) ? $upgrade_premium_url : '';
 			$retries_chart_desc = sprintf(
-				__( 'Your site is currently at a higher risk for brute force activity. We recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access our login firewall and other premium features.', 'limit-login-attempts-reloaded' ),
+				__( 'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
 				$upgrade_premium_url );
 			$retries_chart_color = '#FF6633';
         }
@@ -98,7 +102,7 @@ if ( ! $is_active_app_custom ) {
                     <div class="hint_tooltip-content">
                         <?php $is_active_app_custom
 	                        ? esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' )
-	                        : esc_attr_e( 'An IP that has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' );
+	                       : esc_attr_e( 'An IP that has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' );
                         ?>
                     </div>
                 </div>

@@ -137,11 +137,11 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                 </tr>
             </table>
         </div>
-        <div class="submit">
+        <p class="submit">
             <input class="button menu__item col button__orange" name="llar_update_dashboard"
                    value="<?php echo __( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
                    type="submit"/>
-        </div>
+        </p>
     </form>
 
     <div class="add_block__under_table image_plus">
