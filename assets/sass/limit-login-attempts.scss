@@ -64,6 +64,22 @@
       margin-right: 35px;
       padding: 4px 5px 6px;
 
+      .llar-alert-icon {
+        display: inline-block;
+        vertical-align: middle;
+        box-sizing: border-box;
+        margin: -2px 0 0;
+        padding: 0 1px 4px 2px;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 9px;
+        background-color: #d63638;
+        color: white;
+        font-size: 14px;
+        line-height: 1.4;
+        text-align: center;
+      }
+
       &-active {
         border-bottom: 4px solid $primary-colors__turquoise;
       }
@@ -727,6 +743,7 @@
   @extend #llar-setting-page;
 
   .add_block__under_table {
+    margin-top: 20px;
 
     &.image_plus {
       box-shadow: 3px 5px 23px 0 $box-shadow__light-transparent-gray;
@@ -1451,8 +1468,85 @@
 
 
 // new design
-#llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
+.header_massage {
+  margin-right: 20px;
 
+  #llar-header-upgrade-mc-message, #llar-header-upgrade-premium-message {
+
+    position: relative;
+    margin: 20px auto;
+    width: fit-content;
+    color: $primary-colors__orange_light;
+    font-weight: $text-font-weight-bold;
+    padding: 14px 32px;
+    text-align: center;
+    border-radius: $border-radius__max;
+    border: 1px solid $border-element__red_sand;
+    background-color: $background-element__almond;
+    box-shadow: 0 4px 18px 0 $box-shadow__semi_transparent_gray;
+
+    @include _991 {
+      padding: 5px 14px;
+      font-size: 11px;
+    }
+
+    @include _767 {
+      margin-left: 16px;
+      margin-right: 16px;
+    }
+
+    p {
+      font-size: 16px;
+      margin: 0;
+
+      .dashicons {
+        width: 32px;
+        height: 32px;
+        font-size: 32px;
+        color: inherit;
+        vertical-align: middle;
+        margin-right: 5px;
+
+        @include _991 {
+          width: 16px;
+          height: 16px;
+          font-size: 16px;
+        }
+      }
+    }
+
+    &.exhausted {
+      color: $state-color__error;
+      font-weight: 400;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 12px 25px;
+      background-color: $state-color__error_back;
+      border: 1px solid currentColor;
+    }
+
+    .close {
+      position: absolute;
+      top: -6px;
+      right: -9px;
+      cursor: pointer;
+
+      .dashicons {
+        width: 16px;
+        height: 24px;
+        font-size: 24px;
+
+        @include _991 {
+          width: 16px;
+          height: 18px;
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}
+
+#llar-header-login-custom-message {
   position: relative;
   margin: 20px auto;
   width: fit-content;
@@ -1465,63 +1559,106 @@
   background-color: $background-element__almond;
   box-shadow: 0 4px 18px 0 $box-shadow__semi_transparent_gray;
 
+  width: 900px;
+  font-size: 16px;
+  border-radius: $border-radius;
+
   @include _1799 {
-    margin-right: 20px;
+    margin-right: auto;
+  }
+
+  @include _1199 {
+    width: 795px;
   }
 
   @include _991 {
-    padding: 5px 14px;
-    font-size: 11px;
+    width: 710px;
+    font-size: 95%
   }
 
   @include _767 {
-    margin-left: 16px;
-    margin-right: 16px;
+    font-size: 90%;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
   }
 
-  p {
-    font-size: 16px;
-    margin: 0;
+  @include _575 {
+    width: 400px;
+  }
 
-    .dashicons {
-      width: 32px;
-      height: 32px;
-      font-size: 32px;
-      color: inherit;
-      vertical-align: middle;
-      margin-right: 5px;
 
-      @include _991 {
-        width: 16px;
-        height: 16px;
-        font-size: 16px;
+  .message-flex {
+    display: flex;
+
+    .col-first {
+
+      img {
+        width: 150px;
+
+        @include _1199 {
+          width: 130px;
+        }
+
+        @include _767 {
+          width: 100px;
+        }
       }
     }
-  }
 
-  &.exhausted {
-    color: $state-color__error;
-    font-weight: 400;
-    padding: 12px 25px;
-    background-color: $state-color__error_back;
-    border: 1px solid currentColor;
-  }
+    .col-second {
+      width: 30%;
+      line-height: 1.7;
+      color: $typography-primary;
+      margin: 16px 25px;
+      text-align: left;
 
-  .close {
-    position: absolute;
-    top: -6px;
-    right: -9px;
-    cursor: pointer;
+      @include _1199 {
+        margin: 16px 10px;
+      }
+    }
 
-    .dashicons {
-      width: 16px;
-      height: 24px;
-      font-size: 24px;
+    .col-third {
+      width: 45%;
+      margin: 16px 25px;
+      font-size: 87.5%;
 
-      @include _991 {
-        width: 16px;
-        height: 18px;
-        font-size: 18px;
+      @include _1199 {
+        margin: 16px 10px;
+      }
+
+      .row-first {
+        color: $typography-secondary;
+        font-weight: 400;
+      }
+
+      .row-second {
+        position: relative;
+        margin: 5px 10px;
+        color: $typography-additional;
+
+        hr {
+          background-color: $primary-colors__orange-back;
+          display: inline-block;
+          width: calc(100% / 2 - 50px);
+          border: 0;
+          height: 2px;
+          vertical-align: middle;
+        }
+
+        span {
+          display: inline-flex;
+          width: 50px;
+          justify-content: center;
+        }
+      }
+
+      .row-third {
+        font-weight: 500;
+        margin: 10px;
+        padding: 5px 10px;
+        background-color: $primary-colors__orange-back;
+        border-radius: 10px;
       }
     }
   }

@@ -743,7 +743,7 @@ class Ajax {
 
 	    check_ajax_referer( 'llar-close-premium-message', 'sec' );
 
-	    Config::update( 'notifications_message_shown', 1 );
+	    Config::update( 'notifications_message_shown', strtotime( '+1 day' ) );
 
 	    wp_send_json_success();
     }
@@ -761,7 +761,7 @@ class Ajax {
 
 	    if ( ! empty( $email ) && is_email( $email ) ) {
 
-            $url_api = ! empty( LLAR_MC_URL ) ? LLAR_MC_URL : 'https://api.limitloginattempts.com/checkout/network';
+            $url_api = defined( 'LLAR_MC_URL' ) ? LLAR_MC_URL : 'https://api.limitloginattempts.com/checkout/network';
 
             $data = [
                 'group' => 'free',
