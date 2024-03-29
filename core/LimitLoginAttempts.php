@@ -1971,8 +1971,8 @@ class LimitLoginAttempts
 
                     <ul class="llar-buttons">
 						<li><a href="#" class="llar-review-dismiss" data-type="dismiss"><?php _e('Don\'t show again', 'limit-login-attempts-reloaded'); ?></a></li>
-                        <li><i class=""></i><a href="#" class="llar-review-dismiss button" data-type="later"><?php _e('Maybe later', 'limit-login-attempts-reloaded'); ?></a></li>
-						<li><a class="button button-primary" target="_blank" href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post"><?php _e('Leave a review', 'limit-login-attempts-reloaded'); ?></a></li>
+                        <li><i class=""></i><a href="#" class="llar-review-dismiss llar_button menu__item button__transparent_orange" data-type="later"><?php _e('Maybe later', 'limit-login-attempts-reloaded'); ?></a></li>
+						<li><a class="llar_button menu__item button__transparent_orange" target="_blank" href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post"><?php _e('Leave a review', 'limit-login-attempts-reloaded'); ?></a></li>
                     </ul>
                 </div>
 			</div>
