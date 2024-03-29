@@ -280,6 +280,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   position: relative;
   min-width: 175px;
   text-transform: inherit;
+  text-decoration: none;
 }
 .llar_button.button__orange, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button, #llar-setting-page .button__orange.button, #llar-setting-page-logs .button__orange.button, #llar-setting-page-logs__active .button__orange.button, #llar-setting-page-debug .button__orange.button, #llar-setting-page-premium .button__orange.button, #llar-setting-page-help .button__orange.button {
   color: white !important;
