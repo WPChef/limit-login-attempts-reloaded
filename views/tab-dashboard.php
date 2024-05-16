@@ -150,7 +150,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         </div>
     </div>
 
-    <?php if( $stats_global = CloudApp::stats_global() && false ) : ?>
+    <?php if( $stats_global = CloudApp::stats_global() ) : ?>
 	<div class="dashboard-section-4">
         <?php
 		$stats_global_dates = array();
