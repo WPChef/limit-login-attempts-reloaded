@@ -213,9 +213,11 @@ class LimitLoginAttempts
 
 		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 		add_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999, 2 );
+	    add_action( 'wp_login', array( $this, 'limit_login_success' ), 999, 2 );
 
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
+
 
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
@@ -867,6 +869,46 @@ class LimitLoginAttempts
 
 		return $uri;
 	}
+
+
+	/**
+	 * Fires after successful login
+	 *
+	 * @param $username
+	 * @param $user
+	 *
+	 */
+	public function limit_login_success( $username, $user ) {
+
+		$cloud_key = Config::get( 'cloud_key' );
+
+		if ( ! $cloud_key ) return;
+
+		if ( ! empty( $username ) ) {
+
+			$clean_url = '';
+			if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+
+				$referer_url = $_SERVER['HTTP_REFERER'];
+				$referer_parsed = parse_url( $referer_url );
+
+				$clean_url = isset( $referer_parsed['path']) ? $referer_parsed['path'] : '';
+				$clean_url = ltrim( $clean_url, '/' );
+			}
+
+			$data = array(
+				'ip'        => Helpers::get_all_ips(),
+				'login'     => $username,
+				'gateway'   => Helpers::detect_gateway(),
+				'roles'     => $user->roles,
+				'agent'     => $_SERVER['HTTP_USER_AGENT'],
+			    'url'       => $clean_url,
+			);
+
+			self::$cloud_app->request( 'login', 'post', $data );
+        }
+	}
+
 
 	/**
 	* Check if it is ok to login
