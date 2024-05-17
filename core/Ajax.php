@@ -21,6 +21,7 @@ class Ajax {
 		add_action( 'wp_ajax_app_setup', array( $this, 'app_setup_callback' ) );
 		add_action( 'wp_ajax_app_log_action', array( $this, 'app_log_action_callback' ) );
 		add_action( 'wp_ajax_app_load_log', array( $this, 'app_load_log_callback' ) );
+		add_action( 'wp_ajax_app_load_successful_login', array( $this, 'app_load_successful_login_callback' ) );
 		add_action( 'wp_ajax_app_load_lockouts', array( $this, 'app_load_lockouts_callback' ) );
 		add_action( 'wp_ajax_app_load_acl_rules', array( $this, 'app_load_acl_rules_callback' ) );
 		add_action( 'wp_ajax_app_load_country_access_rules', array( $this, 'app_load_country_access_rules_callback' ) );
@@ -374,6 +375,75 @@ class Ajax {
 							}
 							?>
                         </td>
+                    </tr>
+				<?php endforeach; ?>
+			<?php else : ?>
+				<?php if ( empty( $offset ) ) : ?>
+                    <tr class="empty-row">
+                        <td colspan="100%"
+                            style="text-align: center"><?php _e( 'No events yet.', 'limit-login-attempts-reloaded' ); ?></td>
+                    </tr>
+				<?php endif; ?>
+			<?php endif; ?>
+			<?php
+
+			wp_send_json_success( array(
+				'html'        => ob_get_clean(),
+				'offset'      => $log['offset'],
+				'total_items' => count( $log['items'] )
+			) );
+
+		} else {
+
+			wp_send_json_error( array(
+				'msg' => 'The endpoint is not responding. Please contact your app provider to settle that.'
+			) );
+		}
+	}
+
+
+	public function app_load_successful_login_callback() {
+
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+
+			wp_send_json_error( array() );
+		}
+
+		check_ajax_referer( 'llar-app-load-log', 'sec' );
+
+		$offset = sanitize_text_field( $_POST['offset'] );
+		$limit  = sanitize_text_field( $_POST['limit'] );
+
+		$log = LimitLoginAttempts::$cloud_app->log( $limit, $offset );
+
+		if ( $log ) {
+
+			$date_format    = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+			$countries_list = Helpers::get_countries_list();
+
+			ob_start();
+			if ( empty( $log['items'] ) && ! empty( $log['offset'] ) ) : ?>
+			<?php elseif ( $log['items'] ) : ?>
+
+				<?php foreach ( $log['items'] as $item ) :
+					$country_name = ! empty( $countries_list[ $item['country_code'] ] ) ? $countries_list[ $item['country_code'] ] : '';
+					?>
+                    <tr>
+                        <td class="llar-col-nowrap"><?php echo get_date_from_gmt( date( 'Y-m-d H:i:s', $item['created_at'] ), $date_format ); ?></td>
+                        <td>
+                            <div class="llar-log-country-flag">
+                                <span class="hint_tooltip-parent">
+                                    <img src="<?php echo LLA_PLUGIN_URL . 'assets/img/flags/' . esc_attr( strtolower( $item['country_code'] ) ) . '.png' ?>">
+                                    <div class="hint_tooltip">
+                                        <div class="hint_tooltip-content">
+                                            <?php echo esc_attr( $country_name ) ?>
+                                        </div>
+                                    </div>
+                                </span>
+                                <span><?php echo esc_html( $item['ip'] ); ?></span></div>
+                        </td>
+                        <td><?php echo esc_html( $item['gateway'] ); ?></td>
+                        <td><?php echo ( is_null( $item['login'] ) ) ? '-' : esc_html( $item['login'] ); ?></td>
                     </tr>
 				<?php endforeach; ?>
 			<?php else : ?>

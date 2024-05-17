@@ -150,21 +150,9 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         </div>
     </div>
 
-    <?php if( $stats_global = CloudApp::stats_global() ) : ?>
+    <?php if ( $is_active_app_custom ) : ?>
 	<div class="dashboard-section-4">
         <?php
-		$stats_global_dates = array();
-		$date_format = trim( get_option( 'date_format' ), ' yY,._:;-/\\' );
-		$date_format = str_replace( 'F', 'M', $date_format );
-        $chart3__color = '#FF7C06';
-        $chart3__color_gradient = '#FF7C06B3';
-
-		foreach ( $stats_global['attempts']['day']['at'] as $timest ) {
-
-			$stats_global_dates[] = date( $date_format, $timest );
-		}
-
-		$countries_list = Helpers::get_countries_list();
 
         $lockout_notify = explode( ',', Config::get( 'lockout_notify' ) );
         $email_checked = in_array( 'email', $lockout_notify ) ? ' checked ' : '';
@@ -179,57 +167,129 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         $block_by_country_disabled = $block_sub_group ? '' : ' disabled';
         $is_by_country =  $block_by_country ? ' checked disabled' : $block_by_country_disabled;
         $is_auto_update_choice = (Helpers::is_auto_update_enabled() && !Helpers::is_block_automatic_update_disabled()) ? ' checked' : '';
+
+
+        $app_config = Config::get( 'app_config' );
+        $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.com/logs?key=' . esc_attr( $app_config['key'] ) : false;
+
         ?>
         <div class="info-box-1">
             <div class="section-title__new">
-                <span class="llar-label">
-                    <?php _e( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ); ?>
-                </span>
-                <span class="llar-label llar-label__date">
-                    <?php _e( 'Today', 'limit-login-attempts-reloaded' ); ?>
-                </span>
-                <span class="llar-label llar-label__info">
-                    <?php _e( 'Global Network (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
-                    <div class="hint_tooltip-parent">
-                    <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
-                    <div class="hint_tooltip">
-                        <div class="hint_tooltip-content">
-                            <?php esc_attr_e( 'Failed logins for all users in the LLAR network.', 'limit-login-attempts-reloaded' ); ?>
-                        </div>
-                    </div>
+                <div class="title">
+                    <?php _e( 'Successful Login Attempts', 'limit-login-attempts-reloaded' ) ?>
                 </div>
-                </span>
             </div>
             <div class="section-content">
-                <table class="lockouts-by-country-table">
-                    <tr>
-                        <th><?php _e( 'Country', 'limit-login-attempts-reloaded' ); ?></th>
-                        <th><?php _e( 'Attempts', 'limit-login-attempts-reloaded' ); ?></th>
-                    </tr>
-                    <?php foreach( $stats_global['countries'] as $country_data ) :
-
-                        $country_code = ( array_key_exists( $country_data['code'], $countries_list ) ) ? $country_data['code'] : 'ZZ';
-                        $country_name = apply_filters( 'llar_country_name', $countries_list[$country_code], $country_code );
-                        ?>
+                <div class="llar-table-scroll-wrap llar-app-log-infinity-scroll">
+                    <table class="form-table llar-table-app-log">
+                        <thead>
                         <tr>
-                            <td>
-                                <?php if( $country_code !== 'ZZ' ) : ?>
-                                    <img class="flag-icon" src="<?php echo LLA_PLUGIN_URL; ?>assets/img/flags/<?php echo esc_attr( strtolower( $country_code ) ); ?>.png">
-                                <?php endif; ?>
-                                <?php echo esc_html( $country_name ); ?>
-                            </td>
-                            <td>
-                                <div class="separate"></div>
-                            </td>
-                            <td>
-                                <?php echo esc_html( number_format_i18n( $country_data['attempts'] ) ); ?>
+                            <th scope="col"><?php _e( "Time", 'limit-login-attempts-reloaded' ); ?></th>
+                            <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>
+                            <th scope="col"><?php _e( "URL", 'limit-login-attempts-reloaded' ); ?></th>
+                            <th scope="col"><?php _e( "Login", 'limit-login-attempts-reloaded' ); ?></th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot class="table-inline-preloader">
+                        <tr>
+                            <td colspan="100%">
+                                <div class="load-more-button"><a href="#">
+							            <?php _e( "Load older events", 'limit-login-attempts-reloaded' ); ?>
+                                    </a>
+                                </div>
+                                <div class="preloader-row">
+                                    <span class="preloader-icon"></span>
+                                    <span class="preloader-text">
+                                        <?php echo sprintf(
+                                            __( 'Loading older events, skipping ACL events. <a href="%s" target="_blank">Full logs</a>', 'limit-login-attempts-reloaded' ),
+                                            $full_log_url);
+                                        ?>
+                                    </span>
+                                </div>
                             </td>
                         </tr>
-                    <?php endforeach; ?>
-                </table>
-                <p class="countries-table-info">
-                    <?php _e( 'Block by country feature available with <a href="https://www.limitloginattempts.com/info.php?from=plugin-dashboard-country" class="link__style_color_inherit llar_bold" target="_blank">premium plus plan</a>.', 'limit-login-attempts-reloaded' ) ?>
-                </p>
+                        </tfoot>
+                    </table>
+                </div>
+                <script type="text/javascript">
+                    ;(function($){
+
+                        $(document).ready(function () {
+
+                            let $log_table_body = $('.llar-table-app-log tbody'),
+                                $preloader = $log_table_body.next('.table-inline-preloader'),
+                                $load_more_btn = $preloader.find('.load-more-button a'),
+                                loading_data = false,
+                                page_offset = '',
+                                page_limit = 5,
+                                total_loaded = 0;
+
+                            load_log_data();
+
+                            $('.llar-global-reload-btn').on('click', function() {
+                                page_offset = '';
+                                $log_table_body.find('> tr').remove();
+                                $preloader.removeClass('hidden');
+                                total_loaded = 0;
+                                load_log_data();
+                            });
+
+                            $load_more_btn.on('click', function(e) {
+                                e.preventDefault();
+                                total_loaded = 0;
+                                load_log_data();
+                            });
+
+                            function load_log_data() {
+
+                                if ( page_offset === false ) {
+                                    return;
+                                }
+
+                                $preloader.addClass('loading');
+                                loading_data = true;
+
+                                $.post(ajaxurl, {
+                                    action: 'app_load_successful_login',
+                                    offset: page_offset,
+                                    limit: page_limit,
+                                    sec: '<?php echo wp_create_nonce( "llar-app-load-log" ); ?>'
+                                }, function(response){
+
+                                    $preloader.removeClass('loading');
+
+                                    if(response.success) {
+
+                                        if(response.data.html) {
+                                            $log_table_body.append(response.data.html);
+                                        }
+
+                                        total_loaded += response.data.total_items;
+
+                                        if(response.data.offset) {
+                                            page_offset = response.data.offset;
+
+                                            if(response.data.total_items < page_limit && total_loaded < page_limit) {
+
+                                                load_log_data();
+                                            }
+
+                                        } else {
+                                            $preloader.addClass('hidden');
+                                            page_offset = false;
+                                        }
+
+                                        loading_data = false;
+                                    }
+
+                                });
+
+                            }
+                        });
+
+                    })(jQuery);
+                </script>
             </div>
         </div>
 
