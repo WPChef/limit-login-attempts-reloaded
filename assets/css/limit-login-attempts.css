@@ -1101,29 +1101,29 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody {
   color: #666D84;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row, #llar-setting-page-logs__active .llar-table-scroll-wrap #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd), #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd), #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) {
   border-radius: 16px;
   background-color: #F6FBFF;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
   font-size: 16px;
   font-weight: 400;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
+  #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
     font-size: 14px;
   }
 }
 @media screen and (max-width: 1399.5px) {
-  #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
+  #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
     font-size: 14px;
   }
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td:first-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:first-child {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td:first-child, #llar-setting-page-logs__active .llar-table-scroll-wrap #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) td:first-child, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:first-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:first-child {
   border-top-left-radius: 16px;
   border-bottom-left-radius: 16px;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td:last-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:last-child {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td:last-child, #llar-setting-page-logs__active .llar-table-scroll-wrap #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) td:last-child, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:last-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:last-child {
   border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
 }
@@ -2483,10 +2483,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   flex: 0 0 auto;
   width: calc(50% - 16px);
   min-height: 100px;
+  max-height: 535px;
   padding: 32px 30px 24px;
   border-radius: 20px;
   background: #FDFDFD;
   box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
+  overflow: hidden;
 }
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
@@ -2512,94 +2514,199 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: inline-block;
   position: relative;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new {
-  position: relative;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .title {
+  color: #2A2F40;
+  font-size: 20px;
+  font-weight: 500;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .llar-label {
-  min-width: unset;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .llar-label__date {
-  background-color: #F6FBFF;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .llar-label__info {
-  background-color: unset;
-  color: #A4A8B7;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table {
-  width: 100%;
-  border-collapse: inherit;
-  border-spacing: 0;
-  margin-bottom: 16px;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .desc {
+  color: #666D84;
   font-size: 16px;
 }
-@media screen and (max-width: 767.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table {
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content {
+  height: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+  padding-bottom: 30px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table {
+  position: relative;
+  border-collapse: separate;
+  border-spacing: 0 3px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table.llar-preloader:before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJtYXJnaW46YXV0bztiYWNrZ3JvdW5kOjAgMCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQiIGRpc3BsYXk9ImJsb2NrIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlM2UzZTMiIHN0cm9rZS13aWR0aD0iNSIgcj0iMzIiIHN0cm9rZS1kYXNoYXJyYXk9IjE1MC43OTY0NDczNzIzMTAwNyA1Mi4yNjU0ODI0NTc0MzY2OSIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0LjAxIDUwIDUwKSI+PGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiB2YWx1ZXM9IjAgNTAgNTA7MzYwIDUwIDUwIiBrZXlUaW1lcz0iMDsxIi8+PC9jaXJjbGU+PC9zdmc+");
+  background-color: rgba(255, 255, 255, 0.7);
+  background-repeat: no-repeat;
+  background-position: center center;
+  z-index: 999;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table thead tr th {
+  color: #2A2F40;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 20px 18px;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table thead tr th {
+    font-size: 15px;
+    padding: 15px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table thead tr th {
     font-size: 12px;
   }
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr {
-  border-color: inherit;
-  border-style: solid;
-  border-width: 0;
-  position: relative;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody {
+  color: #666D84;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr:nth-child(even)::after {
-  content: "";
-  position: absolute;
-  top: 5px;
-  bottom: 5px;
-  left: 0;
-  right: 0;
-  border-radius: 20px;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.empty-row, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) {
+  border-radius: 16px;
   background-color: #F6FBFF;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr th {
-  padding: 20px;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.empty-row td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) td {
+  font-size: 16px;
+  font-weight: 400;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr th {
-  background-color: #FDFDFD;
-  color: #2A2F40;
-  text-align: left;
-  font-weight: 500;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td {
-  color: #666D84;
-  border-bottom: 1px solid #E8E9EC;
-  position: relative;
-  z-index: 1;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td .separate {
-  height: 40px;
-  border-left: 1px solid #E8E9EC;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td:last-child {
-  border-right: unset;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td .flag-icon {
-  width: 34px;
-  vertical-align: middle;
-  margin-right: 10px;
-  border-radius: 4px;
-}
-@media screen and (max-width: 767.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td .flag-icon {
-    width: 28px;
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.empty-row td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) td {
+    font-size: 14px;
   }
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .countries-table-info {
-  font-size: 16px;
-  color: #FF7C06;
-  background-color: rgba(255, 124, 6, 0.0980392157);
-  border-radius: 20px;
-  padding: 4px 33px;
-  margin-top: 4px;
-  margin-bottom: 0;
-  float: left;
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.empty-row td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) td {
+    font-size: 14px;
+  }
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .countries-table-info-right {
-  margin-top: 5px;
-  margin-bottom: 0;
-  float: right;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.empty-row td:first-child, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) td:first-child {
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.empty-row td:last-child, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(odd) td:last-child {
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td {
+  padding: 18px;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td {
+    padding: 14px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td {
+    padding: 12px;
+  }
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.llar-col-nowrap {
+  white-space: nowrap;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td select {
+  font-family: inherit;
+  min-width: 150px;
+  margin-right: 25px;
+  background-size: 16px 16px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .llar-log-country-flag {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 3px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .llar-log-country-flag .hint_tooltip {
+  width: fit-content;
+  top: 33px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .llar-log-country-flag .hint_tooltip:before {
+  right: 55%;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .llar-log-country-flag .hint_tooltip-content {
+  font-size: 14px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .llar-log-country-flag .llar-tooltip:before {
+  width: auto !important;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .llar-log-country-flag img {
+  width: 34px;
+  height: auto;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .llar-log-country-flag img {
+    width: 30px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .llar-log-country-flag img {
+    width: 25px;
+  }
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button {
+  line-height: 1;
+  margin-right: 5px;
+  border-radius: 8px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button:last-child {
+  margin-right: 0;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button .dashicons {
+  vertical-align: middle;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button.llar-app-log-action-btn {
+  min-width: 35px;
+  text-align: center;
+  display: inline-block;
+  line-height: 20px;
+  cursor: pointer;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button.llar-app-log-action-btn i {
+  vertical-align: middle;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button.llar-app-log-action-btn:hover i {
+  color: #3c8dbc;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader {
+  text-align: center;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader.hidden {
+  display: none;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader tr td {
+  padding: 5px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader tr td .load-more-button a {
+  text-decoration-style: dashed;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader tr td .preloader-row {
+  display: none;
+  align-items: center;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader tr td .preloader-row .preloader-icon {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJtYXJnaW46YXV0bztiYWNrZ3JvdW5kOjAgMCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQiIGRpc3BsYXk9ImJsb2NrIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlM2UzZTMiIHN0cm9rZS13aWR0aD0iNSIgcj0iMzIiIHN0cm9rZS1kYXNoYXJyYXk9IjE1MC43OTY0NDczNzIzMTAwNyA1Mi4yNjU0ODI0NTc0MzY2OSIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0LjAxIDUwIDUwKSI+PGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiB2YWx1ZXM9IjAgNTAgNTA7MzYwIDUwIDUwIiBrZXlUaW1lcz0iMDsxIi8+PC9jaXJjbGU+PC9zdmc+");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader tr td .preloader-row .preloader-text {
+  color: #999;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader.loading tr td .load-more-button {
+  display: none;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader.loading tr td .preloader-row {
+  display: inline-flex;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 {
   line-height: 1.5;
