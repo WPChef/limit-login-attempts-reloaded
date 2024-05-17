@@ -880,9 +880,13 @@ class LimitLoginAttempts
 	 */
 	public function limit_login_success( $username, $user ) {
 
-		$cloud_key = Config::get( 'cloud_key' );
+		if ( ! self::$cloud_app ) {
+		    return;
+		}
 
-		if ( ! $cloud_key ) return;
+		if ( Config::get( 'active_app' ) !== 'custom' ) {
+			return;
+		}
 
 		if ( ! empty( $username ) ) {
 
