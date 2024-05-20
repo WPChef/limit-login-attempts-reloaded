@@ -897,7 +897,7 @@ class LimitLoginAttempts
 				$referer_parsed = parse_url( $referer_url );
 
 				$clean_url = isset( $referer_parsed['path']) ? $referer_parsed['path'] : '';
-				$clean_url = ltrim( $clean_url, '/' );
+				$clean_url = trim( $clean_url, '/' );
 			}
 
 			$data = array(
