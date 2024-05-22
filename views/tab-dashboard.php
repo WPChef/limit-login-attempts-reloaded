@@ -180,14 +180,14 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                 </div>
             </div>
             <div class="section-content">
-                <div class="llar-table-scroll-wrap llar-app-log-infinity-scroll">
-                    <table class="form-table llar-table-app-log">
+                <div class="llar-table-scroll-wrap llar-app-login-infinity-scroll">
+                    <table class="form-table llar-table-app-login">
                         <thead>
                         <tr>
                             <th scope="col"><?php _e( "Time", 'limit-login-attempts-reloaded' ); ?></th>
-                            <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>
-                            <th scope="col"><?php _e( "URL", 'limit-login-attempts-reloaded' ); ?></th>
                             <th scope="col"><?php _e( "Login", 'limit-login-attempts-reloaded' ); ?></th>
+                            <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>
+                            <th scope="col"><?php _e( "Role", 'limit-login-attempts-reloaded' ); ?></th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -217,7 +217,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
                         $(document).ready(function () {
 
-                            let $log_table_body = $('.llar-table-app-log tbody'),
+                            let $log_table_body = $('.llar-table-app-login tbody'),
                                 $preloader = $log_table_body.next('.table-inline-preloader'),
                                 $load_more_btn = $preloader.find('.load-more-button a'),
                                 loading_data = false,
@@ -225,23 +225,23 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                                 page_limit = 5,
                                 total_loaded = 0;
 
-                            load_log_data();
+                            load_login_data();
 
                             $('.llar-global-reload-btn').on('click', function() {
                                 page_offset = '';
                                 $log_table_body.find('> tr').remove();
                                 $preloader.removeClass('hidden');
                                 total_loaded = 0;
-                                load_log_data();
+                                load_login_data();
                             });
 
                             $load_more_btn.on('click', function(e) {
                                 e.preventDefault();
                                 total_loaded = 0;
-                                load_log_data();
+                                load_login_data();
                             });
 
-                            function load_log_data() {
+                            function load_login_data() {
 
                                 if ( page_offset === false ) {
                                     return;
@@ -254,7 +254,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                                     action: 'app_load_successful_login',
                                     offset: page_offset,
                                     limit: page_limit,
-                                    sec: '<?php echo wp_create_nonce( "llar-app-load-log" ); ?>'
+                                    sec: '<?php echo wp_create_nonce( "llar-app-load-login" ); ?>'
                                 }, function(response){
 
                                     $preloader.removeClass('loading');
@@ -272,7 +272,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
                                             if(response.data.total_items < page_limit && total_loaded < page_limit) {
 
-                                                load_log_data();
+                                                load_login_data();
                                             }
 
                                         } else {
@@ -281,10 +281,42 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                                         }
 
                                         loading_data = false;
+
+                                        setTimeout(function () {
+                                            button_login_data_open();
+                                        }, 500)
+
                                     }
 
                                 });
 
+                            }
+
+
+                            function button_login_data_open() {
+
+                                const $llar_add_login_open = $('.llar-add-login-open')
+
+                                $llar_add_login_open.on( 'click', function () {
+
+                                    const dashicons = $(this).find('.dashicons');
+                                    const dashicons_down = 'dashicons-arrow-down-alt2';
+                                    const dashicons_up = 'dashicons-arrow-up-alt2';
+                                    const parent_tr = $( this ).closest( 'tr' );
+                                    const hidden_row = parent_tr.next();
+
+                                    if ( hidden_row.hasClass( 'table-row-open' ) ) {
+
+                                        dashicons.removeClass(dashicons_up);
+                                        dashicons.addClass(dashicons_down);
+                                        hidden_row.removeClass( 'table-row-open' );
+                                    } else {
+
+                                        dashicons.removeClass(dashicons_down);
+                                        dashicons.addClass(dashicons_up);
+                                        hidden_row.addClass( 'table-row-open' );
+                                    }
+                                })
                             }
                         });
 

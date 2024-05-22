@@ -316,6 +316,26 @@ class CloudApp
 		return $this->request( 'log', 'get', $data );
 	}
 
+
+	/**
+	 * @param int $limit
+	 * @param string $offset
+	 *
+	 * @return bool|mixed
+	 * @throws Exception
+	 */
+	public function get_login($limit = 25, $offset = '')
+	{
+		$data = array();
+
+		$data['limit'] = $limit;
+		$data['offset'] = $offset;
+		$data['is_short'] = 1;
+
+		return $this->request( 'login', 'get', $data );
+	}
+
+
 	/**
 	 * @param int $limit
 	 * @param string $offset
@@ -384,6 +404,6 @@ class CloudApp
 			return false;
 		}
 
-		return json_decode( sanitize_textarea_field( stripslashes( $response['data'] ) ), true );
+		return Helpers::sanitize_stripslashes_deep( json_decode( $response['data'], true ) );
 	}
 }

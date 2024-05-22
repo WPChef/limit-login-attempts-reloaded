@@ -78,6 +78,18 @@ class Helpers {
 		return $countries;
 	}
 
+	public static function get_continent_list() {
+
+		if ( ! ( $continent = require LLA_PLUGIN_DIR . '/resources/continent.php' ) ) {
+
+			return array();
+		}
+
+		asort( $continent );
+
+		return $continent;
+	}
+
 	/**
 	 * @param $ip
 	 * @param $cidr
@@ -117,6 +129,14 @@ class Helpers {
 		$content = preg_replace( '/\\\+/', '\\', $content );
 
 		return $content;
+	}
+
+	// Solution prevents double quotes problem in json string
+	public static function sanitize_stripslashes_deep( $value )
+	{
+		$value = is_array( $value ) ? array_map( 'self::sanitize_stripslashes_deep', $value ) : sanitize_textarea_field( stripslashes( $value ) );
+
+		return $value;
 	}
 
 	public static function is_auto_update_enabled() {
