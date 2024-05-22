@@ -409,31 +409,36 @@ class Ajax {
 			wp_send_json_error( array() );
 		}
 
-		check_ajax_referer( 'llar-app-load-log', 'sec' );
+		check_ajax_referer( 'llar-app-load-login', 'sec' );
 
 		$offset = sanitize_text_field( $_POST['offset'] );
 		$limit  = sanitize_text_field( $_POST['limit'] );
 
-		$log = LimitLoginAttempts::$cloud_app->log( $limit, $offset );
+		$data = LimitLoginAttempts::$cloud_app->get_login( $limit, $offset );
 
-		if ( $log ) {
+		if ( $data ) {
 
 			$date_format    = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
 			$countries_list = Helpers::get_countries_list();
+			$continent_list = Helpers::get_continent_list();
 
 			ob_start();
-			if ( empty( $log['items'] ) && ! empty( $log['offset'] ) ) : ?>
-			<?php elseif ( $log['items'] ) : ?>
+			if ( empty( $data['items'] ) && ! empty( $data['offset'] ) ) :
 
-				<?php foreach ( $log['items'] as $item ) :
-					$country_name = ! empty( $countries_list[ $item['country_code'] ] ) ? $countries_list[ $item['country_code'] ] : '';
+			elseif ( $data['items'] ) : ?>
+
+				<?php foreach ( $data['items'] as $item ) :
+
+					$country_name = ! empty( $countries_list[ $item['location']['country_code'] ] ) ? $countries_list[ $item['location']['country_code'] ] : '';
+					$continent_name = ! empty( $continent_list[ $item['location']['continent_code'] ] ) ? $continent_list[ $item['location']['continent_code'] ] : '';
 					?>
                     <tr>
-                        <td class="llar-col-nowrap"><?php echo get_date_from_gmt( date( 'Y-m-d H:i:s', $item['created_at'] ), $date_format ); ?></td>
+                        <td class="llar-col-nowrap"><?php echo get_date_from_gmt( date( 'Y-m-d H:i:s', $item['at'] ), $date_format ); ?></td>
+                        <td><?php echo ( is_null( $item['login'] ) ) ? '-' : esc_html( $item['login'] ) ?></td>
                         <td>
                             <div class="llar-log-country-flag">
                                 <span class="hint_tooltip-parent">
-                                    <img src="<?php echo LLA_PLUGIN_URL . 'assets/img/flags/' . esc_attr( strtolower( $item['country_code'] ) ) . '.png' ?>">
+                                    <img src="<?php echo LLA_PLUGIN_URL . 'assets/img/flags/' . esc_attr( strtolower( $item['location']['country_code'] ) ) . '.png' ?>">
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
                                             <?php echo esc_attr( $country_name ) ?>
@@ -442,8 +447,93 @@ class Ajax {
                                 </span>
                                 <span><?php echo esc_html( $item['ip'] ); ?></span></div>
                         </td>
-                        <td><?php echo esc_html( $item['gateway'] ); ?></td>
-                        <td><?php echo ( is_null( $item['login'] ) ) ? '-' : esc_html( $item['login'] ); ?></td>
+                        <td>
+	                        <?php if (isset($item['roles']) && is_array($item['roles'])) : ?>
+                                <span class="hint_tooltip-parent">
+                                    <?php $admin_key = array_search('administrator', $item['roles']);
+                                    if ( $admin_key !== false ) : ?>
+                                        <span><?= esc_html( $item['roles'][$admin_key] ) ?></span>
+                                        <?php unset( $item['roles'][$admin_key] );
+                                    else :
+                                        echo esc_html( $item['roles'][0] );
+                                        unset( $item['roles'][0] );
+                                    endif;
+                                    $list_roles = '';
+                                    foreach ( $item['roles'] as $role ) :
+                                            $list_roles .= '<li>' . esc_html( $role ) . '</li>';
+                                    endforeach;
+                                    if ( !empty ( $list_roles ) ) : ?>
+                                        <div class="hint_tooltip">
+                                            <div class="hint_tooltip-content">
+                                                <ul>
+                                                    <?php echo $list_roles; ?>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                </span>
+	                        <?php endif; ?>
+                        </td>
+                        <td class="button-open">
+		                    <button class="button llar-add-login-open">
+                                <i class="dashicons dashicons-arrow-down-alt2"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="hidden-row">
+                        <td colspan="6">
+                            <?php if ( !empty( $continent_name ) ) : ?>
+                                <div>
+                                    <span>Continent: </span><?= $continent_name ?>
+                                </div>
+					        <?php endif; ?>
+	                        <?php if ( !empty( $country_name ) ) : ?>
+                                <div>
+                                    <span>Country: </span><?= $country_name ?>
+                                </div>
+	                        <?php endif; ?>
+	                        <?php if ( !empty( $item['location']['stateprov_code'] ) ) : ?>
+                                <div>
+                                    <span>State/Province: </span><?= $item['location']['stateprov_code'] ?>
+                                </div>
+	                        <?php endif; ?>
+	                        <?php if ( !empty( $item['location']['district'] ) ) : ?>
+                                <div>
+                                    <span>District: </span><?= $item['location']['district'] ?>
+                                </div>
+	                        <?php endif; ?>
+	                        <?php if ( !empty( $item['location']['city'] ) ) : ?>
+                                <div>
+                                    <span>City: </span><?= $item['location']['city'] ?>
+                                </div>
+	                        <?php endif; ?>
+                            <?php if ( !empty( $item['location']['zipcode'] ) ) : ?>
+                                <div>
+                                    <span>Zipcode: </span><?= $item['location']['zipcode'] ?>
+                                </div>
+	                        <?php endif; ?>
+	                        <?php if ( !empty( $item['location']['latitude'] ) && !empty( $item['location']['longitude'] ) ) : ?>
+                                <div>
+                                    <span>Latitude, Longitude: </span><?= $item['location']['latitude'] . ', ' . $item['location']['longitude'] ?>
+                                </div>
+	                        <?php endif; ?>
+	                        <?php if ( !empty( $item['location']['timezone_name'] ) && !empty( $item['location']['timezone_offset'] ) ) : ?>
+                                <div>
+                                    <span>Timezone: </span><?= $item['location']['timezone_name'] . $item['location']['timezone_offset'] ?>
+                                </div>
+	                        <?php endif; ?>
+                            <?php if ( !empty( $item['location']['isp_name'] ) && !empty( $item['location']['organization_name'] ) ) : ?>
+                                <div>
+                                    <span>Internet Provider: </span><?= $item['location']['isp_name'] . ', ' . $item['location']['organization_name'] ?>
+                                </div>
+	                        <?php endif; ?>
+	                        <?php if ( !empty( $item['location']['connection_type'] ) ) : ?>
+                                <div>
+                                    <span>Connection Type: </span><?= $item['location']['connection_type'] ?>
+                                </div>
+	                        <?php endif; ?>
+<!--                            --><?//= '<pre>' . print_r($item, true) . '</pre>' ?>
+                        </td>
                     </tr>
 				<?php endforeach; ?>
 			<?php else : ?>
@@ -458,8 +548,8 @@ class Ajax {
 
 			wp_send_json_success( array(
 				'html'        => ob_get_clean(),
-				'offset'      => $log['offset'],
-				'total_items' => count( $log['items'] )
+				'offset'      => $data['offset'],
+				'total_items' => count( $data['items'] )
 			) );
 
 		} else {
