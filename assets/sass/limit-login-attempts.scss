@@ -996,6 +996,7 @@
                 height: auto;
                 border-radius: $border-radius__min * .5;
                 vertical-align: middle;
+                margin-right: 5px;
 
                 @include _1599 {
                   width: 30px;
