@@ -577,15 +577,15 @@
       flex: 0 0 auto;
       width: calc(50% - 16px);
       min-height: 100px;
-      max-height: 535px;
-      padding: 32px 30px 24px;
+      max-height: 600px;
+      padding: 32px 23px 24px 30px;
       border-radius: $border-radius;
       background: $background-body;
       box-shadow: 4px 4px 18px 0 $box-shadow__light_transparent_gray;
       overflow: hidden;
 
       @include _1599 {
-        padding: 27px 22px 20px;
+        padding: 27px 18px 20px 22px;
       }
 
       @include _1399 {
@@ -593,7 +593,7 @@
       }
 
       @include _991 {
-        padding: 30px 22px 16px;
+        padding: 27px 16px 16px 18px;
       }
 
       &:last-child {
@@ -616,11 +616,6 @@
     }
 
     .info-box-1 {
-      padding-right: 23px;
-
-      @include _1599 {
-        padding-right: 18px;
-      }
 
       .section {
 
@@ -950,7 +945,15 @@
 
     .info-box-2 {
       line-height: 1.5;
-      padding-left: 45px;
+      padding-left: 30px;
+
+      @include _1599 {
+        padding-left: 25px;
+      }
+
+      @include _991 {
+        padding-left: 22px;
+      }
 
       .section {
 
@@ -965,6 +968,11 @@
           .desc {
             color: $typography-secondary;
             font-size: 16px;
+            line-height: 2;
+
+            @include _1599 {
+              line-height: 1.8;
+            }
           }
         }
 
@@ -976,7 +984,20 @@
             color: $typography-primary;
             font-size: 16px;
             font-weight: 500;
-            margin-top: 30px;
+            margin-top: 27px;
+
+            @include _1599 {
+              font-size: 14px;
+              margin-top: 20px;
+            }
+
+            @include _1399 {
+              margin-top: 15px;
+            }
+
+            @include _991 {
+              margin-top: 12px;
+            }
 
             input {
               box-sizing: content-box;

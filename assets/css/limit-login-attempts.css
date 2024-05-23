@@ -2484,8 +2484,8 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   flex: 0 0 auto;
   width: calc(50% - 16px);
   min-height: 100px;
-  max-height: 535px;
-  padding: 32px 30px 24px;
+  max-height: 600px;
+  padding: 32px 23px 24px 30px;
   border-radius: 20px;
   background: #FDFDFD;
   box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
@@ -2493,7 +2493,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 @media screen and (max-width: 1599.5px) {
   #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
-    padding: 27px 22px 20px;
+    padding: 27px 18px 20px 22px;
   }
 }
 @media screen and (max-width: 1399.5px) {
@@ -2503,7 +2503,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 @media screen and (max-width: 991.5px) {
   #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
-    padding: 30px 22px 16px;
+    padding: 27px 16px 16px 18px;
   }
 }
 #llar-dashboard-page .dashboard-section-4 > [class^=info-box-]:last-child {
@@ -2519,14 +2519,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-4 .hint_tooltip-parent {
   display: inline-block;
   position: relative;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 {
-  padding-right: 23px;
-}
-@media screen and (max-width: 1599.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 {
-    padding-right: 18px;
-  }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .title {
   color: #2A2F40;
@@ -2770,7 +2762,17 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 {
   line-height: 1.5;
-  padding-left: 45px;
+  padding-left: 30px;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 {
+    padding-left: 25px;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 {
+    padding-left: 22px;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title__new .title {
   color: #2A2F40;
@@ -2780,6 +2782,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title__new .desc {
   color: #666D84;
   font-size: 16px;
+  line-height: 2;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title__new .desc {
+    line-height: 1.8;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content {
   margin-top: 0;
@@ -2789,7 +2797,23 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #2A2F40;
   font-size: 16px;
   font-weight: 500;
-  margin-top: 30px;
+  margin-top: 27px;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list {
+    font-size: 14px;
+    margin-top: 20px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list {
+    margin-top: 15px;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list {
+    margin-top: 12px;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input {
   box-sizing: content-box;
