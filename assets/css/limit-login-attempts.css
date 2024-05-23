@@ -2493,6 +2493,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 @media screen and (max-width: 1599.5px) {
   #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
+    max-height: 515px;
     padding: 27px 18px 20px 22px;
   }
 }
