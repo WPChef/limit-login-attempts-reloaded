@@ -484,17 +484,19 @@ class Ajax {
                         <td colspan="6">
                             <?php if ( !empty( $continent_name ) ) : ?>
                                 <div>
-                                    <span>Continent: </span><?= $continent_name ?>
+                                    <span>Continent: </span><?= $continent_name . ' (' . $item['location']['continent_code'] . ')' ?>
                                 </div>
 					        <?php endif; ?>
 	                        <?php if ( !empty( $country_name ) ) : ?>
                                 <div>
-                                    <span>Country: </span><?= $country_name ?>
+                                    <span>Country: </span><?= $country_name . ' (' . $item['location']['country_code'] . ')' ?>
                                 </div>
 	                        <?php endif; ?>
-	                        <?php if ( !empty( $item['location']['stateprov_code'] ) ) : ?>
+	                        <?php if ( !empty( $item['location']['stateprov'] ) ) :
+
+		                        $stateprov_code = !empty($item['location']['stateprov_code']) ? ' (' . $item['location']['stateprov_code'] . ')' : ''; ?>
                                 <div>
-                                    <span>State/Province: </span><?= $item['location']['stateprov_code'] ?>
+                                    <span>State/Province: </span><?= $item['location']['stateprov'] . $stateprov_code ?>
                                 </div>
 	                        <?php endif; ?>
 	                        <?php if ( !empty( $item['location']['district'] ) ) : ?>
@@ -517,14 +519,43 @@ class Ajax {
                                     <span>Latitude, Longitude: </span><?= $item['location']['latitude'] . ', ' . $item['location']['longitude'] ?>
                                 </div>
 	                        <?php endif; ?>
-	                        <?php if ( !empty( $item['location']['timezone_name'] ) && !empty( $item['location']['timezone_offset'] ) ) : ?>
+	                        <?php if ( !empty( $item['location']['timezone_name'] ) ) :
+
+		                        $timezone_offset = '';
+                                if ( !empty( $item['location']['timezone_offset'] ) ) {
+
+	                                $timezone_offset = (int)$item['location']['timezone_offset'] > 0
+                                        ? '+' . $item['location']['timezone_offset']
+                                        : $item['location']['timezone_offset'];
+                                }
+                                ?>
                                 <div>
-                                    <span>Timezone: </span><?= $item['location']['timezone_name'] . $item['location']['timezone_offset'] ?>
+                                    <span>Timezone: </span><?= $item['location']['timezone_name'] . ' ' . $timezone_offset ?>
                                 </div>
 	                        <?php endif; ?>
-                            <?php if ( !empty( $item['location']['isp_name'] ) && !empty( $item['location']['organization_name'] ) ) : ?>
+                            <?php if ( !empty( $item['location']['isp_name'] ) && !empty( $item['location']['organization_name'] ) ) :
+
+	                            $usage_type = !empty( $item['location']['usage_type'] ) ? ' (' . $item['location']['usage_type'] . ')' : '';
+
+	                            $isp_name = $item['location']['isp_name'];
+	                            $organization_name = $item['location']['organization_name'];
+
+	                            if ( $isp_name === $organization_name ) {
+
+		                            $full_name =  $organization_name;
+	                            } elseif ( strpos($isp_name, $organization_name ) !== false ) {
+
+		                            $full_name = $isp_name;
+	                            } elseif ( strpos($organization_name, $isp_name ) !== false ) {
+
+		                            $full_name = $organization_name;
+	                            } else {
+
+		                            $full_name =  $isp_name . ' / ' . $organization_name;
+	                            }
+                                ?>
                                 <div>
-                                    <span>Internet Provider: </span><?= $item['location']['isp_name'] . ', ' . $item['location']['organization_name'] ?>
+                                    <span>Internet Provider: </span><?= $full_name . $usage_type ?>
                                 </div>
 	                        <?php endif; ?>
 	                        <?php if ( !empty( $item['location']['connection_type'] ) ) : ?>

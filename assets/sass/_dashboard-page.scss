@@ -584,6 +584,10 @@
       box-shadow: 4px 4px 18px 0 $box-shadow__light_transparent_gray;
       overflow: hidden;
 
+      @include _1599 {
+        padding: 27px 22px 20px;
+      }
+
       @include _1399 {
         width: 100%;
       }
@@ -612,7 +616,11 @@
     }
 
     .info-box-1 {
-      padding: 32px 23px 24px 30px;
+      padding-right: 23px;
+
+      @include _1599 {
+        padding-right: 18px;
+      }
 
       .section {
 
@@ -642,6 +650,7 @@
             position: relative;
             border-collapse: separate;
             border-spacing: 0 3px;
+            padding-right: 3px;
 
 
             &.llar-preloader {
@@ -662,49 +671,50 @@
               }
             }
 
+            tr {
+
+              th, td {
+                font-size: 16px;
+                font-weight: 400;
+                width: fit-content;
+                padding: 20px 12px;
+
+                @include _1599 {
+                  font-size: 14px;
+                  padding: 15px 8px;
+                }
+
+                @include _1399 {
+                  padding: 12px;
+                }
+
+                @include _767 {
+                  display: table-cell;
+                  width: fit-content;
+                  font-size: 12px;
+                }
+              }
+            }
+
             thead {
 
               tr {
 
                 th {
                   color: $typography-primary;
-                  font-size: 16px;
                   font-weight: 500;
-                  padding: 20px 18px;
-
-                  @include _1599 {
-                    font-size: 15px;
-                    padding: 15px;
-                  }
-
-                  @include _1399 {
-                    font-size: 12px;
-                  }
                 }
               }
             }
 
             tbody {
-              color: $typography-secondary;
 
               tr {
                 border-radius: $border-radius__normal;
                 background-color: $background__sky-blue;
 
                 td {
-                  font-size: 16px;
-                  font-weight: 400;
-                  padding: 18px;
-
-                  @include _1599 {
-                    font-size: 14px;
-                    padding: 14px;
-                  }
-
-                  @include _1399 {
-                    font-size: 14px;
-                    padding: 12px;
-                  }
+                  color: $typography-secondary;
 
                   &:first-child {
                     border-top-left-radius: $border-radius__normal;
@@ -809,6 +819,7 @@
                     &.llar-add-login-open {
                       display: inline-block;
                       width: 30px;
+                      min-height: 30px;
                       padding: 0;
                       text-align: center;
                       line-height: 20px;
@@ -816,15 +827,23 @@
                       color: $typography-additional;
                       border-color: currentColor;
 
-                      i {
-                        vertical-align: middle;
+                      @include _767 {
+                        width: 25px;
+                        min-height: 25px;
+
+                        .dashicons {
+                          font-size: 14px;
+                          height: 16px;
+                        }
+                      }
+
+                      &:focus {
+                        outline: unset;
+                        box-shadow: unset;
                       }
 
                       &:hover {
-
-                        i {
-                          color: #3c8dbc;
-                        }
+                        color: $primary-colors__turquoise;
                       }
                     }
                   }
@@ -851,6 +870,14 @@
 
                   &.table-row-open {
                     display: table-row;
+
+                    td {
+                      font-size: 14px;
+
+                      @include _767 {
+                        font-size: 12px;
+                      }
+                    }
                   }
                 }
               }
