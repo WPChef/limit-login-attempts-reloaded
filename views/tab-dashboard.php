@@ -168,7 +168,6 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         $is_by_country =  $block_by_country ? ' checked disabled' : $block_by_country_disabled;
         $is_auto_update_choice = (Helpers::is_auto_update_enabled() && !Helpers::is_block_automatic_update_disabled()) ? ' checked' : '';
 
-
         $app_config = Config::get( 'app_config' );
         $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.com/logs?key=' . esc_attr( $app_config['key'] ) : false;
 
@@ -285,11 +284,8 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                                         setTimeout(function () {
                                             button_login_data_open();
                                         }, 500)
-
                                     }
-
                                 });
-
                             }
 
 

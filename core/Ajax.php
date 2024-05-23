@@ -563,7 +563,6 @@ class Ajax {
                                     <span>Connection Type: </span><?= $item['location']['connection_type'] ?>
                                 </div>
 	                        <?php endif; ?>
-<!--                            --><?//= '<pre>' . print_r($item, true) . '</pre>' ?>
                         </td>
                     </tr>
 				<?php endforeach; ?>
