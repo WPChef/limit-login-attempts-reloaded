@@ -2568,17 +2568,17 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 16px;
   font-weight: 400;
   width: fit-content;
-  padding: 20px 12px;
+  padding: 20px 2px 20px 14px;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr th, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr td {
     font-size: 14px;
-    padding: 15px 8px;
+    padding: 15px 2px 15px 12px;
   }
 }
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr th, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr td {
-    padding: 12px;
+    padding: 12px 2px 12px 14px;
   }
 }
 @media screen and (max-width: 767.5px) {
@@ -2623,7 +2623,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 12px;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .hint_tooltip:before {
-  right: 55%;
+  right: 40%;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .hint_tooltip-content {
   font-size: 14px;
