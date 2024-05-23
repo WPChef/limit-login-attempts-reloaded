@@ -2490,6 +2490,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
   overflow: hidden;
 }
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
+    padding: 27px 22px 20px;
+  }
+}
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
     width: 100%;
@@ -2515,7 +2520,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   position: relative;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 {
-  padding: 32px 23px 24px 30px;
+  padding-right: 23px;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 {
+    padding-right: 18px;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .title {
   color: #2A2F40;
@@ -2537,6 +2547,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   position: relative;
   border-collapse: separate;
   border-spacing: 0 3px;
+  padding-right: 3px;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table.llar-preloader:before {
   content: "";
@@ -2552,46 +2563,40 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   top: 0;
   left: 0;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table thead tr th {
-  color: #2A2F40;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr th, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr td {
   font-size: 16px;
-  font-weight: 500;
-  padding: 20px 18px;
+  font-weight: 400;
+  width: fit-content;
+  padding: 20px 12px;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table thead tr th {
-    font-size: 15px;
-    padding: 15px;
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr th, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr td {
+    font-size: 14px;
+    padding: 15px 8px;
   }
 }
 @media screen and (max-width: 1399.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table thead tr th {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr th, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr td {
+    padding: 12px;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr th, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tr td {
+    display: table-cell;
+    width: fit-content;
     font-size: 12px;
   }
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody {
-  color: #666D84;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table thead tr th {
+  color: #2A2F40;
+  font-weight: 500;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr {
   border-radius: 16px;
   background-color: #F6FBFF;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td {
-  font-size: 16px;
-  font-weight: 400;
-  padding: 18px;
-}
-@media screen and (max-width: 1599.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td {
-    font-size: 14px;
-    padding: 14px;
-  }
-}
-@media screen and (max-width: 1399.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td {
-    font-size: 14px;
-    padding: 12px;
-  }
+  color: #666D84;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td:first-child {
   border-top-left-radius: 16px;
@@ -2677,6 +2682,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button.llar-add-login-open {
   display: inline-block;
   width: 30px;
+  min-height: 30px;
   padding: 0;
   text-align: center;
   line-height: 20px;
@@ -2684,11 +2690,22 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #A4A8B7;
   border-color: currentColor;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button.llar-add-login-open i {
-  vertical-align: middle;
+@media screen and (max-width: 767.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button.llar-add-login-open {
+    width: 25px;
+    min-height: 25px;
+  }
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button.llar-add-login-open .dashicons {
+    font-size: 14px;
+    height: 16px;
+  }
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button.llar-add-login-open:hover i {
-  color: #3c8dbc;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button.llar-add-login-open:focus {
+  outline: unset;
+  box-shadow: unset;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td .button.llar-add-login-open:hover {
+  color: #4ACAD8;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.button-open {
   padding: 0 2px;
@@ -2704,6 +2721,14 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open {
   display: table-row;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td {
+  font-size: 14px;
+}
+@media screen and (max-width: 767.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td {
+    font-size: 12px;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader {
   text-align: center;
