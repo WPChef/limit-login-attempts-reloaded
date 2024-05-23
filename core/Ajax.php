@@ -484,19 +484,20 @@ class Ajax {
                         <td colspan="6">
                             <?php if ( !empty( $continent_name ) ) : ?>
                                 <div>
-                                    <span>Continent: </span><?= $continent_name . ' (' . $item['location']['continent_code'] . ')' ?>
+                                    <span>Continent: </span><?= $continent_name ?>
                                 </div>
 					        <?php endif; ?>
-	                        <?php if ( !empty( $country_name ) ) : ?>
+	                        <?php if ( !empty( $country_name ) ) :
+
+                                $country_code = $item['location']['country_code'] !== 'ZZ' ? ' (' . $item['location']['country_code'] . ')' : '';
+                                ?>
                                 <div>
-                                    <span>Country: </span><?= $country_name . ' (' . $item['location']['country_code'] . ')' ?>
+                                    <span>Country: </span><?= $country_name . $country_code ?>
                                 </div>
 	                        <?php endif; ?>
-	                        <?php if ( !empty( $item['location']['stateprov'] ) ) :
-
-		                        $stateprov_code = !empty($item['location']['stateprov_code']) ? ' (' . $item['location']['stateprov_code'] . ')' : ''; ?>
+	                        <?php if ( !empty( $item['location']['stateprov'] ) ) : ?>
                                 <div>
-                                    <span>State/Province: </span><?= $item['location']['stateprov'] . $stateprov_code ?>
+                                    <span>State/Province: </span><?= $item['location']['stateprov'] ?>
                                 </div>
 	                        <?php endif; ?>
 	                        <?php if ( !empty( $item['location']['district'] ) ) : ?>
