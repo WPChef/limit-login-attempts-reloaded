@@ -431,10 +431,24 @@ class Ajax {
 
 					$country_name = ! empty( $countries_list[ $item['location']['country_code'] ] ) ? $countries_list[ $item['location']['country_code'] ] : '';
 					$continent_name = ! empty( $continent_list[ $item['location']['continent_code'] ] ) ? $continent_list[ $item['location']['continent_code'] ] : '';
+					$long_login = mb_strlen( $item['login'] ) > 10;
+					$login =  $long_login ? mb_substr( $item['login'], 0, 10 ) . '...' : ( ( is_null( $item['login'] ) ) ? '-' : esc_html( $item['login'] ) );
+					$login_url = !empty( $item['user_id'] ) ? get_edit_user_link( $item['user_id'] ) : '';
 					?>
                     <tr>
                         <td class="llar-col-nowrap"><?php echo get_date_from_gmt( date( 'Y-m-d H:i:s', $item['at'] ), $date_format ); ?></td>
-                        <td><?php echo ( is_null( $item['login'] ) ) ? '-' : esc_html( $item['login'] ) ?></td>
+                        <td>
+                            <span class="hint_tooltip-parent">
+                                    <a href="<?php echo $login_url ?>"><?php echo $login ?></a>
+                                    <?php if ( $long_login ) : ?>
+                                        <div class="hint_tooltip">
+                                            <div class="hint_tooltip-content">
+                                                <?php echo esc_html( $item['login'] ) ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                            </span>
+                        </td>
                         <td>
                             <div class="llar-log-country-flag">
                                 <span class="hint_tooltip-parent">
@@ -445,14 +459,15 @@ class Ajax {
                                         </div>
                                     </div>
                                 </span>
-                                <span><?php echo esc_html( $item['ip'] ); ?></span></div>
+                                <span><?php echo esc_html( $item['ip'] ); ?></span>
+                            </div>
                         </td>
                         <td>
-	                        <?php if (isset($item['roles']) && is_array($item['roles'])) : ?>
+	                        <?php if ( isset( $item['roles'] ) && is_array( $item['roles'] ) ) : ?>
                                 <span class="hint_tooltip-parent">
-                                    <?php $admin_key = array_search('administrator', $item['roles']);
+                                    <?php $admin_key = array_search( 'administrator', $item['roles'] );
                                     if ( $admin_key !== false ) : ?>
-                                        <span><?= esc_html( $item['roles'][$admin_key] ) ?></span>
+                                        <span><?php echo esc_html( $item['roles'][$admin_key] ) ?></span>
                                         <?php unset( $item['roles'][$admin_key] );
                                     else :
                                         echo esc_html( $item['roles'][0] );
@@ -484,7 +499,7 @@ class Ajax {
                         <td colspan="6">
                             <?php if ( !empty( $continent_name ) ) : ?>
                                 <div>
-                                    <span>Continent: </span><?= $continent_name ?>
+                                    <span>Continent: </span><?php echo $continent_name ?>
                                 </div>
 					        <?php endif; ?>
 	                        <?php if ( !empty( $country_name ) ) :
@@ -492,32 +507,32 @@ class Ajax {
                                 $country_code = $item['location']['country_code'] !== 'ZZ' ? ' (' . $item['location']['country_code'] . ')' : '';
                                 ?>
                                 <div>
-                                    <span>Country: </span><?= $country_name . $country_code ?>
+                                    <span>Country: </span><?php echo $country_name . $country_code ?>
                                 </div>
 	                        <?php endif; ?>
 	                        <?php if ( !empty( $item['location']['stateprov'] ) ) : ?>
                                 <div>
-                                    <span>State/Province: </span><?= $item['location']['stateprov'] ?>
+                                    <span>State/Province: </span><?php echo $item['location']['stateprov'] ?>
                                 </div>
 	                        <?php endif; ?>
 	                        <?php if ( !empty( $item['location']['district'] ) ) : ?>
                                 <div>
-                                    <span>District: </span><?= $item['location']['district'] ?>
+                                    <span>District: </span><?php echo $item['location']['district'] ?>
                                 </div>
 	                        <?php endif; ?>
 	                        <?php if ( !empty( $item['location']['city'] ) ) : ?>
                                 <div>
-                                    <span>City: </span><?= $item['location']['city'] ?>
+                                    <span>City: </span><?php echo $item['location']['city'] ?>
                                 </div>
 	                        <?php endif; ?>
                             <?php if ( !empty( $item['location']['zipcode'] ) ) : ?>
                                 <div>
-                                    <span>Zipcode: </span><?= $item['location']['zipcode'] ?>
+                                    <span>Zipcode: </span><?php echo $item['location']['zipcode'] ?>
                                 </div>
 	                        <?php endif; ?>
 	                        <?php if ( !empty( $item['location']['latitude'] ) && !empty( $item['location']['longitude'] ) ) : ?>
                                 <div>
-                                    <span>Latitude, Longitude: </span><?= $item['location']['latitude'] . ', ' . $item['location']['longitude'] ?>
+                                    <span>Latitude, Longitude: </span><?php echo $item['location']['latitude'] . ', ' . $item['location']['longitude'] ?>
                                 </div>
 	                        <?php endif; ?>
 	                        <?php if ( !empty( $item['location']['timezone_name'] ) ) :
@@ -531,7 +546,7 @@ class Ajax {
                                 }
                                 ?>
                                 <div>
-                                    <span>Timezone: </span><?= $item['location']['timezone_name'] . ' ' . $timezone_offset ?>
+                                    <span>Timezone: </span><?php echo $item['location']['timezone_name'] . ' ' . $timezone_offset ?>
                                 </div>
 	                        <?php endif; ?>
                             <?php if ( !empty( $item['location']['isp_name'] ) && !empty( $item['location']['organization_name'] ) ) :
@@ -556,12 +571,12 @@ class Ajax {
 	                            }
                                 ?>
                                 <div>
-                                    <span>Internet Provider: </span><?= $full_name . $usage_type ?>
+                                    <span>Internet Provider: </span><?php echo $full_name . $usage_type ?>
                                 </div>
 	                        <?php endif; ?>
 	                        <?php if ( !empty( $item['location']['connection_type'] ) ) : ?>
                                 <div>
-                                    <span>Connection Type: </span><?= $item['location']['connection_type'] ?>
+                                    <span>Connection Type: </span><?php echo $item['location']['connection_type'] ?>
                                 </div>
 	                        <?php endif; ?>
                         </td>

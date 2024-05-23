@@ -900,9 +900,12 @@ class LimitLoginAttempts
 				$clean_url = trim( $clean_url, '/' );
 			}
 
+			$user = get_user_by('login', $username);
+
 			$data = array(
 				'ip'        => Helpers::get_all_ips(),
 				'login'     => $username,
+				'user_id'   => $user->ID,
 				'gateway'   => Helpers::detect_gateway(),
 				'roles'     => $user->roles,
 				'agent'     => $_SERVER['HTTP_USER_AGENT'],

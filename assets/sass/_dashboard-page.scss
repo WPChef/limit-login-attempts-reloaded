@@ -677,15 +677,15 @@
                 font-size: 16px;
                 font-weight: 400;
                 width: fit-content;
-                padding: 20px 12px;
+                padding: 20px 2px 20px 14px;
 
                 @include _1599 {
                   font-size: 14px;
-                  padding: 15px 8px;
+                  padding: 15px 2px 15px 12px;
                 }
 
                 @include _1399 {
-                  padding: 12px;
+                  padding: 12px 2px 12px 14px;
                 }
 
                 @include _767 {
@@ -744,7 +744,7 @@
                     padding: 12px;
 
                     &:before {
-                      right: 55%;
+                      right: 40%;
                     }
 
                     &-content {
