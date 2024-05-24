@@ -906,16 +906,6 @@
             background-color: $background__sky-blue;
 
             td {
-              font-size: 16px;
-              font-weight: 400;
-
-              @include _1599 {
-                font-size: 14px;
-              }
-
-              @include _1399 {
-                font-size: 14px;
-              }
 
               &:first-child {
                 border-top-left-radius: $border-radius__normal;
@@ -930,13 +920,17 @@
           }
 
           td {
+            font-size: 16px;
+            font-weight: 400;
             padding: 18px;
 
             @include _1599 {
+              font-size: 14px;
               padding: 14px;
             }
 
             @include _1399 {
+              font-size: 14px;
               padding: 12px;
             }
 

@@ -1105,20 +1105,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   border-radius: 16px;
   background-color: #F6FBFF;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(4n+1) td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(4n+1) td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
-  font-size: 16px;
-  font-weight: 400;
-}
-@media screen and (max-width: 1599.5px) {
-  #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(4n+1) td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(4n+1) td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
-    font-size: 14px;
-  }
-}
-@media screen and (max-width: 1399.5px) {
-  #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(4n+1) td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(4n+1) td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
-    font-size: 14px;
-  }
-}
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td:first-child, #llar-setting-page-logs__active .llar-table-scroll-wrap #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(4n+1) td:first-child, #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(4n+1) td:first-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:first-child {
   border-top-left-radius: 16px;
   border-bottom-left-radius: 16px;
@@ -1128,15 +1114,19 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   border-bottom-right-radius: 16px;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td {
+  font-size: 16px;
+  font-weight: 400;
   padding: 18px;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td {
+    font-size: 14px;
     padding: 14px;
   }
 }
 @media screen and (max-width: 1399.5px) {
   #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td {
+    font-size: 14px;
     padding: 12px;
   }
 }

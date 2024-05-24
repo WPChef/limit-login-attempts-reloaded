@@ -199,12 +199,6 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                                 </div>
                                 <div class="preloader-row">
                                     <span class="preloader-icon"></span>
-                                    <span class="preloader-text">
-                                        <?php echo sprintf(
-                                            __( 'Loading older events, skipping ACL events. <a href="%s" target="_blank">Full logs</a>', 'limit-login-attempts-reloaded' ),
-                                            $full_log_url);
-                                        ?>
-                                    </span>
                                 </div>
                             </td>
                         </tr>
@@ -219,6 +213,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                             let $log_table_body = $('.llar-table-app-login tbody'),
                                 $preloader = $log_table_body.next('.table-inline-preloader'),
                                 $load_more_btn = $preloader.find('.load-more-button a'),
+                                // $llar_add_login_open,
                                 loading_data = false,
                                 page_offset = '',
                                 page_limit = 5,
@@ -226,13 +221,13 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
                             load_login_data();
 
-                            $('.llar-global-reload-btn').on('click', function() {
-                                page_offset = '';
-                                $log_table_body.find('> tr').remove();
-                                $preloader.removeClass('hidden');
-                                total_loaded = 0;
-                                load_login_data();
-                            });
+                            // $('.llar-global-reload-btn').on('click', function() {
+                            //     page_offset = '';
+                            //     $log_table_body.find('> tr').remove();
+                            //     $preloader.removeClass('hidden');
+                            //     total_loaded = 0;
+                            //     load_login_data();
+                            // });
 
                             $load_more_btn.on('click', function(e) {
                                 e.preventDefault();
@@ -291,9 +286,11 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
                             function button_login_data_open() {
 
-                                const $llar_add_login_open = $('.llar-add-login-open')
+                                let $llar_add_login_open = $('.llar-add-login-open');
 
                                 $llar_add_login_open.on( 'click', function () {
+
+                                    console.log($llar_add_login_open);
 
                                     const dashicons = $(this).find('.dashicons');
                                     const dashicons_down = 'dashicons-arrow-down-alt2';
