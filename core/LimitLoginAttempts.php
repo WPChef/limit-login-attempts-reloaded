@@ -611,6 +611,7 @@ class LimitLoginAttempts
             $auto_update                = wp_create_nonce( 'llar-toggle-auto-update' );
             $app_setup                  = wp_create_nonce( 'llar-app-setup' );
             $account_policies           = wp_create_nonce( 'llar-strong-account-policies' );
+            $block_country              = wp_create_nonce( 'llar-block_by_country' );
             $onboarding_reset           = wp_create_nonce( 'llar-action-onboarding-reset' );
             $dismiss_onboarding_popup   = wp_create_nonce( 'llar-dismiss-onboarding-popup' );
             $activate_micro_cloud       = wp_create_nonce( 'llar-activate-micro-cloud' );
@@ -621,6 +622,7 @@ class LimitLoginAttempts
                 'nonce_auto_update'               => $auto_update,
                 'nonce_app_setup'                 => $app_setup,
                 'nonce_account_policies'          => $account_policies,
+                'nonce_block_by_country'          => $block_country,
                 'nonce_onboarding_reset'          => $onboarding_reset,
                 'nonce_dismiss_onboarding_popup'  => $dismiss_onboarding_popup,
                 'nonce_activate_micro_cloud'      => $activate_micro_cloud,
