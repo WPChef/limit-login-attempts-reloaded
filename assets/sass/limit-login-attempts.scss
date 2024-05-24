@@ -1853,6 +1853,7 @@
 .toplevel_page_limit-login-attempts {
   .update-nag,
   .notice:not(.llar-notice-review) {
+    margin-top: 15px;
     display: none;
   }
 
