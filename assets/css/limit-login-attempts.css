@@ -1871,6 +1871,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .dashboard_page_llar-welcome .notice:not(.llar-notice-review),
 .toplevel_page_limit-login-attempts .update-nag,
 .toplevel_page_limit-login-attempts .notice:not(.llar-notice-review) {
+  margin-top: 15px;
   display: none;
 }
 .dashboard_page_llar-welcome .video-container,

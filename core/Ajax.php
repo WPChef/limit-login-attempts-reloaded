@@ -439,7 +439,7 @@ class Ajax {
                         <td class="llar-col-nowrap"><?php echo get_date_from_gmt( date( 'Y-m-d H:i:s', $item['at'] ), $date_format ); ?></td>
                         <td>
                             <span class="hint_tooltip-parent">
-                                    <a href="<?php echo $login_url ?>"><?php echo $login ?></a>
+                                    <a href="<?php echo $login_url ?>" target="_blank"><?php echo $login ?></a>
                                     <?php if ( $long_login ) : ?>
                                         <div class="hint_tooltip">
                                             <div class="hint_tooltip-content">
