@@ -213,7 +213,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                             let $log_table_body = $('.llar-table-app-login tbody'),
                                 $preloader = $log_table_body.next('.table-inline-preloader'),
                                 $load_more_btn = $preloader.find('.load-more-button a'),
-                                // $llar_add_login_open,
+                                login_button_open = '.llar-add-login-open',
                                 loading_data = false,
                                 page_offset = '',
                                 page_limit = 5,
@@ -221,19 +221,32 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
                             load_login_data();
 
-                            // $('.llar-global-reload-btn').on('click', function() {
-                            //     page_offset = '';
-                            //     $log_table_body.find('> tr').remove();
-                            //     $preloader.removeClass('hidden');
-                            //     total_loaded = 0;
-                            //     load_login_data();
-                            // });
-
                             $load_more_btn.on('click', function(e) {
                                 e.preventDefault();
                                 total_loaded = 0;
                                 load_login_data();
                             });
+
+                            $log_table_body.on('click', login_button_open, function() {
+
+                                const dashicons = $(this).find('.dashicons');
+                                const dashicons_down = 'dashicons-arrow-down-alt2';
+                                const dashicons_up = 'dashicons-arrow-up-alt2';
+                                const parent_tr = $( this ).closest( 'tr' );
+                                const hidden_row = parent_tr.next();
+
+                                if ( hidden_row.hasClass( 'table-row-open' ) ) {
+
+                                    dashicons.removeClass(dashicons_up);
+                                    dashicons.addClass(dashicons_down);
+                                    hidden_row.removeClass( 'table-row-open' );
+                                } else {
+
+                                    dashicons.removeClass(dashicons_down);
+                                    dashicons.addClass(dashicons_up);
+                                    hidden_row.addClass( 'table-row-open' );
+                                }
+                            })
 
                             function load_login_data() {
 
@@ -275,42 +288,10 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                                         }
 
                                         loading_data = false;
-
-                                        setTimeout(function () {
-                                            button_login_data_open();
-                                        }, 500)
                                     }
                                 });
                             }
 
-
-                            function button_login_data_open() {
-
-                                let $llar_add_login_open = $('.llar-add-login-open');
-
-                                $llar_add_login_open.on( 'click', function () {
-
-                                    console.log($llar_add_login_open);
-
-                                    const dashicons = $(this).find('.dashicons');
-                                    const dashicons_down = 'dashicons-arrow-down-alt2';
-                                    const dashicons_up = 'dashicons-arrow-up-alt2';
-                                    const parent_tr = $( this ).closest( 'tr' );
-                                    const hidden_row = parent_tr.next();
-
-                                    if ( hidden_row.hasClass( 'table-row-open' ) ) {
-
-                                        dashicons.removeClass(dashicons_up);
-                                        dashicons.addClass(dashicons_down);
-                                        hidden_row.removeClass( 'table-row-open' );
-                                    } else {
-
-                                        dashicons.removeClass(dashicons_down);
-                                        dashicons.addClass(dashicons_up);
-                                        hidden_row.addClass( 'table-row-open' );
-                                    }
-                                })
-                            }
                         });
 
                     })(jQuery);
