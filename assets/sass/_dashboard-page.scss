@@ -869,10 +869,10 @@
                     display: table-row;
 
                     td {
-                      font-size: 14px;
+                      font-size: 16px;
 
                       @include _767 {
-                        font-size: 12px;
+                        font-size: 14px;
                       }
 
                       span {

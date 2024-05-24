@@ -2708,11 +2708,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: table-row;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td {
-  font-size: 14px;
+  font-size: 16px;
 }
 @media screen and (max-width: 767.5px) {
   #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td span {
