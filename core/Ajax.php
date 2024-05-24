@@ -420,6 +420,8 @@ class Ajax {
 		if ( $data ) {
 
 			$date_format    = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+			$current_date   = current_time('Y-m-d');
+
 			$countries_list = Helpers::get_countries_list();
 			$continent_list = Helpers::get_continent_list();
 
@@ -435,9 +437,20 @@ class Ajax {
 					$long_login = mb_strlen( $item['login'] ) > 10;
 					$login =  $long_login ? mb_substr( $item['login'], 0, 10 ) . '...' : ( ( is_null( $item['login'] ) ) ? '-' : esc_html( $item['login'] ) );
 					$login_url = !empty( $item['user_id'] ) ? get_edit_user_link( $item['user_id'] ) : '';
+
+					$log_date_gmt   = date( 'Y-m-d H:i:s', $item['at'] );
+					$log_local_date = get_date_from_gmt( $log_date_gmt, 'Y-m-d' );
+					$log_local_time = get_date_from_gmt( $log_date_gmt, get_option( 'time_format' ) );
+
+
+					if ( $log_local_date === $current_date ) {
+						$correct_date = 'Today at ' . $log_local_time;
+					} else {
+						$correct_date =  get_date_from_gmt($log_date_gmt, $date_format);
+					}
 					?>
                     <tr>
-                        <td class="llar-col-nowrap"><?php echo get_date_from_gmt( date( 'Y-m-d H:i:s', $item['at'] ), $date_format ); ?></td>
+                        <td class="llar-col-nowrap"><?php echo $correct_date; ?></td>
                         <td>
                             <span class="hint_tooltip-parent">
                                     <a href="<?php echo $login_url ?>" target="_blank"><?php echo $login ?></a>

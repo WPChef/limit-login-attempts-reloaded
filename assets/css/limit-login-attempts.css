@@ -2512,6 +2512,19 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: inline-block;
   position: relative;
 }
+#llar-dashboard-page .dashboard-section-4 .info-box-1 {
+  padding: 32px 15px 24px 20px;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 {
+    padding: 27px 12px 20px 17px;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 {
+    padding: 27px 10px 16px 15px;
+  }
+}
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .title {
   color: #2A2F40;
   font-size: 20px;
@@ -2532,7 +2545,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   position: relative;
   border-collapse: separate;
   border-spacing: 0 3px;
-  padding-right: 3px;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table.llar-preloader:before {
   content: "";
