@@ -35,6 +35,7 @@ class Ajax {
 		) );
 		add_action( 'wp_ajax_subscribe_email', array( $this, 'subscribe_email_callback' ) );
         add_action( 'wp_ajax_strong_account_policies', array( $this, 'strong_account_policies_callback' ) );
+        add_action( 'wp_ajax_block_by_country', array( $this, 'block_by_country_callback' ) );
 		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
 		add_action( 'wp_ajax_onboarding_reset', array( $this, 'onboarding_reset_callback' ) );
 		add_action( 'wp_ajax_close_premium_message', array( $this, 'close_premium_message' ) );
@@ -892,6 +893,22 @@ class Ajax {
         $is_checklist = sanitize_text_field( trim( $_POST['is_checklist'] ) );
 
         Config::update( 'checklist', $is_checklist );
+
+        wp_send_json_success();
+    }
+
+    public function block_by_country_callback() {
+
+        if ( ! current_user_can( 'activate_plugins' ) ) {
+
+            wp_send_json_error( array() );
+        }
+
+        check_ajax_referer( 'llar-block_by_country', 'sec' );
+
+        $is_checklist = sanitize_text_field( trim( $_POST['is_checklist'] ) );
+
+        Config::update( 'block_by_country', $is_checklist );
 
         wp_send_json_success();
     }

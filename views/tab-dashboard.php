@@ -163,9 +163,11 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         $min_plan = 'Premium';
         $plans = $this->array_name_plans();
         $upgrade_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min_plan]) ? ' checked' : '';
+
+        $checked_block_by_country = Config::get( 'block_by_country' ) ? ' checked disabled' : '';
         $block_by_country = $block_sub_group ? $this->info_block_by_country() : false;
         $block_by_country_disabled = $block_sub_group ? '' : ' disabled';
-        $is_by_country =  $block_by_country ? ' checked disabled' : $block_by_country_disabled;
+        $is_by_country =  $block_by_country ? $checked_block_by_country : $block_by_country_disabled;
         $is_auto_update_choice = (Helpers::is_auto_update_enabled() && !Helpers::is_block_automatic_update_disabled()) ? ' checked' : '';
 
         $app_config = Config::get( 'app_config' );
