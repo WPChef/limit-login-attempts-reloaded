@@ -438,10 +438,12 @@ class Ajax {
 					$login =  $long_login ? mb_substr( $item['login'], 0, 10 ) . '...' : ( ( is_null( $item['login'] ) ) ? '-' : esc_html( $item['login'] ) );
 					$login_url = !empty( $item['user_id'] ) ? get_edit_user_link( $item['user_id'] ) : '';
 
+					$latitude = !empty( $item['location']['latitude'] ) ? $item['location']['latitude'] : false;
+					$longitude = !empty( $item['location']['longitude'] ) ? $item['location']['longitude'] : false;
+
 					$log_date_gmt   = date( 'Y-m-d H:i:s', $item['at'] );
 					$log_local_date = get_date_from_gmt( $log_date_gmt, 'Y-m-d' );
 					$log_local_time = get_date_from_gmt( $log_date_gmt, get_option( 'time_format' ) );
-
 
 					if ( $log_local_date === $current_date ) {
 						$correct_date = 'Today at ' . $log_local_time;
@@ -510,7 +512,7 @@ class Ajax {
                         </td>
                     </tr>
                     <tr class="hidden-row">
-                        <td colspan="6">
+                        <td colspan="2">
                             <?php if ( !empty( $continent_name ) ) : ?>
                                 <div>
                                     <span>Continent: </span><?php echo $continent_name ?>
@@ -544,9 +546,13 @@ class Ajax {
                                     <span>Zipcode: </span><?php echo $item['location']['zipcode'] ?>
                                 </div>
 	                        <?php endif; ?>
-	                        <?php if ( !empty( $item['location']['latitude'] ) && !empty( $item['location']['longitude'] ) ) : ?>
+	                        <?php if ( $latitude && $longitude ) : ?>
                                 <div>
-                                    <span>Latitude, Longitude: </span><?php echo $item['location']['latitude'] . ', ' . $item['location']['longitude'] ?>
+                                    <span>Latitude, Longitude: </span>
+                                    <a href="http://limitloginattempts.localhost/map?lat=<?php echo $latitude ?>&lon=<?php echo $longitude ?>" target="_blank">
+<!--                                    <a href="https://www.limitloginattempts.com/map?lat=--><?php //echo $latitude ?><!--&lon=--><?php //echo $longitude ?><!--" target="_blank">-->
+                                        <?php echo $latitude . ', ' . $longitude ?>
+                                    </a>
                                 </div>
 	                        <?php endif; ?>
 	                        <?php if ( !empty( $item['location']['timezone_name'] ) ) :
@@ -593,6 +599,13 @@ class Ajax {
                                     <span>Connection Type: </span><?php echo $item['location']['connection_type'] ?>
                                 </div>
 	                        <?php endif; ?>
+                        </td>
+                        <td colspan="4">
+					        <?php if ( $latitude && $longitude ) : ?>
+                                <iframe class="open_street_map" data-latitude="<?php echo $latitude ?>" data-longitude="<?php echo $longitude ?>"
+                                        width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
+                                </iframe>
+					        <?php endif; ?>
                         </td>
                     </tr>
 				<?php endforeach; ?>

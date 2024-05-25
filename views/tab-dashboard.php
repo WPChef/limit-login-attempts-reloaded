@@ -231,11 +231,11 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
                             $log_table_body.on('click', login_button_open, function() {
 
-                                const dashicons = $(this).find('.dashicons');
-                                const dashicons_down = 'dashicons-arrow-down-alt2';
-                                const dashicons_up = 'dashicons-arrow-up-alt2';
-                                const parent_tr = $( this ).closest( 'tr' );
-                                const hidden_row = parent_tr.next();
+                                const dashicons = $(this).find('.dashicons'),
+                                dashicons_down = 'dashicons-arrow-down-alt2',
+                                dashicons_up = 'dashicons-arrow-up-alt2',
+                                parent_tr = $( this ).closest( 'tr' ),
+                                hidden_row = parent_tr.next();
 
                                 if ( hidden_row.hasClass( 'table-row-open' ) ) {
 
@@ -243,6 +243,15 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                                     dashicons.addClass(dashicons_down);
                                     hidden_row.removeClass( 'table-row-open' );
                                 } else {
+                                    let iframe = hidden_row.find('.open_street_map'),
+                                    latitude = iframe.data('latitude'),
+                                    longitude = iframe.data('longitude'),
+                                    scc_link = "https://www.openstreetmap.org/export/embed.html?bbox=" +
+                                        (longitude * 0.8) + "%2C" + (latitude * 0.8) + "%2C" +
+                                        (longitude * 1.2) + "%2C" + (latitude * 1.2) +
+                                        "&layer=mapnik&marker=" + latitude + "%2C" + longitude;
+
+                                    iframe.attr('src', scc_link);
 
                                     dashicons.removeClass(dashicons_down);
                                     dashicons.addClass(dashicons_up);
