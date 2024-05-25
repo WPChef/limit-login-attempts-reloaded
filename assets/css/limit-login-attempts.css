@@ -2723,13 +2723,21 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td {
   font-size: 16px;
 }
-@media screen and (max-width: 767.5px) {
+@media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td {
     font-size: 14px;
   }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td span {
   font-weight: 600;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td .open_street_map {
+  border: unset;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td .open_street_map .leaflet-touch .leaflet-bar a {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader {
   text-align: center;
