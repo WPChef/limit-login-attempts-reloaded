@@ -231,7 +231,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
                             $log_table_body.on('click', login_button_open, function() {
 
-                                const dashicons = $(this).find('.dashicons'),
+                                const dashicons = $( this ).find( '.dashicons' ),
                                 dashicons_down = 'dashicons-arrow-down-alt2',
                                 dashicons_up = 'dashicons-arrow-up-alt2',
                                 parent_tr = $( this ).closest( 'tr' ),
@@ -239,22 +239,27 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
                                 if ( hidden_row.hasClass( 'table-row-open' ) ) {
 
-                                    dashicons.removeClass(dashicons_up);
-                                    dashicons.addClass(dashicons_down);
+                                    dashicons.removeClass( dashicons_up );
+                                    dashicons.addClass( dashicons_down );
                                     hidden_row.removeClass( 'table-row-open' );
                                 } else {
-                                    let iframe = hidden_row.find('.open_street_map'),
-                                    latitude = iframe.data('latitude'),
-                                    longitude = iframe.data('longitude'),
-                                    scc_link = "https://www.openstreetmap.org/export/embed.html?bbox=" +
-                                        (longitude * 0.8) + "%2C" + (latitude * 0.8) + "%2C" +
-                                        (longitude * 1.2) + "%2C" + (latitude * 1.2) +
-                                        "&layer=mapnik&marker=" + latitude + "%2C" + longitude;
 
-                                    iframe.attr('src', scc_link);
+                                    let iframe = hidden_row.find( '.open_street_map' );
 
-                                    dashicons.removeClass(dashicons_down);
-                                    dashicons.addClass(dashicons_up);
+                                    if ( ! iframe.hasClass('activated') ) {
+
+                                        let latitude = iframe.data( 'latitude' ),
+                                            longitude = iframe.data( 'longitude' ),
+                                            scc_link = "https://www.openstreetmap.org/export/embed.html?bbox=" +
+                                                ( longitude * 0.8 ) + "%2C" + ( latitude * 0.8 ) + "%2C" +
+                                                ( longitude * 1.2 ) + "%2C" + ( latitude * 1.2 ) +
+                                                "&layer=mapnik&marker=" + latitude + "%2C" + longitude;
+                                        iframe.attr( 'src', scc_link );
+                                        iframe.addClass('activated');
+                                    }
+
+                                    dashicons.removeClass( dashicons_down );
+                                    dashicons.addClass( dashicons_up );
                                     hidden_row.addClass( 'table-row-open' );
                                 }
                             })
@@ -323,7 +328,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                 <div class="list">
                     <input type="checkbox" name="lockout_notify_email"<?php echo $email_checked ?> disabled />
                     <span>
-                        <?php echo __( 'Enable Lockout Email Notifications', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Enable Lockout Email Notifications', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
                         <?php echo sprintf(
@@ -335,7 +340,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                 <div class="list">
                     <input type="checkbox" name="strong_account_policies"<?php echo $is_checklist ?> />
                     <span>
-                        <?php echo __( 'Implement strong account policies', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Implement strong account policies', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
                         <?php echo sprintf(
@@ -347,7 +352,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                 <div class="list">
                     <input type="checkbox" name="block_by_country"<?php echo $is_by_country . $block_by_country_disabled?> />
                     <span>
-                        <?php echo __( 'Deny/Allow countries (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Deny/Allow countries (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
                         <?php $link__allow_deny = $block_by_country
@@ -362,7 +367,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                 <div class="list">
                     <input type="checkbox" name="auto_update_choice"<?php echo $is_auto_update_choice ?> disabled />
                     <span>
-                        <?php echo __( 'Turn on plugin auto-updates', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Turn on plugin auto-updates', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
                         <?php if (!empty($is_auto_update_choice)) :
