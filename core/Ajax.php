@@ -424,7 +424,6 @@ class Ajax {
 
 			$countries_list = Helpers::get_countries_list();
 			$continent_list = Helpers::get_continent_list();
-
 			ob_start();
 			if ( empty( $data['items'] ) && ! empty( $data['offset'] ) ) :
 
@@ -435,7 +434,6 @@ class Ajax {
 					$country_name = ! empty( $countries_list[ $item['location']['country_code'] ] ) ? $countries_list[ $item['location']['country_code'] ] : '';
 					$continent_name = ! empty( $continent_list[ $item['location']['continent_code'] ] ) ? $continent_list[ $item['location']['continent_code'] ] : '';
 					$long_login = mb_strlen( $item['login'] ) > 10;
-					$login =  $long_login ? mb_substr( $item['login'], 0, 10 ) . '...' : ( ( is_null( $item['login'] ) ) ? '-' : $item['login'] );
 					$login_url = !empty( $item['user_id'] ) ? get_edit_user_link( $item['user_id'] ) : '';
 
 					$latitude = !empty( $item['location']['latitude'] ) ? $item['location']['latitude'] : false;
@@ -446,16 +444,16 @@ class Ajax {
 					$log_local_time = get_date_from_gmt( $log_date_gmt, get_option( 'time_format' ) );
 
 					if ( $log_local_date === $current_date ) {
-						$correct_date = _e( 'Today at ', 'limit-login-attempts-reloaded' ) . $log_local_time;
+						$correct_date = __( 'Today at ', 'limit-login-attempts-reloaded' ) . $log_local_time;
 					} else {
 						$correct_date =  get_date_from_gmt($log_date_gmt, $date_format);
 					}
 					?>
                     <tr>
                         <td class="llar-col-nowrap"><?php echo $correct_date; ?></td>
-                        <td>
+                        <td class="cell-login">
                             <span class="hint_tooltip-parent">
-                                    <a href="<?php echo $login_url ?>" target="_blank"><?php echo $login ?></a>
+                                    <a href="<?php echo $login_url ?>" target="_blank"><?php echo $item['login'] ?></a>
                                     <?php if ( $long_login ) : ?>
                                         <div class="hint_tooltip">
                                             <div class="hint_tooltip-content">
@@ -565,7 +563,10 @@ class Ajax {
                                 }
                                 ?>
                                 <div>
-                                    <span><?php _e( 'Timezone: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['timezone_name'] . ' ' . $timezone_offset ?>
+                                    <span>
+                                        <?php _e( 'Timezone: ', 'limit-login-attempts-reloaded' ) ?>
+                                    </span>
+                                    <?php echo $item['location']['timezone_name'] . ' [' . $timezone_offset . ']' ?>
                                 </div>
 	                        <?php endif; ?>
                             <?php if ( !empty( $item['location']['isp_name'] ) && !empty( $item['location']['organization_name'] ) ) :

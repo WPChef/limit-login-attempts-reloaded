@@ -453,12 +453,18 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
             </div>
         </div>
 
+        <p class="submit">
+            <input class="button menu__item col button__orange" name="llar_update_settings"
+                   value="<?php _e( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
+                   type="submit"/>
+        </p>
+
         <h3 class="title_page">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-exploitation.png">
 		    <?php _e( 'General Settings', 'limit-login-attempts-reloaded' ); ?>
         </h3>
         <div class="description-page">
-		    <?php _e( 'These settings are independent of the apps (see below).', 'limit-login-attempts-reloaded' ); ?>
+		    <?php _e( 'These settings are independent of the apps.', 'limit-login-attempts-reloaded' ); ?>
         </div>
 
 	    <?php wp_nonce_field( 'limit-login-attempts-options' ); ?>

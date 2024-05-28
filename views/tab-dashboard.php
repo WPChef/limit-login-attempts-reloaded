@@ -232,10 +232,10 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                             $log_table_body.on('click', login_button_open, function() {
 
                                 const dashicons = $( this ).find( '.dashicons' ),
-                                dashicons_down = 'dashicons-arrow-down-alt2',
-                                dashicons_up = 'dashicons-arrow-up-alt2',
-                                parent_tr = $( this ).closest( 'tr' ),
-                                hidden_row = parent_tr.next();
+                                    dashicons_down = 'dashicons-arrow-down-alt2',
+                                    dashicons_up = 'dashicons-arrow-up-alt2',
+                                    parent_tr = $( this ).closest( 'tr' ),
+                                    hidden_row = parent_tr.next();
 
                                 if ( hidden_row.hasClass( 'table-row-open' ) ) {
 
@@ -250,10 +250,13 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
                                         let latitude = iframe.data( 'latitude' ),
                                             longitude = iframe.data( 'longitude' ),
+                                            height_hidden_row = hidden_row.height(),
                                             scc_link = "https://www.openstreetmap.org/export/embed.html?bbox=" +
                                                 ( longitude * 0.8 ) + "%2C" + ( latitude * 0.8 ) + "%2C" +
                                                 ( longitude * 1.2 ) + "%2C" + ( latitude * 1.2 ) +
                                                 "&layer=mapnik&marker=" + latitude + "%2C" + longitude;
+
+                                        iframe.attr( 'height', height_hidden_row - 40);
                                         iframe.attr( 'src', scc_link );
                                         iframe.addClass('activated');
                                     }
@@ -263,6 +266,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                                     hidden_row.addClass( 'table-row-open' );
                                 }
                             })
+
 
                             function load_login_data() {
 
