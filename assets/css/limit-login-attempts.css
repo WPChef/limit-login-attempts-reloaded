@@ -1217,7 +1217,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 5px;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table .table-inline-preloader tr td .load-more-button a {
-  text-decoration-style: dashed;
+  padding-bottom: 1px;
+  text-decoration: unset;
+  border-bottom: 1px dashed;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table .table-inline-preloader tr td .preloader-row {
   display: none;
@@ -2708,6 +2710,40 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.button-open {
   padding: 0 2px;
 }
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.cell-login {
+  max-width: 95px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.cell-login a {
+  display: inline-block;
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.cell-login {
+    max-width: 85px;
+  }
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.cell-login a {
+    max-width: 80px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.cell-login {
+    max-width: 85px;
+  }
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.cell-login a {
+    max-width: 80px;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.cell-login {
+    max-width: 70px;
+  }
+  #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr td.cell-login a {
+    max-width: 68px;
+  }
+}
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr:nth-child(4n+3) {
   background-color: unset;
 }
@@ -2749,7 +2785,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 5px;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader tr td .load-more-button a {
-  text-decoration-style: dashed;
+  padding-bottom: 1px;
+  text-decoration: unset;
+  border-bottom: 1px dashed;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader tr td .preloader-row {
   display: none;

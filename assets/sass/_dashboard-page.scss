@@ -856,6 +856,43 @@
                   &.button-open {
                     padding: 0 2px;
                   }
+
+                  &.cell-login {
+                    max-width: 95px;
+
+                    a {
+                      display: inline-block;
+                      max-width: 90px;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                    }
+
+                    @include _1599 {
+                        max-width: 85px;
+
+                        a {
+                          max-width: 80px;
+                        }
+                      }
+
+
+                    @include _1399 {
+                      max-width: 85px;
+
+                      a {
+                        max-width: 80px;
+                      }
+                    }
+
+                    @include _767 {
+                      max-width: 70px;
+
+                      a {
+                        max-width: 68px;
+                      }
+                    }
+                  }
                 }
 
                 &:nth-child(4n+1) {
@@ -916,7 +953,9 @@
 
                   .load-more-button {
                     a {
-                      text-decoration-style: dashed;
+                      padding-bottom: 1px;
+                      text-decoration: unset;
+                      border-bottom: 1px dashed;
                     }
                   }
 
