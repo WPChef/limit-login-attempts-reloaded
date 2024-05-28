@@ -547,7 +547,7 @@ class Ajax {
 	                        <?php if ( $latitude && $longitude ) : ?>
                                 <div>
                                     <span><?php _e( 'Latitude, Longitude: ', 'limit-login-attempts-reloaded' ) ?></span>
-                                    <a href="https://staging.limitloginattempts.com/map?lat=<?php echo $latitude ?>&lon=<?php echo $longitude ?>" target="_blank">
+                                    <a href="https://www.limitloginattempts.com/map?lat=<?php echo $latitude ?>&lon=<?php echo $longitude ?>" target="_blank">
                                         <?php echo $latitude . ', ' . $longitude ?>
                                     </a>
                                 </div>
