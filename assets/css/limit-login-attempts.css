@@ -1876,6 +1876,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: 15px;
   display: none;
 }
+.dashboard_page_llar-welcome .update-nag p,
+.dashboard_page_llar-welcome .notice:not(.llar-notice-review) p,
+.toplevel_page_limit-login-attempts .update-nag p,
+.toplevel_page_limit-login-attempts .notice:not(.llar-notice-review) p {
+  margin-left: 10px;
+}
 .dashboard_page_llar-welcome .video-container,
 .toplevel_page_limit-login-attempts .video-container {
   position: relative;
@@ -2514,19 +2520,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: inline-block;
   position: relative;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 {
-  padding: 32px 15px 24px 20px;
-}
-@media screen and (max-width: 1599.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 {
-    padding: 27px 12px 20px 17px;
-  }
-}
-@media screen and (max-width: 991.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 {
-    padding: 27px 10px 16px 15px;
-  }
-}
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .title {
   color: #2A2F40;
   font-size: 20px;
@@ -2535,12 +2528,15 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .desc {
   color: #666D84;
   font-size: 16px;
+  line-height: 1.5;
+  margin: 40px;
+  text-align: center;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content {
   height: 100%;
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-gutter: stable both-edges;
+  scrollbar-gutter: stable;
   padding-bottom: 30px;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table {
@@ -2767,13 +2763,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td span {
   font-weight: 600;
 }
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td a {
+  white-space: nowrap;
+}
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td .open_street_map {
   border: unset;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table tbody tr.hidden-row.table-row-open td .open_street_map .leaflet-touch .leaflet-bar a {
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content .form-table .table-inline-preloader {
   text-align: center;
@@ -2874,6 +2868,18 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input:checked + span {
   text-decoration: line-through;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list-add {
+  display: none;
+  color: #FF7C06;
+  margin-left: 10px;
+  font-weight: 400;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input[type=checkbox]:checked ~ .list-add {
+  display: none;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input[type=checkbox]:not(:checked) ~ .list-add {
+  display: inline;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list .desc {
   color: #666D84;

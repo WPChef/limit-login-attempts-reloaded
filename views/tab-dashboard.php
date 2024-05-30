@@ -150,21 +150,21 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         </div>
     </div>
 
-    <?php if ( $is_active_app_custom ) : ?>
 	<div class="dashboard-section-4">
         <?php
 
         $lockout_notify = explode( ',', Config::get( 'lockout_notify' ) );
-        $email_checked = in_array( 'email', $lockout_notify ) ? ' checked ' : '';
+        $email_checked = in_array( 'email', $lockout_notify ) ? ' checked disabled' : '';
+        $email_checked = $is_active_app_custom ? ' checked disabled' : $email_checked;
 
         $checklist = Config::get( 'checklist' );
         $is_checklist =  $checklist === 'true' ? ' checked disabled' : '';
 
         $min_plan = 'Premium';
         $plans = $this->array_name_plans();
-        $upgrade_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min_plan]) ? ' checked' : '';
+        $upgrade_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min_plan] ) ? ' checked' : '';
 
-        $checked_block_by_country = Config::get( 'block_by_country' ) ? ' checked disabled' : '';
+        $checked_block_by_country = Config::get( 'block_by_country' ) === 'true' ? ' checked disabled' : '';
         $block_by_country = $block_sub_group ? $this->info_block_by_country() : false;
         $block_by_country_disabled = $block_sub_group ? '' : ' disabled';
         $is_by_country =  $block_by_country ? $checked_block_by_country : $block_by_country_disabled;
@@ -180,7 +180,29 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                     <?php _e( 'Successful Login Attempts', 'limit-login-attempts-reloaded' ) ?>
                 </div>
             </div>
+
+            <?php if ( ! $is_active_app_custom ) : ?>
+
+            <div class="section-content" style="scrollbar-gutter: unset;">
+                <table class="form-table llar-table-app-login" style="height: 100%">
+                    <tbody>
+                    <tr>
+                        <td style="text-align: center; padding: 10px">
+                            <?php echo sprintf(
+                                __( 'Be aware of who logs into your site! This feature is available to the <a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Premium</a> and <a class="link__style_unlink llar_turquoise button_micro_cloud" href="%s">Micro Cloud (FREE!)</a> plans only because we store the log of successful logins in the cloud. This ensures that hackers can\'t delete it if the site\'s login gateway gets compromised, and the evidence will remain available.', 'limit-login-attempts-reloaded' ),
+                                'https://www.limitloginattempts.com/info.php?id=3',
+                                '#'
+                            ); ?>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <?php else : ?>
+
             <div class="section-content">
+
                 <div class="llar-table-scroll-wrap llar-app-login-infinity-scroll">
                     <table class="form-table llar-table-app-login">
                         <thead>
@@ -317,6 +339,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                     })(jQuery);
                 </script>
             </div>
+            <?php endif; ?>
         </div>
 
         <div class="info-box-2">
@@ -330,14 +353,14 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
             </div>
             <div class="section-content">
                 <div class="list">
-                    <input type="checkbox" name="lockout_notify_email"<?php echo $email_checked ?> disabled />
+                    <input type="checkbox" name="lockout_notify_email"<?php echo $email_checked ?> />
                     <span>
-                        <?php _e( 'Enable Lockout Email Notifications', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Enable Email Notifications', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
                         <?php echo sprintf(
                             __( '<a class="link__style_unlink llar_turquoise" href="%s">Enable email notifications</a> to receive timely alerts and updates via email', 'limit-login-attempts-reloaded' ),
-	                        $url_site . '/wp-admin/admin.php?page=limit-login-attempts&tab=settings#llar_lockout_notify'
+	                        '/wp-admin/admin.php?page=limit-login-attempts&tab=settings#llar_lockout_notify'
                         ); ?>
                     </div>
                 </div>
@@ -346,6 +369,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                     <span>
                         <?php _e( 'Implement strong account policies', 'limit-login-attempts-reloaded' ); ?>
                     </span>
+	                <span class="list-add">Check when done.</span>
                     <div class="desc">
                         <?php echo sprintf(
                             __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Read our guide</a> on implementing and enforcing strong password policies in your organization.', 'limit-login-attempts-reloaded' ),
@@ -355,9 +379,16 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                 </div>
                 <div class="list">
                     <input type="checkbox" name="block_by_country"<?php echo $is_by_country . $block_by_country_disabled?> />
+	                <?php
+	                $list_name = __( 'Deny/Allow countries', 'limit-login-attempts-reloaded' );
+
+                    if ( ! $is_active_app_custom || ( $is_active_app_custom && ( $plans[ $block_sub_group ] === $plans[ $min_plan ] ) ) ) :
+                        $list_name = __( 'Deny/Allow countries (Premium+ Users)', 'limit-login-attempts-reloaded' );
+	                endif ?>
                     <span>
-                        <?php _e( 'Deny/Allow countries (Premium Users)', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo $list_name ?>
                     </span>
+	                <span class="list-add">Check when done.</span>
                     <div class="desc">
                         <?php $link__allow_deny = $block_by_country
                             ? $url_site . '/wp-admin/admin.php?page=limit-login-attempts&tab=logs-custom'
@@ -377,7 +408,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                         <?php if (!empty($is_auto_update_choice)) :
                             _e( 'Enable automatic updates to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' );
                         else :
-                            _e( '<a class="link__style_unlink llar_turquoise" href="llar_auto_update_choice">Enable automatic updates</a> to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' );
+                            _e( '<a class="link__style_unlink llar_turquoise" href="#llar_auto_update_choice">Enable automatic updates</a> to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' );
                         endif; ?>
                     </div>
                 </div>
@@ -387,11 +418,20 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                         <?php _e( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
-                        <?php _e( 'Upgrade to our premium version for advanced protection.', 'limit-login-attempts-reloaded' ); ?>
+	                    <?php if ( $is_active_app_custom && ( $plans[ $block_sub_group ] >= $plans[ $min_plan ] ) ) : ?>
+		                    <?php _e( 'Upgrade to our premium version for advanced protection.', 'limit-login-attempts-reloaded' ) ?>
+                        <?php else : ?>
+		                    <?php $link__allow_deny = $is_active_app_custom
+			                    ? $this->info_upgrade_url()
+			                    : 'https://www.limitloginattempts.com/info.php?id=2' ?>
+		                    <?php echo sprintf(
+			                    __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Upgrade to our premium</a> version for advanced protection.', 'limit-login-attempts-reloaded' ),
+			                    $link__allow_deny
+		                    ); ?>
+                        <?php endif ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <?php endif; ?>
 </div>

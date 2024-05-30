@@ -64,7 +64,7 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
         const $account_policies = $( 'input[name="strong_account_policies"]' );
         const $checkbox_block_by_country = $( 'input[name="block_by_country"]' );
         const $checkbox_auto_update_choice = $( 'input[name="auto_update_choice"]' );
-        const $auto_update_choice = $( 'a[href="llar_auto_update_choice"]' );
+        const $auto_update_choice = $( 'a[href="#llar_auto_update_choice"]' );
         const $auto_update_notice = $( '.llar-auto-update-notice' );
         const content_html = $( '#llar_popup_error_content' ).html();
         const $upgrade_premium_message = $( '#llar-header-upgrade-premium-message' );
