@@ -617,15 +617,6 @@
     }
 
     .info-box-1 {
-      padding: 32px 15px 24px 20px;
-
-      @include _1599 {
-        padding: 27px 12px 20px 17px;
-      }
-
-      @include _991 {
-        padding: 27px 10px 16px 15px;
-      }
 
       .section {
 
@@ -640,6 +631,9 @@
           .desc {
             color: $typography-secondary;
             font-size: 16px;
+            line-height: 1.5;
+            margin: 40px;
+            text-align: center;
           }
         }
 
@@ -648,7 +642,7 @@
           height: 100%;
           overflow: auto;
           scrollbar-width: thin;
-          scrollbar-gutter: stable both-edges;
+          scrollbar-gutter: stable;
           padding-bottom: 30px;
 
           .form-table {
@@ -924,14 +918,12 @@
                         font-weight: 600;
                       }
 
+                      a {
+                        white-space: nowrap;
+                      }
+
                       .open_street_map {
                         border: unset;
-
-                        .leaflet-touch .leaflet-bar a {
-                          width: 20px;
-                          height: 20px;
-                          line-height: 20px;
-                        }
                       }
                     }
                   }
@@ -1071,6 +1063,21 @@
                   text-decoration: line-through;
                 }
               }
+            }
+
+            &-add {
+              display: none;
+              color: $primary-colors__orange;
+              margin-left: 10px;
+              font-weight: 400;
+            }
+
+            input[type="checkbox"]:checked ~ .list-add {
+              display: none;
+            }
+
+            input[type="checkbox"]:not(:checked) ~ .list-add {
+              display: inline;
             }
 
             .desc {

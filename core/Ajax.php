@@ -439,15 +439,22 @@ class Ajax {
 					$latitude = !empty( $item['location']['latitude'] ) ? $item['location']['latitude'] : false;
 					$longitude = !empty( $item['location']['longitude'] ) ? $item['location']['longitude'] : false;
 
-					$log_date_gmt   = date( 'Y-m-d H:i:s', $item['at'] );
-					$log_local_date = get_date_from_gmt( $log_date_gmt, 'Y-m-d' );
-					$log_local_time = get_date_from_gmt( $log_date_gmt, get_option( 'time_format' ) );
+					$log_date_gmt   = date('Y-m-d H:i:s', $item['at']);
+					$log_local_date = get_date_from_gmt($log_date_gmt, 'Y-m-d');
+					$log_local_time = get_date_from_gmt($log_date_gmt, get_option('time_format'));
+					$current_year   = date('Y');
+					$log_year       = get_date_from_gmt($log_date_gmt, 'Y');
+					$current_date   = date('Y-m-d');
 
-					if ( $log_local_date === $current_date ) {
-						$correct_date = __( 'Today at ', 'limit-login-attempts-reloaded' ) . $log_local_time;
+					if ($log_local_date === $current_date) {
+						$correct_date = __('Today at ', 'limit-login-attempts-reloaded') . $log_local_time;
+					} elseif ($log_year === $current_year) {
+						$log_local_month_day = get_date_from_gmt($log_date_gmt, 'M j');
+						$correct_date = $log_local_month_day . ' at ' . $log_local_time;
 					} else {
-						$correct_date =  get_date_from_gmt($log_date_gmt, $date_format);
+						$correct_date = get_date_from_gmt($log_date_gmt, $date_format);
 					}
+
 					?>
                     <tr>
                         <td class="llar-col-nowrap"><?php echo $correct_date; ?></td>
@@ -510,7 +517,7 @@ class Ajax {
                         </td>
                     </tr>
                     <tr class="hidden-row">
-                        <td colspan="2">
+                        <td colspan="2" style="max-width: 200px">
                             <?php if ( !empty( $continent_name ) ) : ?>
                                 <div>
                                     <span><?php _e( 'Continent: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $continent_name ?>
@@ -600,7 +607,7 @@ class Ajax {
                                 </div>
 	                        <?php endif; ?>
                         </td>
-                        <td colspan="4">
+                        <td colspan="3">
 					        <?php if ( $latitude && $longitude ) : ?>
                                 <iframe class="open_street_map" data-latitude="<?php echo $latitude ?>" data-longitude="<?php echo $longitude ?>"
                                         width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
