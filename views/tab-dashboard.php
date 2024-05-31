@@ -187,11 +187,15 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                 <table class="form-table llar-table-app-login" style="height: 100%">
                     <tbody>
                     <tr>
-                        <td style="text-align: center; padding: 10px">
+                        <td style="text-align: center; padding: 25px; font-size: 150%">
+                            <?php if ( ! empty ( $setup_code ) ) :
+                                $text_no_custom = __( 'Be aware of who logs into your site! This feature is available to the <a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Premium</a> plans only because we store the log of successful logins in the cloud. This ensures that hackers can\'t delete it if the site\'s login gateway gets compromised, and the evidence will remain available.', 'limit-login-attempts-reloaded' );
+                            else:
+                                $text_no_custom = __( 'Be aware of who logs into your site! This feature is available to the <a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Premium</a> and <a class="link__style_unlink llar_turquoise button_micro_cloud">Micro Cloud (FREE!)</a> plans only because we store the log of successful logins in the cloud. This ensures that hackers can\'t delete it if the site\'s login gateway gets compromised, and the evidence will remain available.', 'limit-login-attempts-reloaded' );
+                            endif ?>
                             <?php echo sprintf(
-                                __( 'Be aware of who logs into your site! This feature is available to the <a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Premium</a> and <a class="link__style_unlink llar_turquoise button_micro_cloud" href="%s">Micro Cloud (FREE!)</a> plans only because we store the log of successful logins in the cloud. This ensures that hackers can\'t delete it if the site\'s login gateway gets compromised, and the evidence will remain available.', 'limit-login-attempts-reloaded' ),
-                                'https://www.limitloginattempts.com/info.php?id=3',
-                                '#'
+	                            $text_no_custom,
+                                'https://www.limitloginattempts.com/info.php?id=3'
                             ); ?>
                         </td>
                     </tr>
