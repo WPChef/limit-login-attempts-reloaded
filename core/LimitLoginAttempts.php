@@ -1936,10 +1936,7 @@ class LimitLoginAttempts
 			$this->info_data = $this->info();
 		}
 
-		return ( ! empty( $this->info_data )
-            && ! empty( $this->info_data['requests'] )
-            && isset( $this->info_data['requests']['exhausted'] )
-            && $this->info_data['requests']['exhausted'] === true );
+		return !empty($this->info_data['requests']['exhausted'] ?? false);
 	}
 
 

@@ -32,7 +32,7 @@ if ( $is_active_app_custom ) {
 	$upgrade_premium_url = $this->info_upgrade_url();
 	$is_agency = $block_sub_group === 'Agency';
 	$requests = ! $is_agency ? $this->info_requests() : false;
-	$is_exhausted = ! $is_agency ? $this->info_is_exhausted() : false;
+	$is_exhausted = ! $is_agency && $this->info_is_exhausted();
 } else {
 
 	$is_exhausted = false;
