@@ -111,12 +111,12 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                         <td>
                             <select class="input_border" name="active_app" id="">
                                 <option value="local" <?php selected( $active_app, 'local' ); ?>>
-									<?php _e( 'Local', 'limit-login-attempts-reloaded' ); ?>
+									<?php _e( 'Local (Free version)', 'limit-login-attempts-reloaded' ); ?>
                                 </option>
 								<?php if ( $active_app_config ) : ?>
 
                                     <option value="custom" <?php selected( $active_app, 'custom' ); ?>>
-										<?php esc_html_e( $active_app_config['name'] ); ?>
+	                                    <?php _e( 'Cloud App (Premium version)', 'limit-login-attempts-reloaded' ); ?>
                                     </option>
 								<?php endif; ?>
                             </select>

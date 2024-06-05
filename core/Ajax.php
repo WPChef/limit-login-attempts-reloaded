@@ -414,6 +414,7 @@ class Ajax {
 
 		$offset = sanitize_text_field( $_POST['offset'] );
 		$limit  = sanitize_text_field( $_POST['limit'] );
+		$upgrade_premium_url = sanitize_text_field( $_POST['url_premium'] );
 
 		$data = LimitLoginAttempts::$cloud_app->get_login( $limit, $offset );
 
@@ -430,6 +431,8 @@ class Ajax {
 			elseif ( $data['items'] ) : ?>
 
 				<?php foreach ( $data['items'] as $item ) :
+
+                    $limited = ( isset( $item['limited'] ) && $item['limited'] === 'true' );
 
 					$country_name = ! empty( $countries_list[ $item['location']['country_code'] ] ) ? $countries_list[ $item['location']['country_code'] ] : '';
 					$continent_name = ! empty( $continent_list[ $item['location']['continent_code'] ] ) ? $continent_list[ $item['location']['continent_code'] ] : '';
@@ -458,58 +461,68 @@ class Ajax {
 					?>
                     <tr>
                         <td class="llar-col-nowrap"><?php echo $correct_date; ?></td>
-                        <td class="cell-login">
-                            <span class="hint_tooltip-parent">
-                                    <a href="<?php echo $login_url ?>" target="_blank"><?php echo $item['login'] ?></a>
-                                    <?php if ( $long_login ) : ?>
+
+                        <?php if ( $limited ) : ?>
+
+                            <td colspan="3"></td>
+
+                        <?php else : ?>
+
+                            <td class="cell-login">
+                                <span class="hint_tooltip-parent">
+                                        <a href="<?php echo $login_url ?>" target="_blank"><?php echo $item['login'] ?></a>
+                                        <?php if ( $long_login ) : ?>
+                                            <div class="hint_tooltip">
+                                                <div class="hint_tooltip-content">
+                                                    <?php echo $item['login'] ?>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="llar-log-country-flag">
+                                    <span class="hint_tooltip-parent">
+                                        <img src="<?php echo LLA_PLUGIN_URL . 'assets/img/flags/' . esc_attr( strtolower( $item['location']['country_code'] ) ) . '.png' ?>">
                                         <div class="hint_tooltip">
                                             <div class="hint_tooltip-content">
-                                                <?php echo $item['login'] ?>
+                                                <?php echo $country_name ?>
                                             </div>
                                         </div>
-                                    <?php endif; ?>
-                            </span>
-                        </td>
-                        <td>
-                            <div class="llar-log-country-flag">
-                                <span class="hint_tooltip-parent">
-                                    <img src="<?php echo LLA_PLUGIN_URL . 'assets/img/flags/' . esc_attr( strtolower( $item['location']['country_code'] ) ) . '.png' ?>">
-                                    <div class="hint_tooltip">
-                                        <div class="hint_tooltip-content">
-                                            <?php echo $country_name ?>
-                                        </div>
-                                    </div>
-                                </span>
-                                <span><?php echo $item['ip'] ?></span>
-                            </div>
-                        </td>
-                        <td>
-	                        <?php if ( isset( $item['roles'] ) && is_array( $item['roles'] ) ) : ?>
-                                <span class="hint_tooltip-parent">
-                                    <?php $admin_key = array_search( 'administrator', $item['roles'] );
-                                    if ( $admin_key !== false ) : ?>
-                                        <span><?php echo $item['roles'][$admin_key] ?></span>
-                                        <?php unset( $item['roles'][$admin_key] );
-                                    else :
-                                        echo $item['roles'][0];
-                                        unset( $item['roles'][0] );
-                                    endif;
-                                    $list_roles = '';
-                                    foreach ( $item['roles'] as $role ) :
-                                            $list_roles .= '<li>' . $role . '</li>';
-                                    endforeach;
-                                    if ( !empty ( $list_roles ) ) : ?>
-                                        <div class="hint_tooltip">
-                                            <div class="hint_tooltip-content">
-                                                <ul>
-                                                    <?php echo $list_roles; ?>
-                                                </ul>
+                                    </span>
+                                    <span><?php echo $item['ip'] ?></span>
+                                </div>
+                            </td>
+                            <td>
+                                <?php if ( isset( $item['roles'] ) && is_array( $item['roles'] ) ) : ?>
+                                    <span class="hint_tooltip-parent">
+                                        <?php $admin_key = array_search( 'administrator', $item['roles'] );
+                                        if ( $admin_key !== false ) : ?>
+                                            <span><?php echo $item['roles'][$admin_key] ?></span>
+                                            <?php unset( $item['roles'][$admin_key] );
+                                        else :
+                                            echo $item['roles'][0];
+                                            unset( $item['roles'][0] );
+                                        endif;
+                                        $list_roles = '';
+                                        foreach ( $item['roles'] as $role ) :
+                                                $list_roles .= '<li>' . $role . '</li>';
+                                        endforeach;
+                                        if ( !empty ( $list_roles ) ) : ?>
+                                            <div class="hint_tooltip">
+                                                <div class="hint_tooltip-content">
+                                                    <ul>
+                                                        <?php echo $list_roles; ?>
+                                                    </ul>
+                                                </div>
                                             </div>
-                                        </div>
-                                    <?php endif; ?>
-                                </span>
-	                        <?php endif; ?>
-                        </td>
+                                        <?php endif; ?>
+                                    </span>
+                                <?php endif; ?>
+                            </td>
+
+                        <?php endif?>
+
                         <td class="button-open">
 		                    <button class="button llar-add-login-open">
                                 <i class="dashicons dashicons-arrow-down-alt2"></i>
@@ -517,95 +530,122 @@ class Ajax {
                         </td>
                     </tr>
                     <tr class="hidden-row">
-                        <td colspan="2" style="max-width: 200px">
-                            <?php if ( !empty( $continent_name ) ) : ?>
-                                <div>
-                                    <span><?php _e( 'Continent: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $continent_name ?>
-                                </div>
-					        <?php endif; ?>
-	                        <?php if ( !empty( $country_name ) ) :
 
-                                $country_code = $item['location']['country_code'] !== 'ZZ' ? ' (' . $item['location']['country_code'] . ')' : '';
-                                ?>
-                                <div>
-                                    <span><?php _e( 'Country: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $country_name . $country_code ?>
-                                </div>
-	                        <?php endif; ?>
-	                        <?php if ( !empty( $item['location']['stateprov'] ) ) : ?>
-                                <div>
-                                    <span><?php _e( 'State/Province: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['stateprov'] ?>
-                                </div>
-	                        <?php endif; ?>
-	                        <?php if ( !empty( $item['location']['district'] ) ) : ?>
-                                <div>
-                                    <span><?php _e( 'District: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['district'] ?>
-                                </div>
-	                        <?php endif; ?>
-	                        <?php if ( !empty( $item['location']['city'] ) ) : ?>
-                                <div>
-                                    <span><?php _e( 'City: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['city'] ?>
-                                </div>
-	                        <?php endif; ?>
-                            <?php if ( !empty( $item['location']['zipcode'] ) ) : ?>
-                                <div>
-                                    <span><?php _e( 'Zipcode: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['zipcode'] ?>
-                                </div>
-	                        <?php endif; ?>
-	                        <?php if ( $latitude && $longitude ) : ?>
-                                <div>
-                                    <span><?php _e( 'Latitude, Longitude: ', 'limit-login-attempts-reloaded' ) ?></span>
-                                    <a href="https://www.limitloginattempts.com/map?lat=<?php echo $latitude ?>&lon=<?php echo $longitude ?>" target="_blank">
-                                        <?php echo $latitude . ', ' . $longitude ?>
-                                    </a>
-                                </div>
-	                        <?php endif; ?>
-	                        <?php if ( !empty( $item['location']['timezone_name'] ) ) :
+					<?php if ( $limited ) : ?>
 
-		                        $timezone_offset = '';
-                                if ( !empty( $item['location']['timezone_offset'] ) ) {
+                        <td colspan="4" style="max-width: 290px">
+                            <div>
+		                        <?php echo sprintf(
+			                        __( 'This login occurred when your account was out of requests; hence, the login details are missing. We recommend <a class="link__style_unlink llar_turquoise" href="%s" target="_blank">upgrading</a> to avoid this issue in the future.', 'limit-login-attempts-reloaded' ),
+			                        $upgrade_premium_url
+		                        ); ?>
+                            </div>
+                        </td>
 
-	                                $timezone_offset = (int)$item['location']['timezone_offset'] > 0
-                                        ? '+' . $item['location']['timezone_offset']
-                                        : $item['location']['timezone_offset'];
-                                }
-                                ?>
-                                <div>
-                                    <span>
-                                        <?php _e( 'Timezone: ', 'limit-login-attempts-reloaded' ) ?>
-                                    </span>
-                                    <?php echo $item['location']['timezone_name'] . ' [' . $timezone_offset . ']' ?>
-                                </div>
-	                        <?php endif; ?>
-                            <?php if ( !empty( $item['location']['isp_name'] ) && !empty( $item['location']['organization_name'] ) ) :
+                        <?php else : ?>
+                            <td colspan="2" style="max-width: 200px">
 
-	                            $usage_type = !empty( $item['location']['usage_type'] ) ? ' (' . $item['location']['usage_type'] . ')' : '';
+                                <?php if ( !empty( $continent_name ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'Continent: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $continent_name ?>
+                                    </div>
+                                <?php endif ?>
 
-	                            $isp_name = $item['location']['isp_name'];
-	                            $organization_name = $item['location']['organization_name'];
+                                <?php if ( !empty( $country_name ) ) :
 
-	                            if ( $isp_name === $organization_name ) {
+                                    $country_code = $item['location']['country_code'] !== 'ZZ' ? ' (' . $item['location']['country_code'] . ')' : '';
+                                    ?>
+                                    <div>
+                                        <span><?php _e( 'Country: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $country_name . $country_code ?>
+                                    </div>
+                                <?php endif ?>
 
-		                            $full_name =  $organization_name;
-	                            } elseif ( strpos($isp_name, $organization_name ) !== false ) {
+                                <?php if ( !empty( $item['location']['stateprov'] ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'State/Province: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['stateprov'] ?>
+                                    </div>
+                                <?php endif ?>
 
-		                            $full_name = $isp_name;
-	                            } elseif ( strpos($organization_name, $isp_name ) !== false ) {
+                                <?php if ( !empty( $item['location']['district'] ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'District: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['district'] ?>
+                                    </div>
+                                <?php endif ?>
 
-		                            $full_name = $organization_name;
-	                            } else {
+                                <?php if ( !empty( $item['location']['city'] ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'City: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['city'] ?>
+                                    </div>
+                                <?php endif ?>
 
-		                            $full_name =  $isp_name . ' / ' . $organization_name;
-	                            }
-                                ?>
-                                <div>
-                                    <span><?php _e( 'Internet Provider: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $full_name . $usage_type ?>
-                                </div>
-	                        <?php endif; ?>
-	                        <?php if ( !empty( $item['location']['connection_type'] ) ) : ?>
-                                <div>
-                                    <span><?php _e( 'Connection Type: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['connection_type'] ?>
-                                </div>
-	                        <?php endif; ?>
+                                <?php if ( !empty( $item['location']['zipcode'] ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'Zipcode: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['zipcode'] ?>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( $latitude && $longitude ) : ?>
+                                    <div>
+                                        <span><?php _e( 'Latitude, Longitude: ', 'limit-login-attempts-reloaded' ) ?></span>
+                                        <a href="https://www.limitloginattempts.com/map?lat=<?php echo $latitude ?>&lon=<?php echo $longitude ?>" target="_blank">
+                                            <?php echo $latitude . ', ' . $longitude ?>
+                                        </a>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( !empty( $item['location']['timezone_name'] ) ) :
+
+                                    $timezone_offset = '';
+                                    if ( !empty( $item['location']['timezone_offset'] ) ) {
+
+                                        $timezone_offset = (int)$item['location']['timezone_offset'] > 0
+                                            ? '+' . $item['location']['timezone_offset']
+                                            : $item['location']['timezone_offset'];
+                                    }
+                                    ?>
+                                    <div>
+                                        <span>
+                                            <?php _e( 'Timezone: ', 'limit-login-attempts-reloaded' ) ?>
+                                        </span>
+                                        <?php echo $item['location']['timezone_name'] . ' [' . $timezone_offset . ']' ?>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( !empty( $item['location']['isp_name'] ) && !empty( $item['location']['organization_name'] ) ) :
+
+                                    $usage_type = !empty( $item['location']['usage_type'] ) ? ' (' . $item['location']['usage_type'] . ')' : '';
+
+                                    $isp_name = $item['location']['isp_name'];
+                                    $organization_name = $item['location']['organization_name'];
+
+                                    if ( $isp_name === $organization_name ) {
+
+                                        $full_name =  $organization_name;
+                                    } elseif ( strpos($isp_name, $organization_name ) !== false ) {
+
+                                        $full_name = $isp_name;
+                                    } elseif ( strpos($organization_name, $isp_name ) !== false ) {
+
+                                        $full_name = $organization_name;
+                                    } else {
+
+                                        $full_name =  $isp_name . ' / ' . $organization_name;
+                                    }
+                                    ?>
+
+                                    <div>
+                                        <span><?php _e( 'Internet Provider: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $full_name . $usage_type ?>
+                                    </div>
+
+                                <?php endif ?>
+
+                                <?php if ( !empty( $item['location']['connection_type'] ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'Connection Type: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['connection_type'] ?>
+                                    </div>
+                                <?php endif ?>
+
+					        <?php endif ?>
                         </td>
                         <td colspan="3">
 					        <?php if ( $latitude && $longitude ) : ?>
