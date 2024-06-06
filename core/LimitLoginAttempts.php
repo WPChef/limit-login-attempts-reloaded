@@ -213,7 +213,7 @@ class LimitLoginAttempts
 
 		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 		add_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999, 2 );
-	    add_action( 'wp_login', array( $this, 'limit_login_success' ), 999, 2 );
+	    add_action( 'wp_login', array( $this, 'limit_login_success' ), 10, 2 );
 
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
@@ -536,12 +536,21 @@ class LimitLoginAttempts
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 
 				} elseif ( self::$cloud_app && self::$cloud_app->last_response_code === 403 ) {
-					self::$cloud_app = null;
+					add_action('wp_login', array( $this, 'cloud_app_null' ), 999);
 				}
             }
 		}
 
 		return $user;
+	}
+
+
+	/**
+	 * Delete the CloudApp object
+	 */
+	public function cloud_app_null()
+    {
+	    self::$cloud_app = null;
 	}
 
 	/**
@@ -884,10 +893,6 @@ class LimitLoginAttempts
 
 		if ( ! self::$cloud_app ) {
 		    return;
-		}
-
-		if ( Config::get( 'active_app' ) !== 'custom' ) {
-			return;
 		}
 
 		if ( ! empty( $username ) ) {
@@ -1936,7 +1941,7 @@ class LimitLoginAttempts
 			$this->info_data = $this->info();
 		}
 
-		return !empty($this->info_data['requests']['exhausted'] ?? false);
+		return ! empty( $this->info_data['requests']['exhausted'] );
 	}
 
 

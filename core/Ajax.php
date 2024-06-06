@@ -470,11 +470,11 @@ class Ajax {
 
                             <td class="cell-login">
                                 <span class="hint_tooltip-parent">
-                                        <a href="<?php echo $login_url ?>" target="_blank"><?php echo $item['login'] ?></a>
+                                        <a href="<?php echo $login_url ?>" target="_blank"><?php echo esc_html( $item['login'] ) ?></a>
                                         <?php if ( $long_login ) : ?>
                                             <div class="hint_tooltip">
                                                 <div class="hint_tooltip-content">
-                                                    <?php echo $item['login'] ?>
+                                                    <?php echo esc_html( $item['login'] ) ?>
                                                 </div>
                                             </div>
                                         <?php endif; ?>
@@ -490,7 +490,7 @@ class Ajax {
                                             </div>
                                         </div>
                                     </span>
-                                    <span><?php echo $item['ip'] ?></span>
+                                    <span><?php echo esc_html( $item['ip'] ) ?></span>
                                 </div>
                             </td>
                             <td>
@@ -498,17 +498,17 @@ class Ajax {
                                     <span class="hint_tooltip-parent">
                                         <?php $admin_key = array_search( 'administrator', $item['roles'] );
                                         if ( $admin_key !== false ) : ?>
-                                            <span><?php echo $item['roles'][$admin_key] ?></span>
+                                            <span><?php echo esc_html( $item['roles'][$admin_key] ) ?></span>
                                             <?php unset( $item['roles'][$admin_key] );
                                         else :
-                                            echo $item['roles'][0];
+                                            echo esc_html( $item['roles'][0] );
                                             unset( $item['roles'][0] );
                                         endif;
                                         $list_roles = '';
                                         foreach ( $item['roles'] as $role ) :
-                                                $list_roles .= '<li>' . $role . '</li>';
+                                                $list_roles .= '<li>' . esc_html( $role ) . '</li>';
                                         endforeach;
-                                        if ( !empty ( $list_roles ) ) : ?>
+                                        if ( ! empty ( $list_roles ) ) : ?>
                                             <div class="hint_tooltip">
                                                 <div class="hint_tooltip-content">
                                                     <ul>
@@ -553,7 +553,7 @@ class Ajax {
 
                                 <?php if ( !empty( $country_name ) ) :
 
-                                    $country_code = $item['location']['country_code'] !== 'ZZ' ? ' (' . $item['location']['country_code'] . ')' : '';
+                                    $country_code = $item['location']['country_code'] !== 'ZZ' ? ' (' . esc_html( $item['location']['country_code'] ) . ')' : '';
                                     ?>
                                     <div>
                                         <span><?php _e( 'Country: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $country_name . $country_code ?>
@@ -562,33 +562,33 @@ class Ajax {
 
                                 <?php if ( !empty( $item['location']['stateprov'] ) ) : ?>
                                     <div>
-                                        <span><?php _e( 'State/Province: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['stateprov'] ?>
+                                        <span><?php _e( 'State/Province: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $item['location']['stateprov'] ) ?>
                                     </div>
                                 <?php endif ?>
 
                                 <?php if ( !empty( $item['location']['district'] ) ) : ?>
                                     <div>
-                                        <span><?php _e( 'District: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['district'] ?>
+                                        <span><?php _e( 'District: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $item['location']['district'] ) ?>
                                     </div>
                                 <?php endif ?>
 
                                 <?php if ( !empty( $item['location']['city'] ) ) : ?>
                                     <div>
-                                        <span><?php _e( 'City: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['city'] ?>
+                                        <span><?php _e( 'City: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $item['location']['city'] ) ?>
                                     </div>
                                 <?php endif ?>
 
                                 <?php if ( !empty( $item['location']['zipcode'] ) ) : ?>
                                     <div>
-                                        <span><?php _e( 'Zipcode: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['zipcode'] ?>
+                                        <span><?php _e( 'Zipcode: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $item['location']['zipcode'] ) ?>
                                     </div>
                                 <?php endif ?>
 
                                 <?php if ( $latitude && $longitude ) : ?>
                                     <div>
                                         <span><?php _e( 'Latitude, Longitude: ', 'limit-login-attempts-reloaded' ) ?></span>
-                                        <a href="https://www.limitloginattempts.com/map?lat=<?php echo $latitude ?>&lon=<?php echo $longitude ?>" target="_blank">
-                                            <?php echo $latitude . ', ' . $longitude ?>
+                                        <a href="https://www.limitloginattempts.com/map?lat=<?php echo esc_html( $latitude ) ?>&lon=<?php echo esc_html( $longitude ) ?>" target="_blank">
+                                            <?php echo esc_html( $latitude ) . ', ' . esc_html( $longitude ) ?>
                                         </a>
                                     </div>
                                 <?php endif ?>
@@ -607,7 +607,7 @@ class Ajax {
                                         <span>
                                             <?php _e( 'Timezone: ', 'limit-login-attempts-reloaded' ) ?>
                                         </span>
-                                        <?php echo $item['location']['timezone_name'] . ' [' . $timezone_offset . ']' ?>
+                                        <?php echo esc_html( $item['location']['timezone_name'] ) . ' [' . esc_html( $timezone_offset ) . ']'  ?>
                                     </div>
                                 <?php endif ?>
 
@@ -615,8 +615,8 @@ class Ajax {
 
                                     $usage_type = !empty( $item['location']['usage_type'] ) ? ' (' . $item['location']['usage_type'] . ')' : '';
 
-                                    $isp_name = $item['location']['isp_name'];
-                                    $organization_name = $item['location']['organization_name'];
+                                    $isp_name = esc_html( $item['location']['isp_name'] );
+                                    $organization_name = esc_html( $item['location']['organization_name'] );
 
                                     if ( $isp_name === $organization_name ) {
 
@@ -634,14 +634,14 @@ class Ajax {
                                     ?>
 
                                     <div>
-                                        <span><?php _e( 'Internet Provider: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $full_name . $usage_type ?>
+                                        <span><?php _e( 'Internet Provider: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $full_name ) . esc_html( $usage_type ) ?>
                                     </div>
 
                                 <?php endif ?>
 
                                 <?php if ( !empty( $item['location']['connection_type'] ) ) : ?>
                                     <div>
-                                        <span><?php _e( 'Connection Type: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $item['location']['connection_type'] ?>
+                                        <span><?php _e( 'Connection Type: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $item['location']['connection_type'] ) ?>
                                     </div>
                                 <?php endif ?>
 
@@ -649,7 +649,7 @@ class Ajax {
                         </td>
                         <td colspan="3">
 					        <?php if ( $latitude && $longitude ) : ?>
-                                <iframe class="open_street_map" data-latitude="<?php echo $latitude ?>" data-longitude="<?php echo $longitude ?>"
+                                <iframe class="open_street_map" data-latitude="<?php echo esc_html( $latitude ) ?>" data-longitude="<?php echo esc_html( $longitude ) ?>"
                                         width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
                                 </iframe>
 					        <?php endif; ?>
