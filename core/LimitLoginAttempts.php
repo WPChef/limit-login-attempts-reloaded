@@ -1941,7 +1941,7 @@ class LimitLoginAttempts
 			$this->info_data = $this->info();
 		}
 
-		return ! empty( $this->info_data['requests']['exhausted'] );
+		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
 	}
 
 

@@ -421,10 +421,12 @@ class Ajax {
 		if ( $data ) {
 
 			$date_format    = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
-			$current_date   = current_time('Y-m-d');
+			$current_date   = date('Y-m-d');
+			$current_year   = date('Y');
 
 			$countries_list = Helpers::get_countries_list();
 			$continent_list = Helpers::get_continent_list();
+
 			ob_start();
 			if ( empty( $data['items'] ) && ! empty( $data['offset'] ) ) :
 
@@ -432,7 +434,7 @@ class Ajax {
 
 				<?php foreach ( $data['items'] as $item ) :
 
-                    $limited = ( isset( $item['limited'] ) && $item['limited'] === 'true' );
+					$limited = isset( $item['limited'] ) ? filter_var( $item['limited'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
 
 					$country_name = ! empty( $countries_list[ $item['location']['country_code'] ] ) ? $countries_list[ $item['location']['country_code'] ] : '';
 					$continent_name = ! empty( $continent_list[ $item['location']['continent_code'] ] ) ? $continent_list[ $item['location']['continent_code'] ] : '';
@@ -445,9 +447,7 @@ class Ajax {
 					$log_date_gmt   = date('Y-m-d H:i:s', $item['at']);
 					$log_local_date = get_date_from_gmt($log_date_gmt, 'Y-m-d');
 					$log_local_time = get_date_from_gmt($log_date_gmt, get_option('time_format'));
-					$current_year   = date('Y');
 					$log_year       = get_date_from_gmt($log_date_gmt, 'Y');
-					$current_date   = date('Y-m-d');
 
 					if ($log_local_date === $current_date) {
 						$correct_date = __('Today at ', 'limit-login-attempts-reloaded') . $log_local_time;
@@ -457,7 +457,6 @@ class Ajax {
 					} else {
 						$correct_date = get_date_from_gmt($log_date_gmt, $date_format);
 					}
-
 					?>
                     <tr>
                         <td class="llar-col-nowrap"><?php echo $correct_date; ?></td>
@@ -556,7 +555,7 @@ class Ajax {
                                     $country_code = $item['location']['country_code'] !== 'ZZ' ? ' (' . esc_html( $item['location']['country_code'] ) . ')' : '';
                                     ?>
                                     <div>
-                                        <span><?php _e( 'Country: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $country_name . $country_code ?>
+                                        <span><?php _e( 'Country: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html($country_name) . esc_html($country_code) ?>
                                     </div>
                                 <?php endif ?>
 
@@ -587,7 +586,7 @@ class Ajax {
                                 <?php if ( $latitude && $longitude ) : ?>
                                     <div>
                                         <span><?php _e( 'Latitude, Longitude: ', 'limit-login-attempts-reloaded' ) ?></span>
-                                        <a href="https://www.limitloginattempts.com/map?lat=<?php echo esc_html( $latitude ) ?>&lon=<?php echo esc_html( $longitude ) ?>" target="_blank">
+                                        <a href="https://www.limitloginattempts.com/map?lat=<?php echo esc_attr( $latitude ) ?>&lon=<?php echo esc_attr( $longitude ) ?>" target="_blank">
                                             <?php echo esc_html( $latitude ) . ', ' . esc_html( $longitude ) ?>
                                         </a>
                                     </div>
@@ -615,8 +614,8 @@ class Ajax {
 
                                     $usage_type = !empty( $item['location']['usage_type'] ) ? ' (' . $item['location']['usage_type'] . ')' : '';
 
-                                    $isp_name = esc_html( $item['location']['isp_name'] );
-                                    $organization_name = esc_html( $item['location']['organization_name'] );
+                                    $isp_name = $item['location']['isp_name'];
+                                    $organization_name = $item['location']['organization_name'];
 
                                     if ( $isp_name === $organization_name ) {
 
@@ -649,7 +648,7 @@ class Ajax {
                         </td>
                         <td colspan="3">
 					        <?php if ( $latitude && $longitude ) : ?>
-                                <iframe class="open_street_map" data-latitude="<?php echo esc_html( $latitude ) ?>" data-longitude="<?php echo esc_html( $longitude ) ?>"
+                                <iframe class="open_street_map" data-latitude="<?php echo esc_attr( $latitude ) ?>" data-longitude="<?php echo esc_attr( $longitude ) ?>"
                                         width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
                                 </iframe>
 					        <?php endif; ?>

@@ -152,7 +152,6 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 
 	<div class="dashboard-section-4">
         <?php
-
         $lockout_notify = explode( ',', Config::get( 'lockout_notify' ) );
         $email_checked = in_array( 'email', $lockout_notify ) ? ' checked disabled' : '';
         $email_checked = $is_active_app_custom ? ' checked disabled' : $email_checked;
