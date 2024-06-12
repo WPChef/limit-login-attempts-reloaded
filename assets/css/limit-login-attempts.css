@@ -2834,6 +2834,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 1.5rem 2rem;
   background-color: #ECFAFB;
   border-radius: 20px;
+  border: 1px solid #4ACAD8;
   transform: translate(-50%, -50%);
 }
 @media screen and (max-width: 1599.5px) {
