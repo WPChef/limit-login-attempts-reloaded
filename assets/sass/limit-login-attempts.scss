@@ -1362,7 +1362,7 @@
   }
 }
 
-.llar-table-app-login {
+.llar-table-app-login, .llar-table-no_app-login {
   position: relative;
   border-collapse: separate;
   border-spacing: 0 3px;
@@ -1707,6 +1707,10 @@
       }
     }
   }
+}
+
+.llar-table-no_app-login {
+
 }
 
 .llar-notice-review,
