@@ -412,11 +412,22 @@ class Ajax {
 
 		check_ajax_referer( 'llar-app-load-login', 'sec' );
 
+		if ( empty( $_POST['limit'] ) && empty( $_POST['custom'] ) && ! $_POST['offset'] && ! $_POST['url_premium'] ) {
+			wp_send_json_error( array() );
+        }
+
 		$offset = sanitize_text_field( $_POST['offset'] );
 		$limit  = sanitize_text_field( $_POST['limit'] );
+		$custom  = sanitize_text_field( $_POST['custom'] );
 		$upgrade_premium_url = sanitize_text_field( $_POST['url_premium'] );
 
-		$data = LimitLoginAttempts::$cloud_app->get_login( $limit, $offset );
+		if ( $custom === 'true') {
+
+		    $data = LimitLoginAttempts::$cloud_app->get_login( $limit, $offset );
+        } else {
+			$local_data = ['at' => time() - 60, 'login' => 'admin', 'ip' => '11.22.33.44', 'location' => ['country_code' => 'US'], 'roles' => ['administrator']];
+			$data['items'] = array_fill(0, 5, $local_data);
+		}
 
 		if ( $data ) {
 

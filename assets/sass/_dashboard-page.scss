@@ -617,6 +617,7 @@
     }
 
     .info-box-1 {
+      position: relative;
 
       .section {
 
@@ -647,6 +648,93 @@
 
           @extend .llar-table-scroll-wrap;
 
+        }
+      }
+    }
+
+    .llar-blur-block {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      backdrop-filter: blur(1.5px);
+      background-color: $typography-additional__light-two;
+
+      &-text {
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        max-width: 46rem;
+        width: 80%;
+        font-size: 18px;
+        line-height: 1.3;
+        color: $typography-secondary;
+        text-align: center;
+        padding: 1.5rem 2rem;
+        background-color: $secondary-colors-light-blue;
+        border-radius: $border-radius;
+        transform: translate(-50%, -50%);
+
+        @include _1599 {
+          top: 40%;
+          font-size: 16px;
+        }
+
+        @include _1399 {
+          top: 45%;
+          font-size: 14px;
+        }
+
+        img {
+          max-width: 5rem;
+
+          @include _1599 {
+            max-width: 4rem;
+          }
+        }
+
+        .title {
+          margin-top: 1rem;
+          font-size: 26px;
+          font-weight: 500;
+
+          @include _1599 {
+            margin-top: .75rem;
+            font-size: 24px;
+          }
+
+          @include _1399 {
+            margin-top: .5rem;
+          }
+        }
+
+        .description {
+          margin-top: 1rem;
+
+          @include _1599 {
+            margin-top: .75rem;
+          }
+
+          @include _1399 {
+            margin-top: .5rem;
+          }
+        }
+
+        .footer {
+          border-top: 1px solid $primary-colors__turquoise;
+          padding-top: .75rem;
+          margin-top: 1rem;
+          font-weight: 500;
+
+          @include _1599 {
+            margin-top: .75rem;
+          }
+
+          @include _1399 {
+            padding-top: .5rem;
+            margin-top: .5rem;
+          }
         }
       }
     }
