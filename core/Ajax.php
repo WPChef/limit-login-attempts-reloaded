@@ -470,7 +470,7 @@ class Ajax {
 					}
 					?>
                     <tr>
-                        <td class="llar-col-nowrap"><?php echo $correct_date; ?></td>
+                        <td class="llar-col-nowrap"><?php echo esc_html( $correct_date ) ?></td>
 
                         <?php if ( $limited ) : ?>
 
