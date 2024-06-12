@@ -674,6 +674,7 @@
         padding: 1.5rem 2rem;
         background-color: $secondary-colors-light-blue;
         border-radius: $border-radius;
+        border: 1px solid $primary-colors__turquoise;
         transform: translate(-50%, -50%);
 
         @include _1599 {
