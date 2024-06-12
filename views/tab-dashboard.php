@@ -204,7 +204,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                     <span>
                         <?php _e( 'Implement strong account policies', 'limit-login-attempts-reloaded' ); ?>
                     </span>
-	                <span class="list-add">Check when done.</span>
+	                <span class="list-add"><?php _e('Check when done.', 'limit-login-attempts-reloaded' )?></span>
                     <div class="desc">
                         <?php echo sprintf(
                             __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Read our guide</a> on implementing and enforcing strong password policies in your organization.', 'limit-login-attempts-reloaded' ),
@@ -223,7 +223,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                     <span>
                         <?php echo $list_name ?>
                     </span>
-	                <span class="list-add">Check when done.</span>
+	                <span class="list-add"><?php _e('Check when done.', 'limit-login-attempts-reloaded' )?></span>
                     <div class="desc">
                         <?php $link__allow_deny = $block_by_country
                             ? $url_site . '/wp-admin/admin.php?page=limit-login-attempts&tab=logs-custom'
