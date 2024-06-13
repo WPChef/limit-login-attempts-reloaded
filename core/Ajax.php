@@ -473,7 +473,7 @@ class Ajax {
                         <td class="llar-col-nowrap"><?php echo esc_html( $correct_date ) ?></td>
 					<?php if ( $limited ) :
 						$item['login'] = 'admin';
-						$item['location']['country_code'] = 'US';
+						$item['location']['country_code'] = 'ZZ';
 						$item['roles'] = ['administrator'];
 						$item['ip'] = '11.22.33.44';
 				    endif ?>
