@@ -87,13 +87,13 @@ $limit = 10;
             </div>
             <div class="footer">
 	            <?php if ( ! empty ( $setup_code ) ) :
-		            $text_no_custom = __( 'This feature is only available for<br><a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Premium</a> users.', 'limit-login-attempts-reloaded' );
+		            $text_no_custom = __( 'This feature is only available for<br><a class="link__style_unlink llar_turquoise" href="%s">Premium</a> users.', 'limit-login-attempts-reloaded' );
 	            else:
-		            $text_no_custom = __( 'This feature is only available for<br><a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Premium</a> and <a class="link__style_unlink llar_turquoise button_micro_cloud">Micro Cloud (FREE!)</a> users.', 'limit-login-attempts-reloaded' );
+		            $text_no_custom = __( 'This feature is only available for<br><a class="link__style_unlink llar_turquoise" href="%s">Premium</a> and <a class="link__style_unlink llar_turquoise button_micro_cloud">Micro Cloud (FREE!)</a> users.', 'limit-login-attempts-reloaded' );
 	            endif ?>
 	            <?php echo sprintf(
 		            $text_no_custom,
-		            'https://www.limitloginattempts.com/info.php?id=4'
+		            '/wp-admin/admin.php?page=limit-login-attempts&tab=premium'
 	            ); ?>
             </div>
         </div>
