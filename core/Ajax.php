@@ -471,68 +471,64 @@ class Ajax {
 					?>
                     <tr>
                         <td class="llar-col-nowrap"><?php echo esc_html( $correct_date ) ?></td>
-
-                        <?php if ( $limited ) : ?>
-
-                            <td colspan="3"></td>
-
-                        <?php else : ?>
-
-                            <td class="cell-login">
-                                <span class="hint_tooltip-parent">
-                                        <a href="<?php echo $login_url ?>" target="_blank"><?php echo esc_html( $item['login'] ) ?></a>
-                                        <?php if ( $long_login ) : ?>
-                                            <div class="hint_tooltip">
-                                                <div class="hint_tooltip-content">
-                                                    <?php echo esc_html( $item['login'] ) ?>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-                                </span>
-                            </td>
-                            <td>
-                                <div class="llar-log-country-flag">
-                                    <span class="hint_tooltip-parent">
-                                        <img src="<?php echo LLA_PLUGIN_URL . 'assets/img/flags/' . esc_attr( strtolower( $item['location']['country_code'] ) ) . '.png' ?>">
+					<?php if ( $limited ) :
+						$item['login'] = 'admin';
+						$item['location']['country_code'] = 'US';
+						$item['roles'] = ['administrator'];
+						$item['ip'] = '11.22.33.44';
+				    endif ?>
+                        <td class="cell-login <?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
+                            <span class="hint_tooltip-parent">
+                                    <a href="<?php echo $login_url ?>" target="_blank"><?php echo esc_html( $item['login'] ) ?></a>
+                                    <?php if ( $long_login ) : ?>
                                         <div class="hint_tooltip">
                                             <div class="hint_tooltip-content">
-                                                <?php echo $country_name ?>
+                                                <?php echo esc_html( $item['login'] ) ?>
                                             </div>
                                         </div>
-                                    </span>
-                                    <span><?php echo esc_html( $item['ip'] ) ?></span>
-                                </div>
-                            </td>
-                            <td>
-                                <?php if ( isset( $item['roles'] ) && is_array( $item['roles'] ) ) : ?>
-                                    <span class="hint_tooltip-parent">
-                                        <?php $admin_key = array_search( 'administrator', $item['roles'] );
-                                        if ( $admin_key !== false ) : ?>
-                                            <span><?php echo esc_html( $item['roles'][$admin_key] ) ?></span>
-                                            <?php unset( $item['roles'][$admin_key] );
-                                        else :
-                                            echo esc_html( $item['roles'][0] );
-                                            unset( $item['roles'][0] );
-                                        endif;
-                                        $list_roles = '';
-                                        foreach ( $item['roles'] as $role ) :
-                                                $list_roles .= '<li>' . esc_html( $role ) . '</li>';
-                                        endforeach;
-                                        if ( ! empty ( $list_roles ) ) : ?>
-                                            <div class="hint_tooltip">
-                                                <div class="hint_tooltip-content">
-                                                    <ul>
-                                                        <?php echo $list_roles; ?>
-                                                    </ul>
-                                                </div>
+                                    <?php endif; ?>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="llar-log-country-flag <?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
+                                <span class="hint_tooltip-parent">
+                                    <img src="<?php echo LLA_PLUGIN_URL . 'assets/img/flags/' . esc_attr( strtolower( $item['location']['country_code'] ) ) . '.png' ?>">
+                                    <div class="hint_tooltip">
+                                        <div class="hint_tooltip-content">
+                                            <?php echo $country_name ?>
+                                        </div>
+                                    </div>
+                                </span>
+                                <span><?php echo esc_html( $item['ip'] ) ?></span>
+                            </div>
+                        </td>
+                        <td class="<?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
+                            <?php if ( isset( $item['roles'] ) && is_array( $item['roles'] ) ) : ?>
+                                <span class="hint_tooltip-parent">
+                                    <?php $admin_key = array_search( 'administrator', $item['roles'] );
+                                    if ( $admin_key !== false ) : ?>
+                                        <span><?php echo esc_html( $item['roles'][$admin_key] ) ?></span>
+                                        <?php unset( $item['roles'][$admin_key] );
+                                    else :
+                                        echo esc_html( $item['roles'][0] );
+                                        unset( $item['roles'][0] );
+                                    endif;
+                                    $list_roles = '';
+                                    foreach ( $item['roles'] as $role ) :
+                                            $list_roles .= '<li>' . esc_html( $role ) . '</li>';
+                                    endforeach;
+                                    if ( ! empty ( $list_roles ) ) : ?>
+                                        <div class="hint_tooltip">
+                                            <div class="hint_tooltip-content">
+                                                <ul>
+                                                    <?php echo $list_roles; ?>
+                                                </ul>
                                             </div>
-                                        <?php endif; ?>
-                                    </span>
-                                <?php endif; ?>
-                            </td>
-
-                        <?php endif?>
-
+                                        </div>
+                                    <?php endif; ?>
+                                </span>
+                            <?php endif; ?>
+                        </td>
                         <td class="button-open">
 		                    <button class="button llar-add-login-open">
                                 <i class="dashicons dashicons-arrow-down-alt2"></i>
@@ -546,7 +542,7 @@ class Ajax {
                         <td colspan="4" style="max-width: 290px">
                             <div>
 		                        <?php echo sprintf(
-			                        __( 'This login occurred when your account was out of requests; hence, the login details are missing. We recommend <a class="link__style_unlink llar_turquoise" href="%s" target="_blank">upgrading</a> to avoid this issue in the future.', 'limit-login-attempts-reloaded' ),
+			                        __( 'Login details could not be populated due to insufficient cloud resources.<br>Please <a class="link__style_unlink llar_turquoise" href="%s" target="_blank">upgrade to Premium</a> to access this data.', 'limit-login-attempts-reloaded' ),
 			                        $upgrade_premium_url
 		                        ); ?>
                             </div>

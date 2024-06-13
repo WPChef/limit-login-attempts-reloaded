@@ -194,7 +194,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                     </span>
                     <div class="desc">
                         <?php echo sprintf(
-                            __( '<a class="link__style_unlink llar_turquoise" href="%s">Enable email notifications</a> to receive timely alerts and updates via email', 'limit-login-attempts-reloaded' ),
+                            __( '<a class="link__style_unlink llar_turquoise" href="%s">Enable email notifications</a> to receive timely alerts and updates via email.', 'limit-login-attempts-reloaded' ),
 	                        '/wp-admin/admin.php?page=limit-login-attempts&tab=settings#llar_lockout_notify'
                         ); ?>
                     </div>

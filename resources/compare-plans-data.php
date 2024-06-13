@@ -77,6 +77,14 @@ $compare_list = array(
         'Premium +'     => $yes . '<span class="description">200k requests per month</span>',
         'Professional'  => $yes . '<span class="description">300k requests per month</span>',
     ),
+	'Successful Login Logs'                         => array(
+		'description'   =>  __( 'Ensure the security and integrity of your website by logging your successful logins.', 'limit-login-attempts-reloaded' ),
+		'Free'          => $lock,
+		'Micro Cloud'   => $yes,
+		'Premium'       => $yes,
+		'Premium +'     => $yes,
+		'Professional'  => $yes,
+	),
     'Block By Country'                              => array(
         'description'   =>  __( 'Disable IPs from any region to disable logins.', 'limit-login-attempts-reloaded' ),
         'Free'          => $lock,
