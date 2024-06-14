@@ -3971,7 +3971,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-right: 15px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body {
-  padding: 15px 63px;
+  padding: 10px 63px;
   text-align: left;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .description {
@@ -4013,10 +4013,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification {
   font-size: 18px;
-  margin: 15px auto 0;
+  margin: 5px auto 0;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification .field-image img {
-  width: 240px;
+  width: 220px;
   margin: 0 auto;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification__error {
