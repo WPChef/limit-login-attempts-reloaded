@@ -44,6 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) exit();
 
     <?php endif; ?>
 
+	<?php include_once( LLA_PLUGIN_DIR.'views/app-widgets/login-attempts.php'); ?>
 	<?php include_once( LLA_PLUGIN_DIR.'views/app-widgets/active-lockouts.php'); ?>
 	<?php include_once( LLA_PLUGIN_DIR.'views/app-widgets/event-log.php'); ?>
 	<?php include_once( LLA_PLUGIN_DIR.'views/app-widgets/country-access-rules.php'); ?>

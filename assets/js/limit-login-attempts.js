@@ -62,8 +62,9 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
         } )
 
         const $account_policies = $( 'input[name="strong_account_policies"]' );
+        const $checkbox_block_by_country = $( 'input[name="block_by_country"]' );
         const $checkbox_auto_update_choice = $( 'input[name="auto_update_choice"]' );
-        const $auto_update_choice = $( 'a[href="llar_auto_update_choice"]' );
+        const $auto_update_choice = $( 'a[href="#llar_auto_update_choice"]' );
         const $auto_update_notice = $( '.llar-auto-update-notice' );
         const content_html = $( '#llar_popup_error_content' ).html();
         const $upgrade_premium_message = $( '#llar-header-upgrade-premium-message' );
@@ -76,6 +77,23 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
                 action: 'strong_account_policies',
                 is_checklist: $is_checklist,
                 sec: llar_vars.nonce_account_policies
+            }
+
+            llar_ajax_callback_post( ajaxurl, data )
+                .catch( function () {
+                    $account_policies.prop( 'checked', false );
+                } )
+
+        } )
+
+        $checkbox_block_by_country.on( 'change', function () {
+
+            $is_checklist = !! $( this ).prop( 'checked' );
+
+            let data = {
+                action: 'block_by_country',
+                is_checklist: $is_checklist,
+                sec: llar_vars.nonce_block_by_country
             }
 
             llar_ajax_callback_post( ajaxurl, data )

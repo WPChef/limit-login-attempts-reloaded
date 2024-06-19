@@ -151,9 +151,12 @@ class CloudApp
 				Config::update( 'active_app', 'custom' );
 				Config::update( 'app_setup_code', $setup_code );
 
-				return ! empty( $key_result['app_config']['messages']['setup_success'] )
-					? $key_result['app_config']['messages']['setup_success']
+				$setup_result['app_config']['messages']['setup_success'] =
+					! empty( $setup_result['app_config']['messages']['setup_success'] )
+					? $setup_result['app_config']['messages']['setup_success']
 					: __( 'The app has been successfully imported.', 'limit-login-attempts-reloaded' );
+
+				return $setup_result;
 			}
 		} else {
 
@@ -316,6 +319,26 @@ class CloudApp
 		return $this->request( 'log', 'get', $data );
 	}
 
+
+	/**
+	 * @param int $limit
+	 * @param string $offset
+	 *
+	 * @return bool|mixed
+	 * @throws Exception
+	 */
+	public function get_login($limit = 25, $offset = '')
+	{
+		$data = array();
+
+		$data['limit'] = $limit;
+		$data['offset'] = $offset;
+		$data['is_short'] = 1;
+
+		return $this->request( 'login', 'get', $data );
+	}
+
+
 	/**
 	 * @param int $limit
 	 * @param string $offset
@@ -384,6 +407,6 @@ class CloudApp
 			return false;
 		}
 
-		return json_decode( sanitize_textarea_field( stripslashes( $response['data'] ) ), true );
+		return Helpers::sanitize_stripslashes_deep( json_decode( $response['data'], true ) );
 	}
 }

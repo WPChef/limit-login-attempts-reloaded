@@ -1101,42 +1101,32 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody {
   color: #666D84;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody.login-attempts tr:nth-child(4n+1), #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) {
   border-radius: 16px;
   background-color: #F6FBFF;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
-  font-size: 16px;
-  font-weight: 400;
-}
-@media screen and (max-width: 1599.5px) {
-  #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
-    font-size: 14px;
-  }
-}
-@media screen and (max-width: 1399.5px) {
-  #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td {
-    font-size: 14px;
-  }
-}
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td:first-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:first-child {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td:first-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody.login-attempts tr:nth-child(4n+1) td:first-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:first-child {
   border-top-left-radius: 16px;
   border-bottom-left-radius: 16px;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td:last-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:last-child {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr.empty-row td:last-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody.login-attempts tr:nth-child(4n+1) td:last-child, #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr:nth-child(odd) td:last-child {
   border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td {
+  font-size: 16px;
+  font-weight: 400;
   padding: 18px;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td {
+    font-size: 14px;
     padding: 14px;
   }
 }
 @media screen and (max-width: 1399.5px) {
   #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td {
+    font-size: 14px;
     padding: 12px;
   }
 }
@@ -1181,6 +1171,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   height: auto;
   border-radius: 4px;
   vertical-align: middle;
+  margin-right: 5px;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table tbody tr td .llar-log-country-flag img {
@@ -1226,7 +1217,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 5px;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table .table-inline-preloader tr td .load-more-button a {
-  text-decoration-style: dashed;
+  padding-bottom: 1px;
+  text-decoration: unset;
+  border-bottom: 1px dashed;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .form-table .table-inline-preloader tr td .preloader-row {
   display: none;
@@ -1444,6 +1437,371 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: flex;
   border-top: 1px solid #dddada;
   padding-top: 10px;
+}
+
+.llar-blur-block {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  backdrop-filter: blur(1.5px);
+  background-color: rgba(164, 168, 183, 0.0784313725);
+}
+.llar-blur-block-text {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  max-width: 46rem;
+  width: 80%;
+  font-size: 18px;
+  line-height: 1.3;
+  color: #666D84;
+  text-align: center;
+  padding: 1.5rem 2rem;
+  background-color: #ECFAFB;
+  border-radius: 20px;
+  border: 1px solid #4ACAD8;
+  transform: translate(-50%, -50%);
+}
+@media screen and (max-width: 1599.5px) {
+  .llar-blur-block-text {
+    top: 40%;
+    font-size: 16px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  .llar-blur-block-text {
+    top: 45%;
+    font-size: 14px;
+  }
+}
+.llar-blur-block-text img {
+  max-width: 5rem;
+}
+@media screen and (max-width: 1599.5px) {
+  .llar-blur-block-text img {
+    max-width: 4rem;
+  }
+}
+.llar-blur-block-text .title {
+  margin-top: 1rem;
+  font-size: 26px;
+  font-weight: 500;
+}
+@media screen and (max-width: 1599.5px) {
+  .llar-blur-block-text .title {
+    margin-top: 0.75rem;
+    font-size: 24px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  .llar-blur-block-text .title {
+    margin-top: 0.5rem;
+  }
+}
+.llar-blur-block-text .description {
+  margin-top: 1rem;
+}
+@media screen and (max-width: 1599.5px) {
+  .llar-blur-block-text .description {
+    margin-top: 0.75rem;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  .llar-blur-block-text .description {
+    margin-top: 0.5rem;
+  }
+}
+.llar-blur-block-text .footer {
+  border-top: 1px solid #4ACAD8;
+  padding-top: 0.75rem;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+@media screen and (max-width: 1599.5px) {
+  .llar-blur-block-text .footer {
+    margin-top: 0.75rem;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  .llar-blur-block-text .footer {
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
+.llar-blur-block-cell {
+  filter: blur(7px);
+}
+
+.llar-table-app-login, #llar-setting-page-logs__active .llar-table-scroll-wrap, .llar-table-no_app-login {
+  position: relative;
+  border-collapse: separate;
+  border-spacing: 0 3px;
+}
+.llar-table-app-login.llar-preloader:before, #llar-setting-page-logs__active .llar-preloader.llar-table-scroll-wrap:before, .llar-table-no_app-login.llar-preloader:before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJtYXJnaW46YXV0bztiYWNrZ3JvdW5kOjAgMCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQiIGRpc3BsYXk9ImJsb2NrIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlM2UzZTMiIHN0cm9rZS13aWR0aD0iNSIgcj0iMzIiIHN0cm9rZS1kYXNoYXJyYXk9IjE1MC43OTY0NDczNzIzMTAwNyA1Mi4yNjU0ODI0NTc0MzY2OSIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0LjAxIDUwIDUwKSI+PGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiB2YWx1ZXM9IjAgNTAgNTA7MzYwIDUwIDUwIiBrZXlUaW1lcz0iMDsxIi8+PC9jaXJjbGU+PC9zdmc+");
+  background-color: rgba(255, 255, 255, 0.7);
+  background-repeat: no-repeat;
+  background-position: center center;
+  z-index: 999;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.llar-table-app-login tr th, #llar-setting-page-logs__active .llar-table-scroll-wrap tr th, .llar-table-app-login tr td, #llar-setting-page-logs__active .llar-table-scroll-wrap tr td, .llar-table-no_app-login tr th, .llar-table-no_app-login tr td {
+  font-size: 16px;
+  font-weight: 400;
+  width: fit-content;
+  padding: 20px 2px 20px 14px;
+}
+@media screen and (max-width: 1599.5px) {
+  .llar-table-app-login tr th, #llar-setting-page-logs__active .llar-table-scroll-wrap tr th, .llar-table-app-login tr td, #llar-setting-page-logs__active .llar-table-scroll-wrap tr td, .llar-table-no_app-login tr th, .llar-table-no_app-login tr td {
+    font-size: 14px;
+    padding: 15px 2px 15px 12px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  .llar-table-app-login tr th, #llar-setting-page-logs__active .llar-table-scroll-wrap tr th, .llar-table-app-login tr td, #llar-setting-page-logs__active .llar-table-scroll-wrap tr td, .llar-table-no_app-login tr th, .llar-table-no_app-login tr td {
+    padding: 12px 2px 12px 14px;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  .llar-table-app-login tr th, #llar-setting-page-logs__active .llar-table-scroll-wrap tr th, .llar-table-app-login tr td, #llar-setting-page-logs__active .llar-table-scroll-wrap tr td, .llar-table-no_app-login tr th, .llar-table-no_app-login tr td {
+    display: table-cell;
+    width: fit-content;
+    font-size: 12px;
+  }
+}
+.llar-table-app-login thead tr th, #llar-setting-page-logs__active .llar-table-scroll-wrap thead tr th, .llar-table-no_app-login thead tr th {
+  color: #2A2F40;
+  font-weight: 500;
+}
+.llar-table-app-login tbody.login-attempts tr, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr, .llar-table-no_app-login tbody.login-attempts tr {
+  border-radius: 16px;
+  background-color: unset;
+}
+.llar-table-app-login tbody.login-attempts tr:nth-child(4n+1), #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr:nth-child(4n+1), .llar-table-no_app-login tbody.login-attempts tr:nth-child(4n+1) {
+  background-color: #F6FBFF;
+}
+.llar-table-app-login tbody.login-attempts tr:nth-child(4n+3), #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr:nth-child(4n+3), .llar-table-no_app-login tbody.login-attempts tr:nth-child(4n+3) {
+  background-color: unset;
+}
+.llar-table-app-login tbody.login-attempts tr:nth-child(4n+2), #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr:nth-child(4n+2), .llar-table-app-login tbody.login-attempts tr:nth-child(4n+4), #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr:nth-child(4n+4), .llar-table-no_app-login tbody.login-attempts tr:nth-child(4n+2), .llar-table-no_app-login tbody.login-attempts tr:nth-child(4n+4) {
+  background-color: rgba(164, 168, 183, 0.0784313725);
+}
+.llar-table-app-login tbody.login-attempts tr td, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td, .llar-table-no_app-login tbody.login-attempts tr td {
+  color: #666D84;
+}
+.llar-table-app-login tbody.login-attempts tr td:first-child, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td:first-child, .llar-table-no_app-login tbody.login-attempts tr td:first-child {
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+}
+.llar-table-app-login tbody.login-attempts tr td:last-child, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td:last-child, .llar-table-no_app-login tbody.login-attempts tr td:last-child {
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+.llar-table-app-login tbody.login-attempts tr td.llar-col-nowrap, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.llar-col-nowrap, .llar-table-no_app-login tbody.login-attempts tr td.llar-col-nowrap {
+  white-space: nowrap;
+}
+.llar-table-app-login tbody.login-attempts tr td select, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td select, .llar-table-no_app-login tbody.login-attempts tr td select {
+  font-family: inherit;
+  min-width: 150px;
+  margin-right: 25px;
+  background-size: 16px 16px;
+}
+.llar-table-app-login tbody.login-attempts tr td .hint_tooltip, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .hint_tooltip, .llar-table-no_app-login tbody.login-attempts tr td .hint_tooltip {
+  width: max-content;
+  color: white;
+  top: 33px;
+  padding: 12px;
+}
+.llar-table-app-login tbody.login-attempts tr td .hint_tooltip:before, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .hint_tooltip:before, .llar-table-no_app-login tbody.login-attempts tr td .hint_tooltip:before {
+  right: 40%;
+}
+.llar-table-app-login tbody.login-attempts tr td .hint_tooltip-content, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .hint_tooltip-content, .llar-table-no_app-login tbody.login-attempts tr td .hint_tooltip-content {
+  font-size: 14px;
+}
+.llar-table-app-login tbody.login-attempts tr td .hint_tooltip-content ul, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .hint_tooltip-content ul, .llar-table-no_app-login tbody.login-attempts tr td .hint_tooltip-content ul {
+  padding-left: 5px;
+}
+.llar-table-app-login tbody.login-attempts tr td .hint_tooltip-content ul li, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .hint_tooltip-content ul li, .llar-table-no_app-login tbody.login-attempts tr td .hint_tooltip-content ul li {
+  color: inherit;
+  font-size: inherit;
+  margin-bottom: 5px;
+}
+.llar-table-app-login tbody.login-attempts tr td .hint_tooltip-content ul li:before, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .hint_tooltip-content ul li:before, .llar-table-no_app-login tbody.login-attempts tr td .hint_tooltip-content ul li:before {
+  color: white;
+  margin-left: -15px;
+}
+.llar-table-app-login tbody.login-attempts tr td .hint_tooltip-parent span, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .hint_tooltip-parent span, .llar-table-no_app-login tbody.login-attempts tr td .hint_tooltip-parent span {
+  color: #FF7C06;
+  font-weight: 500;
+}
+.llar-table-app-login tbody.login-attempts tr td .llar-log-country-flag, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .llar-log-country-flag, .llar-table-no_app-login tbody.login-attempts tr td .llar-log-country-flag {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 3px;
+}
+.llar-table-app-login tbody.login-attempts tr td .llar-log-country-flag .llar-tooltip:before, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .llar-log-country-flag .llar-tooltip:before, .llar-table-no_app-login tbody.login-attempts tr td .llar-log-country-flag .llar-tooltip:before {
+  width: auto !important;
+}
+.llar-table-app-login tbody.login-attempts tr td .llar-log-country-flag img, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .llar-log-country-flag img, .llar-table-no_app-login tbody.login-attempts tr td .llar-log-country-flag img {
+  width: 34px;
+  height: auto;
+  border-radius: 4px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+@media screen and (max-width: 1599.5px) {
+  .llar-table-app-login tbody.login-attempts tr td .llar-log-country-flag img, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .llar-log-country-flag img, .llar-table-no_app-login tbody.login-attempts tr td .llar-log-country-flag img {
+    width: 30px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  .llar-table-app-login tbody.login-attempts tr td .llar-log-country-flag img, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .llar-log-country-flag img, .llar-table-no_app-login tbody.login-attempts tr td .llar-log-country-flag img {
+    width: 25px;
+  }
+}
+.llar-table-app-login tbody.login-attempts tr td .button, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .button, .llar-table-no_app-login tbody.login-attempts tr td .button {
+  line-height: 1;
+  margin-right: 5px;
+  border-radius: 8px;
+}
+.llar-table-app-login tbody.login-attempts tr td .button:last-child, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .button:last-child, .llar-table-no_app-login tbody.login-attempts tr td .button:last-child {
+  margin-right: 0;
+}
+.llar-table-app-login tbody.login-attempts tr td .button .dashicons, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .button .dashicons, .llar-table-no_app-login tbody.login-attempts tr td .button .dashicons {
+  vertical-align: middle;
+}
+.llar-table-app-login tbody.login-attempts tr td .button.llar-add-login-open, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .button.llar-add-login-open, .llar-table-no_app-login tbody.login-attempts tr td .button.llar-add-login-open {
+  display: inline-block;
+  width: 30px;
+  min-width: unset;
+  min-height: 30px;
+  padding: 0;
+  text-align: center;
+  line-height: 20px;
+  cursor: pointer;
+  color: #A4A8B7;
+  border-color: currentColor;
+}
+@media screen and (max-width: 767.5px) {
+  .llar-table-app-login tbody.login-attempts tr td .button.llar-add-login-open, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .button.llar-add-login-open, .llar-table-no_app-login tbody.login-attempts tr td .button.llar-add-login-open {
+    width: 25px;
+    min-height: 25px;
+  }
+  .llar-table-app-login tbody.login-attempts tr td .button.llar-add-login-open .dashicons, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .button.llar-add-login-open .dashicons, .llar-table-no_app-login tbody.login-attempts tr td .button.llar-add-login-open .dashicons {
+    font-size: 14px;
+    height: 16px;
+  }
+}
+.llar-table-app-login tbody.login-attempts tr td .button.llar-add-login-open:focus, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .button.llar-add-login-open:focus, .llar-table-no_app-login tbody.login-attempts tr td .button.llar-add-login-open:focus {
+  outline: unset;
+  box-shadow: unset;
+}
+.llar-table-app-login tbody.login-attempts tr td .button.llar-add-login-open:hover, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .button.llar-add-login-open:hover, .llar-table-no_app-login tbody.login-attempts tr td .button.llar-add-login-open:hover {
+  color: #4ACAD8;
+}
+.llar-table-app-login tbody.login-attempts tr td.button-open, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.button-open, .llar-table-no_app-login tbody.login-attempts tr td.button-open {
+  padding: 0 2px;
+}
+.llar-table-app-login tbody.login-attempts tr td.cell-login, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login, .llar-table-no_app-login tbody.login-attempts tr td.cell-login {
+  max-width: 95px;
+}
+.llar-table-app-login tbody.login-attempts tr td.cell-login a, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login a, .llar-table-no_app-login tbody.login-attempts tr td.cell-login a {
+  display: inline-block;
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media screen and (max-width: 1599.5px) {
+  .llar-table-app-login tbody.login-attempts tr td.cell-login, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login, .llar-table-no_app-login tbody.login-attempts tr td.cell-login {
+    max-width: 85px;
+  }
+  .llar-table-app-login tbody.login-attempts tr td.cell-login a, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login a, .llar-table-no_app-login tbody.login-attempts tr td.cell-login a {
+    max-width: 80px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  .llar-table-app-login tbody.login-attempts tr td.cell-login, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login, .llar-table-no_app-login tbody.login-attempts tr td.cell-login {
+    max-width: 85px;
+  }
+  .llar-table-app-login tbody.login-attempts tr td.cell-login a, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login a, .llar-table-no_app-login tbody.login-attempts tr td.cell-login a {
+    max-width: 80px;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  .llar-table-app-login tbody.login-attempts tr td.cell-login, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login, .llar-table-no_app-login tbody.login-attempts tr td.cell-login {
+    max-width: 70px;
+  }
+  .llar-table-app-login tbody.login-attempts tr td.cell-login a, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login a, .llar-table-no_app-login tbody.login-attempts tr td.cell-login a {
+    max-width: 68px;
+  }
+}
+.llar-table-app-login tbody.login-attempts tr.hidden-row, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr.hidden-row, .llar-table-no_app-login tbody.login-attempts tr.hidden-row {
+  display: none;
+}
+.llar-table-app-login tbody.login-attempts tr.hidden-row.table-row-open, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr.hidden-row.table-row-open, .llar-table-no_app-login tbody.login-attempts tr.hidden-row.table-row-open {
+  display: table-row;
+}
+.llar-table-app-login tbody.login-attempts tr.hidden-row.table-row-open td, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr.hidden-row.table-row-open td, .llar-table-no_app-login tbody.login-attempts tr.hidden-row.table-row-open td {
+  font-size: 16px;
+}
+@media screen and (max-width: 1399.5px) {
+  .llar-table-app-login tbody.login-attempts tr.hidden-row.table-row-open td, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr.hidden-row.table-row-open td, .llar-table-no_app-login tbody.login-attempts tr.hidden-row.table-row-open td {
+    font-size: 14px;
+  }
+}
+.llar-table-app-login tbody.login-attempts tr.hidden-row.table-row-open td span, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr.hidden-row.table-row-open td span, .llar-table-no_app-login tbody.login-attempts tr.hidden-row.table-row-open td span {
+  font-weight: 600;
+}
+.llar-table-app-login tbody.login-attempts tr.hidden-row.table-row-open td a, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr.hidden-row.table-row-open td a, .llar-table-no_app-login tbody.login-attempts tr.hidden-row.table-row-open td a {
+  white-space: nowrap;
+}
+.llar-table-app-login tbody.login-attempts tr.hidden-row.table-row-open td .open_street_map, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr.hidden-row.table-row-open td .open_street_map, .llar-table-no_app-login tbody.login-attempts tr.hidden-row.table-row-open td .open_street_map {
+  border: unset;
+}
+.llar-table-app-login .table-inline-preloader, #llar-setting-page-logs__active .llar-table-scroll-wrap .table-inline-preloader, .llar-table-no_app-login .table-inline-preloader {
+  text-align: center;
+}
+.llar-table-app-login .table-inline-preloader.hidden, #llar-setting-page-logs__active .llar-table-scroll-wrap .table-inline-preloader.hidden, .llar-table-no_app-login .table-inline-preloader.hidden {
+  display: none;
+}
+.llar-table-app-login .table-inline-preloader tr td, #llar-setting-page-logs__active .llar-table-scroll-wrap .table-inline-preloader tr td, .llar-table-no_app-login .table-inline-preloader tr td {
+  padding: 5px;
+}
+.llar-table-app-login .table-inline-preloader tr td .load-more-button a, #llar-setting-page-logs__active .llar-table-scroll-wrap .table-inline-preloader tr td .load-more-button a, .llar-table-no_app-login .table-inline-preloader tr td .load-more-button a {
+  padding-bottom: 1px;
+  text-decoration: unset;
+  border-bottom: 1px dashed;
+}
+.llar-table-app-login .table-inline-preloader tr td .preloader-row, #llar-setting-page-logs__active .llar-table-scroll-wrap .table-inline-preloader tr td .preloader-row, .llar-table-no_app-login .table-inline-preloader tr td .preloader-row {
+  display: none;
+  align-items: center;
+}
+.llar-table-app-login .table-inline-preloader tr td .preloader-row .preloader-icon, #llar-setting-page-logs__active .llar-table-scroll-wrap .table-inline-preloader tr td .preloader-row .preloader-icon, .llar-table-no_app-login .table-inline-preloader tr td .preloader-row .preloader-icon {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJtYXJnaW46YXV0bztiYWNrZ3JvdW5kOjAgMCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQiIGRpc3BsYXk9ImJsb2NrIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlM2UzZTMiIHN0cm9rZS13aWR0aD0iNSIgcj0iMzIiIHN0cm9rZS1kYXNoYXJyYXk9IjE1MC43OTY0NDczNzIzMTAwNyA1Mi4yNjU0ODI0NTc0MzY2OSIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0LjAxIDUwIDUwKSI+PGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiB2YWx1ZXM9IjAgNTAgNTA7MzYwIDUwIDUwIiBrZXlUaW1lcz0iMDsxIi8+PC9jaXJjbGU+PC9zdmc+");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+}
+.llar-table-app-login .table-inline-preloader tr td .preloader-row .preloader-text, #llar-setting-page-logs__active .llar-table-scroll-wrap .table-inline-preloader tr td .preloader-row .preloader-text, .llar-table-no_app-login .table-inline-preloader tr td .preloader-row .preloader-text {
+  color: #999;
+}
+.llar-table-app-login .table-inline-preloader.loading tr td .load-more-button, #llar-setting-page-logs__active .llar-table-scroll-wrap .table-inline-preloader.loading tr td .load-more-button, .llar-table-no_app-login .table-inline-preloader.loading tr td .load-more-button {
+  display: none;
+}
+.llar-table-app-login .table-inline-preloader.loading tr td .preloader-row, #llar-setting-page-logs__active .llar-table-scroll-wrap .table-inline-preloader.loading tr td .preloader-row, .llar-table-no_app-login .table-inline-preloader.loading tr td .preloader-row {
+  display: inline-flex;
 }
 
 .llar-notice-review,
@@ -1880,7 +2238,14 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .dashboard_page_llar-welcome .notice:not(.llar-notice-review),
 .toplevel_page_limit-login-attempts .update-nag,
 .toplevel_page_limit-login-attempts .notice:not(.llar-notice-review) {
+  margin-top: 15px;
   display: none;
+}
+.dashboard_page_llar-welcome .update-nag p,
+.dashboard_page_llar-welcome .notice:not(.llar-notice-review) p,
+.toplevel_page_limit-login-attempts .update-nag p,
+.toplevel_page_limit-login-attempts .notice:not(.llar-notice-review) p {
+  margin-left: 10px;
 }
 .dashboard_page_llar-welcome .video-container,
 .toplevel_page_limit-login-attempts .video-container {
@@ -2483,10 +2848,18 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   flex: 0 0 auto;
   width: calc(50% - 16px);
   min-height: 100px;
-  padding: 32px 30px 24px;
+  max-height: 600px;
+  padding: 32px 23px 24px 30px;
   border-radius: 20px;
   background: #FDFDFD;
   box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
+  overflow: hidden;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
+    max-height: 515px;
+    padding: 27px 18px 20px 22px;
+  }
 }
 @media screen and (max-width: 1399.5px) {
   #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
@@ -2495,7 +2868,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 @media screen and (max-width: 991.5px) {
   #llar-dashboard-page .dashboard-section-4 > [class^=info-box-] {
-    padding: 30px 22px 16px;
+    padding: 27px 16px 16px 18px;
   }
 }
 #llar-dashboard-page .dashboard-section-4 > [class^=info-box-]:last-child {
@@ -2512,98 +2885,41 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: inline-block;
   position: relative;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new {
+#llar-dashboard-page .dashboard-section-4 .info-box-1 {
   position: relative;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .llar-label {
-  min-width: unset;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .llar-label__date {
-  background-color: #F6FBFF;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .llar-label__info {
-  background-color: unset;
-  color: #A4A8B7;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table {
-  width: 100%;
-  border-collapse: inherit;
-  border-spacing: 0;
-  margin-bottom: 16px;
-  font-size: 16px;
-}
-@media screen and (max-width: 767.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table {
-    font-size: 12px;
-  }
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr {
-  border-color: inherit;
-  border-style: solid;
-  border-width: 0;
-  position: relative;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr:nth-child(even)::after {
-  content: "";
-  position: absolute;
-  top: 5px;
-  bottom: 5px;
-  left: 0;
-  right: 0;
-  border-radius: 20px;
-  background-color: #F6FBFF;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td, #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr th {
-  padding: 20px;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr th {
-  background-color: #FDFDFD;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .title {
   color: #2A2F40;
-  text-align: left;
+  font-size: 20px;
   font-weight: 500;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td {
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-title__new .desc {
   color: #666D84;
-  border-bottom: 1px solid #E8E9EC;
-  position: relative;
-  z-index: 1;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td .separate {
-  height: 40px;
-  border-left: 1px solid #E8E9EC;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td:last-child {
-  border-right: unset;
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td .flag-icon {
-  width: 34px;
-  vertical-align: middle;
-  margin-right: 10px;
-  border-radius: 4px;
-}
-@media screen and (max-width: 767.5px) {
-  #llar-dashboard-page .dashboard-section-4 .info-box-1 .lockouts-by-country-table tbody tr td .flag-icon {
-    width: 28px;
-  }
-}
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .countries-table-info {
   font-size: 16px;
-  color: #FF7C06;
-  background-color: rgba(255, 124, 6, 0.0980392157);
-  border-radius: 20px;
-  padding: 4px 33px;
-  margin-top: 4px;
-  margin-bottom: 0;
-  float: left;
+  line-height: 1.5;
+  margin: 40px;
+  text-align: center;
 }
-#llar-dashboard-page .dashboard-section-4 .info-box-1 .countries-table-info-right {
-  margin-top: 5px;
-  margin-bottom: 0;
-  float: right;
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .section-content {
+  height: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+  padding-bottom: 30px;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 {
   line-height: 1.5;
-  padding-left: 45px;
+  padding-left: 30px;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 {
+    padding-left: 25px;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 {
+    padding-left: 22px;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title__new .title {
   color: #2A2F40;
@@ -2613,6 +2929,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title__new .desc {
   color: #666D84;
   font-size: 16px;
+  line-height: 2;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-title__new .desc {
+    line-height: 1.8;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content {
   margin-top: 0;
@@ -2622,7 +2944,23 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #2A2F40;
   font-size: 16px;
   font-weight: 500;
-  margin-top: 30px;
+  margin-top: 27px;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list {
+    font-size: 14px;
+    margin-top: 20px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list {
+    margin-top: 15px;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list {
+    margin-top: 12px;
+  }
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input {
   box-sizing: content-box;
@@ -2633,6 +2971,18 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input:checked + span {
   text-decoration: line-through;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list-add {
+  display: none;
+  color: #FF7C06;
+  margin-left: 10px;
+  font-weight: 400;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input[type=checkbox]:checked ~ .list-add {
+  display: none;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list input[type=checkbox]:not(:checked) ~ .list-add {
+  display: inline;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 .section-content .list .desc {
   color: #666D84;
@@ -3621,7 +3971,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-right: 15px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body {
-  padding: 15px 63px;
+  padding: 10px 63px;
   text-align: left;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .description {
@@ -3663,10 +4013,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification {
   font-size: 18px;
-  margin: 15px auto 0;
+  margin: 5px auto 0;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification .field-image img {
-  width: 240px;
+  width: 220px;
   margin: 0 auto;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification__error {

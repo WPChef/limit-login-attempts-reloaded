@@ -72,9 +72,13 @@ if ( ! $is_active_app_custom ) {
 	if ( $is_exhausted && $block_sub_group === 'Micro Cloud' ) {
 
 		if ( $retries_count === 0 ) {
+			$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
 			$retries_chart_color = '#97F6C8';
 
         } elseif ( $retries_count < 100 ) {
+			$retries_chart_title = sprintf( _n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
+			$retries_chart_title .= __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
+			$retries_chart_desc = __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
 			$retries_chart_color = '#FFCC66';
 
         } else {
