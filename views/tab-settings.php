@@ -690,7 +690,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 
                         $.post( ajaxurl, {
                             action: 'app_setup',
-                            code: btoa(setup_code),
+                            code: setup_code,
                             sec: '<?php echo esc_js( wp_create_nonce( "llar-app-setup" ) ); ?>',
                             is_network_admin: <?php echo esc_js( is_network_admin() ? 1 : 0 ); ?>
                         }, function ( response ) {
