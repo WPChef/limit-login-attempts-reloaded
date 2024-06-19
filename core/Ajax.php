@@ -162,14 +162,14 @@ class Ajax {
 
 		if ( ! empty( $_POST['code'] ) ) {
 
-			$setup_code = sanitize_text_field( $_POST['code'] );
+			$setup_code = sanitize_text_field( base64_decode( $_POST['code'] ) );
 
 			if ( $key_result = CloudApp::activate_license_key( $setup_code ) ) {
 
 			    if ( $key_result['success'] ) {
 
 				    wp_send_json_success( array(
-					    'msg' => ( $key_result )
+					    'msg' => ( $key_result['app_config']['messages']['setup_success'] )
 				    ) );
                 } else {
 

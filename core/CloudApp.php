@@ -151,9 +151,12 @@ class CloudApp
 				Config::update( 'active_app', 'custom' );
 				Config::update( 'app_setup_code', $setup_code );
 
-				return ! empty( $key_result['app_config']['messages']['setup_success'] )
-					? $key_result['app_config']['messages']['setup_success']
+				$setup_result['app_config']['messages']['setup_success'] =
+					! empty( $setup_result['app_config']['messages']['setup_success'] )
+					? $setup_result['app_config']['messages']['setup_success']
 					: __( 'The app has been successfully imported.', 'limit-login-attempts-reloaded' );
+
+				return $setup_result;
 			}
 		} else {
 
