@@ -162,7 +162,7 @@ class Ajax {
 
 		if ( ! empty( $_POST['code'] ) ) {
 
-			$setup_code = sanitize_text_field( base64_decode( $_POST['code'] ) );
+			$setup_code = sanitize_text_field( $_POST['code'] );
 
 			if ( $key_result = CloudApp::activate_license_key( $setup_code ) ) {
 
