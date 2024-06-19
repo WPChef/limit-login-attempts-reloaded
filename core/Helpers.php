@@ -78,6 +78,18 @@ class Helpers {
 		return $countries;
 	}
 
+	public static function get_continent_list() {
+
+		if ( ! ( $continent = require LLA_PLUGIN_DIR . '/resources/continent.php' ) ) {
+
+			return array();
+		}
+
+		asort( $continent );
+
+		return $continent;
+	}
+
 	/**
 	 * @param $ip
 	 * @param $cidr
@@ -118,6 +130,19 @@ class Helpers {
 
 		return $content;
 	}
+
+	// Solution prevents double quotes problem in json string
+	public static function sanitize_stripslashes_deep( $value )
+	{
+		if ( is_array( $value ) ) {
+			return array_map( 'self::sanitize_stripslashes_deep', $value );
+		} elseif ( is_bool( $value ) ) {
+			return $value;
+		} else {
+			return sanitize_textarea_field( stripslashes( $value ) );
+		}
+	}
+
 
 	public static function is_auto_update_enabled() {
 		$auto_update_plugins = get_site_option( 'auto_update_plugins' );

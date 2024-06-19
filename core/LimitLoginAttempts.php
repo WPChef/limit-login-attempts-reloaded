@@ -213,9 +213,11 @@ class LimitLoginAttempts
 
 		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 		add_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999, 2 );
+	    add_action( 'wp_login', array( $this, 'limit_login_success' ), 10, 2 );
 
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
+
 
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
@@ -534,12 +536,21 @@ class LimitLoginAttempts
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 
 				} elseif ( self::$cloud_app && self::$cloud_app->last_response_code === 403 ) {
-					self::$cloud_app = null;
+					add_action('wp_login', array( $this, 'cloud_app_null' ), 999);
 				}
             }
 		}
 
 		return $user;
+	}
+
+
+	/**
+	 * Delete the CloudApp object
+	 */
+	public function cloud_app_null()
+    {
+	    self::$cloud_app = null;
 	}
 
 	/**
@@ -609,6 +620,7 @@ class LimitLoginAttempts
             $auto_update                = wp_create_nonce( 'llar-toggle-auto-update' );
             $app_setup                  = wp_create_nonce( 'llar-app-setup' );
             $account_policies           = wp_create_nonce( 'llar-strong-account-policies' );
+            $block_country              = wp_create_nonce( 'llar-block_by_country' );
             $onboarding_reset           = wp_create_nonce( 'llar-action-onboarding-reset' );
             $dismiss_onboarding_popup   = wp_create_nonce( 'llar-dismiss-onboarding-popup' );
             $activate_micro_cloud       = wp_create_nonce( 'llar-activate-micro-cloud' );
@@ -619,6 +631,7 @@ class LimitLoginAttempts
                 'nonce_auto_update'               => $auto_update,
                 'nonce_app_setup'                 => $app_setup,
                 'nonce_account_policies'          => $account_policies,
+                'nonce_block_by_country'          => $block_country,
                 'nonce_onboarding_reset'          => $onboarding_reset,
                 'nonce_dismiss_onboarding_popup'  => $dismiss_onboarding_popup,
                 'nonce_activate_micro_cloud'      => $activate_micro_cloud,
@@ -867,6 +880,49 @@ class LimitLoginAttempts
 
 		return $uri;
 	}
+
+
+	/**
+	 * Fires after successful login
+	 *
+	 * @param $username
+	 * @param $user
+	 *
+	 */
+	public function limit_login_success( $username, $user ) {
+
+		if ( ! self::$cloud_app ) {
+		    return;
+		}
+
+		if ( ! empty( $username ) ) {
+
+			$clean_url = '';
+			if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+
+				$referer_url = $_SERVER['HTTP_REFERER'];
+				$referer_parsed = parse_url( $referer_url );
+
+				$clean_url = isset( $referer_parsed['path']) ? $referer_parsed['path'] : '';
+				$clean_url = trim( $clean_url, '/' );
+			}
+
+			$user = get_user_by('login', $username);
+
+			$data = array(
+				'ip'        => Helpers::get_all_ips(),
+				'login'     => $username,
+				'user_id'   => $user->ID,
+				'gateway'   => Helpers::detect_gateway(),
+				'roles'     => $user->roles,
+				'agent'     => $_SERVER['HTTP_USER_AGENT'],
+			    'url'       => $clean_url,
+			);
+
+			self::$cloud_app->request( 'login', 'post', $data );
+        }
+	}
+
 
 	/**
 	* Check if it is ok to login
@@ -1885,10 +1941,7 @@ class LimitLoginAttempts
 			$this->info_data = $this->info();
 		}
 
-		return ( ! empty( $this->info_data )
-            && ! empty( $this->info_data['requests'] )
-            && isset( $this->info_data['requests']['exhausted'] )
-            && $this->info_data['requests']['exhausted'] === true );
+		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
 	}
 
 

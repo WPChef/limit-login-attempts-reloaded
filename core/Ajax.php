@@ -21,6 +21,7 @@ class Ajax {
 		add_action( 'wp_ajax_app_setup', array( $this, 'app_setup_callback' ) );
 		add_action( 'wp_ajax_app_log_action', array( $this, 'app_log_action_callback' ) );
 		add_action( 'wp_ajax_app_load_log', array( $this, 'app_load_log_callback' ) );
+		add_action( 'wp_ajax_app_load_successful_login', array( $this, 'app_load_successful_login_callback' ) );
 		add_action( 'wp_ajax_app_load_lockouts', array( $this, 'app_load_lockouts_callback' ) );
 		add_action( 'wp_ajax_app_load_acl_rules', array( $this, 'app_load_acl_rules_callback' ) );
 		add_action( 'wp_ajax_app_load_country_access_rules', array( $this, 'app_load_country_access_rules_callback' ) );
@@ -34,6 +35,7 @@ class Ajax {
 		) );
 		add_action( 'wp_ajax_subscribe_email', array( $this, 'subscribe_email_callback' ) );
         add_action( 'wp_ajax_strong_account_policies', array( $this, 'strong_account_policies_callback' ) );
+        add_action( 'wp_ajax_block_by_country', array( $this, 'block_by_country_callback' ) );
 		add_action( 'wp_ajax_dismiss_onboarding_popup', array( $this, 'dismiss_onboarding_popup_callback' ) );
 		add_action( 'wp_ajax_onboarding_reset', array( $this, 'onboarding_reset_callback' ) );
 		add_action( 'wp_ajax_close_premium_message', array( $this, 'close_premium_message' ) );
@@ -167,7 +169,7 @@ class Ajax {
 			    if ( $key_result['success'] ) {
 
 				    wp_send_json_success( array(
-					    'msg' => ( $key_result )
+					    'msg' => ( $key_result['app_config']['messages']['setup_success'] )
 				    ) );
                 } else {
 
@@ -390,6 +392,290 @@ class Ajax {
 				'html'        => ob_get_clean(),
 				'offset'      => $log['offset'],
 				'total_items' => count( $log['items'] )
+			) );
+
+		} else {
+
+			wp_send_json_error( array(
+				'msg' => 'The endpoint is not responding. Please contact your app provider to settle that.'
+			) );
+		}
+	}
+
+
+	public function app_load_successful_login_callback() {
+
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+
+			wp_send_json_error( array() );
+		}
+
+		check_ajax_referer( 'llar-app-load-login', 'sec' );
+
+		if ( empty( $_POST['limit'] ) && empty( $_POST['custom'] ) && ! $_POST['offset'] && ! $_POST['url_premium'] ) {
+			wp_send_json_error( array() );
+        }
+
+		$offset = sanitize_text_field( $_POST['offset'] );
+		$limit  = sanitize_text_field( $_POST['limit'] );
+		$custom  = sanitize_text_field( $_POST['custom'] );
+		$upgrade_premium_url = sanitize_text_field( $_POST['url_premium'] );
+
+		if ( $custom === 'true') {
+
+		    $data = LimitLoginAttempts::$cloud_app->get_login( $limit, $offset );
+        } else {
+			$local_data = ['at' => time() - 60, 'login' => 'admin', 'ip' => '11.22.33.44', 'location' => ['country_code' => 'US'], 'roles' => ['administrator']];
+			$data['items'] = array_fill(0, 5, $local_data);
+		}
+
+		if ( $data ) {
+
+			$date_format    = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+			$current_date   = date('Y-m-d');
+			$current_year   = date('Y');
+
+			$countries_list = Helpers::get_countries_list();
+			$continent_list = Helpers::get_continent_list();
+
+			ob_start();
+			if ( empty( $data['items'] ) && ! empty( $data['offset'] ) ) :
+
+			elseif ( $data['items'] ) : ?>
+
+				<?php foreach ( $data['items'] as $item ) :
+
+					$limited = isset( $item['limited'] ) ? filter_var( $item['limited'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+
+					$country_name = ! empty( $countries_list[ $item['location']['country_code'] ] ) ? $countries_list[ $item['location']['country_code'] ] : '';
+					$continent_name = ! empty( $continent_list[ $item['location']['continent_code'] ] ) ? $continent_list[ $item['location']['continent_code'] ] : '';
+					$long_login = mb_strlen( $item['login'] ) > 10;
+					$login_url = !empty( $item['user_id'] ) ? get_edit_user_link( $item['user_id'] ) : '';
+
+					$latitude = !empty( $item['location']['latitude'] ) ? $item['location']['latitude'] : false;
+					$longitude = !empty( $item['location']['longitude'] ) ? $item['location']['longitude'] : false;
+
+					$log_date_gmt   = date('Y-m-d H:i:s', $item['at']);
+					$log_local_date = get_date_from_gmt($log_date_gmt, 'Y-m-d');
+					$log_local_time = get_date_from_gmt($log_date_gmt, get_option('time_format'));
+					$log_year       = get_date_from_gmt($log_date_gmt, 'Y');
+
+					if ($log_local_date === $current_date) {
+						$correct_date = __('Today at ', 'limit-login-attempts-reloaded') . $log_local_time;
+					} elseif ($log_year === $current_year) {
+						$log_local_month_day = get_date_from_gmt($log_date_gmt, 'M j');
+						$correct_date = $log_local_month_day . ' at ' . $log_local_time;
+					} else {
+						$correct_date = get_date_from_gmt($log_date_gmt, $date_format);
+					}
+					?>
+                    <tr>
+                        <td class="llar-col-nowrap"><?php echo esc_html( $correct_date ) ?></td>
+					<?php if ( $limited ) :
+						$item['login'] = 'admin';
+						$item['location']['country_code'] = 'ZZ';
+						$item['roles'] = ['administrator'];
+						$item['ip'] = '11.22.33.44';
+				    endif ?>
+                        <td class="cell-login <?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
+                            <span class="hint_tooltip-parent">
+                                    <a href="<?php echo $login_url ?>" target="_blank"><?php echo esc_html( $item['login'] ) ?></a>
+                                    <?php if ( $long_login ) : ?>
+                                        <div class="hint_tooltip">
+                                            <div class="hint_tooltip-content">
+                                                <?php echo esc_html( $item['login'] ) ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="llar-log-country-flag <?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
+                                <span class="hint_tooltip-parent">
+                                    <img src="<?php echo LLA_PLUGIN_URL . 'assets/img/flags/' . esc_attr( strtolower( $item['location']['country_code'] ) ) . '.png' ?>">
+                                    <div class="hint_tooltip">
+                                        <div class="hint_tooltip-content">
+                                            <?php echo $country_name ?>
+                                        </div>
+                                    </div>
+                                </span>
+                                <span><?php echo esc_html( $item['ip'] ) ?></span>
+                            </div>
+                        </td>
+                        <td class="<?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
+                            <?php if ( isset( $item['roles'] ) && is_array( $item['roles'] ) ) : ?>
+                                <span class="hint_tooltip-parent">
+                                    <?php $admin_key = array_search( 'administrator', $item['roles'] );
+                                    if ( $admin_key !== false ) : ?>
+                                        <span><?php echo esc_html( $item['roles'][$admin_key] ) ?></span>
+                                        <?php unset( $item['roles'][$admin_key] );
+                                    else :
+                                        echo esc_html( $item['roles'][0] );
+                                        unset( $item['roles'][0] );
+                                    endif;
+                                    $list_roles = '';
+                                    foreach ( $item['roles'] as $role ) :
+                                            $list_roles .= '<li>' . esc_html( $role ) . '</li>';
+                                    endforeach;
+                                    if ( ! empty ( $list_roles ) ) : ?>
+                                        <div class="hint_tooltip">
+                                            <div class="hint_tooltip-content">
+                                                <ul>
+                                                    <?php echo $list_roles; ?>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                </span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="button-open">
+		                    <button class="button llar-add-login-open">
+                                <i class="dashicons dashicons-arrow-down-alt2"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="hidden-row">
+
+					<?php if ( $limited ) : ?>
+
+                        <td colspan="4" style="max-width: 290px">
+                            <div>
+		                        <?php echo sprintf(
+			                        __( 'Login details could not be populated due to insufficient cloud resources.<br>Please <a class="link__style_unlink llar_turquoise" href="%s" target="_blank">upgrade to Premium</a> to access this data.', 'limit-login-attempts-reloaded' ),
+			                        $upgrade_premium_url
+		                        ); ?>
+                            </div>
+                        </td>
+
+                        <?php else : ?>
+                            <td colspan="2" style="max-width: 200px">
+
+                                <?php if ( !empty( $continent_name ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'Continent: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo $continent_name ?>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( !empty( $country_name ) ) :
+
+                                    $country_code = $item['location']['country_code'] !== 'ZZ' ? ' (' . esc_html( $item['location']['country_code'] ) . ')' : '';
+                                    ?>
+                                    <div>
+                                        <span><?php _e( 'Country: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html($country_name) . esc_html($country_code) ?>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( !empty( $item['location']['stateprov'] ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'State/Province: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $item['location']['stateprov'] ) ?>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( !empty( $item['location']['district'] ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'District: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $item['location']['district'] ) ?>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( !empty( $item['location']['city'] ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'City: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $item['location']['city'] ) ?>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( !empty( $item['location']['zipcode'] ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'Zipcode: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $item['location']['zipcode'] ) ?>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( $latitude && $longitude ) : ?>
+                                    <div>
+                                        <span><?php _e( 'Latitude, Longitude: ', 'limit-login-attempts-reloaded' ) ?></span>
+                                        <a href="https://www.limitloginattempts.com/map?lat=<?php echo esc_attr( $latitude ) ?>&lon=<?php echo esc_attr( $longitude ) ?>" target="_blank">
+                                            <?php echo esc_html( $latitude ) . ', ' . esc_html( $longitude ) ?>
+                                        </a>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( !empty( $item['location']['timezone_name'] ) ) :
+
+                                    $timezone_offset = '';
+                                    if ( !empty( $item['location']['timezone_offset'] ) ) {
+
+                                        $timezone_offset = (int)$item['location']['timezone_offset'] > 0
+                                            ? '+' . $item['location']['timezone_offset']
+                                            : $item['location']['timezone_offset'];
+                                    }
+                                    ?>
+                                    <div>
+                                        <span>
+                                            <?php _e( 'Timezone: ', 'limit-login-attempts-reloaded' ) ?>
+                                        </span>
+                                        <?php echo esc_html( $item['location']['timezone_name'] ) . ' [' . esc_html( $timezone_offset ) . ']'  ?>
+                                    </div>
+                                <?php endif ?>
+
+                                <?php if ( !empty( $item['location']['isp_name'] ) && !empty( $item['location']['organization_name'] ) ) :
+
+                                    $usage_type = !empty( $item['location']['usage_type'] ) ? ' (' . $item['location']['usage_type'] . ')' : '';
+
+                                    $isp_name = $item['location']['isp_name'];
+                                    $organization_name = $item['location']['organization_name'];
+
+                                    if ( $isp_name === $organization_name ) {
+
+                                        $full_name =  $organization_name;
+                                    } elseif ( strpos($isp_name, $organization_name ) !== false ) {
+
+                                        $full_name = $isp_name;
+                                    } elseif ( strpos($organization_name, $isp_name ) !== false ) {
+
+                                        $full_name = $organization_name;
+                                    } else {
+
+                                        $full_name =  $isp_name . ' / ' . $organization_name;
+                                    }
+                                    ?>
+
+                                    <div>
+                                        <span><?php _e( 'Internet Provider: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $full_name ) . esc_html( $usage_type ) ?>
+                                    </div>
+
+                                <?php endif ?>
+
+                                <?php if ( !empty( $item['location']['connection_type'] ) ) : ?>
+                                    <div>
+                                        <span><?php _e( 'Connection Type: ', 'limit-login-attempts-reloaded' ) ?></span><?php echo esc_html( $item['location']['connection_type'] ) ?>
+                                    </div>
+                                <?php endif ?>
+
+					        <?php endif ?>
+                        </td>
+                        <td colspan="3">
+					        <?php if ( $latitude && $longitude ) : ?>
+                                <iframe class="open_street_map" data-latitude="<?php echo esc_attr( $latitude ) ?>" data-longitude="<?php echo esc_attr( $longitude ) ?>"
+                                        width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
+                                </iframe>
+					        <?php endif; ?>
+                        </td>
+                    </tr>
+				<?php endforeach; ?>
+			<?php else : ?>
+				<?php if ( empty( $offset ) ) : ?>
+                    <tr class="empty-row">
+                        <td colspan="100%"
+                            style="text-align: center"><?php _e( 'No events yet.', 'limit-login-attempts-reloaded' ); ?></td>
+                    </tr>
+				<?php endif; ?>
+			<?php endif; ?>
+			<?php
+
+			wp_send_json_success( array(
+				'html'        => ob_get_clean(),
+				'offset'      => $data['offset'],
+				'total_items' => count( $data['items'] )
 			) );
 
 		} else {
@@ -686,6 +972,22 @@ class Ajax {
         $is_checklist = sanitize_text_field( trim( $_POST['is_checklist'] ) );
 
         Config::update( 'checklist', $is_checklist );
+
+        wp_send_json_success();
+    }
+
+    public function block_by_country_callback() {
+
+        if ( ! current_user_can( 'activate_plugins' ) ) {
+
+            wp_send_json_error( array() );
+        }
+
+        check_ajax_referer( 'llar-block_by_country', 'sec' );
+
+        $is_checklist = sanitize_text_field( trim( $_POST['is_checklist'] ) );
+
+        Config::update( 'block_by_country', $is_checklist );
 
         wp_send_json_success();
     }
