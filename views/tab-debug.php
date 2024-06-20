@@ -53,7 +53,7 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
 
 <div id="llar-setting-page-debug">
     <div class="llar-settings-wrap">
-        <table class="form-table">
+        <table class="llar-form-table">
             <tr>
                 <th scope="row" valign="top"><?php echo __( 'Debug Info', 'limit-login-attempts-reloaded' ); ?></th>
                 <td>

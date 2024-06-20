@@ -31,7 +31,7 @@ $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.co
 </div>
 
 <div class="llar-table-scroll-wrap llar-app-log-infinity-scroll">
-    <table class="form-table llar-table-app-log">
+    <table class="llar-form-table llar-table-app-log">
         <thead>
             <tr>
                 <th scope="col"><?php _e( "Time", 'limit-login-attempts-reloaded' ); ?></th>
