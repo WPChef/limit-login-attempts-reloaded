@@ -16,7 +16,7 @@ if ( !defined( 'ABSPATH' ) ) exit();
 
 <div class="llar-preloader-wrap">
     <div class="llar-table-scroll-wrap llar-app-lockouts-infinity-scroll">
-        <table class="form-table llar-table-app-lockouts">
+        <table class="llar-form-table llar-table-app-lockouts">
             <thead>
                 <tr>
                     <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>

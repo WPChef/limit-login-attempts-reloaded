@@ -518,6 +518,7 @@ class Ajax {
                                             $list_roles .= '<li>' . esc_html( $role ) . '</li>';
                                     endforeach;
                                     if ( ! empty ( $list_roles ) ) : ?>
+                                        <span class="dashicons dashicons-menu-alt2"></span>
                                         <div class="hint_tooltip">
                                             <div class="hint_tooltip-content">
                                                 <ul>

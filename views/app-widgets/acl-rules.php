@@ -18,7 +18,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
         <div class="llar-preloader-wrap login-rules">
             <div class="llar-table-scroll-wrap llar-app-login-access-rules-infinity-scroll">
-                <table class="form-table llar-app-login-access-rules-table">
+                <table class="llar-form-table llar-app-login-access-rules-table">
                     <thead>
                         <tr>
                             <th scope="col"><?php _e( 'Pattern', 'limit-login-attempts-reloaded' ); ?></th>
@@ -67,7 +67,7 @@ if( !defined( 'ABSPATH' ) ) exit();
 
         <div class="llar-preloader-wrap ip-rules">
             <div class="llar-table-scroll-wrap llar-app-ip-access-rules-infinity-scroll">
-                <table class="form-table llar-app-ip-access-rules-table">
+                <table class="llar-form-table llar-app-ip-access-rules-table">
                     <thead>
                         <tr>
                             <th scope="col"><?php _e( 'Pattern', 'limit-login-attempts-reloaded' ); ?></th>

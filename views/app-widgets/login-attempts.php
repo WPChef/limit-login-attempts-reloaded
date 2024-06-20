@@ -43,7 +43,7 @@ $limit = 10;
 
 <div class="section-content">
     <div class="llar-table-scroll-wrap llar-app-login-infinity-scroll">
-        <table class="form-table llar-table-app-login">
+        <table class="llar-form-table llar-table-app-login">
             <thead>
                 <tr>
                     <th scope="col"><?php _e( "Time", 'limit-login-attempts-reloaded' ); ?></th>
