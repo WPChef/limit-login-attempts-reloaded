@@ -513,7 +513,7 @@ class Ajax {
                                     if ( $admin_key !== false ) : ?>
                                         <span><?php echo esc_html( $item['roles'][$admin_key] ) ?></span>
                                         <?php unset( $item['roles'][$admin_key] );
-                                    else :
+                                    elseif ( isset($item['roles'][0]) ) :
                                         echo esc_html( $item['roles'][0] );
                                         unset( $item['roles'][0] );
                                     endif;
