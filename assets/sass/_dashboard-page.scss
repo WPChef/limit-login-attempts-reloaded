@@ -604,15 +604,62 @@
 
     .hint_tooltip {
       box-sizing: content-box;
+      right: -25px;
+      top: 30px;
+
+      &:before {
+        right: 25px;
+      }
 
       &-content {
         font-size: 14px;
         color: white;
+
+        @include _767 {
+          font-size: 12px;
+        }
+
+        ul {
+          padding-left: 16px;
+          padding-right: 10px;
+
+          li {
+            font-size: inherit;
+            color: inherit;
+            margin-bottom: 0;
+            padding-left: 10px;
+            min-width: 120px;
+
+            &::before {
+              color: white;
+              font-size: 12px;
+              margin-left: -15px;
+            }
+          }
+        }
       }
 
       &-parent {
         display: inline-block;
         position: relative;
+
+        span {
+          color: $primary-colors__orange;
+          font-weight: 500;
+        }
+
+        .dashicons {
+          color: $typography-additional;
+
+          @include _1599 {
+            line-height: unset;
+            font-size: 14px;
+          }
+
+          @include _767 {
+            font-size: 12px;
+          }
+        }
       }
     }
 

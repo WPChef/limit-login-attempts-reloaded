@@ -1519,7 +1519,7 @@ class LimitLoginAttempts
 
 	public function fixup_error_messages_wc( \WP_Error $error )
     {
-		$error->add( 1, __( 'WC Error' ) );
+		$error->add( 1, __( 'WC Error', 'limit-login-attempts-reloaded' ) );
 	}
 
 	/**

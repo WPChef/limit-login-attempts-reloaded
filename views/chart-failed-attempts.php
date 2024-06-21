@@ -158,7 +158,9 @@ if ( $is_active_app_custom ) {
     </div>
     <?php if ( ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) && $is_active_app_custom && ! $is_agency ) : ?>
      <span class="llar-label request <?php echo  $is_exhausted  ? 'exhausted' : '' ?>">
-         <?php echo $requests ? 'Monthly Usage: ' . $requests['usage'] . '/' . $requests['quota'] : '' ?>
+         <?php echo ( isset( $requests['usage'], $requests['quota'] ) )
+                 ? ( __( 'Monthly Usage: ', 'limit-login-attempts-reloaded' ) . $requests['usage'] . '/' . $requests['quota'] )
+                 : '' ?>
      </span>
     <?php endif; ?>
 </div>

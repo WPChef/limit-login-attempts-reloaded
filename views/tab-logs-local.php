@@ -39,7 +39,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
         <?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
 
         <div class="llar-settings-wrap">
-            <table class="form-table">
+            <table class="llar-form-table">
                 <tr>
                     <th scope="row" valign="top">
                         <?php _e( 'Total lockouts', 'limit-login-attempts-reloaded' ); ?>
@@ -82,7 +82,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
         <?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
 
         <div class="llar-settings-wrap">
-            <table class="form-table">
+            <table class="llar-form-table">
                 <tr>
                     <th scope="row" valign="top">
                         <?php _e( 'Safelist', 'limit-login-attempts-reloaded' ); ?>
@@ -212,7 +212,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
 
         <div class="limit-login-log">
             <div class="llar-settings-wrap">
-                <table class="form-table">
+                <table class="llar-form-table">
                     <tr>
                         <th scope="col"><?php _e( "Date", 'limit-login-attempts-reloaded' ); ?></th>
                         <th scope="col"><?php echo _x( "IP", "Internet address", 'limit-login-attempts-reloaded' ); ?></th>

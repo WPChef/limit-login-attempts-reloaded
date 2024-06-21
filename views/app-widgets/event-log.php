@@ -21,7 +21,7 @@ $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.co
                     <span class="dashicons dashicons-editor-help"></span>
                     <div class="hint_tooltip">
                         <div class="hint_tooltip-content">
-                            <?php esc_attr_e( 'All attempts blocked by access rules are hidden by default. You can see the full log at this link.' ); ?>
+                            <?php esc_attr_e( 'All attempts blocked by access rules are hidden by default. You can see the full log at this link.', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                     </div>
                 </span>
@@ -31,7 +31,7 @@ $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.co
 </div>
 
 <div class="llar-table-scroll-wrap llar-app-log-infinity-scroll">
-    <table class="form-table llar-table-app-log">
+    <table class="llar-form-table llar-table-app-log">
         <thead>
             <tr>
                 <th scope="col"><?php _e( "Time", 'limit-login-attempts-reloaded' ); ?></th>
