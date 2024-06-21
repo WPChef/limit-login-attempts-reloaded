@@ -552,7 +552,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                    value="<?php esc_attr_e( $admin_notify_email ) ?>"
                                    placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"/>
                             <div class="description-secondary">
-							    <?php _e( 'Receive a weekly digest that includes a recap of your failed logins and lockout notifications. Premium users will be able to see additional data such as countries and IPs with most failed logins.' ); ?>
+							    <?php _e( 'Receive a weekly digest that includes a recap of your failed logins and lockout notifications. Premium users will be able to see additional data such as countries and IPs with most failed logins.', 'limit-login-attempts-reloaded' ); ?>
                             </div>
                         </td>
                     </tr>
