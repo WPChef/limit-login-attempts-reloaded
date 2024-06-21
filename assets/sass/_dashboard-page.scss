@@ -615,6 +615,10 @@
         font-size: 14px;
         color: white;
 
+        @include _767 {
+          font-size: 12px;
+        }
+
         ul {
           padding-left: 16px;
           padding-right: 10px;
@@ -638,6 +642,11 @@
       &-parent {
         display: inline-block;
         position: relative;
+
+        span {
+          color: $primary-colors__orange;
+          font-weight: 500;
+        }
 
         .dashicons {
           color: $typography-additional;
