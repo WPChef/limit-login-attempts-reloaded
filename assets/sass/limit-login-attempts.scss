@@ -1587,9 +1587,11 @@
                 min-width: 120px;
 
                 &::before {
+                  content: "✧";
                   color: white;
                   font-size: 12px;
                   margin-left: -15px;
+                  padding-right: 3px;
                 }
               }
             }
