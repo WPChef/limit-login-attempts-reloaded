@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.10\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.11\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-06-19T20:32:50+03:00\n"
+"POT-Creation-Date: 2024-06-21T14:43:55+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -33,85 +33,85 @@ msgid "Please specify the Setup Code"
 msgstr ""
 
 #: core/Ajax.php:385
-#: core/Ajax.php:669
+#: core/Ajax.php:674
 msgid "No events yet."
 msgstr ""
 
-#: core/Ajax.php:464
+#: core/Ajax.php:474
 msgid "Today at "
 msgstr ""
 
-#: core/Ajax.php:545
+#: core/Ajax.php:550
 msgid "Login details could not be populated due to insufficient cloud resources.<br>Please <a class=\"link__style_unlink llar_turquoise\" href=\"%s\" target=\"_blank\">upgrade to Premium</a> to access this data."
 msgstr ""
 
-#: core/Ajax.php:556
+#: core/Ajax.php:561
 msgid "Continent: "
 msgstr ""
 
-#: core/Ajax.php:565
+#: core/Ajax.php:570
 msgid "Country: "
 msgstr ""
 
-#: core/Ajax.php:571
+#: core/Ajax.php:576
 msgid "State/Province: "
 msgstr ""
 
-#: core/Ajax.php:577
+#: core/Ajax.php:582
 msgid "District: "
 msgstr ""
 
-#: core/Ajax.php:583
+#: core/Ajax.php:588
 msgid "City: "
 msgstr ""
 
-#: core/Ajax.php:589
+#: core/Ajax.php:594
 msgid "Zipcode: "
 msgstr ""
 
-#: core/Ajax.php:595
+#: core/Ajax.php:600
 msgid "Latitude, Longitude: "
 msgstr ""
 
-#: core/Ajax.php:614
+#: core/Ajax.php:619
 msgid "Timezone: "
 msgstr ""
 
-#: core/Ajax.php:643
+#: core/Ajax.php:648
 msgid "Internet Provider: "
 msgstr ""
 
-#: core/Ajax.php:650
+#: core/Ajax.php:655
 msgid "Connection Type: "
 msgstr ""
 
-#: core/Ajax.php:721
+#: core/Ajax.php:726
 msgid "No lockouts yet."
 msgstr ""
 
-#: core/Ajax.php:738
+#: core/Ajax.php:743
 msgid "Meanwhile, the app falls over to the <a href=\"%s\">default functionality</a>."
 msgstr ""
 
-#: core/Ajax.php:792
+#: core/Ajax.php:797
 msgid "No rules yet."
 msgstr ""
 
-#: core/Ajax.php:1019
+#: core/Ajax.php:1024
 msgid "<strong>%d</strong> attempt remaining."
 msgid_plural "<strong>%d</strong> attempts remaining."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/Ajax.php:1161
+#: core/Ajax.php:1166
 msgid "Wrong email format."
 msgstr ""
 
-#: core/Ajax.php:1167
+#: core/Ajax.php:1172
 msgid "LLAR Security Notifications [TEST]"
 msgstr ""
 
-#: core/Ajax.php:1168
+#: core/Ajax.php:1173
 msgid "Your email notifications for Limit Login Attempts Reloaded are working correctly. If this email is going to spam, please be sure to add this address to your safelist."
 msgstr ""
 
@@ -173,6 +173,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: core/LimitLoginAttempts.php:686
+#: resources/compare-plans-data.php:64
 #: views/options-page.php:139
 msgid "Login Firewall"
 msgstr ""
@@ -227,6 +228,10 @@ msgstr ""
 
 #: core/LimitLoginAttempts.php:1506
 msgid "<strong>ERROR</strong>: Incorrect username or password."
+msgstr ""
+
+#: core/LimitLoginAttempts.php:1522
+msgid "WC Error"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:1709
@@ -290,40 +295,113 @@ msgstr ""
 msgid "Don't show this message again"
 msgstr ""
 
+#: resources/compare-plans-data.php:27
+msgid "Installed"
+msgstr ""
+
+#: resources/compare-plans-data.php:31
+msgid "Get Started (Free)"
+msgstr ""
+
+#: resources/compare-plans-data.php:35
+msgid "Upgrade now"
+msgstr ""
+
+#: resources/compare-plans-data.php:50
+msgid "Limit Number of Retry Attempts"
+msgstr ""
+
+#: resources/compare-plans-data.php:57
+msgid "Configurable Lockout Timing"
+msgstr ""
+
 #: resources/compare-plans-data.php:65
 msgid "Secure your login page with our cutting-edge login firewall, defending against unauthorized access attempts and protecting your users' accounts and sensitive information."
+msgstr ""
+
+#: resources/compare-plans-data.php:72
+msgid "Performance Optimizer"
 msgstr ""
 
 #: resources/compare-plans-data.php:73
 msgid "Absorb failed login attempts from brute force bots in the cloud to keep your website at its optimal performance."
 msgstr ""
 
+#: resources/compare-plans-data.php:75
+msgid "1k for first month%s(100 per month after)"
+msgstr ""
+
+#: resources/compare-plans-data.php:76
+msgid "100k requests per month"
+msgstr ""
+
+#: resources/compare-plans-data.php:77
+msgid "200k requests per month"
+msgstr ""
+
+#: resources/compare-plans-data.php:78
+msgid "300k requests per month"
+msgstr ""
+
+#: resources/compare-plans-data.php:80
+msgid "Successful Login Logs"
+msgstr ""
+
 #: resources/compare-plans-data.php:81
 msgid "Ensure the security and integrity of your website by logging your successful logins."
+msgstr ""
+
+#: resources/compare-plans-data.php:88
+msgid "Block By Country"
 msgstr ""
 
 #: resources/compare-plans-data.php:89
 msgid "Disable IPs from any region to disable logins."
 msgstr ""
 
+#: resources/compare-plans-data.php:96
+msgid "Access Blocklist of Malicious IPs"
+msgstr ""
+
 #: resources/compare-plans-data.php:97
 msgid "Add another layer of protection from brute force bots by accessing a global database of known IPs with malicious activity."
+msgstr ""
+
+#: resources/compare-plans-data.php:104
+msgid "Auto IP Blocklist"
 msgstr ""
 
 #: resources/compare-plans-data.php:105
 msgid "Automatically add malicious IPs to your blocklist when triggered by the system."
 msgstr ""
 
+#: resources/compare-plans-data.php:112
+msgid "Access Active Cloud Blocklist"
+msgstr ""
+
 #: resources/compare-plans-data.php:113
 msgid "Use system wide data from over 10,000 WordPress websites to identify and block malicious IPs. This is an active list in real-time."
+msgstr ""
+
+#: resources/compare-plans-data.php:120
+msgid "Intelligent IP Blocking"
 msgstr ""
 
 #: resources/compare-plans-data.php:121
 msgid "Use active IP database via the cloud to automatically block users before they are able to make a failed login."
 msgstr ""
 
+#: resources/compare-plans-data.php:128
+msgid "Synchronize Lockouts & Safelists/Blocklists"
+msgstr ""
+
 #: resources/compare-plans-data.php:129
 msgid "Lockouts & safelists/blocklists can be shared between multiple domains to enhance protection."
+msgstr ""
+
+#: resources/compare-plans-data.php:136
+#: views/tab-help.php:173
+msgid "Premium Support"
 msgstr ""
 
 #: resources/compare-plans-data.php:138
@@ -1394,6 +1472,7 @@ msgstr ""
 
 #: views/app-widgets/acl-rules.php:37
 #: views/app-widgets/acl-rules.php:86
+#: views/app-widgets/country-access-rules.php:54
 msgid "Deny"
 msgstr ""
 
@@ -1453,12 +1532,20 @@ msgstr ""
 msgid "these countries:"
 msgstr ""
 
+#: views/app-widgets/country-access-rules.php:55
+msgid "Allow only"
+msgstr ""
+
 #: views/app-widgets/event-log.php:14
 msgid "Event Log"
 msgstr ""
 
 #: views/app-widgets/event-log.php:19
 msgid "Full Logs"
+msgstr ""
+
+#: views/app-widgets/event-log.php:24
+msgid "All attempts blocked by access rules are hidden by default. You can see the full log at this link."
 msgstr ""
 
 #: views/app-widgets/event-log.php:37
@@ -1587,7 +1674,7 @@ msgstr ""
 
 #: views/chart-failed-attempts.php:44
 #: views/chart-failed-attempts.php:147
-#: views/chart-failed-attempts.php:242
+#: views/chart-failed-attempts.php:244
 msgid "Requests"
 msgstr ""
 
@@ -1595,7 +1682,11 @@ msgstr ""
 msgid "A request is utilized when the cloud validates whether an IP address is allowed to attempt a login, which also includes denied logins."
 msgstr ""
 
-#: views/chart-failed-attempts.php:225
+#: views/chart-failed-attempts.php:162
+msgid "Monthly Usage: "
+msgstr ""
+
+#: views/chart-failed-attempts.php:227
 msgid "Attempts"
 msgstr ""
 
@@ -1884,6 +1975,10 @@ msgstr ""
 msgid "No thanks"
 msgstr ""
 
+#: views/options-page.php:116
+msgid "Account Login"
+msgstr ""
+
 #: views/options-page.php:159
 msgid "Premium / Extensions"
 msgstr ""
@@ -2151,10 +2246,6 @@ msgstr ""
 
 #: views/tab-help.php:161
 msgid "What URLs are being attacked and protected?"
-msgstr ""
-
-#: views/tab-help.php:173
-msgid "Premium Support"
 msgstr ""
 
 #: views/tab-help.php:176
@@ -2611,6 +2702,10 @@ msgstr ""
 #: views/tab-settings.php:550
 #: views/tab-settings.php:574
 msgid "Email to"
+msgstr ""
+
+#: views/tab-settings.php:555
+msgid "Receive a weekly digest that includes a recap of your failed logins and lockout notifications. Premium users will be able to see additional data such as countries and IPs with most failed logins."
 msgstr ""
 
 #: views/tab-settings.php:562
