@@ -425,8 +425,10 @@ class Ajax {
 
 		    $data = LimitLoginAttempts::$cloud_app->get_login( $limit, $offset );
         } else {
+
 			$local_data = ['at' => time() - 60, 'login' => 'admin', 'ip' => '11.22.33.44', 'location' => ['country_code' => 'US'], 'roles' => ['administrator']];
 			$data['items'] = array_fill(0, 5, $local_data);
+			$data['offset'] = '';
 		}
 
 		if ( $data ) {
@@ -447,9 +449,17 @@ class Ajax {
 
 					$limited = isset( $item['limited'] ) ? filter_var( $item['limited'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
 
-					$country_name = ! empty( $countries_list[ $item['location']['country_code'] ] ) ? $countries_list[ $item['location']['country_code'] ] : '';
-					$continent_name = ! empty( $continent_list[ $item['location']['continent_code'] ] ) ? $continent_list[ $item['location']['continent_code'] ] : '';
-					$long_login = mb_strlen( $item['login'] ) > 10;
+					if ( $limited ) :
+						$item['login']                    = 'admin';
+						$item['location']['country_code'] = 'ZZ';
+						$item['roles']                    = [ 'administrator' ];
+						$item['ip']                       = '11.22.33.44';
+					endif;
+
+					$login = ! empty( $item['login'] ) ? $item['login'] : '';
+					$country_name = ! empty( $item['location']['country_code'] ) ? $countries_list[ $item['location']['country_code'] ] : '';
+					$continent_name = ! empty( $item['location']['continent_code'] ) ? $continent_list[ $item['location']['continent_code'] ] : '';
+					$long_login = mb_strlen( $login ) > 10;
 					$login_url = !empty( $item['user_id'] ) ? get_edit_user_link( $item['user_id'] ) : '';
 
 					$latitude = !empty( $item['location']['latitude'] ) ? $item['location']['latitude'] : false;
@@ -471,19 +481,13 @@ class Ajax {
 					?>
                     <tr>
                         <td class="llar-col-nowrap"><?php echo esc_html( $correct_date ) ?></td>
-					<?php if ( $limited ) :
-						$item['login'] = 'admin';
-						$item['location']['country_code'] = 'ZZ';
-						$item['roles'] = ['administrator'];
-						$item['ip'] = '11.22.33.44';
-				    endif ?>
                         <td class="cell-login <?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
                             <span class="hint_tooltip-parent">
-                                    <a href="<?php echo $login_url ?>" target="_blank"><?php echo esc_html( $item['login'] ) ?></a>
+                                    <a href="<?php echo $login_url ?>" target="_blank"><?php echo esc_html( $login ) ?></a>
                                     <?php if ( $long_login ) : ?>
                                         <div class="hint_tooltip">
                                             <div class="hint_tooltip-content">
-                                                <?php echo esc_html( $item['login'] ) ?>
+                                                <?php echo esc_html( $login ) ?>
                                             </div>
                                         </div>
                                     <?php endif; ?>
@@ -509,7 +513,7 @@ class Ajax {
                                     if ( $admin_key !== false ) : ?>
                                         <span><?php echo esc_html( $item['roles'][$admin_key] ) ?></span>
                                         <?php unset( $item['roles'][$admin_key] );
-                                    else :
+                                    elseif ( isset($item['roles'][0]) ) :
                                         echo esc_html( $item['roles'][0] );
                                         unset( $item['roles'][0] );
                                     endif;
@@ -518,6 +522,7 @@ class Ajax {
                                             $list_roles .= '<li>' . esc_html( $role ) . '</li>';
                                     endforeach;
                                     if ( ! empty ( $list_roles ) ) : ?>
+                                        <span class="dashicons dashicons-menu-alt2"></span>
                                         <div class="hint_tooltip">
                                             <div class="hint_tooltip-content">
                                                 <ul>

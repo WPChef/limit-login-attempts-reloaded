@@ -61,7 +61,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 				<?php _e( 'The app absorbs the main load caused by brute-force attacks, analyzes login attempts, and blocks unwanted visitors. It provides other service functions as well.', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="llar-settings-wrap">
-                <table class="form-table">
+                <table class="llar-form-table">
 	                <?php if ( $is_local_empty_setup_code ) : ?>
                     <tr>
                         <th scope="row" valign="top"><?php _e( 'Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
@@ -136,7 +136,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
             <div id="llar-apps-accordion" class="llar-accordion">
                 <h3><?php _e( 'Local App', 'limit-login-attempts-reloaded' ); ?></h3>
                 <div>
-                    <table class="form-table">
+                    <table class="llar-form-table">
                         <tr>
                             <th scope="row" valign="top"><?php _e( 'Lockout', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent">
@@ -303,7 +303,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                 </div>
                 <h3><?php ( $active_app_config ) ? esc_html_e( $active_app_config['name'] ) : _e( 'Custom App', 'limit-login-attempts-reloaded' ); ?></h3>
                 <div class="custom-app-tab">
-                    <table class="form-table">
+                    <table class="llar-form-table">
                         <tr>
                             <th scope="row" valign="top"><?php _e( 'Setup Code', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent">
@@ -500,7 +500,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 	    <?php endif ?>
 
         <div class="llar-settings-wrap">
-            <table class="form-table">
+            <table class="llar-form-table">
                 <tr>
                     <th scope="row" valign="top"><?php _e( 'GDPR compliance', 'limit-login-attempts-reloaded' ); ?></th>
                     <td>
@@ -552,7 +552,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                    value="<?php esc_attr_e( $admin_notify_email ) ?>"
                                    placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"/>
                             <div class="description-secondary">
-							    <?php _e( 'Receive a weekly digest that includes a recap of your failed logins and lockout notifications. Premium users will be able to see additional data such as countries and IPs with most failed logins.' ); ?>
+							    <?php _e( 'Receive a weekly digest that includes a recap of your failed logins and lockout notifications. Premium users will be able to see additional data such as countries and IPs with most failed logins.', 'limit-login-attempts-reloaded' ); ?>
                             </div>
                         </td>
                     </tr>

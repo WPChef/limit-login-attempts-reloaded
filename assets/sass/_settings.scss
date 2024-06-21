@@ -326,7 +326,8 @@ ul.llar_list {
       content: "\2727";
       color: $background-body;
       margin-left: -18px;
-      top: 0;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 }
@@ -483,4 +484,8 @@ button.llar_button {
     outline: none!important;
     box-shadow: unset!important;
   }
+}
+
+.llar-form-table {
+  width: 100%;
 }
