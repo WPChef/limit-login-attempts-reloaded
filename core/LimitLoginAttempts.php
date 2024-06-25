@@ -112,8 +112,12 @@ class LimitLoginAttempts
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
 		add_action( 'wp_footer', array( $this, 'login_page_render_js' ), 9999 );
 
-		if( !Config::get( 'hide_dashboard_widget' ) )
-		    add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
+		if ( ! Config::get( 'hide_dashboard_widget' ) ) {
+			add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
+		}
+
+	    add_action( 'register_post', array( $this, 'register_post_hook' ), 10, 3 );
+	    add_action( 'lostpassword_post', array( $this, 'lostpassword_post_hook' ), 10, 2 );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -2177,6 +2181,52 @@ class LimitLoginAttempts
                 } )(jQuery);
             </script>
 			<?php
+		}
+	}
+
+
+	/**
+	 * @param $user_login
+	 * @param $user_email
+	 * @param $errors
+	 *
+	 * @throws Exception
+	 */
+	public function register_post_hook( $user_login, $user_email, $errors ) {
+
+		if ( ! self::$cloud_app ) return;
+
+		$response = self::$cloud_app->acl_check( array(
+			'ip'        => Helpers::get_all_ips(),
+			'login'     => $user_login,
+			'gateway'   => Helpers::detect_gateway(),
+		) );
+
+		if ( $response['result'] === 'deny' ) {
+
+			$errors->add( 'llar_registration_disabled', __( '<strong>Error</strong>: User registration is currently not allowed.', 'limit-login-attempts-reloaded' ) );
+		}
+	}
+
+	/**
+	 * @param $errors
+	 * @param $user_data
+	 *
+	 * @throws Exception
+	 */
+	public function lostpassword_post_hook( $errors, $user_data ) {
+
+		if ( ! self::$cloud_app || ! $user_data ) return;
+
+		$response = self::$cloud_app->acl_check( array(
+			'ip'        => Helpers::get_all_ips(),
+			'login'     => $user_data->user_login,
+			'gateway'   => Helpers::detect_gateway(),
+		) );
+
+		if ( $response['result'] === 'deny' ) {
+
+			$errors->add( 'llar_password_recovery_disabled', __( '<strong>Error</strong>: Password recovery is currently not allowed.', 'limit-login-attempts-reloaded' ) );
 		}
 	}
 }
