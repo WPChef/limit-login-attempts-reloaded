@@ -369,8 +369,6 @@ class CloudApp
 
 			foreach ( $this->config['settings'] as $setting_name => $setting_data ) {
 
-				if( !isset( $setting_data['methods'] ) ) continue;
-
 				if ( in_array( $method, $setting_data['methods'] ) ) {
 					$settings[$setting_name] = $setting_data['value'];
 				}

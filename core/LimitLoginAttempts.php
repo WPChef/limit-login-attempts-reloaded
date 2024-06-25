@@ -2194,7 +2194,9 @@ class LimitLoginAttempts
 	 */
 	public function register_post_hook( $user_login, $user_email, $errors ) {
 
-		if ( ! self::$cloud_app ) return;
+		if ( ! self::$cloud_app ) {
+			return;
+		}
 
 		$response = self::$cloud_app->acl_check( array(
 			'ip'        => Helpers::get_all_ips(),
@@ -2216,7 +2218,9 @@ class LimitLoginAttempts
 	 */
 	public function lostpassword_post_hook( $errors, $user_data ) {
 
-		if ( ! self::$cloud_app || ! $user_data ) return;
+		if ( ! self::$cloud_app || ! $user_data ) {
+			return;
+		}
 
 		$response = self::$cloud_app->acl_check( array(
 			'ip'        => Helpers::get_all_ips(),
