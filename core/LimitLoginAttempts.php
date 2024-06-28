@@ -648,6 +648,8 @@ class LimitLoginAttempts
 	public function login_page_enqueue()
     {
 
+	    if ( ! Config::get( 'gdpr' ) || isset( $_REQUEST['interim-login'] ) ) return;
+
 	    $plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
 		wp_enqueue_style( 'llar-login-page-styles', LLA_PLUGIN_URL . 'assets/css/login-page-styles.css', array(), $plugin_data['Version'] );
