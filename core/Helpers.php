@@ -135,7 +135,7 @@ class Helpers {
 	public static function sanitize_stripslashes_deep( $value )
 	{
 		if ( is_array( $value ) ) {
-			return array_map( 'self::sanitize_stripslashes_deep', $value );
+			return array_map( [Helpers::class, 'sanitize_stripslashes_deep'], $value );
 		} elseif ( is_bool( $value ) ) {
 			return $value;
 		} else {
