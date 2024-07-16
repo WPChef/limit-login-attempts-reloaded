@@ -441,7 +441,6 @@ class Ajax {
 			$continent_list = Helpers::get_continent_list();
 
 			ob_start();
-			$test = true;
 			if ( empty( $data['items'] ) && ! empty( $data['offset'] ) ) :
 
 			elseif ( $data['items'] ) : ?>
@@ -456,18 +455,6 @@ class Ajax {
 						$item['roles']                    = [ 'administrator' ];
 						$item['ip']                       = '11.22.33.44';
 					endif;
-
-					if ($test) {
-						$item['ip'] = '2001:0db8:11a3:09d7:1f34:8a2e:07a0:765d';
-						$item['login'] = 'administrator_slava_2_slova';
-						$item['roles'] = [
-							'administrator',
-							'administrator_1',
-							'administrator_2',
-						];
-						$test = false;
-                    }
-
 
 					$login = ! empty( $item['login'] ) ? $item['login'] : '';
 					$ip = ! empty( $item['ip'] ) ? $item['ip'] : '';
