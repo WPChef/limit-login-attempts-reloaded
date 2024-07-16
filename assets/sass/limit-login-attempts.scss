@@ -801,6 +801,7 @@
 }
 
 #llar-setting-page-logs__active {
+
   @extend #llar-setting-page-logs;
 
   .llar-table-header {
@@ -970,7 +971,7 @@
                 top: 33px;
 
                 &:before {
-                  right: 55%;
+                  right: 20%;
                 }
 
                 &-content {
