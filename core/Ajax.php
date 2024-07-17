@@ -457,9 +457,12 @@ class Ajax {
 					endif;
 
 					$login = ! empty( $item['login'] ) ? $item['login'] : '';
+					$ip = ! empty( $item['ip'] ) ? $item['ip'] : '';
+
 					$country_name = ! empty( $item['location']['country_code'] ) ? $countries_list[ $item['location']['country_code'] ] : '';
 					$continent_name = ! empty( $item['location']['continent_code'] ) ? $continent_list[ $item['location']['continent_code'] ] : '';
 					$long_login = mb_strlen( $login ) > 10;
+					$long_ip = strlen( $ip ) > 15;
 					$login_url = !empty( $item['user_id'] ) ? get_edit_user_link( $item['user_id'] ) : '';
 
 					$latitude = !empty( $item['location']['latitude'] ) ? $item['location']['latitude'] : false;
@@ -503,10 +506,21 @@ class Ajax {
                                         </div>
                                     </div>
                                 </span>
-                                <span><?php echo esc_html( $item['ip'] ) ?></span>
+                                <span class="cell-id hint_tooltip-parent">
+                                    <div class="id">
+                                        <?php echo esc_html( $ip ) ?>
+                                    </div>
+                                    <?php if ( $long_ip ) : ?>
+                                        <div class="hint_tooltip">
+                                            <div class="hint_tooltip-content">
+                                                <?php echo esc_html( $ip ) ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                </span>
                             </div>
                         </td>
-                        <td class="<?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
+                        <td class="cell-role <?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
                             <?php if ( isset( $item['roles'] ) && is_array( $item['roles'] ) ) : ?>
                                 <span class="hint_tooltip-parent">
                                     <?php $admin_key = array_search( 'administrator', $item['roles'] );
