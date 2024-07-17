@@ -749,7 +749,7 @@ class LimitLoginAttempts
 					array( $this, 'options_page' )
 				);
 
-				if ( ! empty( $_GET['tab'] ) && $_GET['tab'] === $item['id'] ) {
+				if ( ! empty ( $_GET['page'] ) && $_GET['page'] === $this->_options_page_slug && ! empty( $_GET['tab'] ) && $_GET['tab'] === $item['id'] ) {
 					$submenu[$this->_options_page_slug][$index][4] = 'current';
 				}
 				$index++;
@@ -779,6 +779,8 @@ class LimitLoginAttempts
 
 	public function admin_bar_menu( $admin_bar )
     {
+	    if ( ! current_user_can( 'manage_options' ) ) return;
+
 	    $root_item_id = 'llar-root';
 	    $href = $this->get_options_page_uri();
 
