@@ -1,4 +1,12 @@
 <?php
+/**
+ * Settings Page
+ *
+ * @var string $active_app
+ * @var bool $is_active_app_custom
+ * @var string $block_sub_group
+ *
+ */
 
 use LLAR\Core\Config;
 use LLAR\Core\Helpers;
@@ -27,19 +35,17 @@ $admin_notify_email      = Config::get( 'admin_notify_email' );
 $trusted_ip_origins = Config::get( 'trusted_ip_origins' );
 $trusted_ip_origins = ( is_array( $trusted_ip_origins ) && ! empty( $trusted_ip_origins ) ) ? implode( ", ", $trusted_ip_origins ) : 'REMOTE_ADDR';
 
-$active_app        = Config::get( 'active_app' );
 $app_setup_code    = Config::get( 'app_setup_code' );
 $active_app_config = Config::get( 'app_config' );
 
-$is_local_empty_setup_code = ( $active_app === 'local' && empty( $app_setup_code ) );
+$is_local_empty_setup_code = ( ! $is_active_app_custom && empty( $app_setup_code ) );
 
 $min_plan = 'Premium';
 $plans = $this->array_name_plans();
-$block_sub_group = ( $active_app === 'custom' ) ? $this->info_sub_group() : false;
-$is_premium = ( $active_app === 'custom' && $plans[ $block_sub_group ] >= $plans[ $min_plan ] );
+$is_premium = ( $is_active_app_custom && $plans[ $block_sub_group ] >= $plans[ $min_plan ] );
 
 $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
-$url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url() : '';
+$url_try_for_free_cloud = ( $is_active_app_custom ) ? $this->info_upgrade_url() : '';
 ?>
 
 <?php if ( isset( $_GET['llar-cloud-activated'] ) && ! empty( $active_app_config['messages']['setup_success'] ) ) : ?>
@@ -120,7 +126,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                     </option>
 								<?php endif; ?>
                             </select>
-							<?php if ( $active_app === 'local' ) : ?>
+							<?php if ( ! $is_active_app_custom ) : ?>
                                 <span class="llar-protect-notice">
                                     <?php echo sprintf(
 		                                __( 'Get advanced protection by <a href="%s" class="unlink llar-upgrade-to-cloud">upgrading to our Cloud App</a>.', 'limit-login-attempts-reloaded' ),
@@ -237,7 +243,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                             </td>
                         </tr>
                     </table>
-	                <?php if ( $active_app === 'local' || ! $is_premium ) : ?>
+	                <?php if ( ! $is_active_app_custom || ! $is_premium ) : ?>
                     <div class="add_block__under_table">
                         <div class="description">
 							<?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
@@ -316,12 +322,12 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                 </span>
                             </th>
                             <td>
-								<?php if ( $active_app === 'custom' ) : ?>
+								<?php if ( $is_active_app_custom ) : ?>
                                     <a class="unlink link__style_unlink llar-toggle-setup-field" href="#">
 										<?php _e( 'Edit', 'limit-login-attempts-reloaded' ); ?>
                                     </a>
 								<?php endif; ?>
-                                <div class="setup-code-wrap<?php echo ( $active_app === 'local' || ! $active_app_config ) ? ' active' : ''; ?>">
+                                <div class="setup-code-wrap<?php echo ( ! $is_active_app_custom || ! $active_app_config ) ? ' active' : ''; ?>">
                                     <input class="input_border full_area regular-text" type="text"
                                            id="limit-login-app-setup-code"
                                            value="<?php echo ( ! empty( $app_setup_code ) ) ? esc_attr( $app_setup_code ) : ''; ?>">
@@ -337,7 +343,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                                 </div>
                             </td>
                         </tr>
-						<?php if ( $active_app === 'custom' && $active_app_config ) : ?>
+						<?php if ( $is_active_app_custom && $active_app_config ) : ?>
                             <tr class="app-form-field">
                                 <th scope="row" valign="top"><?php _e( 'Configuration', 'limit-login-attempts-reloaded' ); ?></th>
                                 <td>
@@ -352,7 +358,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                             </tr>
 						<?php endif; ?>
 
-						<?php if ( $active_app === 'custom' && ! empty( $active_app_config['settings'] ) ) : ?>
+						<?php if ( $is_active_app_custom && ! empty( $active_app_config['settings'] ) ) : ?>
 							<?php foreach ( $active_app_config['settings'] as $setting_name => $setting_params ) : ?>
                                 <tr>
                                     <th scope="row" valign="top"><?php echo $setting_params['label']; ?>
@@ -387,7 +393,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
 							<?php endforeach; ?>
 						<?php endif; ?>
                     </table>
-	                <?php if ( $active_app === 'local' || ! $is_premium ) : ?>
+	                <?php if ( ! $is_active_app_custom || ! $is_premium ) : ?>
                     <div class="add_block__under_table image_plus">
                         <div class="row__list">
                             <div class="add_block__title">
@@ -668,7 +674,7 @@ $url_try_for_free_cloud = ( $active_app === 'custom' ) ? $this->info_upgrade_url
                     $( "#llar-apps-accordion" ).accordion( {
                         heightStyle: "content",
                         collapsible: true,
-                        active: <?php echo ( $active_app === 'local' ) ? 0 : 1; ?>
+                        active: <?php echo ( ! $is_active_app_custom ) ? 0 : 1; ?>
                     } );
 
                     var $app_ajax_spinner = $( '.llar-app-ajax-spinner' ),
