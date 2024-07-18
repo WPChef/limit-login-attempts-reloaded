@@ -139,6 +139,7 @@ class Helpers {
 		} elseif ( is_bool( $value ) ) {
 			return $value;
 		} else {
+			$value = $value ?? '';
 			return sanitize_textarea_field( stripslashes( $value ) );
 		}
 	}
