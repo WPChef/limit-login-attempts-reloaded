@@ -141,7 +141,6 @@ class Helpers {
 		if ( is_bool( $value ) || is_null( $value ) ) {
 			return $value;
 		}
-
 		return sanitize_textarea_field( stripslashes( (string)$value ) );
 	}
 
