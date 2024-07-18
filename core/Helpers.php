@@ -135,12 +135,14 @@ class Helpers {
 	public static function sanitize_stripslashes_deep( $value )
 	{
 		if ( is_array( $value ) ) {
-			return array_map( 'self::sanitize_stripslashes_deep', $value );
-		} elseif ( is_bool( $value ) ) {
-			return $value;
-		} else {
-			return sanitize_textarea_field( stripslashes( $value ) );
+			return array_map( [self::class, 'sanitize_stripslashes_deep'], $value );
 		}
+
+		if ( is_bool( $value ) || is_null( $value ) ) {
+			return $value;
+		}
+
+		return sanitize_textarea_field( stripslashes( (string)$value ) );
 	}
 
 
