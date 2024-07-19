@@ -506,8 +506,8 @@ class Ajax {
                                         </div>
                                     </div>
                                 </span>
-                                <span class="cell-id hint_tooltip-parent">
-                                    <div class="id">
+                                <span class="cell-ip hint_tooltip-parent">
+                                    <div class="ip">
                                         <?php echo esc_html( $ip ) ?>
                                     </div>
                                     <?php if ( $long_ip ) : ?>
