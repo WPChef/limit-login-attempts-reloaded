@@ -884,6 +884,7 @@
             font-size: 16px;
             font-weight: 500;
             padding: 20px 18px;
+            text-align: left;
 
             @include _1599 {
               font-size: 15px;
@@ -897,7 +898,7 @@
         }
       }
 
-      tbody {
+      tbody.login-attempts {
         color: $typography-secondary;
 
         tr {
@@ -1032,6 +1033,52 @@
                   i {
                     color: #3c8dbc;
                   }
+                }
+              }
+            }
+
+            &.cell-login {
+
+              a {
+                display: inline-block;
+                max-width: fit-content;
+                white-space: nowrap;
+
+                @include _767 {
+                  max-width: 9ch;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                }
+              }
+            }
+
+            .cell-ip {
+              display: inline-block;
+
+              .ip {
+                font-size: 15px;
+                max-width: fit-content;
+                display: inline-block;
+                vertical-align: middle;
+                white-space: nowrap;
+
+                @include _1599 {
+                  font-size: 90%
+                }
+
+                @include _1399 {
+                  max-width: 15ch;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                }
+
+                @include _767 {
+                  max-width: 10ch;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
                 }
               }
             }
@@ -1512,6 +1559,7 @@
       th {
         color: $typography-primary;
         font-weight: 500;
+        text-align: left;
       }
     }
   }
@@ -1848,51 +1896,7 @@
 
         td {
 
-          &.cell-login {
 
-            a {
-              display: inline-block;
-              max-width: fit-content;
-              white-space: nowrap;
-
-              @include _767 {
-                max-width: 9ch;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-            }
-          }
-
-          .cell-ip {
-            display: inline-block;
-
-            .ip {
-              font-size: 15px;
-              max-width: fit-content;
-              display: inline-block;
-              vertical-align: middle;
-              white-space: nowrap;
-
-              @include _1599 {
-                font-size: 90%
-              }
-
-              @include _1399 {
-                max-width: 15ch;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-
-              @include _767 {
-                max-width: 10ch;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-            }
-          }
         }
       }
 
