@@ -1709,7 +1709,6 @@
         }
 
         &.cell-login {
-          max-width: 9ch;
 
           a {
             display: inline-block;
@@ -1721,10 +1720,10 @@
         }
       }
 
-      .cell-id {
+      .cell-ip {
         display: inline-block;
 
-        .id {
+        .ip {
           font-size: 15px;
           max-width: 14ch;
           display: inline-block;
@@ -1839,12 +1838,74 @@
   }
 }
 
-.llar-table-no_app-login {
+#llar-setting-page-logs__active {
 
+  .llar-table-app-login, .llar-table-no_app-login {
+
+    tbody.login-attempts {
+
+      tr {
+
+        td {
+
+          &.cell-login {
+
+            a {
+              display: inline-block;
+              max-width: fit-content;
+              white-space: nowrap;
+
+              @include _767 {
+                max-width: 9ch;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+
+          .cell-ip {
+            display: inline-block;
+
+            .ip {
+              font-size: 15px;
+              max-width: fit-content;
+              display: inline-block;
+              vertical-align: middle;
+              white-space: nowrap;
+
+              @include _1599 {
+                font-size: 90%
+              }
+
+              @include _1399 {
+                max-width: 15ch;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+
+              @include _767 {
+                max-width: 10ch;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+        }
+      }
+
+    }
+  }
 }
 
-.llar-notice-review,
-.llar-notice-notify {
+
+
+
+
+
+.llar-notice-review, .llar-notice-notify {
   display: flex;
   padding: 15px 20px 0 !important;
   border-left: 4px solid #333 !important;
