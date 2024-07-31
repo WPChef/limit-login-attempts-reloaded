@@ -1035,6 +1035,34 @@
                 }
               }
             }
+
+            .cell-id {
+
+              .id {
+                font-size: 15px;
+                max-width: unset;
+                white-space: nowrap;
+
+                @include _991 {
+                  font-size: 90%;
+                  max-width: 15ch;
+                }
+
+                @include _767 {
+                  font-size: 85%;
+                  max-width: 10ch;
+                }
+              }
+
+              .hint_tooltip {
+                visibility: hidden;
+                top: 30px !important;
+
+                @include _991 {
+                  visibility: visible;
+                }
+              }
+            }
           }
 
           &:nth-child(odd) {
@@ -1512,6 +1540,7 @@
       th {
         color: $typography-primary;
         font-weight: 500;
+        text-align: left;
       }
     }
   }
@@ -1839,9 +1868,6 @@
   }
 }
 
-.llar-table-no_app-login {
-
-}
 
 .llar-notice-review,
 .llar-notice-notify {
