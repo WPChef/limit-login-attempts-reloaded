@@ -1212,6 +1212,32 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .button.llar-app-log-action-btn:hover i {
   color: #3c8dbc;
 }
+#llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .cell-id .id {
+  font-size: 15px;
+  max-width: unset;
+  white-space: nowrap;
+}
+@media screen and (max-width: 991.5px) {
+  #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .cell-id .id {
+    font-size: 90%;
+    max-width: 15ch;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .cell-id .id {
+    font-size: 85%;
+    max-width: 10ch;
+  }
+}
+#llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .cell-id .hint_tooltip {
+  visibility: hidden;
+  top: 30px !important;
+}
+@media screen and (max-width: 991.5px) {
+  #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .cell-id .hint_tooltip {
+    visibility: visible;
+  }
+}
 #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table .table-inline-preloader {
   text-align: center;
 }
@@ -1585,6 +1611,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .llar-table-app-login thead tr th, #llar-setting-page-logs__active .llar-table-scroll-wrap thead tr th, .llar-table-no_app-login thead tr th {
   color: #2A2F40;
   font-weight: 500;
+  text-align: left;
 }
 .llar-table-app-login tbody.login-attempts tr, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr, .llar-table-no_app-login tbody.login-attempts tr {
   border-radius: 16px;
