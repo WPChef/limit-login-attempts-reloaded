@@ -224,9 +224,21 @@
 
   .setup-code-wrap {
     display: none;
+    min-width: 450px;
 
     &.active {
       display: block;
+    }
+
+    button.button {
+
+      @include _1199 {
+        min-width: 120px!important;
+      }
+
+      @include _991 {
+        min-width: 90px!important;
+      }
     }
   }
 
@@ -572,7 +584,7 @@
           border: 1px solid $primary-colors__turquoise;
 
           @include _1599 {
-            flex: 0 0 30%;
+            flex: 1 0 30%;
           }
 
           .name {
@@ -665,6 +677,21 @@
 
       &.ui-accordion-header-active {
         background: white;
+      }
+
+      .llar_setup_code {
+        position: absolute;
+        top: 50%;
+        right: 2%;
+        transform: translateY(-50%);
+      }
+
+      &-active {
+
+        .llar_setup_code {
+          visibility: hidden;
+
+        }
       }
     }
 
