@@ -307,7 +307,10 @@ $url_try_for_free_cloud = ( $is_active_app_custom ) ? $this->info_upgrade_url() 
                     </div>
 	                <?php endif; ?>
                 </div>
-                <h3><?php ( $active_app_config ) ? esc_html_e( $active_app_config['name'] ) : _e( 'Custom App', 'limit-login-attempts-reloaded' ); ?></h3>
+                <h3>
+                    <?php _e( 'Limit Login Attempts Reloaded Cloud App', 'limit-login-attempts-reloaded' ); ?>
+                    <div class="llar_setup_code llar_orange"><?php _e( 'Setup Code', 'limit-login-attempts-reloaded' ); ?></div>
+                </h3>
                 <div class="custom-app-tab">
                     <table class="llar-form-table">
                         <tr>
@@ -739,6 +742,27 @@ $url_try_for_free_cloud = ( $is_active_app_custom ) ? $this->info_upgrade_url() 
                         $( '.setup-code-wrap' ).toggleClass( 'active' );
                         $( '.app-form-field' ).toggleClass( 'active' );
                     } );
+
+                    $( '.llar_setup_code' ).on( 'click', function () {
+
+                        const $edit_button = $( '.llar-toggle-setup-field' );
+
+
+                        if ( $edit_button.length && $edit_button.css('display') !== 'none' ) {
+                            $( '.llar-toggle-setup-field' ).trigger('click');
+                        }
+
+                        setTimeout(function () {
+
+                            const $inpur_setup_code = $( '#limit-login-app-setup-code' );
+
+                            if ( $inpur_setup_code.length ) {
+                                $inpur_setup_code.focus();
+                            }
+                        }, 200)
+
+                    })
+
 
                     $( '.llar-upgrade-to-cloud' ).on( 'click', function ( e ) {
                         e.preventDefault();
