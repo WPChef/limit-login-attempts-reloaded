@@ -869,7 +869,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item {
-    flex: 0 0 30%;
+    flex: 1 0 30%;
   }
 }
 #llar-setting-page .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item .name {
@@ -1092,11 +1092,18 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   top: 0;
   left: 0;
 }
+#llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table thead {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 100;
+}
 #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table thead tr th {
   color: #2A2F40;
   font-size: 16px;
   font-weight: 500;
   padding: 20px 18px;
+  text-align: left;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table thead tr th {
