@@ -1032,6 +1032,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-logs__active .llar-table-header .title_page {
   margin-top: 0;
 }
+#llar-setting-page-logs__active .llar-table-header .title_page span {
+  color: #666D84;
+  font-size: 80%;
+  font-weight: 400;
+  margin-left: 10px;
+}
 #llar-setting-page-logs__active .llar-table-header .right-link {
   font-size: 16px;
   line-height: 1.625;
