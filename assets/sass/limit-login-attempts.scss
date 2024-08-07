@@ -572,7 +572,7 @@
           border: 1px solid $primary-colors__turquoise;
 
           @include _1599 {
-            flex: 0 0 30%;
+            flex: 1 0 30%;
           }
 
           .name {
@@ -883,6 +883,10 @@
       }
 
       thead {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 100;
 
         tr {
 
@@ -891,6 +895,7 @@
             font-size: 16px;
             font-weight: 500;
             padding: 20px 18px;
+            text-align: left;
 
             @include _1599 {
               font-size: 15px;
