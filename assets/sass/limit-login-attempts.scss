@@ -812,6 +812,13 @@
 
     .title_page {
       margin-top: 0;
+
+      span {
+        color: $typography-secondary;
+        font-size: 80%;
+        font-weight: 400;
+        margin-left: 10px;
+      }
     }
 
     .right-link {
