@@ -50,6 +50,7 @@ $limit = 10;
                     <th scope="col"><?php _e( "Login", 'limit-login-attempts-reloaded' ); ?></th>
                     <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>
                     <th scope="col"><?php _e( "Role", 'limit-login-attempts-reloaded' ); ?></th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody class="login-attempts"></tbody>
