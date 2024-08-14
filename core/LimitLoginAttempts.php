@@ -291,7 +291,8 @@ class LimitLoginAttempts
 
         <script>
             ;( function( $ ) {
-                var ajaxUrlObj = new URL( '<?php echo admin_url( 'admin-ajax.php' ); ?>' );
+                let ajaxUrlObj = new URL( '<?php echo admin_url( 'admin-ajax.php' ); ?>' );
+                let wp_login_page = '<?php echo $is_wp_login_page; ?>'
                 ajaxUrlObj.protocol = location.protocol;
 
                 $.post( ajaxUrlObj.toString(), {
@@ -299,9 +300,24 @@ class LimitLoginAttempts
                     sec: '<?php echo wp_create_nonce( "llar-get-remaining-attempts-message" ); ?>'
                 }, function( response ) {
                     if ( response.success && response.data ) {
-                        $( '#login_error' ).append( "<br>" + response.data );
-                        $( '.um-notice.err' ).append( "<br>" + response.data );
-                        $( '.woocommerce-error' ).append( "<li>(" + response.data + ")</li>" );
+
+                        if ( wp_login_page ) {
+
+                            $( '#login_error' ).append( "<br>" + response.data );
+                        } else {
+
+                            let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; width: 300px; z-index: 999999; background: rgba(255, 124, 6, 0.75); padding: 2rem; color: rgb(255, 255, 255); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); } .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; }';
+                            let style = document.createElement('style');
+                            style.appendChild(document.createTextNode(css));
+                            document.head.appendChild(style);
+
+                            $( 'body' ).prepend( '<div class="llar_notification_login_page"><h4>Warning!</h4><div>' + response.data + '</div></div>');
+
+                            setTimeout(function () {
+                                $('.llar_notification_login_page').hide();
+                            }, 4000);
+                            // $( '.woocommerce-error' ).append( "<li>(" + response.data + ")</li>" );
+                        }
                     }
                 } )
             } )(jQuery)
