@@ -316,7 +316,6 @@ class LimitLoginAttempts
                             setTimeout(function () {
                                 $('.llar_notification_login_page').hide();
                             }, 4000);
-                            // $( '.woocommerce-error' ).append( "<li>(" + response.data + ")</li>" );
                         }
                     }
                 } )
