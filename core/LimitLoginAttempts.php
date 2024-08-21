@@ -26,6 +26,12 @@ class LimitLoginAttempts
 	public $_errors = array();
 
 	/**
+     * custom error
+	 * @var string
+	 */
+	public $custom_error = '';
+
+	/**
 	* Additional login errors messages that we need to show
 	*
 	* @var array
@@ -114,6 +120,8 @@ class LimitLoginAttempts
 
 		if( !Config::get( 'hide_dashboard_widget' ) )
 		    add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
+
+	    $this->custom_error = Config::get( 'custom_error_message' );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -248,7 +256,7 @@ class LimitLoginAttempts
 		* later versions of WP.
 		*/
 		add_action( 'wp_authenticate', array( $this, 'track_credentials' ), 10, 2 );
-		add_action( 'authenticate', array( $this, 'authenticate_filter' ), 5, 3 );
+		add_action( 'authenticate', array( $this, 'authenticate_filter' ), 0, 3 );
 
 		/**
 		 * BuddyPress unactivated user account message fix
@@ -499,6 +507,8 @@ class LimitLoginAttempts
 						}
                     }
 
+				    $err .= '<br>' . $this->custom_error;
+
 				    self::$cloud_app->add_error( $err );
 
 					$user = new WP_Error();
@@ -536,7 +546,10 @@ class LimitLoginAttempts
 					remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
 
 					$user = new WP_Error();
-					$user->add( 'username_blacklisted', "<strong>ERROR:</strong> Too many failed login attempts." );
+					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
+					$err .= '<br>' . $this->custom_error;
+
+					$user->add( 'username_blacklisted', $err );
 
 					if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
 
@@ -1007,6 +1020,8 @@ class LimitLoginAttempts
 					$err .= ' ' . sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
 				}
 
+				$err .= '<br>' . $this->custom_error;
+
 			    self::$cloud_app->add_error( $err );
             }
 
@@ -1413,7 +1428,10 @@ class LimitLoginAttempts
 
 		if ( $this->is_username_blacklisted( $user_login ) || $this->is_ip_blacklisted( $this->get_address() ) ) {
 
-			$error->add( 'username_blacklisted', "<strong>ERROR:</strong> Too many failed login attempts." );
+			$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
+			$err .= '<br>' . $this->custom_error;
+
+			$error->add( 'username_blacklisted', $err );
 		} else {
 
 			// This error should be the same as in "shake it" filter below
@@ -1486,6 +1504,8 @@ class LimitLoginAttempts
 			$msg .= sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $when, 'limit-login-attempts-reloaded' ), $when );
 		}
 
+	    $msg .= '<br>' . $this->custom_error;
+
 		return $msg;
 	}
 
@@ -1528,8 +1548,12 @@ class LimitLoginAttempts
 
 		        $content .= ( !empty( $content ) ) ? "<br />\n" : '';
 				$content .= $error_msg . "<br />\n";
+
+				$content .= $this->custom_error;
 			}
 		}
+
+
 
 		return $content;
 	}
@@ -1827,14 +1851,15 @@ class LimitLoginAttempts
                 Config::update('hide_dashboard_widget', ( isset( $_POST['hide_dashboard_widget'] ) ? 1 : 0 ) );
                 Config::update('show_warning_badge', ( isset( $_POST['show_warning_badge'] ) ? 1 : 0 ) );
 
-                Config::update('allowed_retries',    (int)$_POST['allowed_retries'] );
-                Config::update('lockout_duration',   (int)$_POST['lockout_duration'] * 60 );
-                Config::update('valid_duration',     (int)$_POST['valid_duration'] * 3600 );
-                Config::update('allowed_lockouts',   (int)$_POST['allowed_lockouts'] );
-                Config::update('long_duration',      (int)$_POST['long_duration'] * 3600 );
-                Config::update('notify_email_after', (int)$_POST['email_after'] );
-                Config::update('gdpr_message',       sanitize_textarea_field( Helpers::deslash( $_POST['gdpr_message'] ) ) );
-                Config::update('admin_notify_email', sanitize_email( $_POST['admin_notify_email'] ) );
+                Config::update('allowed_retries',           (int)$_POST['allowed_retries'] );
+                Config::update('lockout_duration',    (int)$_POST['lockout_duration'] * 60 );
+                Config::update('valid_duration',      (int)$_POST['valid_duration'] * 3600 );
+                Config::update('allowed_lockouts',          (int)$_POST['allowed_lockouts'] );
+                Config::update('long_duration',       (int)$_POST['long_duration'] * 3600 );
+                Config::update('notify_email_after',        (int)$_POST['email_after'] );
+                Config::update('gdpr_message',              sanitize_textarea_field( Helpers::deslash( $_POST['gdpr_message'] ) ) );
+	            Config::update('custom_error_message',      sanitize_textarea_field( Helpers::deslash( $_POST['custom_error_message'] ) ) );
+                Config::update('admin_notify_email',        sanitize_email( $_POST['admin_notify_email'] ) );
 
 	            Config::update('active_app', sanitize_text_field( $_POST['active_app'] ) );
 

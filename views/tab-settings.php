@@ -19,33 +19,34 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var $this LLAR\Core\LimitLoginAttempts
  */
 
-$gdpr         = Config::get( 'gdpr' );
-$gdpr_message = Config::get( 'gdpr_message' );
+$gdpr                       = Config::get( 'gdpr' );
+$gdpr_message               = Config::get( 'gdpr_message' );
 
-$v             = explode( ',', Config::get( 'lockout_notify' ) );
-$email_checked = in_array( 'email', $v );
+$v                          = explode( ',', Config::get( 'lockout_notify' ) );
+$email_checked              = in_array( 'email', $v );
 
-$show_top_level_menu_item = Config::get( 'show_top_level_menu_item' );
-$show_top_bar_menu_item   = Config::get( 'show_top_bar_menu_item' );
-$hide_dashboard_widget    = Config::get( 'hide_dashboard_widget' );
-$show_warning_badge       = Config::get( 'show_warning_badge' );
+$show_top_level_menu_item   = Config::get( 'show_top_level_menu_item' );
+$show_top_bar_menu_item     = Config::get( 'show_top_bar_menu_item' );
+$hide_dashboard_widget      = Config::get( 'hide_dashboard_widget' );
+$show_warning_badge         = Config::get( 'show_warning_badge' );
 
-$admin_notify_email      = Config::get( 'admin_notify_email' );
+$admin_notify_email         = Config::get( 'admin_notify_email' );
 
-$trusted_ip_origins = Config::get( 'trusted_ip_origins' );
-$trusted_ip_origins = ( is_array( $trusted_ip_origins ) && ! empty( $trusted_ip_origins ) ) ? implode( ", ", $trusted_ip_origins ) : 'REMOTE_ADDR';
+$trusted_ip_origins         = Config::get( 'trusted_ip_origins' );
+$trusted_ip_origins         = ( is_array( $trusted_ip_origins ) && ! empty( $trusted_ip_origins ) ) ? implode( ", ", $trusted_ip_origins ) : 'REMOTE_ADDR';
 
-$app_setup_code    = Config::get( 'app_setup_code' );
-$active_app_config = Config::get( 'app_config' );
+$app_setup_code             = Config::get( 'app_setup_code' );
+$active_app_config          = Config::get( 'app_config' );
+$custom_error_message       = Config::get( 'custom_error_message' );
 
-$is_local_empty_setup_code = ( ! $is_active_app_custom && empty( $app_setup_code ) );
+$is_local_empty_setup_code  = ( ! $is_active_app_custom && empty( $app_setup_code ) );
 
-$min_plan = 'Premium';
-$plans = $this->array_name_plans();
-$is_premium = ( $is_active_app_custom && $plans[ $block_sub_group ] >= $plans[ $min_plan ] );
+$min_plan                   = 'Premium';
+$plans                      = $this->array_name_plans();
+$is_premium                 = ( $is_active_app_custom && $plans[ $block_sub_group ] >= $plans[ $min_plan ] );
 
-$url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
-$url_try_for_free_cloud = ( $is_active_app_custom ) ? $this->info_upgrade_url() : '';
+$url_try_for_free           = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
+$url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_url() : '';
 ?>
 
 <?php if ( isset( $_GET['llar-cloud-activated'] ) && ! empty( $active_app_config['messages']['setup_success'] ) ) : ?>
@@ -661,6 +662,23 @@ $url_try_for_free_cloud = ( $is_active_app_custom ) ? $this->info_upgrade_url() 
                     <td>
                         <input type="checkbox" name="show_warning_badge" <?php checked( $show_warning_badge ); ?> >
 					    <?php _e( '(Save and reload this page to see the changes)', 'limit-login-attempts-reloaded' ) ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" valign="top"><?php _e( 'Custom Error Message', 'limit-login-attempts-reloaded' ); ?>                        &nbsp;
+                        <span class="hint_tooltip-parent">
+                            <span class="dashicons dashicons-editor-help"></span>
+                            <div class="hint_tooltip">
+                                <div class="hint_tooltip-content">
+                                    <?php _e( 'This message will be <b>appended</b> to other error messages displayed by the plugin.', 'limit-login-attempts-reloaded' ); ?>
+                                </div>
+                            </div>
+                        </span>
+                    </th>
+                    <td>
+                        <div class="textarea_border">
+                            <textarea name="custom_error_message" cols="85"><?php echo esc_textarea( stripslashes( $custom_error_message ) ); ?></textarea>
+                        </div>
                     </td>
                 </tr>
             </table>
