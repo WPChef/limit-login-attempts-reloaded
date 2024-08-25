@@ -2,6 +2,7 @@
 
 namespace LLAR\Core;
 
+use Cassandra\Varint;
 use Exception;
 use IXR_Error;
 use LLAR\Core\Http\Http;
@@ -24,6 +25,8 @@ class LimitLoginAttempts
 	* @var array
 	*/
 	public $_errors = array();
+
+	public $all_errors_array = array();
 
 	/**
      * custom error
@@ -225,7 +228,8 @@ class LimitLoginAttempts
 
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
-
+		// hook for the plugin UM
+		add_action( 'um_submit_form_errors_hook_login', array( $this, 'um_limit_login_failed' ) );
 
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
@@ -255,7 +259,8 @@ class LimitLoginAttempts
 		* it will probably be deprecated. That is however only available in
 		* later versions of WP.
 		*/
-		add_action( 'wp_authenticate', array( $this, 'track_credentials' ), 10, 2 );
+//		add_action( 'wp_authenticate', array( $this, 'track_credentials' ), 10, 2 );
+		add_action( 'authenticate', array( $this, 'track_credentials' ), 1, 3 ); // to replace the deprecated wp_authenticate hook
 		add_action( 'authenticate', array( $this, 'authenticate_filter' ), 0, 3 );
 
 		/**
@@ -281,26 +286,34 @@ class LimitLoginAttempts
 
 	public function login_page_render_js()
     {
-	    global $limit_login_just_lockedout;
+	    global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $um_limit_login_failed;
 
-	    if (
-	            $limit_login_just_lockedout
-                || ( Config::get( 'active_app' ) === 'local' && ! $this->is_limit_login_ok() )
-                || ( self::$cloud_app && !empty( self::$cloud_app->get_errors() ) )
+		if ( Config::get( 'active_app' ) === 'local' && ! $limit_login_nonempty_credentials ) {
+            return;
+        }
+
+		if (
+		        self::$cloud_app
+                && ! empty( $this->all_errors_array['early_hook_errors'] )
+                && !empty( self::$cloud_app->get_errors() )
         ) {
-	        return;
-	    }
+		    return;
+        }
 
+		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? str_replace("\n", '', $this->all_errors_array['late_hook_errors'] ) : false;
 	    $is_wp_login_page = isset( $_POST['log'] );
 	    $is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
-	    $is_um_login_page = ( function_exists( 'um_is_core_page' ) && um_is_core_page( 'login' ) && !empty( $_POST ) );
 
-		if ( ( $is_wp_login_page || $is_woo_login_page || $is_um_login_page ) ) : ?>
+		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) : ?>
 
         <script>
             ;( function( $ ) {
                 let ajaxUrlObj = new URL( '<?php echo admin_url( 'admin-ajax.php' ); ?>' );
-                let wp_login_page = '<?php echo $is_wp_login_page; ?>'
+                let wp_login_page = '<?php echo esc_js( $is_wp_login_page ) ?>';
+                let um_limit_login_failed = '<?php echo $um_limit_login_failed ?>';
+                let late_hook_errors = '<?php echo $late_hook_errors ?>';
+                let title_notification = '<?php echo __( 'Warning!', 'limit-login-attempts-reloaded' ) ?>';
+
                 ajaxUrlObj.protocol = location.protocol;
 
                 $.post( ajaxUrlObj.toString(), {
@@ -314,19 +327,31 @@ class LimitLoginAttempts
                             $( '#login_error' ).append( "<br>" + response.data );
                         } else {
 
-                            let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; width: 300px; z-index: 999999; background: rgba(255, 124, 6, 0.75); padding: 2rem; color: rgb(255, 255, 255); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); } .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; }';
-                            let style = document.createElement('style');
-                            style.appendChild(document.createTextNode(css));
-                            document.head.appendChild(style);
-
-                            $( 'body' ).prepend( '<div class="llar_notification_login_page"><h4>Warning!</h4><div>' + response.data + '</div></div>');
-
-                            setTimeout(function () {
-                                $('.llar_notification_login_page').hide();
-                            }, 4000);
+                            notification_login_page( response.data, title_notification );
                         }
+                    } else if ( um_limit_login_failed && late_hook_errors ) {
+
+                        notification_login_page( late_hook_errors, title_notification );
                     }
                 } )
+
+                function notification_login_page(message, title = '') {
+                    let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; width: 365px; z-index: 999999; background: rgba(255, 124, 6, 0.75); padding: 20px; color: rgb(255, 255, 255); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); } .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; }';
+                    let style = document.createElement('style');
+                    style.appendChild(document.createTextNode(css));
+                    document.head.appendChild(style);
+
+                    if ( title ) {
+                        title = '<h4>' + title + '</h4>';
+                    }
+
+                    $( 'body' ).prepend( '<div class="llar_notification_login_page">' + title + '<div>' + message + '</div></div>' );
+
+                    setTimeout(function () {
+                        $('.llar_notification_login_page').hide();
+                    }, 4000);
+                }
+
             } )(jQuery)
         </script>
         <?php endif;
@@ -443,7 +468,7 @@ class LimitLoginAttempts
     {
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $limit_login_my_error_shown;
 
-		if ( ! function_exists( 'is_account_page' ) || ! function_exists( 'wc_add_notice' ) || !$limit_login_nonempty_credentials ) {
+		if ( ! function_exists( 'is_account_page' ) || ! function_exists( 'wc_add_notice' ) || ! $limit_login_nonempty_credentials ) {
 			return;
 		}
 
@@ -457,7 +482,6 @@ class LimitLoginAttempts
 				wc_add_notice( $this->error_msg(), 'error' );
 			}
 		}
-
 	}
 
 	/**
@@ -473,6 +497,7 @@ class LimitLoginAttempts
 		if ( ! session_id() ) {
 			session_start();
 		}
+	    $_SESSION['errors_in_early_hook'] = false;
 
 		if ( ! empty( $username ) && ! empty( $password ) ) {
 
@@ -496,7 +521,7 @@ class LimitLoginAttempts
 
 					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
-					$time_left = ( ! empty( $acl_result['time_left'] ) ) ? $acl_result['time_left'] : 0;
+					$time_left = ( ! empty( $response['time_left'] ) ) ? $response['time_left'] : 0;
 					if ( $time_left ) {
 
 						if ( $time_left > 60 ) {
@@ -513,6 +538,9 @@ class LimitLoginAttempts
 
 					$user = new WP_Error();
 					$user->add( 'username_blacklisted', $err );
+
+				    $_SESSION['errors_in_early_hook'] = true;
+				    $this->all_errors_array['early_hook_errors'] = $err;
 
 					if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
 
@@ -550,6 +578,9 @@ class LimitLoginAttempts
 					$err .= '<br>' . $this->custom_error;
 
 					$user->add( 'username_blacklisted', $err );
+
+					$_SESSION['errors_in_early_hook'] = true;
+					$this->all_errors_array['early_hook_errors'] = $err;
 
 					if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
 
@@ -629,7 +660,6 @@ class LimitLoginAttempts
 		if ( is_plugin_active('limit-login-attempts/limit-login-attempts.php') ) {
 
 			deactivate_plugins( 'limit-login-attempts/limit-login-attempts.php', true );
-			//add_action('plugins_loaded', 'limit_login_setup', 99999);
 			remove_action( 'plugins_loaded', 'limit_login_setup', 99999 );
 		}
 	}
@@ -974,6 +1004,18 @@ class LimitLoginAttempts
 		return ( ! is_array( $lockouts ) || ! isset( $lockouts[ $ip ] ) || time() >= $lockouts[ $ip ] );
 	}
 
+
+	/**
+	 * For plugin UM
+	 */
+	public function um_limit_login_failed ()
+	{
+		global $um_limit_login_failed;
+
+		do_action( 'login_errors', '' );
+		$um_limit_login_failed = true;
+	}
+
 	/**
 	* Action when login attempt failed
 	*
@@ -1001,7 +1043,7 @@ class LimitLoginAttempts
 
 		    if ( $response['result'] === 'allow' ) {
 
-				$_SESSION['login_attempts_left'] = intval( $response['attempts_left'] );
+				$_SESSION['login_attempts_left'] = (int)$response['attempts_left'];
 
             } elseif ( $response['result'] === 'deny' ) {
 
@@ -1020,9 +1062,9 @@ class LimitLoginAttempts
 					$err .= ' ' . sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
 				}
 
-				$err .= '<br>' . $this->custom_error;
-
 			    self::$cloud_app->add_error( $err );
+
+			    $_SESSION['errors_in_early_hook'] = false;
             }
 
 		} else {
@@ -1429,14 +1471,16 @@ class LimitLoginAttempts
 		if ( $this->is_username_blacklisted( $user_login ) || $this->is_ip_blacklisted( $this->get_address() ) ) {
 
 			$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
-			$err .= '<br>' . $this->custom_error;
 
 			$error->add( 'username_blacklisted', $err );
+			$this->all_errors_array['late_hook_errors'] = $err;
 		} else {
 
 			// This error should be the same as in "shake it" filter below
 			$error->add( 'too_many_retries', $this->error_msg() );
 		}
+
+	    $_SESSION['errors_in_early_hook'] = false;
 
 		return $error;
 	}
@@ -1460,13 +1504,16 @@ class LimitLoginAttempts
 	* Keep track of if user or password are empty, to filter errors correctly
 	*
 	* @param $user
+	* @param $username
 	* @param $password
 	*/
-	public function track_credentials( $user, $password )
+	public function track_credentials( $user, $username, $password )
     {
 		global $limit_login_nonempty_credentials;
 
-		$limit_login_nonempty_credentials = ( ! empty( $user ) && ! empty( $password ) );
+		$limit_login_nonempty_credentials = ( ! empty( $username ) && ! empty( $password ) );
+
+		return $user;
 	}
 
 	/**
@@ -1491,6 +1538,9 @@ class LimitLoginAttempts
 			/* Huh? No timeout active? */
 			$msg .= __( 'Please try again later.', 'limit-login-attempts-reloaded' );
 
+			$this->all_errors_array['late_hook_errors'] = $msg;
+			$_SESSION['errors_in_early_hook'] = false;
+
 			return $msg;
 		}
 
@@ -1504,7 +1554,11 @@ class LimitLoginAttempts
 			$msg .= sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $when, 'limit-login-attempts-reloaded' ), $when );
 		}
 
-	    $msg .= '<br>' . $this->custom_error;
+//	    $msg .= '<br>' . $this->custom_error;
+
+	    $this->all_errors_array['late_hook_errors'] = $msg;
+
+	    $_SESSION['errors_in_early_hook'] = false;
 
 		return $msg;
 	}
@@ -1544,16 +1598,17 @@ class LimitLoginAttempts
 				}
             }
 
-			if ( $error_msg ) {
+			if ( ! empty( $error_msg ) ) {
 
 		        $content .= ( !empty( $content ) ) ? "<br />\n" : '';
 				$content .= $error_msg . "<br />\n";
-
-				$content .= $this->custom_error;
 			}
 		}
 
+	    $content .= '<br>' . $this->custom_error;
 
+	    $this->all_errors_array['late_hook_errors'] = $content;
+	    $_SESSION['errors_in_early_hook'] = false;
 
 		return $content;
 	}
