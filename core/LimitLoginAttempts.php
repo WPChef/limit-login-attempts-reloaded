@@ -295,7 +295,7 @@ class LimitLoginAttempts
 		if (
 		        self::$cloud_app
                 && ! empty( $this->all_errors_array['early_hook_errors'] )
-                && !empty( self::$cloud_app->get_errors() )
+                && ! empty( self::$cloud_app->get_errors() )
         ) {
 		    return;
         }
@@ -1553,8 +1553,6 @@ class LimitLoginAttempts
 
 			$msg .= sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $when, 'limit-login-attempts-reloaded' ), $when );
 		}
-
-//	    $msg .= '<br>' . $this->custom_error;
 
 	    $this->all_errors_array['late_hook_errors'] = $msg;
 
