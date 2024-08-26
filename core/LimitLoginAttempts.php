@@ -40,6 +40,7 @@ class LimitLoginAttempts
 	public static $cloud_app = null;
 
     private $info_data = array();
+
 	/**
      * Class instance accessible in other classes
      *
@@ -54,8 +55,6 @@ class LimitLoginAttempts
 	 */
 	public static $capabilities = 'llar_admin';
 	public $has_capability = false;
-
-	public function __construct() {
 
     private $plans = array(
         'default'       => array(
@@ -278,7 +277,9 @@ class LimitLoginAttempts
 
 
 		$role = get_role( 'administrator' );
+
 		if ( $role && ! $role->has_cap( self::$capabilities ) ) {
+
 			$role->add_cap( self::$capabilities );
 		}
 
@@ -286,7 +287,6 @@ class LimitLoginAttempts
 
 	}
 
-	}
 
 	public function login_page_gdpr_message()
     {
@@ -690,7 +690,13 @@ class LimitLoginAttempts
 	{
 		if ( ! $this->has_capability ) return;
 
-		add_submenu_page( 'settings.php', 'Limit Login Attempts', 'Limit Login Attempts' . $this->menu_alert_icon(), self::$capabilities, $this->_options_page_slug, array( $this, 'options_page' ) );
+		add_submenu_page(
+            'settings.php',
+            'Limit Login Attempts',
+            'Limit Login Attempts' . $this->menu_alert_icon(),
+            self::$capabilities,
+            $this->_options_page_slug,
+            array( $this, 'options_page' ) );
 	}
 
 	private function get_submenu_items()
@@ -779,7 +785,6 @@ class LimitLoginAttempts
 					$item['name'],
 					self::$capabilities,
 					$this->_options_page_slug . $item['url'],
-					$item['url'],
 					array( $this, 'options_page' )
 				);
 
@@ -801,7 +806,6 @@ class LimitLoginAttempts
 
         } else {
 
-			//add_options_page( 'Limit Login Attempts', 'Limit Login Attempts' . $this->menu_alert_icon(), self::$capabilities, $this->_options_page_slug, array( $this, 'options_page' ) );
 			add_options_page(
 			        'Limit Login Attempts',
                     'Limit Login Attempts' . $this->menu_alert_icon(),
