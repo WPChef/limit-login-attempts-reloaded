@@ -1052,6 +1052,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-logs__active .llar-table-header .title_page {
   margin-top: 0;
 }
+#llar-setting-page-logs__active .llar-table-header .title_page span {
+  color: #666D84;
+  font-size: 80%;
+  font-weight: 400;
+  margin-left: 10px;
+}
 #llar-setting-page-logs__active .llar-table-header .right-link {
   font-size: 16px;
   line-height: 1.625;
@@ -1106,11 +1112,18 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   top: 0;
   left: 0;
 }
+#llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table thead {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 100;
+}
 #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table thead tr th {
   color: #2A2F40;
   font-size: 16px;
   font-weight: 500;
   padding: 20px 18px;
+  text-align: left;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table thead tr th {
