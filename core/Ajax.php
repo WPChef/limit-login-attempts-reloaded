@@ -379,7 +379,7 @@ class Ajax
 
 	public function app_load_successful_login_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
+		if ( ! LimitLoginAttempts::$instance->has_capability ) {
 
 			wp_send_json_error( array() );
 		}
@@ -937,7 +937,7 @@ class Ajax
 
     public function strong_account_policies_callback() {
 
-        if ( ! current_user_can( 'activate_plugins' ) ) {
+	    if ( ! LimitLoginAttempts::$instance->has_capability ) {
 
             wp_send_json_error( array() );
         }
@@ -953,7 +953,7 @@ class Ajax
 
     public function block_by_country_callback() {
 
-        if ( ! current_user_can( 'activate_plugins' ) ) {
+	    if ( ! LimitLoginAttempts::$instance->has_capability ) {
 
             wp_send_json_error( array() );
         }
@@ -995,7 +995,7 @@ class Ajax
 
     public function onboarding_reset_callback() {
 
-        if ( ! current_user_can( 'update_plugins' ) ) {
+	    if ( ! LimitLoginAttempts::$instance->has_capability ) {
 
             wp_send_json_error( array() );
         }
@@ -1025,7 +1025,7 @@ class Ajax
 
     public function activate_micro_cloud_callback() {
 
-        if ( ! current_user_can( 'update_plugins' ) ) {
+        if ( ! LimitLoginAttempts::$instance->has_capability ) {
 
             wp_send_json_error( array('msg' => 'Wrong country code.') );
         }
