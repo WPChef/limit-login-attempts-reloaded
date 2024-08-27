@@ -721,6 +721,8 @@ class LimitLoginAttempts
 
 	public function admin_menu()
     {
+	    if ( ! current_user_can( 'manage_options' ) ) return;
+
 		global $submenu;
 
 		if ( Config::get( 'show_top_level_menu_item' ) ) {
