@@ -340,7 +340,10 @@ class LimitLoginAttempts
                 let wp_login_page = '<?php echo esc_js( $is_wp_login_page ) ?>';
                 let um_limit_login_failed = '<?php echo $um_limit_login_failed ?>';
                 let late_hook_errors = '<?php echo $late_hook_errors ?>';
-                let title_notification = '<?php echo __( 'Warning!', 'limit-login-attempts-reloaded' ) ?>';
+                let custom_error = '<?php echo '<br />' . $this->custom_error . '<br />' ?>';
+                //let title_notification = '<?php //echo __( 'Warning!', 'limit-login-attempts-reloaded' ) ?>//';
+
+                let title_notification = '';
 
                 ajaxUrlObj.protocol = location.protocol;
 
@@ -352,10 +355,10 @@ class LimitLoginAttempts
 
                         if ( wp_login_page ) {
 
-                            $( '#login_error' ).append( "<br>" + response.data );
+                            $( '#login_error' ).append( '<br />' + response.data );
                         } else {
 
-                            notification_login_page( response.data, title_notification );
+                            notification_login_page( response.data + custom_error, title_notification );
                         }
                     } else if ( um_limit_login_failed && late_hook_errors ) {
 
@@ -364,7 +367,7 @@ class LimitLoginAttempts
                 } )
 
                 function notification_login_page(message, title = '') {
-                    let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; width: 365px; z-index: 999999; background: rgba(255, 124, 6, 0.75); padding: 20px; color: rgb(255, 255, 255); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); } .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; }';
+                    let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; width: 365px; z-index: 999999; background: #fffbe0; padding: 20px; color: rgb(121, 121, 121); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); box-shadow: 10px 10px 14px 0 #72757B99;} .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; }';
                     let style = document.createElement('style');
                     style.appendChild(document.createTextNode(css));
                     document.head.appendChild(style);
@@ -560,7 +563,8 @@ class LimitLoginAttempts
 						}
                     }
 
-				    $err .= '<br>' . $this->custom_error;
+				    $err .= ! empty($err) ? '<br />' : '';
+				    $err .= '<br />' . $this->custom_error;
 
 				    self::$cloud_app->add_error( $err );
 
@@ -603,7 +607,9 @@ class LimitLoginAttempts
 
 					$user = new WP_Error();
 					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
-					$err .= '<br>' . $this->custom_error;
+
+					$err .= ! empty($err) ? '<br />' : '';
+					$err .= '<br />' . $this->custom_error;
 
 					$user->add( 'username_blacklisted', $err );
 
@@ -1643,7 +1649,7 @@ class LimitLoginAttempts
 			}
 		}
 
-	    $content .= '<br>' . $this->custom_error;
+	    $content .= "<br />\n" . $this->custom_error . "<br />\n";
 
 	    $this->all_errors_array['late_hook_errors'] = $content;
 	    $_SESSION['errors_in_early_hook'] = false;
