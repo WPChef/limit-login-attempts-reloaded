@@ -998,6 +998,7 @@ class Ajax
         } elseif ( ! empty( $remaining ) ) {
 
 			$message   = ( ! $remaining ) ? '' : sprintf( _n( "<strong>%d</strong> attempt remaining.", "<strong>%d</strong> attempts remaining.", $remaining, 'limit-login-attempts-reloaded' ), $remaining );
+			$message .= '<br />';
         }
 
 		wp_send_json_success( $message );

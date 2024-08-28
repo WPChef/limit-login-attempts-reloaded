@@ -1599,6 +1599,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .llar-table-app-login thead tr th, #llar-setting-page-logs__active .llar-table-scroll-wrap thead tr th, .llar-table-no_app-login thead tr th {
   color: #2A2F40;
   font-weight: 500;
+  text-align: left;
 }
 .llar-table-app-login tbody.login-attempts tr, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr, .llar-table-no_app-login tbody.login-attempts tr {
   border-radius: 16px;
