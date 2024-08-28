@@ -224,9 +224,21 @@
 
   .setup-code-wrap {
     display: none;
+    min-width: 450px;
 
     &.active {
       display: block;
+    }
+
+    button.button {
+
+      @include _1199 {
+        min-width: 120px!important;
+      }
+
+      @include _991 {
+        min-width: 90px!important;
+      }
     }
   }
 
@@ -666,6 +678,21 @@
       &.ui-accordion-header-active {
         background: white;
       }
+
+      .llar_setup_code {
+        position: absolute;
+        top: 50%;
+        right: 2%;
+        transform: translateY(-50%);
+      }
+
+      &-active {
+
+        .llar_setup_code {
+          visibility: hidden;
+
+        }
+      }
     }
 
     .ui-accordion-content {
@@ -1044,34 +1071,6 @@
                   i {
                     color: #3c8dbc;
                   }
-                }
-              }
-            }
-
-            .cell-id {
-
-              .id {
-                font-size: 15px;
-                max-width: unset;
-                white-space: nowrap;
-
-                @include _991 {
-                  font-size: 90%;
-                  max-width: 15ch;
-                }
-
-                @include _767 {
-                  font-size: 85%;
-                  max-width: 10ch;
-                }
-              }
-
-              .hint_tooltip {
-                visibility: hidden;
-                top: 30px !important;
-
-                @include _991 {
-                  visibility: visible;
                 }
               }
             }
@@ -1552,7 +1551,7 @@
       th {
         color: $typography-primary;
         font-weight: 500;
-        text-align: left;
+        text-align: center;
       }
     }
   }
@@ -1880,6 +1879,9 @@
   }
 }
 
+.llar-table-no_app-login {
+
+}
 
 .llar-notice-review,
 .llar-notice-notify {
