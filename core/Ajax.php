@@ -987,7 +987,6 @@ class Ajax
 			session_start();
 		}
 
-//		$failed_error = ! empty( $_SESSION['login_failed_errors'] ) ? $_SESSION['login_failed_errors'] : '';
 		$failed_error = '';
 
 		$remaining = ! empty( $_SESSION['login_attempts_left'] ) ? (int)$_SESSION['login_attempts_left'] : 0;
