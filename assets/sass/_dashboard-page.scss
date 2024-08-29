@@ -693,6 +693,22 @@
           padding-bottom: 30px;
         }
       }
+
+      .llar-table-app-login, .llar-table-no_app-login {
+
+        tbody {
+
+          td {
+
+            .cell-id {
+
+              .id {
+                max-width: 12ch;
+              }
+            }
+          }
+        }
+      }
     }
 
     .info-box-2 {
