@@ -1766,7 +1766,6 @@
 
         .id {
           font-size: 15px;
-          max-width: 14ch;
           display: inline-block;
           vertical-align: middle;
           white-space: nowrap;
@@ -1775,6 +1774,10 @@
 
           @include _1599 {
             font-size: 90%
+          }
+
+          @include _767 {
+            max-width: 14ch;
           }
         }
 
@@ -1879,9 +1882,6 @@
   }
 }
 
-.llar-table-no_app-login {
-
-}
 
 .llar-notice-review,
 .llar-notice-notify {
