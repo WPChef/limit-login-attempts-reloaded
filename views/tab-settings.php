@@ -259,14 +259,14 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                             <div class="item">
                                 <img class="icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-ip-bg.png">
                                 <div class="name">
-									<?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
+									<?php _e( 'Use intelligent IP denial/&#8203;unblocking technology', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
                                 <img class="icon"
                                      src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-blocklist-bg.png">
                                 <div class="name">
-									<?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
+									<?php _e( 'Sync the allow/&#8203;deny/&#8203;pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
                             </div>
                             <div class="item">
@@ -425,13 +425,13 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                                 <div class="item">
                                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/ip-min.png">
                                     <div class="name">
-										<?php _e( 'Use intelligent IP denial/unblocking technology', 'limit-login-attempts-reloaded' ); ?>
+										<?php _e( 'Use intelligent IP denial/&#8203;unblocking technology', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
                                 </div>
                                 <div class="item">
                                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/cross-min.png">
                                     <div class="name">
-										<?php _e( 'Sync the allow/deny/pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
+										<?php _e( 'Sync the allow/&#8203;deny/&#8203;pass lists between multiple domains', 'limit-login-attempts-reloaded' ); ?>
                                     </div>
                                 </div>
                                 <div class="item">
