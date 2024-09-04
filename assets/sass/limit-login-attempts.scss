@@ -224,9 +224,21 @@
 
   .setup-code-wrap {
     display: none;
+    min-width: 450px;
 
     &.active {
       display: block;
+    }
+
+    button.button {
+
+      @include _1199 {
+        min-width: 120px!important;
+      }
+
+      @include _991 {
+        min-width: 90px!important;
+      }
     }
   }
 
@@ -331,7 +343,6 @@
           border-top-right-radius: unset;
           border-bottom-right-radius: unset;
           width: 300px;
-          text-align: left;
 
           @include _1399 {
             width: 260px;
@@ -666,6 +677,21 @@
 
       &.ui-accordion-header-active {
         background: white;
+      }
+
+      .llar_setup_code {
+        position: absolute;
+        top: 50%;
+        right: 2%;
+        transform: translateY(-50%);
+      }
+
+      &-active {
+
+        .llar_setup_code {
+          visibility: hidden;
+
+        }
       }
     }
 
@@ -1525,7 +1551,7 @@
       th {
         color: $typography-primary;
         font-weight: 500;
-        text-align: left;
+        text-align: center;
       }
     }
   }
