@@ -5,7 +5,7 @@ Tags: brute force, login, security, firewall, protection
 License: GPLv2 or later
 Requires at least: 3.0
 Tested up to: 6.6
-Stable tag: 2.26.12
+Stable tag: 2.26.13
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -32,11 +32,13 @@ https://www.youtube.com/watch?v=JfkvIiQft14
 * **Sucuri** compatibility.
 * **Wordfence** compatibility.
 * **Ultimate Member** compatibility.
+* **WPS Hide Login** compatibility.
 * **XMLRPC** gateway protection.
 * **Woocommerce** login page protection.
 * **Multi-site compatibility** with extra MU settings.
 * **GDPR** compliant.
 * **Custom IP origins support** (Cloudflare, Sucuri, etc.).
+* **llar_admin** own capability.
 
 = Features (Premium Version): =
 * **Performance Optimizer** - Offload the burden of excessive failed logins from your server to protect your server resources, resulting in improved speed and efficiency of your website.
@@ -136,6 +138,12 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 2.26.13 =
+* New "llar_admin" capability added to let other roles access the plugin.
+* CSS fixes.
+* Sticky headers added to the log tables.
+* Small interface changes.
 
 = 2.26.12 =
 * Better displaying IPv6 in successful login attempts block.

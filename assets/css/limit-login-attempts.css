@@ -264,12 +264,12 @@ button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .lla
 }
 @media screen and (max-width: 991.5px) {
   button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
-    padding: 5px 16px;
+    padding: 6px 15px;
   }
 }
 @media screen and (max-width: 428px) {
   button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
-    padding: 5px 14px;
+    padding: 6px 14px;
   }
 }
 button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
@@ -557,9 +557,20 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .limit-login-page-settings .setup-code-wrap {
   display: none;
+  min-width: 450px;
 }
 .limit-login-page-settings .setup-code-wrap.active {
   display: block;
+}
+@media screen and (max-width: 1199.5px) {
+  .limit-login-page-settings .setup-code-wrap button.button, .limit-login-page-settings .setup-code-wrap .button.llar_button, .limit-login-page-settings .setup-code-wrap .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .limit-login-page-settings .setup-code-wrap .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs__active .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-debug .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-premium .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-help .button, #llar-setting-page .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs__active .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-debug .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-premium .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-help .limit-login-page-settings .setup-code-wrap .button {
+    min-width: 120px !important;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  .limit-login-page-settings .setup-code-wrap button.button, .limit-login-page-settings .setup-code-wrap .button.llar_button, .limit-login-page-settings .setup-code-wrap .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .limit-login-page-settings .setup-code-wrap .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs__active .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-debug .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-premium .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-help .button, #llar-setting-page .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs__active .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-debug .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-premium .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-help .limit-login-page-settings .setup-code-wrap .button {
+    min-width: 90px !important;
+  }
 }
 .limit-login-page-settings .app-form-field {
   display: none;
@@ -659,7 +670,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   border-top-right-radius: unset;
   border-bottom-right-radius: unset;
   width: 300px;
-  text-align: left;
 }
 @media screen and (max-width: 1399.5px) {
   #llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th {
@@ -944,6 +954,15 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-setting-page .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-logs .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-debug .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-premium .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-help .llar-accordion .ui-accordion-header.ui-accordion-header-active {
   background: white;
+}
+#llar-setting-page .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-logs .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-debug .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-premium .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-help .llar-accordion .ui-accordion-header .llar_setup_code {
+  position: absolute;
+  top: 50%;
+  right: 2%;
+  transform: translateY(-50%);
+}
+#llar-setting-page .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-logs .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-debug .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-premium .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-help .llar-accordion .ui-accordion-header-active .llar_setup_code {
+  visibility: hidden;
 }
 #llar-setting-page .llar-accordion .ui-accordion-content, #llar-setting-page-logs .llar-accordion .ui-accordion-content, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content, #llar-setting-page-debug .llar-accordion .ui-accordion-content, #llar-setting-page-premium .llar-accordion .ui-accordion-content, #llar-setting-page-help .llar-accordion .ui-accordion-content {
   padding-top: 0;
@@ -1599,7 +1618,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .llar-table-app-login thead tr th, #llar-setting-page-logs__active .llar-table-scroll-wrap thead tr th, .llar-table-no_app-login thead tr th {
   color: #2A2F40;
   font-weight: 500;
-  text-align: left;
+  text-align: center;
 }
 .llar-table-app-login tbody.login-attempts tr, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr, .llar-table-no_app-login tbody.login-attempts tr {
   border-radius: 16px;
