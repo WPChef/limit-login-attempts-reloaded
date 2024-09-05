@@ -331,6 +331,7 @@ class LimitLoginAttempts
 		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
 		$is_wp_login_page = isset( $_POST['log'] );
 		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
+		$custom_error = ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
 
 		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) : ?>
 
@@ -340,7 +341,7 @@ class LimitLoginAttempts
                     let wp_login_page = '<?php echo esc_js( $is_wp_login_page ) ?>';
                     let um_limit_login_failed = '<?php echo $um_limit_login_failed ?>';
                     let late_hook_errors = <?php echo json_encode( $late_hook_errors ) ?>;
-                    let custom_error = <?php echo json_encode ( ! empty( $um_limit_login_failed ) ? '<br /><br />' . $this->custom_error : '' ) ?>;
+                    let custom_error = <?php echo json_encode ( ! empty( $um_limit_login_failed ) ? $custom_error : '' ) ?>;
 
                     ajaxUrlObj.protocol = location.protocol;
 
@@ -1636,10 +1637,11 @@ class LimitLoginAttempts
 		}
 
 		if ( ! empty( $error_msg ) ) {
+
 			$content = $error_msg;
 		}
 
-		$content = ! empty( $content ) ? $content . '<br /><br />' . $this->custom_error : $this->custom_error;
+		$content .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
 		$content = ! empty( $content ) ? '<span>' . $content . '</span>' : '';
 
 		$this->all_errors_array['late_hook_errors'] = $content;
