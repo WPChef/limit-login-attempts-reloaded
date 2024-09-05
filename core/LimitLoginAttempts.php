@@ -141,7 +141,7 @@ class LimitLoginAttempts
 		if( !Config::get( 'hide_dashboard_widget' ) )
 			add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
 
-		$this->custom_error = Config::get( 'custom_error_message' );
+		$this->custom_error = nl2br( esc_html( Config::get( 'custom_error_message' ) ) );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -339,8 +339,8 @@ class LimitLoginAttempts
                     let ajaxUrlObj = new URL( '<?php echo admin_url( 'admin-ajax.php' ); ?>' );
                     let wp_login_page = '<?php echo esc_js( $is_wp_login_page ) ?>';
                     let um_limit_login_failed = '<?php echo $um_limit_login_failed ?>';
-                    let late_hook_errors = '<?php echo $late_hook_errors ?>';
-                    let custom_error = '<?php echo ! empty( $um_limit_login_failed ) ? '<br /><br />' . $this->custom_error : '' ?>';
+                    let late_hook_errors = <?php echo json_encode( $late_hook_errors ) ?>;
+                    let custom_error = <?php echo json_encode ( ! empty( $um_limit_login_failed ) ? '<br /><br />' . $this->custom_error : '' ) ?>;
 
                     ajaxUrlObj.protocol = location.protocol;
 
