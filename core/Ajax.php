@@ -987,17 +987,11 @@ class Ajax
 			session_start();
 		}
 
-		$failed_error = '';
-
 		$remaining = ! empty( $_SESSION['login_attempts_left'] ) ? (int)$_SESSION['login_attempts_left'] : 0;
 
-		if ( ! empty ( $failed_error ) ) {
+		if ( ! empty( $remaining ) && $remaining > 0 ) {
 
-			$message = $failed_error;
-        } elseif ( ! empty( $remaining ) ) {
-
-			$message   = ( ! $remaining ) ? '' : sprintf( _n( "<strong>%d</strong> attempt remaining.", "<strong>%d</strong> attempts remaining.", $remaining, 'limit-login-attempts-reloaded' ), $remaining );
-			$message .= '<br />';
+			$message   = sprintf( _n( "<strong>%d</strong> attempt remaining.", "<strong>%d</strong> attempts remaining.", $remaining, 'limit-login-attempts-reloaded' ), $remaining );
         }
 
 		wp_send_json_success( $message );

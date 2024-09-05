@@ -328,7 +328,7 @@ class LimitLoginAttempts
 			return;
 		}
 
-		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? str_replace("\n", '', $this->all_errors_array['late_hook_errors'] ) : false;
+		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
 		$is_wp_login_page = isset( $_POST['log'] );
 		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
 
@@ -340,7 +340,7 @@ class LimitLoginAttempts
                     let wp_login_page = '<?php echo esc_js( $is_wp_login_page ) ?>';
                     let um_limit_login_failed = '<?php echo $um_limit_login_failed ?>';
                     let late_hook_errors = '<?php echo $late_hook_errors ?>';
-                    let custom_error = '<?php echo '<br />' . $this->custom_error . '<br />' ?>';
+                    let custom_error = '<?php echo ! empty( $um_limit_login_failed ) ? '<br /><br />' . $this->custom_error : '' ?>';
 
                     ajaxUrlObj.protocol = location.protocol;
 
@@ -352,7 +352,7 @@ class LimitLoginAttempts
 
                             if ( wp_login_page ) {
 
-                                $( '#login_error' ).append( '<br />' + response.data );
+                                $( '#login_error' ).append( '<br /><br />' + response.data );
                             } else {
 
                                 notification_login_page( response.data + custom_error );
@@ -372,7 +372,7 @@ class LimitLoginAttempts
                         $( 'body' ).prepend( '<div class="llar_notification_login_page">' + message + '</div>' );
 
                         setTimeout(function () {
-                            // $('.llar_notification_login_page').hide();
+                            $('.llar_notification_login_page').hide();
                         }, 4000);
                     }
 
@@ -556,8 +556,7 @@ class LimitLoginAttempts
 						}
 					}
 
-					$err .= ! empty($err) ? '<br />' : '';
-					$err .= '<br />' . $this->custom_error;
+					$err .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
 					$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
 
 					self::$cloud_app->add_error( $err );
@@ -602,9 +601,7 @@ class LimitLoginAttempts
 					$user = new WP_Error();
 					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
-//					$err .= ! empty($err) ? '<br />' : '';
-					$err .= ! empty( $err ) ? '' : '';
-					$err .= '<br />' . $this->custom_error;
+					$err .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
 					$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
 
 					$user->add( 'username_blacklisted', $err );
@@ -1622,29 +1619,27 @@ class LimitLoginAttempts
 			if ( $this->other_login_errors ) {
 
 				foreach ( $this->other_login_errors as $msg ) {
-					$content .= ! empty( $msg ) ? $msg . "<br />" : '';
+					$content .= ! empty( $msg ) ? $msg . '<br />' : '';
 				}
 
-			} elseif ( ! $limit_login_just_lockedout ) {
+			} else {
 
 				/* Replace error message, including ours if necessary */
 				if ( ! empty( $_REQUEST['log'] ) && is_email( $_REQUEST['log'] ) ) {
 
-					$content = __( '<strong>ERROR</strong>: Incorrect email address or password.', 'limit-login-attempts-reloaded' ) . "<br />\n";
+					$content = __( '<strong>ERROR</strong>: Incorrect email address or password.', 'limit-login-attempts-reloaded' );
 				} else {
 
-					$content = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' ) . "<br />\n";
+					$content = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
 				}
-			}
-
-			if ( ! empty( $error_msg ) ) {
-
-				$content .= ( !empty( $content ) ) ? "<br />" : '';
-				$content .= $error_msg . "<br />";
 			}
 		}
 
-		$content .= ! empty( $content) ? "<br />" . $this->custom_error : $this->custom_error;
+		if ( ! empty( $error_msg ) ) {
+			$content = $error_msg;
+		}
+
+		$content = ! empty( $content ) ? $content . '<br /><br />' . $this->custom_error : $this->custom_error;
 		$content = ! empty( $content ) ? '<span>' . $content . '</span>' : '';
 
 		$this->all_errors_array['late_hook_errors'] = $content;
