@@ -339,7 +339,7 @@ class LimitLoginAttempts
                 ;( function( $ ) {
                     let ajaxUrlObj = new URL( '<?php echo admin_url( 'admin-ajax.php' ); ?>' );
                     let wp_login_page = '<?php echo esc_js( $is_wp_login_page ) ?>';
-                    let um_limit_login_failed = '<?php echo $um_limit_login_failed ?>';
+                    let um_limit_login_failed = '<?php echo esc_js( $um_limit_login_failed ) ?>';
                     let late_hook_errors = <?php echo json_encode( $late_hook_errors ) ?>;
                     let custom_error = <?php echo json_encode ( ! empty( $um_limit_login_failed ) ? $custom_error : '' ) ?>;
 
