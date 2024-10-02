@@ -38,13 +38,13 @@ class Helpers {
 			if ( ! empty( $users ) ) {
 				foreach ( $users as $user_name => $info ) {
 
-					if ( is_array( $info ) && !empty( $info['date'] ) && !empty( $info['counter'] ) ) { // For new plugin version
+					if ( is_array( $info ) && ! empty( $info['date'] ) && ! empty( $info['counter'] ) ) { // For new plugin version
 						$new_log[ $info['date'] ] = array(
 							'ip'       => $ip,
 							'username' => $user_name,
 							'counter'  => $info['counter'],
 							'gateway'  => isset( $info['gateway'] ) ? $info['gateway'] : '-',
-							'unlocked' => !empty( $info['unlocked'] ),
+							'unlocked' => ! empty( $info['unlocked'] ),
 						);
 						continue;
 					}
