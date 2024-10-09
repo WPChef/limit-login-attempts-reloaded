@@ -343,6 +343,7 @@
           border-top-right-radius: unset;
           border-bottom-right-radius: unset;
           width: 300px;
+          text-align: left;
 
           @include _1399 {
             width: 260px;

@@ -9,60 +9,61 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Config {
 
 	private static $default_options = array(
-		'gdpr'               => 0,
-		'gdpr_message'       => '',
+		'gdpr'                          => 0,
+		'gdpr_message'                  => '',
 
 		/* Are we behind a proxy? */
-		'client_type'        => LLA_DIRECT_ADDR,
+		'client_type'                   => LLA_DIRECT_ADDR,
 
 		/* Lock out after this many tries */
-		'allowed_retries'    => 4,
+		'allowed_retries'               => 4,
 
 		/* Lock out for this many seconds */
-		'lockout_duration'   => 1200, // 20 minutes
+		'lockout_duration'              => 1200, // 20 minutes
 
 		/* Long lock out after this many lockouts */
-		'allowed_lockouts'   => 4,
+		'allowed_lockouts'              => 4,
 
 		/* Long lock out for this many seconds */
-		'long_duration'      => 86400, // 24 hours,
+		'long_duration'                 => 86400, // 24 hours,
 
 		/* Reset failed attempts after this many seconds */
-		'valid_duration'     => 86400, // 12 hours
+		'valid_duration'                => 86400, // 12 hours
 
 		/* Also limit malformed/forged cookies? */
-		'cookies'            => true,
+		'cookies'                       => true,
 
 		/* Notify on lockout. Values: '', 'log', 'email', 'log,email' */
-		'lockout_notify'     => 'email',
+		'lockout_notify'                => 'email',
 
         /* strong account policies */
-        'checklist'         => false,
+        'checklist'                     => false,
 
 		/* If notify by email, do so after this number of lockouts */
 		'notify_email_after' => 3,
 
-		'review_notice_shown'        => false,
-		'enable_notify_notice_shown' => false,
+		'review_notice_shown'           => false,
+		'enable_notify_notice_shown'    => false,
 
-		'whitelist'           => array(),
-		'whitelist_usernames' => array(),
-		'blacklist'           => array(),
-		'blacklist_usernames' => array(),
+		'whitelist'                     => array(),
+		'whitelist_usernames'           => array(),
+		'blacklist'                     => array(),
+		'blacklist_usernames'           => array(),
 
-		'active_app'               => 'local',
-		'app_config'               => '',
-		'show_top_level_menu_item' => true,
-		'show_top_bar_menu_item'   => true,
-		'hide_dashboard_widget'    => false,
-		'show_warning_badge'       => true,
-		'onboarding_popup_shown'   => false,
+		'active_app'                    => 'local',
+		'app_config'                    => '',
+		'show_top_level_menu_item'      => true,
+		'show_top_bar_menu_item'        => true,
+		'hide_dashboard_widget'         => false,
+		'show_warning_badge'            => true,
+		'onboarding_popup_shown'        => false,
+		'custom_error_message'          => '',
 
-		'logged'                => array(),
-		'retries_valid'         => array(),
-		'retries'               => array(),
-		'lockouts'              => array(),
-		'auto_update_choice'    => null,
+		'logged'                        => array(),
+		'retries_valid'                 => array(),
+		'retries'                       => array(),
+		'lockouts'                      => array(),
+		'auto_update_choice'            => null,
 	);
 
 	private static $disable_autoload_options = array(
