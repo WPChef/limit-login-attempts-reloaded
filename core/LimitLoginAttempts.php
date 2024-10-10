@@ -320,20 +320,13 @@ class LimitLoginAttempts
 			return;
 		}
 
-		if (
-			self::$cloud_app
-			&& ! empty( $this->all_errors_array['early_hook_errors'] )
-			&& ! empty( self::$cloud_app->get_errors() )
-		) {
-			return;
-		}
-
 		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
 		$is_wp_login_page = isset( $_POST['log'] );
 		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
-		$custom_error = ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
+		$custom_error = ! empty( $this->custom_error ) ? $this->custom_error : '';
 
-		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) : ?>
+		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) :
+            ?>
 
             <script>
                 ;( function( $ ) {
@@ -341,7 +334,8 @@ class LimitLoginAttempts
                     let wp_login_page = '<?php echo esc_js( $is_wp_login_page ) ?>';
                     let um_limit_login_failed = '<?php echo esc_js( $um_limit_login_failed ) ?>';
                     let late_hook_errors = <?php echo json_encode( $late_hook_errors ) ?>;
-                    let custom_error = <?php echo json_encode ( ! empty( $um_limit_login_failed ) ? $custom_error : '' ) ?>;
+                    let custom_error = <?php echo json_encode ( $custom_error ) ?>;
+
 
                     ajaxUrlObj.protocol = location.protocol;
 
@@ -351,30 +345,53 @@ class LimitLoginAttempts
                     }, function( response ) {
                         if ( response.success && response.data ) {
 
-                            if ( wp_login_page ) {
+                            if ( custom_error.length ) {
 
-                                $( '#login_error' ).append( '<br /><br />' + response.data );
+                                custom_error = '<br /><br />' + custom_error;
+                            }
+                             notification_login_page( response.data + custom_error );
+
+                        } else if ( um_limit_login_failed ) {
+
+                            if ( late_hook_errors === false) {
+
+                                notification_login_page( custom_error );
                             } else {
 
-                                notification_login_page( response.data + custom_error );
-                            }
-                        } else if ( um_limit_login_failed && late_hook_errors ) {
+                                if ( custom_error.length ) {
+                                    custom_error = '<br /><br />' + custom_error;
+                                }
 
-                            notification_login_page( late_hook_errors );
+                                notification_login_page( late_hook_errors + custom_error );
+                            }
+
+                        } else {
+
+                            if ( custom_error.length ) {
+                                notification_login_page(custom_error);
+                            }
                         }
                     } )
 
                     function notification_login_page( message ) {
-                        let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; width: 365px; z-index: 999999; background: #fffbe0; padding: 20px; color: rgb(121, 121, 121); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); box-shadow: 10px 10px 14px 0 #72757B99;} .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; }';
+
+                        if ( ! message.length ) {
+                            return false;
+                        }
+                        let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; width: 365px; z-index: 999999; background: #fffbe0; padding: 20px; color: rgb(121, 121, 121); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); box-shadow: 10px 10px 14px 0 #72757B99;} .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; } .llar_notification_login_page .close-button {position: absolute; top: 0; right: 5px; cursor: pointer;} .dashicons-no-alt:before {position: relative;} ';
                         let style = document.createElement('style');
                         style.appendChild(document.createTextNode(css));
                         document.head.appendChild(style);
 
-                        $( 'body' ).prepend( '<div class="llar_notification_login_page">' + message + '</div>' );
+                        $( 'body' ).prepend( '<div class="llar_notification_login_page"><div class="close-button"><span class="dashicons dashicons-no-alt"></span></div>' + message + '</div>' );
 
                         setTimeout(function () {
                             $('.llar_notification_login_page').hide();
-                        }, 4000);
+                        }, 10000);
+
+                        $('.llar_notification_login_page').on( 'click', '.close-button', function () {
+                            $('.llar_notification_login_page').hide();
+                        });
                     }
 
                 } )(jQuery)
@@ -557,7 +574,7 @@ class LimitLoginAttempts
 						}
 					}
 
-					$err .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
+//					$err .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
 					$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
 
 					self::$cloud_app->add_error( $err );
@@ -602,7 +619,7 @@ class LimitLoginAttempts
 					$user = new WP_Error();
 					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
-					$err .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
+//					$err .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
 					$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
 
 					$user->add( 'username_blacklisted', $err );
@@ -1641,7 +1658,7 @@ class LimitLoginAttempts
 			$content = $error_msg;
 		}
 
-		$content .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
+//		$content .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
 		$content = ! empty( $content ) ? '<span>' . $content . '</span>' : '';
 
 		$this->all_errors_array['late_hook_errors'] = $content;
