@@ -325,12 +325,7 @@ $url_try_for_free_cloud = ( $is_active_app_custom ) ? $this->info_upgrade_url() 
                                 </span>
                             </th>
                             <td>
-								<?php if ( $is_active_app_custom ) : ?>
-                                    <a class="unlink link__style_unlink llar-toggle-setup-field" href="#">
-										<?php _e( 'Edit', 'limit-login-attempts-reloaded' ); ?>
-                                    </a>
-								<?php endif; ?>
-                                <div class="setup-code-wrap<?php echo ( ! $is_active_app_custom || ! $active_app_config ) ? ' active' : ''; ?>">
+                                <div class="setup-code-wrap active">
                                     <input class="input_border full_area regular-text" type="text"
                                            id="limit-login-app-setup-code"
                                            value="<?php echo ( ! empty( $app_setup_code ) ) ? esc_attr( $app_setup_code ) : ''; ?>">
@@ -734,23 +729,7 @@ $url_try_for_free_cloud = ( $is_active_app_custom ) ? $this->info_upgrade_url() 
 
                     } );
 
-                    $( '.llar-toggle-setup-field' ).on( 'click', function ( e ) {
-                        e.preventDefault();
-
-                        $( this ).hide();
-
-                        $( '.setup-code-wrap' ).toggleClass( 'active' );
-                        $( '.app-form-field' ).toggleClass( 'active' );
-                    } );
-
                     $( '.llar_setup_code' ).on( 'click', function () {
-
-                        const $edit_button = $( '.llar-toggle-setup-field' );
-
-
-                        if ( $edit_button.length && $edit_button.css('display') !== 'none' ) {
-                            $( '.llar-toggle-setup-field' ).trigger('click');
-                        }
 
                         setTimeout(function () {
 
