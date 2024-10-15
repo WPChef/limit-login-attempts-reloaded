@@ -332,7 +332,7 @@ class LimitLoginAttempts
             <script>
                 ;( function( $ ) {
                     let ajaxUrlObj = new URL( `<?php echo admin_url( 'admin-ajax.php' ); ?>` );
-                    let wp_login_page = `<?php echo esc_js( $is_wp_login_page ) ?>`;
+                    //let wp_login_page = `<?php //echo esc_js( $is_wp_login_page ) ?>//`;
                     let um_limit_login_failed = `<?php echo esc_js( $um_limit_login_failed ) ?>`;
                     let late_hook_errors = <?php echo wp_json_encode( wp_kses_post( ( $late_hook_errors ) ) ) ?>;
                     let custom_error = <?php echo wp_json_encode( nl2br( esc_html( $custom_error ) ) ) ?>;
