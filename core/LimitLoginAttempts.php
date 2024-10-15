@@ -141,7 +141,7 @@ class LimitLoginAttempts
 		if( !Config::get( 'hide_dashboard_widget' ) )
 			add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
 
-		$this->custom_error = nl2br( esc_html( Config::get( 'custom_error_message' ) ) );
+//		$this->custom_error = nl2br( esc_html( Config::get( 'custom_error_message' ) ) );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -320,22 +320,22 @@ class LimitLoginAttempts
 			return;
 		}
 
+		$custom_error = Config::get( 'custom_error_message' );
 		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
 		$is_wp_login_page = isset( $_POST['log'] );
 		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
-		$custom_error = ! empty( $this->custom_error ) ? $this->custom_error : '';
+//		$custom_error = ! empty( $custom_error_msg ) ? $custom_error_msg : '';
 
 		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) :
             ?>
 
             <script>
                 ;( function( $ ) {
-                    let ajaxUrlObj = new URL( '<?php echo admin_url( 'admin-ajax.php' ); ?>' );
-                    let wp_login_page = '<?php echo esc_js( $is_wp_login_page ) ?>';
-                    let um_limit_login_failed = '<?php echo esc_js( $um_limit_login_failed ) ?>';
-                    let late_hook_errors = <?php echo json_encode( $late_hook_errors ) ?>;
-                    let custom_error = <?php echo json_encode ( $custom_error ) ?>;
-
+                    let ajaxUrlObj = new URL( `<?php echo admin_url( 'admin-ajax.php' ); ?>` );
+                    let wp_login_page = `<?php echo esc_js( $is_wp_login_page ) ?>`;
+                    let um_limit_login_failed = `<?php echo esc_js( $um_limit_login_failed ) ?>`;
+                    let late_hook_errors = <?php echo wp_json_encode( wp_kses_post( ( $late_hook_errors ) ) ) ?>;
+                    let custom_error = <?php echo wp_json_encode( nl2br( esc_html( $custom_error ) ) ) ?>;
 
                     ajaxUrlObj.protocol = location.protocol;
 
@@ -353,7 +353,7 @@ class LimitLoginAttempts
 
                         } else if ( um_limit_login_failed ) {
 
-                            if ( late_hook_errors === false) {
+                            if ( late_hook_errors === false || late_hook_errors === '' ) {
 
                                 notification_login_page( custom_error );
                             } else {
