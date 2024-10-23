@@ -378,12 +378,12 @@ class LimitLoginAttempts
                         if ( ! message.length ) {
                             return false;
                         }
-                        let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; width: 365px; z-index: 999999; background: #fffbe0; padding: 20px; color: rgb(121, 121, 121); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); box-shadow: 10px 10px 14px 0 #72757B99;} .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; } .llar_notification_login_page .close-button {position: absolute; top: 0; right: 5px; cursor: pointer;} .dashicons-no-alt:before {position: relative;} ';
+                        let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; font-size: 150%; line-height: 1.5; width: 365px; z-index: 999999; background: #fffbe0; padding: 20px; color: rgb(121, 121, 121); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); box-shadow: 10px 10px 14px 0 #72757B99;} .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; } .llar_notification_login_page .close-button {position: absolute; top: 0; right: 5px; cursor: pointer; line-height: 1;}';
                         let style = document.createElement('style');
                         style.appendChild(document.createTextNode(css));
                         document.head.appendChild(style);
 
-                        $( 'body' ).prepend( '<div class="llar_notification_login_page"><div class="close-button"><span class="dashicons dashicons-no-alt"></span></div>' + message + '</div>' );
+                        $( 'body' ).prepend( '<div class="llar_notification_login_page"><div class="close-button">&times;</div>' + message + '</div>' );
 
                         setTimeout(function () {
                             $('.llar_notification_login_page').hide();
@@ -391,6 +391,12 @@ class LimitLoginAttempts
 
                         $('.llar_notification_login_page').on( 'click', '.close-button', function () {
                             $('.llar_notification_login_page').hide();
+                        });
+
+                        $( 'body' ).on('click', function(event) {
+                            if (!$(event.target).closest('.llar_notification_login_page').length) {
+                                $('.llar_notification_login_page').hide();
+                            }
                         });
                     }
 
