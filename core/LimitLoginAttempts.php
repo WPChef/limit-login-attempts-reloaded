@@ -141,8 +141,6 @@ class LimitLoginAttempts
 		if( !Config::get( 'hide_dashboard_widget' ) )
 			add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
 
-//		$this->custom_error = nl2br( esc_html( Config::get( 'custom_error_message' ) ) );
-
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
 
@@ -276,7 +274,6 @@ class LimitLoginAttempts
 		* it will probably be deprecated. That is however only available in
 		* later versions of WP.
 		*/
-//		add_action( 'wp_authenticate', array( $this, 'track_credentials' ), 10, 2 );
 		add_action( 'authenticate', array( $this, 'track_credentials' ), 1, 3 ); // to replace the deprecated wp_authenticate hook
 		add_action( 'authenticate', array( $this, 'authenticate_filter' ), 0, 3 );
 
@@ -324,7 +321,6 @@ class LimitLoginAttempts
 		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
 		$is_wp_login_page = isset( $_POST['log'] );
 		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
-//		$custom_error = ! empty( $custom_error_msg ) ? $custom_error_msg : '';
 
 		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) :
             ?>
@@ -332,7 +328,6 @@ class LimitLoginAttempts
             <script>
                 ;( function( $ ) {
                     let ajaxUrlObj = new URL( `<?php echo admin_url( 'admin-ajax.php' ); ?>` );
-                    //let wp_login_page = `<?php //echo esc_js( $is_wp_login_page ) ?>//`;
                     let um_limit_login_failed = `<?php echo esc_js( $um_limit_login_failed ) ?>`;
                     let late_hook_errors = <?php echo wp_json_encode( wp_kses_post( ( $late_hook_errors ) ) ) ?>;
                     let custom_error = <?php echo wp_json_encode( nl2br( esc_html( $custom_error ) ) ) ?>;
@@ -580,7 +575,6 @@ class LimitLoginAttempts
 						}
 					}
 
-//					$err .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
 					$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
 
 					self::$cloud_app->add_error( $err );
@@ -625,7 +619,6 @@ class LimitLoginAttempts
 					$user = new WP_Error();
 					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
-//					$err .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
 					$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
 
 					$user->add( 'username_blacklisted', $err );
@@ -1664,7 +1657,6 @@ class LimitLoginAttempts
 			$content = $error_msg;
 		}
 
-//		$content .= ! empty( $this->custom_error ) ? '<br /><br />' . $this->custom_error : '';
 		$content = ! empty( $content ) ? '<span>' . $content . '</span>' : '';
 
 		$this->all_errors_array['late_hook_errors'] = $content;
