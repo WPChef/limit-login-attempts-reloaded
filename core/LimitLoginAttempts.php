@@ -228,8 +228,10 @@ class LimitLoginAttempts
 			Config::update( 'auto_update_choice', 0 );
 		}
 
-		// Load languages files
-		load_plugin_textdomain( 'limit-login-attempts-reloaded', false, plugin_basename( dirname( __FILE__ ) ) . '/../languages' );
+		// Load languages files via hook
+	    add_action('admin_init', function() {
+		    load_plugin_textdomain( 'limit-login-attempts-reloaded', false, plugin_basename( __DIR__ ) . '/../languages' );
+	    });
 
 		// Check if installed old plugin
 		$this->check_original_installed();
