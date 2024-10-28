@@ -670,6 +670,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   border-top-right-radius: unset;
   border-bottom-right-radius: unset;
   width: 300px;
+  text-align: left;
 }
 @media screen and (max-width: 1399.5px) {
   #llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th {
