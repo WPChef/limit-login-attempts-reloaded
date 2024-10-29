@@ -2,7 +2,6 @@
 
 namespace LLAR\Core;
 
-use Cassandra\Varint;
 use Exception;
 use IXR_Error;
 use LLAR\Core\Http\Http;
