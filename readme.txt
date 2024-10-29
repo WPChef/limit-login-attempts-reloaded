@@ -141,7 +141,7 @@ By default, you will need to copy and paste the lists to each site manually. For
 
 = 2.26.14 =
 * Improved compatibility with custom login pages, including WooCommerce and UltimateMember.
-* Standardized display of c login messages.
+* Standardized display of login messages.
 * A new Custom Error Message setting is added. The message is being appended to all asynchronous messages.
 * Fixed translation compatibility with WordPress 6.7.
 * CSS fixes.
