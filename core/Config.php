@@ -88,7 +88,6 @@ class Config {
 	}
 
 	public static function init() {
-		self::init_defaults();
 		self::$use_local_options = Helpers::use_local_options();
 	}
 
