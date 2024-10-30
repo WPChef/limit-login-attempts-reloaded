@@ -5,7 +5,7 @@ Description: Block excessive login attempts and protect your site against brute 
 Author: Limit Login Attempts Reloaded
 Author URI: https://www.limitloginattempts.com/
 Text Domain: limit-login-attempts-reloaded
-Version: 2.26.13
+Version: 2.26.14
 
 Copyright 2008 - 2012 Johan Eenfeldt, 2016 - 2023 Limit Login Attempts Reloaded
 */
@@ -29,6 +29,7 @@ define( 'LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR' );
 /* Notify value checked against these in limit_login_sanitize_variables() */
 define( 'LLA_LOCKOUT_NOTIFY_ALLOWED', 'log,email' );
 
+$um_limit_login_failed = false;
 $limit_login_my_error_shown = false; /* have we shown our stuff? */
 $limit_login_just_lockedout = false; /* started this pageload??? */
 $limit_login_nonempty_credentials = false; /* user and pwd nonempty */

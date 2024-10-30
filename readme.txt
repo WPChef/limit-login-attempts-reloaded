@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login, security, firewall, protection
 License: GPLv2 or later
 Requires at least: 3.0
-Tested up to: 6.6
-Stable tag: 2.26.13
+Tested up to: 6.7
+Stable tag: 2.26.14
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -13,7 +13,7 @@ Block excessive login attempts and protect your site against brute force attacks
 
 <a href="https://www.limitloginattempts.com">Limit Login Attempts Reloaded</a> functions as a robust deterrent against <a href="https://www.limitloginattempts.com/cracking-the-code-unveiling-the-mechanics-behind-brute-force-attacks/">brute force attacks</a>, bolstering your website's security measures and optimizing its performance. It achieves this by **restricting the number of login attempts allowed**. This applies not only to the standard login method, but also to XMLRPC, Woocommerce, and custom login pages. With more than 2.5 million active users, this plugin fulfills all your login security requirements.
 
-The plugin functions by automatically preventing further attempts from a particular Internet Protocol (IP) address and/or username once a predetermined limit of retries has been surpassed. This significantly weakens the effectiveness of brute force attacks on your website. 
+The plugin functions by automatically preventing further attempts from a particular Internet Protocol (IP) address and/or username once a predetermined limit of retries has been surpassed. This significantly weakens the effectiveness of brute force attacks on your website.
 
 By default, WordPress permits an unlimited number of login attempts, posing a vulnerability where passwords can be easily deciphered through brute force methods.
 
@@ -138,6 +138,13 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 2.26.14 =
+* Improved compatibility with custom login pages, including WooCommerce and UltimateMember.
+* Standardized display of login messages.
+* A new Custom Error Message setting is added. The message is being appended to all asynchronous messages.
+* Fixed translation compatibility with WordPress 6.7.
+* CSS fixes.
 
 = 2.26.13 =
 * New "llar_admin" capability added to let other roles access the plugin.
