@@ -751,6 +751,7 @@ class LimitLoginAttempts
 
 	public function login_page_enqueue()
 	{
+		if ( ! Config::get( 'gdpr' ) || isset( $_REQUEST['interim-login'] ) ) return;
 
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
