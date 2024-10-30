@@ -224,9 +224,21 @@
 
   .setup-code-wrap {
     display: none;
+    min-width: 450px;
 
     &.active {
       display: block;
+    }
+
+    button.button {
+
+      @include _1199 {
+        min-width: 120px!important;
+      }
+
+      @include _991 {
+        min-width: 90px!important;
+      }
     }
   }
 
@@ -331,6 +343,7 @@
           border-top-right-radius: unset;
           border-bottom-right-radius: unset;
           width: 300px;
+          text-align: left;
 
           @include _1399 {
             width: 260px;
@@ -572,7 +585,7 @@
           border: 1px solid $primary-colors__turquoise;
 
           @include _1599 {
-            flex: 0 0 30%;
+            flex: 1 0 30%;
           }
 
           .name {
@@ -665,6 +678,21 @@
 
       &.ui-accordion-header-active {
         background: white;
+      }
+
+      .llar_setup_code {
+        position: absolute;
+        top: 50%;
+        right: 2%;
+        transform: translateY(-50%);
+      }
+
+      &-active {
+
+        .llar_setup_code {
+          visibility: hidden;
+
+        }
       }
     }
 
@@ -801,6 +829,7 @@
 }
 
 #llar-setting-page-logs__active {
+
   @extend #llar-setting-page-logs;
 
   .llar-table-header {
@@ -811,6 +840,13 @@
 
     .title_page {
       margin-top: 0;
+
+      span {
+        color: $typography-secondary;
+        font-size: 80%;
+        font-weight: 400;
+        margin-left: 10px;
+      }
     }
 
     .right-link {
@@ -875,6 +911,10 @@
       }
 
       thead {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 100;
 
         tr {
 
@@ -883,6 +923,7 @@
             font-size: 16px;
             font-weight: 500;
             padding: 20px 18px;
+            text-align: left;
 
             @include _1599 {
               font-size: 15px;
@@ -970,7 +1011,7 @@
                 top: 33px;
 
                 &:before {
-                  right: 55%;
+                  right: 20%;
                 }
 
                 &-content {
@@ -1511,6 +1552,7 @@
       th {
         color: $typography-primary;
         font-weight: 500;
+        text-align: center;
       }
     }
   }
@@ -1560,7 +1602,7 @@
 
         .hint_tooltip {
           box-sizing: content-box;
-          right: -25px;
+          right: 0;
           top: 30px;
 
           &:before {
@@ -1628,9 +1670,16 @@
           gap: 3px;
 
           .llar-tooltip {
+
             &:before {
               width: auto !important;
             }
+          }
+
+          .hint_tooltip {
+            width: fit-content;
+            right: 0;
+            top: 35px;
           }
 
           img {
@@ -1701,40 +1750,44 @@
         }
 
         &.cell-login {
-          max-width: 95px;
+          max-width: 9ch;
 
           a {
             display: inline-block;
-            max-width: 90px;
+            max-width: 9ch;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
           }
+        }
+      }
+
+      .cell-id {
+        display: inline-block;
+
+        .id {
+          font-size: 15px;
+          max-width: 14ch;
+          display: inline-block;
+          vertical-align: middle;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
 
           @include _1599 {
-            max-width: 85px;
-
-            a {
-              max-width: 80px;
-            }
+            font-size: 90%
           }
+        }
 
+        .hint_tooltip {
+          top: 30px !important;
+        }
+      }
 
-          @include _1399 {
-            max-width: 85px;
+      .cell-role {
 
-            a {
-              max-width: 80px;
-            }
-          }
-
-          @include _767 {
-            max-width: 70px;
-
-            a {
-              max-width: 68px;
-            }
-          }
+        .hint_tooltip {
+          right: -25px;
         }
       }
 
