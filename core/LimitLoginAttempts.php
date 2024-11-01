@@ -227,10 +227,8 @@ class LimitLoginAttempts
 			Config::update( 'auto_update_choice', 0 );
 		}
 
-		// Load languages files via hook
-	    add_action('admin_init', function() {
-		    load_plugin_textdomain( 'limit-login-attempts-reloaded', false, plugin_basename( __DIR__ ) . '/../languages' );
-	    });
+		// Load languages files via a later hook
+	    add_action('init', array( $this, 'load_plugin_textdomain_in_time' ) );
 
 		// Check if installed old plugin
 		$this->check_original_installed();
@@ -298,6 +296,15 @@ class LimitLoginAttempts
 
 	}
 
+
+	/**
+	 * Later loading of translations load_plugin_textdomain
+	 */
+	public function load_plugin_textdomain_in_time()
+	{
+		load_plugin_textdomain( 'limit-login-attempts-reloaded', false, plugin_basename( __DIR__ ) . '/../languages' );
+		Config::init_defaults();
+	}
 
 	public function login_page_gdpr_message()
 	{
