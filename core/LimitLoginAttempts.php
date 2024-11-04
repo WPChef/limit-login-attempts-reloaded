@@ -134,6 +134,9 @@ class LimitLoginAttempts
 		add_action( 'admin_init', array( $this, 'setup_cookie' ), 10 );
 
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
+		add_action( 'wp_footer', array( $this, 'login_page_gdpr_message' ) );
+		add_action( 'wp_footer', array( $this, 'login_page_enqueue' ) );
+
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
 		add_action( 'wp_footer', array( $this, 'login_page_render_js' ), 9999 );
 
@@ -313,6 +316,9 @@ class LimitLoginAttempts
 		?>
         <div id="llar-login-page-gdpr">
             <div class="llar-login-page-gdpr__message"><?php echo do_shortcode( stripslashes( Config::get( 'gdpr_message' ) ) ); ?></div>
+            <div class="llar-login-page-gdpr__close" onclick="document.getElementById('llar-login-page-gdpr').style.display = 'none';">
+                &times;
+            </div>
         </div>
 		<?php
 	}
