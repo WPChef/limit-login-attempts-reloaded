@@ -134,7 +134,6 @@ class LimitLoginAttempts
 		add_action( 'admin_init', array( $this, 'setup_cookie' ), 10 );
 
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
-		add_action( 'wp_footer', array( $this, 'login_page_gdpr_message' ) );
 		add_action( 'wp_footer', array( $this, 'login_page_enqueue' ) );
 
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
@@ -311,6 +310,7 @@ class LimitLoginAttempts
 
 	public function login_page_gdpr_message()
 	{
+
 		if ( ! Config::get( 'gdpr' ) || isset( $_REQUEST['interim-login'] ) ) return;
 
 		?>
