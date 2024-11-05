@@ -141,6 +141,7 @@ By default, you will need to copy and paste the lists to each site manually. For
 
 = 2.26.15 =
 * Fixed translation compatibility with WordPress 6.7.
+* Fixed GDPR message on the Woocommerce login page.
 * Fix: load login-page-styles.css (on wp-login.php) only if it is necessary (thanks to georgejipa).
 * CSS fixes.
 
