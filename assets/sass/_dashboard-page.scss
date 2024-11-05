@@ -641,6 +641,10 @@
         display: inline-block;
         position: relative;
 
+        &:hover .hint_tooltip {
+          display: block;
+        }
+
         span {
           color: $primary-colors__orange;
           font-weight: 500;
