@@ -148,7 +148,6 @@ class LimitLoginAttempts
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
 
-
 	/**
 	 * Runs when the plugin is activated
 	 */
