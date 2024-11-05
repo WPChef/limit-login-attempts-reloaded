@@ -315,7 +315,7 @@ class LimitLoginAttempts
 	public function login_page_gdpr_message()
 	{
 
-		if ( ! Config::get( 'gdpr' ) || isset( $_REQUEST['interim-login'] ) ) return;
+		if ( ! Config::get( 'gdpr' ) ) return;
 
 		?>
         <div id="llar-login-page-gdpr">
