@@ -112,7 +112,6 @@ class LimitLoginAttempts
 	public function hooks_init()
 	{
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
-		add_action( 'login_enqueue_scripts', array( $this, 'login_page_enqueue' ) );
 		add_filter( 'limit_login_whitelist_ip', array( $this, 'check_whitelist_ips' ), 10, 2 );
 		add_filter( 'limit_login_whitelist_usernames', array( $this, 'check_whitelist_usernames' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_ip', array( $this, 'check_blacklist_ips' ), 10, 2 );
@@ -134,7 +133,11 @@ class LimitLoginAttempts
 		add_action( 'admin_init', array( $this, 'setup_cookie' ), 10 );
 
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
-		add_action( 'wp_footer', array( $this, 'login_page_enqueue' ) );
+		add_action( 'login_footer', array( $this, 'login_page_enqueue' ) );
+		add_action( 'woocommerce_login_form_start', array( $this, 'login_page_gdpr_message' ) );
+		add_action( 'woocommerce_login_form_start', array( $this, 'login_page_enqueue' ) );
+		add_action( 'um_before_login_fields', array( $this, 'login_page_gdpr_message' ) );
+		add_action( 'um_before_login_fields', array( $this, 'login_page_enqueue' ) );
 
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
 		add_action( 'wp_footer', array( $this, 'login_page_render_js' ), 9999 );
@@ -144,6 +147,7 @@ class LimitLoginAttempts
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
+
 
 	/**
 	 * Runs when the plugin is activated
