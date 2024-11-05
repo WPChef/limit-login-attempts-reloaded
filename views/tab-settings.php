@@ -675,7 +675,7 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" valign="top"><?php _e( 'Custom Error Message', 'limit-login-attempts-reloaded' ); ?>                        &nbsp;
+                    <th scope="row" valign="top"><?php _e( 'Custom Login Error Message', 'limit-login-attempts-reloaded' ); ?>                        &nbsp;
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
                             <div class="hint_tooltip">
