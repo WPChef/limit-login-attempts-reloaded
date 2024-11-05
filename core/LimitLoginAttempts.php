@@ -112,6 +112,7 @@ class LimitLoginAttempts
 	public function hooks_init()
 	{
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
+
 		add_filter( 'limit_login_whitelist_ip', array( $this, 'check_whitelist_ips' ), 10, 2 );
 		add_filter( 'limit_login_whitelist_usernames', array( $this, 'check_whitelist_usernames' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_ip', array( $this, 'check_blacklist_ips' ), 10, 2 );
