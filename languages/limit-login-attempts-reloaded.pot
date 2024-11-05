@@ -2,21 +2,21 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.15\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.16\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-11-05T16:37:53+03:00\n"
+"POT-Creation-Date: 2024-11-05T19:15:01+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
 
 #. Plugin Name of the plugin
 #. Author of the plugin
-#: core/LimitLoginAttempts.php:180
+#: core/LimitLoginAttempts.php:179
 msgid "Limit Login Attempts Reloaded"
 msgstr ""
 
