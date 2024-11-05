@@ -10,10 +10,21 @@
   display: block;
   text-align: center;
   box-sizing: border-box;
+  z-index: 1;
 }
 #llar-login-page-gdpr .llar-login-page-gdpr__message {
   font-size: 14px;
   color: #fff;
+}
+#llar-login-page-gdpr .llar-login-page-gdpr__close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  position: absolute;
+  right: 3px;
+  top: 3px;
 }
 
 /*# sourceMappingURL=login-page-styles.css.map */
