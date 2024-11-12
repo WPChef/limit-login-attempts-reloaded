@@ -604,8 +604,6 @@
 
     .hint_tooltip {
       box-sizing: content-box;
-      right: -25px;
-      top: 30px;
 
       &:before {
         right: 25px;
@@ -654,6 +652,7 @@
           @include _1599 {
             line-height: unset;
             font-size: 14px;
+            width: 12px;
           }
 
           @include _767 {
@@ -692,6 +691,22 @@
           scrollbar-width: thin;
           scrollbar-gutter: stable;
           padding-bottom: 30px;
+        }
+      }
+
+      .llar-table-app-login, .llar-table-no_app-login {
+
+        tbody {
+
+          td {
+
+            .cell-id {
+
+              .id {
+                max-width: 12ch;
+              }
+            }
+          }
         }
       }
     }

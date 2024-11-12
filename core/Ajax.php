@@ -4,9 +4,10 @@ namespace LLAR\Core;
 
 use LLAR\Core\Http\Http;
 
-if( !defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class Ajax {
+class Ajax
+{
 
 	/**
 	 * Register all ajax requests & handlers
@@ -46,10 +47,7 @@ class Ajax {
 
 	public function ajax_unlock() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-unlock', 'sec' );
 		$ip = (string) @$_POST['ip'];
@@ -83,10 +81,7 @@ class Ajax {
 
 	public function dismiss_review_notice_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-dismiss-review', 'sec' );
 
@@ -107,10 +102,7 @@ class Ajax {
 
 	public function dismiss_notify_notice_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-dismiss-notify-notice', 'sec' );
 
@@ -131,10 +123,7 @@ class Ajax {
 
 	public function enable_notify_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-enable-notify', 'sec' );
 
@@ -153,10 +142,7 @@ class Ajax {
 
 	public function app_setup_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-setup', 'sec' );
 
@@ -193,10 +179,7 @@ class Ajax {
 
 	public function app_log_action_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-log', 'sec' );
 
@@ -233,10 +216,7 @@ class Ajax {
 
 	public function app_acl_add_rule_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-acl-add-rule', 'sec' );
 
@@ -278,10 +258,7 @@ class Ajax {
 
 	public function app_acl_remove_rule_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-acl-remove-rule', 'sec' );
 
@@ -314,10 +291,7 @@ class Ajax {
 
 	public function app_load_log_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-load-log', 'sec' );
 
@@ -405,7 +379,7 @@ class Ajax {
 
 	public function app_load_successful_login_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
+		if ( ! LimitLoginAttempts::$instance->has_capability ) {
 
 			wp_send_json_error( array() );
 		}
@@ -457,9 +431,12 @@ class Ajax {
 					endif;
 
 					$login = ! empty( $item['login'] ) ? $item['login'] : '';
+					$ip = ! empty( $item['ip'] ) ? $item['ip'] : '';
+
 					$country_name = ! empty( $item['location']['country_code'] ) ? $countries_list[ $item['location']['country_code'] ] : '';
 					$continent_name = ! empty( $item['location']['continent_code'] ) ? $continent_list[ $item['location']['continent_code'] ] : '';
 					$long_login = mb_strlen( $login ) > 10;
+					$long_ip = strlen( $ip ) > 15;
 					$login_url = !empty( $item['user_id'] ) ? get_edit_user_link( $item['user_id'] ) : '';
 
 					$latitude = !empty( $item['location']['latitude'] ) ? $item['location']['latitude'] : false;
@@ -503,10 +480,21 @@ class Ajax {
                                         </div>
                                     </div>
                                 </span>
-                                <span><?php echo esc_html( $item['ip'] ) ?></span>
+                                <span class="cell-id hint_tooltip-parent">
+                                    <div class="id">
+                                        <?php echo esc_html( $ip ) ?>
+                                    </div>
+                                    <?php if ( $long_ip ) : ?>
+                                        <div class="hint_tooltip">
+                                            <div class="hint_tooltip-content">
+                                                <?php echo esc_html( $ip ) ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                </span>
                             </div>
                         </td>
-                        <td class="<?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
+                        <td class="cell-role <?php echo $limited ? 'llar-blur-block-cell' : '' ?>">
                             <?php if ( isset( $item['roles'] ) && is_array( $item['roles'] ) ) : ?>
                                 <span class="hint_tooltip-parent">
                                     <?php $admin_key = array_search( 'administrator', $item['roles'] );
@@ -693,10 +681,7 @@ class Ajax {
 
 	public function app_load_lockouts_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-load-lockouts', 'sec' );
 
@@ -753,10 +738,7 @@ class Ajax {
 
 	public function app_load_acl_rules_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-load-acl-rules', 'sec' );
 
@@ -815,10 +797,7 @@ class Ajax {
 
 	public function app_load_country_access_rules_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-load-country-access-rules', 'sec' );
 
@@ -837,10 +816,7 @@ class Ajax {
 
 	public function app_toggle_country_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-toggle-country', 'sec' );
 
@@ -882,10 +858,7 @@ class Ajax {
 
 	public function app_country_rule_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-app-country-rule', 'sec' );
 
@@ -916,10 +889,7 @@ class Ajax {
 
 	public function subscribe_email_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-subscribe-email', 'sec' );
 
@@ -967,7 +937,7 @@ class Ajax {
 
     public function strong_account_policies_callback() {
 
-        if ( ! current_user_can( 'activate_plugins' ) ) {
+	    if ( ! LimitLoginAttempts::$instance->has_capability ) {
 
             wp_send_json_error( array() );
         }
@@ -983,7 +953,7 @@ class Ajax {
 
     public function block_by_country_callback() {
 
-        if ( ! current_user_can( 'activate_plugins' ) ) {
+	    if ( ! LimitLoginAttempts::$instance->has_capability ) {
 
             wp_send_json_error( array() );
         }
@@ -1000,10 +970,7 @@ class Ajax {
 
 	public function dismiss_onboarding_popup_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer( 'llar-dismiss-onboarding-popup', 'sec' );
 
@@ -1020,15 +987,22 @@ class Ajax {
 			session_start();
 		}
 
-		$remaining = ! empty( $_SESSION['login_attempts_left'] ) ? intval( $_SESSION['login_attempts_left'] ) : 0;
-		$message   = ( ! $remaining ) ? '' : sprintf( _n( "<strong>%d</strong> attempt remaining.", "<strong>%d</strong> attempts remaining.", $remaining, 'limit-login-attempts-reloaded' ), $remaining );
-		wp_send_json_success( $message );
+		$remaining = ! empty( $_SESSION['login_attempts_left'] ) ? (int)$_SESSION['login_attempts_left'] : 0;
+
+		if ( ! empty( $remaining ) && $remaining > 0 ) {
+
+			$message = sprintf( _n( "<strong>%d</strong> attempt remaining.", "<strong>%d</strong> attempts remaining.", $remaining, 'limit-login-attempts-reloaded' ), $remaining );
+			wp_send_json_success( $message );
+        } else {
+
+			wp_send_json_error();
+		}
 	}
 
 
     public function onboarding_reset_callback() {
 
-        if ( ! current_user_can( 'update_plugins' ) ) {
+	    if ( ! LimitLoginAttempts::$instance->has_capability ) {
 
             wp_send_json_error( array() );
         }
@@ -1058,7 +1032,7 @@ class Ajax {
 
     public function activate_micro_cloud_callback() {
 
-        if ( ! current_user_can( 'update_plugins' ) ) {
+        if ( ! LimitLoginAttempts::$instance->has_capability ) {
 
             wp_send_json_error( array('msg' => 'Wrong country code.') );
         }
@@ -1118,10 +1092,7 @@ class Ajax {
 
 	public function toggle_auto_update_callback() {
 
-		if ( ! current_user_can( 'update_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		if ( Helpers::is_block_automatic_update_disabled() ) {
 
@@ -1151,10 +1122,7 @@ class Ajax {
 
 	public function test_email_notifications_callback() {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-
-			wp_send_json_error( array() );
-		}
+		$this->check_user_capabilities();
 
 		check_ajax_referer('llar-test-email-notifications', 'sec');
 
@@ -1177,6 +1145,18 @@ class Ajax {
 		} else {
 
 			wp_send_json_error();
+		}
+	}
+
+
+	/**
+	 * Access capabilities checks
+	 */
+	private function check_user_capabilities() {
+
+		if ( ! LimitLoginAttempts::$instance->has_capability ) {
+
+			wp_send_json_error( array() );
 		}
 	}
 }

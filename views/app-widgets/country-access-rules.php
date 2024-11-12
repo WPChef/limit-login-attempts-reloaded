@@ -12,6 +12,7 @@ $countries_list = Helpers::get_countries_list();
         <h3 class="title_page">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-filter.png">
             <?php _e( 'Country Access Rules', 'limit-login-attempts-reloaded' ); ?>
+            <span><?php _e( 'To block all countries but your own add your country as Allow Only rule', 'limit-login-attempts-reloaded' ); ?></span>
         </h3>
     </div>
     <div class="llar-preloader-wrap">

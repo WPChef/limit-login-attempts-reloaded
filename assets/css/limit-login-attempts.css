@@ -264,12 +264,12 @@ button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .lla
 }
 @media screen and (max-width: 991.5px) {
   button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
-    padding: 5px 16px;
+    padding: 6px 15px;
   }
 }
 @media screen and (max-width: 428px) {
   button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
-    padding: 5px 14px;
+    padding: 6px 14px;
   }
 }
 button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
@@ -557,9 +557,20 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .limit-login-page-settings .setup-code-wrap {
   display: none;
+  min-width: 450px;
 }
 .limit-login-page-settings .setup-code-wrap.active {
   display: block;
+}
+@media screen and (max-width: 1199.5px) {
+  .limit-login-page-settings .setup-code-wrap button.button, .limit-login-page-settings .setup-code-wrap .button.llar_button, .limit-login-page-settings .setup-code-wrap .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .limit-login-page-settings .setup-code-wrap .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs__active .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-debug .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-premium .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-help .button, #llar-setting-page .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs__active .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-debug .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-premium .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-help .limit-login-page-settings .setup-code-wrap .button {
+    min-width: 120px !important;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  .limit-login-page-settings .setup-code-wrap button.button, .limit-login-page-settings .setup-code-wrap .button.llar_button, .limit-login-page-settings .setup-code-wrap .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .limit-login-page-settings .setup-code-wrap .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs__active .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-debug .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-premium .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-help .button, #llar-setting-page .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs__active .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-debug .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-premium .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-help .limit-login-page-settings .setup-code-wrap .button {
+    min-width: 90px !important;
+  }
 }
 .limit-login-page-settings .app-form-field {
   display: none;
@@ -641,7 +652,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   line-height: inherit;
   border-radius: 20px;
   background-color: unset;
-  padding: 29px 5px 32px 44px;
+  padding: 29px 5px 32px 35px;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th, #llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
@@ -659,6 +670,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   border-top-right-radius: unset;
   border-bottom-right-radius: unset;
   width: 300px;
+  text-align: left;
 }
 @media screen and (max-width: 1399.5px) {
   #llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th {
@@ -869,7 +881,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item {
-    flex: 0 0 30%;
+    flex: 1 0 30%;
   }
 }
 #llar-setting-page .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item .name {
@@ -943,6 +955,15 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-setting-page .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-logs .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-debug .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-premium .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-help .llar-accordion .ui-accordion-header.ui-accordion-header-active {
   background: white;
+}
+#llar-setting-page .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-logs .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-debug .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-premium .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-help .llar-accordion .ui-accordion-header .llar_setup_code {
+  position: absolute;
+  top: 50%;
+  right: 2%;
+  transform: translateY(-50%);
+}
+#llar-setting-page .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-logs .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-debug .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-premium .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-help .llar-accordion .ui-accordion-header-active .llar_setup_code {
+  visibility: hidden;
 }
 #llar-setting-page .llar-accordion .ui-accordion-content, #llar-setting-page-logs .llar-accordion .ui-accordion-content, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content, #llar-setting-page-debug .llar-accordion .ui-accordion-content, #llar-setting-page-premium .llar-accordion .ui-accordion-content, #llar-setting-page-help .llar-accordion .ui-accordion-content {
   padding-top: 0;
@@ -1032,6 +1053,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-logs__active .llar-table-header .title_page {
   margin-top: 0;
 }
+#llar-setting-page-logs__active .llar-table-header .title_page span {
+  color: #666D84;
+  font-size: 80%;
+  font-weight: 400;
+  margin-left: 10px;
+}
 #llar-setting-page-logs__active .llar-table-header .right-link {
   font-size: 16px;
   line-height: 1.625;
@@ -1086,11 +1113,18 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   top: 0;
   left: 0;
 }
+#llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table thead {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 100;
+}
 #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table thead tr th {
   color: #2A2F40;
   font-size: 16px;
   font-weight: 500;
   padding: 20px 18px;
+  text-align: left;
 }
 @media screen and (max-width: 1599.5px) {
   #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table thead tr th {
@@ -1163,7 +1197,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   top: 33px;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .llar-log-country-flag .hint_tooltip:before {
-  right: 55%;
+  right: 20%;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .llar-log-country-flag .hint_tooltip-content {
   font-size: 14px;
@@ -1585,6 +1619,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .llar-table-app-login thead tr th, #llar-setting-page-logs__active .llar-table-scroll-wrap thead tr th, .llar-table-no_app-login thead tr th {
   color: #2A2F40;
   font-weight: 500;
+  text-align: center;
 }
 .llar-table-app-login tbody.login-attempts tr, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr, .llar-table-no_app-login tbody.login-attempts tr {
   border-radius: 16px;
@@ -1621,7 +1656,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .llar-table-app-login tbody.login-attempts tr td .hint_tooltip, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .hint_tooltip, .llar-table-no_app-login tbody.login-attempts tr td .hint_tooltip {
   box-sizing: content-box;
-  right: -25px;
+  right: 0;
   top: 30px;
 }
 .llar-table-app-login tbody.login-attempts tr td .hint_tooltip:before, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .hint_tooltip:before, .llar-table-no_app-login tbody.login-attempts tr td .hint_tooltip:before {
@@ -1685,6 +1720,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .llar-table-app-login tbody.login-attempts tr td .llar-log-country-flag .llar-tooltip:before, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .llar-log-country-flag .llar-tooltip:before, .llar-table-no_app-login tbody.login-attempts tr td .llar-log-country-flag .llar-tooltip:before {
   width: auto !important;
 }
+.llar-table-app-login tbody.login-attempts tr td .llar-log-country-flag .hint_tooltip, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .llar-log-country-flag .hint_tooltip, .llar-table-no_app-login tbody.login-attempts tr td .llar-log-country-flag .hint_tooltip {
+  width: fit-content;
+  right: 0;
+  top: 35px;
+}
 .llar-table-app-login tbody.login-attempts tr td .llar-log-country-flag img, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td .llar-log-country-flag img, .llar-table-no_app-login tbody.login-attempts tr td .llar-log-country-flag img {
   width: 34px;
   height: auto;
@@ -1746,38 +1786,41 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 0 2px;
 }
 .llar-table-app-login tbody.login-attempts tr td.cell-login, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login, .llar-table-no_app-login tbody.login-attempts tr td.cell-login {
-  max-width: 95px;
+  max-width: 9ch;
 }
 .llar-table-app-login tbody.login-attempts tr td.cell-login a, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login a, .llar-table-no_app-login tbody.login-attempts tr td.cell-login a {
   display: inline-block;
-  max-width: 90px;
+  max-width: 9ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.llar-table-app-login tbody.login-attempts tr .cell-id, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr .cell-id, .llar-table-no_app-login tbody.login-attempts tr .cell-id {
+  display: inline-block;
+}
+.llar-table-app-login tbody.login-attempts tr .cell-id .id, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr .cell-id .id, .llar-table-no_app-login tbody.login-attempts tr .cell-id .id {
+  font-size: 15px;
+  display: inline-block;
+  vertical-align: middle;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 @media screen and (max-width: 1599.5px) {
-  .llar-table-app-login tbody.login-attempts tr td.cell-login, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login, .llar-table-no_app-login tbody.login-attempts tr td.cell-login {
-    max-width: 85px;
-  }
-  .llar-table-app-login tbody.login-attempts tr td.cell-login a, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login a, .llar-table-no_app-login tbody.login-attempts tr td.cell-login a {
-    max-width: 80px;
-  }
-}
-@media screen and (max-width: 1399.5px) {
-  .llar-table-app-login tbody.login-attempts tr td.cell-login, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login, .llar-table-no_app-login tbody.login-attempts tr td.cell-login {
-    max-width: 85px;
-  }
-  .llar-table-app-login tbody.login-attempts tr td.cell-login a, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login a, .llar-table-no_app-login tbody.login-attempts tr td.cell-login a {
-    max-width: 80px;
+  .llar-table-app-login tbody.login-attempts tr .cell-id .id, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr .cell-id .id, .llar-table-no_app-login tbody.login-attempts tr .cell-id .id {
+    font-size: 90%;
   }
 }
 @media screen and (max-width: 767.5px) {
-  .llar-table-app-login tbody.login-attempts tr td.cell-login, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login, .llar-table-no_app-login tbody.login-attempts tr td.cell-login {
-    max-width: 70px;
+  .llar-table-app-login tbody.login-attempts tr .cell-id .id, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr .cell-id .id, .llar-table-no_app-login tbody.login-attempts tr .cell-id .id {
+    max-width: 14ch;
   }
-  .llar-table-app-login tbody.login-attempts tr td.cell-login a, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr td.cell-login a, .llar-table-no_app-login tbody.login-attempts tr td.cell-login a {
-    max-width: 68px;
-  }
+}
+.llar-table-app-login tbody.login-attempts tr .cell-id .hint_tooltip, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr .cell-id .hint_tooltip, .llar-table-no_app-login tbody.login-attempts tr .cell-id .hint_tooltip {
+  top: 30px !important;
+}
+.llar-table-app-login tbody.login-attempts tr .cell-role .hint_tooltip, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr .cell-role .hint_tooltip, .llar-table-no_app-login tbody.login-attempts tr .cell-role .hint_tooltip {
+  right: -25px;
 }
 .llar-table-app-login tbody.login-attempts tr.hidden-row, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr.hidden-row, .llar-table-no_app-login tbody.login-attempts tr.hidden-row {
   display: none;
@@ -2910,8 +2953,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .dashboard-section-4 .hint_tooltip {
   box-sizing: content-box;
-  right: -25px;
-  top: 30px;
 }
 #llar-dashboard-page .dashboard-section-4 .hint_tooltip:before {
   right: 25px;
@@ -2956,6 +2997,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   #llar-dashboard-page .dashboard-section-4 .hint_tooltip-parent .dashicons {
     line-height: unset;
     font-size: 14px;
+    width: 12px;
   }
 }
 @media screen and (max-width: 767.5px) {
@@ -2984,6 +3026,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   scrollbar-width: thin;
   scrollbar-gutter: stable;
   padding-bottom: 30px;
+}
+#llar-dashboard-page .dashboard-section-4 .info-box-1 .llar-table-app-login tbody td .cell-id .id, #llar-dashboard-page .dashboard-section-4 .info-box-1 #llar-setting-page-logs__active .llar-table-scroll-wrap tbody td .cell-id .id, #llar-setting-page-logs__active #llar-dashboard-page .dashboard-section-4 .info-box-1 .llar-table-scroll-wrap tbody td .cell-id .id, #llar-dashboard-page .dashboard-section-4 .info-box-1 .llar-table-no_app-login tbody td .cell-id .id {
+  max-width: 12ch;
 }
 #llar-dashboard-page .dashboard-section-4 .info-box-2 {
   line-height: 1.5;
