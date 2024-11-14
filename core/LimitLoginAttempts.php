@@ -118,7 +118,6 @@ class LimitLoginAttempts
 		add_filter( 'limit_login_blacklist_ip', array( $this, 'check_blacklist_ips' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_usernames', array( $this, 'check_blacklist_usernames' ), 10, 2 );
 
-		add_filter( 'illegal_user_logins', array( $this, 'register_user_blacklist' ), 999 );
 		add_filter( 'um_custom_authenticate_error_codes', array( $this, 'ultimate_member_register_error_codes' ) );
 
 		// TODO: Temporary turn off the holiday warning.
@@ -486,21 +485,6 @@ class LimitLoginAttempts
 		return in_array( $username, ( array ) Config::get( 'blacklist_usernames' ) );
 	}
 
-	/**
-	 * @param $blacklist
-	 * @return array|null
-	 */
-	public function register_user_blacklist($blacklist)
-	{
-
-		$black_list_usernames = Config::get( 'blacklist_usernames' );
-
-		if ( ! empty( $black_list_usernames ) && is_array( $black_list_usernames ) ) {
-			$blacklist += $black_list_usernames;
-		}
-
-		return $blacklist;
-	}
 
 	/**
 	 * @param $error IXR_Error
