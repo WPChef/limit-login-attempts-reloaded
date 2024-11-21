@@ -360,7 +360,7 @@ class Helpers {
 
 		$gateway = 'wp_login';
 
-		if ( basename($_SERVER['PHP_SELF']) === 'wp-login.php' && ( !isset( $_GET['action'] ) || $_GET['action'] === 'login' ) ) {
+		if ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false && ( !isset( $_GET['action'] ) || $_GET['action'] === 'login' ) ) {
 			$gateway = 'wp_login';
 		} elseif ( isset( $_GET['action'] ) && $_GET['action'] === 'lostpassword' && strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false ) {
 			$gateway = 'wp_lostpassword';
@@ -368,7 +368,7 @@ class Helpers {
 			$gateway = 'wp_register';
 		} elseif ( isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ) ) {
 			$gateway = 'wp_xmlrpc';
-		} elseif ( basename($_SERVER['PHP_SELF']) !== 'wp-login.php' ) {
+		} elseif ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) === false ) {
 			$gateway = trim( $_SERVER['REQUEST_URI'], '/' );
 		}
 
