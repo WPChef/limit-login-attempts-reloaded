@@ -2363,7 +2363,7 @@ class LimitLoginAttempts
 
 		if ( $response['result'] === 'deny' ) {
 
-			$errors->add( 'llar_registration_disabled', __( '<strong>Error</strong>: User registration is currently not allowed.', 'limit-login-attempts-reloaded' ) );
+			$errors->add( 'llar_registration_disabled', __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' ) );
 		}
 	}
 
@@ -2411,7 +2411,7 @@ class LimitLoginAttempts
 	public function llar_um_deny_error_message( $error, $request_error, $args )
     {
 		if ( 'llar_registration_disabled' === $request_error ) {
-			$error = __( '<strong>Error</strong>: User registration is currently not allowed.', 'limit-login-attempts-reloaded' );
+			$error = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
 		}
 		return $error;
     }
@@ -2440,7 +2440,7 @@ class LimitLoginAttempts
 
 		if ( $response['result'] === 'deny' ) {
 
-			UM()->form()->add_error( 'username_b', __( '<strong>Error</strong>: Password recovery is currently not allowed.', 'limit-login-attempts-reloaded' ) );
+			UM()->form()->add_error( 'username_b', __( '<strong>Error</strong>: Password recovery is currently disabled.', 'limit-login-attempts-reloaded' ) );
         }
 	}
 
@@ -2460,7 +2460,7 @@ class LimitLoginAttempts
 		}
 
 	    if ( ! $user_data ) {
-		    $errors->add( 'invalidcombo', __( '<strong>Error:</strong> Password recovery is currently not allowed.' ) );
+		    $errors->add( 'invalidcombo', __( '<strong>Error:</strong> Password recovery is currently disabled.' ) );
 		    return;
 	    }
 
@@ -2472,7 +2472,7 @@ class LimitLoginAttempts
 
 		if ( $response['result'] === 'deny' ) {
 
-			$errors->add( 'llar_password_recovery_disabled', __( '<strong>Error</strong>: Password recovery is currently not allowed.', 'limit-login-attempts-reloaded' ) );
+			$errors->add( 'llar_password_recovery_disabled', __( '<strong>Error</strong>: Password recovery is currently disabled.', 'limit-login-attempts-reloaded' ) );
 		}
 	}
 }
