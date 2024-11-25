@@ -2446,7 +2446,7 @@ class LimitLoginAttempts
 	    $limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
 	                               $app_config['settings']['limit_password_recovery']['value'] === 'on';
 
-	    if (  $limit_password_recovery ) {
+	    if ( ! $limit_password_recovery ) {
 	        return;
 	    }
 
