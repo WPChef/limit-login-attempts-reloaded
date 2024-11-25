@@ -118,7 +118,6 @@ class LimitLoginAttempts
 		add_filter( 'limit_login_blacklist_ip', array( $this, 'check_blacklist_ips' ), 10, 2 );
 		add_filter( 'limit_login_blacklist_usernames', array( $this, 'check_blacklist_usernames' ), 10, 2 );
 
-		add_filter( 'illegal_user_logins', array( $this, 'register_user_blacklist' ), 999 );
 		add_filter( 'um_custom_authenticate_error_codes', array( $this, 'ultimate_member_register_error_codes' ) );
 
 		// TODO: Temporary turn off the holiday warning.
@@ -138,8 +137,15 @@ class LimitLoginAttempts
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
 		add_action( 'wp_footer', array( $this, 'login_page_render_js' ), 9999 );
 
-		if( !Config::get( 'hide_dashboard_widget' ) )
+		if ( ! Config::get( 'hide_dashboard_widget' ) ) {
 			add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
+		}
+
+	    add_action( 'register_post', array( $this, 'register_post_hook' ), 10, 3 );
+	    add_action( 'lostpassword_post', array( $this, 'lostpassword_post_hook' ), 10, 2 );
+		add_action( 'um_submit_form_errors_hook__blockedips', array( $this, 'um_submit_form_errors_hook__blockedips_hook' ), 1, 2 );
+		add_filter( 'um_custom_error_message_handler', array( $this, 'llar_um_deny_error_message' ), 10, 3 );
+		add_action( 'um_reset_password_errors_hook', array( $this, 'um_reset_password_errors_hook' ), 10, 2);
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -482,21 +488,6 @@ class LimitLoginAttempts
 		return in_array( $username, ( array ) Config::get( 'blacklist_usernames' ) );
 	}
 
-	/**
-	 * @param $blacklist
-	 * @return array|null
-	 */
-	public function register_user_blacklist($blacklist)
-	{
-
-		$black_list_usernames = Config::get( 'blacklist_usernames' );
-
-		if ( ! empty( $black_list_usernames ) && is_array( $black_list_usernames ) ) {
-			$blacklist += $black_list_usernames;
-		}
-
-		return $blacklist;
-	}
 
 	/**
 	 * @param $error IXR_Error
@@ -2340,6 +2331,176 @@ class LimitLoginAttempts
                 } )(jQuery);
             </script>
 			<?php
+		}
+	}
+
+
+	/**
+     * Register new user standard WP, Woo
+     *
+	 * @param $user_login
+	 * @param $user_email
+	 * @param $errors
+	 *
+	 * @throws Exception
+	 */
+	public function register_post_hook( $user_login, $user_email, $errors )
+    {
+
+		if ( ! self::$cloud_app ) {
+			return;
+		}
+
+	    $app_config = Config::get( 'app_config' );
+	    $limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
+	                          $app_config['settings']['limit_registration']['value'] === 'on';
+
+	    if ( ! $limit_registration ) {
+	        return;
+	    }
+
+		$response = self::$cloud_app->acl_check( array(
+			'ip'        => Helpers::get_all_ips(),
+			'login'     => $user_login,
+			'gateway'   => Helpers::detect_gateway(),
+		) );
+
+		if ( $response['result'] === 'deny' ) {
+
+			$errors->add( 'llar_registration_disabled', __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' ) );
+		}
+	}
+
+
+	/**
+	 * Register new user UM
+	 */
+	public function um_submit_form_errors_hook__blockedips_hook($args, $form_data) {
+
+	    if($form_data['mode'] === 'register' ) {
+
+		    if ( ! self::$cloud_app ) {
+			    return;
+		    }
+
+		    $app_config = Config::get( 'app_config' );
+		    $limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
+		                          $app_config['settings']['limit_registration']['value'] === 'on';
+
+		    if ( ! $limit_registration ) {
+			    return;
+		    }
+
+		    if ( ! isset( $args['user_login'] ) ) {
+			    return;
+		    }
+
+		    $user_login = sanitize_text_field( $args['user_login'] );
+
+		    $response = self::$cloud_app->acl_check( array(
+			    'ip'        => Helpers::get_all_ips(),
+			    'login'     => $user_login,
+			    'gateway'   => Helpers::detect_gateway(),
+		    ) );
+
+		    if ( $response['result'] === 'deny' ) {
+
+			    exit( wp_redirect( esc_url( add_query_arg( 'err', 'llar_registration_disabled' ) ) ) );
+		    }
+        }
+	}
+
+
+	/**
+     * Error for register new user UM
+     *
+	 * @param $error
+	 * @param $request_error
+	 * @param $args
+	 *
+	 * @return mixed|string|void
+	 */
+	public function llar_um_deny_error_message( $error, $request_error, $args )
+    {
+		if ( 'llar_registration_disabled' === $request_error ) {
+			$error = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+		}
+		return $error;
+    }
+
+
+	/**
+	 * Reset password UM
+	 */
+    public function um_reset_password_errors_hook( $args, $form_data ) {
+
+		if ( ! self::$cloud_app ) {
+			return;
+		}
+
+	    $app_config = Config::get( 'app_config' );
+	    $limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
+	                               $app_config['settings']['limit_password_recovery']['value'] === 'on';
+
+	    if ( ! $limit_password_recovery ) {
+	        return;
+	    }
+
+	    if ( ! isset( $args['username_b'] ) ) {
+		    return;
+	    }
+
+	    $user_login = sanitize_text_field( $args['username_b'] );
+
+		$response = self::$cloud_app->acl_check( array(
+			'ip'        => Helpers::get_all_ips(),
+			'login'     => $user_login,
+			'gateway'   => Helpers::detect_gateway(),
+		) );
+
+		if ( $response['result'] === 'deny' ) {
+
+			UM()->form()->add_error( 'username_b', __( '<strong>Error</strong>: Password recovery is currently disabled.', 'limit-login-attempts-reloaded' ) );
+        }
+	}
+
+	/**
+     * Reset password standard WP, Woo
+     *
+	 * @param $errors
+	 * @param $user_data
+	 *
+	 * @throws Exception
+	 */
+	public function lostpassword_post_hook( $errors, $user_data )
+    {
+
+		if ( ! self::$cloud_app ) {
+			return;
+		}
+
+	    $app_config = Config::get( 'app_config' );
+	    $limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
+	                               $app_config['settings']['limit_password_recovery']['value'] === 'on';
+
+	    if ( ! $limit_password_recovery ) {
+	        return;
+	    }
+
+	    if ( ! $user_data ) {
+		    $errors->add( 'invalidcombo', __( '<strong>Error:</strong> Password recovery is currently disabled.' ) );
+		    return;
+	    }
+
+		$response = self::$cloud_app->acl_check( array(
+			'ip'        => Helpers::get_all_ips(),
+			'login'     => $user_data->user_login,
+			'gateway'   => Helpers::detect_gateway(),
+		) );
+
+		if ( $response['result'] === 'deny' ) {
+
+			$errors->add( 'llar_password_recovery_disabled', __( '<strong>Error</strong>: Password recovery is currently disabled.', 'limit-login-attempts-reloaded' ) );
 		}
 	}
 }
