@@ -2356,7 +2356,10 @@ class LimitLoginAttempts
 	    $app_config = Config::get( 'app_config' );
 	    $limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
 	                          $app_config['settings']['limit_registration']['value'] === 'on';
-	    if( !$limit_registration ) return;
+
+	    if ( ! $limit_registration ) {
+	        return;
+	    }
 
 		$response = self::$cloud_app->acl_check( array(
 			'ip'        => Helpers::get_all_ips(),
@@ -2387,7 +2390,10 @@ class LimitLoginAttempts
 		    $app_config = Config::get( 'app_config' );
 		    $limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
 		                          $app_config['settings']['limit_registration']['value'] === 'on';
-		    if( !$limit_registration ) return;
+
+		    if ( ! $limit_registration ) {
+			    return;
+		    }
 
 		    if ( ! isset( $args['user_login'] ) ) {
 			    return;
@@ -2439,15 +2445,16 @@ class LimitLoginAttempts
 	    $app_config = Config::get( 'app_config' );
 	    $limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
 	                               $app_config['settings']['limit_password_recovery']['value'] === 'on';
-	    if( !$limit_password_recovery ) return;
 
+	    if ( ! $limit_password_recovery ) {
+	        return;
+	    }
 
 	    if ( ! isset( $args['username_b'] ) ) {
 		    return;
 	    }
 
 	    $user_login = sanitize_text_field( $args['username_b'] );
-
 
 		$response = self::$cloud_app->acl_check( array(
 			'ip'        => Helpers::get_all_ips(),
@@ -2479,7 +2486,10 @@ class LimitLoginAttempts
 	    $app_config = Config::get( 'app_config' );
 	    $limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
 	                               $app_config['settings']['limit_password_recovery']['value'] === 'on';
-	    if( !$limit_password_recovery ) return;
+
+	    if ( ! $limit_password_recovery ) {
+	        return;
+	    }
 
 	    if ( ! $user_data ) {
 		    $errors->add( 'invalidcombo', __( '<strong>Error:</strong> Password recovery is currently disabled.' ) );
