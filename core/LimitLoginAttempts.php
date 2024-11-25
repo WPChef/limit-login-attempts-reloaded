@@ -2353,6 +2353,11 @@ class LimitLoginAttempts
 			return;
 		}
 
+	    $app_config = Config::get( 'app_config' );
+	    $limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
+	                          $app_config['settings']['limit_registration']['value'] === 'on';
+	    if( !$limit_registration ) return;
+
 		$response = self::$cloud_app->acl_check( array(
 			'ip'        => Helpers::get_all_ips(),
 			'login'     => $user_login,
@@ -2375,15 +2380,20 @@ class LimitLoginAttempts
 
 	    if($form_data['mode'] === 'register' ) {
 
+		    if ( ! self::$cloud_app ) {
+			    return;
+		    }
+
+		    $app_config = Config::get( 'app_config' );
+		    $limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
+		                          $app_config['settings']['limit_registration']['value'] === 'on';
+		    if( !$limit_registration ) return;
+
 		    if ( ! isset( $args['user_login'] ) ) {
 			    return;
 		    }
 
 		    $user_login = sanitize_text_field( $args['user_login'] );
-
-		    if ( ! self::$cloud_app ) {
-			    return;
-		    }
 
 		    $response = self::$cloud_app->acl_check( array(
 			    'ip'        => Helpers::get_all_ips(),
@@ -2422,15 +2432,22 @@ class LimitLoginAttempts
 	 */
     public function um_reset_password_errors_hook( $args, $form_data ) {
 
-		if ( ! isset( $args['username_b'] ) ) {
-			return;
-		}
-
-		$user_login = sanitize_text_field( $args['username_b'] );
-
 		if ( ! self::$cloud_app ) {
 			return;
 		}
+
+	    $app_config = Config::get( 'app_config' );
+	    $limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
+	                               $app_config['settings']['limit_password_recovery']['value'] === 'on';
+	    if( !$limit_password_recovery ) return;
+
+
+	    if ( ! isset( $args['username_b'] ) ) {
+		    return;
+	    }
+
+	    $user_login = sanitize_text_field( $args['username_b'] );
+
 
 		$response = self::$cloud_app->acl_check( array(
 			'ip'        => Helpers::get_all_ips(),
@@ -2458,6 +2475,11 @@ class LimitLoginAttempts
 		if ( ! self::$cloud_app ) {
 			return;
 		}
+
+	    $app_config = Config::get( 'app_config' );
+	    $limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
+	                               $app_config['settings']['limit_password_recovery']['value'] === 'on';
+	    if( !$limit_password_recovery ) return;
 
 	    if ( ! $user_data ) {
 		    $errors->add( 'invalidcombo', __( '<strong>Error:</strong> Password recovery is currently disabled.' ) );
