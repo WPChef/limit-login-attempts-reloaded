@@ -142,6 +142,7 @@ class LimitLoginAttempts
 		}
 
 	    add_action( 'register_post', array( $this, 'register_post_hook' ), 10, 3 );
+	    add_action( 'woocommerce_register_post', array( $this, 'register_post_hook' ), 10, 3 );
 	    add_action( 'lostpassword_post', array( $this, 'lostpassword_post_hook' ), 10, 2 );
 		add_action( 'um_submit_form_errors_hook__blockedips', array( $this, 'um_submit_form_errors_hook__blockedips_hook' ), 1, 2 );
 		add_filter( 'um_custom_error_message_handler', array( $this, 'llar_um_deny_error_message' ), 10, 3 );
@@ -2359,6 +2360,12 @@ class LimitLoginAttempts
 	        return;
 	    }
 
+	    // Check that the function is called woocommerce_register_post
+	    $woo_hook = false;
+	    if ( in_array( 'woocommerce_register_post', $GLOBALS['wp_current_filter'], true ) ) {
+		    $woo_hook = true;
+	    }
+
 		$response = self::$cloud_app->acl_check( array(
 			'ip'        => Helpers::get_all_ips(),
 			'login'     => $user_login,
@@ -2367,7 +2374,13 @@ class LimitLoginAttempts
 
 		if ( $response['result'] === 'deny' ) {
 
-			$errors->add( 'llar_registration_disabled', __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' ) );
+			if ( $woo_hook ) {
+			    $err_msg = __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+            } else {
+				$err_msg = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+			}
+
+			$errors->add( 'llar_registration_disabled', $err_msg );
 		}
 	}
 
