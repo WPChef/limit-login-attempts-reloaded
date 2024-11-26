@@ -2487,14 +2487,14 @@ class LimitLoginAttempts
 	        return;
 	    }
 
-	    if ( ! $user_data ) {
-		    $errors->add( 'invalidcombo', __( '<strong>Error:</strong> Password recovery is currently disabled.' ) );
-		    return;
+	    $user_login = $user_data->user_login;
+	    if ( ! empty( $_POST['user_login'] ) ) {
+		    $user_login = sanitize_text_field( $_POST['user_login'] );
 	    }
 
 		$response = self::$cloud_app->acl_check( array(
 			'ip'        => Helpers::get_all_ips(),
-			'login'     => $user_data->user_login,
+			'login'     => $user_login,
 			'gateway'   => Helpers::detect_gateway(),
 		) );
 
