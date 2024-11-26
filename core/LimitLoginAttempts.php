@@ -2513,11 +2513,6 @@ class LimitLoginAttempts
 	        return;
 	    }
 
-	    if ( ! $user_data ) {
-		    $errors->add( 'invalidcombo', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
-		    return;
-	    }
-
 	    $user_login = $user_data->user_login;
 	    if ( ! empty( $_POST['user_login'] ) ) {
 		    $user_login = sanitize_text_field( $_POST['user_login'] );
@@ -2532,6 +2527,9 @@ class LimitLoginAttempts
 		if ( $response['result'] === 'deny' ) {
 
 			$errors->add( 'llar_password_recovery_disabled', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
-		}
-	}
+		} elseif ( ! $user_data ) {
+
+		    $errors->add( 'invalidcombo', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
+	    }
+    }
 }
