@@ -2366,19 +2366,22 @@ class LimitLoginAttempts
 		    $woo_hook = true;
 	    }
 
-		$response_login = self::$cloud_app->acl_check( array(
+		$response = self::$cloud_app->acl_check( array(
 			'ip'        => Helpers::get_all_ips(),
 			'login'     => $user_login,
 			'gateway'   => Helpers::detect_gateway(),
 		) );
 
-	    $response_email = self::$cloud_app->acl_check( array(
-		    'ip'        => Helpers::get_all_ips(),
-		    'login'     => $user_email,
-		    'gateway'   => Helpers::detect_gateway(),
-	    ) );
+	    if ( $response['result'] !== 'deny' ) {
 
-		if ( $response_login['result'] === 'deny' || $response_email['result'] === 'deny' ) {
+		    $response = self::$cloud_app->acl_check( array(
+			    'ip'        => Helpers::get_all_ips(),
+			    'login'     => $user_email,
+			    'gateway'   => Helpers::detect_gateway(),
+		    ) );
+        }
+
+		if ( $response['result'] === 'deny' ) {
 
 			if ( $woo_hook ) {
 			    $err_msg = __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' );
@@ -2417,19 +2420,22 @@ class LimitLoginAttempts
 		    $user_login = sanitize_text_field( $args['user_login'] );
 		    $user_email = sanitize_text_field( $args['user_email'] );
 
-		    $response_login = self::$cloud_app->acl_check( array(
+		    $response = self::$cloud_app->acl_check( array(
 			    'ip'        => Helpers::get_all_ips(),
 			    'login'     => $user_login,
 			    'gateway'   => Helpers::detect_gateway(),
 		    ) );
 
-		    $response_email = self::$cloud_app->acl_check( array(
-			    'ip'        => Helpers::get_all_ips(),
-			    'login'     => $user_email,
-			    'gateway'   => Helpers::detect_gateway(),
-		    ) );
+		    if ( $response['result'] !== 'deny' ) {
 
-		    if ( $response_login['result'] === 'deny' || $response_email['result'] === 'deny' ) {
+			    $response = self::$cloud_app->acl_check( array(
+				    'ip'        => Helpers::get_all_ips(),
+				    'login'     => $user_email,
+				    'gateway'   => Helpers::detect_gateway(),
+			    ) );
+		    }
+
+		    if ( $response['result'] === 'deny' ) {
 
 			    exit( wp_redirect( esc_url( add_query_arg( 'err', 'llar_registration_disabled' ) ) ) );
 		    }
