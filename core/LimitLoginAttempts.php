@@ -2513,8 +2513,8 @@ class LimitLoginAttempts
 	        return;
 	    }
 
-	    $user_login = $user_data->user_login;
-	    if ( ! empty( $_POST['user_login'] ) ) {
+	    $user_login = $user_data->user_login ?: $user_data;
+	    if ( ! $user_login && ! empty( $_POST['user_login'] ) ) {
 		    $user_login = sanitize_text_field( $_POST['user_login'] );
 	    }
 
