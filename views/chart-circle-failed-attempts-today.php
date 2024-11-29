@@ -121,7 +121,7 @@ if ( ! $is_active_app_custom ) {
 		: ''; ?>
 </div>
 <div class="section-content">
-    <div class="chart">
+    <div class="llar-chart">
         <div class="doughnut-chart-wrap">
             <canvas id="llar-attack-velocity-chart"></canvas>
         </div>
