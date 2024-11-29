@@ -2586,20 +2586,21 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: 24px;
   margin-bottom: 16px;
 }
-#llar-dashboard-page .dashboard-section-1 .info-box-1 .chart {
+#llar-dashboard-page .dashboard-section-1 .info-box-1 .llar-chart {
   max-width: 300px;
+  height: auto;
   position: relative;
   margin-bottom: 15px;
   margin-left: auto;
   margin-right: auto;
 }
-#llar-dashboard-page .dashboard-section-1 .info-box-1 .chart .doughnut-chart-wrap {
+#llar-dashboard-page .dashboard-section-1 .info-box-1 .llar-chart .doughnut-chart-wrap {
   position: relative;
   width: 200px;
   height: auto;
   margin: 0 auto;
 }
-#llar-dashboard-page .dashboard-section-1 .info-box-1 .chart .llar-retries-count {
+#llar-dashboard-page .dashboard-section-1 .info-box-1 .llar-chart .llar-retries-count {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -3183,18 +3184,19 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
     margin-right: 2px;
   }
 }
-#llar-admin-dashboard-widgets .llar-widget .chart {
+#llar-admin-dashboard-widgets .llar-widget .llar-chart {
   max-width: 300px;
+  height: auto;
   position: relative;
   margin: 15px auto;
 }
-#llar-admin-dashboard-widgets .llar-widget .chart .doughnut-chart-wrap {
+#llar-admin-dashboard-widgets .llar-widget .llar-chart .doughnut-chart-wrap {
   position: relative;
   width: 200px;
   height: auto;
   margin: 0 auto;
 }
-#llar-admin-dashboard-widgets .llar-widget .chart .llar-retries-count {
+#llar-admin-dashboard-widgets .llar-widget .llar-chart .llar-retries-count {
   position: absolute;
   top: 50%;
   left: 50%;
