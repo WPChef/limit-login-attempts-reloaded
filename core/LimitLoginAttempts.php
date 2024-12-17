@@ -2347,7 +2347,6 @@ class LimitLoginAttempts
 	 */
 	public function register_post_hook( $user_login, $user_email, $errors )
     {
-
 		if ( ! self::$cloud_app ) {
 			return;
 		}
@@ -2389,7 +2388,10 @@ class LimitLoginAttempts
 				$err_msg = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
 			}
 
-			$errors->add( 'llar_registration_disabled', $err_msg );
+			// Replace the error message with your own
+			$errors->remove('username_exists');
+			$errors->remove('email_exists');
+			$errors->add( 'email_exists', $err_msg );
 		}
 	}
 
@@ -2397,9 +2399,9 @@ class LimitLoginAttempts
 	/**
 	 * Register new user UM
 	 */
-	public function um_submit_form_errors_hook__blockedips_hook($args, $form_data) {
-
-	    if($form_data['mode'] === 'register' ) {
+	public function um_submit_form_errors_hook__blockedips_hook($args, $form_data)
+    {
+	    if ( $form_data['mode'] === 'register' ) {
 
 		    if ( ! self::$cloud_app ) {
 			    return;
@@ -2437,6 +2439,7 @@ class LimitLoginAttempts
 
 		    if ( $response['result'] === 'deny' ) {
 
+			    // Replace the error message with your own
 			    exit( wp_redirect( esc_url( add_query_arg( 'err', 'llar_registration_disabled' ) ) ) );
 		    }
         }
@@ -2464,8 +2467,8 @@ class LimitLoginAttempts
 	/**
 	 * Reset password UM
 	 */
-    public function um_reset_password_errors_hook( $args, $form_data ) {
-
+    public function um_reset_password_errors_hook( $args, $form_data )
+    {
 		if ( ! self::$cloud_app ) {
 			return;
 		}
@@ -2506,7 +2509,6 @@ class LimitLoginAttempts
 	 */
 	public function lostpassword_post_hook( $errors, $user_data )
     {
-
 		if ( ! self::$cloud_app ) {
 			return;
 		}
@@ -2519,7 +2521,8 @@ class LimitLoginAttempts
 	        return;
 	    }
 
-	    $user_login = $user_data->user_login ?: $user_data;
+	    $user_login = ( ! empty( $user_data) && $user_data->user_login ) ? $user_data->user_login : false;
+
 	    if ( ! $user_login && ! empty( $_POST['user_login'] ) ) {
 		    $user_login = sanitize_text_field( $_POST['user_login'] );
 	    }
@@ -2530,10 +2533,25 @@ class LimitLoginAttempts
 			'gateway'   => Helpers::detect_gateway(),
 		) );
 
+		if ( $response['result'] !== 'deny' ) {
+
+			$user_email = ( ! empty( $user_data) && $user_data->user_email ) ? $user_data->user_email : false;
+
+			if ( ! $user_email && ! empty( $_POST['user_login'] ) ) {
+				$user_email = sanitize_text_field( $_POST['user_login'] );
+			}
+
+			$response = self::$cloud_app->acl_check( array(
+				'ip'        => Helpers::get_all_ips(),
+				'login'     => $user_email,
+				'gateway'   => Helpers::detect_gateway(),
+			) );
+        }
+
 		if ( $response['result'] === 'deny' ) {
 
 			$errors->add( 'llar_password_recovery_disabled', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
-		} elseif ( ! $user_data ) {
+		} elseif ( empty( $user_data ) ) {
 
 		    $errors->add( 'invalidcombo', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
 	    }
