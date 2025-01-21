@@ -107,6 +107,10 @@
           background: url("./images/micro-cloud-bg.webp") no-repeat center top;
           background-size: 100%;
           background-color: $background-body;
+
+          input[type="checkbox"] {
+            @extend .llar_input_checkbox;
+          }
         }
 
         &__body {
