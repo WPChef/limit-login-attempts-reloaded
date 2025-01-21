@@ -1,5 +1,4 @@
 .toplevel_page_limit-login-attempts {
-  font-family: $font-primary, $font-secondary;
 
   .jconfirm {
 
@@ -23,48 +22,8 @@
         padding-right: 15px;
       }
 
-      .button {
-        @extend .llar_button;
-      }
-
-      .button_block {
-        margin-top: 24px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        column-gap: 16px;
-
-        .button {
-          font-size: 18px;
-          margin-top: 20px;
-          padding: 11px 60px;
-          width: 70%;
-        }
-
-        &-horizon {
-          display: flex;
-          justify-content: center;
-          margin-top: 20px;
-          gap: 10px;
-
-          .button {
-            font-size: 18px;
-            padding: 11px 60px;
-          }
-        }
-
-        &-single {
-          margin-top: 20px;
-
-          .button {
-            font-size: 18px;
-            padding: 11px 60px;
-            width: fit-content;
-          }
-        }
-      }
-
       .llar-onboarding-popup__content {
+        font-family: $font-primary, $font-secondary;
         min-height: 930px;
         padding: 15px;
         background: url("./images/onboarding-bg-big.webp") center top;
@@ -79,6 +38,47 @@
             background: $background-body__transparent;
             border-radius: $border-radius__min;
             padding: 20px;
+          }
+        }
+
+        .button {
+          @extend .llar_button;
+        }
+
+        .button_block {
+          margin-top: 24px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          column-gap: 16px;
+
+          .button {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 11px 60px;
+            width: 70%;
+          }
+
+          &-horizon {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+
+            .button {
+              font-size: 18px;
+              padding: 11px 60px;
+            }
+          }
+
+          &-single {
+            margin-top: 20px;
+
+            .button {
+              font-size: 18px;
+              padding: 11px 60px;
+              width: fit-content;
+            }
           }
         }
 
@@ -442,11 +442,11 @@
             }
           }
         }
+
+        input[type="checkbox"] {
+          @extend .llar_input_checkbox;
+        }
       }
     }
-  }
-
-  input[type="checkbox"] {
-    @extend .llar_input_checkbox;
   }
 }

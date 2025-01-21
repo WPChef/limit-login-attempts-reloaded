@@ -200,17 +200,17 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   opacity: 0.5;
 }
 
-.llar_input_checkbox, .toplevel_page_limit-login-attempts input[type=checkbox], #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox], #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox] {
+.llar_input_checkbox, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content input[type=checkbox], #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox], #llar-setting-page input[type=checkbox], #llar-setting-page-logs input[type=checkbox], #llar-setting-page-logs__active input[type=checkbox], #llar-setting-page-debug input[type=checkbox], #llar-setting-page-premium input[type=checkbox], #llar-setting-page-help input[type=checkbox], #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox], .limit-login-page-settings input[type=checkbox] {
   background-color: #FDFDFD;
   border: 1.5px solid #ABBFC1;
   box-sizing: content-box;
   margin: -0.25rem 0.25rem 0 0;
 }
-.llar_input_checkbox:checked, .toplevel_page_limit-login-attempts input[type=checkbox]:checked, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked {
+.llar_input_checkbox:checked, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content input[type=checkbox]:checked, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked, #llar-setting-page input[type=checkbox]:checked, #llar-setting-page-logs input[type=checkbox]:checked, #llar-setting-page-logs__active input[type=checkbox]:checked, #llar-setting-page-debug input[type=checkbox]:checked, #llar-setting-page-premium input[type=checkbox]:checked, #llar-setting-page-help input[type=checkbox]:checked, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, .limit-login-page-settings input[type=checkbox]:checked {
   background-color: #FF7C06;
   border: 1.5px solid #FF7C06;
 }
-.llar_input_checkbox:checked::before, .toplevel_page_limit-login-attempts input[type=checkbox]:checked::before, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked::before, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before {
+.llar_input_checkbox:checked::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content input[type=checkbox]:checked::before, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked::before, #llar-setting-page input[type=checkbox]:checked::before, #llar-setting-page-logs input[type=checkbox]:checked::before, #llar-setting-page-logs__active input[type=checkbox]:checked::before, #llar-setting-page-debug input[type=checkbox]:checked::before, #llar-setting-page-premium input[type=checkbox]:checked::before, #llar-setting-page-help input[type=checkbox]:checked::before, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, .limit-login-page-settings input[type=checkbox]:checked::before {
   content: "✔";
   font-size: 14px;
   line-height: 1.1;
@@ -219,7 +219,7 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   margin: 0;
   color: #FDFDFD;
 }
-.llar_input_checkbox:focus, .toplevel_page_limit-login-attempts input[type=checkbox]:focus, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:focus, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus {
+.llar_input_checkbox:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content input[type=checkbox]:focus, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:focus, #llar-setting-page input[type=checkbox]:focus, #llar-setting-page-logs input[type=checkbox]:focus, #llar-setting-page-logs__active input[type=checkbox]:focus, #llar-setting-page-debug input[type=checkbox]:focus, #llar-setting-page-premium input[type=checkbox]:focus, #llar-setting-page-help input[type=checkbox]:focus, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, .limit-login-page-settings input[type=checkbox]:focus {
   box-shadow: unset;
 }
 
@@ -242,7 +242,7 @@ ul.llar_list li::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm
   transform: translateY(-50%);
 }
 
-button.llar_button, #llar-setting-page button.button, .llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
+button.llar_button, #llar-setting-page button.button, .llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
   font-family: inherit;
   background: #FDFDFD;
   border: 1px solid #2A2F40;
@@ -277,7 +277,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   box-shadow: unset !important;
 }
 
-.llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
+.llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
   position: relative;
   min-width: 175px;
   text-transform: inherit;
@@ -584,7 +584,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .limit-login-page-settings .llar-app-field.active {
   display: table-row;
 }
-
 #llar-setting-page, #llar-setting-page-logs, #llar-setting-page-logs__active, #llar-setting-page-debug, #llar-setting-page-premium, #llar-setting-page-help {
   color: #2A2F40;
   margin-top: 40px;
@@ -993,7 +992,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table tr th {
   padding-left: 0;
 }
-
 #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea {
   color: #A4A8B7;
 }
@@ -3113,6 +3111,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin: 5px 25px;
 }
 
+#llar-admin-dashboard-widgets {
+  font-family: CoFo Sans, arial;
+}
 #llar-admin-dashboard-widgets .widget-title {
   padding-bottom: 15px;
   border-bottom: 1px solid #e4e4e4;
@@ -3227,9 +3228,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: 10px;
 }
 
-.toplevel_page_limit-login-attempts {
-  font-family: CoFo Sans, arial;
-}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box {
   padding: 0 !important;
   background-color: transparent;
@@ -3247,38 +3245,8 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .jconfirm-buttons {
   padding-right: 15px;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block {
-  margin-top: 24px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  column-gap: 16px;
-}
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block .button {
-  font-size: 18px;
-  margin-top: 20px;
-  padding: 11px 60px;
-  width: 70%;
-}
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 10px;
-}
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon .button {
-  font-size: 18px;
-  padding: 11px 60px;
-}
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-single {
-  margin-top: 20px;
-}
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-single .button {
-  font-size: 18px;
-  padding: 11px 60px;
-  width: fit-content;
-}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content {
+  font-family: CoFo Sans, arial;
   min-height: 930px;
   padding: 15px;
   background: url("./images/onboarding-bg-big.webp") center top;
@@ -3293,6 +3261,37 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background: rgba(253, 253, 253, 0.4);
   border-radius: 8px;
   padding: 20px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 16px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block .button {
+  font-size: 18px;
+  margin-top: 20px;
+  padding: 11px 60px;
+  width: 70%;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-horizon .button {
+  font-size: 18px;
+  padding: 11px 60px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single {
+  margin-top: 20px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .button_block-single .button {
+  font-size: 18px;
+  padding: 11px 60px;
+  width: fit-content;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .llar-onboarding__line {
   position: relative;
@@ -3943,9 +3942,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   text-decoration: underline;
 }
 
-.toplevel_page_limit-login-attempts {
-  font-family: CoFo Sans, arial;
-}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box {
   padding: 0 !important;
   background-color: transparent;
@@ -3994,6 +3990,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 15px 30px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .popup_error_content__content {
+  font-family: CoFo Sans, arial;
   padding: 15px;
   border-radius: 16px;
   background-color: #FDFDFD;
@@ -4017,6 +4014,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: 10px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__content {
+  font-family: CoFo Sans, arial;
   padding: 15px;
   border-radius: 16px;
   background: url("./images/micro-cloud-bg.webp") no-repeat center top;
