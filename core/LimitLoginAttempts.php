@@ -2435,6 +2435,7 @@ class LimitLoginAttempts
 		    $limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
 		                          $app_config['settings']['limit_registration']['value'] === 'on';
 
+
 		    if ( ! $limit_registration ) {
 			    return;
 		    }
