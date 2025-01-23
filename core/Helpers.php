@@ -360,10 +360,16 @@ class Helpers {
 
 		$gateway = 'wp_login';
 
-		if ( isset( $_POST['woocommerce-login-nonce'] ) ) {
-			$gateway = 'wp_woo_login';
+		if ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false && ( !isset( $_GET['action'] ) || $_GET['action'] === 'login' ) ) {
+			$gateway = 'wp_login';
+		} elseif ( isset( $_GET['action'] ) && $_GET['action'] === 'lostpassword' && strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false ) {
+			$gateway = 'wp_lostpassword';
+		} elseif ( isset($_GET['action']) && $_GET['action'] === 'register' && strpos($_SERVER['REQUEST_URI'], 'wp-login.php') !== false ) {
+			$gateway = 'wp_register';
 		} elseif ( isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ) ) {
 			$gateway = 'wp_xmlrpc';
+		} elseif ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) === false ) {
+			$gateway = trim( $_SERVER['REQUEST_URI'], '/' );
 		}
 
 		return $gateway;
