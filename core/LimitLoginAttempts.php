@@ -143,6 +143,7 @@ class LimitLoginAttempts
 
 	    add_action( 'register_post', array( $this, 'register_post_hook' ), 10, 3 );
 	    add_action( 'woocommerce_register_post', array( $this, 'register_post_hook' ), 10, 3 );
+		add_filter( 'woocommerce_process_registration_errors', array( $this, 'pre_register_post_hook' ), 10, 4 );
 	    add_action( 'lostpassword_post', array( $this, 'lostpassword_post_hook' ), 10, 2 );
 		add_filter( 'wp_login_errors', array( $this, 'llar_confirm_lostpassword_msg' ), 10, 2 );
 		add_action( 'um_submit_form_errors_hook__blockedips', array( $this, 'um_submit_form_errors_hook__blockedips_hook' ), 1, 2 );
@@ -2362,38 +2363,52 @@ class LimitLoginAttempts
 
 	    // Check that the function is called woocommerce_register_post
 	    $woo_hook = false;
-	    if ( current_filter() === 'woocommerce_register_post' ) {
+	    if ( current_filter() === 'woocommerce_register_post' || current_filter() === 'woocommerce_process_registration_errors' ) {
 		    $woo_hook = true;
 	    }
 
-		$response = self::$cloud_app->acl_check( array(
-			'ip'        => Helpers::get_all_ips(),
-			'login'     => $user_login,
-			'gateway'   => Helpers::detect_gateway(),
-		) );
+	    $login_to_check = ! empty( $user_login ) ? $user_login : $user_email;
 
-	    if ( $response['result'] !== 'deny' ) {
+	    $response = self::$cloud_app->acl_check( array(
+		    'ip'        => Helpers::get_all_ips(),
+		    'login'     => $login_to_check,
+		    'gateway'   => Helpers::detect_gateway(),
+	    ) );
+
+	    if ( ! empty( $user_login ) && $response['result'] !== 'deny' ) {
 
 		    $response = self::$cloud_app->acl_check( array(
 			    'ip'        => Helpers::get_all_ips(),
 			    'login'     => $user_email,
 			    'gateway'   => Helpers::detect_gateway(),
 		    ) );
-        }
+	    }
 
-		if ( $response['result'] === 'deny' ) {
+	    if ( $response['result'] === 'deny' ) {
 
-			if ( $woo_hook ) {
+		    if ( $woo_hook ) {
 			    $err_msg = __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' );
-            } else {
-				$err_msg = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
-			}
+		    } else {
+			    $err_msg = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+		    }
 
-			// Replace the error message with your own
-			$errors->remove('username_exists');
-			$errors->remove('email_exists');
-			$errors->add( 'email_exists', $err_msg );
+		    // Replace the error message with your own
+		    $errors->remove('username_exists');
+		    $errors->remove('email_exists');
+		    $errors->add( 'email_exists', $err_msg );
+	    }
+	}
+
+
+	/**
+     * Early hook for checking email before registration
+     */
+	function pre_register_post_hook( $validation_error, $username, $password, $email ) {
+		if ( email_exists( $email ) ) {
+			$validation_error->add( 'email_exists', __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' ) );
+			$this->register_post_hook( $username, $email, $validation_error );
 		}
+		return $validation_error;
 	}
 
 
@@ -2404,6 +2419,14 @@ class LimitLoginAttempts
     {
 	    if ( $form_data['mode'] === 'register' ) {
 
+		    if ( empty( $args['user_password'] ) || empty( $args['confirm_user_password'] ) ) {
+			    return;
+		    }
+
+		    if ( empty( $args['user_login'] ) || empty( $args['user_email'] ) ) {
+			    return;
+		    }
+
 		    if ( ! self::$cloud_app ) {
 			    return;
 		    }
@@ -2413,10 +2436,6 @@ class LimitLoginAttempts
 		                          $app_config['settings']['limit_registration']['value'] === 'on';
 
 		    if ( ! $limit_registration ) {
-			    return;
-		    }
-
-		    if ( ! isset( $args['user_login'] ) ) {
 			    return;
 		    }
 
@@ -2542,19 +2561,25 @@ class LimitLoginAttempts
 				$user_email = sanitize_text_field( $_POST['user_login'] );
 			}
 
-			$response = self::$cloud_app->acl_check( array(
-				'ip'        => Helpers::get_all_ips(),
-				'login'     => $user_email,
-				'gateway'   => Helpers::detect_gateway(),
-			) );
+			if ( $user_login !== $user_email ) {
+
+				$response = self::$cloud_app->acl_check( array(
+					'ip'        => Helpers::get_all_ips(),
+					'login'     => $user_email,
+					'gateway'   => Helpers::detect_gateway(),
+				) );
+            }
         }
 
 		if ( $response['result'] === 'deny' ) {
 
 			$errors->add( 'llar_password_recovery_disabled', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
+			$errors->remove('invalidcombo');
+			$errors->remove('invalid_email');
 		} elseif ( empty( $user_data ) ) {
 
 		    $errors->add( 'invalidcombo', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
+			$errors->remove('invalid_email');
 	    }
     }
 
