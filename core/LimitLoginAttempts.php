@@ -34,6 +34,18 @@ class LimitLoginAttempts
 	public $custom_error = '';
 
 	/**
+	 * Registration ban
+	 * @var boolean
+	 */
+	public $registration_ban = false;
+
+	/**
+	 * Registration error messages
+	 * @var string
+	 */
+	public $error_messages = '';
+
+	/**
 	 * Additional login errors messages that we need to show
 	 *
 	 * @var array
@@ -141,7 +153,9 @@ class LimitLoginAttempts
 			add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
 		}
 
-		add_action( 'register_post', array( $this, 'register_post_hook' ), 10, 3 );
+//		add_action( 'register_post', array( $this, 'register_post_hook' ), 10, 3 );
+		add_action( 'login_form_register', array( $this, 'llar_custom_login_form_register' ), 10 );
+		add_filter( 'registration_errors', array( $this, 'llar_custom_registration_errors' ), 10, 3 );
 		add_action( 'woocommerce_register_post', array( $this, 'register_post_hook' ), 10, 3 );
 		add_filter( 'woocommerce_process_registration_errors', array( $this, 'pre_register_post_hook' ), 10, 4 );
 		add_action( 'lostpassword_post', array( $this, 'lostpassword_post_hook' ), 10, 2 );
@@ -2399,7 +2413,6 @@ class LimitLoginAttempts
 		}
 	}
 
-
 	/**
 	 * Early hook for checking email before registration
 	 */
@@ -2410,6 +2423,107 @@ class LimitLoginAttempts
 		}
 		return $validation_error;
 	}
+
+
+
+	/**
+	 * Register new user standard WP, Woo
+	 *
+	 * @param $user_login
+	 * @param $user_email
+	 * @param $errors
+	 *
+	 * @throws Exception
+	 */
+	public function llar_custom_login_form_register() {
+
+		if ( ! self::$cloud_app ) {
+			return;
+		}
+
+		$app_config = Config::get( 'app_config' );
+		$limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
+		                      $app_config['settings']['limit_registration']['value'] === 'on';
+
+		if ( ! $limit_registration ) {
+			return;
+		}
+
+		if ( empty( $_POST['user_login'] ) && empty( $_POST['user_email'] ) ) {
+			return;
+		}
+
+		$user_login = $_POST['user_login'];
+		$user_email = $_POST['user_email'];
+
+		// Only if both fields are empty we exit the check
+		if ( ( empty( $user_login ) || ! validate_username( $user_login ) )  && ( empty( $user_email ) || ! is_email( $user_email ) ) ) {
+		    return;
+        }
+
+		$user_login_sanitize = sanitize_user( $_POST['user_login'] );
+		$user_email_sanitize = sanitize_user( $_POST['user_email'] );
+
+		// Check any non-empty
+		$check_combo = ! empty( $user_login_sanitize ) ? $user_login_sanitize : $user_email_sanitize;
+
+        $response = self::$cloud_app->acl_check( array(
+            'ip'        => Helpers::get_all_ips(),
+            'login'     => $check_combo,
+            'gateway'   => Helpers::detect_gateway(),
+        ) );
+
+        // If $user_login is not empty, we will also check $user_email
+		if ( ! empty( $user_login_sanitize ) && $response['result'] !== 'deny' ) {
+
+			if ( empty( $user_email ) || ! is_email( $user_email ) ) {
+				return;
+			}
+
+			$response = self::$cloud_app->acl_check( array(
+				'ip'        => Helpers::get_all_ips(),
+				'login'     => $user_email_sanitize,
+				'gateway'   => Helpers::detect_gateway(),
+			) );
+		}
+
+		if ( $response['result'] === 'deny' ) {
+
+		    // Set variables to empty to prevent Wordpress from accessing the database
+			$_POST['user_login'] = '';
+			$_POST['user_email'] = '';
+
+			// Set the marker and the error
+			$this->registration_ban = true;
+			$this->error_messages = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+        }
+	}
+
+
+	/**
+     * Correcting errors in the presence of a registration prohibition marker
+	 * @param $errors
+	 * @param $sanitized_user_login
+	 * @param $user_email
+	 *
+	 * @return mixed
+	 */
+	public function llar_custom_registration_errors( $errors, $sanitized_user_login, $user_email ) {
+
+	    // Checking the marker and the presence of empty variables
+	    if ( $this->registration_ban && ( empty( $sanitized_user_login ) && empty( $user_email ) ) ) {
+		    $errors->remove('empty_username');
+		    $errors->remove('empty_email');
+		    $errors->add( 'registration_ban', $this->error_messages );
+        }
+
+	    return $errors;
+    }
+
+
+
+
+
 
 
 	/**
