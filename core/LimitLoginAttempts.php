@@ -158,8 +158,10 @@ class LimitLoginAttempts
 		add_filter( 'registration_errors', array( $this, 'llar_custom_registration_errors' ), 10, 3 );
 		add_action( 'woocommerce_register_post', array( $this, 'register_post_hook' ), 10, 3 );
 		add_filter( 'woocommerce_process_registration_errors', array( $this, 'pre_register_post_hook' ), 10, 4 );
-		add_action( 'lostpassword_post', array( $this, 'lostpassword_post_hook' ), 10, 2 );
-		add_filter( 'wp_login_errors', array( $this, 'llar_confirm_lostpassword_msg' ), 10, 2 );
+		add_action( 'login_form_lostpassword', array( $this, 'llar_lostpassword_post_hook' ), 10 );
+		add_filter( 'lostpassword_errors', array( $this, 'llar_custom_lostpassword_errors' ), 10, 2 );
+//		add_action( 'lostpassword_post', array( $this, 'lostpassword_post_hook' ), 10, 2 );
+//		add_filter( 'wp_login_errors', array( $this, 'llar_confirm_lostpassword_msg' ), 10, 2 );
 		add_action( 'um_submit_form_errors_hook__blockedips', array( $this, 'um_submit_form_errors_hook__blockedips_hook' ), 1, 2 );
 		add_filter( 'um_custom_error_message_handler', array( $this, 'llar_um_deny_error_message' ), 10, 3 );
 		add_action( 'um_reset_password_errors_hook', array( $this, 'um_reset_password_errors_hook' ), 10, 2);
@@ -2428,14 +2430,9 @@ class LimitLoginAttempts
 
 	/**
 	 * Register new user standard WP, Woo
-	 *
-	 * @param $user_login
-	 * @param $user_email
-	 * @param $errors
-	 *
-	 * @throws Exception
 	 */
-	public function llar_custom_login_form_register() {
+	public function llar_custom_login_form_register()
+    {
 
 		if ( ! self::$cloud_app ) {
 			return;
@@ -2508,8 +2505,8 @@ class LimitLoginAttempts
 	 *
 	 * @return mixed
 	 */
-	public function llar_custom_registration_errors( $errors, $sanitized_user_login, $user_email ) {
-
+	public function llar_custom_registration_errors( $errors, $sanitized_user_login, $user_email )
+    {
 	    // Checking the marker and the presence of empty variables
 	    if ( $this->registration_ban && ( empty( $sanitized_user_login ) && empty( $user_email ) ) ) {
 		    $errors->remove('empty_username');
@@ -2708,5 +2705,57 @@ class LimitLoginAttempts
 
 		return $errors;
 
+	}
+
+
+	/**
+	 * Reset password standard WP, Woo
+	 */
+	public function llar_lostpassword_post_hook()
+    {
+	    if ( ! self::$cloud_app ) {
+		    return;
+	    }
+
+	    $app_config = Config::get( 'app_config' );
+	    $limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
+	                               $app_config['settings']['limit_password_recovery']['value'] === 'on';
+
+	    if ( ! $limit_password_recovery ) {
+		    return;
+	    }
+
+	    if ( ! empty( $_POST['user_login'] ) ) {
+		    $user_login = sanitize_text_field( $_POST['user_login'] );
+	    } else {
+	        return;
+        }
+
+	    $response = self::$cloud_app->acl_check( array(
+		    'ip'        => Helpers::get_all_ips(),
+		    'login'     => $user_login,
+		    'gateway'   => Helpers::detect_gateway(),
+	    ) );
+
+	    if ( $response['result'] === 'deny' ) {
+
+		    $this->error_messages = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
+		    $this->registration_ban = true;
+		    $_POST['user_login'] = '';
+	    }
+    }
+
+	/**
+	 * @return array
+	 */
+	public function llar_custom_lostpassword_errors( $errors, $user_data )
+    {
+	    // Checking the marker and the presence of empty variables
+	    if ( $this->registration_ban && empty( $user_data ) ) {
+		    $errors->remove('empty_username');
+		    $errors->add( 'registration_ban', $this->error_messages );
+	    }
+
+	    return $errors;
 	}
 }
