@@ -34,10 +34,11 @@ class LimitLoginAttempts
 	public $custom_error = '';
 
 	/**
-	 * Registration ban
+	 * User blocking
 	 * @var boolean
 	 */
-	public $registration_ban = false;
+	public $user_blocking = false;
+	public $user_empty = false;
 
 	/**
 	 * Registration error messages
@@ -153,18 +154,19 @@ class LimitLoginAttempts
 			add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
 		}
 
-//		add_action( 'register_post', array( $this, 'register_post_hook' ), 10, 3 );
-		add_action( 'login_form_register', array( $this, 'llar_custom_login_form_register' ), 10 );
-		add_filter( 'registration_errors', array( $this, 'llar_custom_registration_errors' ), 10, 3 );
-		add_action( 'woocommerce_register_post', array( $this, 'register_post_hook' ), 10, 3 );
-		add_filter( 'woocommerce_process_registration_errors', array( $this, 'pre_register_post_hook' ), 10, 4 );
+		add_action( 'login_form_register', array( $this, 'llar_submit_login_form_register' ), 10 );
+		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
 		add_action( 'login_form_lostpassword', array( $this, 'llar_lostpassword_post_hook' ), 10 );
-		add_filter( 'lostpassword_errors', array( $this, 'llar_custom_lostpassword_errors' ), 10, 2 );
-//		add_action( 'lostpassword_post', array( $this, 'lostpassword_post_hook' ), 10, 2 );
-//		add_filter( 'wp_login_errors', array( $this, 'llar_confirm_lostpassword_msg' ), 10, 2 );
-		add_action( 'um_submit_form_errors_hook__blockedips', array( $this, 'um_submit_form_errors_hook__blockedips_hook' ), 1, 2 );
+		add_filter( 'lostpassword_errors', array( $this, 'llar_submit_lostpassword_errors' ), 10, 2 );
+
+		add_filter( 'woocommerce_process_registration_errors', array( $this, 'llar_submit_woo_form_register' ), 10, 4 );
+		add_action( 'wp_loaded', array( $this, 'llar_woo_process_lost_password' ), 10 );
+		add_action( 'lostpassword_post', array( $this, 'llar_woo_lostpassword_post_hook' ), 10, 2 );
+		add_filter( 'woocommerce_add_error', array( $this, 'llar_woo_add_error' ), 10 );
+
+		add_action( 'um_submit_form_errors_hook__blockedips', array( $this, 'llar_um_submit_form_errors_hook__blockedips_hook' ), 1, 2 );
 		add_filter( 'um_custom_error_message_handler', array( $this, 'llar_um_deny_error_message' ), 10, 3 );
-		add_action( 'um_reset_password_errors_hook', array( $this, 'um_reset_password_errors_hook' ), 10, 2);
+		add_action( 'um_reset_password_errors_hook', array( $this, 'llar_um_reset_password_errors_hook' ), 10, 2);
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -2354,95 +2356,46 @@ class LimitLoginAttempts
 	}
 
 
-	/**
-	 * Register new user standard WP, Woo
-	 *
-	 * @param $user_login
-	 * @param $user_email
-	 * @param $errors
-	 *
-	 * @throws Exception
-	 */
-	public function register_post_hook( $user_login, $user_email, $errors )
+	public function is_limit_registration()
+    {
+		if ( ! self::$cloud_app ) {
+			return false;
+		}
+
+		$app_config = Config::get( 'app_config' );
+	    $limit_registration = isset( $app_config['settings']['limit_registration']['value'] ) ? $app_config['settings']['limit_registration']['value'] : '';
+
+	    return $limit_registration === 'on';
+    }
+
+	public function is_limit_password_recovery()
 	{
 		if ( ! self::$cloud_app ) {
-			return;
+			return false;
 		}
 
 		$app_config = Config::get( 'app_config' );
-		$limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
-		                      $app_config['settings']['limit_registration']['value'] === 'on';
+		$limit_password_recovery = isset( $app_config['settings']['limit_password_recovery']['value'] ) ? $app_config['settings']['limit_password_recovery']['value'] : '';
 
-		if ( ! $limit_registration ) {
-			return;
-		}
-
-		// Check that the function is called woocommerce_register_post
-		$woo_hook = false;
-		if ( current_filter() === 'woocommerce_register_post' || current_filter() === 'woocommerce_process_registration_errors' ) {
-			$woo_hook = true;
-		}
-
-		$login_to_check = ! empty( $user_login ) ? $user_login : $user_email;
-
-		$response = self::$cloud_app->acl_check( array(
-			'ip'        => Helpers::get_all_ips(),
-			'login'     => $login_to_check,
-			'gateway'   => Helpers::detect_gateway(),
-		) );
-
-		if ( ! empty( $user_login ) && $response['result'] !== 'deny' ) {
-
-			$response = self::$cloud_app->acl_check( array(
-				'ip'        => Helpers::get_all_ips(),
-				'login'     => $user_email,
-				'gateway'   => Helpers::detect_gateway(),
-			) );
-		}
-
-		if ( $response['result'] === 'deny' ) {
-
-			if ( $woo_hook ) {
-				$err_msg = __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' );
-			} else {
-				$err_msg = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
-			}
-
-			// Replace the error message with your own
-			$errors->remove('username_exists');
-			$errors->remove('email_exists');
-			$errors->add( 'email_exists', $err_msg );
-		}
+		return $limit_password_recovery === 'on';
 	}
 
-	/**
-	 * Early hook for checking email before registration
-	 */
-	function pre_register_post_hook( $validation_error, $username, $password, $email ) {
-		if ( email_exists( $email ) ) {
-			$validation_error->add( 'email_exists', __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' ) );
-			$this->register_post_hook( $username, $email, $validation_error );
-		}
-		return $validation_error;
-	}
-
-
-
-	/**
-	 * Register new user standard WP, Woo
-	 */
-	public function llar_custom_login_form_register()
+	public function llar_api_response( $user_data )
     {
+	    return self::$cloud_app->acl_check( array(
+		    'ip'        => Helpers::get_all_ips(),
+		    'login'     => $user_data,
+		    'gateway'   => Helpers::detect_gateway(),
+	    ) );
+    }
 
-		if ( ! self::$cloud_app ) {
-			return;
-		}
 
-		$app_config = Config::get( 'app_config' );
-		$limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
-		                      $app_config['settings']['limit_registration']['value'] === 'on';
-
-		if ( ! $limit_registration ) {
+	/**
+	 * Register new user standard WP
+	 */
+	public function llar_submit_login_form_register()
+    {
+		if ( ! $this->is_limit_registration() ) {
 			return;
 		}
 
@@ -2464,11 +2417,7 @@ class LimitLoginAttempts
 		// Check any non-empty
 		$check_combo = ! empty( $user_login_sanitize ) ? $user_login_sanitize : $user_email_sanitize;
 
-        $response = self::$cloud_app->acl_check( array(
-            'ip'        => Helpers::get_all_ips(),
-            'login'     => $check_combo,
-            'gateway'   => Helpers::detect_gateway(),
-        ) );
+        $response = $this->llar_api_response( $check_combo );
 
         // If $user_login is not empty, we will also check $user_email
 		if ( ! empty( $user_login_sanitize ) && $response['result'] !== 'deny' ) {
@@ -2477,11 +2426,7 @@ class LimitLoginAttempts
 				return;
 			}
 
-			$response = self::$cloud_app->acl_check( array(
-				'ip'        => Helpers::get_all_ips(),
-				'login'     => $user_email_sanitize,
-				'gateway'   => Helpers::detect_gateway(),
-			) );
+			$response = $this->llar_api_response( $user_email_sanitize );
 		}
 
 		if ( $response['result'] === 'deny' ) {
@@ -2491,7 +2436,7 @@ class LimitLoginAttempts
 			$_POST['user_email'] = '';
 
 			// Set the marker and the error
-			$this->registration_ban = true;
+			$this->user_blocking = true;
 			$this->error_messages = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
         }
 	}
@@ -2505,28 +2450,55 @@ class LimitLoginAttempts
 	 *
 	 * @return mixed
 	 */
-	public function llar_custom_registration_errors( $errors, $sanitized_user_login, $user_email )
+	public function llar_submit_registration_errors( $errors, $sanitized_user_login, $user_email )
     {
 	    // Checking the marker and the presence of empty variables
-	    if ( $this->registration_ban && ( empty( $sanitized_user_login ) && empty( $user_email ) ) ) {
+	    if ( $this->user_blocking && ( empty( $sanitized_user_login ) && empty( $user_email ) ) ) {
 		    $errors->remove('empty_username');
 		    $errors->remove('empty_email');
-		    $errors->add( 'registration_ban', $this->error_messages );
+		    $errors->add( 'user_blocking', $this->error_messages );
         }
 
 	    return $errors;
     }
 
 
+	/**
+	 * Register new user standard Woo
+	 */
+	function llar_submit_woo_form_register( $validation_error, $username, $password, $email ) {
 
+		if ( ! $this->is_limit_registration() ) {
+			return $validation_error;
+		}
 
+		if ( empty( $username ) ) {
+			$username = strstr($email, '@', true);
+        }
+
+		// Let's check for $username too, for the case if the registration form has a $username field
+		$check_combo = ! empty( $username ) ? sanitize_user( $username ) : sanitize_user( $email );
+
+		$response = $this->llar_api_response( $check_combo );
+
+		if ( ! empty( $username ) && $response['result'] !== 'deny' ) {
+
+			$response = $this->llar_api_response( $email );
+        }
+
+		if ( $response['result'] === 'deny' ) {
+			$validation_error->add( 'email_exists', __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' ) );
+        }
+
+		return $validation_error;
+	}
 
 
 
 	/**
 	 * Register new user UM
 	 */
-	public function um_submit_form_errors_hook__blockedips_hook($args, $form_data)
+	public function llar_um_submit_form_errors_hook__blockedips_hook($args, $form_data)
 	{
 		if ( $form_data['mode'] === 'register' ) {
 
@@ -2538,35 +2510,18 @@ class LimitLoginAttempts
 				return;
 			}
 
-			if ( ! self::$cloud_app ) {
-				return;
-			}
-
-			$app_config = Config::get( 'app_config' );
-			$limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
-			                      $app_config['settings']['limit_registration']['value'] === 'on';
-
-
-			if ( ! $limit_registration ) {
+			if ( ! $this->is_limit_registration() ) {
 				return;
 			}
 
 			$user_login = sanitize_text_field( $args['user_login'] );
 			$user_email = sanitize_text_field( $args['user_email'] );
 
-			$response = self::$cloud_app->acl_check( array(
-				'ip'        => Helpers::get_all_ips(),
-				'login'     => $user_login,
-				'gateway'   => Helpers::detect_gateway(),
-			) );
+			$response = $this->llar_api_response( $user_login );
 
 			if ( $response['result'] !== 'deny' ) {
 
-				$response = self::$cloud_app->acl_check( array(
-					'ip'        => Helpers::get_all_ips(),
-					'login'     => $user_email,
-					'gateway'   => Helpers::detect_gateway(),
-				) );
+				$response = $this->llar_api_response( $user_email );
 			}
 
 			if ( $response['result'] === 'deny' ) {
@@ -2599,17 +2554,9 @@ class LimitLoginAttempts
 	/**
 	 * Reset password UM
 	 */
-	public function um_reset_password_errors_hook( $args, $form_data )
+	public function llar_um_reset_password_errors_hook( $args, $form_data )
 	{
-		if ( ! self::$cloud_app ) {
-			return;
-		}
-
-		$app_config = Config::get( 'app_config' );
-		$limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
-		                           $app_config['settings']['limit_password_recovery']['value'] === 'on';
-
-		if ( ! $limit_password_recovery ) {
+		if ( ! $this->is_limit_password_recovery() ) {
 			return;
 		}
 
@@ -2619,11 +2566,7 @@ class LimitLoginAttempts
 
 		$user_login = sanitize_text_field( $args['username_b'] );
 
-		$response = self::$cloud_app->acl_check( array(
-			'ip'        => Helpers::get_all_ips(),
-			'login'     => $user_login,
-			'gateway'   => Helpers::detect_gateway(),
-		) );
+		$response = $this->llar_api_response( $user_login );
 
 		if ( $response['result'] === 'deny' ) {
 
@@ -2631,97 +2574,13 @@ class LimitLoginAttempts
 		}
 	}
 
-	/**
-	 * Reset password standard WP, Woo
-	 *
-	 * @param $errors
-	 * @param $user_data
-	 *
-	 * @throws Exception
-	 */
-	public function lostpassword_post_hook( $errors, $user_data )
-	{
-		if ( ! self::$cloud_app ) {
-			return;
-		}
-
-		$app_config = Config::get( 'app_config' );
-		$limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
-		                           $app_config['settings']['limit_password_recovery']['value'] === 'on';
-
-		if ( ! $limit_password_recovery ) {
-			return;
-		}
-
-		$user_login = ( ! empty( $user_data) && $user_data->user_login ) ? $user_data->user_login : false;
-
-		if ( ! $user_login && ! empty( $_POST['user_login'] ) ) {
-			$user_login = sanitize_text_field( $_POST['user_login'] );
-		}
-
-		$response = self::$cloud_app->acl_check( array(
-			'ip'        => Helpers::get_all_ips(),
-			'login'     => $user_login,
-			'gateway'   => Helpers::detect_gateway(),
-		) );
-
-		if ( $response['result'] !== 'deny' ) {
-
-			$user_email = ( ! empty( $user_data) && $user_data->user_email ) ? $user_data->user_email : false;
-
-			if ( ! $user_email && ! empty( $_POST['user_login'] ) ) {
-				$user_email = sanitize_text_field( $_POST['user_login'] );
-			}
-
-			if ( $user_login !== $user_email ) {
-
-				$response = self::$cloud_app->acl_check( array(
-					'ip'        => Helpers::get_all_ips(),
-					'login'     => $user_email,
-					'gateway'   => Helpers::detect_gateway(),
-				) );
-			}
-		}
-
-		if ( $response['result'] === 'deny' ) {
-
-			$errors->add( 'llar_password_recovery_disabled', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
-			$errors->remove('invalidcombo');
-			$errors->remove('invalid_email');
-		} elseif ( empty( $user_data ) ) {
-
-			$errors->add( 'invalidcombo', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
-			$errors->remove('invalid_email');
-		}
-	}
-
-	public function llar_confirm_lostpassword_msg( $errors, $redirect_to )
-	{
-		if ( $errors && $errors->get_error_message( 'confirm' ) ) {
-			$errors->remove( 'confirm' );
-
-			$errors->add( 'confirm', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ), 'message' );
-		}
-
-		return $errors;
-
-	}
-
 
 	/**
-	 * Reset password standard WP, Woo
+	 * Reset password standard WP
 	 */
 	public function llar_lostpassword_post_hook()
     {
-	    if ( ! self::$cloud_app ) {
-		    return;
-	    }
-
-	    $app_config = Config::get( 'app_config' );
-	    $limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
-	                               $app_config['settings']['limit_password_recovery']['value'] === 'on';
-
-	    if ( ! $limit_password_recovery ) {
+	    if ( ! $this->is_limit_password_recovery() ) {
 		    return;
 	    }
 
@@ -2731,16 +2590,12 @@ class LimitLoginAttempts
 	        return;
         }
 
-	    $response = self::$cloud_app->acl_check( array(
-		    'ip'        => Helpers::get_all_ips(),
-		    'login'     => $user_login,
-		    'gateway'   => Helpers::detect_gateway(),
-	    ) );
+	    $response = $this->llar_api_response( $user_login );
 
 	    if ( $response['result'] === 'deny' ) {
 
 		    $this->error_messages = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
-		    $this->registration_ban = true;
+		    $this->user_blocking = true;
 		    $_POST['user_login'] = '';
 	    }
     }
@@ -2748,14 +2603,72 @@ class LimitLoginAttempts
 	/**
 	 * @return array
 	 */
-	public function llar_custom_lostpassword_errors( $errors, $user_data )
+	public function llar_submit_lostpassword_errors( $errors, $user_data )
     {
 	    // Checking the marker and the presence of empty variables
-	    if ( $this->registration_ban && empty( $user_data ) ) {
+	    if ( ( $this->user_blocking || $this->user_empty ) && empty( $user_data ) ) {
 		    $errors->remove('empty_username');
-		    $errors->add( 'registration_ban', $this->error_messages );
+		    $errors->add( 'user_blocking', $this->error_messages );
 	    }
 
 	    return $errors;
 	}
+
+
+	/**
+	 * Reset password standard Woo
+	 */
+	public function llar_woo_process_lost_password() {
+
+		if ( ! isset( $_POST['wc_reset_password'], $_POST['user_login'] ) ) {
+		    return;
+		}
+
+		$nonce_value = wc_get_var( $_REQUEST['woocommerce-lost-password-nonce'], wc_get_var( $_REQUEST['_wpnonce'], '' ) ); // @codingStandardsIgnoreLine.
+
+		if ( ! wp_verify_nonce( $nonce_value, 'lost_password' ) ) {
+			return;
+		}
+
+		if ( ! $this->is_limit_password_recovery() ) {
+			return;
+		}
+
+		if ( ! empty( $_POST['user_login'] ) ) {
+			$user_login = sanitize_text_field( $_POST['user_login'] );
+		} else {
+			return;
+		}
+
+		$response = $this->llar_api_response( $user_login );
+
+		if ( $response['result'] === 'deny' ) {
+
+			$this->error_messages = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
+			$this->user_blocking = true;
+			$_POST['user_login'] = '';
+		}
+	}
+
+
+	public function llar_woo_lostpassword_post_hook( $errors, $user_data )
+    {
+        if ( ! $user_data ) {
+	        $this->error_messages = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
+            $this->user_empty = true;
+        }
+    }
+
+	/**
+	 * Correcting the displayed message
+	 */
+	public function llar_woo_add_error( $message ) {
+
+		if ( $this->user_blocking || $this->user_empty ) {
+            $message = $this->error_messages;
+		}
+
+		return $message;
+	}
+
 }
