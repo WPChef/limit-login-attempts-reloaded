@@ -2356,7 +2356,11 @@ class LimitLoginAttempts
 	}
 
 
-	public function is_limit_registration()
+	/**
+     * Check if the user is a cloud user and if limit_registration is enabled
+	 * @return bool
+	 */
+	private function is_limit_registration()
     {
 		if ( ! self::$cloud_app ) {
 			return false;
@@ -2368,7 +2372,11 @@ class LimitLoginAttempts
 	    return $limit_registration === 'on';
     }
 
-	public function is_limit_password_recovery()
+	/**
+	 * Check if the user is a cloud user and if limit_password_recovery is enabled
+	 * @return bool
+	 */
+	private function is_limit_password_recovery()
 	{
 		if ( ! self::$cloud_app ) {
 			return false;
@@ -2380,7 +2388,15 @@ class LimitLoginAttempts
 		return $limit_password_recovery === 'on';
 	}
 
-	public function llar_api_response( $user_data )
+
+	/**
+     * API response
+	 * @param $user_data
+	 *
+	 * @return bool|mixed
+	 * @throws Exception
+	 */
+	private function llar_api_response( $user_data )
     {
 	    return self::$cloud_app->acl_check( array(
 		    'ip'        => Helpers::get_all_ips(),
