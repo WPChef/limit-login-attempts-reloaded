@@ -34,6 +34,19 @@ class LimitLoginAttempts
 	public $custom_error = '';
 
 	/**
+	 * User blocking
+	 * @var boolean
+	 */
+	public $user_blocking = false;
+	public $user_empty = false;
+
+	/**
+	 * Registration error messages
+	 * @var string
+	 */
+	public $error_messages = '';
+
+	/**
 	 * Additional login errors messages that we need to show
 	 *
 	 * @var array
@@ -148,6 +161,9 @@ class LimitLoginAttempts
 
 	    add_action( 'register_post', array( $this, 'register_post_hook' ), 10, 3 );
 	    add_action( 'lostpassword_post', array( $this, 'lostpassword_post_hook' ), 10, 2 );
+
+		add_action( 'login_form_register', array( $this, 'llar_submit_login_form_register' ), 10 );
+		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
