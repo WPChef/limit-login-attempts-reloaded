@@ -1,22 +1,22 @@
-# Copyright (C) 2024 Limit Login Attempts Reloaded
+# Copyright (C) 2025 Limit Login Attempts Reloaded
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.16\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.17\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-11-05T19:15:01+03:00\n"
+"POT-Creation-Date: 2025-02-06T15:49:27+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
 
 #. Plugin Name of the plugin
 #. Author of the plugin
-#: core/LimitLoginAttempts.php:179
+#: core/LimitLoginAttempts.php:194
 msgid "Limit Login Attempts Reloaded"
 msgstr ""
 
@@ -127,174 +127,178 @@ msgstr ""
 msgid "By proceeding you understand and give your consent that your IP address and browser information might be processed by the security plugins installed on this site."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:420
-#: core/LimitLoginAttempts.php:801
+#: core/LimitLoginAttempts.php:435
+#: core/LimitLoginAttempts.php:816
 #: views/options-page.php:129
 msgid "Dashboard"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:421
-#: core/LimitLoginAttempts.php:806
+#: core/LimitLoginAttempts.php:436
+#: core/LimitLoginAttempts.php:821
 #: views/options-page.php:133
 msgid "Settings"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:431
-#: core/LimitLoginAttempts.php:835
+#: core/LimitLoginAttempts.php:446
+#: core/LimitLoginAttempts.php:850
 msgid "Free Upgrade"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:438
+#: core/LimitLoginAttempts.php:453
 #: views/tab-dashboard.php:97
 #: views/tab-dashboard.php:253
 msgid "Upgrade to Premium"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:579
-#: core/LimitLoginAttempts.php:634
-#: core/LimitLoginAttempts.php:1124
-#: core/LimitLoginAttempts.php:1543
-#: core/LimitLoginAttempts.php:1602
+#: core/LimitLoginAttempts.php:594
+#: core/LimitLoginAttempts.php:649
+#: core/LimitLoginAttempts.php:1139
+#: core/LimitLoginAttempts.php:1558
+#: core/LimitLoginAttempts.php:1617
 msgid "<strong>ERROR</strong>: Too many failed login attempts."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:586
-#: core/LimitLoginAttempts.php:1131
-#: core/LimitLoginAttempts.php:1622
+#: core/LimitLoginAttempts.php:601
+#: core/LimitLoginAttempts.php:1146
+#: core/LimitLoginAttempts.php:1637
 msgid "Please try again in %d hour."
 msgid_plural "Please try again in %d hours."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:588
-#: core/LimitLoginAttempts.php:1133
-#: core/LimitLoginAttempts.php:1625
+#: core/LimitLoginAttempts.php:603
+#: core/LimitLoginAttempts.php:1148
+#: core/LimitLoginAttempts.php:1640
 msgid "Please try again in %d minute."
 msgid_plural "Please try again in %d minutes."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:812
+#: core/LimitLoginAttempts.php:827
 #: resources/compare-plans-data.php:64
 #: views/options-page.php:139
 msgid "Login Firewall"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:817
+#: core/LimitLoginAttempts.php:832
 #: views/options-page.php:145
 msgid "Logs"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:822
+#: core/LimitLoginAttempts.php:837
 #: views/options-page.php:151
 msgid "Debug"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:827
+#: core/LimitLoginAttempts.php:842
 #: views/options-page.php:155
 #: views/tab-dashboard.php:128
 msgid "Help"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:835
+#: core/LimitLoginAttempts.php:850
 msgid "Premium"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:918
+#: core/LimitLoginAttempts.php:933
 msgid "LLAR"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1318
+#: core/LimitLoginAttempts.php:1333
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:1325
+#: core/LimitLoginAttempts.php:1340
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:1362
+#: core/LimitLoginAttempts.php:1377
 msgid "Failed login by IP %s www.limitloginattempts.com"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1610
+#: core/LimitLoginAttempts.php:1625
 msgid "Please try again later."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1662
+#: core/LimitLoginAttempts.php:1677
 msgid "<strong>ERROR</strong>: Incorrect email address or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1665
+#: core/LimitLoginAttempts.php:1680
 msgid "<strong>ERROR</strong>: Incorrect username or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1685
+#: core/LimitLoginAttempts.php:1700
 msgid "WC Error"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1872
+#: core/LimitLoginAttempts.php:1887
 msgid "Cleared IP log"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1879
+#: core/LimitLoginAttempts.php:1894
 msgid "Reset lockout count"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1886
+#: core/LimitLoginAttempts.php:1901
 msgid "Cleared current lockouts"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1931
+#: core/LimitLoginAttempts.php:1946
 msgid "The %s IP range is invalid"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1958
-#: core/LimitLoginAttempts.php:2032
+#: core/LimitLoginAttempts.php:1973
+#: core/LimitLoginAttempts.php:2047
 msgid "Settings saved."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2185
+#: core/LimitLoginAttempts.php:2200
 msgid "Hey <strong>Limit Login Attempts Reloaded</strong> user!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2186
+#: core/LimitLoginAttempts.php:2201
 msgid "A <strong>crazy idea</strong> we wanted to share! What if we put an image from YOU on the <a href=\"https://wordpress.org/plugins/limit-login-attempts-reloaded/\" target=\"_blank\">LLAR page</a>?! (<a href=\"https://wordpress.org/plugins/hello-dolly/\" target=\"_blank\">example</a>) A drawing made by you or your child would cheer people up! Send us your drawing by <a href=\"mailto:wpchef.me@gmail.com\" target=\"_blank\">email</a> and we like it, we'll add it in the next release. Let's have some fun!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2187
+#: core/LimitLoginAttempts.php:2202
 msgid "We would really like to hear your feedback about the plugin! Please take a couple minutes to write a few words <a href=\"https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post\" target=\"_blank\">here</a>. Thank you!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2190
+#: core/LimitLoginAttempts.php:2205
 msgid "Don't show again"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2191
+#: core/LimitLoginAttempts.php:2206
 msgid "Maybe later"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2192
+#: core/LimitLoginAttempts.php:2207
 msgid "Leave a review"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2278
+#: core/LimitLoginAttempts.php:2293
 msgid "You have been upgraded to the latest version of <strong>Limit Login Attempts Reloaded</strong>.<br> Due to increased security threats around the holidays, we recommend turning on email notifications when you receive a failed login attempt."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2283
+#: core/LimitLoginAttempts.php:2298
 msgid "Yes, turn on email notifications"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2284
+#: core/LimitLoginAttempts.php:2299
 msgid "Remind me a month from now"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2285
+#: core/LimitLoginAttempts.php:2300
 msgid "Don't show this message again"
+msgstr ""
+
+#: core/LimitLoginAttempts.php:2444
+msgid "<strong>Error</strong>: Registration is currently disabled."
 msgstr ""
 
 #: resources/compare-plans-data.php:27
