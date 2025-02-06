@@ -34,6 +34,19 @@ class LimitLoginAttempts
 	public $custom_error = '';
 
 	/**
+	 * User blocking
+	 * @var boolean
+	 */
+	public $user_blocking = false;
+	public $user_empty = false;
+
+	/**
+	 * Registration error messages
+	 * @var string
+	 */
+	public $error_messages = '';
+
+	/**
 	 * Additional login errors messages that we need to show
 	 *
 	 * @var array
@@ -140,6 +153,9 @@ class LimitLoginAttempts
 
 		if( !Config::get( 'hide_dashboard_widget' ) )
 			add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
+
+		add_action( 'login_form_register', array( $this, 'llar_submit_login_form_register' ), 10 );
+		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -2342,4 +2358,112 @@ class LimitLoginAttempts
 			<?php
 		}
 	}
+
+
+	/**
+	 * Check if the user is a cloud user and if limit_registration is enabled
+	 * @return bool
+	 */
+	private function is_limit_registration()
+	{
+		if ( ! self::$cloud_app ) {
+			return false;
+		}
+
+		$app_config = Config::get( 'app_config' );
+		$limit_registration = isset( $app_config['settings']['limit_registration']['value'] ) ? $app_config['settings']['limit_registration']['value'] : '';
+
+		return $limit_registration === 'on';
+	}
+
+
+	/**
+	 * API response
+	 * @param $user_data
+	 *
+	 * @return bool|mixed
+	 * @throws Exception
+	 */
+	private function llar_api_response( $user_data )
+	{
+		return self::$cloud_app->acl_check( array(
+			'ip'        => Helpers::get_all_ips(),
+			'login'     => $user_data,
+			'gateway'   => Helpers::detect_gateway(),
+		) );
+	}
+
+
+	/**
+	 * Register new user standard WP
+	 */
+	public function llar_submit_login_form_register()
+	{
+		if ( ! $this->is_limit_registration() ) {
+			return;
+		}
+
+		if ( empty( $_POST['user_login'] ) && empty( $_POST['user_email'] ) ) {
+			return;
+		}
+
+		$user_login = $_POST['user_login'];
+		$user_email = $_POST['user_email'];
+
+		// Only if both fields are empty we exit the check
+		if ( ( empty( $user_login ) || ! validate_username( $user_login ) )  && ( empty( $user_email ) || ! is_email( $user_email ) ) ) {
+			return;
+		}
+
+		$user_login_sanitize = sanitize_user( $_POST['user_login'] );
+		$user_email_sanitize = sanitize_user( $_POST['user_email'] );
+
+		// Check any non-empty
+		$check_combo = ! empty( $user_login_sanitize ) ? $user_login_sanitize : $user_email_sanitize;
+
+		$response = $this->llar_api_response( $check_combo );
+
+		// If $user_login is not empty, we will also check $user_email
+		if ( ! empty( $user_login_sanitize ) && $response['result'] !== 'deny' ) {
+
+			if ( empty( $user_email ) || ! is_email( $user_email ) ) {
+				return;
+			}
+
+			$response = $this->llar_api_response( $user_email_sanitize );
+		}
+
+		if ( $response['result'] === 'deny' ) {
+
+			// Set variables to empty to prevent Wordpress from accessing the database
+			$_POST['user_login'] = '';
+			$_POST['user_email'] = '';
+
+			// Set the marker and the error
+			$this->user_blocking = true;
+			$this->error_messages = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+		}
+	}
+
+
+	/**
+	 * Correcting errors in the presence of a registration prohibition marker
+	 * @param $errors
+	 * @param $sanitized_user_login
+	 * @param $user_email
+	 *
+	 * @return mixed
+	 */
+	public function llar_submit_registration_errors( $errors, $sanitized_user_login, $user_email )
+	{
+		// Checking the marker and the presence of empty variables
+		if ( $this->user_blocking && ( empty( $sanitized_user_login ) && empty( $user_email ) ) ) {
+			$errors->remove('empty_username');
+			$errors->remove('empty_email');
+			$errors->add( 'user_blocking', $this->error_messages );
+		}
+
+		return $errors;
+	}
 }
+
