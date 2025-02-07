@@ -257,6 +257,10 @@
       display: table-row;
     }
   }
+
+  input[type="checkbox"] {
+    @extend .llar_input_checkbox;
+  }
 }
 
 #llar-setting-page {
@@ -729,6 +733,9 @@
         }
       }
     }
+  }
+  input[type="checkbox"] {
+    @extend .llar_input_checkbox;
   }
 }
 

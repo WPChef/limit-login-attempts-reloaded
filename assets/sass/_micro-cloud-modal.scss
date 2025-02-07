@@ -1,5 +1,4 @@
 .toplevel_page_limit-login-attempts {
-  font-family: $font-primary, $font-secondary;
 
   .jconfirm {
 
@@ -69,6 +68,7 @@
       .popup_error_content {
 
         &__content {
+          font-family: $font-primary, $font-secondary;
           padding: 15px;
           border-radius: $border-radius__normal;
           background-color: $background-body;
@@ -101,11 +101,16 @@
       .micro_cloud_modal {
 
         &__content {
+          font-family: $font-primary, $font-secondary;
           padding: 15px;
           border-radius: $border-radius__normal;
           background: url("./images/micro-cloud-bg.webp") no-repeat center top;
           background-size: 100%;
           background-color: $background-body;
+
+          input[type="checkbox"] {
+            @extend .llar_input_checkbox;
+          }
         }
 
         &__body {
