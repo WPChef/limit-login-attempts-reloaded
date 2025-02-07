@@ -158,7 +158,7 @@ class LimitLoginAttempts
 		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
 		add_action( 'login_form_lostpassword', array( $this, 'llar_lostpassword_post_hook' ), 10 );
 		add_filter( 'lostpassword_errors', array( $this, 'llar_submit_lostpassword_errors' ), 10, 2 );
-		add_action( 'lostpassword_post', array( $this, 'llar_woo_lostpassword_post_hook' ), 10, 2 );
+		add_action( 'lostpassword_post', array( $this, 'llar_lostpassword_post_replace_error_message_hook' ), 10, 2 );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -2533,7 +2533,7 @@ class LimitLoginAttempts
 	 * @param $errors
 	 * @param $user_data
 	 */
-	public function llar_woo_lostpassword_post_hook( $errors, $user_data )
+	public function llar_lostpassword_post_replace_error_message_hook( $errors, $user_data )
 	{
 		if ( ! $user_data ) {
 			$this->error_messages = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
