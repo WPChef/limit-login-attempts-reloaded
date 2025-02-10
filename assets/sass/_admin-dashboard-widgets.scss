@@ -98,13 +98,11 @@
       }
     }
 
-    .chart {
-      max-width: 300px;
+    .llar-chart {
       position: relative;
+      max-width: 300px;
+      height: auto;
       margin: 15px auto;
-      //margin-bottom: 15px;
-      //margin-left: auto;
-      //margin-right: auto;
 
       .doughnut-chart-wrap {
         position: relative;
