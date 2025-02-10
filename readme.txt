@@ -1,11 +1,11 @@
-=== Limit Login Attempts Reloaded ===
+=== Limit Login Attempts Reloaded - Login Security, Brute Force Protection, Firewall ===
 Contributors: wpchefgadget
 Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
-Tags: brute force, login, security, firewall, protection
+Tags: brute force, login security, security, firewall, spam
 License: GPLv2 or later
 Requires at least: 3.0
 Tested up to: 6.7
-Stable tag: 2.26.16
+Stable tag: 2.26.18
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -29,6 +29,7 @@ https://www.youtube.com/watch?v=JfkvIiQft14
 * **Lockout Email Notifications** - Informs the admin via email of lockouts. 
 * **Denied Attempt Logs** - View a log of all denied attempts and lockouts. 
 * **IP & Username Safelist/Denylist** - Control access to usernames and IPs. 
+* **New User Registration Protection (Micro Cloud Accounts)** - Protects default WP registration. 
 * **Sucuri** compatibility.
 * **Wordfence** compatibility.
 * **Ultimate Member** compatibility.
@@ -46,6 +47,7 @@ https://www.youtube.com/watch?v=JfkvIiQft14
 * **Enhanced Throttling** - Longer lockout intervals each time a malicious IP or username tries to login unsuccessfully.
 * **Deny By Country** - <a href="https://www.limitloginattempts.com/block-logins-by-country-in-wordpress/">Block logins by country</a> by simply selecting the countries you want to deny.
 * **Auto IP Denylist** - Automatically add IP addresses to your active cloud deny list that repeatedly fail login attempts. 
+* **New User Registration Protection** - Protects default WP registration. 
 * **Global Denylist Protection** - Utilize our active cloud IP data from thousands of websites in the LLAR network. 
 * **Synchronized Lockouts** -  Lockout IP data can be shared between multiple domains for enhanced protection in your network.
 * **Synchronized Safelist/Denylist** - Safelist/Denylist IP and username data can be shared between multiple domains.
@@ -62,8 +64,8 @@ https://www.youtube.com/watch?v=JfkvIiQft14
 
 = Upgrading from the old Limit Login Attempts plugin? =
 1. Go to the Plugins section in your site's backend.
-1. Remove the Limit Login Attempts plugin.
-1. Install the Limit Login Attempts Reloaded plugin.
+2. Remove the Limit Login Attempts plugin.
+3. Install the Limit Login Attempts Reloaded plugin.
 
 All your settings will be kept intact!
 
@@ -87,7 +89,12 @@ Limit Login Attempts Reloaded™ is a trademark of Atlantic Silicon Inc. When wr
 
 1. Login screen after a failed login with remaining retries
 2. Lockout login screen
-3. Administration interface in WordPress 5.2.1
+3. LLAR Dashboard
+4. Plugin App Settings
+5. Plugin General Settings
+6. Login Firewall & Login Access Rules
+7. Debug
+8. Support
 
 == Frequently Asked Questions ==
 
@@ -138,6 +145,12 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 2.26.18 =
+* Better displaying IPv6 in the log.
+
+= 2.26.17 =
+* Added default registration protection for cloud accounts (free and paid).
 
 = 2.26.16 =
 * Fixed GDPR message issue for some themes.
