@@ -1782,6 +1782,14 @@
           }
         }
 
+        &:hover .hint_tooltip {
+          display: none;
+
+          @include _767 {
+            display: block;
+          }
+        }
+
         .hint_tooltip {
           top: 30px !important;
         }

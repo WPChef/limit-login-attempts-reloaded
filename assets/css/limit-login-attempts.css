@@ -1816,6 +1816,14 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
     max-width: 14ch;
   }
 }
+.llar-table-app-login tbody.login-attempts tr .cell-id:hover .hint_tooltip, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr .cell-id:hover .hint_tooltip, .llar-table-no_app-login tbody.login-attempts tr .cell-id:hover .hint_tooltip {
+  display: none;
+}
+@media screen and (max-width: 767.5px) {
+  .llar-table-app-login tbody.login-attempts tr .cell-id:hover .hint_tooltip, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr .cell-id:hover .hint_tooltip, .llar-table-no_app-login tbody.login-attempts tr .cell-id:hover .hint_tooltip {
+    display: block;
+  }
+}
 .llar-table-app-login tbody.login-attempts tr .cell-id .hint_tooltip, #llar-setting-page-logs__active .llar-table-scroll-wrap tbody.login-attempts tr .cell-id .hint_tooltip, .llar-table-no_app-login tbody.login-attempts tr .cell-id .hint_tooltip {
   top: 30px !important;
 }
@@ -2985,6 +2993,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .dashboard-section-4 .hint_tooltip-parent {
   display: inline-block;
   position: relative;
+}
+#llar-dashboard-page .dashboard-section-4 .hint_tooltip-parent:hover .hint_tooltip {
+  display: block;
 }
 #llar-dashboard-page .dashboard-section-4 .hint_tooltip-parent span {
   color: #FF7C06;
