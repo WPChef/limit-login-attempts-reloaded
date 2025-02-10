@@ -2595,9 +2595,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-bottom: 16px;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .llar-chart {
+  position: relative;
   max-width: 300px;
   height: auto;
-  position: relative;
   margin-bottom: 15px;
   margin-left: auto;
   margin-right: auto;
@@ -3196,9 +3196,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   }
 }
 #llar-admin-dashboard-widgets .llar-widget .llar-chart {
+  position: relative;
   max-width: 300px;
   height: auto;
-  position: relative;
   margin: 15px auto;
 }
 #llar-admin-dashboard-widgets .llar-widget .llar-chart .doughnut-chart-wrap {
