@@ -433,9 +433,7 @@ class Helpers {
 
 		// Retrieve server IP information
 		$ip_info = array(
-			'SERVER_ADDR' => $_SERVER['SERVER_ADDR'] ?? 'Unknown',
-			'HTTP_CF_CONNECTING_IP' => $_SERVER['HTTP_CF_CONNECTING_IP'] ?? 'Not set',
-			'HTTP_X_FORWARDED_FOR' => $_SERVER['HTTP_X_FORWARDED_FOR'] ?? 'Not set'
+			'SERVER_ADDR' => $_SERVER['SERVER_ADDR'] ?? 'Unknown'
 		);
 
 		// Format the debug information
