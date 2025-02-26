@@ -403,4 +403,62 @@ class Helpers {
 	public static function wp_locale() {
 		return str_replace( '_', '-', get_locale() );
 	}
+	
+	/**
+	 * Retrieves debug information for the Debug tab
+	 *
+	 * @return string
+	 */
+	public static function get_debug_info() {
+		global $wp_version;
+
+		// Get the plugin version
+		$plugin_data = get_file_data(LLA_PLUGIN_FILE, array('Version' => 'Version'));
+		$plugin_version = isset($plugin_data['Version']) ? $plugin_data['Version'] : 'Unknown';
+
+		// Check if the site is multisite
+		$is_multisite = is_multisite() ? 'yes' : 'no';
+
+		// Get the list of active plugins
+		$active_plugins = get_option('active_plugins', array());
+		$plugin_list = array();
+		foreach ($active_plugins as $plugin) {
+			$plugin_info = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin);
+			$plugin_list[] = isset($plugin_info['Name']) ? $plugin_info['Name'] : $plugin;
+		}
+
+		// Get the currently active theme
+		$theme = wp_get_theme();
+		$active_theme = $theme->get('Name');
+
+		// Retrieve server IP information
+		$ip_info = array(
+			'SERVER_ADDR' => $_SERVER['SERVER_ADDR'] ?? 'Unknown',
+			'HTTP_CF_CONNECTING_IP' => $_SERVER['HTTP_CF_CONNECTING_IP'] ?? 'Not set',
+			'HTTP_X_FORWARDED_FOR' => $_SERVER['HTTP_X_FORWARDED_FOR'] ?? 'Not set'
+		);
+
+		// Format the debug information
+		$debug_info = "=== " . __('Debug Info', 'limit-login-attempts-reloaded') . " ===\n\n";
+
+		$debug_info .= "" . __('IPs', 'limit-login-attempts-reloaded') . ":\n";
+		foreach ($ip_info as $key => $value) {
+			$debug_info .= "$key = $value\n";
+		}
+
+		$debug_info .= "\n" . __('Plugin Version', 'limit-login-attempts-reloaded') . ": $plugin_version\n";
+		$debug_info .= __('WordPress Version', 'limit-login-attempts-reloaded') . ": $wp_version\n";
+		$debug_info .= __('Is Multisite', 'limit-login-attempts-reloaded') . ": $is_multisite\n\n";
+
+		$debug_info .= "" . __('Active Plugins', 'limit-login-attempts-reloaded') . ":\n";
+		foreach ($plugin_list as $plugin_name) {
+			$debug_info .= "$plugin_name\n";
+		}
+
+		$debug_info .= "\n" . __('Active Theme', 'limit-login-attempts-reloaded') . ":\n$active_theme\n";
+
+		return $debug_info;
+	}
+		
+	
 }

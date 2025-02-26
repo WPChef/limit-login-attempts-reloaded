@@ -26,7 +26,7 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
                 <td>
                     <div class="textarea_border">
                         <textarea cols="70" rows="10" onclick="this.select()"
-                                  readonly><?php echo esc_textarea(\LLAR\Core\LimitLoginAttempts::get_debug_info()); ?></textarea>
+                                  readonly><?php echo esc_textarea(\LLAR\Core\Helpers::get_debug_info()); ?></textarea>
                     </div>
                     <div class="description-secondary">
 						<?php _e( 'Copy the contents of the window and provide to support.', 'limit-login-attempts-reloaded' ); ?>
