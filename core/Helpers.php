@@ -431,10 +431,42 @@ class Helpers {
 		$theme = wp_get_theme();
 		$active_theme = $theme->get('Name');
 
+		// Collecting IP addresses from the server variables
+		$ips = $server = array();
+
+		foreach ($_SERVER as $key => $value) {
+			// Skip 'SERVER_ADDR' and array values
+			if (in_array($key, array('SERVER_ADDR')) || is_array($value)) {
+				continue;
+			}
+
+			// Split multiple IPs and trim spaces
+			$ips_for_check = array_map('trim', explode(',', $value));
+			foreach ($ips_for_check as $ip) {
+				if (Helpers::is_ip_valid($ip)) {
+					// Store unique IPs
+					if (!in_array($ip, $ips)) {
+						$ips[] = $ip;
+					}
+
+					// Initialize key if not set
+					if (!isset($server[$key])) {
+						$server[$key] = '';
+					}
+
+					// Assign IP to the key
+					if (in_array($ip, array('127.0.0.1', '0.0.0.0'))) {
+						$server[$key] = $ip;
+					} else {
+						$server[$key] .= 'IP' . array_search($ip, $ips) . ',';
+					}
+				}
+			}
+		}
+
 		// Retrieve server IP information
-		$ip_info = array(
-			'SERVER_ADDR' => $_SERVER['SERVER_ADDR'] ?? 'Unknown'
-		);
+
+		$ip_info = array_merge($ip_info, $server);
 
 		// Format the debug information
 		$debug_info = "=== " . __('Debug Info', 'limit-login-attempts-reloaded') . " ===\n\n";
