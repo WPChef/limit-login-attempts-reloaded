@@ -156,7 +156,8 @@ class LimitLoginAttempts
 
 		add_action( 'login_form_register', array( $this, 'llar_submit_login_form_register' ), 10 );
 		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
-
+		
+		add_filter( 'admin_init', array( $this, 'save_mfa_settings' ) );
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
 
@@ -831,6 +832,11 @@ class LimitLoginAttempts
 				'id'    => 'logs-local',
 				'name'  => __( 'Logs', 'limit-login-attempts-reloaded' ),
 				'url'   => '&tab=logs-local'
+			),
+			array(
+				'id'    => 'mfa',
+				'name'  => __( 'MFA', 'limit-login-attempts-reloaded' ),
+				'url'   => '&tab=2fa'
 			),
 			array(
 				'id'    => 'debug',
@@ -2465,5 +2471,35 @@ class LimitLoginAttempts
 
 		return $errors;
 	}
+
+	/**
+	 * Save mfa settings
+	 *
+	 */	 
+	public function save_mfa_settings() {
+		if (!isset($_POST['llar_mfa_nonce']) || !wp_verify_nonce($_POST['llar_mfa_nonce'], 'llar_save_mfa_settings')) {
+			return;
+		}
+
+		if (!current_user_can('manage_options')) {
+			return;
+		}
+
+		$new_mfa_settings = $_POST['llar_mfa_roles'] ?? [];
+
+		// get current config
+		$app_config = get_option('limit_login_app_config', []);
+
+		// write new settings
+		$app_config['mfa_roles'] = $new_mfa_settings;
+
+		// resave
+		update_option('limit_login_app_config', $app_config);
+
+		// redirect and message save
+		wp_redirect(add_query_arg('mfa_saved', 'true', $_SERVER['REQUEST_URI']));
+		exit();
+	}
+	
 }
 
