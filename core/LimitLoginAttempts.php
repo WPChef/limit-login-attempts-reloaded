@@ -2473,9 +2473,8 @@ class LimitLoginAttempts
 	}
 
 	/**
-	 * Save mfa settings
-	 *
-	 */	 
+	 * Save MFA settings
+	 */
 	public function save_mfa_settings() {
 		if (!isset($_POST['llar_mfa_nonce']) || !wp_verify_nonce($_POST['llar_mfa_nonce'], 'llar_save_mfa_settings')) {
 			return;
@@ -2485,21 +2484,22 @@ class LimitLoginAttempts
 			return;
 		}
 
-		$new_mfa_settings = $_POST['llar_mfa_roles'] ?? [];
+		// Sanitize and retrieve submitted data
+		$new_mfa_settings = isset($_POST['llar_mfa_roles']) && is_array($_POST['llar_mfa_roles']) ? array_map('sanitize_text_field', $_POST['llar_mfa_roles']) : array();
 
-		// get current config
-		$app_config = get_option('limit_login_app_config', []);
+		// Get current config
+		$app_config = get_option('limit_login_app_config', array());
 
-		// write new settings
+		// Write new settings
 		$app_config['mfa_roles'] = $new_mfa_settings;
 
-		// resave
+		// Save updated config
 		update_option('limit_login_app_config', $app_config);
 
-		// redirect and message save
-		wp_redirect(add_query_arg('mfa_saved', 'true', $_SERVER['REQUEST_URI']));
-		exit();
+		// Redirect with success message
+		wp_redirect(esc_url_raw(add_query_arg('mfa_saved', 'true', $_SERVER['REQUEST_URI'])));
+		exit;
 	}
-	
+		
 }
 
