@@ -464,15 +464,11 @@ class Helpers {
 			}
 		}
 
-		// Retrieve server IP information
-
-		$ip_info = array_merge($ip_info, $server);
-
 		// Format the debug information
 		$debug_info = "=== " . __('Debug Info', 'limit-login-attempts-reloaded') . " ===\n\n";
 
 		$debug_info .= "" . __('IPs', 'limit-login-attempts-reloaded') . ":\n";
-		foreach ($ip_info as $key => $value) {
+		foreach ($server as $key => $value) {
 			$debug_info .= "$key = $value\n";
 		}
 
