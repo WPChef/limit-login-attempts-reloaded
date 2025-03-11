@@ -117,6 +117,8 @@ class LimitLoginAttempts
 
 		( new Shortcodes() )->register();
 		( new Ajax() )->register();
+		require_once plugin_dir_path(__FILE__) . 'MFA.php';
+		( new Limit_Login_Attempts_MFA() )->register();
 	}
 
 	/**
@@ -836,7 +838,7 @@ class LimitLoginAttempts
 			array(
 				'id'    => 'mfa',
 				'name'  => __( 'MFA', 'limit-login-attempts-reloaded' ),
-				'url'   => '&tab=2fa'
+				'url'   => '&tab=mfa'
 			),
 			array(
 				'id'    => 'debug',

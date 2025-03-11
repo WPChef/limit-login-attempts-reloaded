@@ -1,76 +1,199 @@
 <?php
 
-class Limit_Login_MFA {
-    private $allowed_roles;
+namespace LLAR\Core;
 
-    public function __construct() {
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class Limit_Login_Attempts_MFA {
+    private static $instance;
+    private $allowed_roles = array();
+
+    public static function init() {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    public function register() {
         $this->load_config();
-        add_action('wp_ajax_lar_send_otp', array($this, 'send_otp'));
-        add_action('wp_ajax_nopriv_lar_send_otp', array($this, 'send_otp'));
-        add_action('wp_ajax_lar_verify_otp', array($this, 'verify_otp'));
-        add_action('wp_ajax_nopriv_lar_verify_otp', array($this, 'verify_otp'));
+        add_action('login_form', [$this, 'add_2fa_scripts'], 99);
+        add_action('wp_ajax_check_mfa_role', [$this, 'check_mfa_role']);
+        add_action('wp_ajax_nopriv_check_mfa_role', [$this, 'check_mfa_role']);
+        add_action('wp_ajax_send_2fa_code', [$this, 'send_2fa_code']);
+        add_action('wp_ajax_nopriv_send_2fa_code', [$this, 'send_2fa_code']);
+        add_action('wp_ajax_verify_2fa_code', [$this, 'verify_2fa_code']);
+        add_action('wp_ajax_nopriv_verify_2fa_code', [$this, 'verify_2fa_code']);
     }
 
     private function load_config() {
         $app_config_json = get_option('limit_login_app_config', '{}');
+
+        if (!is_string($app_config_json)) {
+            $app_config_json = json_encode($app_config_json);
+        }
+
         $app_config = json_decode($app_config_json, true);
-        $this->allowed_roles = isset($app_config['mfa_roles']) ? $app_config['mfa_roles'] : array();
-    }
+        if (!is_array($app_config)) {
+            $app_config = [];
+        }
 
-    public function handle_login($username, $password) {
-        $user = get_user_by('login', sanitize_user($username));
-        if ($user && wp_check_password($password, $user->user_pass, $user->ID)) {
-            $requires_mfa = array_intersect($this->allowed_roles, $user->roles);
-            if (!empty($requires_mfa)) {
-                set_transient('pending_user_' . $user->ID, $user->ID, 300);
-                wp_send_json_success(array('status' => 'send_otp'));
-            } else {
-                wp_set_auth_cookie($user->ID);
-                wp_send_json_success(array('status' => 'success'));
+        $this->allowed_roles = [];
+        if (!empty($app_config['mfa_roles']) && is_array($app_config['mfa_roles'])) {
+            foreach ($app_config['mfa_roles'] as $role => $status) {
+                if ($status !== 'off') {
+                    $this->allowed_roles[$role] = true;
+                }
             }
-        } else {
-            wp_send_json_error(array('status' => 'error', 'message' => 'Invalid credentials'));
         }
-        exit;
     }
 
-    public function send_otp() {
-        if (!isset($_POST['user_id'])) {
-            wp_send_json_error(array('status' => 'error', 'message' => 'User ID missing'));
+    public function check_mfa_role() {
+        $username = isset($_POST['username']) ? sanitize_text_field($_POST['username']) : '';
+
+        if (!$username) {
+            wp_send_json_error(['message' => __('Username is required.', 'limit-login-attempts-reloaded')]);
         }
-        $user_id = intval($_POST['user_id']);
-        $user = get_userdata($user_id);
+
+        $user = get_user_by('login', $username);
         if (!$user) {
-            wp_send_json_error(array('status' => 'error', 'message' => 'User not found'));
+            wp_send_json_error(['message' => __('User not found.', 'limit-login-attempts-reloaded')]);
         }
-        $otp = wp_rand(100000, 999999);
-        set_transient('otp_' . $user_id, $otp, 300);
-        wp_mail($user->user_email, 'Your OTP Code', 'Your OTP: ' . $otp);
-        wp_send_json_success(array('status' => 'otp_sent'));
-        exit;
+
+        $user_roles = array_flip($user->roles);
+        if (!array_intersect_key($this->allowed_roles, $user_roles)) {
+            wp_send_json_success(['requires_mfa' => false]);
+        } else {
+            session_start();
+            $_SESSION['mfa_user_id'] = $user->ID;
+            wp_send_json_success(['requires_mfa' => true]);
+        }
     }
 
-    public function verify_otp() {
-        if (!isset($_POST['user_id']) || !isset($_POST['otp'])) {
-            wp_send_json_error(array('status' => 'error', 'message' => 'Missing data'));
+    public function send_2fa_code() {
+        session_start();
+        if (!isset($_SESSION['mfa_user_id'])) {
+            wp_send_json_error(['message' => __('Session expired, please log in again.', 'limit-login-attempts-reloaded')]);
         }
-        $user_id = intval($_POST['user_id']);
-        $otp = sanitize_text_field($_POST['otp']);
-        $stored_otp = get_transient('otp_' . $user_id);
-        
-        if (!$stored_otp) {
-            wp_send_json_error(array('status' => 'error', 'message' => 'OTP expired, please request a new one'));
+
+        $user_id = $_SESSION['mfa_user_id'];
+        $user = get_user_by('ID', $user_id);
+        if (!$user) {
+            wp_send_json_error(['message' => __('User not found.', 'limit-login-attempts-reloaded')]);
         }
-        
-        if ($stored_otp == $otp) {
-            wp_set_auth_cookie($user_id);
-            delete_transient('otp_' . $user_id);
-            wp_send_json_success(array('status' => 'success'));
-        } else {
-            wp_send_json_error(array('status' => 'error', 'message' => 'Invalid OTP'));
+
+        if (get_transient("mfa_email_sent_$user_id")) {
+            wp_send_json_error(['message' => __('2FA code was already sent. Please check your email.', 'limit-login-attempts-reloaded')]);
         }
-        exit;
+
+        // Generate a 6-digit numeric OTP code
+        $otp_code = rand(100000, 999999);
+        set_transient("mfa_otp_$user_id", $otp_code, 5 * MINUTE_IN_SECONDS);
+        set_transient("mfa_email_sent_$user_id", true, 5 * MINUTE_IN_SECONDS);
+
+        wp_mail($user->user_email, __('Your 2FA Code', 'limit-login-attempts-reloaded'), sprintf(__('Your verification code: %s', 'limit-login-attempts-reloaded'), $otp_code));
+
+        wp_send_json_success(['message' => __('2FA code sent to your email.', 'limit-login-attempts-reloaded')]);
+    }
+
+    public function verify_2fa_code() {
+        if (!session_id()) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['mfa_user_id'])) {
+            wp_send_json_error(['message' => __('Session expired, please log in again.', 'limit-login-attempts-reloaded')]);
+        }
+
+        $user_id = $_SESSION['mfa_user_id'];
+        $saved_code = get_transient("mfa_otp_$user_id");
+
+        if (!$saved_code || empty($_POST['mfa_code']) || $_POST['mfa_code'] !== $saved_code) {
+            wp_send_json_error(['message' => __('Incorrect or expired 2FA code.', 'limit-login-attempts-reloaded')]);
+        }
+
+        delete_transient("mfa_otp_$user_id");
+        unset($_SESSION['mfa_user_id']);
+
+        wp_set_auth_cookie($user_id, true);
+        wp_set_current_user($user_id);
+        do_action('wp_login', get_userdata($user_id)->user_login, get_userdata($user_id));
+
+        wp_send_json_success(['message' => __('Verification successful! Redirecting...', 'limit-login-attempts-reloaded'), 'redirect' => admin_url()]);
+    }
+
+    public function add_2fa_scripts() {
+        ?>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+        jQuery(document).ready(function($) {
+            let form = $("#loginform");
+
+            form.on("submit", function(e) {
+                let username = $("#user_login").val();
+                if (!username) return;
+
+                e.preventDefault();
+
+                $.post('<?php echo admin_url('admin-ajax.php'); ?>', {
+                    action: "check_mfa_role",
+                    username: username
+                }, function(response) {
+                    if (!response.success) {
+                        alert(response.data.message);
+                        return;
+                    }
+
+                    if (!response.data.requires_mfa) {
+                        form.off("submit").submit();
+                        return;
+                    }
+
+                    $("#mfa-actions").show();
+                    $("#send-2fa-code").click();
+                });
+            });
+
+            $("#send-2fa-code").click(function() {
+                $.post('<?php echo admin_url('admin-ajax.php'); ?>', { action: "send_2fa_code" }, function(response) {
+                    $("#mfa-message").text(response.data.message);
+                    if (response.success) {
+                        $("#send-2fa-code").hide();
+                        $("#mfa-code, #verify-2fa-code").show();
+                    }
+                });
+            });
+
+            $('#verify-2fa-code').click(function() {
+                let mfa_code = $('#mfa-code').val();
+                if (!mfa_code) {
+                    $('#mfa-message').text('<?php echo __('Enter the 2FA code.', 'limit-login-attempts-reloaded'); ?>');
+                    return;
+                }
+
+                $.post('<?php echo admin_url('admin-ajax.php'); ?>', {
+                    action: 'verify_2fa_code',
+                    mfa_code: mfa_code
+                }, function(response) {
+                    $('#mfa-message').text(response.data.message);
+                    if (response.success) {
+                        window.location.href = response.data.redirect;
+                    }
+                });
+            });
+        });
+        </script>
+
+        <p id="mfa-actions" style="display:none;">
+            <button type="button" id="send-2fa-code" class="button button-primary"><?php echo __('Send Code', 'limit-login-attempts-reloaded'); ?></button>
+            <input type="text" id="mfa-code" class="input" placeholder="<?php echo __('Enter 2FA code', 'limit-login-attempts-reloaded'); ?>" style="display:none;">
+            <button type="button" id="verify-2fa-code" class="button button-primary" style="display:none;"><?php echo __('Verify', 'limit-login-attempts-reloaded'); ?></button>
+            <span id="mfa-message"></span>
+        </p>
+        <?php
     }
 }
 
-new Limit_Login_MFA();
+Limit_Login_Attempts_MFA::init()->register();
