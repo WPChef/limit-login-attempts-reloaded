@@ -50,7 +50,7 @@ class Limit_Login_Attempts_MFA {
 	 * Clears MFA session data upon user logout.
 	 *
 	 * This function checks if an MFA session exists and removes associated transients 
-	 * (2FA code and email status) when a user logs out of the WordPress site.
+	 * (mfa code and email status) when a user logs out of the WordPress site.
 	 *
 	 * @return void
 	 */
@@ -77,7 +77,7 @@ class Limit_Login_Attempts_MFA {
 	 * Registers plugin actions and loads configuration settings.
 	 *
 	 * This function sets up various WordPress hooks to handle:
-	 * - Adding 2FA scripts to the login form.
+	 * - Adding mfa scripts to the login form.
 	 * - Handling AJAX requests for MFA verification.
 	 * - Clearing MFA data upon logout.
 	 * 
@@ -87,20 +87,20 @@ class Limit_Login_Attempts_MFA {
 		// Load configuration settings for allowed MFA roles.
 		$this->_load_config();
 		
-		// Add 2FA scripts to the WordPress login form.
+		// Add mfa scripts to the WordPress login form.
 		add_action('login_form', array($this, 'print_mfa_html'), 99);
 
 		// Register AJAX handlers for checking user role and triggering MFA.
 		add_action('wp_ajax_check_mfa_role', array($this, 'check_mfa_role'));
 		add_action('wp_ajax_nopriv_check_mfa_role', array($this, 'check_mfa_role'));
-		add_action('wp_ajax_send_2fa_code', array($this, 'send_2fa_code'));
-		add_action('wp_ajax_nopriv_send_2fa_code', array($this, 'send_2fa_code'));
-		add_action('wp_ajax_verify_2fa_code', array($this, 'verify_2fa_code'));
-		add_action('wp_ajax_nopriv_verify_2fa_code', array($this, 'verify_2fa_code'));
+		add_action('wp_ajax_send_mfa_code', array($this, 'send_mfa_code'));
+		add_action('wp_ajax_nopriv_send_mfa_code', array($this, 'send_mfa_code'));
+		add_action('wp_ajax_verify_mfa_code', array($this, 'verify_mfa_code'));
+		add_action('wp_ajax_nopriv_verify_mfa_code', array($this, 'verify_mfa_code'));
 
 		// Clear MFA session data when a user logs out.
 		add_action('wp_logout', array($this, 'logout_clear_mfa_data'));
-		add_action('login_enqueue_scripts', array($this, 'add_2fa_scripts'));
+		add_action('login_enqueue_scripts', array($this, 'add_mfa_scripts'));
 	}
 
 	/**
@@ -151,7 +151,7 @@ class Limit_Login_Attempts_MFA {
      */
     public function check_mfa_role() {
 		$nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
-		if (empty($nonce) || wp_verify_nonce($nonce, 'llar_mfa_nonce') === false) {
+		if (empty($nonce) && wp_verify_nonce($nonce, 'llar_mfa_nonce') === false) {
 			wp_send_json_error(array('message' => __('Nonce verification failed.', 'limit-login-attempts-reloaded')));
 		}
 
@@ -185,9 +185,9 @@ class Limit_Login_Attempts_MFA {
 
         // Check API whitelist
         if (class_exists('\LLAR\Core\CloudApp') === false && isset(LimitLoginAttempts::$cloud_app) === true) {
-            $cloudApp = LimitLoginAttempts::$cloud_app;
-            if (method_exists($cloudApp, 'request') === true) {
-                $api_whitelist_usernames = $cloudApp->request('acl', 'get', array('type' => 'whitelist'));
+            $cloud_app = LimitLoginAttempts::$cloud_app;
+            if (method_exists($cloud_app, 'request') === true) {
+                $api_whitelist_usernames = $cloud_app->request('acl', 'get', array('type' => 'whitelist'));
                 if (is_array($api_whitelist_usernames['items']) === true && empty($api_whitelist_usernames['items']) === false) {
                     foreach ($api_whitelist_usernames['items'] as $rule) {
                         if ($username === $rule['pattern'] && $rule['rule'] === 'allow') {
@@ -222,8 +222,9 @@ class Limit_Login_Attempts_MFA {
 	 * 
 	 * @return void
 	 */
-	public function send_2fa_code() {
-		if (array_key_exists('nonce', $_POST) === false || wp_verify_nonce(wp_unslash($_POST['nonce']), 'llar_mfa_nonce') === false) {
+	public function send_mfa_code() {
+
+		if (array_key_exists('nonce', $_POST) === false && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) ) === false) {
 			wp_send_json_error(array('message' => __('Nonce verification failed.', 'limit-login-attempts-reloaded')));
 		}
 		// Start a session if one hasn't already been started.
@@ -258,7 +259,7 @@ class Limit_Login_Attempts_MFA {
 
 		// Check if an OTP has already been sent recently.
 		if (get_transient('mfa_email_sent_' . $user_id) !== false) {
-			wp_send_json_error(array('message' => __('2FA code was already sent. Please check your email.', 'limit-login-attempts-reloaded')));
+			wp_send_json_error(array('message' => __('mfa code was already sent. Please check your email.', 'limit-login-attempts-reloaded')));
 		}
 
 		// Generate a new OTP code and store it in a transient for verification.
@@ -267,12 +268,13 @@ class Limit_Login_Attempts_MFA {
 		set_transient('mfa_email_sent_' . $user_id, true, (5 * MINUTE_IN_SECONDS));
 
 		// Send the OTP code to the user's registered email address.
-		$subject = __('Your 2FA Code', 'limit-login-attempts-reloaded');
+		$subject = __('Your mfa Code', 'limit-login-attempts-reloaded');
+		// Translators: %s is the OTP code sent to the user.
 		$message = sprintf(__('Your verification code: %s', 'limit-login-attempts-reloaded'), $otp_code);
 		wp_mail($user->user_email, $subject, $message);
 
 		// Respond with a success message.
-		wp_send_json_success(array('message' => __('2FA code sent to your email.', 'limit-login-attempts-reloaded')));
+		wp_send_json_success(array('message' => __('mfa code sent to your email.', 'limit-login-attempts-reloaded')));
 	}
 
 	/**
@@ -283,8 +285,8 @@ class Limit_Login_Attempts_MFA {
 	 *
 	 * @return void
 	 */
-	public function verify_2fa_code() {
-		if (array_key_exists('nonce', $_POST) === false || wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'llar_mfa_nonce') === false) {
+	public function verify_mfa_code() {
+		if (array_key_exists('nonce', $_POST) === false && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'llar_mfa_nonce') === false) {
 			wp_send_json_error(array('message' => __('Nonce verification failed.', 'limit-login-attempts-reloaded')));
 		}
 		// Start the session if it's not already started.
@@ -339,21 +341,21 @@ class Limit_Login_Attempts_MFA {
 		$blacklisted_ip        = get_option('limit_login_blacklisted_ips', '');
 		$blacklisted_usernames = get_option('limit_login_blacklisted_usernames', '');
 
-		if (empty($blacklistedIp) === false && strpos($blacklistedIp, $ip) !== false) {
+		if (empty($blacklisted_ip) === false && strpos($blacklisted_ip, $ip) !== false) {
 			wp_send_json_error(array( 'message' => __('Your IP is blacklisted.', 'limit-login-attempts-reloaded') ));
 		}
 
-		if (empty($blacklistedUsernames) === false && strpos($blacklistedUsernames, $username) !== false) {
+		if (empty($blacklisted_usernames) === false && strpos($blacklisted_usernames, $username) !== false) {
 			wp_send_json_error(array( 'message' => __('This username is blacklisted.', 'limit-login-attempts-reloaded') ));
 		}
 
 		if (class_exists('\LLAR\Core\CloudApp') === true && isset(\LLAR\Core\LimitLoginAttempts::$cloud_app) === true) {
-			$cloudApp = \LLAR\Core\LimitLoginAttempts::$cloud_app;
+			$cloud_app = \LLAR\Core\LimitLoginAttempts::$cloud_app;
 
-			if (method_exists($cloudApp, 'request') === true) {
+			if (method_exists($cloud_app, 'request') === true) {
 				// Check IP blacklist via API
-				$api_blacklist_ip = $cloudApp->request('acl', 'get', array( 'type' => 'ip' ));
-				if (!empty($apiBlacklistIp['items']) === true) {
+				$api_blacklist_ip = $cloud_app->request('acl', 'get', array( 'type' => 'ip' ));
+				if (!empty($api_blacklist_ip['items']) === true) {
 					foreach ( $api_blacklist_ip['items'] as $rule ) {
 						if ($rule['pattern'] === $ip && $rule['rule'] === 'deny') {
 							wp_send_json_error(array( 'message' => __('Your IP is blacklisted.', 'limit-login-attempts-reloaded') ));
@@ -362,7 +364,7 @@ class Limit_Login_Attempts_MFA {
 				}
 
 				// Check Username blacklist via API
-				$api_blacklist_usernames = $cloudApp->request('acl', 'get', array( 'type' => 'login' ));
+				$api_blacklist_usernames = $cloud_app->request('acl', 'get', array( 'type' => 'login' ));
 				if (! empty($api_blacklist_usernames['items']) ) {
 					foreach ( $api_blacklist_usernames['items'] as $rule ) {
 						if ($rule['pattern'] === $username && $rule['rule'] === 'deny' ) {
@@ -401,7 +403,7 @@ class Limit_Login_Attempts_MFA {
 			update_user_meta($user_id, 'limit_login_failed_attempts', ($failed_attempts + 1));
 
 			if (function_exists('limit_login_failed_attempt')) {
-				// Record the failed attempt for 2FA verification.
+				// Record the failed attempt for mfa verification.
 				limit_login_failed_attempt($username, $ip);
 			}
 
@@ -412,7 +414,8 @@ class Limit_Login_Attempts_MFA {
 
 			// Calculate the remaining attempts allowed and return an error message.
 			$remaining_attempts = max(0, ($max_attempts - ($failed_attempts + 1)));
-			wp_send_json_error(array('message' => sprintf(__('Incorrect or expired 2FA code. Attempts left: %d', 'limit-login-attempts-reloaded'), $remaining_attempts)));
+			// Translators: %s 
+			wp_send_json_error(array('message' => sprintf(__('Incorrect or expired mfa code. Attempts left: %d', 'limit-login-attempts-reloaded'), $remaining_attempts)));
 		}
 
 		delete_user_meta($user_id, 'limit_login_failed_attempts'); 
@@ -440,21 +443,21 @@ class Limit_Login_Attempts_MFA {
 
 
 	/**
-	 * Enqueue 2FA-related scripts and localize data for use in JavaScript.
+	 * Enqueue mfa-related scripts and localize data for use in JavaScript.
 	 *
-	 * This function properly enqueues the script file for handling 2FA logic 
+	 * This function properly enqueues the script file for handling mfa logic 
 	 * and uses `wp_localize_script()` to pass necessary PHP data to JavaScript.
 	 * @return void
 	 */
-	public function add_2fa_scripts() {
+	public function add_mfa_scripts() {
 		if ('wp-login.php' !== $GLOBALS['pagenow']) {
 			return; 
 		}
 
 		// Register the JavaScript file.
 		wp_register_script(
-			'limit-login-attempts-2fa', 
-			plugin_dir_url(__FILE__) . '../assets/js/mfa.js', 
+			'limit-login-attempts-mfa', 
+			plugin_dir_url(__FILE__) . '../assets/js/llar-mfa.js', 
 			array('jquery'), 
 			'1.0', 
 			true 
@@ -462,7 +465,7 @@ class Limit_Login_Attempts_MFA {
 
 		// Localize script to pass PHP data to the JS file.
 		wp_localize_script(
-            'limit-login-attempts-2fa',
+            'limit-login-attempts-mfa',
             'llar_mfa_data',
             array(
                 'ajax_url'            => admin_url('admin-ajax.php'),
@@ -473,7 +476,7 @@ class Limit_Login_Attempts_MFA {
         );
 
 		// Enqueue the JavaScript file.
-		wp_enqueue_script('limit-login-attempts-2fa');
+		wp_enqueue_script('limit-login-attempts-mfa');
 
 		// Register and enqueue the CSS file.
 		wp_register_style(
@@ -495,9 +498,9 @@ class Limit_Login_Attempts_MFA {
 	public function print_mfa_html() {
 		$html = '
 			<p id="mfa-actions" style="display:none;">
-				<button type="button" id="send-2fa-code" class="button button-primary">' . esc_html__('Send Code', 'limit-login-attempts-reloaded') . '</button>
-				<input type="text" id="mfa-code" class="input" placeholder="' . esc_attr__('Enter 2FA code', 'limit-login-attempts-reloaded') . '" style="display:none;">
-				<button type="button" id="verify-2fa-code" class="button button-primary" style="display:none;">' . esc_html__('Verify', 'limit-login-attempts-reloaded') . '</button>
+				<button type="button" id="send-mfa-code" class="button button-primary">' . esc_html__('Send Code', 'limit-login-attempts-reloaded') . '</button>
+				<input type="text" id="mfa-code" class="input" placeholder="' . esc_attr__('Enter mfa code', 'limit-login-attempts-reloaded') . '" style="display:none;">
+				<button type="button" id="verify-mfa-code" class="button button-primary" style="display:none;">' . esc_html__('Verify', 'limit-login-attempts-reloaded') . '</button>
 				<span id="mfa-message"></span>
 			</p>
 		';

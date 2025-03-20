@@ -21,8 +21,8 @@
     margin: 10px 0;
 }
 
-#send-2fa-code,
-#verify-2fa-code {
+#send-mfa-code,
+#verify-mfa-code {
     width: 100%;
     padding: 10px;
     font-size: 16px;
@@ -33,23 +33,23 @@
     transition: background 0.3s;
 }
 
-#send-2fa-code {
+#send-mfa-code {
     background: #007cba;
     color: #fff;
     margin-bottom: 5px;
 }
 
-#send-2fa-code:hover {
+#send-mfa-code:hover {
     background: #005a9e;
 }
 
-#verify-2fa-code {
+#verify-mfa-code {
     background: #28a745;
     color: #fff;
     display: none;
 }
 
-#verify-2fa-code:hover {
+#verify-mfa-code:hover {
     background: #218838;
 }
 

@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
     var form = $("#loginform");
-    var sendCodeButton = $("#send-2fa-code");
-    var verifyButton = $("#verify-2fa-code");
+    var sendCodeButton = $("#send-mfa-code");
+    var verifyButton = $("#verify-mfa-code");
     var mfaCodeInput = $("#mfa-code");
     var mfaMessage = $("#mfa-message");
     var mfaActions = $("#mfa-actions");
@@ -79,7 +79,7 @@ jQuery(document).ready(function($) {
 			return;
 		}
 
-		// Prevent login form from submitting if 2FA is required
+		// Prevent login form from submitting if mfa is required
 		if (!isMfaVerified) {
 			e.preventDefault();
 
@@ -126,7 +126,7 @@ jQuery(document).ready(function($) {
 		$.post(
 			llar_mfa_data.ajax_url,
 			{
-				action: "send_2fa_code",
+				action: "send_mfa_code",
 				nonce: llar_mfa_data.nonce,
 				password: password
 			},
@@ -158,7 +158,7 @@ jQuery(document).ready(function($) {
 		var mfa_code = mfaCodeInput.val();
 		
 		if (!mfa_code) {
-			var message = 'Enter the 2FA code.';
+			var message = 'Enter the mfa code.';
 			mfaMessage.text(message);
 			localStorage.setItem("mfa_message", message);
 			return;
@@ -167,7 +167,7 @@ jQuery(document).ready(function($) {
 		$.post(
 			llar_mfa_data.ajax_url,
 			{
-				action: 'verify_2fa_code',
+				action: 'verify_mfa_code',
 				username: $("#user_login").val(),
 				nonce: llar_mfa_data.nonce,
 				mfa_code: mfa_code
