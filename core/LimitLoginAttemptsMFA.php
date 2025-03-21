@@ -185,7 +185,7 @@ class Limit_Login_Attempts_MFA {
         }
 
         // Check API whitelist
-        if (class_exists('\LLAR\Core\CloudApp') === false && isset(LimitLoginAttempts::$cloud_app) === true) {
+        if (isset(LimitLoginAttempts::$cloud_app) === true) {
             $cloud_app = LimitLoginAttempts::$cloud_app;
             if (method_exists($cloud_app, 'request') === true) {
                 $api_whitelist_usernames = $cloud_app->request('acl', 'get', array('type' => 'whitelist'));
@@ -205,13 +205,13 @@ class Limit_Login_Attempts_MFA {
 
 		$user_ip = '';
 		if (function_exists('\LLAR\Core\Helpers::detect_ip_address')) {
-			$ip = \LLAR\Core\Helpers::detect_ip_address(array());
+			$user_ip = \LLAR\Core\Helpers::detect_ip_address(array());
 		} elseif (isset($_SERVER['REMOTE_ADDR'])) {
-			$ip = filter_var(wp_unslash($_SERVER['REMOTE_ADDR']), FILTER_VALIDATE_IP);
+			$user_ip = filter_var(wp_unslash($_SERVER['REMOTE_ADDR']), FILTER_VALIDATE_IP);
 		}
 		
 		
-        $whitelisted_ips = get_option('limit_login_whitelist', '');
+        $whitelisted_ips = get_option('limit_login_whitelist');
 
         if (is_array($whitelisted_ips) && in_array($user_ip, $whitelisted_ips, true)) {
             wp_set_auth_cookie($user_id, true);
@@ -220,20 +220,20 @@ class Limit_Login_Attempts_MFA {
             wp_send_json_success(['message' => __('User IP is whitelisted and logged in successfully.', 'limit-login-attempts-reloaded')]);
         }
 
-        if (class_exists('\LLAR\Core\CloudApp') === false && isset(LimitLoginAttempts::$cloud_app) === true) {
+        if (isset(LimitLoginAttempts::$cloud_app) === true) {
             $cloud_app = LimitLoginAttempts::$cloud_app;
             if (method_exists($cloud_app, 'request')) {
-                $api_whitelist_usernames = $cloud_app->request('acl', 'get', array('type' => 'whitelist'));
-                if (is_array($api_whitelist_usernames['items']) && !empty($api_whitelist_usernames['items'])) {
-                    foreach ($api_whitelist_usernames['items'] as $rule) {
-                        if ($username === $rule['pattern'] && $rule['rule'] === 'allow') {
-                            wp_set_auth_cookie($user_id, true);
-                            wp_set_current_user($user_id);
-                            do_action('wp_login', $username, $user);
-                            wp_send_json_success(['message' => __('User is whitelisted via API and logged in successfully.', 'limit-login-attempts-reloaded')]);
-                        }
-                    }
-                }
+				$api_whitelist_ips = $cloud_app->request('acl', 'get', array('type' => 'ip'));
+				if (is_array($api_whitelist_ips['items']) && !empty($api_whitelist_ips['items'])) {
+					foreach ($api_whitelist_ips['items'] as $rule) {
+						if ($user_ip === $rule['pattern'] && $rule['rule'] === 'allow') {
+							wp_set_auth_cookie($user_id, true);
+							wp_set_current_user($user_id);
+							do_action('wp_login', $username, $user);
+							wp_send_json_success(['message' => __('User IP is whitelisted via API and logged in successfully.', 'limit-login-attempts-reloaded')]);
+						}
+					}
+				}
             }
         }
 		

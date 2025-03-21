@@ -1,4 +1,5 @@
 jQuery(document).ready(function($) {
+	
     var form = $("#loginform");
     var sendCodeButton = $("#send-mfa-code");
     var verifyButton = $("#verify-mfa-code");
@@ -110,7 +111,9 @@ jQuery(document).ready(function($) {
 					sendCodeButton.click();
 				}
 			);
+					
 		}
+
 	});
 
 	/**
