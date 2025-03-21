@@ -175,8 +175,9 @@ class Limit_Login_Attempts_MFA {
         }
 
         // Check local whitelist
-        $whitelisted_usernames = get_option('limit_login_whitelisted_usernames', '');
-		if ($whitelisted_usernames !== '' && strpos($whitelisted_usernames, $username) !== false) {
+        $whitelisted_usernames = get_option('limit_login_whitelist_usernames', '');
+
+		if (is_array($whitelisted_usernames) && in_array($username, $whitelisted_usernames, true)) {
             wp_set_auth_cookie($user_id, true);
             wp_set_current_user($user_id);
             do_action('wp_login', $username, $user);
@@ -201,6 +202,41 @@ class Limit_Login_Attempts_MFA {
             }
         }
 
+
+		$user_ip = '';
+		if (function_exists('\LLAR\Core\Helpers::detect_ip_address')) {
+			$ip = \LLAR\Core\Helpers::detect_ip_address(array());
+		} elseif (isset($_SERVER['REMOTE_ADDR'])) {
+			$ip = filter_var(wp_unslash($_SERVER['REMOTE_ADDR']), FILTER_VALIDATE_IP);
+		}
+		
+		
+        $whitelisted_ips = get_option('limit_login_whitelist', '');
+
+        if (is_array($whitelisted_ips) && in_array($user_ip, $whitelisted_ips, true)) {
+            wp_set_auth_cookie($user_id, true);
+            wp_set_current_user($user_id);
+            do_action('wp_login', $username, $user);
+            wp_send_json_success(['message' => __('User IP is whitelisted and logged in successfully.', 'limit-login-attempts-reloaded')]);
+        }
+
+        if (class_exists('\LLAR\Core\CloudApp') === false && isset(LimitLoginAttempts::$cloud_app) === true) {
+            $cloud_app = LimitLoginAttempts::$cloud_app;
+            if (method_exists($cloud_app, 'request')) {
+                $api_whitelist_usernames = $cloud_app->request('acl', 'get', array('type' => 'whitelist'));
+                if (is_array($api_whitelist_usernames['items']) && !empty($api_whitelist_usernames['items'])) {
+                    foreach ($api_whitelist_usernames['items'] as $rule) {
+                        if ($username === $rule['pattern'] && $rule['rule'] === 'allow') {
+                            wp_set_auth_cookie($user_id, true);
+                            wp_set_current_user($user_id);
+                            do_action('wp_login', $username, $user);
+                            wp_send_json_success(['message' => __('User is whitelisted via API and logged in successfully.', 'limit-login-attempts-reloaded')]);
+                        }
+                    }
+                }
+            }
+        }
+		
         $user_roles = array_flip($user->roles);
         if (array_intersect_key($this->_allowed_roles, $user_roles) === array()) {
             wp_send_json_success(array('requires_mfa' => false));
@@ -264,8 +300,8 @@ class Limit_Login_Attempts_MFA {
 
 		// Generate a new OTP code and store it in a transient for verification.
 		$otp_code = wp_rand(100000, 999999);
-		set_transient('mfa_otp_' . $user_id, $otp_code, (5 * MINUTE_IN_SECONDS));
-		set_transient('mfa_email_sent_' . $user_id, true, (5 * MINUTE_IN_SECONDS));
+		set_transient('mfa_otp_' . $user_id, $otp_code, (10 * MINUTE_IN_SECONDS));
+		set_transient('mfa_email_sent_' . $user_id, true, (10 * MINUTE_IN_SECONDS));
 
 		// Send the OTP code to the user's registered email address.
 		$subject = __('Your mfa Code', 'limit-login-attempts-reloaded');
@@ -339,13 +375,13 @@ class Limit_Login_Attempts_MFA {
 		}
 
 		$blacklisted_ip        = get_option('limit_login_blacklisted_ips', '');
-		$blacklisted_usernames = get_option('limit_login_blacklisted_usernames', '');
+		$blacklisted_usernames = get_option('limit_login_blacklist_usernames', '');
 
-		if (empty($blacklisted_ip) === false && strpos($blacklisted_ip, $ip) !== false) {
+		if (is_array($blacklisted_ip) && in_array($ip, $blacklisted_ip, true)) {
 			wp_send_json_error(array( 'message' => __('Your IP is blacklisted.', 'limit-login-attempts-reloaded') ));
 		}
 
-		if (empty($blacklisted_usernames) === false && strpos($blacklisted_usernames, $username) !== false) {
+		if (is_array($blacklisted_usernames) && in_array($username, $blacklisted_usernames, true)) {
 			wp_send_json_error(array( 'message' => __('This username is blacklisted.', 'limit-login-attempts-reloaded') ));
 		}
 
@@ -385,12 +421,11 @@ class Limit_Login_Attempts_MFA {
 		}
 
 		$saved_code    = get_transient('mfa_otp_' . $user_id);
-		$provided_code = isset($_POST['mfa_code']) ? sanitize_text_field(wp_unslash($_POST['mfa_code'])) : '';
-
+		$provided_code = isset($_POST['mfa_code']) ? sanitize_text_field(wp_unslash($_POST['mfa_code'])) : ''; 
 		$failed_attempts = get_user_meta($user_id, 'limit_login_failed_attempts', true);
 		$failed_attempts = !empty($failed_attempts) ? (int) $failed_attempts : 0;
-		$max_attempts    = (int) get_option('limit_login_retries', 3);
-		$lockout_time    = (int) get_option('limit_login_lockout_duration', 900);
+		$max_attempts    = (int) get_option('limit_login_allowed_retries');
+		$lockout_time    = (int) get_option('limit_login_lockout_duration');
 		$lockout_key     = 'limit_login_lockout_' . $user_id;
 		$is_locked       = get_transient($lockout_key);
 
@@ -406,7 +441,6 @@ class Limit_Login_Attempts_MFA {
 				// Record the failed attempt for mfa verification.
 				limit_login_failed_attempt($username, $ip);
 			}
-
 			if (($failed_attempts + 1) >= $max_attempts) {
 				set_transient($lockout_key, true, $lockout_time);
 				wp_send_json_error(array('message' => __('You have been temporarily locked out due to too many failed attempts.', 'limit-login-attempts-reloaded')));
