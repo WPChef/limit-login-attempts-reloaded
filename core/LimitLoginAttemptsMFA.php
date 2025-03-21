@@ -184,23 +184,6 @@ class Limit_Login_Attempts_MFA {
             wp_send_json_success(array('message' => __('User is whitelisted and logged in successfully.', 'limit-login-attempts-reloaded')));
         }
 
-        // Check API whitelist
-        if (isset(LimitLoginAttempts::$cloud_app) === true) {
-            $cloud_app = LimitLoginAttempts::$cloud_app;
-            if (method_exists($cloud_app, 'request') === true) {
-                $api_whitelist_usernames = $cloud_app->request('acl', 'get', array('type' => 'whitelist'));
-                if (is_array($api_whitelist_usernames['items']) === true && empty($api_whitelist_usernames['items']) === false) {
-                    foreach ($api_whitelist_usernames['items'] as $rule) {
-                        if ($username === $rule['pattern'] && $rule['rule'] === 'allow') {
-                            wp_set_auth_cookie($user_id, true);
-                            wp_set_current_user($user_id);
-                            do_action('wp_login', $username, $user);
-                            wp_send_json_success(array('message' => __('User is whitelisted via API and logged in successfully.', 'limit-login-attempts-reloaded')));
-                        }
-                    }
-                }
-            }
-        }
 
 
 		$user_ip = '';
@@ -220,22 +203,6 @@ class Limit_Login_Attempts_MFA {
             wp_send_json_success(['message' => __('User IP is whitelisted and logged in successfully.', 'limit-login-attempts-reloaded')]);
         }
 
-        if (isset(LimitLoginAttempts::$cloud_app) === true) {
-            $cloud_app = LimitLoginAttempts::$cloud_app;
-            if (method_exists($cloud_app, 'request')) {
-				$api_whitelist_ips = $cloud_app->request('acl', 'get', array('type' => 'ip'));
-				if (is_array($api_whitelist_ips['items']) && !empty($api_whitelist_ips['items'])) {
-					foreach ($api_whitelist_ips['items'] as $rule) {
-						if ($user_ip === $rule['pattern'] && $rule['rule'] === 'allow') {
-							wp_set_auth_cookie($user_id, true);
-							wp_set_current_user($user_id);
-							do_action('wp_login', $username, $user);
-							wp_send_json_success(['message' => __('User IP is whitelisted via API and logged in successfully.', 'limit-login-attempts-reloaded')]);
-						}
-					}
-				}
-            }
-        }
 		
         $user_roles = array_flip($user->roles);
         if (array_intersect_key($this->_allowed_roles, $user_roles) === array()) {
@@ -385,31 +352,6 @@ class Limit_Login_Attempts_MFA {
 			wp_send_json_error(array( 'message' => __('This username is blacklisted.', 'limit-login-attempts-reloaded') ));
 		}
 
-		if (class_exists('\LLAR\Core\CloudApp') === true && isset(\LLAR\Core\LimitLoginAttempts::$cloud_app) === true) {
-			$cloud_app = \LLAR\Core\LimitLoginAttempts::$cloud_app;
-
-			if (method_exists($cloud_app, 'request') === true) {
-				// Check IP blacklist via API
-				$api_blacklist_ip = $cloud_app->request('acl', 'get', array( 'type' => 'ip' ));
-				if (!empty($api_blacklist_ip['items']) === true) {
-					foreach ( $api_blacklist_ip['items'] as $rule ) {
-						if ($rule['pattern'] === $ip && $rule['rule'] === 'deny') {
-							wp_send_json_error(array( 'message' => __('Your IP is blacklisted.', 'limit-login-attempts-reloaded') ));
-						}
-					}
-				}
-
-				// Check Username blacklist via API
-				$api_blacklist_usernames = $cloud_app->request('acl', 'get', array( 'type' => 'login' ));
-				if (! empty($api_blacklist_usernames['items']) ) {
-					foreach ( $api_blacklist_usernames['items'] as $rule ) {
-						if ($rule['pattern'] === $username && $rule['rule'] === 'deny' ) {
-							wp_send_json_error(array( 'message' => __('This username is blacklisted.', 'limit-login-attempts-reloaded') ));
-						}
-					}
-				}
-			}
-		}
 
 		if (!wp_check_password($password, $user->user_pass, $user->ID)) {
 			if (function_exists('limit_login_failed_attempt')) {
