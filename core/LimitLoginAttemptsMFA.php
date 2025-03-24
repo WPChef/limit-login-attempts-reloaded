@@ -391,7 +391,15 @@ class Limit_Login_Attempts_MFA {
 			// Calculate the remaining attempts allowed and return an error message.
 			$remaining_attempts = max(0, ($max_attempts - ($failed_attempts + 1)));
 			// Translators: %s 
+			$_SESSION['login_error_message'] = sprintf(__('Incorrect or expired mfa code.','limit-login-attempts-reloaded'));
+			// Translators: %d is the number of remaining MFA attempts.
 			wp_send_json_error(array('message' => sprintf(__('Incorrect or expired mfa code. Attempts left: %d', 'limit-login-attempts-reloaded'), $remaining_attempts)));
+		} else {
+			wp_send_json_success(
+				array(
+					'message' => __('Verification successful! Redirecting...', 'limit-login-attempts-reloaded'),
+				)
+			);			
 		}
 
 		delete_user_meta($user_id, 'limit_login_failed_attempts'); 
@@ -404,17 +412,6 @@ class Limit_Login_Attempts_MFA {
 		// Remove transient data related to the user session and password storage.
 		delete_transient('mfa_last_user_id');
 		delete_transient('mfa_last_user_password_' . $user_id);
-
-		wp_set_auth_cookie($user_id, true); 
-		wp_set_current_user($user_id); 
-		do_action('wp_login', $username, $user); 
-
-		wp_send_json_success(
-            array(
-                'message'  => __('Verification successful! Redirecting...', 'limit-login-attempts-reloaded'),
-                'redirect' => esc_url(admin_url()),
-            )
-        );
 	}
 
 
@@ -447,6 +444,7 @@ class Limit_Login_Attempts_MFA {
                 'ajax_url'            => admin_url('admin-ajax.php'),
                 'nonce'               => wp_create_nonce('llar_mfa_nonce'),
                 'logged_out'          => isset($_GET['loggedout']),
+                'lockout_time'        => get_option('limit_login_lockout_duration'),
                 'mfa_resend_cooldown' => (int) get_option('mfa_resend_cooldown', 60),
 			)
         );
@@ -506,5 +504,29 @@ class Limit_Login_Attempts_MFA {
         );
 	}
 }
+
+add_filter('authenticate', function($user, $username, $password) {
+
+    if (isset($_COOKIE['mfa_error'])) {
+        setcookie('mfa_error', '', time() - 3600, '/');
+        return new \WP_Error('mfa_error', __('Invalid MFA code!', 'limit-login-attempts-reloaded'));
+    }
+    return $user;
+
+}, 100, 3);
+
+add_filter('login_errors', function($error) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if (isset($_SESSION['login_error_message'])) {
+		$error .= '<br>' . sanitize_text_field($_SESSION['login_error_message']);
+		unset($_SESSION['login_error_message']);
+    }
+
+    return $error;
+});
+
 
 Limit_Login_Attempts_MFA::init()->register();

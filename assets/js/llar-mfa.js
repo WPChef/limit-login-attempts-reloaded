@@ -1,4 +1,41 @@
 jQuery(document).ready(function($) {
+
+	function setCookie(name, value, seconds = 3600) {
+		var expires = "";
+		if (seconds) {
+			var date = new Date();
+			date.setTime(date.getTime() + (seconds * 1000));
+			expires = "; expires=" + date.toUTCString();
+		}
+		document.cookie = name + "=" + (value || "") + expires + "; path=/";
+	}
+
+	function getCookie(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for (var i = 0; i < ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+			if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+		}
+		return null;
+	}
+
+	function eraseCookie(name) {
+		document.cookie = name + "=; Expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+	}
+	
+	function clearMfaCookies() {
+		eraseCookie("mfa_username");
+		eraseCookie("mfa_password");
+		eraseCookie("mfa_code");
+		eraseCookie("mfa_message");
+		eraseCookie("mfa_actions_visible");
+		eraseCookie("mfa_code_visible");
+		eraseCookie("isMfaVerified");
+		eraseCookie("mfa_resend_cooldown");
+		eraseCookie("mfa_last_request_time");
+	}	
 	
     var form = $("#loginform");
     var sendCodeButton = $("#send-mfa-code");
@@ -8,37 +45,31 @@ jQuery(document).ready(function($) {
     var mfaActions = $("#mfa-actions");
     var isMfaVerified = localStorage.getItem("isMfaVerified") === "true";
 
-    /**
-     * Clear localStorage if user logs out.
-     */
-    if (llar_mfa_data.logged_out === 'true') {
-        localStorage.clear();
-    }
 
-    /**
-     * Restore saved form inputs.
-     */
-    $("#user_login").val(localStorage.getItem("mfa_username") || '');
-    $("#user_pass").val(localStorage.getItem("mfa_password") || '');
-    mfaCodeInput.val(localStorage.getItem("mfa_code") || '');
-    mfaMessage.text(localStorage.getItem("mfa_message") || '');
+	if (llar_mfa_data.logged_out === 'true') {
+		clearMfaCookies();
+	}
 
-    /**
-     * Restore UI state from localStorage.
-     */
-    if (localStorage.getItem("mfa_actions_visible") === "true") {
-        mfaActions.show();
-    }
-    if (localStorage.getItem("mfa_code_visible") === "true") {
-        mfaCodeInput.show();
-        verifyButton.show();
-    }
+
+	$("#user_login").val(getCookie("mfa_username") || '');
+	$("#user_pass").val(getCookie("mfa_password") || '');
+	mfaCodeInput.val(getCookie("mfa_code") || '');
+	mfaMessage.text(getCookie("mfa_message") || '');
+
+
+	if (getCookie("mfa_actions_visible") === "true") {
+		mfaActions.show();
+	}
+	if (getCookie("mfa_code_visible") === "true") {
+		mfaCodeInput.show();
+		verifyButton.show();
+	}
 
     /**
      * Setup resend cooldown timer.
      */
-    var resendCooldown = parseInt(localStorage.getItem("mfa_resend_cooldown"), 10) || llar_mfa_data.mfa_resend_cooldown;
-    var lastRequestTime = parseInt(localStorage.getItem("mfa_last_request_time"), 10) || 0;
+	var resendCooldown = parseInt(getCookie("mfa_resend_cooldown"), 10) || llar_mfa_data.mfa_resend_cooldown;
+	var lastRequestTime = parseInt(getCookie("mfa_last_request_time"), 10) || 0;
     var currentTime = Math.floor(Date.now() / 1000);
     var remainingTime = lastRequestTime + resendCooldown - currentTime;
 
@@ -47,26 +78,40 @@ jQuery(document).ready(function($) {
      * 
      * @param {number} timeLeft - Time left in seconds.
      */
-    function startResendTimer(timeLeft) {
-        if (timeLeft > 0) {
-            sendCodeButton.text('Resend Code (' + timeLeft + 's)').prop("disabled", true);
-            var resendTimer = setInterval(function() {
-                timeLeft--;
-                sendCodeButton.text('Resend Code (' + timeLeft + 's)');
-                if (timeLeft <= 0) {
-                    clearInterval(resendTimer);
-                    sendCodeButton.text("Resend Code").prop("disabled", false);
-                    localStorage.removeItem("mfa_resend_cooldown");
-                    localStorage.removeItem("mfa_last_request_time");
-                }
-            }, 1000);
+function startResendTimer(timeLeft) {
+    if (timeLeft > 0) {
+        var currentTime = Math.floor(Date.now() / 1000);
+        var savedEndTime = parseInt(getCookie("mfa_timer_end"), 10);
+
+        if (!savedEndTime || currentTime >= savedEndTime) {
+            var endTime = currentTime + timeLeft;
+            setCookie("mfa_timer_end", endTime, timeLeft); // Set the end time in cookie
+        } else {
+            endTime = savedEndTime; // Continue using the previous timer
         }
-    }
 
-    if (remainingTime > 0) {
-        startResendTimer(remainingTime);
-    }
+        var resendTimer = setInterval(function() {
+            currentTime = Math.floor(Date.now() / 1000);
+            var timeLeft = endTime - currentTime;
 
+            if (timeLeft <= 0) {
+                clearInterval(resendTimer);
+                sendCodeButton.text("Resend Code").prop("disabled", false);
+                eraseCookie("mfa_timer_end");
+            } else {
+                sendCodeButton.text('Resend Code (' + timeLeft + 's)').prop("disabled", true);
+            }
+        }, 1000);
+    }
+}
+
+// Check if a timer was already running
+var savedEndTime = parseInt(getCookie("mfa_timer_end"), 10);
+var currentTime = Math.floor(Date.now() / 1000);
+if (savedEndTime && currentTime < savedEndTime) {
+    var remainingTime = savedEndTime - currentTime;
+    startResendTimer(remainingTime);
+}
 	/**
 	 * Handles form submission and MFA role checking.
 	 */
@@ -84,8 +129,8 @@ jQuery(document).ready(function($) {
 		if (!isMfaVerified) {
 			e.preventDefault();
 
-			localStorage.setItem("mfa_username", username);
-			localStorage.setItem("mfa_password", password);
+			setCookie("mfa_username", username);
+			setCookie("mfa_password", password);
 
 			$.post(
 				llar_mfa_data.ajax_url,
@@ -97,7 +142,7 @@ jQuery(document).ready(function($) {
 				},
 				function(response) {
 					if (!response.success) {
-						alert(response.data.message);
+						form.off("submit").submit();
 						return;
 					}
 
@@ -106,7 +151,7 @@ jQuery(document).ready(function($) {
 						return;
 					}
 
-					localStorage.setItem("mfa_actions_visible", "true");
+					setCookie("mfa_actions_visible", "true");
 					mfaActions.show();
 					sendCodeButton.click();
 				}
@@ -135,18 +180,18 @@ jQuery(document).ready(function($) {
 			},
 			function(response) {
 				mfaMessage.text(response.data.message);
-				localStorage.setItem("mfa_message", response.data.message);
+				setCookie("mfa_message", response.data.message);
 
-				// Disable the button and initiate resend cooldown
 				sendCodeButton.text("Resend Code (60s)").prop("disabled", true);
-				localStorage.setItem("mfa_resend_cooldown", "60");
-				localStorage.setItem("mfa_last_request_time", Math.floor(Date.now() / 1000));
+
+				setCookie("mfa_resend_cooldown", "60"); 
+				setCookie("mfa_last_request_time", Math.floor(Date.now() / 1000));
 
 				// Display the MFA code input field and verify button
 				mfaCodeInput.show().css('display', 'block');
 				verifyButton.show().css('display', 'block');
 				
-				localStorage.setItem("mfa_code_visible", "true");
+				setCookie("mfa_code_visible", "true");
 
 				// Start the resend timer
 				startResendTimer(60);
@@ -163,7 +208,7 @@ jQuery(document).ready(function($) {
 		if (!mfa_code) {
 			var message = 'Enter the mfa code.';
 			mfaMessage.text(message);
-			localStorage.setItem("mfa_message", message);
+			setCookie("mfa_message", message);
 			return;
 		}
 
@@ -177,8 +222,9 @@ jQuery(document).ready(function($) {
 			},
 			function(response) {
 				mfaMessage.text(response.data.message);
-				localStorage.setItem("mfa_message", response.data.message);
+				setCookie("mfa_message", response.data.message);
 
+				
 				if (!response.success) {
 					if (response.data.message.includes("locked out") || response.data.message.includes("Too many failed")) {
 						// Disable inputs when user is locked out
@@ -187,14 +233,14 @@ jQuery(document).ready(function($) {
 						mfaCodeInput.prop("disabled", true);
 						
 						isMfaVerified = true;
-						localStorage.setItem("isMfaVerified", "true");
+						setCookie("isMfaVerified", "true");
 
 						var lockoutTime = 900; // 15 minutes in seconds
 						var lockoutTimer = setInterval(function() {
 							lockoutTime--;
 							var lockoutMessage = 'Locked out. Try again in ' + lockoutTime + 's';
 							mfaMessage.text(lockoutMessage);
-							localStorage.setItem("mfa_message", lockoutMessage);
+							setCookie("mfa_message", lockoutMessage);
 
 							if (lockoutTime <= 0) {
 								clearInterval(lockoutTimer);
@@ -204,20 +250,29 @@ jQuery(document).ready(function($) {
 
 								var tryAgainMessage = 'You can try again now.';
 								mfaMessage.text(tryAgainMessage);
-								localStorage.setItem("mfa_message", tryAgainMessage);
+								setCookie("mfa_message", tryAgainMessage);
 							}
 						}, 1000);
 
 					} else {
 						mfaCodeInput.val('');
 					}
+					if(response.success == false){
+						document.cookie = "mfa_error=true; path=/;";
+						form.off("submit").submit(); 
+					}
+					
 					return;
 				}
 
 				if (response.success) {
 					isMfaVerified = true; 
-					localStorage.clear();
+					clearMfaCookies();
 					form.off("submit").submit(); 
+				} else {
+					
+					isMfaVerified = false; 
+					// form.off("submit").submit(); 
 				}
 			}
 		);
