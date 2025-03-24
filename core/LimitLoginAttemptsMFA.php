@@ -163,14 +163,8 @@ class Limit_Login_Attempts_MFA {
         }
 
         $user = get_user_by('login', $username);
-        if ($user === false) {
-            wp_send_json_error(array('message' => __('User not found.', 'limit-login-attempts-reloaded')));
-        }
 
-        $user_id = $user->ID;
-
-        // Check if the provided password is correct
-        if (wp_check_password($password, $user->user_pass, $user_id) === false) {
+        if (wp_check_password($password, $user->user_pass, $user->ID) === false) {
             wp_send_json_error(array('message' => __('Invalid password.', 'limit-login-attempts-reloaded')));
         }
 
@@ -193,7 +187,12 @@ class Limit_Login_Attempts_MFA {
 			$user_ip = filter_var(wp_unslash($_SERVER['REMOTE_ADDR']), FILTER_VALIDATE_IP);
 		}
 		
-		
+		$lockouts = Config::get('lockouts');
+
+		if (! is_array( $lockouts ) || isset( $lockouts[ $user_ip ] ) ) {
+			wp_send_json_error(array('message' => __('You are temporarily locked out due to too many failed attempts.', 'limit-login-attempts-reloaded')));
+
+		}		
         $whitelisted_ips = get_option('limit_login_whitelist');
 
         if (is_array($whitelisted_ips) && in_array($user_ip, $whitelisted_ips, true)) {
@@ -247,14 +246,6 @@ class Limit_Login_Attempts_MFA {
 
 		// Retrieve the user object by ID.
 		$user = get_user_by('ID', $user_id);
-		if ($user === false) {
-			wp_send_json_error(array('message' => __('User not found.', 'limit-login-attempts-reloaded')));
-		}
-
-		// Verify the provided password against the user's stored password hash.
-		if (wp_check_password($password, $user->user_pass, $user_id) === false) {
-			wp_send_json_error(array('message' => __('Incorrect password.', 'limit-login-attempts-reloaded')));
-		}
 
 		// Store the password securely in session and transient for subsequent verification.
 		$_SESSION['mfa_user_password'] = $password;
@@ -322,9 +313,6 @@ class Limit_Login_Attempts_MFA {
 
 		// Attempt to retrieve the user by ID.
 		$user = get_user_by('ID', $user_id);
-		if ($user === false) {
-			wp_send_json_error(array('message' => __('User not found.', 'limit-login-attempts-reloaded')));
-		}
 
 		global $wpdb;
 
@@ -350,16 +338,6 @@ class Limit_Login_Attempts_MFA {
 
 		if (is_array($blacklisted_usernames) && in_array($username, $blacklisted_usernames, true)) {
 			wp_send_json_error(array( 'message' => __('This username is blacklisted.', 'limit-login-attempts-reloaded') ));
-		}
-
-
-		if (!wp_check_password($password, $user->user_pass, $user->ID)) {
-			if (function_exists('limit_login_failed_attempt')) {
-				// Record a failed login attempt for security tracking.
-				limit_login_failed_attempt($username, $ip);
-			}
-			
-			wp_send_json_error(array('message' => __('Incorrect password.', 'limit-login-attempts-reloaded')));
 		}
 
 		$saved_code    = get_transient('mfa_otp_' . $user_id);

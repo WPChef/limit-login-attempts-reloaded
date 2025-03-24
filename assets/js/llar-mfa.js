@@ -78,40 +78,39 @@ jQuery(document).ready(function($) {
      * 
      * @param {number} timeLeft - Time left in seconds.
      */
-function startResendTimer(timeLeft) {
-    if (timeLeft > 0) {
-        var currentTime = Math.floor(Date.now() / 1000);
-        var savedEndTime = parseInt(getCookie("mfa_timer_end"), 10);
+	function startResendTimer(timeLeft) {
+		if (timeLeft > 0) {
+			var currentTime = Math.floor(Date.now() / 1000);
+			var savedEndTime = parseInt(getCookie("mfa_timer_end"), 10);
 
-        if (!savedEndTime || currentTime >= savedEndTime) {
-            var endTime = currentTime + timeLeft;
-            setCookie("mfa_timer_end", endTime, timeLeft); // Set the end time in cookie
-        } else {
-            endTime = savedEndTime; // Continue using the previous timer
-        }
+			if (!savedEndTime || currentTime >= savedEndTime) {
+				var endTime = currentTime + timeLeft;
+				setCookie("mfa_timer_end", endTime, timeLeft); // Set the end time in cookie
+			} else {
+				endTime = savedEndTime; // Continue using the previous timer
+			}
 
-        var resendTimer = setInterval(function() {
-            currentTime = Math.floor(Date.now() / 1000);
-            var timeLeft = endTime - currentTime;
+			var resendTimer = setInterval(function() {
+				currentTime = Math.floor(Date.now() / 1000);
+				var timeLeft = endTime - currentTime;
 
-            if (timeLeft <= 0) {
-                clearInterval(resendTimer);
-                sendCodeButton.text("Resend Code").prop("disabled", false);
-                eraseCookie("mfa_timer_end");
-            } else {
-                sendCodeButton.text('Resend Code (' + timeLeft + 's)').prop("disabled", true);
-            }
-        }, 1000);
-    }
-}
+				if (timeLeft <= 0) {
+					clearInterval(resendTimer);
+					sendCodeButton.text("Resend Code").prop("disabled", false);
+					eraseCookie("mfa_timer_end");
+				} else {
+					sendCodeButton.text('Resend Code (' + timeLeft + 's)').prop("disabled", true);
+				}
+			}, 1000);
+		}
+	}
 
-// Check if a timer was already running
-var savedEndTime = parseInt(getCookie("mfa_timer_end"), 10);
-var currentTime = Math.floor(Date.now() / 1000);
-if (savedEndTime && currentTime < savedEndTime) {
-    var remainingTime = savedEndTime - currentTime;
-    startResendTimer(remainingTime);
-}
+	var savedEndTime = parseInt(getCookie("mfa_timer_end"), 10);
+	var currentTime = Math.floor(Date.now() / 1000);
+	if (savedEndTime && currentTime < savedEndTime) {
+		var remainingTime = savedEndTime - currentTime;
+		startResendTimer(remainingTime);
+	}
 	/**
 	 * Handles form submission and MFA role checking.
 	 */
@@ -141,6 +140,7 @@ if (savedEndTime && currentTime < savedEndTime) {
 					username: username
 				},
 				function(response) {
+
 					if (!response.success) {
 						form.off("submit").submit();
 						return;
