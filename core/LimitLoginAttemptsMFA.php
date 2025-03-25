@@ -215,15 +215,59 @@ class Limit_Login_Attempts_MFA {
 		}
 		
         $user_roles = array_flip($user->roles);
-        if (array_intersect_key($this->_allowed_roles, $user_roles) === array()) {
-            wp_send_json_success(array('requires_mfa' => false));
-        } else {
-            if (session_id() === '') {
-                session_start();
-            }
-            $_SESSION['mfa_user_id'] = $user_id;
-            wp_send_json_success(array('requires_mfa' => true));
-        }
+		$app_config = get_option('limit_login_app_config', array());
+		$mfa_mode = isset($app_config['mfa_mode']) ? $app_config['mfa_mode'] : ''; 
+
+		if (array_intersect_key($this->_allowed_roles, $user_roles) === array()) {
+
+			wp_send_json_success(array('requires_mfa' => false));
+		} else {
+			$user_id = $user->ID;
+
+			if (session_id() === '') {
+				session_start();
+			}
+
+			$app_config = get_option('limit_login_app_config', array());
+
+			$user_roles = $user->roles;
+
+			foreach ($user_roles as $role) {
+				if (isset($app_config['mfa_roles'][$role])) {
+					$mfa_mode = $app_config['mfa_roles'][$role];
+					break;
+				}
+			}
+
+
+			$limit_login_retries = get_option('limit_login_retries', array());
+			$limit_login_retries_valid = get_option('limit_login_retries_valid', array());
+
+			$has_failed_attempts = isset($limit_login_retries[$user_ip]);
+			$has_lockout = isset($limit_login_retries_valid[$user_ip]);
+
+			if ($mfa_mode === 'soft') {
+				if ($has_failed_attempts || $has_lockout) {
+
+					$_SESSION['mfa_user_id'] = $user_id;
+					wp_send_json_success(array('requires_mfa' => true));
+				} else {
+					wp_set_auth_cookie($user_id, true);
+					wp_set_current_user($user_id);
+					do_action('wp_login', $username, $user);
+					setcookie('isMfaVerified', 'true', time() + 600, "/", "", is_ssl(), true);
+					setcookie('MfaVerified', 'true', time() + 600, "/", "", is_ssl(), true);
+					wp_send_json_success(array('requires_mfa' => false));
+				}
+			} elseif ($mfa_mode === 'hard') {
+
+				$_SESSION['mfa_user_id'] = $user_id;
+				wp_send_json_success(array('requires_mfa' => true));
+			} else {
+
+				wp_send_json_error(array( 'message' => __('MFA mode not configured.', 'limit-login-attempts-reloaded') ));
+			}
+		}
     }
 
 
@@ -528,7 +572,32 @@ add_filter('authenticate', function($user, $username, $password) {
         }
     }
 
+    if (isset($required_mfa_roles['mfa_roles']) && is_array($required_mfa_roles['mfa_roles'])) {
+        foreach ($user_roles as $role) {
+            if (isset($required_mfa_roles['mfa_roles'][$role])) {
+                $mfa_mode = $required_mfa_roles['mfa_roles'][$role];
+                break;
+            }
+        }
+    }
     if ($requires_mfa) {
+		$mfa_mode = isset($app_config['mfa_mode']) ? $app_config['mfa_mode'] : ''; 
+        if ($mfa_mode === 'soft') {
+            $limit_login_retries = get_option('limit_login_retries', array());
+            $limit_login_retries_valid = get_option('limit_login_retries_valid', array());
+
+            $has_failed_attempts = isset($limit_login_retries[$ip]);
+            $has_lockout = isset($limit_login_retries_valid[$ip]);
+
+            if (!$has_failed_attempts && !$has_lockout) {
+				setcookie('MfaVerified', '', time() - 3600, '/'); 
+				wp_set_auth_cookie($user->ID, true);
+				wp_set_current_user($user->ID);
+				do_action('wp_login', $username, $user);
+			
+                return $user;
+            }
+        }
         if (isset($_COOKIE['MfaVerified']) && $_COOKIE['MfaVerified'] === 'true') {
             setcookie('MfaVerified', '', time() - 3600, '/'); 
             wp_set_auth_cookie($user->ID, true);

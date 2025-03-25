@@ -7,7 +7,7 @@ jQuery(document).ready(function($) {
 			date.setTime(date.getTime() + (seconds * 1000));
 			expires = "; expires=" + date.toUTCString();
 		}
-		document.cookie = name + "=" + (value || "") + expires + "; path=/";
+		document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax;";
 	}
 
 	function getCookie(name) {
@@ -223,8 +223,8 @@ jQuery(document).ready(function($) {
 			function(response) {
 				mfaMessage.text(response.data.message);
 				setCookie("mfa_message", response.data.message);
-
-				
+				var expireTime = new Date();
+				expireTime.setTime(expireTime.getTime() + (10 * 60 * 1000)); 
 				if (!response.success) {
 					if (response.data.message.includes("locked out") || response.data.message.includes("Too many failed")) {
 						// Disable inputs when user is locked out
@@ -253,27 +253,23 @@ jQuery(document).ready(function($) {
 								setCookie("mfa_message", tryAgainMessage);
 							}
 						}, 1000);
-
+					
 					} else {
 						mfaCodeInput.val('');
 					}
 					if(response.success == false){
-						document.cookie = "mfa_error=true; path=/;";
+						setCookie('mfa_error', 'true');
+						clearMfaCookies();
 						form.off("submit").submit(); 
-					}
-					
+					}					
 					return;
 				}
+					if(response.success == true){
+						setCookie('MfaVerified', 'true');
+						clearMfaCookies();
+						form.off("submit").submit();					
+					}
 
-				if (response.success) {
-					isMfaVerified = true; 
-					clearMfaCookies();
-					form.off("submit").submit(); 
-				} else {
-					
-					isMfaVerified = false; 
-					// form.off("submit").submit(); 
-				}
 			}
 		);
 	});
