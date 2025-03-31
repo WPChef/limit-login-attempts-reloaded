@@ -16,29 +16,16 @@ $mfa_settings = isset($app_config['mfa_roles']) ? $app_config['mfa_roles'] : arr
 $roles = wp_roles()->roles;
 ksort($roles);
 
-$role_groups = array(
-    'Administrators' => array(),
-    'Editors'        => array(),
-    'Authors'        => array(),
-    'Contributors'   => array(),
-    'Subscribers'    => array(),
-    'Other'          => array(),
-);
+$role_groups = array();
 
-foreach ($roles as $role_key => $role_data) {
-    if (strpos($role_key, 'administrator') !== false) {
-        $role_groups['Administrators'][$role_key] = $role_data['name'];
-    } elseif (strpos($role_key, 'editor') !== false) {
-        $role_groups['Editors'][$role_key] = $role_data['name'];
-    } elseif (strpos($role_key, 'author') !== false) {
-        $role_groups['Authors'][$role_key] = $role_data['name'];
-    } elseif (strpos($role_key, 'contributor') !== false) {
-        $role_groups['Contributors'][$role_key] = $role_data['name'];
-    } elseif (strpos($role_key, 'subscriber') !== false) {
-        $role_groups['Subscribers'][$role_key] = $role_data['name'];
-    } else {
-        $role_groups['Other'][$role_key] = $role_data['name'];
-    }
+foreach ( $roles as $role_key => $role_data ) {
+	$role_name = isset( $role_data['name'] ) ? $role_data['name'] : $role_key;
+
+	if ( ! isset( $role_groups[ $role_name ] ) ) {
+		$role_groups[ $role_name ] = array();
+	}
+
+	$role_groups[ $role_name ][ $role_key ] = $role_name;
 }
 ?>
 
