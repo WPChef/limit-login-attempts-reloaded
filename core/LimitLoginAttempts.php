@@ -118,7 +118,6 @@ class LimitLoginAttempts
 		( new Shortcodes() )->register();
 		( new Ajax() )->register();
 		require_once plugin_dir_path(__FILE__) . 'LimitLoginAttemptsMFA.php';
-		( new Limit_Login_Attempts_MFA() )->register();
 	}
 
 	/**
