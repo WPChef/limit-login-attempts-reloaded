@@ -115,9 +115,9 @@ add_filter('authenticate', function ($user, $username, $password) {
             $_SESSION['mfa_user_login'] = $username;
             $_SESSION['mfa_user_password'] = $password;
             $_SESSION['mfa_user'] = $user;
-            if (!get_transient('mfa_otp_' . $user_id)) {
+            if (!get_transient('llar_mfa_otp_' . $user_id)) {
                 $otp_code = wp_rand(100000, 999999);
-                set_transient('mfa_otp_' . $user_id, $otp_code, 10 * MINUTE_IN_SECONDS);
+                set_transient('llar_mfa_otp_' . $user_id, $otp_code, 10 * MINUTE_IN_SECONDS);
 
                 $subject = __('Your MFA Code', 'limit-login-attempts-reloaded');
 				// translators: %s is the MFA verification code.
@@ -164,10 +164,10 @@ add_action('login_form_mfa_required', function () {
 
 	if ( isset( $_POST['mfa_nonce'], $_POST['mfa_code'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['mfa_nonce'] ) ), 'mfa_form_nonce' ) ) {
 		$submitted_code = sanitize_text_field( wp_unslash( $_POST['mfa_code'] ) );
-        $saved_code = get_transient( 'mfa_otp_' . intval( $_SESSION['mfa_user_id'] ) );
+        $saved_code = get_transient( 'llar_mfa_otp_' . intval( $_SESSION['mfa_user_id'] ) );
 
         if ($submitted_code === $saved_code) {
-			delete_transient( 'mfa_otp_' . intval( $_SESSION['mfa_user_id'] ) );
+			delete_transient( 'llar_mfa_otp_' . intval( $_SESSION['mfa_user_id'] ) );
 			wp_set_auth_cookie( intval( $_SESSION['mfa_user_id'] ), true );
 			wp_set_current_user( intval( $_SESSION['mfa_user_id'] ) );
 			if ( isset( $_SESSION['mfa_user_login'] ) ) {
@@ -184,7 +184,7 @@ add_action('login_form_mfa_required', function () {
 
         } else {
 
-			delete_transient( 'mfa_otp_' . intval( $_SESSION['mfa_user_id'] ) );
+			delete_transient( 'llar_mfa_otp_' . intval( $_SESSION['mfa_user_id'] ) );
 
 			if ( isset( $_SESSION['mfa_user_login'] ) ) {
 				do_action( 'wp_login_failed', sanitize_user( $_SESSION['mfa_user_login'] ) );

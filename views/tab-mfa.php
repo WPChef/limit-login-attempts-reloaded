@@ -32,8 +32,8 @@ foreach ( $roles as $role_key => $role_data ) {
 <div id="llar-setting-page-mfa" class="llar-settings-wrap">
 	<div class="llar-table-header">
     <h3 class="title_page">
-        <img src="<?php echo plugin_dir_url(LLA_PLUGIN_FILE) . 'assets/css/images/icon-help.png'; ?>">
-        <?php _e('Multi-Factor Authentication (MFA)', 'limit-login-attempts-reloaded'); ?>
+		<img src="<?php echo esc_url(plugin_dir_url(LLA_PLUGIN_FILE) . 'assets/css/images/icon-help.png'); ?>">
+        <?php esc_html_e('Multi-Factor Authentication (MFA)', 'limit-login-attempts-reloaded'); ?>
 		
     </h3>
     </div>
@@ -45,9 +45,9 @@ foreach ( $roles as $role_key => $role_data ) {
 				<table class="llar-form-table llar-table-app-login">
 					<thead>
 						<tr>
-							<th scope="col"> <?php _e('User Role Group', 'limit-login-attempts-reloaded'); ?> </th>
-							<th scope="col"> <?php _e('Role', 'limit-login-attempts-reloaded'); ?> </th>
-							<th scope="col"> <?php _e('MFA Mode', 'limit-login-attempts-reloaded'); ?> </th>
+							<th scope="col"> <?php esc_html_e('User Role Group', 'limit-login-attempts-reloaded'); ?> </th>
+							<th scope="col"> <?php esc_html_e('Role', 'limit-login-attempts-reloaded'); ?> </th>
+							<th scope="col"> <?php esc_html_e('MFA Mode', 'limit-login-attempts-reloaded'); ?> </th>
 						</tr>
 					</thead>
 					<tbody class="login-attempts">
@@ -55,7 +55,7 @@ foreach ( $roles as $role_key => $role_data ) {
 							<?php if (!empty($group_roles)) : ?>
 								<tr class="role-group">
 									<td rowspan="<?php echo count($group_roles); ?>" class="group-title">
-										<strong><?php echo esc_html__($group_name, 'limit-login-attempts-reloaded'); ?></strong>
+										<strong><?php echo esc_html( $group_name ); ?></strong>
 									</td>
 									<?php $first = true; ?>
 									<?php foreach ($group_roles as $role_key => $role_name) : ?>
@@ -63,12 +63,18 @@ foreach ( $roles as $role_key => $role_data ) {
 											<td class="role-name"> <?php echo esc_html($role_name); ?> </td>
 											<td class="mfa-mode">
 												<select name="llar_mfa_roles[<?php echo esc_attr($role_key); ?>]" class="input_border">
-													<option value="off" <?php selected(isset($mfa_settings[$role_key]) ? $mfa_settings[$role_key] : 'off', 'off'); ?>><?php _e('Off', 'limit-login-attempts-reloaded'); ?></option>
-													<option value="soft" <?php selected(isset($mfa_settings[$role_key]) ? $mfa_settings[$role_key] : 'off', 'soft'); ?>><?php _e('Soft', 'limit-login-attempts-reloaded'); ?></option>
-													<option value="hard" <?php selected(isset($mfa_settings[$role_key]) ? $mfa_settings[$role_key] : 'off', 'hard'); ?>><?php _e('Hard', 'limit-login-attempts-reloaded'); ?></option>
+													<option value="off" <?php selected(isset($mfa_settings[$role_key]) ? $mfa_settings[$role_key] : 'off', 'off'); ?>>
+														<?php esc_html_e('Off', 'limit-login-attempts-reloaded'); ?>
+													</option>
+													<option value="soft" <?php selected(isset($mfa_settings[$role_key]) ? $mfa_settings[$role_key] : 'off', 'soft'); ?>>
+														<?php esc_html_e('Soft', 'limit-login-attempts-reloaded'); ?>
+													</option>
+													<option value="hard" <?php selected(isset($mfa_settings[$role_key]) ? $mfa_settings[$role_key] : 'off', 'hard'); ?>>
+														<?php esc_html_e('Hard', 'limit-login-attempts-reloaded'); ?>
+													</option>
 												</select>
 											</td>
-										</tr>
+										</tr> 
 										<?php $first = false; ?>
 									<?php endforeach; ?>
 							<?php endif; ?>
@@ -79,7 +85,7 @@ foreach ( $roles as $role_key => $role_data ) {
 		</div>
 
         <p class="submit">
-            <button type="submit" class="button menu__item col button__orange"> <?php _e('Save Changes', 'limit-login-attempts-reloaded'); ?> </button>
+            <button type="submit" class="button menu__item col button__orange"> <?php esc_html_e('Save Changes', 'limit-login-attempts-reloaded'); ?> </button>
         </p>
     </form>
 	

@@ -9,14 +9,22 @@ if ( defined( 'ABSPATH' ) === false ) {
 	exit;
 }
 
+add_action( 'login_enqueue_scripts', 'llar_enqueue_core_login_styles' );
+function llar_enqueue_core_login_styles() {
+	$styles = array( 'dashicons', 'buttons', 'forms', 'l10n', 'login' );
+
+	foreach ( $styles as $style ) {
+		wp_enqueue_style( $style );
+	}
+}
+
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title><?php _e( 'MFA Verification', 'limit-login-attempts-reloaded' ); ?></title>
-	<link rel="stylesheet" href="<?php echo esc_url( admin_url( 'load-styles.php?c=0&dir=ltr&load=dashicons,buttons,forms,l10n,login' ) ); ?>" type="text/css" media="all" />
+	<title><?php esc_html_e( 'MFA Verification', 'limit-login-attempts-reloaded' ); ?></title>
 	<?php
 	wp_admin_css( 'login', true );
 	do_action( 'login_enqueue_scripts' );
@@ -33,8 +41,8 @@ if ( defined( 'ABSPATH' ) === false ) {
 	if ( isset( $_SESSION['mfa_error'] ) ) :
 	?>
 		<div id="login_error">
-			<strong><?php _e( 'ERROR', 'limit-login-attempts-reloaded' ); ?>:</strong>
-			<?php echo esc_html( $_SESSION['mfa_error'] ); ?>
+			<strong><?php esc_html_e( 'ERROR', 'limit-login-attempts-reloaded' ); ?>:</strong>
+			<?php echo esc_html( wp_kses_post( $_SESSION['mfa_error'] ) ); ?>
 		</div>
 	<?php
 		unset( $_SESSION['mfa_error'] );
@@ -43,7 +51,7 @@ if ( defined( 'ABSPATH' ) === false ) {
 
 	<form name="mfaform" id="loginform" action="" method="post">
 		<p>
-			<label for="mfa_code"><?php _e( 'Enter MFA Code', 'limit-login-attempts-reloaded' ); ?><br />
+			<label for="mfa_code"><?php esc_html_e( 'Enter MFA Code', 'limit-login-attempts-reloaded' ); ?><br />
 				<input type="text" name="mfa_code" id="mfa_code" class="input" value="" size="20" required />
 			</label>
 		</p>
@@ -56,10 +64,10 @@ if ( defined( 'ABSPATH' ) === false ) {
 	</form>
 
 	<p id="backtoblog">
-		<a href="<?php echo esc_url( home_url( '/' ) ); ?>">&larr; <?php _e( 'Back to site', 'limit-login-attempts-reloaded' ); ?></a>
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>">&larr; <?php esc_html_e( 'Back to site', 'limit-login-attempts-reloaded' ); ?></a>
 	</p>
 </div>
 
-<?php do_action( 'login_footer' ); ?>
+<?php do_action( 'login_footer' ); ?> 
 </body>
 </html>
