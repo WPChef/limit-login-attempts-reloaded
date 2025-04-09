@@ -326,8 +326,8 @@ add_action('login_form_mfa_required', function () {
         $user_id = intval($_SESSION['mfa_user_id']);
         $transient_key = 'llar_mfa_otp_' . $user_id;
         $expires_at = get_option('_transient_timeout_' . $transient_key);
-        // $saved_code     = get_transient( $transient_key );
-        $saved_code = get_option('_transient_' . $transient_key);
+        $saved_code     = get_transient( $transient_key );
+        // $saved_code = get_option('_transient_' . $transient_key);
         $current_time = time();
         if ($submitted_code === $saved_code) {
             delete_transient($transient_key);
