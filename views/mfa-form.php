@@ -40,7 +40,7 @@ function llar_enqueue_core_login_styles() {
 	<?php
 	if ( isset( $_SESSION['mfa_error'] ) ) :
 	?>
-		<div id="login_error">
+		<div id="login_error" class="notice notice-error">
 			<strong><?php esc_html_e( 'ERROR', 'limit-login-attempts-reloaded' ); ?>:</strong>
 			<?php echo esc_html( wp_kses_post( $_SESSION['mfa_error'] ) ); ?>
 		</div>
@@ -58,9 +58,25 @@ function llar_enqueue_core_login_styles() {
 
 		<?php wp_nonce_field( 'mfa_form_nonce', 'mfa_nonce' ); ?>
 
-		<p class="submit">
-			<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_attr_e( 'Submit', 'limit-login-attempts-reloaded' ); ?>" />
-		</p>
+<p class="submit" style="display: flex; justify-content: space-between; align-items: center;">
+	<?php
+	if ( isset( $_SESSION['mfa_user_id'] ) ) {
+		$user_id = intval( $_SESSION['mfa_user_id'] );
+
+		// if ( false === get_transient( 'llar_mfa_otp_' . $user_id ) ) {
+			echo '<a href="' . esc_url( site_url( '/wp-login.php?action=mfa_send_code' ) ) . '" class="button button-secondary button-large" style="margin-right: auto;">' .
+				esc_html__( 'Send Code Again', 'limit-login-attempts-reloaded' ) .
+			'</a>';
+		// }
+	}
+	?>
+
+	<input type="submit"
+		name="wp-submit"
+		id="wp-submit"
+		class="button button-primary button-large"
+		value="<?php esc_attr_e( 'Submit', 'limit-login-attempts-reloaded' ); ?>">
+</p>
 	</form>
 
 	<p id="backtoblog">
