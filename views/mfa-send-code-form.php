@@ -41,7 +41,7 @@ function llar_enqueue_core_login_styles()
     <?php
     if (isset($_SESSION['mfa_error'])) {
         ?>
-        <div id="login_error">
+        <div id="login_error" class="notice notice-error">
             <strong><?php esc_html_e('ERROR', 'limit-login-attempts-reloaded'); ?>:</strong>
             <?php echo esc_html(wp_kses_post($_SESSION['mfa_error'])); ?>
         </div>

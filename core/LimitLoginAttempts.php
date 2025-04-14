@@ -1125,7 +1125,12 @@ class LimitLoginAttempts
 		if ( ! session_id() ) {
 			session_start();
 		}
-
+		
+		if ( isset( $_SESSION['mfa_suppress_failed_hook'] ) && $_SESSION['mfa_suppress_failed_hook'] === true ) {
+			unset( $_SESSION['mfa_suppress_failed_hook'] );
+			return;
+		}
+		
 		$_SESSION['login_attempts_left'] = 0;
 
 		if ( self::$cloud_app && $response = self::$cloud_app->lockout_check( array(
