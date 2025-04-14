@@ -61,17 +61,9 @@ function llar_enqueue_core_login_styles()
 
         <p class="submit" style="display: flex; justify-content: space-between; align-items: center;">
             <?php
-
-            if (isset($_SESSION['mfa_user_id'])) {
                 echo '<a href="' . esc_url(site_url('/wp-login.php?action=mfa_send_code')) . '" class="button button-secondary button-large" style="margin-right: auto;">' .
                     esc_html__('Send Code Again', 'limit-login-attempts-reloaded') .
                     '</a>';
-            }
-            if (isset($_SESSION['mfa_is_bot']) && $_SESSION['mfa_is_bot'] === true && isset($_SESSION['mfa_user_id']) === false) {
-                echo '<a href="" class="button button-secondary button-large" style="margin-right: auto;">' .
-                    esc_html__('Send Code Again', 'limit-login-attempts-reloaded') .
-                    '</a>';
-            }
             ?>
 
             <input type="submit"
