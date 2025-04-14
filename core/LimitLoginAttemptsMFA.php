@@ -32,7 +32,7 @@ add_filter('authenticate', function ($user, $username, $password) {
     $blacklisted_ip = get_option('limit_login_blacklist', '');
     $blacklisted_usernames = get_option('limit_login_blacklist_usernames', '');
 	$retries = get_option( 'limit_login_retries', array() );
-
+	
     if (is_array($blacklisted_ip) && in_array($user_ip, $blacklisted_ip, true)) {
         return new \WP_Error('mfa_error', __('Your IP is blacklisted.', 'limit-login-attempts-reloaded'));
     }
@@ -142,10 +142,6 @@ add_filter('authenticate', function ($user, $username, $password) {
         }
 		
         global $wpdb;
-
-        if (!is_array($lockouts) || isset($lockouts[$user_ip])) {
-            return new \WP_Error('mfa_error', __('You are temporarily locked out due to too many failed attempts.', 'limit-login-attempts-reloaded'));
-        }
 		
         $limit_login_retries = get_option('limit_login_retries', array());
         $limit_login_retries_valid = get_option('limit_login_retries_valid', array());
@@ -284,6 +280,7 @@ function llar_send_mfa_code( $user ) {
 
 
 	if ( $existing_code ) {
+
 		if ( $expires_at ) {
 			$seconds_left = intval( $expires_at ) - time();
 			if ( $seconds_left > 0 ) {
@@ -296,7 +293,7 @@ function llar_send_mfa_code( $user ) {
 	}
 
 	$otp_code = wp_rand( 100000, 999999 );
-	set_transient( 'llar_mfa_otp_' . $user_id, $otp_code, 10 * MINUTE_IN_SECONDS);
+	set_transient( 'llar_mfa_otp_' . $user_id, $otp_code, 10 * MINUTE_IN_SECONDS );
 	$subject = __( 'Your MFA Code', 'limit-login-attempts-reloaded' );
 	// Translators: %d is the number of minutes remaining before a new code can be requested.
 	$message = sprintf( __( 'Your MFA verification code is: %s. This code is valid for 10 minutes.', 'limit-login-attempts-reloaded' ), $otp_code );
@@ -333,13 +330,18 @@ add_action('login_form_mfa_required', function () {
 			$transient_key  = 'llar_mfa_otp_' . $user_id;
 			$expires_at     = get_option( '_transient_timeout_' . $transient_key );
 			$saved_code     = get_transient( $transient_key );
-			// $saved_code 	= get_option( '_transient_' . $transient_key );
 			$current_time   = time();
         if ($submitted_code === $saved_code) {
 			delete_transient( $transient_key );
 			if( isset( $_SESSION['mfa_wrong_pwd'] ) && $_SESSION['mfa_wrong_pwd'] === true){
 				$_SESSION['mfa_wrong_pwd'] = false;
 				$_SESSION['mfa_error'] = __( 'Invalid password.', 'limit-login-attempts-reloaded' );
+				if ( class_exists( '\LLAR\Core\LimitLoginAttempts' ) && \LLAR\Core\LimitLoginAttempts::$instance ) {
+					if ( isset( $_SESSION['mfa_user_login'] ) ) {
+						\LLAR\Core\LimitLoginAttempts::$instance->limit_login_failed( sanitize_user( $_SESSION['mfa_user_login'] ) );
+						$_SESSION['mfa_suppress_failed_hook'] = true;
+					}
+				}
 				$_SESSION['mfa_refferform'] = true;
 				wp_redirect(site_url('/wp-login.php'));
 				exit;
@@ -364,13 +366,26 @@ add_action('login_form_mfa_required', function () {
 					$_SESSION['mfa_suppress_failed_hook'] = true;
 				} else {
 					$_SESSION['mfa_error'] = __( 'No MFA code was found. Please request a new one.', 'limit-login-attempts-reloaded' );
+					if ( class_exists( '\LLAR\Core\LimitLoginAttempts' ) && \LLAR\Core\LimitLoginAttempts::$instance ) {
+						if ( isset( $_SESSION['mfa_user_login'] ) ) {
+							\LLAR\Core\LimitLoginAttempts::$instance->limit_login_failed( sanitize_user( $_SESSION['mfa_user_login'] ) );
+							$_SESSION['mfa_suppress_failed_hook'] = true;
+						}
+					}
 				}
 			} elseif ( $submitted_code !== $saved_code ) {
 
 				$_SESSION['mfa_error'] = __( 'Invalid MFA code. Please try again.', 'limit-login-attempts-reloaded' );
 				delete_transient( 'llar_mfa_otp_' . $user_id );
+				
+				if ( class_exists( '\LLAR\Core\LimitLoginAttempts' ) && \LLAR\Core\LimitLoginAttempts::$instance ) {
+					if ( isset( $_SESSION['mfa_user_login'] ) ) {
+						\LLAR\Core\LimitLoginAttempts::$instance->limit_login_failed( sanitize_user( $_SESSION['mfa_user_login'] ) );
+						$_SESSION['mfa_suppress_failed_hook'] = true;
+					}
+				}
+				
 			}
-
 			$_SESSION['mfa_refferform'] = true;
 			wp_redirect( site_url( 'wp-login.php' ) );
 			exit;

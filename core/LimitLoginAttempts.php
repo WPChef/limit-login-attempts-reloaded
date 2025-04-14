@@ -343,14 +343,16 @@ class LimitLoginAttempts
 	public function login_page_render_js()
 	{
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $um_limit_login_failed;
-
+		if ( isset( $_SESSION['mfa_refferform'] ) && $_SESSION['mfa_refferform'] === true ) {
+			$limit_login_nonempty_credentials = true;
+		}
 		if ( Config::get( 'active_app' ) === 'local' && ! $limit_login_nonempty_credentials ) {
 			return;
 		}
 
 		$custom_error = Config::get( 'custom_error_message' );
 		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
-		$is_wp_login_page = isset( $_POST['log'] );
+		$is_wp_login_page = isset( $_POST['log'] ) || ( isset( $_SESSION['mfa_refferform'] ) && $_SESSION['mfa_refferform'] === true );
 		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
 
 		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) :
