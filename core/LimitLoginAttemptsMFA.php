@@ -364,6 +364,7 @@ add_action('login_form_mfa_required', function () {
 				if ( $expires_at && $expires_at < $current_time ) {
 					$_SESSION['mfa_error'] = __( 'The code is expired, please request a new one.', 'limit-login-attempts-reloaded' );
 					$_SESSION['mfa_suppress_failed_hook'] = true;
+					$_SESSION['nonempty_credentials'] = false;
 				} else {
 					$_SESSION['mfa_error'] = __( 'No MFA code was found. Please request a new one.', 'limit-login-attempts-reloaded' );
 					if ( class_exists( '\LLAR\Core\LimitLoginAttempts' ) && \LLAR\Core\LimitLoginAttempts::$instance ) {

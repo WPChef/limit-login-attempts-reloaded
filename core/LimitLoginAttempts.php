@@ -346,6 +346,10 @@ class LimitLoginAttempts
 		if ( isset( $_SESSION['mfa_refferform'] ) && $_SESSION['mfa_refferform'] === true ) {
 			$limit_login_nonempty_credentials = true;
 		}
+		if(	isset( $_SESSION['nonempty_credentials'] ) && $_SESSION['nonempty_credentials'] === false	) {
+			$limit_login_nonempty_credentials = false;
+			unset($_SESSION['nonempty_credentials']);
+		}
 		if ( Config::get( 'active_app' ) === 'local' && ! $limit_login_nonempty_credentials ) {
 			return;
 		}
