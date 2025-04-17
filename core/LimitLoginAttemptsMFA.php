@@ -102,6 +102,12 @@ add_filter('authenticate', function ($user, $username, $password) {
 			}
 			if (is_array($whitelisted_usernames) && in_array($username, $whitelisted_usernames, true) || is_array($whitelisted_ips) && in_array($user_ip, $whitelisted_ips, true)) {
 				return new \WP_Error('mfa_error', __('Incorrect password.', 'limit-login-attempts-reloaded'));
+				if ( class_exists( '\LLAR\Core\LimitLoginAttempts' ) && \LLAR\Core\LimitLoginAttempts::$instance ) {
+					if ( isset( $_SESSION['mfa_user_login'] ) ) {
+						\LLAR\Core\LimitLoginAttempts::$instance->limit_login_failed( sanitize_user( $_SESSION['mfa_user_login'] ) );
+						$_SESSION['mfa_suppress_failed_hook'] = true;
+					}
+				}
 			} else {
 				if ( true === $allow_mfa_on_invalid_password ) {
 					$_SESSION['mfa_user_login'] = $username;
@@ -395,4 +401,15 @@ add_action('login_form_mfa_required', function () {
 	
 	include plugin_dir_path( __DIR__ ) . 'views/mfa-form.php';
     exit;
+});
+add_action( 'wp_logout', function () {
+    if ( session_id() === '' ) {
+        session_start();
+    }
+    unset( $_SESSION['errors_in_early_hook'] );
+    unset( $_SESSION['mfa_user_login'] );
+    unset( $_SESSION['mfa_wrong_pwd'] );
+    unset( $_SESSION['mfa_refferform'] );
+    unset( $_SESSION['mfa_error'] );
+    unset( $_SESSION['mfa_suppress_failed_hook'] );
 });
