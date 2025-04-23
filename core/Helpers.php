@@ -356,6 +356,82 @@ class Helpers {
 			filter_var( preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ip ), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 );
 	}
 
+
+	// New address detection feature
+	public static function detect_ipv4_or_ipv6_address( $trusted_ip_origins )
+	{
+		if ( empty( $trusted_ip_origins ) || !is_array( $trusted_ip_origins ) ) {
+			$trusted_ip_origins = array();
+		}
+
+		if ( ! in_array( 'REMOTE_ADDR', $trusted_ip_origins, true ) ) {
+			$trusted_ip_origins[] = 'REMOTE_ADDR';
+		}
+
+		$ip = '';
+
+		foreach ( $trusted_ip_origins as $origin ) {
+
+			if ( isset( $_SERVER[$origin] ) && !empty( $_SERVER[$origin] ) ) {
+
+				if ( strpos( $_SERVER[$origin], ',' ) !== false ) {
+
+					$origin_ips = explode( ',', $_SERVER[$origin] );
+					$origin_ips = array_map( 'trim', $origin_ips );
+
+					if ( $origin_ips ) {
+
+						foreach ( $origin_ips as $check_ip ) {
+
+							if ( self::is_ipv4_or_ipv6_valid( $check_ip ) ) {
+								$ip = $check_ip;
+								break 2;
+							}
+						}
+					}
+				}
+
+				if ( self::is_ipv4_or_ipv6_valid( $_SERVER[$origin] ) ) {
+					$ip = $_SERVER[$origin];
+					break;
+				}
+			}
+		}
+
+		return self::remove_port_from_ip( $ip );
+	}
+
+
+	// Removing a port from an IP
+	private static function remove_port_from_ip( $ip )
+	{
+		// Removing a port from an IPv6 address of the format [IPv6]:port
+		$ip = preg_replace( '/^\[([0-9a-f:]+)\]:\d+$/i', '$1', $ip );
+
+		// Removing a port from an IPv4 address of the format IPv4:port
+		$ip = preg_replace( '/^(\d+\.\d+\.\d+\.\d+):\d+$/', '$1', $ip );
+
+		return $ip;
+	}
+
+	public static function is_ipv4_or_ipv6_valid( $ip )
+	{
+		if ( empty( $ip ) ) {
+			return false;
+		}
+
+		$ip_no_port = self::remove_port_from_ip( $ip );
+
+		// IPv6 Check
+		if ( filter_var( $ip_no_port, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+			return true;
+		}
+
+		// IPv4 Check
+		return filter_var( $ip_no_port, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 );
+	}
+
+
 	public static function detect_gateway() {
 
 		$gateway = 'wp_login';
