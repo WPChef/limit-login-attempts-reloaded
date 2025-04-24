@@ -124,7 +124,21 @@ add_filter('authenticate', function ($user, $username, $password) {
         if (!is_array($lockouts) || isset($lockouts[$user_ip])) {
             return new \WP_Error('mfa_error', __('You are temporarily locked out due to too many failed attempts.', 'limit-login-attempts-reloaded'));
         }
-		if ( $user->get_error_code() === 'invalid_username' ) {
+		$required_mfa_roles = get_option( 'limit_login_app_config', array() );
+		$has_mfa_roles = false;
+
+		if (
+			isset( $required_mfa_roles['mfa_roles'] ) 
+			&& is_array( $required_mfa_roles['mfa_roles'] )
+		) {
+			foreach ( $required_mfa_roles['mfa_roles'] as $role => $mode ) {
+				if ( $mode !== 'off' ) {
+					$has_mfa_roles = true;
+					break;
+				}
+			}
+		}
+		if ( $user->get_error_code() === 'invalid_username' && $has_mfa_roles === true ) {
 			$_SESSION['mfa_user_login'] = $username;
 			$_SESSION['mfa_is_bot'] = true;
 			wp_redirect( site_url( '/wp-login.php?action=mfa_send_code' ) );
