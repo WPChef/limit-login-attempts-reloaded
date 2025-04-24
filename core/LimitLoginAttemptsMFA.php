@@ -38,7 +38,7 @@ add_filter('authenticate', function ($user, $username, $password) {
     }
 
     if (is_array($blacklisted_usernames) && in_array($username, $blacklisted_usernames, true)) {
-        return new \WP_Error('mfa_error', __('This username is blacklisted.', 'limit-login-attempts-reloaded'));
+        return new \WP_Error('mfa_error', __('<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded'));
     }
     $whitelisted_usernames = get_option('limit_login_whitelist_usernames', '');
 	$whitelisted_ips = get_option('limit_login_whitelist');
@@ -101,7 +101,7 @@ add_filter('authenticate', function ($user, $username, $password) {
 				}
 			}
 			if (is_array($whitelisted_usernames) && in_array($username, $whitelisted_usernames, true) || is_array($whitelisted_ips) && in_array($user_ip, $whitelisted_ips, true)) {
-				return new \WP_Error('mfa_error', __('Incorrect password.', 'limit-login-attempts-reloaded'));
+				return new \WP_Error('mfa_error', __('<strong>Error:</strong> The password you entered for the username <strong>member-deny-name</strong> is incorrect. <a href="?action=lostpassword">Lost your password?</a>', 'limit-login-attempts-reloaded'));
 				if ( class_exists( '\LLAR\Core\LimitLoginAttempts' ) && \LLAR\Core\LimitLoginAttempts::$instance ) {
 					if ( isset( $_SESSION['mfa_user_login'] ) ) {
 						\LLAR\Core\LimitLoginAttempts::$instance->limit_login_failed( sanitize_user( $_SESSION['mfa_user_login'] ) );
