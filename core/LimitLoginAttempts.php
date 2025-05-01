@@ -1307,7 +1307,7 @@ class LimitLoginAttempts
 	 */
 	public function notify_email( $user )
 	{
-		$ip = $this->get_ipv4_or_ipv6_address();
+		$ip = $this->get_address();
 		$retries = Config::get( 'retries' );
 
 		if ( ! is_array( $retries ) ) {
