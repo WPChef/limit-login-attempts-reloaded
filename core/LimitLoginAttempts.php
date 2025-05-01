@@ -1776,10 +1776,6 @@ class LimitLoginAttempts
 		return Helpers::detect_ip_address( Config::get( 'trusted_ip_origins' ) );
 	}
 
-	public function get_ipv4_or_ipv6_address()
-	{
-		return Helpers::detect_ipv4_or_ipv6_address( Config::get( 'trusted_ip_origins' ) );
-	}
 
 	/**
 	 * Clean up old lockouts and retries, and save supplied arrays
