@@ -250,7 +250,11 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                                     <?php _e( 'The failed login details include:', 'limit-login-attempts-reloaded' ); ?></p>
                                                                 <ul>
                                                                     <li style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;margin-left:0;color:#333333;font-size:14px">
-                                                                        <?php _e( '{attempts_count} failed login attempts ({lockouts_count} lockout(s)) from IP <b>{ip_address}</b>', 'limit-login-attempts-reloaded' ); ?>
+                                                                        <?php _e( '{attempts_count} failed login attempts ({lockouts_count} lockout(s)) from IP ', 'limit-login-attempts-reloaded' ); ?>
+                                                                        <b><a href="{ip_address_link}" target="_blank"
+                                                                              style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#FDA33B;font-size:14px">
+                                                                            {ip_address}
+                                                                        </a></b>
                                                                     </li>
                                                                     <li style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;margin-left:0;color:#333333;font-size:14px">
                                                                         <?php _e( 'Last user attempted: <b>{username}</b>', 'limit-login-attempts-reloaded' ); ?></li>
