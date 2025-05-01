@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.18\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.19\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-02-10T17:53:57+03:00\n"
+"POT-Creation-Date: 2025-05-01T17:23:14+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -153,14 +153,14 @@ msgstr ""
 #: core/LimitLoginAttempts.php:594
 #: core/LimitLoginAttempts.php:649
 #: core/LimitLoginAttempts.php:1139
-#: core/LimitLoginAttempts.php:1558
-#: core/LimitLoginAttempts.php:1617
+#: core/LimitLoginAttempts.php:1559
+#: core/LimitLoginAttempts.php:1618
 msgid "<strong>ERROR</strong>: Too many failed login attempts."
 msgstr ""
 
 #: core/LimitLoginAttempts.php:601
 #: core/LimitLoginAttempts.php:1146
-#: core/LimitLoginAttempts.php:1637
+#: core/LimitLoginAttempts.php:1638
 msgid "Please try again in %d hour."
 msgid_plural "Please try again in %d hours."
 msgstr[0] ""
@@ -168,7 +168,7 @@ msgstr[1] ""
 
 #: core/LimitLoginAttempts.php:603
 #: core/LimitLoginAttempts.php:1148
-#: core/LimitLoginAttempts.php:1640
+#: core/LimitLoginAttempts.php:1641
 msgid "Please try again in %d minute."
 msgid_plural "Please try again in %d minutes."
 msgstr[0] ""
@@ -220,84 +220,84 @@ msgstr[1] ""
 msgid "Failed login by IP %s www.limitloginattempts.com"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1625
+#: core/LimitLoginAttempts.php:1626
 msgid "Please try again later."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1677
+#: core/LimitLoginAttempts.php:1678
 msgid "<strong>ERROR</strong>: Incorrect email address or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1680
+#: core/LimitLoginAttempts.php:1681
 msgid "<strong>ERROR</strong>: Incorrect username or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1700
+#: core/LimitLoginAttempts.php:1701
 msgid "WC Error"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1887
+#: core/LimitLoginAttempts.php:1889
 msgid "Cleared IP log"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1894
+#: core/LimitLoginAttempts.php:1896
 msgid "Reset lockout count"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1901
+#: core/LimitLoginAttempts.php:1903
 msgid "Cleared current lockouts"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1946
+#: core/LimitLoginAttempts.php:1948
 msgid "The %s IP range is invalid"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1973
-#: core/LimitLoginAttempts.php:2047
+#: core/LimitLoginAttempts.php:1975
+#: core/LimitLoginAttempts.php:2049
 msgid "Settings saved."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2200
+#: core/LimitLoginAttempts.php:2202
 msgid "Hey <strong>Limit Login Attempts Reloaded</strong> user!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2201
+#: core/LimitLoginAttempts.php:2203
 msgid "A <strong>crazy idea</strong> we wanted to share! What if we put an image from YOU on the <a href=\"https://wordpress.org/plugins/limit-login-attempts-reloaded/\" target=\"_blank\">LLAR page</a>?! (<a href=\"https://wordpress.org/plugins/hello-dolly/\" target=\"_blank\">example</a>) A drawing made by you or your child would cheer people up! Send us your drawing by <a href=\"mailto:wpchef.me@gmail.com\" target=\"_blank\">email</a> and we like it, we'll add it in the next release. Let's have some fun!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2202
+#: core/LimitLoginAttempts.php:2204
 msgid "We would really like to hear your feedback about the plugin! Please take a couple minutes to write a few words <a href=\"https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post\" target=\"_blank\">here</a>. Thank you!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2205
+#: core/LimitLoginAttempts.php:2207
 msgid "Don't show again"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2206
+#: core/LimitLoginAttempts.php:2208
 msgid "Maybe later"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2207
+#: core/LimitLoginAttempts.php:2209
 msgid "Leave a review"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2293
+#: core/LimitLoginAttempts.php:2295
 msgid "You have been upgraded to the latest version of <strong>Limit Login Attempts Reloaded</strong>.<br> Due to increased security threats around the holidays, we recommend turning on email notifications when you receive a failed login attempt."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2298
+#: core/LimitLoginAttempts.php:2300
 msgid "Yes, turn on email notifications"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2299
+#: core/LimitLoginAttempts.php:2301
 msgid "Remind me a month from now"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2300
+#: core/LimitLoginAttempts.php:2302
 msgid "Don't show this message again"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2444
+#: core/LimitLoginAttempts.php:2446
 msgid "<strong>Error</strong>: Registration is currently disabled."
 msgstr ""
 
@@ -1721,82 +1721,82 @@ msgid "The failed login details include:"
 msgstr ""
 
 #: views/emails/failed-login.php:253
-msgid "{attempts_count} failed login attempts ({lockouts_count} lockout(s)) from IP <b>{ip_address}</b>"
+msgid "{attempts_count} failed login attempts ({lockouts_count} lockout(s)) from IP "
 msgstr ""
 
-#: views/emails/failed-login.php:256
+#: views/emails/failed-login.php:260
 msgid "Last user attempted: <b>{username}</b>"
 msgstr ""
 
-#: views/emails/failed-login.php:258
+#: views/emails/failed-login.php:262
 msgid "IP was blocked for {blocked_duration}"
 msgstr ""
 
-#: views/emails/failed-login.php:262
+#: views/emails/failed-login.php:266
 msgid "Please visit your WordPress dashboard for additional details, investigation options, and help articles."
 msgstr ""
 
-#: views/emails/failed-login.php:276
+#: views/emails/failed-login.php:280
 msgid "Go to Dashboard"
 msgstr ""
 
-#: views/emails/failed-login.php:292
+#: views/emails/failed-login.php:296
 msgid "<b>Experiencing frequent attacks or degraded performance?</b> You can now receive premium protection for FREE with "
 msgstr ""
 
-#: views/emails/failed-login.php:295
+#: views/emails/failed-login.php:299
 msgid "Micro Cloud©."
 msgstr ""
 
-#: views/emails/failed-login.php:296
+#: views/emails/failed-login.php:300
 msgid " Go to your LLAR dashboard to get starte."
 msgstr ""
 
-#: views/emails/failed-login.php:305
+#: views/emails/failed-login.php:309
 msgid "Frequently Asked Questions"
 msgstr ""
 
-#: views/emails/failed-login.php:307
+#: views/emails/failed-login.php:311
 msgid "What is a failed login attempt?"
 msgstr ""
 
-#: views/emails/failed-login.php:308
+#: views/emails/failed-login.php:312
 msgid "A failed login attempt is when an IP address uses incorrect credentials to log into your website. The IP address could be a human operator, or a program designed to guess your password."
 msgstr ""
 
-#: views/emails/failed-login.php:310
+#: views/emails/failed-login.php:314
 msgid "Why am I getting these emails?"
 msgstr ""
 
-#: views/emails/failed-login.php:311
+#: views/emails/failed-login.php:315
 msgid "You are receiving this email because there was a failed login attempt on your website {domain}. If you'd like to opt out of these notifications, please click the “Unsubscribe” link below."
 msgstr ""
 
-#: views/emails/failed-login.php:313
+#: views/emails/failed-login.php:317
 msgid "How dangerous is this failed login attempt?"
 msgstr ""
 
-#: views/emails/failed-login.php:314
+#: views/emails/failed-login.php:318
 msgid "Unfortunately, we cannot determine the severity of the IP address with the free version of the plugin. If the IP continues to make attempts and is not recognized by your organization, then it's likely to have malicious intent. Depending on how frequent the attacks are, you may experience performance issues. In the plugin dashboard, you can investigate the frequency of the failed login attempts in the logs and take additional steps to protect your website (i.e. adding them to the block list). You can visit the "
 msgstr ""
 
-#: views/emails/failed-login.php:317
+#: views/emails/failed-login.php:321
 msgid "Limit Login Attempts Reloaded website"
 msgstr ""
 
-#: views/emails/failed-login.php:317
+#: views/emails/failed-login.php:321
 msgid " for more information on our premium services, which can automatically block and detect malicious IP addresses."
 msgstr ""
 
-#: views/emails/failed-login.php:327
+#: views/emails/failed-login.php:331
 msgid "This alert was sent by your website where Limit Login Attempts Reloaded free version is installed and you are listed as the admin. If you are a GoDaddy customer, the plugin is installed into a must-use (MU) folder."
 msgstr ""
 
-#: views/emails/failed-login.php:347
+#: views/emails/failed-login.php:351
 msgid "Unsubscribe"
 msgstr ""
 
-#: views/emails/failed-login.php:348
+#: views/emails/failed-login.php:352
 msgid "from these notifications."
 msgstr ""
 
@@ -2349,7 +2349,7 @@ msgid "Upgrade To Premium For Our Login Firewall"
 msgstr ""
 
 #: views/tab-logs-local.php:154
-#: views/tab-logs-local.php:260
+#: views/tab-logs-local.php:262
 #: views/tab-settings.php:303
 #: views/tab-settings.php:410
 msgid "Try For FREE"
@@ -2400,35 +2400,35 @@ msgstr ""
 msgid "F d, Y H:i"
 msgstr ""
 
-#: views/tab-logs-local.php:231
+#: views/tab-logs-local.php:233
 msgid " lockouts"
 msgstr ""
 
-#: views/tab-logs-local.php:240
+#: views/tab-logs-local.php:242
 msgid "Unlock"
 msgstr ""
 
-#: views/tab-logs-local.php:243
+#: views/tab-logs-local.php:245
 msgid "Unlocked"
 msgstr ""
 
-#: views/tab-logs-local.php:257
+#: views/tab-logs-local.php:259
 msgid "Upgrade Today For Enhanced Logs & IP Intelligence"
 msgstr ""
 
-#: views/tab-logs-local.php:267
+#: views/tab-logs-local.php:269
 msgid "Enhanced Logs Tell You Exactly Which IPs Are Attempting Logins"
 msgstr ""
 
-#: views/tab-logs-local.php:273
+#: views/tab-logs-local.php:275
 msgid "Identify & Counter New Threats With Ease"
 msgstr ""
 
-#: views/tab-logs-local.php:279
+#: views/tab-logs-local.php:281
 msgid "Automatically Add Malicious IPs To Your Deny List"
 msgstr ""
 
-#: views/tab-logs-local.php:285
+#: views/tab-logs-local.php:287
 msgid "Unblock The Blocked Admins Effortlessly"
 msgstr ""
 
