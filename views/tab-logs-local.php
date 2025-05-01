@@ -225,7 +225,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                         <tr>
                             <td class="limit-login-date"><?php echo date_i18n(__( 'F d, Y H:i', 'limit-login-attempts-reloaded' ), $date ); ?></td>
                             <td class="limit-login-ip">
-                                <a href="<?php echo esc_url('https://www.limitloginattempts.com/location?ip=' . $user_info['ip'] ) ?>" target="_blank">
+                                <a href="<?php echo esc_url('https://www.limitloginattempts.com/location/?ip=' . $user_info['ip'] ) ?>" target="_blank">
 	                                <?php esc_html_e( $user_info['ip'] ); ?>
                                 </a>
                             </td>

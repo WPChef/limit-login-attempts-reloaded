@@ -1388,7 +1388,7 @@ class LimitLoginAttempts
 			'{attempts_count}'      => $count,
 			'{lockouts_count}'      => $lockouts,
 			'{ip_address}'          => esc_html( $ip ),
-			'{ip_address_link}'     => esc_url( 'https://www.limitloginattempts.com/location?ip=' . $ip ),
+			'{ip_address_link}'     => esc_url( 'https://www.limitloginattempts.com/location/?ip=' . $ip ),
 			'{username}'            => $user,
 			'{blocked_duration}'    => $when,
 			'{dashboard_url}'       => admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
