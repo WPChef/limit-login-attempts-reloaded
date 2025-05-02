@@ -57,36 +57,21 @@ ob_start(); ?>
     <div class="llar-onboarding__body">
         <div class="title">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/welcome.png">
-			<?php _e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
+			<?php _e( 'Welcome To Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="card mx-auto">
             <div class="field-wrap">
-                <div class="field-title">
-					<?php _e( 'Add your Setup Code', 'limit-login-attempts-reloaded' ); ?>
-                </div>
-                <div class="field-key">
-                    <input type="text" class="input_border" id="llar-setup-code-field" placeholder="<?php _e('Your Setup Code', 'limit-login-attempts-reloaded' ) ?>" value="">
-                    <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
-						<?php _e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
-                        <span class="dashicons dashicons-arrow-right-alt"></span>
-                        <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
-                    </button>
-                </div>
-                <div class="field-error"></div>
-                <div class="field-desc">
-					<?php _e( 'The Setup Code can be found in your email if you have subscribed to premium', 'limit-login-attempts-reloaded' ); ?>
-                </div>
-            </div>
-        </div>
-        <div class="card mx-auto">
-            <div class="field-wrap">
-                <div class="field-title">
-					<?php _e( 'Not A Premium User?', 'limit-login-attempts-reloaded' ); ?>
-                </div>
                 <div class="field-desc-add">
-					<?php _e( 'We <b>highly recommend</b> upgrading to premium for the best protection against brute force attacks and unauthorized logins', 'limit-login-attempts-reloaded' ); ?>
+					<?php _e( 'With Micro Cloud, your site becomes part of a powerful, real-time threat intelligence network built on the data of over 80,000 WordPress sites. That means you’re not just blocking attackers after they strike — you’re preventing them from making legitimate login attempts.', 'limit-login-attempts-reloaded' ); ?>
+                </div>
+                <div class="field-title">
+		            <?php _e( 'Here\'s what you\'ll get with your FREE upgrade', 'limit-login-attempts-reloaded' ); ?>
                 </div>
                 <ul class="field-list">
+                    <h3 class="title_page">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-gears.png">
+		                <?php _e( 'App Settings', 'limit-login-attempts-reloaded' ); ?>
+                    </h3>
                     <li class="item">
 						<?php _e( 'Detect, counter, and deny unauthorized logins with IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
                     </li>
