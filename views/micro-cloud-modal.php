@@ -207,7 +207,13 @@ $micro_cloud_popup_content = ob_get_clean();
                         } )
 
                     } )
-                }
+                },
+                onClose: function() {
+                    // Remove hash from URL
+                    if (window.location.hash === '#modal_micro_cloud') {
+                        history.pushState('', document.title, window.location.pathname + window.location.search);
+                    }
+                },
             } );
 
 
