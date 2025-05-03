@@ -57,31 +57,48 @@ ob_start(); ?>
     <div class="llar-onboarding__body">
         <div class="title">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/welcome.png">
-			<?php _e( 'Welcome To Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
+			<?php _e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="card mx-auto">
             <div class="field-wrap">
-                <div class="field-desc-add">
-					<?php _e( 'With Micro Cloud, your site becomes part of a powerful, real-time threat intelligence network built on the data of over 80,000 WordPress sites. That means you’re not just blocking attackers after they strike — you’re preventing them from making legitimate login attempts.', 'limit-login-attempts-reloaded' ); ?>
-                </div>
                 <div class="field-title">
-		            <?php _e( 'Here\'s what you\'ll get with your FREE upgrade', 'limit-login-attempts-reloaded' ); ?>
+			        <?php _e( 'Already using Premium? Add your Setup Code', 'limit-login-attempts-reloaded' ); ?>
+                </div>
+                <div class="field-key">
+                    <input type="text" class="input_border" id="llar-setup-code-field" placeholder="<?php _e('Your Setup Code', 'limit-login-attempts-reloaded' ) ?>" value="">
+                    <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
+				        <?php _e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
+                        <span class="dashicons dashicons-arrow-right-alt"></span>
+                        <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+                    </button>
+                </div>
+                <div class="field-error"></div>
+                <div class="field-desc">
+			        <?php _e( 'The Setup Code can be found in your email confirmation.', 'limit-login-attempts-reloaded' ); ?>
+                </div>
+            </div>
+        </div>
+        <div class="card mx-auto">
+            <div class="field-wrap">
+            <div class="field-wrap">
+                <div class="field-title">
+		            <?php _e( 'Not using Premium yet?', 'limit-login-attempts-reloaded' ); ?>
+                </div>
+                <div class="field-desc-add">
+		            <?php _e( 'We <b>highly recommend</b> upgrading to premium for the best protection against brute force attacks and unauthorized logins', 'limit-login-attempts-reloaded' ); ?>
                 </div>
                 <ul class="field-list">
-                    <h3 class="title_page">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-gears.png">
-		                <?php _e( 'App Settings', 'limit-login-attempts-reloaded' ); ?>
-                    </h3>
                     <li class="item">
-						<?php _e( 'Detect, counter, and deny unauthorized logins with IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
+			            <?php _e( 'Detect, counter, and deny unauthorized logins with IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
                     </li>
                     <li class="item">
-						<?php _e( 'Absorb failed login activity to improve site performance', 'limit-login-attempts-reloaded' ); ?>
+			            <?php _e( 'Absorb failed login activity to improve site performance', 'limit-login-attempts-reloaded' ); ?>
                     </li>
                     <li class="item">
-						<?php _e( 'Block IPs by country, premium support, and much more!', 'limit-login-attempts-reloaded' ); ?>
+			            <?php _e( 'Block IPs by country, premium support, and much more!', 'limit-login-attempts-reloaded' ); ?>
                     </li>
                 </ul>
+
                 <div class="field-video" id="video-play">
                     <div class="video-container" id="video-container">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/video-bg.webp" id="video-poster">
@@ -90,6 +107,35 @@ ob_start(); ?>
                                 title="YouTube video player" frameborder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 allowfullscreen></iframe>
+                    </div>
+                </div>
+
+                <div class="field-desc-add">
+					<?php printf(
+						__( 'With Premium, your site becomes part of a powerful, real-time threat intelligence network built on the data of %1$s over 80,000 WordPress sites. %2$s That means you’re not just blocking attackers after they strike — you’re %1$s preventing them from making legitimate login attempts. %2$s', 'limit-login-attempts-reloaded' ),
+						'<span class="llar_turquoise">', '</span>' );
+					?>
+                </div>
+                <div class="field-list-desc">
+                    <div class="field-desc-item">
+                        <img class="field-desc-item-icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-shield.png">
+		                <?php _e( 'Cloud-based login protection with dynamic IP blocklists', 'limit-login-attempts-reloaded' ); ?>
+                    </div>
+                    <div class="field-desc-item">
+                        <img class="field-desc-item-icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-lock.png">
+		                <?php _e( '97% of brute force attacks blocked before they begin', 'limit-login-attempts-reloaded' ); ?>
+                    </div>
+                    <div class="field-desc-item">
+                        <img class="field-desc-item-icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-reload.png">
+		                <?php _e( 'Real-time threat updates powered by our global network', 'limit-login-attempts-reloaded' ); ?>
+                    </div>
+                    <div class="field-desc-item">
+                        <img class="field-desc-item-icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-web.png">
+		                <?php _e( 'Country & IP controls for greater control', 'limit-login-attempts-reloaded' ); ?>
+                    </div>
+                    <div class="field-desc-item">
+                        <img class="field-desc-item-icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-dollar.png">
+		                <?php _e( 'Powerful login security from just $0.10/day - built for sites of all sizes', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </div>
                 <div class="button_block">
@@ -101,11 +147,6 @@ ob_start(); ?>
 						<?php _e( 'No, I don’t want advanced protection', 'limit-login-attempts-reloaded' ); ?>
                     </button>
                 </div>
-            </div>
-            <div class="button_block-single">
-                <button class="button next_step menu__item button__transparent_grey button-skip">
-					<?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
-                </button>
             </div>
         </div>
     </div>
@@ -158,63 +199,76 @@ ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/rocket-min.png">
+		<?php _e( 'Activate Micro Cloud (Free)', 'limit-login-attempts-reloaded' ); ?>
 		<?php _e( 'Limited Upgrade (Free)', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <div class="card mx-auto">
         <div class="field-wrap" id="llar-description-step-3">
             <div class="field-desc-add">
-				<?php _e( 'Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP intelligence, and performance optimizer (up to 1,000 requests monthly).', 'limit-login-attempts-reloaded' ); ?>
+				<?php printf(
+					__( 'To activate Micro Cloud, we need your consent to collect and share your IP data. This allows us to analyze threats and contribute to our global security network—helping protect your site and others from malicious login attempts. %1$s', 'limit-login-attempts-reloaded' ),
+					'<br />' ); ?>
+				<?php printf(
+					__( 'In return, you’ll receive %1$s 1,000 monthly cloud requests %2$s to power advanced login protection and other premium features. %3$s', 'limit-login-attempts-reloaded' ),
+					'<span class="llar_turquoise">', '</span>', '<br />' );
+				?>
+				<?php printf(
+					__( '%1$s By proceeding, you agree to participate in our threat-sharing network. %2$s %3$s', 'limit-login-attempts-reloaded' ),
+					'<span class="llar_turquoise">', '</span>', '<br />' );
+				?>
+				<?php _e( 'You can switch back to the free version of the plugin at any time, which will deactivate Micro Cloud and stop all data sharing.', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="field-desc-add">
 				<?php _e( '<b>Would you like to opt-in?</b>', 'limit-login-attempts-reloaded' ); ?>
             </div>
-            <div class="field-desc">
-		        <?php _e( 'Please enter the email that will receive activation confirmation', 'limit-login-attempts-reloaded' ); ?>
-            </div>
-            <div class="field-email">
-                <input type="text" class="input_border" id="llar-subscribe-mc-email" placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>" value="">
-            </div>
-            <div class="field-checkbox">
-                <input type="checkbox" id="onboarding_consent_registering"/>
-                <span>
-                    <?php echo sprintf(
-                        __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service.', 'limit-login-attempts-reloaded' ),
-                        $url_site);
-                    ?>
-                </span>
-            </div>
+<!--            <div class="field-desc">-->
+<!--		        --><?php //_e( 'Please enter the email that will receive activation confirmation', 'limit-login-attempts-reloaded' ); ?>
+<!--            </div>-->
+<!--            <div class="field-email">-->
+<!--                <input type="text" class="input_border" id="llar-subscribe-mc-email" placeholder="--><?php //_e( 'Your email', 'limit-login-attempts-reloaded' ); ?><!--" value="">-->
+<!--            </div>-->
+<!--            <div class="field-checkbox">-->
+<!--                <input type="checkbox" id="onboarding_consent_registering"/>-->
+<!--                <span>-->
+<!--                    --><?php //echo sprintf(
+//                        __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service.', 'limit-login-attempts-reloaded' ),
+//                        $url_site);
+//                    ?>
+<!--                </span>-->
+<!--            </div>-->
         </div>
         <div class="llar-upgrade-subscribe">
             <div class="button_block-horizon">
-                <button class="button menu__item button__transparent_grey gray-back"
-                        id="llar-limited-upgrade-subscribe">
-					<?php _e( 'Sign Me Up', 'limit-login-attempts-reloaded' ); ?>
-                    <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+                <button class="button next_step menu__item button__transparent_orange">
+		            <?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
+                </button>
+                <button class="button menu__item button__transparent_grey">
+		            <?php _e( 'No', 'limit-login-attempts-reloaded' ); ?>
                 </button>
             </div>
             <div class="explanations">
-				<?php echo sprintf(
-					__( 'You may opt-out of this program at any time. You accept our <a class="link__style_color_inherit llar_turquoise" href="%s" target="_blank">terms of service</a> by participating in this program.', 'limit-login-attempts-reloaded' ),
-					'https://www.limitloginattempts.com/terms/'
-				); ?>
+				<?php printf(
+					__( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our %1$s terms of service %2$s by participating in this program.', 'limit-login-attempts-reloaded' ),
+					'<a class="link__style_color_inherit llar_turquoise" href="https://www.limitloginattempts.com/terms/" target="_blank">', '</a>' );
+				?>
             </div>
         </div>
-        <div class="llar-upgrade-subscribe_notification">
-            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
-			<?php _e( 'Congrats! Your website is now activated for Micro Cloud. Account information has been emailed to you for your reference.', 'limit-login-attempts-reloaded' ); ?>
-        </div>
-        <div class="llar-upgrade-subscribe_notification__error">
-            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
-			<?php _e( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ); ?>
-        </div>
-        <div class="button_block-single">
-            <button class="button next_step menu__item button__transparent_grey button-skip">
-				<?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
-            </button>
-            <button class="button next_step menu__item button__transparent_orange orange-back llar-display-none">
-				<?php _e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
-            </button>
-        </div>
+<!--        <div class="llar-upgrade-subscribe_notification">-->
+<!--            <img src="--><?php //echo LLA_PLUGIN_URL ?><!--assets/css/images/start.png">-->
+<!--			--><?php //_e( 'Congrats! Your website is now activated for Micro Cloud. Account information has been emailed to you for your reference.', 'limit-login-attempts-reloaded' ); ?>
+<!--        </div>-->
+<!--        <div class="llar-upgrade-subscribe_notification__error">-->
+<!--            <img src="--><?php //echo LLA_PLUGIN_URL ?><!--assets/css/images/start.png">-->
+<!--			--><?php //_e( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ); ?>
+<!--        </div>-->
+<!--        <div class="button_block-single">-->
+<!--            <button class="button next_step menu__item button__transparent_grey button-skip">-->
+<!--				--><?php //_e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
+<!--            </button>-->
+<!--            <button class="button next_step menu__item button__transparent_orange orange-back llar-display-none">-->
+<!--				--><?php //_e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
+<!--            </button>-->
+<!--        </div>-->
     </div>
 </div>
 

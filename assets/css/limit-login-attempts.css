@@ -3498,6 +3498,22 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   text-align: left;
   margin-top: 12px;
 }
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-item {
+  color: #666D84;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: left;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #FDFDFD;
+  box-shadow: 2px 2px 9px 0 rgba(162, 180, 189, 0.2);
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-item-icon {
+  max-width: 30px;
+  margin-right: 15px;
+  vertical-align: middle;
+}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-list {
   line-height: 1.5;
 }
@@ -3507,6 +3523,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-list .item:before {
   color: #9762EF;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-list-desc {
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-video {
   position: relative;
