@@ -221,28 +221,13 @@ ob_start(); ?>
             <div class="field-desc-add">
 				<?php _e( '<b>Would you like to opt-in?</b>', 'limit-login-attempts-reloaded' ); ?>
             </div>
-<!--            <div class="field-desc">-->
-<!--		        --><?php //_e( 'Please enter the email that will receive activation confirmation', 'limit-login-attempts-reloaded' ); ?>
-<!--            </div>-->
-<!--            <div class="field-email">-->
-<!--                <input type="text" class="input_border" id="llar-subscribe-mc-email" placeholder="--><?php //_e( 'Your email', 'limit-login-attempts-reloaded' ); ?><!--" value="">-->
-<!--            </div>-->
-<!--            <div class="field-checkbox">-->
-<!--                <input type="checkbox" id="onboarding_consent_registering"/>-->
-<!--                <span>-->
-<!--                    --><?php //echo sprintf(
-//                        __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service.', 'limit-login-attempts-reloaded' ),
-//                        $url_site);
-//                    ?>
-<!--                </span>-->
-<!--            </div>-->
         </div>
         <div class="llar-upgrade-subscribe">
             <div class="button_block-horizon">
-                <button class="button next_step menu__item button__transparent_orange">
+                <button class="button next_step menu__item button__transparent_orange" id="llar-limited-upgrade-subscribe">
 		            <?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
                 </button>
-                <button class="button menu__item button__transparent_grey">
+                <button class="button next_step menu__item button__transparent_grey">
 		            <?php _e( 'No', 'limit-login-attempts-reloaded' ); ?>
                 </button>
             </div>
@@ -253,22 +238,6 @@ ob_start(); ?>
 				?>
             </div>
         </div>
-<!--        <div class="llar-upgrade-subscribe_notification">-->
-<!--            <img src="--><?php //echo LLA_PLUGIN_URL ?><!--assets/css/images/start.png">-->
-<!--			--><?php //_e( 'Congrats! Your website is now activated for Micro Cloud. Account information has been emailed to you for your reference.', 'limit-login-attempts-reloaded' ); ?>
-<!--        </div>-->
-<!--        <div class="llar-upgrade-subscribe_notification__error">-->
-<!--            <img src="--><?php //echo LLA_PLUGIN_URL ?><!--assets/css/images/start.png">-->
-<!--			--><?php //_e( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ); ?>
-<!--        </div>-->
-<!--        <div class="button_block-single">-->
-<!--            <button class="button next_step menu__item button__transparent_grey button-skip">-->
-<!--				--><?php //_e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
-<!--            </button>-->
-<!--            <button class="button next_step menu__item button__transparent_orange orange-back llar-display-none">-->
-<!--				--><?php //_e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
-<!--            </button>-->
-<!--        </div>-->
     </div>
 </div>
 
@@ -437,53 +406,15 @@ $content_step_4 = ob_get_clean();
 
                             const $limited_upgrade_subscribe = $( '#llar-limited-upgrade-subscribe' );
                             const $block_upgrade_subscribe = $( '.llar-upgrade-subscribe' );
-                            const $subscribe_notification = $( '.llar-upgrade-subscribe_notification' );
-                            const $subscribe_notification_error = $( '.llar-upgrade-subscribe_notification__error' );
-                            const $consent_registering = $( '#onboarding_consent_registering' );
                             const $button_next = $( '.button.next_step' );
                             const $button_skip = $button_next.filter( '.button-skip' );
                             const $spinner = $limited_upgrade_subscribe.find( '.preloader-wrapper .spinner' );
                             const $description = $( '#llar-description-step-3' );
-                            const $subscribe_mc_email = $( '#llar-subscribe-mc-email' );
 
 
                             if ( email === '' || email === null ) {
                                 email = '<?php esc_attr_e( $admin_email ); ?>'
                             }
-
-                            $subscribe_mc_email.val(email);
-                            $limited_upgrade_subscribe.addClass( disabled );
-
-                            $subscribe_mc_email.on( 'input', function () {
-                                $consent_registering.prop( 'checked', false );
-                                $consent_registering.trigger( 'change' );
-                            } );
-
-                            $subscribe_mc_email.on( 'blur', function () {
-
-                                email = $ ( this ).val().trim();
-
-                                if ( email === '' || email === null || ! llar_is_valid_email( email ) ) {
-                                    $consent_registering.prop( 'disabled', true );
-                                } else {
-                                    $consent_registering.prop( 'disabled', false );
-                                }
-                            });
-
-                            $consent_registering.on( 'change', function () {
-
-                                const is_checked = $( this ).prop( 'checked' );
-
-                                if( is_checked ) {
-                                    $limited_upgrade_subscribe.removeClass( disabled );
-                                    $limited_upgrade_subscribe.removeClass( 'button__transparent_grey gray-back' );
-                                    $limited_upgrade_subscribe.addClass( 'button__orange' );
-                                } else {
-                                    $limited_upgrade_subscribe.addClass( disabled );
-                                    $limited_upgrade_subscribe.addClass( 'button__transparent_grey gray-back' );
-                                    $limited_upgrade_subscribe.removeClass( 'button__orange' );
-                                }
-                            } );
 
                             $limited_upgrade_subscribe.on( 'click', function () {
 
@@ -494,14 +425,11 @@ $content_step_4 = ob_get_clean();
                                 llar_activate_micro_cloud( email )
                                     .then( function () {
                                         $description.addClass( 'llar-display-none' );
-                                        $subscribe_notification.addClass( 'llar-display-block' );
                                         $button_next.removeClass( disabled );
                                         $button_next.removeClass( 'llar-display-none' );
                                         $button_skip.addClass( 'llar-display-none' );
                                     })
                                     .catch( function ( response ) {
-                                        $subscribe_notification_error.text( response.data.msg )
-                                        $subscribe_notification_error.addClass( 'llar-display-block' )
                                         $button_skip.removeClass( disabled );
                                     })
                                     .finally( function () {
