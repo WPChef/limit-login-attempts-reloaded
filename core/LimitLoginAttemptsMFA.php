@@ -34,7 +34,7 @@ add_filter('authenticate', function ($user, $username, $password) {
 	$retries = get_option( 'limit_login_retries', array() );
 	
     if (is_array($blacklisted_ip) && in_array($user_ip, $blacklisted_ip, true)) {
-        return new \WP_Error('mfa_error', __('Your IP is blacklisted.', 'limit-login-attempts-reloaded'));
+        return new \WP_Error('mfa_error', __('<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded'));
     }
 
     if (is_array($blacklisted_usernames) && in_array($username, $blacklisted_usernames, true)) {
@@ -101,7 +101,14 @@ add_filter('authenticate', function ($user, $username, $password) {
 				}
 			}
 			if (is_array($whitelisted_usernames) && in_array($username, $whitelisted_usernames, true) || is_array($whitelisted_ips) && in_array($user_ip, $whitelisted_ips, true)) {
-				return new \WP_Error('mfa_error', __('<strong>Error:</strong> The password you entered for the username <strong>member-deny-name</strong> is incorrect. <a href="?action=lostpassword">Lost your password?</a>', 'limit-login-attempts-reloaded'));
+				return new \WP_Error(
+					'mfa_error',
+					/* translators: %s is the username */
+					sprintf(
+						__( '<strong>Error:</strong> The password you entered for the username <strong>%s</strong> is incorrect. <a href="?action=lostpassword">Lost your password?</a>', 'limit-login-attempts-reloaded' ),
+						esc_html( $username )
+					)
+				);
 				if ( class_exists( '\LLAR\Core\LimitLoginAttempts' ) && \LLAR\Core\LimitLoginAttempts::$instance ) {
 					if ( isset( $_SESSION['mfa_user_login'] ) ) {
 						\LLAR\Core\LimitLoginAttempts::$instance->limit_login_failed( sanitize_user( $_SESSION['mfa_user_login'] ) );

@@ -2501,7 +2501,9 @@ class LimitLoginAttempts
 
 		// Get current config
 		$app_config = get_option('limit_login_app_config', array());
-
+		if ( ! is_array( $app_config ) ) {
+			$app_config = array();
+		}
 		// Write new settings
 		$app_config['mfa_roles'] = $new_mfa_settings;
 
