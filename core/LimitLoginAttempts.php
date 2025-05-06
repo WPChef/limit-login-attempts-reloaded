@@ -117,6 +117,7 @@ class LimitLoginAttempts
 
 		( new Shortcodes() )->register();
 		( new Ajax() )->register();
+		require_once plugin_dir_path(__FILE__) . 'LimitLoginAttemptsMFA.php';
 	}
 
 	/**
@@ -156,7 +157,8 @@ class LimitLoginAttempts
 
 		add_action( 'login_form_register', array( $this, 'llar_submit_login_form_register' ), 10 );
 		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
-
+		
+		add_filter( 'admin_init', array( $this, 'save_mfa_settings' ) );
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
 
@@ -341,14 +343,20 @@ class LimitLoginAttempts
 	public function login_page_render_js()
 	{
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $um_limit_login_failed;
-
+		if ( isset( $_SESSION['mfa_refferform'] ) && $_SESSION['mfa_refferform'] === true ) {
+			$limit_login_nonempty_credentials = true;
+		}
+		if(	isset( $_SESSION['nonempty_credentials'] ) && $_SESSION['nonempty_credentials'] === false	) {
+			$limit_login_nonempty_credentials = false;
+			unset($_SESSION['nonempty_credentials']);
+		}
 		if ( Config::get( 'active_app' ) === 'local' && ! $limit_login_nonempty_credentials ) {
 			return;
 		}
 
 		$custom_error = Config::get( 'custom_error_message' );
 		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
-		$is_wp_login_page = isset( $_POST['log'] );
+		$is_wp_login_page = isset( $_POST['log'] ) || ( isset( $_SESSION['mfa_refferform'] ) && $_SESSION['mfa_refferform'] === true );
 		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
 
 		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) :
@@ -833,6 +841,11 @@ class LimitLoginAttempts
 				'url'   => '&tab=logs-local'
 			),
 			array(
+				'id'    => 'mfa',
+				'name'  => __( 'MFA', 'limit-login-attempts-reloaded' ),
+				'url'   => '&tab=mfa'
+			),
+			array(
 				'id'    => 'debug',
 				'name'  => __( 'Debug', 'limit-login-attempts-reloaded' ),
 				'url'   => '&tab=debug'
@@ -1118,7 +1131,12 @@ class LimitLoginAttempts
 		if ( ! session_id() ) {
 			session_start();
 		}
-
+		
+		if ( isset( $_SESSION['mfa_suppress_failed_hook'] ) && $_SESSION['mfa_suppress_failed_hook'] === true ) {
+			unset( $_SESSION['mfa_suppress_failed_hook'] );
+			return;
+		}
+		
 		$_SESSION['login_attempts_left'] = 0;
 
 		if ( self::$cloud_app && $response = self::$cloud_app->lockout_check( array(
@@ -2467,5 +2485,37 @@ class LimitLoginAttempts
 
 		return $errors;
 	}
+
+	/**
+	 * Save MFA settings
+	 */
+	public function save_mfa_settings() {
+		if (!isset($_POST['llar_mfa_nonce']) || !wp_verify_nonce($_POST['llar_mfa_nonce'], 'llar_save_mfa_settings')) {
+			return;
+		}
+
+		if (!current_user_can('manage_options')) {
+			return;
+		}
+
+		// Sanitize and retrieve submitted data
+		$new_mfa_settings = isset($_POST['llar_mfa_roles']) && is_array($_POST['llar_mfa_roles']) ? array_map('sanitize_text_field', $_POST['llar_mfa_roles']) : array();
+
+		// Get current config
+		$app_config = get_option('limit_login_app_config', array());
+		if ( ! is_array( $app_config ) ) {
+			$app_config = array();
+		}
+		// Write new settings
+		$app_config['mfa_roles'] = $new_mfa_settings;
+
+		// Save updated config
+		update_option('limit_login_app_config', $app_config);
+
+		// Redirect with success message
+		wp_redirect(esc_url_raw(add_query_arg('mfa_saved', 'true', $_SERVER['REQUEST_URI'])));
+		exit;
+	}
+		
 }
 

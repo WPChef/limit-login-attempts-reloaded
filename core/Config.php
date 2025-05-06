@@ -64,6 +64,7 @@ class Config {
 		'retries'                       => array(),
 		'lockouts'                      => array(),
 		'auto_update_choice'            => null,
+		'mfa_roles' 					=> array(),
 	);
 
 	private static $disable_autoload_options = array(
