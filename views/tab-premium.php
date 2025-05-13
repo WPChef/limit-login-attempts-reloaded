@@ -32,6 +32,23 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
 	                    <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
                     <?php endif; ?>
                 </div>
+                <div class="llar-header-wrap">
+                    <h1><?php echo esc_html__( 'Premium', 'limit-login-attempts-reloaded' ); ?></h1>
+                    <?php 
+                    if ( $is_active_app_custom ) {
+                        $app_config = get_option( 'limit_login_app_config' );
+                        if ( is_array( $app_config ) && ! empty( $app_config['key'] ) ) {
+                            $customer_id = substr( $app_config['key'], 0, 8 );
+                            ?>
+                            <div class="llar-customer-id">
+                                <?php echo esc_html__( 'Customer ID:', 'limit-login-attempts-reloaded' ); ?> 
+                                <strong><?php echo esc_html( $customer_id ); ?></strong>
+                            </div>
+                            <?php
+                        }
+                    }
+                    ?>
+                </div>
                 <ul class="links mt-1_5">
                     <li class="button tags tags_add">
                         <a href="https://www.limitloginattempts.com/features/?from=plugin-premium-tab" class="link__style_unlink gdpr-information-link" target="_blank">
