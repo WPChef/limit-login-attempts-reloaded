@@ -489,3 +489,13 @@ button.llar_button {
 .llar-form-table {
   width: 100%;
 }
+.llar-customer-id {
+    display: inherit;
+    text-align: right;
+    margin-top: 5px;
+}
+.limit-login-page-settings__logo_block {
+	> a {
+		text-align:right;
+	}
+}
