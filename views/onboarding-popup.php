@@ -85,32 +85,6 @@ ob_start(); ?>
 		            <?php _e( 'Not using Premium yet?', 'limit-login-attempts-reloaded' ); ?>
                 </div>
                 <div class="field-desc-add">
-		            <?php _e( 'We <b>highly recommend</b> upgrading to premium for the best protection against brute force attacks and unauthorized logins', 'limit-login-attempts-reloaded' ); ?>
-                </div>
-                <ul class="field-list">
-                    <li class="item">
-			            <?php _e( 'Detect, counter, and deny unauthorized logins with IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
-                    </li>
-                    <li class="item">
-			            <?php _e( 'Absorb failed login activity to improve site performance', 'limit-login-attempts-reloaded' ); ?>
-                    </li>
-                    <li class="item">
-			            <?php _e( 'Block IPs by country, premium support, and much more!', 'limit-login-attempts-reloaded' ); ?>
-                    </li>
-                </ul>
-
-                <div class="field-video" id="video-play">
-                    <div class="video-container" id="video-container">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/video-bg.webp" id="video-poster">
-                        <iframe id="video-frame" width="560" height="315"
-                                src="https://www.youtube.com/embed/JfkvIiQft14"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowfullscreen></iframe>
-                    </div>
-                </div>
-
-                <div class="field-desc-add">
 					<?php printf(
 						__( 'With Premium, your site becomes part of a powerful, real-time threat intelligence network built on the data of %1$s over 80,000 WordPress sites. %2$s That means you’re not just blocking attackers after they strike — you’re %1$s preventing them from making legitimate login attempts. %2$s', 'limit-login-attempts-reloaded' ),
 						'<span class="llar_turquoise">', '</span>' );
@@ -199,7 +173,6 @@ ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/rocket-min.png">
-		<?php _e( 'Activate Micro Cloud (Free)', 'limit-login-attempts-reloaded' ); ?>
 		<?php _e( 'Limited Upgrade (Free)', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <div class="card mx-auto">
