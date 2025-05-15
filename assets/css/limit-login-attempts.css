@@ -4168,7 +4168,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .llar-customer-id {
     display: inherit;
     text-align: right;
+    color: #A4A8B7;
     margin-top: 5px;
+    font-size: 14px;
 }
 .limit-login-page-settings__logo_block > a {
 	text-align:right;
