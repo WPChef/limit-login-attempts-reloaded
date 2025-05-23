@@ -104,6 +104,13 @@ class LimitLoginAttempts
 		),
 	);
 
+	/**
+	 * Flag to allow WordPress default error messages in premium pass mode
+	 *
+	 * @var bool
+	 */
+	private $allow_wp_errors = false;
+
 	public function __construct()
 	{
 		self::$instance = $this;
@@ -2493,19 +2500,29 @@ class LimitLoginAttempts
 	public function llar_lostpassword_post_hook()
 	{
 		if ( ! $this->is_limit_password_recovery() ) {
+			$this->allow_wp_errors = false;
 			return;
 		}
 
-		if ( ! empty( $_POST['user_login'] ) ) {
-			$user_login = sanitize_user( $_POST['user_login'] );
-		} else {
+		if ( empty( $_POST['user_login'] ) ) {
+			$this->allow_wp_errors = false;
 			return;
 		}
 
+		$user_login = sanitize_user( $_POST['user_login'] );
 		$response = $this->llar_api_response( $user_login );
-
-		if ( $response['result'] === 'deny' ) {
-
+		$is_premium = Config::get('active_app') === 'custom';
+		$user = get_user_by('login', $user_login) || get_user_by('email', $user_login);
+		
+		if ( $is_premium ) {
+			if ( $user && $response['result'] === 'allow' || $response['result'] === 'pass' ) {
+				$this->allow_wp_errors = true;
+				return;
+			}
+		}
+		
+		if ( $response['result'] === 'deny' || $response['result'] === 'allow') {
+			$this->allow_wp_errors = false;
 			$this->error_messages = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
 			$this->user_blocking = true;
 			$_POST['user_login'] = '';
@@ -2519,6 +2536,14 @@ class LimitLoginAttempts
 	public function llar_submit_lostpassword_errors( $errors, $user_data )
 	{
 		// Checking the marker and the presence of empty variables
+		if ( ! $this->is_limit_password_recovery() ) {
+			return $errors;
+		}
+
+		if ( ! empty( $this->allow_wp_errors ) ) {
+			return $errors;
+		}
+
 		if ( ( $this->user_blocking || $this->user_empty ) && empty( $user_data ) ) {
 			$errors->remove('empty_username');
 			$errors->add( 'user_blocking', $this->error_messages );
@@ -2535,6 +2560,14 @@ class LimitLoginAttempts
 	 */
 	public function llar_lostpassword_post_replace_error_message_hook( $errors, $user_data )
 	{
+		if ( ! $this->is_limit_password_recovery() ) {
+			return;
+		}
+
+		if ( ! empty( $this->allow_wp_errors ) ) {
+			return;
+		}
+
 		if ( ! $user_data ) {
 			$this->error_messages = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
 			$this->user_empty = true;
