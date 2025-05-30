@@ -111,6 +111,8 @@ class LimitLoginAttempts
 	 */
 	public function hooks_init()
 	{
+		add_filter( 'woocommerce_get_notices', array( $this, 'llar_wc_lostpassword_notice_override' ), 99, 1 );
+		add_filter( 'woocommerce_add_error', array( $this, 'llar_wc_add_error_debug' ), 99, 1 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'login_enqueue_scripts', array( $this, 'login_page_enqueue' ) );
 		add_filter( 'limit_login_whitelist_ip', array( $this, 'check_whitelist_ips' ), 10, 2 );
@@ -2594,5 +2596,73 @@ class LimitLoginAttempts
 
 		return $errors;
 
+	}
+
+	/**
+	 * Override WooCommerce lost password errors with LLAR message if needed (minimal, robust version).
+	 *
+	 * @param array $notices Array of WooCommerce notices.
+	 * @return array Modified notices if LLAR logic applies, otherwise original notices.
+	 */
+	public function llar_wc_lostpassword_notice_override( $notices ) {
+		return $notices;
+	}
+
+	/**
+	 * Check if the user is in the pass-list (Cloud API)
+	 *
+	 * @param string $login Username or email to check
+	 * @return bool True if user is in pass-list, false otherwise
+	 */
+	private function is_in_pass_list($login) {
+		if (!self::$cloud_app) {
+			return false;
+		}
+		$response = self::$cloud_app->acl([
+			'type' => 'login',
+			'rule' => 'pass',
+			'limit' => 1000
+		]);
+		if (!empty($response['items'])) {
+			foreach ($response['items'] as $item) {
+				if ($item['pattern'] === $login) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Debug filter for woocommerce_add_error to check if it is called.
+	 *
+	 * @param string $error Error message from WooCommerce.
+	 * @return string
+	 */
+	public function llar_wc_add_error_debug( $error ) {
+		$default_woo_error = __("Invalid username or email.", "woocommerce");
+		if (
+			isset($_POST['user_login']) &&
+			self::$cloud_app &&
+			isset($_POST['wc_reset_password'], $_POST['woocommerce-lost-password-nonce'])
+		) {
+			$user_login = sanitize_text_field($_POST['user_login']);
+			$acl_check_response = self::$cloud_app->acl_check([
+				'ip'      => Helpers::get_all_ips(),
+				'login'   => $user_login,
+				'gateway' => Helpers::detect_gateway(),
+			]);
+			if (isset($acl_check_response['result']) && $acl_check_response['result'] === 'pass') {
+				return $default_woo_error;
+			}
+			if (
+				empty($acl_check_response['result']) ||
+				$acl_check_response['result'] === 'allow' ||
+				$acl_check_response['result'] === 'deny'
+			) {
+				return __("If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded');
+			}
+		}
+		return $error;
 	}
 }
