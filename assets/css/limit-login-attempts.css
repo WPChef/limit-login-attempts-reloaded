@@ -3377,6 +3377,13 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   width: 36px;
   vertical-align: text-top;
 }
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .title_description {
+  font-size: 18px;
+  font-weight: 500;
+  color: #666D84;
+  margin-top: 10px;
+  text-align: center;
+}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .preloader-wrapper {
   display: none;
   position: absolute;
