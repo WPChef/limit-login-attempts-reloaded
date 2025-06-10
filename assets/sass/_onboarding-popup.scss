@@ -167,6 +167,14 @@
             width: 36px;
             vertical-align: text-top;
           }
+
+          &_description {
+            font-size: 18px;
+            font-weight: 500;
+            color: $typography-secondary;
+            margin-top: 10px;
+            text-align: center;
+          }
         }
 
         .preloader-wrapper {
