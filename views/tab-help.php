@@ -63,7 +63,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             </h3>
             <div class="questions__block">
                 <a class="question"
-                   href="www.limitloginattempts.com/info.php?id=12"
+                   href="https://www.limitloginattempts.com/info.php?id=12"
                    target="_blank">
                     <div class="title"><?php _e( 'Cloud Service & Security', 'limit-login-attempts-reloaded' ); ?></div>
                     <div class="desc">
@@ -71,14 +71,14 @@ if ( ! defined( 'ABSPATH' ) ) {
                     </div>
                 </a>
                 <a class="question"
-                   href="www.limitloginattempts.com/info.php?id=13"
+                   href="https://www.limitloginattempts.com/info.php?id=13"
                    target="_blank">
                     <div class="title"><?php _e( 'Technical Questions', 'limit-login-attempts-reloaded' ); ?></div>
                     <div class="desc">
 						<?php _e( 'Popular technical questions about the service including admin blocking, definitions, and email notifications.', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </a>
-                <a class="question" href="www.limitloginattempts.com/info.php?id=14"
+                <a class="question" href="https://www.limitloginattempts.com/info.php?id=14"
                    target="_blank">
                     <div class="title"><?php _e( 'Accounts & Billing', 'limit-login-attempts-reloaded' ); ?></div>
                     <div class="desc">
@@ -86,7 +86,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     </div>
                 </a>
                 <a class="question"
-                   href="www.limitloginattempts.com/info.php?id=15"
+                   href="https://www.limitloginattempts.com/info.php?id=15"
                    target="_blank">
                     <div class="title"><?php _e( 'Pre-sales Questions', 'limit-login-attempts-reloaded' ); ?></div>
                     <div class="desc">
