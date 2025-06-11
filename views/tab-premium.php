@@ -34,22 +34,22 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
                 </div>
                 <ul class="links mt-1_5">
                     <li class="button tags tags_add">
-                        <a href="www.limitloginattempts.com/info.php?id=16" class="link__style_unlink gdpr-information-link" target="_blank">
+                        <a href="https://www.limitloginattempts.com/info.php?id=16" class="link__style_unlink gdpr-information-link" target="_blank">
                             <?php _e( 'Full feature list', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li class="button tags tags_add">
-                        <a href="www.limitloginattempts.com/info.php?id=17" class="link__style_unlink gdpr-information-link" target="_blank">
+                        <a href="https://www.limitloginattempts.com/info.php?id=17" class="link__style_unlink gdpr-information-link" target="_blank">
                             <?php _e( 'Pre-sales FAQs', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li class="button tags tags_add">
-                        <a href="www.limitloginattempts.com/info.php?id=18" class="link__style_unlink gdpr-information-link" target="_blank">
+                        <a href="https://www.limitloginattempts.com/info.php?id=18" class="link__style_unlink gdpr-information-link" target="_blank">
                             <?php _e( 'Ask a pre-sales question', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li class="button tags tags_add">
-                        <a href="www.limitloginattempts.com/info.php?id=19" class="link__style_unlink gdpr-information-link" target="_blank">
+                        <a href="https://www.limitloginattempts.com/info.php?id=19" class="link__style_unlink gdpr-information-link" target="_blank">
                             <?php _e( 'Support', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
