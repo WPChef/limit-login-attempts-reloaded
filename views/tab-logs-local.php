@@ -129,8 +129,8 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                         </div>
                         <div class="description-additional p-0 mt-0_5">
                             <?php echo sprintf(
-                                __( 'Automate your denylist with IP intelligence when you <a href="https://www.limitloginattempts.com/info.php?id=21" class="unlink link__style_unlink" target="_blank">upgrade to premium</a>.', 'limit-login-attempts-reloaded' ),
-                                'https://www.limitloginattempts.com/info.php?from=plugin-denylist'
+                                __( 'Automate your denylist with IP intelligence when you <a href="%s" class="unlink link__style_unlink" target="_blank">upgrade to premium</a>.', 'limit-login-attempts-reloaded' ),
+                                'https://www.limitloginattempts.com/info.php?id=21'
                             ); ?>
                         </div>
                     </td>
