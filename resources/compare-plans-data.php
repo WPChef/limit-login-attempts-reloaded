@@ -31,7 +31,15 @@ foreach ( $plans as $plan => $rate ) {
         $attribute[$plan]['title'] = __( 'Get Started (Free)', 'limit-login-attempts-reloaded' );
     }
     else {
-        $attribute[$plan]['attr'] = 'class="button menu__item button__orange" href="' . $upgrade_url . '" target="_blank"';
+		if ( $plan === 'Premium' ) {
+			$attribute[$plan]['attr'] = 'class="button menu__item button__orange" href="https://www.limitloginattempts.com/info.php?id=24" target="_blank"';
+		}
+		if ( $plan === 'Premium +' ) {
+			$attribute[$plan]['attr'] = 'class="button menu__item button__orange" href="https://www.limitloginattempts.com/info.php?id=25" target="_blank"';
+		}
+		if ( $plan === 'Professional' ) {
+			$attribute[$plan]['attr'] = 'class="button menu__item button__orange" href="https://www.limitloginattempts.com/info.php?id=26" target="_blank"';
+		}
         $attribute[$plan]['title'] = __( 'Upgrade now', 'limit-login-attempts-reloaded' );
     }
 }
