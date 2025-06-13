@@ -147,8 +147,13 @@ class LimitLoginAttempts
 		add_action( 'lostpassword_post', array( $this, 'lostpassword_post_hook' ), 10, 2 );
 		add_filter( 'wp_login_errors', array( $this, 'llar_confirm_lostpassword_msg' ), 10, 2 );
 		add_action( 'um_submit_form_errors_hook__blockedips', array( $this, 'um_submit_form_errors_hook__blockedips_hook' ), 1, 2 );
-		add_filter( 'um_custom_error_message_handler', array( $this, 'llar_um_deny_error_message' ), 10, 3 );
+		add_filter( 'um_submit_form_error', array( $this, 'llar_um_deny_error_message' ), 10, 2 );
 		add_action( 'um_reset_password_errors_hook', array( $this, 'um_reset_password_errors_hook' ), 10, 2);
+		add_filter( 'um_success_response_message', array( $this, 'llar_um_success_response_message' ), 1, 2 );
+		add_filter( 'lostpassword_redirect', array( $this, 'llar_lostpassword_redirect_filter' ), 99, 1 );
+
+		// New hook for output buffering to override UM template message
+		add_action( 'template_redirect', array( $this, 'llar_override_um_password_reset_template_output' ), 9999 );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -699,6 +704,7 @@ class LimitLoginAttempts
 
 		$codes[] = 'too_many_retries';
 		$codes[] = 'username_blacklisted';
+		$codes[] = 'llar_password_recovery_denied';
 
 		return $codes;
 	}
@@ -1596,8 +1602,8 @@ class LimitLoginAttempts
 
 		if (
 			! is_array( $lockouts )
-			|| ( ! isset( $lockouts[ $ip ] ) && ! isset( $lockouts[ $this->getHash( $ip ) ] ) )
-			|| ( time() >= $a && time() >= $b )
+			|| ( ( ! isset( $lockouts[ $ip ] ) && ! isset( $lockouts[ $this->getHash( $ip ) ] ) )
+			|| ( time() >= $a && time() >= $b ) )
 		){
 			/* Huh? No timeout active? */
 			$msg .= __( 'Please try again later.', 'limit-login-attempts-reloaded' );
@@ -1728,13 +1734,6 @@ class LimitLoginAttempts
 			|| ( time() > $c && time() > $d )
 		) {
 			/* no: no valid retries */
-			return $remaining;
-		}
-		if (
-			( $a % Config::get( 'allowed_retries' ) ) == 0
-			&& ( $b % Config::get( 'allowed_retries' ) ) == 0
-		) {
-			/* no: already been locked out for these retries */
 			return $remaining;
 		}
 
@@ -2176,7 +2175,7 @@ class LimitLoginAttempts
                 </div>
                 <div class="llar-review-info">
                     <p><?php _e('Hey <strong>Limit Login Attempts Reloaded</strong> user!', 'limit-login-attempts-reloaded'); ?></p>
-                    <!--<p><?php _e('A <strong>crazy idea</strong> we wanted to share! What if we put an image from YOU on the <a href="https://wordpress.org/plugins/limit-login-attempts-reloaded/" target="_blank">LLAR page</a>?! (<a href="https://wordpress.org/plugins/hello-dolly/" target="_blank">example</a>) A drawing made by you or your child would cheer people up! Send us your drawing by <a href="mailto:wpchef.me@gmail.com" target="_blank">email</a> and we like it, we\'ll add it in the next release. Let\'s have some fun!', 'limit-login-attempts-reloaded'); ?></p> Also, -->
+                    <!--<p><?php _e('A <strong>crazy idea</strong> we wanted to share! What if we put an image from YOU on the <a href="https://wordpress.org/plugins/limit-login-attempts-reloaded/" target="_blank">LLAR page</a>?! (<a href="https://wordpress.org/plugins/hello-dolly/" target="_blank">example</a>) A drawing made by you or your child would cheer people up! Send us your drawing by <a href="mailto:wpchef.me@gmail.com" target="_blank">email</a> and we like it, we\'ll add it in the next release. Let\'s have some fun!', 'limit-login-attempts-reloaded'); ?> </p> Also, -->
                     <p><?php _e('We would really like to hear your feedback about the plugin! Please take a couple minutes to write a few words <a href="https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post" target="_blank">here</a>. Thank you!', 'limit-login-attempts-reloaded'); ?></p>
 
                     <ul class="llar-buttons">
@@ -2417,7 +2416,7 @@ class LimitLoginAttempts
 	 */
 	public function um_submit_form_errors_hook__blockedips_hook($args, $form_data)
 	{
-		if ( $form_data['mode'] === 'register' ) {
+		if ( is_array( $form_data ) && $form_data['mode'] === 'register' ) {
 
 			if ( empty( $args['user_password'] ) || empty( $args['confirm_user_password'] ) ) {
 				return;
@@ -2476,49 +2475,106 @@ class LimitLoginAttempts
 	 *
 	 * @return mixed|string|void
 	 */
-	public function llar_um_deny_error_message( $error, $request_error, $args )
+	public function llar_um_deny_error_message( $error_message_from_um, $error_key_from_um )
 	{
-		if ( 'llar_registration_disabled' === $request_error ) {
-			$error = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+		if ( 'llar_password_recovery_denied' === $error_message_from_um ) {
+			$new_error = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
+			return $new_error;
 		}
-		return $error;
+		return $error_message_from_um;
 	}
 
 
 	/**
 	 * Reset password UM
 	 */
-	public function um_reset_password_errors_hook( $args, $form_data )
-	{
-		if ( ! self::$cloud_app ) {
-			return;
-		}
+    public function um_reset_password_errors_hook( $args, $form_data )
+    {
+        $app_config = Config::get( 'app_config' );
+        $limit_password_recovery = ( is_array( $app_config ) &&
+                                   isset( $app_config['settings']['limit_password_recovery']['value'] ) &&
+                                   $app_config['settings']['limit_password_recovery']['value'] === 'on' );
 
-		$app_config = Config::get( 'app_config' );
-		$limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
-		                           $app_config['settings']['limit_password_recovery']['value'] === 'on';
+        if ( ! $limit_password_recovery ) {
+            return;
+        }
 
-		if ( ! $limit_password_recovery ) {
-			return;
-		}
+        if ( ! isset( $args['username_b'] ) ) {
+            return;
+        }
 
-		if ( ! isset( $args['username_b'] ) ) {
-			return;
-		}
+        $user_login = sanitize_text_field( $args['username_b'] );
+        $ip = $this->get_address();
 
-		$user_login = sanitize_text_field( $args['username_b'] );
+        $llar_denies_reset = false;
 
-		$response = self::$cloud_app->acl_check( array(
-			'ip'        => Helpers::get_all_ips(),
-			'login'     => $user_login,
-			'gateway'   => Helpers::detect_gateway(),
-		) );
+        // --- Determine if LLAR should completely bypass (for 'pass-name' scenario) ---
+        // This means LLAR takes NO action, and UM shows its native message.
+        // This applies if Cloud App says 'pass' OR (local whitelist AND NOT blacklisted AND NOT locked out).
+        $is_bypass_scenario = false;
+        if ( self::$cloud_app ) {
+            $response = self::$cloud_app->acl_check( array(
+                'ip'        => Helpers::get_all_ips(),
+                'login'     => $user_login,
+                'gateway'   => Helpers::detect_gateway(),
+            ) );
+            if ( $response['result'] === 'pass' ) {
+                return; // Let UM handle as if LLAR is not present.
+            }
+        } else { // Local mode
+            // Check for 'pass-name' bypass: whitelisted AND NOT blacklisted AND NOT locked out
+            if ( ( $this->is_ip_whitelisted( $ip ) || $this->is_username_whitelisted( $user_login ) ) &&
+                 ! $this->is_ip_blacklisted( $ip ) && ! $this->is_username_blacklisted( $user_login ) &&
+                 $this->is_limit_login_ok() ) {
+                return; // Let UM handle as if LLAR is not present.
+            }
+        }
 
-		if ( $response['result'] === 'deny' ) {
+        // If we reach here, it means LLAR *should* intervene (not a full bypass).
 
-			UM()->form()->add_error( 'username_b', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
-		}
-	}
+        // Try to get user by login or email
+        $user_data = get_user_by( 'login', $user_login );
+        if ( ! $user_data && is_email( $user_login ) ) {
+            $user_data = get_user_by( 'email', $user_login );
+        }
+
+        // --- Check for non-existent user and force denial if not bypassed ---
+        // If no user found, then it's a denial by LLAR.
+        if ( ! $user_data ) {
+            $llar_denies_reset = true;
+        } else {
+            // --- Determine if LLAR denies the password reset action (for custom message scenarios) ---
+            // This applies if the user (or IP) is blacklisted or locked out.
+            if ( self::$cloud_app ) {
+                $response = self::$cloud_app->acl_check( array(
+                    'ip'        => Helpers::get_all_ips(),
+                    'login'     => $user_login,
+                    'gateway'   => Helpers::detect_gateway(),
+                ) );
+                if ( $response['result'] === 'deny' ) {
+                    $llar_denies_reset = true;
+                }
+            } else { // Local mode
+                if ( $this->is_ip_blacklisted( $ip ) || $this->is_username_blacklisted( $user_login ) || ! $this->is_limit_login_ok() ) {
+                    $llar_denies_reset = true;
+                }
+            }
+        }
+
+        // --- If LLAR denies the reset, add an error to UM form and clear transient ---
+        if ( $llar_denies_reset ) {
+            UM()->form()->add_error( 'username_b', 'llar_password_recovery_denied' );
+            delete_transient('llar_display_custom_um_password_reset_message'); // Ensure transient is cleared on denial
+        } else {
+            // If LLAR does not deny, but still intervenes (e.g., guest-allow-name), set transient for success message replacement.
+            set_transient('llar_display_custom_um_password_reset_message', true, 60);
+        }
+
+        // For UM hook, no explicit return value is needed if errors are added via UM()->form()->add_error().
+        // If no error was added, UM proceeds normally, and our transient will ensure the custom message.
+        return;
+    }
+
 
 	/**
 	 * Reset password standard WP, Woo
@@ -2528,71 +2584,174 @@ class LimitLoginAttempts
 	 *
 	 * @throws Exception
 	 */
-	public function lostpassword_post_hook( $errors, $user_data )
-	{
-		if ( ! self::$cloud_app ) {
-			return;
-		}
+    public function lostpassword_post_hook( $errors, $user_data )
+    {
+        $app_config = Config::get( 'app_config' );
+        $limit_password_recovery = ( is_array( $app_config ) &&
+                                   isset( $app_config['settings']['limit_password_recovery']['value'] ) &&
+                                   $app_config['settings']['limit_password_recovery']['value'] === 'on' );
 
-		$app_config = Config::get( 'app_config' );
-		$limit_password_recovery = !empty( $app_config['settings']['limit_password_recovery']['value'] ) &&
-		                           $app_config['settings']['limit_password_recovery']['value'] === 'on';
+        if ( ! $limit_password_recovery ) {
+            return $errors;
+        }
 
-		if ( ! $limit_password_recovery ) {
-			return;
-		}
+        $user_login = ( ! empty( $user_data) && $user_data->user_login ) ? $user_data->user_login : false;
 
-		$user_login = ( ! empty( $user_data) && $user_data->user_login ) ? $user_data->user_login : false;
+        if ( ! $user_login && ! empty( $_POST['user_login'] ) ) {
+            $user_login = sanitize_text_field( $_POST['user_login'] );
+        }
 
-		if ( ! $user_login && ! empty( $_POST['user_login'] ) ) {
-			$user_login = sanitize_text_field( $_POST['user_login'] );
-		}
+        $ip = $this->get_address();
 
-		$response = self::$cloud_app->acl_check( array(
-			'ip'        => Helpers::get_all_ips(),
-			'login'     => $user_login,
-			'gateway'   => Helpers::detect_gateway(),
-		) );
+        $llar_denies_reset = false;
 
-		if ( $response['result'] !== 'deny' ) {
+        // --- Determine if LLAR should completely bypass (for 'pass-name' scenario) ---
+        // This means LLAR takes NO action, and WP shows its native message.
+        // This applies if Cloud App says 'pass' OR (local whitelist AND NOT blacklisted AND NOT locked out).
+        $is_bypass_scenario = false;
+        if ( self::$cloud_app ) {
+            $response = self::$cloud_app->acl_check( array(
+                'ip'        => Helpers::get_all_ips(),
+                'login'     => $user_login,
+                'gateway'   => Helpers::detect_gateway(),
+            ) );
+            if ( $response['result'] === 'pass' ) {
+                return $errors; // Let WP handle as if LLAR is not present.
+            }
+        } else { // Local mode
+            // Check for 'pass-name' bypass: whitelisted AND NOT blacklisted AND NOT locked out
+            if ( ( $this->is_ip_whitelisted( $ip ) || $this->is_username_whitelisted( $user_login ) ) &&
+                 ! $this->is_ip_blacklisted( $ip ) && ! $this->is_username_blacklisted( $user_login ) &&
+                 $this->is_limit_login_ok() ) {
+                return $errors; // Let WP handle as if LLAR is not present.
+            }
+        }
 
-			$user_email = ( ! empty( $user_data) && $user_data->user_email ) ? $user_data->user_email : false;
+        // If we reach here, it means LLAR *should* intervene (not a full bypass).
 
-			if ( ! $user_email && ! empty( $_POST['user_login'] ) ) {
-				$user_email = sanitize_text_field( $_POST['user_login'] );
-			}
+        // Try to get user by login or email
+        $existing_user_data = get_user_by( 'login', $user_login );
+        if ( ! $existing_user_data && is_email( $user_login ) ) {
+            $existing_user_data = get_user_by( 'email', $user_login );
+        }
 
-			if ( $user_login !== $user_email ) {
+        // --- Check for non-existent user and force denial if not bypassed ---
+        // If no user found, then it's a denial by LLAR.
+        if ( ! $existing_user_data ) {
+            $llar_denies_reset = true;
+        } else {
+            // --- Determine if LLAR denies the password reset action (for custom message scenarios) ---
+            // This applies if the user (or IP) is blacklisted or locked out.
+            if ( self::$cloud_app ) {
+                $response = self::$cloud_app->acl_check( array(
+                    'ip'        => Helpers::get_all_ips(),
+                    'login'     => $user_login,
+                    'gateway'   => Helpers::detect_gateway(),
+                ) );
+                if ( $response['result'] === 'deny' ) {
+                    $llar_denies_reset = true;
+                }
+            } else { // Local mode
+                if ( $this->is_ip_blacklisted( $ip ) || $this->is_username_blacklisted( $user_login ) || ! $this->is_limit_login_ok() ) {
+                    $llar_denies_reset = true;
+                }
+            }
+        }
 
-				$response = self::$cloud_app->acl_check( array(
-					'ip'        => Helpers::get_all_ips(),
-					'login'     => $user_email,
-					'gateway'   => Helpers::detect_gateway(),
-				) );
-			}
-		}
+        // Remove existing generic errors if LLAR is taking over the message.
+        $errors->remove('invalidcombo');
+        $errors->remove('invalid_email');
 
-		if ( $response['result'] === 'deny' ) {
+        // --- If LLAR denies the reset, add an error to WP_Error object and clear transient ---
+        if ( $llar_denies_reset ) {
+            $errors->add( 'llar_password_recovery_denied', 'llar_password_recovery_denied' );
+            delete_transient('llar_display_custom_um_password_reset_message'); // Ensure transient is cleared on denial
+        } else {
+            // If LLAR does not deny, but still intervenes (e.g., guest-allow-name), set transient for success message replacement.
+            set_transient('llar_display_custom_um_password_reset_message', true, 60);
+        }
 
-			$errors->add( 'llar_password_recovery_disabled', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
-			$errors->remove('invalidcombo');
-			$errors->remove('invalid_email');
-		} elseif ( empty( $user_data ) ) {
-
-			$errors->add( 'invalidcombo', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ) );
-			$errors->remove('invalid_email');
-		}
-	}
+        return $errors;
+    }
 
 	public function llar_confirm_lostpassword_msg( $errors, $redirect_to )
 	{
-		if ( $errors && $errors->get_error_message( 'confirm' ) ) {
+		// If our custom message flag is present in transient, force our message and clear others.
+		if ( get_transient('llar_display_custom_um_password_reset_message') ) {
 			$errors->remove( 'confirm' );
+			$errors->remove( 'invalidcombo' );
+			$errors->remove( 'invalid_email' );
 
-			$errors->add( 'confirm', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ), 'message' );
+			$errors->add( 'llar_custom_password_reset_msg', __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' ), 'message' );
 		}
 
 		return $errors;
+	}
 
+	/**
+	 * Filter UM success response message for password reset.
+	 *
+	 * @param string $message The original success message.
+	 * @param string $key The message key.
+	 * @return string
+	 */
+	public function llar_um_success_response_message( $message, $key ) {
+		if ( $key === 'password_reset_success' && get_transient('llar_display_custom_um_password_reset_message') ) {
+			return __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
+		}
+
+		return $message;
+	}
+
+	/**
+	 * Filter the redirect URL for lostpassword to ensure 'updated' parameter is removed.
+	 *
+	 * @param string $redirect_to The redirect URL.
+	 * @return string
+	 */
+	public function llar_lostpassword_redirect_filter( $redirect_to ) {
+		// This filter is primarily for removing 'updated' and 'checkemail' from lostpassword_url.
+		// With the new transient approach, the redirects don't contain these for custom messages,
+		// but it might still be useful for other cases.
+		$redirect_to = remove_query_arg( 'updated', $redirect_to );
+		$redirect_to = remove_query_arg( 'checkemail', $redirect_to );
+		return $redirect_to;
+	}
+
+	/**
+	 * Callback for `template_redirect` to override Ultimate Member password reset message.
+	 */
+	public function llar_override_um_password_reset_template_output() {
+		// Check if it's the Ultimate Member password reset page
+		if ( function_exists( 'um_is_core_page' ) && um_is_core_page( 'password-reset' ) ) {
+			// Check if our custom message should be displayed via transient
+			if ( get_transient('llar_display_custom_um_password_reset_message') ) {
+				ob_start( array( $this, 'replace_um_password_reset_message' ) );
+				// Delete the transient immediately after starting output buffering
+				// to ensure it's only for this page load.
+				delete_transient('llar_display_custom_um_password_reset_message');
+			} else {
+			}
+		}
+	}
+
+	/**
+	 * Callback for `ob_start` to replace the Ultimate Member password reset message.
+	 *
+	 * @param string $buffer The output buffer content.
+	 * @return string The modified buffer content.
+	 */
+	public function replace_um_password_reset_message( $buffer ) {
+		// This is the *exact* string UM displays after a password reset request.
+		$original_um_success_message_text = __( 'If an account matching the provided details exists, we will send a password reset link. Please check your inbox.', 'ultimate-member' );
+		$custom_message_text = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
+
+		// Only attempt replacement if the transient was present (meaning we are on the custom message path)
+		// The transient is already deleted in llar_override_um_password_reset_template_output after ob_start,
+		// so we rely on the fact that ob_start is called *only* when the transient is present.
+		$modified_buffer = str_replace( $original_um_success_message_text, $custom_message_text, $buffer );
+
+
+		return $modified_buffer;
 	}
 }
