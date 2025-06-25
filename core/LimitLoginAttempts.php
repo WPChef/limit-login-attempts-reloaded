@@ -2506,19 +2506,17 @@ class LimitLoginAttempts
         $user_login = sanitize_text_field( $args['username_b'] );
         $ip = $this->get_address();
 
-        $llar_denies_reset = false;
-
-        // --- Determine if LLAR should completely bypass (for 'pass-name' scenario) ---
+        // --- If LLAR should completely bypass (for 'pass-name' scenario), return early ---
         // This means LLAR takes NO action, and UM shows its native message.
         // This applies if Cloud App says 'pass' OR (local whitelist AND NOT blacklisted AND NOT locked out).
-        $is_bypass_scenario = false;
         if ( self::$cloud_app ) {
             $response = self::$cloud_app->acl_check( array(
                 'ip'        => Helpers::get_all_ips(),
                 'login'     => $user_login,
                 'gateway'   => Helpers::detect_gateway(),
             ) );
-            if ( $response['result'] === 'pass' ) {
+            if ( is_array( $response ) && ! empty( $response ) && $response['result'] === 'pass' ) {
+                delete_transient('llar_display_custom_um_password_reset_message'); // Ensure it's cleared
                 return; // Let UM handle as if LLAR is not present.
             }
         } else { // Local mode
@@ -2526,11 +2524,12 @@ class LimitLoginAttempts
             if ( ( $this->is_ip_whitelisted( $ip ) || $this->is_username_whitelisted( $user_login ) ) &&
                  ! $this->is_ip_blacklisted( $ip ) && ! $this->is_username_blacklisted( $user_login ) &&
                  $this->is_limit_login_ok() ) {
+                delete_transient('llar_display_custom_um_password_reset_message'); // Ensure it's cleared
                 return; // Let UM handle as if LLAR is not present.
             }
         }
 
-        // If we reach here, it means LLAR *should* intervene (not a full bypass).
+        // If we reach here, it means LLAR *should* intervene.
 
         // Try to get user by login or email
         $user_data = get_user_by( 'login', $user_login );
@@ -2538,13 +2537,13 @@ class LimitLoginAttempts
             $user_data = get_user_by( 'email', $user_login );
         }
 
-        // --- Check for non-existent user and force denial if not bypassed ---
-        // If no user found, then it's a denial by LLAR.
+        $llar_denies_reset = false;
+
+        // --- Determine if LLAR denies the password reset action ---
+        // If no user found, or user/IP is blacklisted/locked out, then it's a denial by LLAR.
         if ( ! $user_data ) {
             $llar_denies_reset = true;
         } else {
-            // --- Determine if LLAR denies the password reset action (for custom message scenarios) ---
-            // This applies if the user (or IP) is blacklisted or locked out.
             if ( self::$cloud_app ) {
                 $response = self::$cloud_app->acl_check( array(
                     'ip'        => Helpers::get_all_ips(),
@@ -2566,12 +2565,11 @@ class LimitLoginAttempts
             UM()->form()->add_error( 'username_b', 'llar_password_recovery_denied' );
             delete_transient('llar_display_custom_um_password_reset_message'); // Ensure transient is cleared on denial
         } else {
-            // If LLAR does not deny, but still intervenes (e.g., guest-allow-name), set transient for success message replacement.
+            // If LLAR does not deny, set transient for success message replacement.
             set_transient('llar_display_custom_um_password_reset_message', true, 60);
         }
 
         // For UM hook, no explicit return value is needed if errors are added via UM()->form()->add_error().
-        // If no error was added, UM proceeds normally, and our transient will ensure the custom message.
         return;
     }
 
@@ -2603,19 +2601,17 @@ class LimitLoginAttempts
 
         $ip = $this->get_address();
 
-        $llar_denies_reset = false;
-
-        // --- Determine if LLAR should completely bypass (for 'pass-name' scenario) ---
+        // --- If LLAR should completely bypass (for 'pass-name' scenario), return early ---
         // This means LLAR takes NO action, and WP shows its native message.
         // This applies if Cloud App says 'pass' OR (local whitelist AND NOT blacklisted AND NOT locked out).
-        $is_bypass_scenario = false;
         if ( self::$cloud_app ) {
             $response = self::$cloud_app->acl_check( array(
                 'ip'        => Helpers::get_all_ips(),
                 'login'     => $user_login,
                 'gateway'   => Helpers::detect_gateway(),
             ) );
-            if ( $response['result'] === 'pass' ) {
+            if ( is_array( $response ) && ! empty( $response ) && $response['result'] === 'pass' ) {
+                delete_transient('llar_display_custom_um_password_reset_message'); // Ensure it's cleared
                 return $errors; // Let WP handle as if LLAR is not present.
             }
         } else { // Local mode
@@ -2623,11 +2619,12 @@ class LimitLoginAttempts
             if ( ( $this->is_ip_whitelisted( $ip ) || $this->is_username_whitelisted( $user_login ) ) &&
                  ! $this->is_ip_blacklisted( $ip ) && ! $this->is_username_blacklisted( $user_login ) &&
                  $this->is_limit_login_ok() ) {
+                delete_transient('llar_display_custom_um_password_reset_message'); // Ensure it's cleared
                 return $errors; // Let WP handle as if LLAR is not present.
             }
         }
 
-        // If we reach here, it means LLAR *should* intervene (not a full bypass).
+        // If we reach here, it means LLAR *should* intervene.
 
         // Try to get user by login or email
         $existing_user_data = get_user_by( 'login', $user_login );
@@ -2635,13 +2632,13 @@ class LimitLoginAttempts
             $existing_user_data = get_user_by( 'email', $user_login );
         }
 
-        // --- Check for non-existent user and force denial if not bypassed ---
-        // If no user found, then it's a denial by LLAR.
+        $llar_denies_reset = false;
+
+        // --- Determine if LLAR denies the password reset action ---
+        // If no user found, or user/IP is blacklisted/locked out, then it's a denial by LLAR.
         if ( ! $existing_user_data ) {
             $llar_denies_reset = true;
         } else {
-            // --- Determine if LLAR denies the password reset action (for custom message scenarios) ---
-            // This applies if the user (or IP) is blacklisted or locked out.
             if ( self::$cloud_app ) {
                 $response = self::$cloud_app->acl_check( array(
                     'ip'        => Helpers::get_all_ips(),
@@ -2667,7 +2664,7 @@ class LimitLoginAttempts
             $errors->add( 'llar_password_recovery_denied', 'llar_password_recovery_denied' );
             delete_transient('llar_display_custom_um_password_reset_message'); // Ensure transient is cleared on denial
         } else {
-            // If LLAR does not deny, but still intervenes (e.g., guest-allow-name), set transient for success message replacement.
+            // If LLAR does not deny, set transient for success message replacement.
             set_transient('llar_display_custom_um_password_reset_message', true, 60);
         }
 
