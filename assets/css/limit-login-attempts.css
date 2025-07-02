@@ -3675,6 +3675,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr {
   position: relative;
 }
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr:nth-child(even) {
+  transform: translateZ(0);
+}
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr:nth-child(even)::after {
   content: "";
   position: absolute;
