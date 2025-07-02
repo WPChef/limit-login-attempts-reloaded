@@ -224,9 +224,21 @@
 
   .setup-code-wrap {
     display: none;
+    min-width: 450px;
 
     &.active {
       display: block;
+    }
+
+    button.button {
+
+      @include _1199 {
+        min-width: 120px!important;
+      }
+
+      @include _991 {
+        min-width: 90px!important;
+      }
     }
   }
 
@@ -314,7 +326,7 @@
           line-height: inherit;
           border-radius: $border-radius;
           background-color: unset;
-          padding: 29px 5px 32px 44px;
+          padding: 29px 5px 32px 35px;
 
           @include _1599 {
             padding: 12px 5px 12px 25px;
@@ -331,6 +343,7 @@
           border-top-right-radius: unset;
           border-bottom-right-radius: unset;
           width: 300px;
+          text-align: left;
 
           @include _1399 {
             width: 260px;
@@ -572,7 +585,7 @@
           border: 1px solid $primary-colors__turquoise;
 
           @include _1599 {
-            flex: 0 0 30%;
+            flex: 1 0 30%;
           }
 
           .name {
@@ -665,6 +678,21 @@
 
       &.ui-accordion-header-active {
         background: white;
+      }
+
+      .llar_setup_code {
+        position: absolute;
+        top: 50%;
+        right: 2%;
+        transform: translateY(-50%);
+      }
+
+      &-active {
+
+        .llar_setup_code {
+          visibility: hidden;
+
+        }
       }
     }
 
@@ -812,6 +840,13 @@
 
     .title_page {
       margin-top: 0;
+
+      span {
+        color: $typography-secondary;
+        font-size: 80%;
+        font-weight: 400;
+        margin-left: 10px;
+      }
     }
 
     .right-link {
@@ -876,6 +911,10 @@
       }
 
       thead {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 100;
 
         tr {
 
@@ -884,6 +923,7 @@
             font-size: 16px;
             font-weight: 500;
             padding: 20px 18px;
+            text-align: left;
 
             @include _1599 {
               font-size: 15px;
@@ -1512,6 +1552,7 @@
       th {
         color: $typography-primary;
         font-weight: 500;
+        text-align: center;
       }
     }
   }
@@ -1726,7 +1767,6 @@
 
         .id {
           font-size: 15px;
-          max-width: 14ch;
           display: inline-block;
           vertical-align: middle;
           white-space: nowrap;
@@ -1735,6 +1775,18 @@
 
           @include _1599 {
             font-size: 90%
+          }
+
+          @include _767 {
+            max-width: 14ch;
+          }
+        }
+
+        &:hover .hint_tooltip {
+          display: none;
+
+          @include _767 {
+            display: block;
           }
         }
 
@@ -1839,9 +1891,6 @@
   }
 }
 
-.llar-table-no_app-login {
-
-}
 
 .llar-notice-review,
 .llar-notice-notify {
