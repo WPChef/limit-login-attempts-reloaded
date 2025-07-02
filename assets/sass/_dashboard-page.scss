@@ -641,6 +641,10 @@
         display: inline-block;
         position: relative;
 
+        &:hover .hint_tooltip {
+          display: block;
+        }
+
         span {
           color: $primary-colors__orange;
           font-weight: 500;
@@ -691,6 +695,22 @@
           scrollbar-width: thin;
           scrollbar-gutter: stable;
           padding-bottom: 30px;
+        }
+      }
+
+      .llar-table-app-login, .llar-table-no_app-login {
+
+        tbody {
+
+          td {
+
+            .cell-id {
+
+              .id {
+                max-width: 12ch;
+              }
+            }
+          }
         }
       }
     }
