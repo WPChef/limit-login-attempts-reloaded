@@ -2339,64 +2339,103 @@ class LimitLoginAttempts
 
 
 	/**
-	 * Register new user standard WP, Woo
+	 * Register new user WooCommerce only (standard hooks, cloud mode logic)
 	 *
-	 * @param $user_login
-	 * @param $user_email
-	 * @param $errors
+	 * @param string $user_login
+	 * @param string $user_email
+	 * @param WP_Error $errors
 	 *
 	 * @throws Exception
 	 */
-	public function register_post_hook( $user_login, $user_email, $errors )
-	{
+	public function register_post_hook( $user_login, $user_email, $errors ) {
+		// Only run for WooCommerce registration hooks
+		$current = current_filter();
+		if ( $current !== 'woocommerce_register_post' && $current !== 'woocommerce_process_registration_errors' ) {
+			return;
+		}
+
 		if ( ! self::$cloud_app ) {
 			return;
 		}
 
 		$app_config = Config::get( 'app_config' );
-		$limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
+		$limit_registration = ! empty( $app_config['settings']['limit_registration']['value'] ) &&
 		                      $app_config['settings']['limit_registration']['value'] === 'on';
 
 		if ( ! $limit_registration ) {
 			return;
 		}
 
-		// Check that the function is called woocommerce_register_post
-		$woo_hook = false;
-		if ( current_filter() === 'woocommerce_register_post' || current_filter() === 'woocommerce_process_registration_errors' ) {
-			$woo_hook = true;
+		// Check if user or email is already registered
+		$is_registered = false;
+		if ( ! empty( $user_login ) && username_exists( $user_login ) ) {
+			$is_registered = true;
+		} elseif ( ! empty( $user_email ) && email_exists( $user_email ) ) {
+			$is_registered = true;
 		}
 
-		$login_to_check = ! empty( $user_login ) ? $user_login : $user_email;
-
-		$response = self::$cloud_app->acl_check( array(
-			'ip'        => Helpers::get_all_ips(),
-			'login'     => $login_to_check,
-			'gateway'   => Helpers::detect_gateway(),
+		// Check ACL for login and email
+		$response_login = self::$cloud_app->acl_check( array(
+			'ip'      => Helpers::get_all_ips(),
+			'login'   => $user_login,
+			'gateway' => Helpers::detect_gateway(),
+		) );
+		$response_email = self::$cloud_app->acl_check( array(
+			'ip'      => Helpers::get_all_ips(),
+			'login'   => $user_email,
+			'gateway' => Helpers::detect_gateway(),
 		) );
 
-		if ( ! empty( $user_login ) && $response['result'] !== 'deny' ) {
-
-			$response = self::$cloud_app->acl_check( array(
-				'ip'        => Helpers::get_all_ips(),
-				'login'     => $user_email,
-				'gateway'   => Helpers::detect_gateway(),
-			) );
+		// If login or email is in pass list, do nothing (plugin does not interfere)
+		if (
+			( isset( $response_login['result'] ) && $response_login['result'] === 'pass' ) ||
+			( isset( $response_email['result'] ) && $response_email['result'] === 'pass' )
+		) {
+			return;
 		}
 
-		if ( $response['result'] === 'deny' ) {
-
-			if ( $woo_hook ) {
-				$err_msg = __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' );
-			} else {
-				$err_msg = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
-			}
-
-			// Replace the error message with your own
-			$errors->remove('username_exists');
-			$errors->remove('email_exists');
+		// If login or email is in deny/blacklist, always block registration
+		if (
+			( isset( $response_login['result'] ) && $response_login['result'] === 'deny' ) ||
+			( isset( $response_email['result'] ) && $response_email['result'] === 'deny' )
+		) {
+			$err_msg = __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+			$errors->remove( 'username_exists' );
+			$errors->remove( 'email_exists' );
 			$errors->add( 'email_exists', $err_msg );
+			return;
 		}
+
+		// If user is already registered, always block registration
+		if ( $is_registered ) {
+			$err_msg = __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+			$errors->remove( 'username_exists' );
+			$errors->remove( 'email_exists' );
+			$errors->add( 'email_exists', $err_msg );
+			return;
+		}
+
+		// If login or email is in allow/whitelist, always allow registration (even if lockout)
+		if (
+			( isset( $response_login['result'] ) && $response_login['result'] === 'allow' ) ||
+			( isset( $response_email['result'] ) && $response_email['result'] === 'allow' )
+		) {
+			return;
+		}
+
+		// For guests (not registered, not in allow/pass/deny):
+		// If there is an active lockout for this IP/email, block registration
+		$lockouts = Config::get( 'lockouts' );
+		$ip = $this->get_address();
+		$has_lockout = is_array( $lockouts ) && isset( $lockouts[ $ip ] ) && time() < $lockouts[ $ip ];
+		if ( $has_lockout ) {
+			$err_msg = __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+			$errors->remove( 'username_exists' );
+			$errors->remove( 'email_exists' );
+			$errors->add( 'email_exists', $err_msg );
+			return;
+		}
+		// Otherwise, allow registration
 	}
 
 
