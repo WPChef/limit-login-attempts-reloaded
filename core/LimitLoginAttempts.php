@@ -2418,51 +2418,70 @@ class LimitLoginAttempts
 	public function um_submit_form_errors_hook__blockedips_hook($args, $form_data)
 	{
 		if ( $form_data['mode'] === 'register' ) {
-
 			if ( empty( $args['user_password'] ) || empty( $args['confirm_user_password'] ) ) {
 				return;
 			}
-
 			if ( empty( $args['user_login'] ) || empty( $args['user_email'] ) ) {
 				return;
 			}
-
 			if ( ! self::$cloud_app ) {
 				return;
 			}
-
 			$app_config = Config::get( 'app_config' );
 			$limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
 			                      $app_config['settings']['limit_registration']['value'] === 'on';
-
-
 			if ( ! $limit_registration ) {
 				return;
 			}
-
 			$user_login = sanitize_text_field( $args['user_login'] );
 			$user_email = sanitize_text_field( $args['user_email'] );
 
-			$response = self::$cloud_app->acl_check( array(
-				'ip'        => Helpers::get_all_ips(),
-				'login'     => $user_login,
-				'gateway'   => Helpers::detect_gateway(),
+			// Check cloud ACL for login and email
+			$acl_login = self::$cloud_app->acl_check( array(
+				'ip'      => Helpers::get_all_ips(),
+				'login'   => $user_login,
+				'gateway' => Helpers::detect_gateway(),
+			) );
+			$acl_email = self::$cloud_app->acl_check( array(
+				'ip'      => Helpers::get_all_ips(),
+				'login'   => $user_email,
+				'gateway' => Helpers::detect_gateway(),
 			) );
 
-			if ( $response['result'] !== 'deny' ) {
-
-				$response = self::$cloud_app->acl_check( array(
-					'ip'        => Helpers::get_all_ips(),
-					'login'     => $user_email,
-					'gateway'   => Helpers::detect_gateway(),
-				) );
+			// Pass-list: if any rule or result is 'pass', skip all plugin logic
+			if (
+				( ( isset($acl_login['rule']) && $acl_login['rule'] === 'pass' ) || ( isset($acl_login['result']) && $acl_login['result'] === 'pass' ) ) ||
+				( ( isset($acl_email['rule']) && $acl_email['rule'] === 'pass' ) || ( isset($acl_email['result']) && $acl_email['result'] === 'pass' ) )
+			) {
+				// Do nothing, let UM handle registration
+				return;
 			}
 
-			if ( $response['result'] === 'deny' ) {
-
-				// Replace the error message with your own
-				exit( wp_redirect( esc_url( add_query_arg( 'err', 'llar_registration_disabled' ) ) ) );
+			// Blacklist: if any rule is 'deny', always block
+			if ( ( isset($acl_login['rule']) && $acl_login['rule'] === 'deny' ) || ( isset($acl_email['rule']) && $acl_email['rule'] === 'deny' ) ) {
+				$this->um_block_registration();
+				return;
 			}
+
+			// Whitelist: if any rule is 'allow' and user is not registered, always allow
+			$user_exists = email_exists( $user_email ) || username_exists( $user_login );
+			if ( ( ( isset($acl_login['rule']) && $acl_login['rule'] === 'allow' ) || ( isset($acl_email['rule']) && $acl_email['rule'] === 'allow' ) ) && ! $user_exists ) {
+				// Allow registration for whitelisted, not registered users
+				return;
+			}
+
+			// If user is registered (by email or login), always block
+			if ( $user_exists ) {
+				$this->um_block_registration();
+				return;
+			}
+
+			// For all others: if lockout is active (result=deny), block; else allow
+			if ( ( isset($acl_login['result']) && $acl_login['result'] === 'deny' ) || ( isset($acl_email['result']) && $acl_email['result'] === 'deny' ) ) {
+				$this->um_block_registration();
+				return;
+			}
+			// Otherwise, allow registration
 		}
 	}
 
@@ -2594,5 +2613,13 @@ class LimitLoginAttempts
 
 		return $errors;
 
+	}
+
+	public function um_block_registration()
+	{
+		// Add error to UM registration form under the E-mail Address field
+		if ( function_exists( 'UM' ) && method_exists( UM()->form(), 'add_error' ) ) {
+			UM()->form()->add_error( 'user_email', __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' ) );
+		}
 	}
 }
