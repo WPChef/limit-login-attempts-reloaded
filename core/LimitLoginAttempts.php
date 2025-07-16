@@ -2421,7 +2421,7 @@ class LimitLoginAttempts
 	 */
 	public function um_submit_form_errors_hook__blockedips_hook($args, $form_data)
 	{
-		if ( $form_data['mode'] === 'register' ) {
+		if ( is_array( $form_data ) && isset( $form_data['mode'] ) && 'register' === $form_data['mode'] ) {
 			if ( empty( $args['user_password'] ) || empty( $args['confirm_user_password'] ) ) {
 				return;
 			}
