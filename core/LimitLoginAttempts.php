@@ -2354,8 +2354,12 @@ class LimitLoginAttempts
 		}
 
 		$app_config = Config::get( 'app_config' );
-		$limit_registration = !empty( $app_config['settings']['limit_registration']['value'] ) &&
-		                      $app_config['settings']['limit_registration']['value'] === 'on';
+		$limit_registration = (
+			!empty($app_config) &&
+			isset($app_config['settings']['limit_registration']) &&
+			isset($app_config['settings']['limit_registration']['value']) &&
+			$app_config['settings']['limit_registration']['value'] === 'on'
+		);
 
 		if ( ! $limit_registration ) {
 			return;
