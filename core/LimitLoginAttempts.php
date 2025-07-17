@@ -2451,6 +2451,16 @@ class LimitLoginAttempts
 				'login'   => $user_email,
 				'gateway' => Helpers::detect_gateway(),
 			) );
+			// Blacklist: if any rule or result is 'deny', always block
+			if (
+				( isset($acl_login['rule']) && $acl_login['rule'] === 'deny' ) ||
+				( isset($acl_email['rule']) && $acl_email['rule'] === 'deny' ) ||
+				( isset($acl_login['result']) && $acl_login['result'] === 'deny' ) ||
+				( isset($acl_email['result']) && $acl_email['result'] === 'deny' )
+			) {
+				$this->um_block_registration();
+				return;
+			}
 
 			// Pass-list: if any rule or result is 'pass', skip all plugin logic
 			if (
@@ -2461,31 +2471,18 @@ class LimitLoginAttempts
 				return;
 			}
 
-			// Blacklist: if any rule is 'deny', always block
-			if ( ( isset($acl_login['rule']) && $acl_login['rule'] === 'deny' ) || ( isset($acl_email['rule']) && $acl_email['rule'] === 'deny' ) ) {
-				$this->um_block_registration();
-				return;
-			}
-
 			// Whitelist: if any rule is 'allow' and user is not registered, always allow
 			$user_exists = email_exists( $user_email ) || username_exists( $user_login );
-			if ( ( ( isset($acl_login['rule']) && $acl_login['rule'] === 'allow' ) || ( isset($acl_email['rule']) && $acl_email['rule'] === 'allow' ) ) && ! $user_exists ) {
-				// Allow registration for whitelisted, not registered users
+			if (
+				( ( isset($acl_login['rule']) && $acl_login['rule'] === 'allow' ) || ( isset($acl_email['rule']) && $acl_email['rule'] === 'allow' ) ) &&
+				! $user_exists
+			) {
 				return;
 			}
-
-			// If user is registered (by email or login), always block
+			
 			if ( $user_exists ) {
-				$this->um_block_registration();
 				return;
 			}
-
-			// For all others: if lockout is active (result=deny), block; else allow
-			if ( ( isset($acl_login['result']) && $acl_login['result'] === 'deny' ) || ( isset($acl_email['result']) && $acl_email['result'] === 'deny' ) ) {
-				$this->um_block_registration();
-				return;
-			}
-			// Otherwise, allow registration
 		}
 	}
 
