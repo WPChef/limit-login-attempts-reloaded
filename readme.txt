@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, spam
 License: GPLv2 or later
 Requires at least: 3.0
 Tested up to: 6.8
-Stable tag: 2.26.19
+Stable tag: 2.26.20a
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 

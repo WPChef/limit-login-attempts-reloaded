@@ -167,6 +167,14 @@
             width: 36px;
             vertical-align: text-top;
           }
+
+          &_description {
+            font-size: 18px;
+            font-weight: 500;
+            color: $typography-secondary;
+            margin-top: 10px;
+            text-align: center;
+          }
         }
 
         .preloader-wrapper {
@@ -318,6 +326,24 @@
               text-align: left;
               margin-top: 12px;
             }
+
+            &-item {
+              color: $typography-secondary;
+              font-size: 16px;
+              line-height: 1.5;
+              text-align: left;
+              margin-top: 10px;
+              padding: 10px;
+              border-radius: $border-radius__min;
+              background: $background-body;
+              box-shadow: 2px 2px 9px 0 $box-shadow__light-transparent-gray;
+
+              &-icon {
+                max-width: 30px;
+                margin-right: 15px;
+                vertical-align: middle;
+              }
+            }
           }
 
           &-list {
@@ -331,6 +357,11 @@
               &:before {
                 color: $color-marker;
               }
+            }
+
+            &-desc {
+              margin-top: 30px;
+              margin-bottom: 30px;
             }
           }
 
