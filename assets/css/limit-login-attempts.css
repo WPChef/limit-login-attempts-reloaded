@@ -376,6 +376,18 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   width: 100%;
 }
 
+.llar-customer-id {
+  display: inherit;
+  text-align: right;
+  color: #A4A8B7;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.limit-login-page-settings__logo_block > a {
+  text-align: right;
+}
+
 .toplevel_page_limit-login-attempts #wpwrap {
   background-color: #F6FBFF;
 }
@@ -4192,14 +4204,5 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   width: 12.5px;
   margin-right: 2px;
 }
-.llar-customer-id {
-    display: inherit;
-    text-align: right;
-    color: #A4A8B7;
-    margin-top: 5px;
-    font-size: 14px;
-}
-.limit-login-page-settings__logo_block > a {
-	text-align:right;
-}
+
 /*# sourceMappingURL=limit-login-attempts.css.map */
