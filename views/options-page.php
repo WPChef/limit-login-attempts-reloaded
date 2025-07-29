@@ -111,14 +111,29 @@ if ( $is_active_app_custom ) {
     <div class="limit-login-page-settings__logo_block">
         <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/logo-llap.png">
 
-	    <?php if ( $is_active_app_custom ) : ?>
+	    <?php if ( $is_active_app_custom ) : 
+            $app_config = get_option( 'limit_login_app_config' );
+            ?>
             <a href="https://my.limitloginattempts.com/" class="link__style_unlink" target="_blank">
-	            <?php esc_html_e( 'Account Login', 'limit-login-attempts-reloaded' ); ?>
+                <?php esc_html_e( 'Account Login', 'limit-login-attempts-reloaded' ); ?>
                 <div class="info-box-icon">
                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-backup-big-bw.png">
                 </div>
+            <?php
+            if ( is_array( $app_config ) && ! empty( $app_config['key'] ) ) {
+                $customer_id = substr( $app_config['key'], 0, 8 );
+                ?>
+                    <span class="llar-customer-id">
+                        <?php esc_html_e( 'Customer ID:', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo esc_html( $customer_id ); ?>
+                    </span>
+                <?php
+            }
+            ?>
             </a>
-	    <?php endif; ?>
+            <?php
+
+        endif; ?>
 
     </div>
 
