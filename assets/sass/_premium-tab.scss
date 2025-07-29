@@ -165,6 +165,7 @@
             position: relative;
 
             &:nth-child(even) {
+              transform: translateZ(0);
 
               &::after {
                 content: '';
