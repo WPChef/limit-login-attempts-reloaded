@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.19\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.20\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-05-01T17:37:09+03:00\n"
+"POT-Creation-Date: 2025-07-29T15:59:19+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -129,13 +129,13 @@ msgstr ""
 
 #: core/LimitLoginAttempts.php:435
 #: core/LimitLoginAttempts.php:816
-#: views/options-page.php:129
+#: views/options-page.php:144
 msgid "Dashboard"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:436
 #: core/LimitLoginAttempts.php:821
-#: views/options-page.php:133
+#: views/options-page.php:148
 msgid "Settings"
 msgstr ""
 
@@ -176,22 +176,22 @@ msgstr[1] ""
 
 #: core/LimitLoginAttempts.php:827
 #: resources/compare-plans-data.php:64
-#: views/options-page.php:139
+#: views/options-page.php:154
 msgid "Login Firewall"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:832
-#: views/options-page.php:145
+#: views/options-page.php:160
 msgid "Logs"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:837
-#: views/options-page.php:151
+#: views/options-page.php:166
 msgid "Debug"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:842
-#: views/options-page.php:155
+#: views/options-page.php:170
 #: views/tab-dashboard.php:128
 msgid "Help"
 msgstr ""
@@ -1817,26 +1817,22 @@ msgid "How To Activate Micro Cloud"
 msgstr ""
 
 #: views/micro-cloud-modal.php:48
-#: views/onboarding-popup.php:187
 msgid "Please enter the email that will receive activation confirmation"
 msgstr ""
 
 #: views/micro-cloud-modal.php:53
-#: views/onboarding-popup.php:142
-#: views/onboarding-popup.php:190
+#: views/onboarding-popup.php:145
 #: views/tab-settings.php:570
 #: views/tab-settings.php:594
 msgid "Your email"
 msgstr ""
 
 #: views/micro-cloud-modal.php:61
-#: views/onboarding-popup.php:196
 msgid "I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service."
 msgstr ""
 
 #: views/micro-cloud-modal.php:68
-#: views/onboarding-popup.php:158
-#: views/onboarding-popup.php:230
+#: views/onboarding-popup.php:161
 msgid "Continue"
 msgstr ""
 
@@ -1845,7 +1841,6 @@ msgid "By signing up you agree to our <a href=\"%s\" class=\"llar_turquoise\">te
 msgstr ""
 
 #: views/micro-cloud-modal.php:82
-#: views/onboarding-popup.php:223
 msgid "The server is not working, try again later"
 msgstr ""
 
@@ -1854,7 +1849,7 @@ msgid "Micro Cloud has been activated!"
 msgstr ""
 
 #: views/micro-cloud-modal.php:95
-#: views/onboarding-popup.php:253
+#: views/onboarding-popup.php:241
 msgid "Go To Dashboard"
 msgstr ""
 
@@ -1875,93 +1870,115 @@ msgstr ""
 msgid "Completion"
 msgstr ""
 
-#: views/onboarding-popup.php:65
-msgid "Add your Setup Code"
+#: views/onboarding-popup.php:63
+msgid "Before you start using the plugin, please complete onboarding (It only takes a minute)."
 msgstr ""
 
 #: views/onboarding-popup.php:68
+msgid "Already using Premium? Add your Setup Code"
+msgstr ""
+
+#: views/onboarding-popup.php:71
 msgid "Your Setup Code"
 msgstr ""
 
-#: views/onboarding-popup.php:70
+#: views/onboarding-popup.php:73
 msgid "Activate"
 msgstr ""
 
-#: views/onboarding-popup.php:77
-msgid "The Setup Code can be found in your email if you have subscribed to premium"
+#: views/onboarding-popup.php:80
+msgid "The Setup Code can be found in your email confirmation."
 msgstr ""
 
-#: views/onboarding-popup.php:84
-msgid "Not A Premium User?"
+#: views/onboarding-popup.php:88
+msgid "Not using Premium yet?"
 msgstr ""
 
-#: views/onboarding-popup.php:87
-msgid "We <b>highly recommend</b> upgrading to premium for the best protection against brute force attacks and unauthorized logins"
+#: views/onboarding-popup.php:92
+msgid "With Premium, your site becomes part of a powerful, real-time threat intelligence network built on the data of %1$s over 80,000 WordPress sites. %2$s That means you’re not just blocking attackers after they strike — you’re %1$s preventing them from making legitimate login attempts. %2$s"
 msgstr ""
 
-#: views/onboarding-popup.php:91
-msgid "Detect, counter, and deny unauthorized logins with IP Intelligence"
+#: views/onboarding-popup.php:99
+msgid "Cloud-based login protection with dynamic IP blocklists"
 msgstr ""
 
-#: views/onboarding-popup.php:94
-msgid "Absorb failed login activity to improve site performance"
+#: views/onboarding-popup.php:103
+msgid "97% of brute force attacks blocked before they begin"
 msgstr ""
 
-#: views/onboarding-popup.php:97
-msgid "Block IPs by country, premium support, and much more!"
+#: views/onboarding-popup.php:107
+msgid "Real-time threat updates powered by our global network"
 msgstr ""
 
-#: views/onboarding-popup.php:113
+#: views/onboarding-popup.php:111
+msgid "Country & IP controls for greater control"
+msgstr ""
+
+#: views/onboarding-popup.php:115
+msgid "Powerful login security from just $0.10/day - built for sites of all sizes"
+msgstr ""
+
+#: views/onboarding-popup.php:121
 msgid "Yes, show me plan options"
 msgstr ""
 
-#: views/onboarding-popup.php:116
+#: views/onboarding-popup.php:124
 msgid "No, I don’t want advanced protection"
 msgstr ""
 
-#: views/onboarding-popup.php:122
-#: views/onboarding-popup.php:162
-#: views/onboarding-popup.php:227
-msgid "Skip"
-msgstr ""
-
-#: views/onboarding-popup.php:137
+#: views/onboarding-popup.php:140
 msgid "Notification Settings"
 msgstr ""
 
-#: views/onboarding-popup.php:146
+#: views/onboarding-popup.php:149
 msgid "This email will receive notifications of unauthorized access to your website. You may turn this off in your settings."
 msgstr ""
 
-#: views/onboarding-popup.php:151
+#: views/onboarding-popup.php:154
 msgid "Sign me up for the LLAR newsletter to receive important security alerts, plugin updates, and helpful guides."
 msgstr ""
 
-#: views/onboarding-popup.php:176
+#: views/onboarding-popup.php:165
+msgid "Skip"
+msgstr ""
+
+#: views/onboarding-popup.php:179
 msgid "Limited Upgrade (Free)"
 msgstr ""
 
-#: views/onboarding-popup.php:181
-msgid "Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP intelligence, and performance optimizer (up to 1,000 requests monthly)."
+#: views/onboarding-popup.php:185
+msgid "Help us secure the WordPress network, and in return, we'll give you access to Micro Cloud - Our FREE premium plan. %1$s"
 msgstr ""
 
-#: views/onboarding-popup.php:184
+#: views/onboarding-popup.php:189
+msgid "You’ll receive %1$s 1,000 monthly cloud requests %2$s to power advanced login protection tools that block more than 97%% of all attempted logins. %3$s"
+msgstr ""
+
+#: views/onboarding-popup.php:194
+msgid "%1$s By proceeding, you agree to participate in our threat-sharing network. %2$s %3$s"
+msgstr ""
+
+#: views/onboarding-popup.php:197
+msgid "You can switch back to the free version of the plugin at any time, which will deactivate Micro Cloud and stop all data sharing."
+msgstr ""
+
+#: views/onboarding-popup.php:200
 msgid "<b>Would you like to opt-in?</b>"
 msgstr ""
 
 #: views/onboarding-popup.php:206
-msgid "Sign Me Up"
+msgid "Yes"
 msgstr ""
 
-#: views/onboarding-popup.php:212
-msgid "You may opt-out of this program at any time. You accept our <a class=\"link__style_color_inherit llar_turquoise\" href=\"%s\" target=\"_blank\">terms of service</a> by participating in this program."
+#: views/onboarding-popup.php:210
+msgid "No"
 msgstr ""
 
-#: views/onboarding-popup.php:219
-msgid "Congrats! Your website is now activated for Micro Cloud. Account information has been emailed to you for your reference."
+#: views/onboarding-popup.php:216
+msgid "We'll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our %1$s terms of service %2$s by participating in this program."
 msgstr ""
 
-#: views/onboarding-popup.php:245
+#: views/onboarding-popup.php:233
 msgid "Thank you for completing the setup"
 msgstr ""
 
@@ -1985,19 +2002,23 @@ msgstr ""
 msgid "No thanks"
 msgstr ""
 
-#: views/options-page.php:116
+#: views/options-page.php:118
 msgid "Account Login"
 msgstr ""
 
-#: views/options-page.php:159
+#: views/options-page.php:127
+msgid "Customer ID:"
+msgstr ""
+
+#: views/options-page.php:174
 msgid "Premium / Extensions"
 msgstr ""
 
-#: views/options-page.php:164
+#: views/options-page.php:179
 msgid "Failover"
 msgstr ""
 
-#: views/options-page.php:169
+#: views/options-page.php:184
 msgid "Automatic switch to free version when premium stops working (usually due to non-payment or exceeding monthly resource budget)."
 msgstr ""
 
