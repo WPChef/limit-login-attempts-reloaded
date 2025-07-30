@@ -403,4 +403,88 @@ class Helpers {
 	public static function wp_locale() {
 		return str_replace( '_', '-', get_locale() );
 	}
+	
+	/**
+	 * Retrieves debug information for the Debug tab
+	 *
+	 * @return string
+	 */
+	public static function get_debug_info() {
+		global $wp_version;
+
+		// Get the plugin version
+		$plugin_data = get_file_data(LLA_PLUGIN_FILE, array('Version' => 'Version'));
+		$plugin_version = isset($plugin_data['Version']) ? $plugin_data['Version'] : 'Unknown';
+
+		// Check if the site is multisite
+		$is_multisite = is_multisite() ? 'yes' : 'no';
+
+		// Get the list of active plugins
+		$active_plugins = get_option('active_plugins', array());
+		$plugin_list = array();
+		foreach ($active_plugins as $plugin) {
+			$plugin_info = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin);
+			$plugin_list[] = isset($plugin_info['Name']) ? $plugin_info['Name'] : $plugin;
+		}
+
+		// Get the currently active theme
+		$theme = wp_get_theme();
+		$active_theme = $theme->get('Name');
+
+		// Collecting IP addresses from the server variables
+		$ips = $server = array();
+
+		foreach ($_SERVER as $key => $value) {
+			// Skip 'SERVER_ADDR' and array values
+			if (in_array($key, array('SERVER_ADDR')) || is_array($value)) {
+				continue;
+			}
+
+			// Split multiple IPs and trim spaces
+			$ips_for_check = array_map('trim', explode(',', $value));
+			foreach ($ips_for_check as $ip) {
+				if (Helpers::is_ip_valid($ip)) {
+					// Store unique IPs
+					if (!in_array($ip, $ips)) {
+						$ips[] = $ip;
+					}
+
+					// Initialize key if not set
+					if (!isset($server[$key])) {
+						$server[$key] = '';
+					}
+
+					// Assign IP to the key
+					if (in_array($ip, array('127.0.0.1', '0.0.0.0'))) {
+						$server[$key] = $ip;
+					} else {
+						$server[$key] .= 'IP' . array_search($ip, $ips) . ',';
+					}
+				}
+			}
+		}
+
+		// Format the debug information
+		$debug_info = "=== " . __('Debug Info', 'limit-login-attempts-reloaded') . " ===\n\n";
+
+		$debug_info .= "" . __('IPs', 'limit-login-attempts-reloaded') . ":\n";
+		foreach ($server as $key => $value) {
+			$debug_info .= "$key = $value\n";
+		}
+
+		$debug_info .= "\n" . __('Plugin Version', 'limit-login-attempts-reloaded') . ": $plugin_version\n";
+		$debug_info .= __('WordPress Version', 'limit-login-attempts-reloaded') . ": $wp_version\n";
+		$debug_info .= __('Is Multisite', 'limit-login-attempts-reloaded') . ": $is_multisite\n\n";
+
+		$debug_info .= "" . __('Active Plugins', 'limit-login-attempts-reloaded') . ":\n";
+		foreach ($plugin_list as $plugin_name) {
+			$debug_info .= "$plugin_name\n";
+		}
+
+		$debug_info .= "\n" . __('Active Theme', 'limit-login-attempts-reloaded') . ":\n$active_theme\n";
+
+		return $debug_info;
+	}
+		
+	
 }
