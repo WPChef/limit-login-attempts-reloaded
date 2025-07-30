@@ -124,7 +124,7 @@ class LimitLoginAttempts
 	 */
 	public function hooks_init()
 	{
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) ,999);
 		add_action( 'login_enqueue_scripts', array( $this, 'login_page_enqueue' ) );
 		add_filter( 'limit_login_whitelist_ip', array( $this, 'check_whitelist_ips' ), 10, 2 );
 		add_filter( 'limit_login_whitelist_usernames', array( $this, 'check_whitelist_usernames' ), 10, 2 );
@@ -770,6 +770,24 @@ class LimitLoginAttempts
 				'nonce_subscribe_email'           => $subscribe_email,
 				'nonce_close_premium_message'     => $close_premium_message,
 			));
+
+			global $wp_scripts, $wp_styles;
+				
+			if($wp_scripts && $wp_scripts->registered) {
+				foreach($wp_scripts->registered as $handle => $script) {
+					if(strpos($handle, 'jquery-confirm') !== false) {
+						wp_dequeue_script($handle);
+					}
+				}
+			}
+				
+			if($wp_styles && $wp_styles->registered) {
+				foreach($wp_styles->registered as $handle => $style) {
+					if(strpos($handle, 'jquery-confirm') !== false) {
+						wp_dequeue_style($handle);
+					}
+				}
+			}
 
 			wp_enqueue_style( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/css/jquery-confirm.min.css' );
 			wp_enqueue_script( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/js/jquery-confirm.min.js' );
