@@ -410,78 +410,68 @@ class Helpers {
 	 * @return string
 	 */
 	public static function get_debug_info() {
-		global $wp_version;
+		$debug_info = '';
+		$ips        = array();
+		$server     = array();
 
-		// Get the plugin version
-		$plugin_data = get_file_data(LLA_PLUGIN_FILE, array('Version' => 'Version'));
-		$plugin_version = isset($plugin_data['Version']) ? $plugin_data['Version'] : 'Unknown';
-
-		// Check if the site is multisite
-		$is_multisite = is_multisite() ? 'yes' : 'no';
-
-		// Get the list of active plugins
-		$active_plugins = get_option('active_plugins', array());
-		$plugin_list = array();
-		foreach ($active_plugins as $plugin) {
-			$plugin_info = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin);
-			$plugin_list[] = isset($plugin_info['Name']) ? $plugin_info['Name'] : $plugin;
-		}
-
-		// Get the currently active theme
-		$theme = wp_get_theme();
-		$active_theme = $theme->get('Name');
-
-		// Collecting IP addresses from the server variables
-		$ips = $server = array();
-
-		foreach ($_SERVER as $key => $value) {
-			// Skip 'SERVER_ADDR' and array values
-			if (in_array($key, array('SERVER_ADDR')) || is_array($value)) {
+		foreach ( $_SERVER as $key => $value ) {
+			if ( in_array( $key, array( 'SERVER_ADDR' ), true ) || is_array( $value ) ) {
 				continue;
 			}
-
-			// Split multiple IPs and trim spaces
-			$ips_for_check = array_map('trim', explode(',', $value));
-			foreach ($ips_for_check as $ip) {
-				if (Helpers::is_ip_valid($ip)) {
-					// Store unique IPs
-					if (!in_array($ip, $ips)) {
+			$ips_for_check = array_map( 'trim', explode( ',', $value ) );
+			foreach ( $ips_for_check as $ip ) {
+				if ( self::is_ip_valid( $ip ) ) {
+					if ( ! in_array( $ip, $ips, true ) ) {
 						$ips[] = $ip;
 					}
-
-					// Initialize key if not set
-					if (!isset($server[$key])) {
-						$server[$key] = '';
+					if ( ! isset( $server[ $key ] ) ) {
+						$server[ $key ] = '';
 					}
+					$server[ $key ] .= 'IP' . array_search( $ip, $ips, true );
+				}
+			}
+		}
+		foreach ( $server as $server_key => $ips_val ) {
+			$debug_info .= $server_key . ' = ' . trim( $ips_val, ',' ) . "\n";
+		}
 
-					// Assign IP to the key
-					if (in_array($ip, array('127.0.0.1', '0.0.0.0'))) {
-						$server[$key] = $ip;
+		$plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
+		$debug_info .= "\nPlugin Version: " . $plugin_data['Version'] . "\n";
+		$debug_info .= "WordPress Version: " . get_bloginfo( 'version' ) . "\n";
+		$debug_info .= "Is Multisite: " . ( is_multisite() ? 'yes' : 'no' ) . "\n";
+
+		$debug_info .= "\nActive Plugins:\n";
+		$all_plugins = get_plugins();
+		$active_plugins = get_option( 'active_plugins' );
+		if ( is_array( $active_plugins ) ) {
+			foreach ( $active_plugins as $plugin_file ) {
+				if ( strpos( $plugin_file, 'limit-login-attempts-reloaded' ) === 0 ) {
+					continue;
+				}
+				if ( isset( $all_plugins[ $plugin_file ] ) ) {
+					$plugin_data_item = $all_plugins[ $plugin_file ];
+					$name   = $plugin_data_item['Name'];
+					$uri    = $plugin_data_item['PluginURI'];
+					$slug   = dirname( $plugin_file );
+					if ( ! empty( $uri ) && strpos( $uri, 'https://wordpress.org/plugins/' ) === 0 ) {
+						$debug_info .= $name . ' (' . $uri . ")\n";
 					} else {
-						$server[$key] .= 'IP' . array_search($ip, $ips) . ',';
+						$debug_info .= $name . ' (https://wordpress.org/plugins/' . $slug . "/)\n";
 					}
 				}
 			}
 		}
 
-		// Format the debug information
-		$debug_info = "=== " . __('Debug Info', 'limit-login-attempts-reloaded') . " ===\n\n";
-
-		$debug_info .= "" . __('IPs', 'limit-login-attempts-reloaded') . ":\n";
-		foreach ($server as $key => $value) {
-			$debug_info .= "$key = $value\n";
+		$current_theme = wp_get_theme();
+		$theme_name    = $current_theme->get( 'Name' );
+		$theme_uri     = $current_theme->get( 'ThemeURI' );
+		$theme_slug    = $current_theme->get_stylesheet();
+		$debug_info .= "\nActive Theme:\n";
+		if ( ! empty( $theme_uri ) && strpos( $theme_uri, 'https://wordpress.org/themes/' ) === 0 ) {
+			$debug_info .= $theme_name . ' (' . $theme_uri . ")\n";
+		} else {
+			$debug_info .= $theme_name . ' (https://wordpress.org/themes/' . $theme_slug . "/)\n";
 		}
-
-		$debug_info .= "\n" . __('Plugin Version', 'limit-login-attempts-reloaded') . ": $plugin_version\n";
-		$debug_info .= __('WordPress Version', 'limit-login-attempts-reloaded') . ": $wp_version\n";
-		$debug_info .= __('Is Multisite', 'limit-login-attempts-reloaded') . ": $is_multisite\n\n";
-
-		$debug_info .= "" . __('Active Plugins', 'limit-login-attempts-reloaded') . ":\n";
-		foreach ($plugin_list as $plugin_name) {
-			$debug_info .= "$plugin_name\n";
-		}
-
-		$debug_info .= "\n" . __('Active Theme', 'limit-login-attempts-reloaded') . ":\n$active_theme\n";
 
 		return $debug_info;
 	}

@@ -14,6 +14,7 @@ $setup_code = Config::get( 'app_setup_code' );
 
 
 
+$debug_info = Helpers::get_debug_info();
 $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
 ?>
 
@@ -25,11 +26,11 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
                 <th scope="row" valign="top"><?php echo esc_html__( 'Debug Info', 'limit-login-attempts-reloaded' ); ?></th>
                 <td>
                     <div class="textarea_border">
-                        <textarea cols="70" rows="10" onclick="this.select()"
-                                  readonly><?php echo esc_textarea(\LLAR\Core\Helpers::get_debug_info()); ?></textarea>
+                        <textarea cols="70" rows="10" onclick="this.select();"
+								  readonly><?php echo esc_textarea( $debug_info ); ?></textarea>
                     </div>
                     <div class="description-secondary">
-						<?php esc_attr_e( 'Copy the contents of the window and provide to support.', 'limit-login-attempts-reloaded' ); ?>
+						<?php esc_html_e( 'When submitting a support ticket, please include the contents of the window shown above.', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </td>
             </tr>
