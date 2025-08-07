@@ -403,4 +403,91 @@ class Helpers {
 	public static function wp_locale() {
 		return str_replace( '_', '-', get_locale() );
 	}
+	
+	/**
+	 * Retrieves debug information for the Debug tab
+	 *
+	 * @return string
+	 */
+	public static function get_debug_info() {
+		$debug_info = '';
+		$ips        = array();
+		$server     = array();
+
+		foreach ( $_SERVER as $key => $value ) {
+			if ( in_array( $key, array( 'SERVER_ADDR' ), true ) || is_array( $value ) ) {
+				continue;
+			}
+			$ips_for_check = array_map( 'trim', explode( ',', $value ) );
+			foreach ( $ips_for_check as $ip ) {
+				if ( self::is_ip_valid( $ip ) ) {
+					if ( ! in_array( $ip, $ips, true ) ) {
+						$ips[] = $ip;
+					}
+					if ( ! isset( $server[ $key ] ) ) {
+						$server[ $key ] = '';
+					}
+					if ( in_array( $ip, array( '127.0.0.1', '0.0.0.0' ), true ) ) {
+						$server[ $key ] = $ip;
+					} else {
+						$server[ $key ] .= 'IP' . array_search( $ip, $ips, true ) . ',';
+					}
+				}
+			}
+		}
+		$debug_info .= 'IPs:' . "\n";
+		foreach ( $server as $server_key => $ips_val ) {
+			$debug_info .= $server_key . ' = ' . trim( $ips_val, ',' ) . "\n";
+		}
+
+		$plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
+		$debug_info .= "\nPlugin Version: " . $plugin_data['Version'] . "\n";
+		$debug_info .= "WordPress Version: " . get_bloginfo( 'version' ) . "\n";
+		$debug_info .= "Is Multisite: " . ( is_multisite() ? 'yes' : 'no' ) . "\n";
+
+		$debug_info .= "\nActive Plugins:\n";
+		$all_plugins = get_plugins();
+		$active_plugins = get_option( 'active_plugins' );
+		if ( is_array( $active_plugins ) ) {
+			foreach ( $active_plugins as $plugin_file ) {
+				if ( isset( $all_plugins[ $plugin_file ] ) ) {
+					$plugin_data_item = $all_plugins[ $plugin_file ];
+					$name   = $plugin_data_item['Name'];
+					$version = $plugin_data_item['Version'];
+					$uri    = $plugin_data_item['PluginURI'];
+					$slug   = dirname( $plugin_file );
+					
+					if ( empty( $slug ) ) {
+						$slug = strtolower( str_replace( array( ' ', '-', '_' ), '-', $name ) );
+					}
+					
+					$mu_indicator = '';
+					if ( strpos( $plugin_file, 'limit-login-attempts-reloaded' ) === 0 ) {
+						$mu_indicator = self::is_mu() ? ' MU' : '';
+					}
+					
+					if ( ! empty( $uri ) && strpos( $uri, 'https://wordpress.org/plugins/' ) === 0 ) {
+						$debug_info .= $name . ' ' . $version . ' (' . $uri . ")" . $mu_indicator . "\n";
+					} else {
+						$debug_info .= $name . ' ' . $version . ' (https://wordpress.org/plugins/' . $slug . "/)" . $mu_indicator . "\n";
+					}
+				}
+			}
+		}
+
+		$current_theme = wp_get_theme();
+		$theme_name    = $current_theme->get( 'Name' );
+		$theme_uri     = $current_theme->get( 'ThemeURI' );
+		$theme_slug    = $current_theme->get_stylesheet();
+		$debug_info .= "\nActive Theme:\n";
+		if ( ! empty( $theme_uri ) && strpos( $theme_uri, 'https://wordpress.org/themes/' ) === 0 ) {
+			$debug_info .= $theme_name . ' (' . $theme_uri . ")\n";
+		} else {
+			$debug_info .= $theme_name . ' (https://wordpress.org/themes/' . $theme_slug . "/)\n";
+		}
+
+		return $debug_info;
+	}
+		
+	
 }
