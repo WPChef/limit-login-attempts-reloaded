@@ -405,9 +405,9 @@ class Helpers {
 	}
 	
 	/**
-	 * Retrieves debug information for the Debug tab
+	 * Retrieves debug information for the Debug tab.
 	 *
-	 * @return string
+	 * @return string Debug info as a multi-line string.
 	 */
 	public static function get_debug_info() {
 		$debug_info = '';
@@ -441,10 +441,14 @@ class Helpers {
 		}
 
 		$plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
-		$debug_info .= "\nPlugin Version: " . $plugin_data['Version'] . "\n";
-		$debug_info .= "WordPress Version: " . get_bloginfo( 'version' ) . "\n";
-		$debug_info .= "Is Multisite: " . ( is_multisite() ? 'yes' : 'no' ) . "\n";
-
+		if ( is_array( $plugin_data ) ) {
+			$version = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
+			$debug_info .= "\nPlugin Version: " . $version . "\n";
+		} else {
+			$debug_info .= "\nPlugin Version: \n";
+		}
+		$debug_info .= 'WordPress Version: ' . get_bloginfo( 'version' ) . "\n";
+		$debug_info .= 'Is Multisite: ' . ( is_multisite() ? 'yes' : 'no' ) . "\n";
 		$debug_info .= "\nActive Plugins:\n";
 		$all_plugins = get_plugins();
 		$active_plugins = get_option( 'active_plugins' );
@@ -452,38 +456,54 @@ class Helpers {
 			foreach ( $active_plugins as $plugin_file ) {
 				if ( isset( $all_plugins[ $plugin_file ] ) ) {
 					$plugin_data_item = $all_plugins[ $plugin_file ];
-					$name   = $plugin_data_item['Name'];
-					$version = $plugin_data_item['Version'];
-					$uri    = $plugin_data_item['PluginURI'];
-					$slug   = dirname( $plugin_file );
-					
-					if ( empty( $slug ) ) {
-						$slug = strtolower( str_replace( array( ' ', '-', '_' ), '-', $name ) );
+
+					$name    = isset( $plugin_data_item['Name'] ) ? $plugin_data_item['Name'] : '';
+					$version = isset( $plugin_data_item['Version'] ) ? $plugin_data_item['Version'] : '';
+					$uri     = isset( $plugin_data_item['PluginURI'] ) ? $plugin_data_item['PluginURI'] : '';
+
+					// Base slug from path.
+					$slug = dirname( $plugin_file );
+
+					// Single-file plugin at plugins root: dirname() returns '.'.
+					if ( '.' === $slug || '' === $slug ) {
+						$slug = basename( $plugin_file, '.php' );
 					}
 					
+
+					// If PluginURI points to WordPress.org, prefer slug from the URI.
+					if ( ! empty( $uri ) && preg_match( '#WordPress\.org/plugins/([^/]+)/?#i', $uri, $m ) ) {
+						$slug = $m[1];
+					}
+
+					// Normalize slug similar to WP's sanitize_title().
+					$slug = sanitize_title( $slug );
+
 					$mu_indicator = '';
-					if ( strpos( $plugin_file, 'limit-login-attempts-reloaded' ) === 0 ) {
+					if ( 0 === strpos( $plugin_file, 'limit-login-attempts-reloaded' ) ) {
 						$mu_indicator = self::is_mu() ? ' MU' : '';
 					}
-					
-					if ( ! empty( $uri ) && strpos( $uri, 'https://wordpress.org/plugins/' ) === 0 ) {
-						$debug_info .= $name . ' ' . $version . ' (' . $uri . ")" . $mu_indicator . "\n";
+
+					// Prefer official WordPress.org PluginURI when it is clearly such.
+					if ( ! empty( $uri ) && 0 === strpos( $uri, 'https://WordPress.org/plugins/' ) ) {
+						$debug_info .= $name . ' ' . $version . ' (' . $uri . ')' . $mu_indicator . "\n";
 					} else {
-						$debug_info .= $name . ' ' . $version . ' (https://wordpress.org/plugins/' . $slug . "/)" . $mu_indicator . "\n";
+						$debug_info .= $name . ' ' . $version . ' (https://WordPress.org/plugins/' . $slug . '/)' . $mu_indicator . "\n";
 					}
 				}
 			}
 		}
 
 		$current_theme = wp_get_theme();
-		$theme_name    = $current_theme->get( 'Name' );
-		$theme_uri     = $current_theme->get( 'ThemeURI' );
-		$theme_slug    = $current_theme->get_stylesheet();
+		$theme_name    = is_object( $current_theme ) ? $current_theme->get( 'Name' ) : '';
+		$theme_uri     = is_object( $current_theme ) ? $current_theme->get( 'ThemeURI' ) : '';
+		$theme_slug    = is_object( $current_theme ) ? $current_theme->get_stylesheet() : '';
+
 		$debug_info .= "\nActive Theme:\n";
-		if ( ! empty( $theme_uri ) && strpos( $theme_uri, 'https://wordpress.org/themes/' ) === 0 ) {
-			$debug_info .= $theme_name . ' (' . $theme_uri . ")\n";
+
+		if ( ! empty( $theme_uri ) && 0 === strpos( $theme_uri, 'https://WordPress.org/themes/' ) ) {
+			$debug_info .= $theme_name . ' (' . $theme_uri . ')' . "\n";
 		} else {
-			$debug_info .= $theme_name . ' (https://wordpress.org/themes/' . $theme_slug . "/)\n";
+			$debug_info .= $theme_name . ' (https://WordPress.org/themes/' . $theme_slug . '/)' . "\n";
 		}
 
 		return $debug_info;
