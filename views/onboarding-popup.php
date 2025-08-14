@@ -246,6 +246,31 @@ ob_start(); ?>
 
 <?php
 $content_step_4 = ob_get_clean();
+add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
+	if ( 'post' === $context ) {
+		$tags['form'] = array(
+			'action' => true,
+			'method' => true,
+			'id'     => true,
+			'class'  => true,
+		);
+
+		$tags['input'] = array(
+			'type'        => true,
+			'name'        => true,
+			'value'       => true,
+			'id'          => true,
+			'class'       => true,
+			'placeholder' => true,
+			'checked'     => true,
+			'disabled'    => true,
+			'readonly'    => true,
+		);
+	}
+
+	return $tags;
+}, 10, 2 );
+
 ?>
 
 <script>
