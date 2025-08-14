@@ -17,7 +17,7 @@ $admin_email             = ! empty($admin_notify_email)
 $onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
 $setup_code             = Config::get( 'app_setup_code' );
 
-$url_site = parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
+$url_site = wp_parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
 
 if ( $onboarding_popup_shown || ! empty( $setup_code ) ) {
 	return;
@@ -26,58 +26,58 @@ if ( $onboarding_popup_shown || ! empty( $setup_code ) ) {
 ob_start(); ?>
 <div class="llar-onboarding-popup__content">
     <div class="logo">
-        <img src="<?php echo LLA_PLUGIN_URL ?>assets/img/icon-logo-menu-dark.png">
+        <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/img/icon-logo-menu-dark.png">
     </div>
     <div class="llar-onboarding__line">
         <div class="point__block visited active" data-step="1">
             <div class="point"></div>
             <div class="description">
-				<?php _e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
+				<?php esc_html_e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
         <div class="point__block" data-step="2">
             <div class="point"></div>
             <div class="description">
-				<?php _e( 'Notifications', 'limit-login-attempts-reloaded' ); ?>
+				<?php esc_html_e( 'Notifications', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
         <div class="point__block" data-step="3">
             <div class="point"></div>
             <div class="description">
-				<?php _e( 'Limited Upgrade', 'limit-login-attempts-reloaded' ); ?>
+				<?php esc_html_e( 'Limited Upgrade', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
         <div class="point__block" data-step="4">
             <div class="point"></div>
             <div class="description">
-				<?php _e( 'Completion', 'limit-login-attempts-reloaded' ); ?>
+				<?php esc_html_e( 'Completion', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
     </div>
     <div class="llar-onboarding__body">
         <div class="title">
-            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/welcome.png">
-			<?php _e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
+            <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/welcome.png">
+			<?php esc_html_e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="title_description">
-		    <?php _e( 'Before you start using the plugin, please complete onboarding (It only takes a minute).', 'limit-login-attempts-reloaded' ); ?>
+		    <?php esc_html_e( 'Before you start using the plugin, please complete onboarding (It only takes a minute).', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <div class="card mx-auto">
             <div class="field-wrap">
                 <div class="field-title">
-			        <?php _e( 'Already using Premium? Add your Setup Code', 'limit-login-attempts-reloaded' ); ?>
+			        <?php esc_html_e( 'Already using Premium? Add your Setup Code', 'limit-login-attempts-reloaded' ); ?>
                 </div>
                 <div class="field-key">
-                    <input type="text" class="input_border" id="llar-setup-code-field" placeholder="<?php _e('Your Setup Code', 'limit-login-attempts-reloaded' ) ?>" value="">
+                    <input type="text" class="input_border" id="llar-setup-code-field" placeholder="<?php esc_attr_e('Your Setup Code', 'limit-login-attempts-reloaded' ); ?>" value="">
                     <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
-				        <?php _e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
+				        <?php esc_html_e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
                         <span class="dashicons dashicons-arrow-right-alt"></span>
                         <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
                     </button>
                 </div>
                 <div class="field-error"></div>
                 <div class="field-desc">
-			        <?php _e( 'The Setup Code can be found in your email confirmation.', 'limit-login-attempts-reloaded' ); ?>
+			        <?php esc_html_e( 'The Setup Code can be found in your email confirmation.', 'limit-login-attempts-reloaded' ); ?>
                 </div>
             </div>
         </div>
@@ -85,43 +85,43 @@ ob_start(); ?>
             <div class="field-wrap">
             <div class="field-wrap">
                 <div class="field-title">
-		            <?php _e( 'Not using Premium yet?', 'limit-login-attempts-reloaded' ); ?>
+		            <?php esc_html_e( 'Not using Premium yet?', 'limit-login-attempts-reloaded' ); ?>
                 </div>
                 <div class="field-desc-add">
-					<?php printf(
-						__( 'With Premium, your site becomes part of a powerful, real-time threat intelligence network built on the data of %1$s over 80,000 WordPress sites. %2$s That means you’re not just blocking attackers after they strike — you’re %1$s preventing them from making legitimate login attempts. %2$s', 'limit-login-attempts-reloaded' ),
-						'<span class="llar_turquoise">', '</span>' );
+					<?php 
+					/* translators: %1$s: opening span tag, %2$s: closing span tag */
+					printf( esc_html__( 'With Premium, your site becomes part of a powerful, real-time threat intelligence network built on the data of %1$s over 80,000 WordPress sites. %2$s That means you\'re not just blocking attackers after they strike — you\'re %1$s preventing them from making legitimate login attempts. %2$s', 'limit-login-attempts-reloaded' ), '<span class="llar_turquoise">', '</span>' );
 					?>
                 </div>
                 <div class="field-list-desc">
                     <div class="field-desc-item">
-                        <img class="field-desc-item-icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-shield.png">
-		                <?php _e( 'Cloud-based login protection with dynamic IP blocklists', 'limit-login-attempts-reloaded' ); ?>
+                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/icon-shield.png">
+		                <?php esc_html_e( 'Cloud-based login protection with dynamic IP blocklists', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <div class="field-desc-item">
-                        <img class="field-desc-item-icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-lock.png">
-		                <?php _e( '97% of brute force attacks blocked before they begin', 'limit-login-attempts-reloaded' ); ?>
+                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/icon-lock.png">
+		                <?php esc_html_e( '97% of brute force attacks blocked before they begin', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <div class="field-desc-item">
-                        <img class="field-desc-item-icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-reload.png">
-		                <?php _e( 'Real-time threat updates powered by our global network', 'limit-login-attempts-reloaded' ); ?>
+                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/icon-reload.png">
+		                <?php esc_html_e( 'Real-time threat updates powered by our global network', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <div class="field-desc-item">
-                        <img class="field-desc-item-icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-web.png">
-		                <?php _e( 'Country & IP controls for greater control', 'limit-login-attempts-reloaded' ); ?>
+                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/icon-web.png">
+		                <?php esc_html_e( 'Country & IP controls for greater control', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <div class="field-desc-item">
-                        <img class="field-desc-item-icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-dollar.png">
-		                <?php _e( 'Powerful login security from just $0.10/day - built for sites of all sizes', 'limit-login-attempts-reloaded' ); ?>
+                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/icon-dollar.png">
+		                <?php esc_html_e( 'Powerful login security from just $0.10/day - built for sites of all sizes', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </div>
                 <div class="button_block">
                     <a href="https://www.limitloginattempts.com/info.php?from=plugin-onboarding-plans"
                        class="button menu__item button__orange" target="_blank">
-						<?php _e( 'Yes, show me plan options', 'limit-login-attempts-reloaded' ); ?>
+						<?php esc_html_e( 'Yes, show me plan options', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                     <button class="button next_step menu__item button__transparent_orange">
-						<?php _e( 'No, I don’t want advanced protection', 'limit-login-attempts-reloaded' ); ?>
+						<?php esc_html_e( 'No, I don\'t want advanced protection', 'limit-login-attempts-reloaded' ); ?>
                     </button>
                 </div>
             </div>
@@ -136,33 +136,33 @@ $popup_complete_install_content = ob_get_clean();
 ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
-        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/email.png">
-		<?php _e( 'Notification Settings', 'limit-login-attempts-reloaded' ); ?>
+        <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/email.png">
+		<?php esc_html_e( 'Notification Settings', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <div class="card mx-auto">
         <div class="field-wrap">
             <div class="field-email">
-                <input type="text" class="input_border" id="llar-subscribe-email" placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"
-                       value="<?php esc_attr_e( $admin_email ); ?>">
+                <input type="text" class="input_border" id="llar-subscribe-email" placeholder="<?php esc_attr_e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"
+                       value="<?php echo esc_attr( $admin_email ); ?>">
             </div>
             <div class="field-desc-additional">
-				<?php _e( 'This email will receive notifications of unauthorized access to your website. You may turn this off in your settings.', 'limit-login-attempts-reloaded' ); ?>
+				<?php esc_html_e( 'This email will receive notifications of unauthorized access to your website. You may turn this off in your settings.', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="field-checkbox">
                 <input type="checkbox" name="lockout_notify_email" value="email"/>
                 <span>
-                    <?php _e( 'Sign me up for the LLAR newsletter to receive important security alerts, plugin updates, and helpful guides.', 'limit-login-attempts-reloaded' ); ?>
+                    <?php esc_html_e( 'Sign me up for the LLAR newsletter to receive important security alerts, plugin updates, and helpful guides.', 'limit-login-attempts-reloaded' ); ?>
                 </span>
             </div>
         </div>
     </div>
     <div class="button_block-horizon">
         <button class="button menu__item button__orange" id="llar-subscribe-email-button">
-			<?php _e( 'Continue', 'limit-login-attempts-reloaded' ) ?>
+			<?php esc_html_e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
             <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
         </button>
         <button class="button next_step menu__item button__transparent_orange button-skip" style="display: none">
-			<?php _e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
+			<?php esc_html_e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
         </button>
     </div>
 </div>
@@ -175,46 +175,46 @@ $content_step_2 = ob_get_clean();
 ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
-        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/rocket-min.png">
-		<?php _e( 'Limited Upgrade (Free)', 'limit-login-attempts-reloaded' ); ?>
+        <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/rocket-min.png">
+		<?php esc_html_e( 'Limited Upgrade (Free)', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <div class="card mx-auto">
         <div class="field-wrap" id="llar-description-step-3">
             <div class="field-desc-add">
-				<?php printf(
-					__( 'Help us secure the WordPress network, and in return, we\'ll give you access to Micro Cloud - Our FREE premium plan. %1$s', 'limit-login-attempts-reloaded' ),
-					'<br />' ); ?>
+				<?php 
+				/* translators: %s: line break */
+				printf( esc_html__( 'Help us secure the WordPress network, and in return, we\'ll give you access to Micro Cloud - Our FREE premium plan. %s', 'limit-login-attempts-reloaded' ), '<br />' ); ?>
                 <br>
-				<?php printf(
-					__( 'You’ll receive %1$s 1,000 monthly cloud requests %2$s to power advanced login protection tools that block more than 97%% of all attempted logins. %3$s', 'limit-login-attempts-reloaded' ),
-					'<span class="llar_turquoise">', '</span>', '<br />' );
+				<?php 
+				/* translators: %1$s: opening span tag, %2$s: closing span tag, %3$s: line break */
+				printf( esc_html__( 'You\'ll receive %1$s 1,000 monthly cloud requests %2$s to power advanced login protection tools that block more than 97%% of all attempted logins. %3$s', 'limit-login-attempts-reloaded' ), '<span class="llar_turquoise">', '</span>', '<br />' );
 				?>
                 <br>
-				<?php printf(
-					__( '%1$s By proceeding, you agree to participate in our threat-sharing network. %2$s %3$s', 'limit-login-attempts-reloaded' ),
-					'<span class="llar_turquoise">', '</span>', '<br />' );
+				<?php 
+				/* translators: %1$s: opening span tag, %2$s: closing span tag, %3$s: line break */
+				printf( esc_html__( '%1$s By proceeding, you agree to participate in our threat-sharing network. %2$s %3$s', 'limit-login-attempts-reloaded' ), '<span class="llar_turquoise">', '</span>', '<br />' );
 				?>
-				<?php _e( 'You can switch back to the free version of the plugin at any time, which will deactivate Micro Cloud and stop all data sharing.', 'limit-login-attempts-reloaded' ); ?>
+				<?php esc_html_e( 'You can switch back to the free version of the plugin at any time, which will deactivate Micro Cloud and stop all data sharing.', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="field-desc-add">
-				<?php _e( '<b>Would you like to opt-in?</b>', 'limit-login-attempts-reloaded' ); ?>
+				<b><?php esc_html_e( 'Would you like to opt-in?', 'limit-login-attempts-reloaded' ); ?></b>
             </div>
         </div>
         <div class="llar-upgrade-subscribe">
             <div class="button_block-horizon">
                 <button class="button next_step menu__item button__transparent_orange" id="llar-limited-upgrade-subscribe">
-		            <?php _e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
+		            <?php esc_html_e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
                     <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
                 </button>
                 <button class="button next_step menu__item button__transparent_grey" id="llar-limited-upgrade-no_subscribe">
-		            <?php _e( 'No', 'limit-login-attempts-reloaded' ); ?>
+		            <?php esc_html_e( 'No', 'limit-login-attempts-reloaded' ); ?>
                     <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
                 </button>
             </div>
             <div class="explanations">
-				<?php printf(
-					__( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our %1$s terms of service %2$s by participating in this program.', 'limit-login-attempts-reloaded' ),
-					'<a class="link__style_color_inherit llar_turquoise" href="https://www.limitloginattempts.com/terms/" target="_blank">', '</a>' );
+				<?php 
+				/* translators: %1$s: opening link tag, %2$s: closing link tag */
+				printf(	esc_html__( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our %1$s terms of service %2$s by participating in this program.', 'limit-login-attempts-reloaded' ), '<a class="link__style_color_inherit llar_turquoise" href="https://www.limitloginattempts.com/terms/" target="_blank">', '</a>' );
 				?>
             </div>
         </div>
@@ -229,16 +229,16 @@ $content_step_3 = ob_get_clean();
 ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
-        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/like-min.png">
-		<?php _e( 'Thank you for completing the setup', 'limit-login-attempts-reloaded' ); ?>
+        <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/like-min.png">
+		<?php esc_html_e( 'Thank you for completing the setup', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <div class="card mx-auto">
         <div class="field-image">
-            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/schema-ok-min.png">
+            <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/schema-ok-min.png">
         </div>
         <div class="button_block-single">
             <button class="button next_step menu__item button__orange">
-				<?php _e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); ?>
+				<?php esc_html_e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); ?>
             </button>
         </div>
     </div>
@@ -246,6 +246,31 @@ ob_start(); ?>
 
 <?php
 $content_step_4 = ob_get_clean();
+add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
+	if ( 'post' === $context ) {
+		$tags['form'] = array(
+			'action' => true,
+			'method' => true,
+			'id'     => true,
+			'class'  => true,
+		);
+
+		$tags['input'] = array(
+			'type'        => true,
+			'name'        => true,
+			'value'       => true,
+			'id'          => true,
+			'class'       => true,
+			'placeholder' => true,
+			'checked'     => true,
+			'disabled'    => true,
+			'readonly'    => true,
+		);
+	}
+
+	return $tags;
+}, 10, 2 );
+
 ?>
 
 <script>
@@ -255,7 +280,7 @@ $content_step_4 = ob_get_clean();
 
             const ondoarding_modal = $.dialog( {
                 title: false,
-                content: `<?php echo trim( $popup_complete_install_content ); ?>`,
+                content: `<?php echo wp_kses_post( trim( $popup_complete_install_content ) ); ?>`,
                 type: 'default',
                 typeAnimated: true,
                 draggable: false,
@@ -340,7 +365,7 @@ $content_step_4 = ob_get_clean();
                         const $html_onboarding_body = $( '.llar-onboarding__body' );
 
                         if ( next_step === 2 ) {
-                            $html_onboarding_body.replaceWith( <?php echo json_encode( trim( $content_step_2 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
+                            $html_onboarding_body.replaceWith( <?php echo wp_json_encode( trim( $content_step_2 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
 
                             const $subscribe_email = $( '#llar-subscribe-email' );
                             const $subscribe_email_button = $( '#llar-subscribe-email-button' );
@@ -382,7 +407,7 @@ $content_step_4 = ob_get_clean();
                             } )
                         } else if ( next_step === 3 ) {
 
-                            $html_onboarding_body.replaceWith( <?php echo json_encode( trim( $content_step_3 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
+                            $html_onboarding_body.replaceWith( <?php echo wp_json_encode( trim( $content_step_3 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
 
                             const $limited_upgrade_subscribe = $( '#llar-limited-upgrade-subscribe' );
                             const $limited_upgrade_no_subscribe = $( '#llar-limited-upgrade-no_subscribe' );
@@ -394,7 +419,7 @@ $content_step_4 = ob_get_clean();
 
 
                             if ( email === '' || email === null ) {
-                                email = '<?php esc_attr_e( $admin_email ); ?>'
+                                email = '<?php echo esc_js( $admin_email ); ?>'
                             }
 
                             $limited_upgrade_no_subscribe.on( 'click', function () {
@@ -438,7 +463,7 @@ $content_step_4 = ob_get_clean();
                                 .then( function () {
 
                                     setTimeout(function() {
-                                        $html_onboarding_body.replaceWith( <?php echo json_encode( trim( $content_step_4 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
+                                        $html_onboarding_body.replaceWith( <?php echo wp_json_encode( trim( $content_step_4 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
                                     }, 1500);
                                 } )
 
