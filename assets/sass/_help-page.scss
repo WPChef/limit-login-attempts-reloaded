@@ -1,170 +1,279 @@
-.llar-help-page {
-  font-family: inherit;
-  line-height: 1.5;
+#llar-setting-page-help {
 
-  .section-1 {
-    display: flex;
-    padding-top: 45px;
-    padding-bottom: 50px;
-    margin-bottom: 20px;
-    border-radius: $border-radius;
-    background-color: $background-body;
-    box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
+  &.llar-help-page {
+    font-family: inherit;
+    line-height: 1.5;
 
-    .block {
-      text-align: center;
-      flex: 1;
-      border-right: 1px solid $typography-additional__light;
-
-      &:last-child {
-        border: 0;
-      }
-
-      .title {
-        color: $typography-primary;
-        font-weight: 500;
-        font-size: 20px;
-      }
-
-      .text {
-        color: $typography-secondary;
-        font-size: 18px;
-        max-width: 80%;
-        margin: 10px auto;
-      }
-
-      .actions {
-        text-align: center;
-
-        .button {
-          text-transform: uppercase;
-          font-size: 18px;
-          line-height: 1.4;
-          padding: 4px 20px;
-
-          span {
-            text-transform: none;
-            display: block;
-            font-size: 12px;
-            line-height: 13px;
-            margin-bottom: 2px;
-          }
-
-          &.button-secondary {
-            min-height: 40px;
-            line-height: 40px;
-          }
-        }
-      }
-    }
-  }
-
-  .description-page {
-    font-weight: 500;
-    color: $typography-primary;
-  }
-
-  .documentation-section {
-    display: flex;
-    flex-wrap: wrap;
-
-    .questions {
+    .section-mission, .section-team {
       display: flex;
-      flex: 1 1 calc(100% - 550px);
       flex-direction: column;
 
-      &__block {
-        display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
+      .title_page {
+        margin-top: 0;
+      }
 
-        @include _1399 {
-          flex: 1 1 100%;
+      .section-mission-block {
+        color: $typography-secondary;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+        padding: 30px 40px;
+        border-radius: $border-radius;
+        background-color: $background-body;
+        box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
+
+        .text {
+          font-size: 18px;
+          font-weight: $text-font-weight-bold;
         }
 
-        .question {
-          display: block;
-          flex: 1 0 auto;
-          margin-bottom: 20px;
-          padding: 30px 40px;
-          background-color: $background-body;
-          border-radius: $border-radius;
-          text-decoration: none;
-          box-shadow: 2px 2px 9px 0 $box-shadow__light-transparent-gray;
+        .add_block__under_table {
+          margin-top: 20px;
 
-          &:last-child {
-            margin-bottom: 0;
-          }
+          .add_block__list {
+            column-gap: 15px;
 
-          &:hover {
-            box-shadow: 4px 4px 18px 0 $box-shadow__light-transparent-gray;
-          }
-
-          .title {
-            font-size: 18px;
-            font-weight: 500;
-            color: $typography-primary;
-          }
-
-          .desc {
-            font-size: 16px;
-            margin-top: 5px;
-            color: $typography-secondary;
+            .item {
+              flex: 1 1 fit-content;
+            }
           }
         }
       }
     }
 
-    .top-list {
-      flex: 0 0 500px;
-      margin-left: 20px;
+    .section-team {
 
-      @include _1399 {
-        flex: 0 0 100%;
-      }
+      .section-team-block {
+        color: $typography-secondary;
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+        margin-bottom: 20px;
 
-      .list__block {
-        padding: 30px 35px;
-        border-radius: $border-radius;
-        background-color: $background-body;
-        box-shadow: 4px 4px 18px 0 $box-shadow__light-transparent-gray;
-      }
+        @include _767 {
+          flex-direction: column;
+        }
 
-      ol {
-        margin: 0;
-        margin-left: 35px;
-        color: $secondary-colors__blue;
-        list-style: none;
-        counter-reset: my-counter;
+        .team-member {
+          flex: 1 1 calc(100% / 3);
+          display: flex;
+          flex-direction: row;
+          row-gap: 15px;
+          align-items: center;
+          justify-content: space-between;
+          padding: 35px;
+          border-radius: $border-radius;
+          background-color: $background-body;
+          box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
 
-        li {
-          position: relative;
-          font-size: 16px;
-          margin-bottom: 15px;
-          padding: 3px;
-          border-radius: $border-radius__min;
-          counter-increment: my-counter;
-
-          &:before {
-            content: counter(my-counter) ".";
-            position: absolute;
-            left: -45px;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            font-size: inherit;
-            background-color: $background__sky-blue;
-            border-radius: $border-radius__normal;
-            padding: 3px 20px;
+          @include _1599 {
+            flex-direction: column;
           }
 
-          a {
-            position: relative;
-            color: inherit;
+          @include _767 {
+            flex: 0 0 100%;
+          }
+
+          &-image {
+            background-color: $background__sky-blue;
+            border-radius: $border-radius__normal;
+            max-width: 277px;
+            width: 100%;
+            height: auto;
+          }
+
+          &-description {
+            display: flex;
+            flex-direction: column;
+
+            &-name {
+              font-size: 18px;
+              font-weight: $text-font-weight-bold;
+              text-align: center;
+
+              @include _991 {
+                font-size: 16px;
+              }
+            }
+
+            &-button {
+              margin-top: 20px;
+              max-width: 168px;
+              min-width: 100px;
+
+              @include _991 {
+                margin-top: 15px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .section-1 {
+      display: flex;
+      padding-top: 45px;
+      padding-bottom: 50px;
+      margin-bottom: 20px;
+      border-radius: $border-radius;
+      background-color: $background-body;
+      box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
+
+      .block {
+        text-align: center;
+        flex: 1;
+        border-right: 1px solid $typography-additional__light;
+
+        &:last-child {
+          border: 0;
+        }
+
+        .title {
+          color: $typography-primary;
+          font-weight: 500;
+          font-size: 20px;
+        }
+
+        .text {
+          color: $typography-secondary;
+          font-size: 18px;
+          max-width: 80%;
+          margin: 10px auto;
+        }
+
+        .actions {
+          text-align: center;
+
+          .button {
+            text-transform: uppercase;
+            font-size: 18px;
+            line-height: 1.4;
+            padding: 4px 20px;
+
+            span {
+              text-transform: none;
+              display: block;
+              font-size: 12px;
+              line-height: 13px;
+              margin-bottom: 2px;
+            }
+
+            &.button-secondary {
+              min-height: 40px;
+              line-height: 40px;
+            }
+          }
+        }
+      }
+    }
+
+    .description-page {
+      font-weight: 500;
+      color: $typography-primary;
+    }
+
+    .documentation-section {
+      display: flex;
+      flex-wrap: wrap;
+
+      .questions {
+        display: flex;
+        flex: 1 1 calc(100% - 550px);
+        flex-direction: column;
+
+        &__block {
+          display: flex;
+          flex: 1 1 auto;
+          flex-direction: column;
+
+          @include _1399 {
+            flex: 1 1 100%;
+          }
+
+          .question {
+            display: block;
+            flex: 1 0 auto;
+            margin-bottom: 20px;
+            padding: 30px 40px;
+            background-color: $background-body;
+            border-radius: $border-radius;
             text-decoration: none;
+            box-shadow: 2px 2px 9px 0 $box-shadow__light-transparent-gray;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
 
             &:hover {
-              text-decoration: underline;
+              box-shadow: 4px 4px 18px 0 $box-shadow__light-transparent-gray;
+            }
+
+            .title {
+              font-size: 18px;
+              font-weight: 500;
+              color: $typography-primary;
+            }
+
+            .desc {
+              font-size: 16px;
+              margin-top: 5px;
+              color: $typography-secondary;
+            }
+          }
+        }
+      }
+
+      .top-list {
+        flex: 0 0 500px;
+        margin-left: 20px;
+
+        @include _1399 {
+          flex: 0 0 100%;
+        }
+
+        .list__block {
+          padding: 30px 35px;
+          border-radius: $border-radius;
+          background-color: $background-body;
+          box-shadow: 4px 4px 18px 0 $box-shadow__light-transparent-gray;
+        }
+
+        ol {
+          margin: 0;
+          margin-left: 35px;
+          color: $secondary-colors__blue;
+          list-style: none;
+          counter-reset: my-counter;
+
+          li {
+            position: relative;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding: 3px;
+            border-radius: $border-radius__min;
+            counter-increment: my-counter;
+
+            &:before {
+              content: counter(my-counter) ".";
+              position: absolute;
+              left: -45px;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              font-size: inherit;
+              background-color: $background__sky-blue;
+              border-radius: $border-radius__normal;
+              padding: 3px 20px;
+            }
+
+            a {
+              position: relative;
+              color: inherit;
+              text-decoration: none;
+
+              &:hover {
+                text-decoration: underline;
+              }
             }
           }
         }
@@ -172,3 +281,4 @@
     }
   }
 }
+
