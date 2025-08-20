@@ -81,9 +81,9 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
 
     <?php if( $active_app === 'local' ) : ?>
         <div class="description-page">
-            <h2 class="llar_typography-secondary">
+            <h3 class="llar_typography-secondary">
                 <?php _e( 'Why Should I Consider Premium?', 'limit-login-attempts-reloaded' ); ?>
-            </h2>
+            </h3>
             <div class="description-secondary">
                 <?php _e( 'Although the free version offers basic protection, the premium version includes an important feature called <b>IP Intelligence</b>. With IP intelligence, your website will be able to identify malicious IPs before they attempt a login, and absorb them into the cloud to save system resources. Your site will not only be more secure, but will operate at its optimal performance.', 'limit-login-attempts-reloaded' ); ?>
             </div>
