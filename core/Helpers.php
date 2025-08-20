@@ -484,10 +484,10 @@ class Helpers {
 					}
 
 					// Prefer official WordPress.org PluginURI when it is clearly such.
-					if ( ! empty( $uri ) && 0 === strpos( $uri, 'https://WordPress.org/plugins/' ) ) {
+					if ( ! empty( $uri ) && 0 === strpos( $uri, 'https://wordpress.org/plugins/' ) ) {
 						$debug_info .= $name . ' ' . $version . ' (' . $uri . ')' . $mu_indicator . "\n";
 					} else {
-						$debug_info .= $name . ' ' . $version . ' (https://WordPress.org/plugins/' . $slug . '/)' . $mu_indicator . "\n";
+						$debug_info .= $name . ' ' . $version . ' (https://wordpress.org/plugins/' . $slug . '/)' . $mu_indicator . "\n";
 					}
 				}
 			}
@@ -500,10 +500,10 @@ class Helpers {
 
 		$debug_info .= "\nActive Theme:\n";
 
-		if ( ! empty( $theme_uri ) && 0 === strpos( $theme_uri, 'https://WordPress.org/themes/' ) ) {
+		if ( ! empty( $theme_uri ) && 0 === strpos( $theme_uri, 'https://wordpress.org/themes/' ) ) {
 			$debug_info .= $theme_name . ' (' . $theme_uri . ')' . "\n";
 		} else {
-			$debug_info .= $theme_name . ' (https://WordPress.org/themes/' . $theme_slug . '/)' . "\n";
+			$debug_info .= $theme_name . ' (https://wordpress.org/themes/' . $theme_slug . '/)' . "\n";
 		}
 
 		return $debug_info;
