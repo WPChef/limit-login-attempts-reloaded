@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.20\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.21\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-29T15:59:19+03:00\n"
+"POT-Creation-Date: 2025-08-20T15:38:20+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -2143,27 +2143,27 @@ msgstr ""
 msgid "<a class=\"link__style_unlink llar_turquoise\" href=\"%s\" target=\"_blank\">Upgrade to our premium</a> version for advanced protection."
 msgstr ""
 
-#: views/tab-debug.php:58
+#: views/tab-debug.php:26
 msgid "Debug Info"
 msgstr ""
 
-#: views/tab-debug.php:65
-msgid "Copy the contents of the window and provide to support."
+#: views/tab-debug.php:33
+msgid "When submitting a support ticket, please include the contents of the window shown above."
 msgstr ""
 
-#: views/tab-debug.php:70
+#: views/tab-debug.php:38
 msgid "Version"
 msgstr ""
 
-#: views/tab-debug.php:77
+#: views/tab-debug.php:45
 msgid "Start Over"
 msgstr ""
 
-#: views/tab-debug.php:82
+#: views/tab-debug.php:50
 msgid "You can start over the onboarding process by clicking this button. All existing data will remain unchanged."
 msgstr ""
 
-#: views/tab-debug.php:90
+#: views/tab-debug.php:58
 msgid "Reset"
 msgstr ""
 
