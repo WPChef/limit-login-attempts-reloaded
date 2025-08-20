@@ -403,4 +403,111 @@ class Helpers {
 	public static function wp_locale() {
 		return str_replace( '_', '-', get_locale() );
 	}
+	
+	/**
+	 * Retrieves debug information for the Debug tab.
+	 *
+	 * @return string Debug info as a multi-line string.
+	 */
+	public static function get_debug_info() {
+		$debug_info = '';
+		$ips        = array();
+		$server     = array();
+
+		foreach ( $_SERVER as $key => $value ) {
+			if ( in_array( $key, array( 'SERVER_ADDR' ), true ) || is_array( $value ) ) {
+				continue;
+			}
+			$ips_for_check = array_map( 'trim', explode( ',', $value ) );
+			foreach ( $ips_for_check as $ip ) {
+				if ( self::is_ip_valid( $ip ) ) {
+					if ( ! in_array( $ip, $ips, true ) ) {
+						$ips[] = $ip;
+					}
+					if ( ! isset( $server[ $key ] ) ) {
+						$server[ $key ] = '';
+					}
+					if ( in_array( $ip, array( '127.0.0.1', '0.0.0.0' ), true ) ) {
+						$server[ $key ] = $ip;
+					} else {
+						$server[ $key ] .= 'IP' . array_search( $ip, $ips, true ) . ',';
+					}
+				}
+			}
+		}
+		$debug_info .= 'IPs:' . "\n";
+		foreach ( $server as $server_key => $ips_val ) {
+			$debug_info .= $server_key . ' = ' . trim( $ips_val, ',' ) . "\n";
+		}
+
+		$plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
+		if ( is_array( $plugin_data ) ) {
+			$version = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
+			$debug_info .= "\nPlugin Version: " . $version . "\n";
+		} else {
+			$debug_info .= "\nPlugin Version: \n";
+		}
+		$debug_info .= 'WordPress Version: ' . get_bloginfo( 'version' ) . "\n";
+		$debug_info .= 'Is Multisite: ' . ( is_multisite() ? 'yes' : 'no' ) . "\n";
+		$debug_info .= "\nActive Plugins:\n";
+		$all_plugins = get_plugins();
+		$active_plugins = get_option( 'active_plugins' );
+		if ( is_array( $active_plugins ) ) {
+			foreach ( $active_plugins as $plugin_file ) {
+				if ( isset( $all_plugins[ $plugin_file ] ) ) {
+					$plugin_data_item = $all_plugins[ $plugin_file ];
+
+					$name    = isset( $plugin_data_item['Name'] ) ? $plugin_data_item['Name'] : '';
+					$version = isset( $plugin_data_item['Version'] ) ? $plugin_data_item['Version'] : '';
+					$uri     = isset( $plugin_data_item['PluginURI'] ) ? $plugin_data_item['PluginURI'] : '';
+
+					// Base slug from path.
+					$slug = dirname( $plugin_file );
+
+					// Single-file plugin at plugins root: dirname() returns '.'.
+					if ( '.' === $slug || '' === $slug ) {
+						$slug = basename( $plugin_file, '.php' );
+					}
+					
+
+					// If PluginURI points to WordPress.org, prefer slug from the URI.
+					if ( ! empty( $uri ) && preg_match( '#WordPress\.org/plugins/([^/]+)/?#i', $uri, $m ) ) {
+						$slug = $m[1];
+					}
+
+					// Normalize slug similar to WP's sanitize_title().
+					$slug = sanitize_title( $slug );
+
+					$mu_indicator = '';
+					if ( 0 === strpos( $plugin_file, 'limit-login-attempts-reloaded' ) ) {
+						$mu_indicator = self::is_mu() ? ' MU' : '';
+					}
+
+					// Prefer official WordPress.org PluginURI when it is clearly such.
+					if ( ! empty( $uri ) && 0 === strpos( $uri, 'https://wordpress.org/plugins/' ) ) {
+						$debug_info .= $name . ' ' . $version . ' (' . $uri . ')' . $mu_indicator . "\n";
+					} else {
+						$debug_info .= $name . ' ' . $version . ' (https://wordpress.org/plugins/' . $slug . '/)' . $mu_indicator . "\n";
+					}
+				}
+			}
+		}
+
+		$current_theme = wp_get_theme();
+		$theme_name    = is_object( $current_theme ) ? $current_theme->get( 'Name' ) : '';
+		$theme_uri     = is_object( $current_theme ) ? $current_theme->get( 'ThemeURI' ) : '';
+		$theme_slug    = is_object( $current_theme ) ? $current_theme->get_stylesheet() : '';
+
+		$debug_info .= "\nActive Theme:\n";
+
+		if ( ! empty( $theme_uri ) && 0 === strpos( $theme_uri, 'https://wordpress.org/themes/' ) ) {
+			$debug_info .= $theme_name . ' (' . $theme_uri . ')' . "\n";
+		} else {
+			$debug_info .= $theme_name . ' (https://wordpress.org/themes/' . $theme_slug . '/)' . "\n";
+		}
+
+		return $debug_info;
+	}
+		
+	
 }
