@@ -24,7 +24,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </div>
                 <div class="actions mt-1_5">
                     <a class="button menu__item button__orange"
-                       href="https://www.limitloginattempts.com/plans/" target="_blank">
+                       href="<?php echo esc_url( ( $block_sub_group === 'Micro Cloud' )
+                        ? str_replace('id=0', 'id=7', $this->info_upgrade_url())
+                        : 'https://www.limitloginattempts.com/info.php?id=22' ); ?>" target="_blank">
 						<?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>
@@ -63,7 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             </h3>
             <div class="questions__block">
                 <a class="question"
-                   href="https://www.limitloginattempts.com/services/cloud-service/?from=plugin-help-tab"
+                   href="https://www.limitloginattempts.com/info.php?id=12"
                    target="_blank">
                     <div class="title"><?php _e( 'Cloud Service & Security', 'limit-login-attempts-reloaded' ); ?></div>
                     <div class="desc">
@@ -71,14 +73,14 @@ if ( ! defined( 'ABSPATH' ) ) {
                     </div>
                 </a>
                 <a class="question"
-                   href="https://www.limitloginattempts.com/services/technical-questions/?from=plugin-help-tab"
+                   href="https://www.limitloginattempts.com/info.php?id=13"
                    target="_blank">
                     <div class="title"><?php _e( 'Technical Questions', 'limit-login-attempts-reloaded' ); ?></div>
                     <div class="desc">
 						<?php _e( 'Popular technical questions about the service including admin blocking, definitions, and email notifications.', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </a>
-                <a class="question" href="https://www.limitloginattempts.com/services/accounts/?from=plugin-help-tab"
+                <a class="question" href="https://www.limitloginattempts.com/info.php?id=14"
                    target="_blank">
                     <div class="title"><?php _e( 'Accounts & Billing', 'limit-login-attempts-reloaded' ); ?></div>
                     <div class="desc">
@@ -86,7 +88,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     </div>
                 </a>
                 <a class="question"
-                   href="https://www.limitloginattempts.com/services/pre-sales-questions/?from=plugin-help-tab"
+                   href="https://www.limitloginattempts.com/info.php?id=15"
                    target="_blank">
                     <div class="title"><?php _e( 'Pre-sales Questions', 'limit-login-attempts-reloaded' ); ?></div>
                     <div class="desc">

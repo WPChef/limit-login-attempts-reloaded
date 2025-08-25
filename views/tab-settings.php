@@ -410,7 +410,7 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
 			                            <?php _e( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
                                     </a>
 	                            <?php elseif ( $block_sub_group === 'Micro Cloud' ) : ?>
-                                    <a href="<?php echo esc_url( $url_try_for_free_cloud ) ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
+                                    <a href="<?php echo esc_url( str_replace('id=0', 'id=6', $url_try_for_free_cloud)) ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
 			                            <?php _e( 'Upgrade', 'limit-login-attempts-reloaded' ); ?>
                                     </a>
 	                            <?php else : ?>
