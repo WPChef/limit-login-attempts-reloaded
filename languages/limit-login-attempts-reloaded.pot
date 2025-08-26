@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.21\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.22\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-20T15:38:20+03:00\n"
+"POT-Creation-Date: 2025-08-26T14:54:27+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -1894,8 +1894,9 @@ msgstr ""
 msgid "Not using Premium yet?"
 msgstr ""
 
-#: views/onboarding-popup.php:92
-msgid "With Premium, your site becomes part of a powerful, real-time threat intelligence network built on the data of %1$s over 80,000 WordPress sites. %2$s That means you’re not just blocking attackers after they strike — you’re %1$s preventing them from making legitimate login attempts. %2$s"
+#. translators: %1$s: opening span tag, %2$s: closing span tag
+#: views/onboarding-popup.php:93
+msgid "With Premium, your site becomes part of a powerful, real-time threat intelligence network built on the data of %1$s over 80,000 WordPress sites. %2$s That means you're not just blocking attackers after they strike — you're %1$s preventing them from making legitimate login attempts. %2$s"
 msgstr ""
 
 #: views/onboarding-popup.php:99
@@ -1923,7 +1924,7 @@ msgid "Yes, show me plan options"
 msgstr ""
 
 #: views/onboarding-popup.php:124
-msgid "No, I don’t want advanced protection"
+msgid "No, I don't want advanced protection"
 msgstr ""
 
 #: views/onboarding-popup.php:140
@@ -1946,15 +1947,18 @@ msgstr ""
 msgid "Limited Upgrade (Free)"
 msgstr ""
 
-#: views/onboarding-popup.php:185
-msgid "Help us secure the WordPress network, and in return, we'll give you access to Micro Cloud - Our FREE premium plan. %1$s"
+#. translators: %s: line break
+#: views/onboarding-popup.php:186
+msgid "Help us secure the WordPress network, and in return, we'll give you access to Micro Cloud - Our FREE premium plan. %s"
 msgstr ""
 
-#: views/onboarding-popup.php:189
-msgid "You’ll receive %1$s 1,000 monthly cloud requests %2$s to power advanced login protection tools that block more than 97%% of all attempted logins. %3$s"
+#. translators: %1$s: opening span tag, %2$s: closing span tag, %3$s: line break
+#: views/onboarding-popup.php:190
+msgid "You'll receive %1$s 1,000 monthly cloud requests %2$s to power advanced login protection tools that block more than 97%% of all attempted logins. %3$s"
 msgstr ""
 
-#: views/onboarding-popup.php:194
+#. translators: %1$s: opening span tag, %2$s: closing span tag, %3$s: line break
+#: views/onboarding-popup.php:195
 msgid "%1$s By proceeding, you agree to participate in our threat-sharing network. %2$s %3$s"
 msgstr ""
 
@@ -1963,7 +1967,7 @@ msgid "You can switch back to the free version of the plugin at any time, which 
 msgstr ""
 
 #: views/onboarding-popup.php:200
-msgid "<b>Would you like to opt-in?</b>"
+msgid "Would you like to opt-in?"
 msgstr ""
 
 #: views/onboarding-popup.php:206
@@ -1974,7 +1978,8 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: views/onboarding-popup.php:216
+#. translators: %1$s: opening link tag, %2$s: closing link tag
+#: views/onboarding-popup.php:217
 msgid "We'll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our %1$s terms of service %2$s by participating in this program."
 msgstr ""
 
