@@ -335,6 +335,13 @@ class Helpers {
 
 			if( in_array( $key, array( 'SERVER_ADDR' ) ) ) continue;
 
+			// If REMOTE_ADDR contains multiple values (comma-separated), keep only the first before validation
+			if ( $key === 'REMOTE_ADDR' && strpos( $value, ',' ) !== false ) {
+
+				$parts = explode( ',', $value );
+				$value = trim( $parts[0] );
+			}
+
 			if( $valid_ip = self::is_ip_valid( $value ) ) {
 
 				$ips[$key] = $valid_ip;
