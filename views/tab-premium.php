@@ -34,22 +34,22 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
                 </div>
                 <ul class="links mt-1_5">
                     <li class="button tags tags_add">
-                        <a href="https://www.limitloginattempts.com/features/?from=plugin-premium-tab" class="link__style_unlink gdpr-information-link" target="_blank">
+                        <a href="https://www.limitloginattempts.com/info.php?id=16" class="link__style_unlink gdpr-information-link" target="_blank">
                             <?php _e( 'Full feature list', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li class="button tags tags_add">
-                        <a href="https://www.limitloginattempts.com/services/pre-sales-questions/?from=plugin-premium-tab" class="link__style_unlink gdpr-information-link" target="_blank">
+                        <a href="https://www.limitloginattempts.com/info.php?id=17" class="link__style_unlink gdpr-information-link" target="_blank">
                             <?php _e( 'Pre-sales FAQs', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li class="button tags tags_add">
-                        <a href="https://www.limitloginattempts.com/contact-us/?from=plugin-premium-tab" class="link__style_unlink gdpr-information-link" target="_blank">
+                        <a href="https://www.limitloginattempts.com/info.php?id=18" class="link__style_unlink gdpr-information-link" target="_blank">
                             <?php _e( 'Ask a pre-sales question', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
                     <li class="button tags tags_add">
-                        <a href="https://www.limitloginattempts.com/contact-us/?from=plugin-premium-tab" class="link__style_unlink gdpr-information-link" target="_blank">
+                        <a href="https://www.limitloginattempts.com/info.php?id=19" class="link__style_unlink gdpr-information-link" target="_blank">
                             <?php _e( 'Support', 'limit-login-attempts-reloaded' ); ?>
                         </a>
                     </li>
@@ -57,7 +57,9 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
             </div>
             <?php if ( ! $is_premium ) : ?>
                 <div class="action">
-                    <a class="button menu__item button__orange" href="https://www.limitloginattempts.com/plans/" target="_blank">
+                    <a class="button menu__item button__orange" href="<?php echo esc_url( ( $block_sub_group === 'Micro Cloud' )
+                        ? str_replace('id=0', 'id=8', $this->info_upgrade_url())
+                        : 'https://www.limitloginattempts.com/info.php?id=23' ); ?>" target="_blank">
                         <?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>
