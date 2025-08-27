@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, spam
 License: GPLv2 or later
 Requires at least: 3.0
 Tested up to: 6.8
-Stable tag: 2.26.22
+Stable tag: 2.26.23
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -145,6 +145,10 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 2.26.23 =
+* Fixed conflict with Hub and similar themes.
+* Reorganized links.
 
 = 2.26.22 =
 * Fixed REMOTE_ADDR if server is misconfigured.
