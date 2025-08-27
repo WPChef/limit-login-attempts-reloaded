@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.22\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.23\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-26T14:54:27+03:00\n"
+"POT-Creation-Date: 2025-08-27T14:52:12+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -128,19 +128,19 @@ msgid "By proceeding you understand and give your consent that your IP address a
 msgstr ""
 
 #: core/LimitLoginAttempts.php:435
-#: core/LimitLoginAttempts.php:816
-#: views/options-page.php:144
+#: core/LimitLoginAttempts.php:834
+#: views/options-page.php:146
 msgid "Dashboard"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:436
-#: core/LimitLoginAttempts.php:821
-#: views/options-page.php:148
+#: core/LimitLoginAttempts.php:839
+#: views/options-page.php:150
 msgid "Settings"
 msgstr ""
 
 #: core/LimitLoginAttempts.php:446
-#: core/LimitLoginAttempts.php:850
+#: core/LimitLoginAttempts.php:868
 msgid "Free Upgrade"
 msgstr ""
 
@@ -152,152 +152,152 @@ msgstr ""
 
 #: core/LimitLoginAttempts.php:594
 #: core/LimitLoginAttempts.php:649
-#: core/LimitLoginAttempts.php:1139
-#: core/LimitLoginAttempts.php:1559
-#: core/LimitLoginAttempts.php:1618
+#: core/LimitLoginAttempts.php:1157
+#: core/LimitLoginAttempts.php:1577
+#: core/LimitLoginAttempts.php:1636
 msgid "<strong>ERROR</strong>: Too many failed login attempts."
 msgstr ""
 
 #: core/LimitLoginAttempts.php:601
-#: core/LimitLoginAttempts.php:1146
-#: core/LimitLoginAttempts.php:1638
+#: core/LimitLoginAttempts.php:1164
+#: core/LimitLoginAttempts.php:1656
 msgid "Please try again in %d hour."
 msgid_plural "Please try again in %d hours."
 msgstr[0] ""
 msgstr[1] ""
 
 #: core/LimitLoginAttempts.php:603
-#: core/LimitLoginAttempts.php:1148
-#: core/LimitLoginAttempts.php:1641
+#: core/LimitLoginAttempts.php:1166
+#: core/LimitLoginAttempts.php:1659
 msgid "Please try again in %d minute."
 msgid_plural "Please try again in %d minutes."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:827
-#: resources/compare-plans-data.php:64
-#: views/options-page.php:154
+#: core/LimitLoginAttempts.php:845
+#: resources/compare-plans-data.php:72
+#: views/options-page.php:156
 msgid "Login Firewall"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:832
-#: views/options-page.php:160
+#: core/LimitLoginAttempts.php:850
+#: views/options-page.php:162
 msgid "Logs"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:837
-#: views/options-page.php:166
+#: core/LimitLoginAttempts.php:855
+#: views/options-page.php:168
 msgid "Debug"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:842
-#: views/options-page.php:170
+#: core/LimitLoginAttempts.php:860
+#: views/options-page.php:172
 #: views/tab-dashboard.php:128
 msgid "Help"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:850
+#: core/LimitLoginAttempts.php:868
 msgid "Premium"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:933
+#: core/LimitLoginAttempts.php:951
 msgid "LLAR"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1333
+#: core/LimitLoginAttempts.php:1351
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:1340
+#: core/LimitLoginAttempts.php:1358
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:1377
+#: core/LimitLoginAttempts.php:1395
 msgid "Failed login by IP %s www.limitloginattempts.com"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1626
+#: core/LimitLoginAttempts.php:1644
 msgid "Please try again later."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1678
+#: core/LimitLoginAttempts.php:1696
 msgid "<strong>ERROR</strong>: Incorrect email address or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1681
+#: core/LimitLoginAttempts.php:1699
 msgid "<strong>ERROR</strong>: Incorrect username or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1701
+#: core/LimitLoginAttempts.php:1719
 msgid "WC Error"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1889
+#: core/LimitLoginAttempts.php:1907
 msgid "Cleared IP log"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1896
+#: core/LimitLoginAttempts.php:1914
 msgid "Reset lockout count"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1903
+#: core/LimitLoginAttempts.php:1921
 msgid "Cleared current lockouts"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1948
+#: core/LimitLoginAttempts.php:1966
 msgid "The %s IP range is invalid"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1975
-#: core/LimitLoginAttempts.php:2049
+#: core/LimitLoginAttempts.php:1993
+#: core/LimitLoginAttempts.php:2067
 msgid "Settings saved."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2202
+#: core/LimitLoginAttempts.php:2220
 msgid "Hey <strong>Limit Login Attempts Reloaded</strong> user!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2203
+#: core/LimitLoginAttempts.php:2221
 msgid "A <strong>crazy idea</strong> we wanted to share! What if we put an image from YOU on the <a href=\"https://wordpress.org/plugins/limit-login-attempts-reloaded/\" target=\"_blank\">LLAR page</a>?! (<a href=\"https://wordpress.org/plugins/hello-dolly/\" target=\"_blank\">example</a>) A drawing made by you or your child would cheer people up! Send us your drawing by <a href=\"mailto:wpchef.me@gmail.com\" target=\"_blank\">email</a> and we like it, we'll add it in the next release. Let's have some fun!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2204
+#: core/LimitLoginAttempts.php:2222
 msgid "We would really like to hear your feedback about the plugin! Please take a couple minutes to write a few words <a href=\"https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post\" target=\"_blank\">here</a>. Thank you!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2207
+#: core/LimitLoginAttempts.php:2225
 msgid "Don't show again"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2208
+#: core/LimitLoginAttempts.php:2226
 msgid "Maybe later"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2209
+#: core/LimitLoginAttempts.php:2227
 msgid "Leave a review"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2295
+#: core/LimitLoginAttempts.php:2313
 msgid "You have been upgraded to the latest version of <strong>Limit Login Attempts Reloaded</strong>.<br> Due to increased security threats around the holidays, we recommend turning on email notifications when you receive a failed login attempt."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2300
+#: core/LimitLoginAttempts.php:2318
 msgid "Yes, turn on email notifications"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2301
+#: core/LimitLoginAttempts.php:2319
 msgid "Remind me a month from now"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2302
+#: core/LimitLoginAttempts.php:2320
 msgid "Don't show this message again"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2446
+#: core/LimitLoginAttempts.php:2464
 msgid "<strong>Error</strong>: Registration is currently disabled."
 msgstr ""
 
@@ -309,108 +309,108 @@ msgstr ""
 msgid "Get Started (Free)"
 msgstr ""
 
-#: resources/compare-plans-data.php:35
+#: resources/compare-plans-data.php:43
 msgid "Upgrade now"
 msgstr ""
 
-#: resources/compare-plans-data.php:50
+#: resources/compare-plans-data.php:58
 msgid "Limit Number of Retry Attempts"
 msgstr ""
 
-#: resources/compare-plans-data.php:57
+#: resources/compare-plans-data.php:65
 msgid "Configurable Lockout Timing"
 msgstr ""
 
-#: resources/compare-plans-data.php:65
+#: resources/compare-plans-data.php:73
 msgid "Secure your login page with our cutting-edge login firewall, defending against unauthorized access attempts and protecting your users' accounts and sensitive information."
 msgstr ""
 
-#: resources/compare-plans-data.php:72
+#: resources/compare-plans-data.php:80
 msgid "Performance Optimizer"
 msgstr ""
 
-#: resources/compare-plans-data.php:73
+#: resources/compare-plans-data.php:81
 msgid "Absorb failed login attempts from brute force bots in the cloud to keep your website at its optimal performance."
 msgstr ""
 
-#: resources/compare-plans-data.php:75
+#: resources/compare-plans-data.php:83
 msgid "1k for first month%s(100 per month after)"
 msgstr ""
 
-#: resources/compare-plans-data.php:76
+#: resources/compare-plans-data.php:84
 msgid "100k requests per month"
 msgstr ""
 
-#: resources/compare-plans-data.php:77
+#: resources/compare-plans-data.php:85
 msgid "200k requests per month"
 msgstr ""
 
-#: resources/compare-plans-data.php:78
+#: resources/compare-plans-data.php:86
 msgid "300k requests per month"
 msgstr ""
 
-#: resources/compare-plans-data.php:80
+#: resources/compare-plans-data.php:88
 msgid "Successful Login Logs"
 msgstr ""
 
-#: resources/compare-plans-data.php:81
+#: resources/compare-plans-data.php:89
 msgid "Ensure the security and integrity of your website by logging your successful logins."
 msgstr ""
 
-#: resources/compare-plans-data.php:88
+#: resources/compare-plans-data.php:96
 msgid "Block By Country"
 msgstr ""
 
-#: resources/compare-plans-data.php:89
+#: resources/compare-plans-data.php:97
 msgid "Disable IPs from any region to disable logins."
 msgstr ""
 
-#: resources/compare-plans-data.php:96
+#: resources/compare-plans-data.php:104
 msgid "Access Blocklist of Malicious IPs"
 msgstr ""
 
-#: resources/compare-plans-data.php:97
+#: resources/compare-plans-data.php:105
 msgid "Add another layer of protection from brute force bots by accessing a global database of known IPs with malicious activity."
 msgstr ""
 
-#: resources/compare-plans-data.php:104
+#: resources/compare-plans-data.php:112
 msgid "Auto IP Blocklist"
 msgstr ""
 
-#: resources/compare-plans-data.php:105
+#: resources/compare-plans-data.php:113
 msgid "Automatically add malicious IPs to your blocklist when triggered by the system."
 msgstr ""
 
-#: resources/compare-plans-data.php:112
+#: resources/compare-plans-data.php:120
 msgid "Access Active Cloud Blocklist"
 msgstr ""
 
-#: resources/compare-plans-data.php:113
+#: resources/compare-plans-data.php:121
 msgid "Use system wide data from over 10,000 WordPress websites to identify and block malicious IPs. This is an active list in real-time."
 msgstr ""
 
-#: resources/compare-plans-data.php:120
+#: resources/compare-plans-data.php:128
 msgid "Intelligent IP Blocking"
 msgstr ""
 
-#: resources/compare-plans-data.php:121
+#: resources/compare-plans-data.php:129
 msgid "Use active IP database via the cloud to automatically block users before they are able to make a failed login."
 msgstr ""
 
-#: resources/compare-plans-data.php:128
+#: resources/compare-plans-data.php:136
 msgid "Synchronize Lockouts & Safelists/Blocklists"
 msgstr ""
 
-#: resources/compare-plans-data.php:129
+#: resources/compare-plans-data.php:137
 msgid "Lockouts & safelists/blocklists can be shared between multiple domains to enhance protection."
 msgstr ""
 
-#: resources/compare-plans-data.php:136
-#: views/tab-help.php:173
+#: resources/compare-plans-data.php:144
+#: views/tab-help.php:175
 msgid "Premium Support"
 msgstr ""
 
-#: resources/compare-plans-data.php:138
+#: resources/compare-plans-data.php:146
 msgid "Receive 1 on 1 technical support via email for any issues. Free support availabe in the <a href=\"%s\" target=\"_blank\">WordPress support forum</a>."
 msgstr ""
 
@@ -1987,43 +1987,43 @@ msgstr ""
 msgid "Thank you for completing the setup"
 msgstr ""
 
-#: views/options-page.php:57
+#: views/options-page.php:58
 msgid "You have exhausted your monthly quota of free Micro Cloud requests. The plugin has now reverted to the free version. <a href=\"%s\" class=\"link__style_color_inherit\" target=\"_blank\">Upgrade to the premium</a> version today to maintain cloud protection and advanced features."
 msgstr ""
 
-#: views/options-page.php:72
+#: views/options-page.php:74
 msgid "Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href=\"%s\" class=\"link__style_color_inherit\" target=\"_blank\">Upgrade to Premium</a> today"
 msgstr ""
 
-#: views/options-page.php:86
+#: views/options-page.php:88
 msgid "Do you want Limit Login Attempts Reloaded to provide the latest version automatically?"
 msgstr ""
 
-#: views/options-page.php:88
+#: views/options-page.php:90
 msgid "Yes, enable auto-update"
 msgstr ""
 
-#: views/options-page.php:92
+#: views/options-page.php:94
 msgid "No thanks"
 msgstr ""
 
-#: views/options-page.php:118
+#: views/options-page.php:120
 msgid "Account Login"
 msgstr ""
 
-#: views/options-page.php:127
+#: views/options-page.php:129
 msgid "Customer ID:"
 msgstr ""
 
-#: views/options-page.php:174
+#: views/options-page.php:176
 msgid "Premium / Extensions"
 msgstr ""
 
-#: views/options-page.php:179
+#: views/options-page.php:181
 msgid "Failover"
 msgstr ""
 
-#: views/options-page.php:184
+#: views/options-page.php:186
 msgid "Automatic switch to free version when premium stops working (usually due to non-payment or exceeding monthly resource budget)."
 msgstr ""
 
@@ -2180,115 +2180,115 @@ msgstr ""
 msgid "Our technical support team is available by email to help<br>with any questions."
 msgstr ""
 
-#: views/tab-help.php:28
+#: views/tab-help.php:30
 msgid "Upgrade To Premium"
 msgstr ""
 
-#: views/tab-help.php:34
+#: views/tab-help.php:36
 msgid "Free Support"
 msgstr ""
 
-#: views/tab-help.php:37
+#: views/tab-help.php:39
 msgid "Support for free customers is available via our forums page on WordPress.org.<br>The majority of requests <b>receive an answer within a few days</b>."
 msgstr ""
 
-#: views/tab-help.php:42
+#: views/tab-help.php:44
 msgid "Go To Support Forums"
 msgstr ""
 
-#: views/tab-help.php:51
+#: views/tab-help.php:53
 msgid "GDPR Information"
 msgstr ""
 
-#: views/tab-help.php:55
+#: views/tab-help.php:57
 msgid "Software Documentation"
 msgstr ""
 
-#: views/tab-help.php:62
+#: views/tab-help.php:64
 msgid "All Documentation"
 msgstr ""
 
-#: views/tab-help.php:68
+#: views/tab-help.php:70
 msgid "Cloud Service & Security"
 msgstr ""
 
-#: views/tab-help.php:70
+#: views/tab-help.php:72
 msgid "Questions regarding the cloud service including how to activate, logs and storage, and compliance."
 msgstr ""
 
-#: views/tab-help.php:76
+#: views/tab-help.php:78
 msgid "Technical Questions"
 msgstr ""
 
-#: views/tab-help.php:78
+#: views/tab-help.php:80
 msgid "Popular technical questions about the service including admin blocking, definitions, and email notifications."
 msgstr ""
 
-#: views/tab-help.php:83
+#: views/tab-help.php:85
 msgid "Accounts & Billing"
 msgstr ""
 
-#: views/tab-help.php:85
+#: views/tab-help.php:87
 msgid "Questions regarding updating billing info, cancellation, and expiration."
 msgstr ""
 
-#: views/tab-help.php:91
+#: views/tab-help.php:93
 msgid "Pre-sales Questions"
 msgstr ""
 
-#: views/tab-help.php:93
+#: views/tab-help.php:95
 msgid "Questions regarding premium software sales."
 msgstr ""
 
-#: views/tab-help.php:101
+#: views/tab-help.php:103
 msgid "Top Topics and Questions"
 msgstr ""
 
-#: views/tab-help.php:107
+#: views/tab-help.php:109
 msgid "How do I know if I'm under attack?"
 msgstr ""
 
-#: views/tab-help.php:113
+#: views/tab-help.php:115
 msgid "How can I tell that the premium plugin is working?"
 msgstr ""
 
-#: views/tab-help.php:119
+#: views/tab-help.php:121
 msgid "What do I do if the admin gets blocked?"
 msgstr ""
 
-#: views/tab-help.php:125
+#: views/tab-help.php:127
 msgid "Why am I still seeing login attempts even after the IP got blocked?"
 msgstr ""
 
-#: views/tab-help.php:131
+#: views/tab-help.php:133
 msgid "Could these failed login attempts be fake?"
 msgstr ""
 
-#: views/tab-help.php:137
+#: views/tab-help.php:139
 msgid "How does the login firewall work?"
 msgstr ""
 
-#: views/tab-help.php:143
+#: views/tab-help.php:145
 msgid "What happens if my site exceeds the request limits in the plan?"
 msgstr ""
 
-#: views/tab-help.php:149
+#: views/tab-help.php:151
 msgid "What do I do if all users get blocked?"
 msgstr ""
 
-#: views/tab-help.php:155
+#: views/tab-help.php:157
 msgid "I just installed LLAR and I'm already getting several failed login attempts"
 msgstr ""
 
-#: views/tab-help.php:161
+#: views/tab-help.php:163
 msgid "What URLs are being attacked and protected?"
 msgstr ""
 
-#: views/tab-help.php:176
+#: views/tab-help.php:178
 msgid "Our technical support team is available by email to help with any questions."
 msgstr ""
 
-#: views/tab-help.php:181
+#: views/tab-help.php:183
 msgid "Contact Support"
 msgstr ""
 
@@ -2482,35 +2482,35 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: views/tab-premium.php:61
+#: views/tab-premium.php:63
 msgid "Get It Here"
 msgstr ""
 
-#: views/tab-premium.php:68
+#: views/tab-premium.php:70
 msgid "You are currently using the free version of <strong>Limit Login Attempts Reloaded</strong>."
 msgstr ""
 
-#: views/tab-premium.php:70
+#: views/tab-premium.php:72
 msgid "If you purchased a premium plan, check your email for setup instructions (Setup Code included)"
 msgstr ""
 
-#: views/tab-premium.php:74
+#: views/tab-premium.php:76
 msgid "You are currently using Micro Cloud, which provides access to premium cloud app on a limited basis. To prevent interruption, upgrade to one of our paid plans below."
 msgstr ""
 
-#: views/tab-premium.php:76
+#: views/tab-premium.php:78
 msgid "You are currently using the premium version of Limit Login Attempts Reloaded."
 msgstr ""
 
-#: views/tab-premium.php:85
+#: views/tab-premium.php:87
 msgid "Why Should I Consider Premium?"
 msgstr ""
 
-#: views/tab-premium.php:88
+#: views/tab-premium.php:90
 msgid "Although the free version offers basic protection, the premium version includes an important feature called <b>IP Intelligence</b>. With IP intelligence, your website will be able to identify malicious IPs before they attempt a login, and absorb them into the cloud to save system resources. Your site will not only be more secure, but will operate at its optimal performance."
 msgstr ""
 
-#: views/tab-premium.php:95
+#: views/tab-premium.php:97
 msgid "Features comparison"
 msgstr ""
 
