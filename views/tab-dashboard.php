@@ -257,7 +257,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 		                    <?php _e( 'Upgrade to our premium version for advanced protection.', 'limit-login-attempts-reloaded' ) ?>
                         <?php else : ?>
 		                    <?php $link__allow_deny = $is_active_app_custom
-			                    ? $this->info_upgrade_url()
+			                    ? str_replace('id=0', 'id=5', $this->info_upgrade_url())
 			                    : 'https://www.limitloginattempts.com/info.php?id=3' ?>
 		                    <?php echo sprintf(
 			                    __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Upgrade to our premium</a> version for advanced protection.', 'limit-login-attempts-reloaded' ),

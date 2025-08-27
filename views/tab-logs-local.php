@@ -130,7 +130,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                         <div class="description-additional p-0 mt-0_5">
                             <?php echo sprintf(
                                 __( 'Automate your denylist with IP intelligence when you <a href="%s" class="unlink link__style_unlink" target="_blank">upgrade to premium</a>.', 'limit-login-attempts-reloaded' ),
-                                'https://www.limitloginattempts.com/info.php?from=plugin-denylist'
+                                'https://www.limitloginattempts.com/info.php?id=21'
                             ); ?>
                         </div>
                     </td>
@@ -150,7 +150,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                 <div class="description mt-1_5">
                     <?php _e( 'Upgrade To Premium For Our Login Firewall', 'limit-login-attempts-reloaded' ); ?>
                 </div>
-                <a href="<?php echo esc_url( $url_try_for_free ) . 'logs-settings' ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
+                <a href="https://www.limitloginattempts.com/info.php?id=20" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
                     <?php _e( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
                 </a>
             </div>
