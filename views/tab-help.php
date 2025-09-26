@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         </h3>
         <div class="section-mission-block">
             <div class="text">
-                <?php _e( 'Our mission is to empower website owners and administrators with an effective security solution that mitigates the risk of unauthorized access, enhances user authentication, and safeguards WordPress websites from brute-force attacks. We are committed to providing a robust and user-friendly plugin that helps protect our clients\' digital assets, promotes a secure online environment, and fosters trust in the WordPress community', 'limit-login-attempts-reloaded' ); ?>
+                <?php _e( 'Our mission is to empower website owners and administrators with an effective security solution that mitigates the risk of unauthorized access, enhances user authentication, and safeguards WordPress websites from brute-force attacks. We are committed to providing a robust and user-friendly plugin that helps protect our clients\' digital assets, promotes a secure online environment, and fosters trust in the WordPress community.', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="add_block__under_table">
                 <div class="add_block__list">
