@@ -2,6 +2,56 @@
   font-family: inherit;
   line-height: 1.5;
 
+  .llar-notification-premium {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius__normal;
+    background-color: $primary-colors__turquoise;
+
+    &-text {
+      position: relative;
+      font-size: 32px;
+      line-height: 1.5;
+      font-weight: 500;
+      color: white;
+      text-align: center;
+      padding: 12px 20px;
+
+      span {
+        color: $primary-colors__turquoise;
+        padding: 5px 15px;
+        margin: 0 10px;
+        border-radius: $border-radius__max;
+        background-color: white;
+
+        @include _991 {
+          padding: 3px 10px;
+          margin: 0 7px;
+        }
+      }
+
+      @include _1399 {
+        font-size: 28px;
+      }
+
+      @include _991 {
+        font-size: 24px;
+      }
+    }
+
+    .llar-cloud-left {
+      margin-left: 10px;
+    }
+
+    .llar-cloud-right {
+      margin-right: 10px;
+    }
+  }
+
   .llar-premium-page-promo {
     padding: 43px 80px 60px;
     margin-bottom: 20px;
