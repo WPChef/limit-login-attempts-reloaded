@@ -3640,6 +3640,54 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-family: inherit;
   line-height: 1.5;
 }
+#llar-setting-page-premium .llar-notification-premium {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background-color: #4ACAD8;
+}
+#llar-setting-page-premium .llar-notification-premium-text {
+  position: relative;
+  font-size: 32px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+  padding: 12px 20px;
+}
+#llar-setting-page-premium .llar-notification-premium-text span {
+  color: #4ACAD8;
+  padding: 5px 15px;
+  margin: 0 10px;
+  border-radius: 40px;
+  background-color: white;
+}
+@media screen and (max-width: 991.5px) {
+  #llar-setting-page-premium .llar-notification-premium-text span {
+    padding: 3px 10px;
+    margin: 0 7px;
+  }
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-setting-page-premium .llar-notification-premium-text {
+    font-size: 28px;
+  }
+}
+@media screen and (max-width: 991.5px) {
+  #llar-setting-page-premium .llar-notification-premium-text {
+    font-size: 24px;
+  }
+}
+#llar-setting-page-premium .llar-notification-premium .llar-cloud-left {
+  margin-left: 10px;
+}
+#llar-setting-page-premium .llar-notification-premium .llar-cloud-right {
+  margin-right: 10px;
+}
 #llar-setting-page-premium .llar-premium-page-promo {
   padding: 43px 80px 60px;
   margin-bottom: 20px;
