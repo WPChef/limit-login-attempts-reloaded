@@ -13,6 +13,92 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div id="llar-setting-page-help" class="llar-help-page">
+
+    <div class="section-mission">
+        <h3 class="title_page">
+            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-blocklist.png">
+            <?php _e( 'Our Mission', 'limit-login-attempts-reloaded' ); ?>
+        </h3>
+        <div class="section-mission-block">
+            <div class="text">
+                <?php _e( 'Our mission is to empower website owners and administrators with an effective security solution that mitigates the risk of unauthorized access, enhances user authentication, and safeguards WordPress websites from brute-force attacks. We are committed to providing a robust and user-friendly plugin that helps protect our clients\' digital assets, promotes a secure online environment, and fosters trust in the WordPress community', 'limit-login-attempts-reloaded' ); ?>
+            </div>
+            <div class="add_block__under_table">
+                <div class="add_block__list">
+                    <div class="item">
+                        <img class="icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-pre-install-bg.png">
+                        <div class="name">
+					        <?php _e( '2.5 Million Active<br>Installs', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img class="icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-star-bg.png">
+                        <div class="name">
+					        <?php _e( '4.9 Rating On WordPress.org<br>(1,200 reviews)', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img class="icon"
+                             src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-check-bg.png">
+                        <div class="name">
+	                        <?php _e( 'Top 25 Plugin<br>(by active installs)', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img class="icon"
+                             src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-exploitation-bg.png">
+                        <div class="name">
+	                        <?php _e( '10,000 avg Daily<br>Activations', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img class="icon"
+                             src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-grow-clients-bg.png">
+                        <div class="name">
+	                        <?php _e( 'Users from 150+<br>countries', 'limit-login-attempts-reloaded' ); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-team mt-1_5">
+        <h3 class="title_page">
+            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-grow-clients.png">
+			<?php _e( 'The Team', 'limit-login-attempts-reloaded' ); ?>
+        </h3>
+        <div class="section-team-block">
+            <div class="team-member">
+                <img class="team-member-image" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/alex-benko.png">
+                <div class="team-member-description">
+                    <div class="team-member-description-name">
+                        Alex Benko - CCO
+                    </div>
+                    <a class="team-member-description-button button menu__item button__blue" href="https://www.linkedin.com/in/alexbenkotripshock/" target="_blank">in</a>
+                </div>
+            </div>
+            <div class="team-member">
+                <img class="team-member-image" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/guriy.webp">
+                <div class="team-member-description">
+                    <div class="team-member-description-name">
+                        Guriy Habarov - CTO
+                    </div>
+                    <a class="team-member-description-button button menu__item button__blue" href="https://www.linkedin.com/in/gurii/" target="_blank">in</a>
+                </div>
+            </div>
+            <div class="team-member">
+                <img class="team-member-image" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/greg-fisher.png">
+                <div class="team-member-description">
+                    <div class="team-member-description-name">
+                        Greg Fisher - CMO
+                    </div>
+                    <a class="team-member-description-button button menu__item button__blue" href="https://www.linkedin.com/in/greg-fisher-1b3a6514/" target="_blank">in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 	<?php if ( ! $is_active_app_custom || $block_sub_group === 'Micro Cloud' ) : ?>
         <div class="section-1">
             <div class="block">

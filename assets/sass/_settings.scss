@@ -29,6 +29,9 @@ $primary-colors__turquoise_semi_back: #4ACAD84D; //rgba(74, 202, 216, 0.3);
 $primary-colors__turquoise_back: #4ACAD819; //rgba(74, 202, 216, 0.1);
 $primary-colors__aero-blue: #97F6C8;
 
+$gradient-colors__blue: linear-gradient(339.52deg, #007BB6 13.79%, #138AC4 49.78%, #1F93CA 88.26%);
+$gradient-colors__blue-hover: linear-gradient(339.52deg, #1F93CA 13.79%, #138AC4 49.78%, #007BB6 88.26%);
+
 $color-marker: #9762EF;
 $box-shadow__semi-transparent-gray: #72757B33; // rgba(114, 117, 123, 0.20);
 $box-shadow__light-transparent-gray: #A2B4BD33; //rgba(162, 180, 189, 0.20);
@@ -389,6 +392,17 @@ button.llar_button {
         border: 1px solid $primary-colors__orange-semi_back!important;
         background: $primary-colors__orange-semi_back!important;
         cursor: auto;
+      }
+    }
+
+    &__blue {
+      color: white !important;
+      background: $gradient-colors__blue;
+      border: unset !important;
+      box-shadow: 0 6px 12px 0 $typography-additional__light !important;
+
+      &:hover {
+        background: $gradient-colors__blue-hover !important;
       }
     }
 
