@@ -3689,21 +3689,33 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-right: 10px;
 }
 #llar-setting-page-premium .llar-premium-page-promo {
+  position: relative;
   padding: 43px 80px 60px;
   margin-bottom: 20px;
   border-radius: 20px;
   background-color: #FDFDFD;
   box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
 }
+#llar-setting-page-premium .llar-premium-page-promo .rating-badge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 375px;
+  height: 100%;
+  background: url("./images/rating-badge.png") no-repeat;
+  background-size: contain;
+  transform: translateX(-50%);
+}
 #llar-setting-page-premium .llar-premium-page-promo .section-1 {
   display: flex;
   align-items: flex-end;
+  margin-top: 20px;
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .text .title {
   font-size: 31px;
   font-weight: 500;
-  color: #FF7C06;
   line-height: 1.4;
+  color: #FF7C06;
   margin-bottom: 5px;
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .text .links {
