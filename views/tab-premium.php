@@ -39,6 +39,7 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
     </div>
 	<?php endif ?>
     <div class="llar-premium-page-promo mt-1_5">
+        <div class="rating-badge"></div>
         <div class="section-1">
             <div class="text">
                 <div class="title">

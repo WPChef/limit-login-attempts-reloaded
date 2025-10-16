@@ -53,23 +53,36 @@
   }
 
   .llar-premium-page-promo {
+    position: relative;
     padding: 43px 80px 60px;
     margin-bottom: 20px;
     border-radius: $border-radius;
     background-color: $background-body;
     box-shadow: 3px 5px 23px 0 $box-shadow__light-transparent-gray;
 
+    .rating-badge {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 375px;
+      height: 100%;
+      background: url("./images/rating-badge.png") no-repeat;
+      background-size: contain;
+      transform: translateX(-50%);
+    }
+
     .section-1 {
       display: flex;
       align-items: flex-end;
+      margin-top: 20px;
 
       .text {
 
         .title {
           font-size: 31px;
           font-weight: 500;
-          color: $primary-colors__orange;
           line-height: 1.4;
+          color: $primary-colors__orange;
           margin-bottom: 5px;
         }
 
