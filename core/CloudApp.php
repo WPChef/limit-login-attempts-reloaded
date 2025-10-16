@@ -114,7 +114,9 @@ class CloudApp
 		$link = add_query_arg( 'version', $plugin_data['Version'], $link );
 
 		$setup_response = Http::get( $link );
-		$setup_response_body = json_decode( $setup_response['data'], true );
+
+		$response_data = isset( $setup_response['data'] ) ? $setup_response['data'] : '{}';
+		$setup_response_body = json_decode( $response_data, true );
 
 		if ( ! empty( $setup_response['error'] ) ) {
 
