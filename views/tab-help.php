@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <div class="item">
                         <img class="icon" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-star-bg.png">
                         <div class="name">
-					        <?php _e( '4.9 Rating On WordPress.org<br>(1,200 reviews)', 'limit-login-attempts-reloaded' ); ?>
+					        <?php _e( '4.9 Rating On WordPress.org<br>(1,400 reviews)', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                     </div>
                     <div class="item">

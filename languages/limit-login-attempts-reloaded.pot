@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-09-26T17:16:26+03:00\n"
+"POT-Creation-Date: 2025-10-23T19:51:13+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -115,11 +115,11 @@ msgstr ""
 msgid "Your email notifications for Limit Login Attempts Reloaded are working correctly. If this email is going to spam, please be sure to add this address to your safelist."
 msgstr ""
 
-#: core/CloudApp.php:132
+#: core/CloudApp.php:134
 msgid "The endpoint is not responding. Please contact your app provider to settle that."
 msgstr ""
 
-#: core/CloudApp.php:157
+#: core/CloudApp.php:159
 msgid "The app has been successfully imported."
 msgstr ""
 
@@ -2185,7 +2185,7 @@ msgid "2.5 Million Active<br>Installs"
 msgstr ""
 
 #: views/tab-help.php:37
-msgid "4.9 Rating On WordPress.org<br>(1,200 reviews)"
+msgid "4.9 Rating On WordPress.org<br>(1,400 reviews)"
 msgstr ""
 
 #: views/tab-help.php:44
@@ -2494,59 +2494,59 @@ msgstr ""
 msgid "New users receive <span>37% OFF</span> their first year when they upgrade to Premium"
 msgstr ""
 
-#: views/tab-premium.php:46
+#: views/tab-premium.php:47
 msgid "Limit Login Attempts Reloaded <strong>Micro Cloud</strong>"
 msgstr ""
 
-#: views/tab-premium.php:48
+#: views/tab-premium.php:49
 msgid "Limit Login Attempts Reloaded <strong>Premium</strong>"
 msgstr ""
 
-#: views/tab-premium.php:54
+#: views/tab-premium.php:55
 msgid "Full feature list"
 msgstr ""
 
-#: views/tab-premium.php:59
+#: views/tab-premium.php:60
 msgid "Pre-sales FAQs"
 msgstr ""
 
-#: views/tab-premium.php:64
+#: views/tab-premium.php:65
 msgid "Ask a pre-sales question"
 msgstr ""
 
-#: views/tab-premium.php:69
+#: views/tab-premium.php:70
 msgid "Support"
 msgstr ""
 
-#: views/tab-premium.php:79
+#: views/tab-premium.php:80
 msgid "Get It Here"
 msgstr ""
 
-#: views/tab-premium.php:86
+#: views/tab-premium.php:87
 msgid "You are currently using the free version of <strong>Limit Login Attempts Reloaded</strong>."
 msgstr ""
 
-#: views/tab-premium.php:88
+#: views/tab-premium.php:89
 msgid "If you purchased a premium plan, check your email for setup instructions (Setup Code included)"
 msgstr ""
 
-#: views/tab-premium.php:92
+#: views/tab-premium.php:93
 msgid "You are currently using Micro Cloud, which provides access to premium cloud app on a limited basis. To prevent interruption, upgrade to one of our paid plans below."
 msgstr ""
 
-#: views/tab-premium.php:94
+#: views/tab-premium.php:95
 msgid "You are currently using the premium version of Limit Login Attempts Reloaded."
 msgstr ""
 
-#: views/tab-premium.php:103
+#: views/tab-premium.php:104
 msgid "Why Should I Consider Premium?"
 msgstr ""
 
-#: views/tab-premium.php:106
+#: views/tab-premium.php:107
 msgid "Although the free version offers basic protection, the premium version includes an important feature called <b>IP Intelligence</b>. With IP intelligence, your website will be able to identify malicious IPs before they attempt a login, and absorb them into the cloud to save system resources. Your site will not only be more secure, but will operate at its optimal performance."
 msgstr ""
 
-#: views/tab-premium.php:113
+#: views/tab-premium.php:114
 msgid "Features comparison"
 msgstr ""
 
