@@ -39,6 +39,7 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
     </div>
 	<?php endif ?>
     <div class="llar-premium-page-promo mt-1_5">
+        <a href='https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/?filter=5' target="_blank"><div class="rating-badge"></div></a>
         <div class="section-1">
             <div class="text">
                 <div class="title">
