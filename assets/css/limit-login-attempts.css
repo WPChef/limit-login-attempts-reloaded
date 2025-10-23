@@ -3702,7 +3702,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   left: 50%;
   width: 375px;
   height: 100%;
-  background: url("./images/rating-badge.png") no-repeat;
+  background: url("./images/rating-badge-plug.svg") no-repeat;
   background-size: contain;
   transform: translateX(-50%);
 }
