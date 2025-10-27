@@ -63,42 +63,6 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
     </div>
 
-    <div class="section-team mt-1_5">
-        <h3 class="title_page">
-            <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-grow-clients.png">
-			<?php _e( 'The Team', 'limit-login-attempts-reloaded' ); ?>
-        </h3>
-        <div class="section-team-block">
-            <div class="team-member">
-                <img class="team-member-image" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/alex-benko.png">
-                <div class="team-member-description">
-                    <div class="team-member-description-name">
-                        Alex Benko - CCO
-                    </div>
-                    <a class="team-member-description-button button menu__item button__blue" href="https://www.linkedin.com/in/alexbenkotripshock/" target="_blank">in</a>
-                </div>
-            </div>
-            <div class="team-member">
-                <img class="team-member-image" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/guriy.webp">
-                <div class="team-member-description">
-                    <div class="team-member-description-name">
-                        Guriy Habarov - CTO
-                    </div>
-                    <a class="team-member-description-button button menu__item button__blue" href="https://www.linkedin.com/in/gurii/" target="_blank">in</a>
-                </div>
-            </div>
-            <div class="team-member">
-                <img class="team-member-image" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/greg-fisher.png">
-                <div class="team-member-description">
-                    <div class="team-member-description-name">
-                        Greg Fisher - CMO
-                    </div>
-                    <a class="team-member-description-button button menu__item button__blue" href="https://www.linkedin.com/in/greg-fisher-1b3a6514/" target="_blank">in</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
 	<?php if ( ! $is_active_app_custom || $block_sub_group === 'Micro Cloud' ) : ?>
         <div class="section-1">
             <div class="block">
@@ -268,6 +232,44 @@ if ( ! defined( 'ABSPATH' ) ) {
                        href="https://www.limitloginattempts.com/contact-us/?from=plugin-help-tab" target="_blank">
 						<?php _e( 'Contact Support', 'limit-login-attempts-reloaded' ); ?>
                     </a>
+                </div>
+            </div>
+        </div>
+	<?php endif ?>
+
+	<?php if ( $is_active_app_custom && $block_sub_group !== 'Micro Cloud') : ?>
+        <div class="section-team mt-1_5">
+            <h3 class="title_page">
+                <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-grow-clients.png">
+				<?php _e( 'The Team', 'limit-login-attempts-reloaded' ); ?>
+            </h3>
+            <div class="section-team-block">
+                <div class="team-member">
+                    <img class="team-member-image" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/alex-benko.png">
+                    <div class="team-member-description">
+                        <div class="team-member-description-name">
+                            Alex Benko - CCO
+                        </div>
+                        <a class="team-member-description-button button menu__item button__blue" href="https://www.linkedin.com/in/alexbenkotripshock/" target="_blank">in</a>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <img class="team-member-image" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/guriy.webp">
+                    <div class="team-member-description">
+                        <div class="team-member-description-name">
+                            Guriy Habarov - CTO
+                        </div>
+                        <a class="team-member-description-button button menu__item button__blue" href="https://www.linkedin.com/in/gurii/" target="_blank">in</a>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <img class="team-member-image" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/greg-fisher.png">
+                    <div class="team-member-description">
+                        <div class="team-member-description-name">
+                            Greg Fisher - CMO
+                        </div>
+                        <a class="team-member-description-button button menu__item button__blue" href="https://www.linkedin.com/in/greg-fisher-1b3a6514/" target="_blank">in</a>
+                    </div>
                 </div>
             </div>
         </div>
