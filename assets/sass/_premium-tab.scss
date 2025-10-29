@@ -60,15 +60,21 @@
     background-color: $background-body;
     box-shadow: 3px 5px 23px 0 $box-shadow__light-transparent-gray;
 
-    .rating-badge {
+    a.rating-badge {
       position: absolute;
       top: 0;
       left: 50%;
       width: 375px;
-      height: 100%;
+      height: 65px;
       background: url("./images/rating-badge-plug.svg") no-repeat;
       background-size: contain;
       transform: translateX(-50%);
+
+      &:focus {
+        color: unset;
+        box-shadow: unset;
+        outline: unset;
+      }
     }
 
     .section-1 {
