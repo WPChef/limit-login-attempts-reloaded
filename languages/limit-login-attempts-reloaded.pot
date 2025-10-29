@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-23T19:51:13+03:00\n"
+"POT-Creation-Date: 2025-10-29T16:06:11+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -406,7 +406,7 @@ msgid "Lockouts & safelists/blocklists can be shared between multiple domains to
 msgstr ""
 
 #: resources/compare-plans-data.php:144
-#: views/tab-help.php:261
+#: views/tab-help.php:225
 msgid "Premium Support"
 msgstr ""
 
@@ -2200,128 +2200,128 @@ msgstr ""
 msgid "Users from 150+<br>countries"
 msgstr ""
 
-#: views/tab-help.php:69
-msgid "The Team"
-msgstr ""
-
-#: views/tab-help.php:106
+#: views/tab-help.php:70
 msgid "Upgrade Now to Access Premium Support"
 msgstr ""
 
-#: views/tab-help.php:109
+#: views/tab-help.php:73
 msgid "Our technical support team is available by email to help<br>with any questions."
 msgstr ""
 
-#: views/tab-help.php:116
+#: views/tab-help.php:80
 msgid "Upgrade To Premium"
 msgstr ""
 
-#: views/tab-help.php:122
+#: views/tab-help.php:86
 msgid "Free Support"
 msgstr ""
 
-#: views/tab-help.php:125
+#: views/tab-help.php:89
 msgid "Support for free customers is available via our forums page on WordPress.org.<br>The majority of requests <b>receive an answer within a few days</b>."
 msgstr ""
 
-#: views/tab-help.php:130
+#: views/tab-help.php:94
 msgid "Go To Support Forums"
 msgstr ""
 
-#: views/tab-help.php:139
+#: views/tab-help.php:103
 msgid "GDPR Information"
 msgstr ""
 
-#: views/tab-help.php:143
+#: views/tab-help.php:107
 msgid "Software Documentation"
 msgstr ""
 
-#: views/tab-help.php:150
+#: views/tab-help.php:114
 msgid "All Documentation"
 msgstr ""
 
-#: views/tab-help.php:156
+#: views/tab-help.php:120
 msgid "Cloud Service & Security"
 msgstr ""
 
-#: views/tab-help.php:158
+#: views/tab-help.php:122
 msgid "Questions regarding the cloud service including how to activate, logs and storage, and compliance."
 msgstr ""
 
-#: views/tab-help.php:164
+#: views/tab-help.php:128
 msgid "Technical Questions"
 msgstr ""
 
-#: views/tab-help.php:166
+#: views/tab-help.php:130
 msgid "Popular technical questions about the service including admin blocking, definitions, and email notifications."
 msgstr ""
 
-#: views/tab-help.php:171
+#: views/tab-help.php:135
 msgid "Accounts & Billing"
 msgstr ""
 
-#: views/tab-help.php:173
+#: views/tab-help.php:137
 msgid "Questions regarding updating billing info, cancellation, and expiration."
 msgstr ""
 
-#: views/tab-help.php:179
+#: views/tab-help.php:143
 msgid "Pre-sales Questions"
 msgstr ""
 
-#: views/tab-help.php:181
+#: views/tab-help.php:145
 msgid "Questions regarding premium software sales."
 msgstr ""
 
-#: views/tab-help.php:189
+#: views/tab-help.php:153
 msgid "Top Topics and Questions"
 msgstr ""
 
-#: views/tab-help.php:195
+#: views/tab-help.php:159
 msgid "How do I know if I'm under attack?"
 msgstr ""
 
-#: views/tab-help.php:201
+#: views/tab-help.php:165
 msgid "How can I tell that the premium plugin is working?"
 msgstr ""
 
-#: views/tab-help.php:207
+#: views/tab-help.php:171
 msgid "What do I do if the admin gets blocked?"
 msgstr ""
 
-#: views/tab-help.php:213
+#: views/tab-help.php:177
 msgid "Why am I still seeing login attempts even after the IP got blocked?"
 msgstr ""
 
-#: views/tab-help.php:219
+#: views/tab-help.php:183
 msgid "Could these failed login attempts be fake?"
 msgstr ""
 
-#: views/tab-help.php:225
+#: views/tab-help.php:189
 msgid "How does the login firewall work?"
 msgstr ""
 
-#: views/tab-help.php:231
+#: views/tab-help.php:195
 msgid "What happens if my site exceeds the request limits in the plan?"
 msgstr ""
 
-#: views/tab-help.php:237
+#: views/tab-help.php:201
 msgid "What do I do if all users get blocked?"
 msgstr ""
 
-#: views/tab-help.php:243
+#: views/tab-help.php:207
 msgid "I just installed LLAR and I'm already getting several failed login attempts"
 msgstr ""
 
-#: views/tab-help.php:249
+#: views/tab-help.php:213
 msgid "What URLs are being attacked and protected?"
 msgstr ""
 
-#: views/tab-help.php:264
+#: views/tab-help.php:228
 msgid "Our technical support team is available by email to help with any questions."
 msgstr ""
 
-#: views/tab-help.php:269
+#: views/tab-help.php:233
 msgid "Contact Support"
+msgstr ""
+
+#: views/tab-help.php:244
+msgid "The Team"
 msgstr ""
 
 #: views/tab-logs-custom.php:26
