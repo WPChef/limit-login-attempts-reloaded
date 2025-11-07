@@ -278,6 +278,8 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 
         $( document ).ready( function () {
 
+            let shouldRedirectToDashboard = false;
+
             const ondoarding_modal = $.dialog( {
                 title: false,
                 content: `<?php echo wp_kses_post( trim( $popup_complete_install_content ) ); ?>`,
@@ -294,6 +296,10 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                 useBootstrap: false,
                 closeIcon: true,
                 onClose: function () {
+
+                    if ( ! shouldRedirectToDashboard ) {
+                        return;
+                    }
 
                     let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     let target_url = clear_url + '?page=limit-login-attempts&tab=dashboard';
@@ -450,6 +456,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                                     .finally( function () {
 
                                         $block_upgrade_subscribe.addClass( 'llar-display-none' );
+                                        shouldRedirectToDashboard = true;
                                     } )
 
                             });
@@ -462,7 +469,9 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                             llar_ajax_callback_post( ajaxurl, data )
                                 .then( function () {
 
-                                    setTimeout(function() {
+                                    shouldRedirectToDashboard = true;
+
+                                    setTimeout( function () {
                                         $html_onboarding_body.replaceWith( <?php echo wp_json_encode( trim( $content_step_4 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
                                     }, 1500);
                                 } )
