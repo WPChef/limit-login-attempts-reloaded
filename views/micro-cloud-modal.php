@@ -195,6 +195,7 @@ $micro_cloud_popup_content = ob_get_clean();
 
                         llar_activate_micro_cloud( email )
                             .then( function() {
+
                                 $button_subscribe_email.removeClass( disabled );
                             } )
                             .catch( function() {
