@@ -108,8 +108,15 @@ $micro_cloud_popup_content = ob_get_clean();
 
         $( document ).ready( function() {
 
+            const $body = $( 'body' );
+
+            const redirectToDashboard = function () {
+                redirectToDashboard();
+            };
+
             const $button_micro_cloud = $( '.button.button_micro_cloud, a.button_micro_cloud' );
 
+            let shouldRefreshDashboard = false;
             $button_micro_cloud.on( 'click', function () {
                 micro_cloud_modal.open();
             } )
@@ -183,10 +190,11 @@ $micro_cloud_popup_content = ob_get_clean();
 
                         $button_subscribe_email.addClass( disabled );
                         $spinner.addClass( visibility );
+                        $body.addClass( disabled );
+                        shouldRefreshDashboard = true;
 
                         llar_activate_micro_cloud( email )
                             .then( function() {
-
                                 $button_subscribe_email.removeClass( disabled );
                             } )
                             .catch( function() {
@@ -198,17 +206,21 @@ $micro_cloud_popup_content = ob_get_clean();
 
                                 $card_body_first.addClass( 'llar-display-none' );
                                 $card_body_second.removeClass( 'llar-display-none' );
+                                $body.removeClass( disabled );
                             } );
 
                         $button_dashboard.on( 'click', function () {
-                            let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                            window.location = clear_url + '?page=limit-login-attempts&tab=dashboard';
+                            redirectToDashboard();
 
                         } )
 
                     } )
                 },
                 onClose: function() {
+                    if ( shouldRefreshDashboard ) {
+                        redirectToDashboard();
+                        return;
+                    }
                     // Remove hash from URL
                     if (window.location.hash === '#modal_micro_cloud') {
                         history.pushState('', document.title, window.location.pathname + window.location.search);
