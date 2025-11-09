@@ -111,12 +111,15 @@ $micro_cloud_popup_content = ob_get_clean();
             const $body = $( 'body' );
 
             const redirectToDashboard = function () {
-                redirectToDashboard();
+                let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.location = clear_url + '?page=limit-login-attempts&tab=dashboard';
             };
 
             const $button_micro_cloud = $( '.button.button_micro_cloud, a.button_micro_cloud' );
 
-            let shouldRefreshDashboard = false;
+            let microCloudActivationInProgress = false;
+            let microCloudActivationCompleted = false;
+
             $button_micro_cloud.on( 'click', function () {
                 micro_cloud_modal.open();
             } )
@@ -191,15 +194,17 @@ $micro_cloud_popup_content = ob_get_clean();
                         $button_subscribe_email.addClass( disabled );
                         $spinner.addClass( visibility );
                         $body.addClass( disabled );
-                        shouldRefreshDashboard = true;
+                        microCloudActivationInProgress = true;
 
                         llar_activate_micro_cloud( email )
                             .then( function() {
 
+                                microCloudActivationCompleted = true;
                                 $button_subscribe_email.removeClass( disabled );
                             } )
                             .catch( function() {
 
+                                microCloudActivationCompleted = false;
                                 $subscribe_notification_error.removeClass( 'llar-display-none' );
                                 $subscribe_notification.addClass( 'llar-display-none' );
                             } )
@@ -208,19 +213,23 @@ $micro_cloud_popup_content = ob_get_clean();
                                 $card_body_first.addClass( 'llar-display-none' );
                                 $card_body_second.removeClass( 'llar-display-none' );
                                 $body.removeClass( disabled );
+                                microCloudActivationInProgress = false;
                             } );
 
-                        $button_dashboard.on( 'click', function () {
+                        $button_dashboard.off( 'click.llarDashboardRedirect' ).on( 'click.llarDashboardRedirect', function () {
                             redirectToDashboard();
-
-                        } )
+                        } );
 
                     } )
                 },
                 onClose: function() {
-                    if ( shouldRefreshDashboard ) {
+                    if ( microCloudActivationInProgress ) {
+                        return false; // Prevent closing during activation
+                    }
+                    // Redirect to dashboard after successful activation
+                    if ( microCloudActivationCompleted ) {
                         redirectToDashboard();
-                        return;
+                        return false;
                     }
                     // Remove hash from URL
                     if (window.location.hash === '#modal_micro_cloud') {

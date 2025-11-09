@@ -278,7 +278,8 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 
         $( document ).ready( function () {
 
-            let shouldRedirectToDashboard = false;
+            let onboardingCompleted = false;
+
 
             const ondoarding_modal = $.dialog( {
                 title: false,
@@ -297,10 +298,20 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                 closeIcon: true,
                 onClose: function () {
 
-                    if ( ! shouldRedirectToDashboard ) {
+                    // If onboarding is not completed, mark it as dismissed
+                    if ( ! onboardingCompleted ) {
+                        // Mark onboarding as dismissed to prevent reopening
+                        llar_ajax_callback_post( ajaxurl, {
+                            action: 'dismiss_onboarding_popup',
+                            sec: llar_vars.nonce_dismiss_onboarding_popup
+                        } ).catch( function() {
+                            // On error, just continue with closing
+                            // State will be saved on next page load
+                        } );
                         return;
                     }
 
+                    // Redirect to dashboard after completed onboarding
                     let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     let target_url = clear_url + '?page=limit-login-attempts&tab=dashboard';
 
@@ -456,7 +467,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                                     .finally( function () {
 
                                         $block_upgrade_subscribe.addClass( 'llar-display-none' );
-                                        shouldRedirectToDashboard = true;
+                                        onboardingCompleted = true;
                                     } )
 
                             });
@@ -469,7 +480,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                             llar_ajax_callback_post( ajaxurl, data )
                                 .then( function () {
 
-                                    shouldRedirectToDashboard = true;
+                                    onboardingCompleted = true;
 
                                     setTimeout( function () {
                                         $html_onboarding_body.replaceWith( <?php echo wp_json_encode( trim( $content_step_4 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
