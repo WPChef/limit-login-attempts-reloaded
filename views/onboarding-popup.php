@@ -298,20 +298,15 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                 closeIcon: true,
                 onClose: function () {
 
-                    // If onboarding is not completed, mark it as dismissed
                     if ( ! onboardingCompleted ) {
-                        // Mark onboarding as dismissed to prevent reopening
                         llar_ajax_callback_post( ajaxurl, {
                             action: 'dismiss_onboarding_popup',
                             sec: llar_vars.nonce_dismiss_onboarding_popup
                         } ).catch( function() {
-                            // On error, just continue with closing
-                            // State will be saved on next page load
                         } );
                         return;
                     }
 
-                    // Redirect to dashboard after completed onboarding
                     let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     let target_url = clear_url + '?page=limit-login-attempts&tab=dashboard';
 
