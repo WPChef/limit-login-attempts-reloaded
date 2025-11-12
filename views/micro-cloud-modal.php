@@ -93,6 +93,7 @@ ob_start(); ?>
                     <div class="button_block-single">
                         <button class="button next_step menu__item button__orange" id="llar-button_dashboard">
                             <?php _e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); ?>
+                            <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
                         </button>
                     </div>
                 </div>
@@ -150,6 +151,7 @@ $micro_cloud_popup_content = ob_get_clean();
                     const $subscribe_notification = $( '.llar-upgrade-subscribe_notification' );
                     const $subscribe_notification_error = $( '.llar-upgrade-subscribe_notification__error' );
                     const $spinner = $button_subscribe_email.find( '.preloader-wrapper .spinner' );
+                    const $spinner_dashboard = $button_dashboard.find( '.preloader-wrapper .spinner' );
                     const disabled = 'llar-disabled';
                     const visibility = 'llar-visibility';
 
@@ -195,7 +197,6 @@ $micro_cloud_popup_content = ob_get_clean();
                         $spinner.addClass( visibility );
                         $body.addClass( disabled );
                         microCloudActivationInProgress = true;
-
                         llar_activate_micro_cloud( email )
                             .then( function() {
 
@@ -209,17 +210,16 @@ $micro_cloud_popup_content = ob_get_clean();
                                 $subscribe_notification.addClass( 'llar-display-none' );
                             } )
                             .finally( function() {
-
                                 $card_body_first.addClass( 'llar-display-none' );
                                 $card_body_second.removeClass( 'llar-display-none' );
                                 $body.removeClass( disabled );
                                 microCloudActivationInProgress = false;
+                                $button_dashboard.off( 'click.llarDashboardRedirect' ).on( 'click.llarDashboardRedirect', function () {
+                                    $button_dashboard.addClass( disabled );
+                                    $spinner_dashboard.addClass( visibility );
+                                    redirectToDashboard();
+                                } );
                             } );
-
-                        $button_dashboard.off( 'click.llarDashboardRedirect' ).on( 'click.llarDashboardRedirect', function () {
-                            redirectToDashboard();
-                        } );
-
                     } )
                 },
                 onClose: function() {
