@@ -297,7 +297,33 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                 containerFluid: true,
                 bgOpacity: 0.9,
                 useBootstrap: false,
-                closeIcon: true,
+                closeIcon: function() {
+                    // If onboarding is completed, prevent closing and reload page
+                    if ( onboardingCompleted ) {
+                        window.location.reload();
+                        return false; // Prevent closing
+                    }
+                    // Allow closing if onboarding is not completed
+                    return true;
+                },
+                backgroundDismiss: function() {
+                    // Prevent closing by clicking on background when onboarding is completed
+                    if ( onboardingCompleted ) {
+                        window.location.reload();
+                        return false; // Prevent closing
+                    }
+                    // Allow closing if onboarding is not completed
+                    return true;
+                },
+                escapeKey: function() {
+                    // Prevent closing by ESC key when onboarding is completed
+                    if ( onboardingCompleted ) {
+                        window.location.reload();
+                        return false; // Prevent closing
+                    }
+                    // Allow closing if onboarding is not completed
+                    return true;
+                },
                 onClose: function () {
                     $body.removeClass( disabled );
                     if ( ! onboardingCompleted ) {
@@ -309,18 +335,6 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                         } ).finally( function() {
                             $body.removeClass( disabled );
                         } );
-                        return;
-                    }
-                    $onboarding_panel.addClass( hidden );
-                    window.location.reload();
-
-                    let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                    let target_url = clear_url + '?page=limit-login-attempts&tab=dashboard';
-
-                    if (window.location.href === target_url) {
-                        window.location.reload();
-                    } else {
-                        window.location = target_url;
                     }
                 },
                 buttons: {},
