@@ -136,7 +136,27 @@ $micro_cloud_popup_content = ob_get_clean();
                 boxWidth: 1280,
                 bgOpacity: 0.9,
                 useBootstrap: false,
-                closeIcon: true,
+                closeIcon: function() {
+                    if ( microCloudActivationCompleted ) {
+                        redirectToDashboard();
+                        return false;
+                    }
+                    return true;
+                },
+                backgroundDismiss: function() {
+                    if ( microCloudActivationCompleted ) {
+                        redirectToDashboard();
+                        return false;
+                    }
+                    return true;
+                },
+                escapeKey: function() {
+                    if ( microCloudActivationCompleted ) {
+                        redirectToDashboard();
+                        return false;
+                    }
+                    return true;
+                },
                 buttons: {},
                 onOpenBefore: function () {
 
