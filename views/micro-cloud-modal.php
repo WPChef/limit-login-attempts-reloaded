@@ -13,7 +13,7 @@ $setup_code = Config::get( 'app_setup_code' );
 if ( ! empty( $setup_code ) ) {
 	return;
 }
-
+$spinner = '<span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>';
 $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 $url_site = parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
 
@@ -65,8 +65,7 @@ ob_start(); ?>
                     </div>
                     <div class="button_block-single">
                         <button class="button menu__item button__orange" id="llar-button_subscribe-email">
-                            <?php _e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
-                            <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+                            <?php _e( 'Continue', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
                         </button>
                         <div class="description_add">
                             <?php echo sprintf(
@@ -92,8 +91,7 @@ ob_start(); ?>
                     </div>
                     <div class="button_block-single">
                         <button class="button next_step menu__item button__orange" id="llar-button_dashboard">
-                            <?php _e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); ?>
-                            <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+                            <?php _e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
                         </button>
                     </div>
                 </div>
