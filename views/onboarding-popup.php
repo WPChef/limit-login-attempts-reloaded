@@ -487,9 +487,12 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                             thank_you_for_completing_setup();
 
                         } else if ( !next_step ) {
-                            onboardingCompleted = true;
-                            $( $button_go_to_dashboard ).find( $button_go_to_dashboard_spinner ).addClass( visibility ).show();
-                            window.location.reload();
+                            if ( onboardingCompleted ) {
+                                $( $button_go_to_dashboard ).find( $button_go_to_dashboard_spinner ).addClass( visibility ).show();
+                                window.location.reload();
+                            } else {
+                                ondoarding_modal.close();
+                            }
                         }
                     } )
                 }
