@@ -19,6 +19,8 @@ $setup_code             = Config::get( 'app_setup_code' );
 
 $url_site = wp_parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
 
+$spinner = '<span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>';
+
 if ( $onboarding_popup_shown || ! empty( $setup_code ) ) {
 	return;
 }
@@ -72,7 +74,7 @@ ob_start(); ?>
                     <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
 				        <?php esc_html_e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
                         <span class="dashicons dashicons-arrow-right-alt"></span>
-                        <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+                        <?php echo $spinner; ?>
                     </button>
                 </div>
                 <div class="field-error"></div>
@@ -158,8 +160,7 @@ ob_start(); ?>
     </div>
     <div class="button_block-horizon">
         <button class="button menu__item button__orange" id="llar-subscribe-email-button">
-			<?php esc_html_e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
-            <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+			<?php esc_html_e( 'Continue', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
         </button>
         <button class="button next_step menu__item button__transparent_orange button-skip" style="display: none">
 			<?php esc_html_e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
@@ -203,12 +204,10 @@ ob_start(); ?>
         <div class="llar-upgrade-subscribe">
             <div class="button_block-horizon">
                 <button class="button next_step menu__item button__transparent_orange" id="llar-limited-upgrade-subscribe">
-		            <?php esc_html_e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
-                    <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+		            <?php esc_html_e( 'Yes', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
                 </button>
                 <button class="button next_step menu__item button__transparent_grey" id="llar-limited-upgrade-no_subscribe">
-		            <?php esc_html_e( 'No', 'limit-login-attempts-reloaded' ); ?>
-                    <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+		            <?php esc_html_e( 'No', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
                 </button>
             </div>
             <div class="explanations">
@@ -238,7 +237,7 @@ ob_start(); ?>
         </div>
         <div class="button_block-single">
             <button class="button next_step menu__item button__orange">
-				<?php esc_html_e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); ?>
+				<?php esc_html_e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
             </button>
         </div>
     </div>
@@ -332,6 +331,9 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                     const $activate_button = $( '#llar-app-install-btn' );
                     const $spinner = $activate_button.find( '.preloader-wrapper .spinner' );
                     const visibility = 'llar-visibility';
+                    const $button_go_to_dashboard = '.button.next_step.menu__item.button__orange';
+                    const $button_go_to_dashboard_spinner = '.preloader-wrapper,.preloader-wrapper .spinner';
+                    const spinner = '.preloader-wrapper .spinner';
                     let email;
 
                     $setup_code_key.on( 'input', function () {
@@ -440,7 +442,6 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                             const $block_upgrade_subscribe = $( '.llar-upgrade-subscribe' );
                             const $button_next = $( '.button.next_step' );
                             const $button_skip = $button_next.filter( '.button-skip' );
-                            const spinner = '.preloader-wrapper .spinner';
                             const $description = $( '#llar-description-step-3' );
 
 
@@ -487,7 +488,8 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 
                         } else if ( !next_step ) {
                             onboardingCompleted = true;
-                            ondoarding_modal.close();
+                            $( $button_go_to_dashboard ).find( $button_go_to_dashboard_spinner ).addClass( visibility ).show();
+                            window.location.reload();
                         }
                     } )
                 }
