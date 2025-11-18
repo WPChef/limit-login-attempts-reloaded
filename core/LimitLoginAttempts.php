@@ -261,6 +261,8 @@ class LimitLoginAttempts
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
 		// hook for the plugin UM
 		add_action( 'um_submit_form_errors_hook_login', array( $this, 'um_limit_login_failed' ) );
+		// hook for the plugin MemberPress
+		add_action( 'mepr_validate_login', array( $this, 'mepr_validate_login_handler' ) );
 
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
@@ -1118,6 +1120,23 @@ class LimitLoginAttempts
 
 		do_action( 'login_errors', '' );
 		$um_limit_login_failed = true;
+	}
+
+	/**
+	 * For plugin MemberPress
+	 * Triggers authenticate filter to allow Limit Login Attempts Reloaded
+	 * to check lockouts before MemberPress validates the password
+	 */
+	public function mepr_validate_login_handler()
+	{
+		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
+			return;
+		}
+
+		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
+		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
+
+		apply_filters( 'authenticate', null, $log, $pwd );
 	}
 
 	/**
