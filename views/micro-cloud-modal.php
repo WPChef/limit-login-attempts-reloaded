@@ -232,6 +232,7 @@ $micro_cloud_popup_content = ob_get_clean();
                                 $card_body_second.removeClass( 'llar-display-none' );
                                 $body.removeClass( disabled );
                                 microCloudActivationInProgress = false;
+                                $( '.jconfirm-closeIcon' ).remove();
                                 $button_dashboard.off( 'click.llarDashboardRedirect' ).on( 'click.llarDashboardRedirect', function () {
                                     $button_dashboard.addClass( disabled );
                                     $spinner_dashboard.addClass( visibility );

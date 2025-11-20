@@ -541,7 +541,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                 action: 'dismiss_onboarding_popup',
                 sec: llar_vars.nonce_dismiss_onboarding_popup
             }
-            $( '.jconfirm-closeIcon' ).addClass( hidden );
+            $( '.jconfirm-closeIcon' ).remove();
             llar_ajax_callback_post( ajaxurl, data )
             .then( function () {
                 onboardingCompleted = true;
