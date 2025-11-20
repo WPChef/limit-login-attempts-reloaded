@@ -275,11 +275,13 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 <script>
     ;( function ( $ ) {
 
+        const disabled = 'llar-disabled';
+        const hidden = 'llar-hidden';
+
         $( document ).ready( function () {
             const $body = $( 'body' );
             const $onboarding_panel = $( '.dashboard-section-4' );
-            const disabled = 'llar-disabled';
-            const hidden = 'llar-hidden';
+
             let onboardingCompleted = false;
 
 
@@ -539,6 +541,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                 action: 'dismiss_onboarding_popup',
                 sec: llar_vars.nonce_dismiss_onboarding_popup
             }
+            $( '.jconfirm-closeIcon' ).addClass( hidden );
             llar_ajax_callback_post( ajaxurl, data )
             .then( function () {
                 onboardingCompleted = true;
