@@ -70,6 +70,12 @@
   position: relative;
 }
 
+.link__style_unlink > a {
+  color: rgb(33, 49, 70);
+  text-align: right;
+  text-decoration: none;
+}
+
 .link__style_unlink:hover, .llar-label:hover, .link__style_color_inherit:hover {
   color: inherit;
 }

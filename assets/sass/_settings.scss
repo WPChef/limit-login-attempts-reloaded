@@ -158,6 +158,12 @@ $border-radius__max: $border-radius * 2;
   color: inherit;
 }
 
+.link__style_unlink > a {
+  color: rgb(33, 49, 70);
+  text-align: right;
+  text-decoration: none;
+}
+
 .link__style_color_inherit {
   text-decoration: none;
   border-bottom: 1px solid currentColor;
