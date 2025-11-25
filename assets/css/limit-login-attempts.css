@@ -426,7 +426,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   font-size: 18px;
   margin-right: 20px;
 }
@@ -437,6 +437,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .limit-login-page-settings__logo_block .info-box-icon img {
   width: 15px;
   vertical-align: middle;
+}
+.limit-login-page-settings__logo_block .link__style_unlink {
+  margin-top: 21px;
 }
 .limit-login-page-settings__logo {
   margin-top: 21px;
