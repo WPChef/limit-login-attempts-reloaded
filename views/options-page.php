@@ -118,7 +118,7 @@ if ( $is_active_app_custom ) {
             ?>
             <div class="link__style_unlink">
                 <a href="https://my.limitloginattempts.com/" target="_blank">
-                    <?php esc_html_e( 'Account Login', 'limit-login-attempts-reloaded' ); ?>
+                    &nbsp;&nbsp;&nbsp;<?php esc_html_e( 'Account Login', 'limit-login-attempts-reloaded' ); ?>
                     <div class="info-box-icon">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-backup-big-bw.png">
                     </div>
