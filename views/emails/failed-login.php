@@ -297,7 +297,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                                                              target="_blank"
                                                                                              style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#FDA33B;font-size:14px">
                                                                         <?php _e( 'Micro Cloud©.', 'limit-login-attempts-reloaded' ); ?></a>
-                                                                        <?php _e( ' Go to your LLAR dashboard to get starte.', 'limit-login-attempts-reloaded' ); ?></p></td>
+                                                                        <?php _e( ' Go to your LLAR dashboard to get started.', 'limit-login-attempts-reloaded' ); ?></p></td>
                                                         </tr>
                                                         <tr>
                                                             <td height="25" align="center"
