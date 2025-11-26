@@ -19,6 +19,8 @@ $setup_code             = Config::get( 'app_setup_code' );
 
 $url_site = wp_parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
 
+$spinner = '<span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>';
+
 if ( $onboarding_popup_shown || ! empty( $setup_code ) ) {
 	return;
 }
@@ -72,7 +74,7 @@ ob_start(); ?>
                     <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
 				        <?php esc_html_e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
                         <span class="dashicons dashicons-arrow-right-alt"></span>
-                        <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+                        <?php echo $spinner; ?>
                     </button>
                 </div>
                 <div class="field-error"></div>
@@ -158,8 +160,7 @@ ob_start(); ?>
     </div>
     <div class="button_block-horizon">
         <button class="button menu__item button__orange" id="llar-subscribe-email-button">
-			<?php esc_html_e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
-            <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+			<?php esc_html_e( 'Continue', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
         </button>
         <button class="button next_step menu__item button__transparent_orange button-skip" style="display: none">
 			<?php esc_html_e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
@@ -203,12 +204,10 @@ ob_start(); ?>
         <div class="llar-upgrade-subscribe">
             <div class="button_block-horizon">
                 <button class="button next_step menu__item button__transparent_orange" id="llar-limited-upgrade-subscribe">
-		            <?php esc_html_e( 'Yes', 'limit-login-attempts-reloaded' ); ?>
-                    <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+		            <?php esc_html_e( 'Yes', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
                 </button>
                 <button class="button next_step menu__item button__transparent_grey" id="llar-limited-upgrade-no_subscribe">
-		            <?php esc_html_e( 'No', 'limit-login-attempts-reloaded' ); ?>
-                    <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+		            <?php esc_html_e( 'No', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
                 </button>
             </div>
             <div class="explanations">
@@ -238,7 +237,7 @@ ob_start(); ?>
         </div>
         <div class="button_block-single">
             <button class="button next_step menu__item button__orange">
-				<?php esc_html_e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); ?>
+				<?php esc_html_e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
             </button>
         </div>
     </div>
@@ -276,7 +275,15 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 <script>
     ;( function ( $ ) {
 
+        const disabled = 'llar-disabled';
+        const hidden = 'llar-hidden';
+
         $( document ).ready( function () {
+            const $body = $( 'body' );
+            const $onboarding_panel = $( '.dashboard-section-4' );
+
+            let onboardingCompleted = false;
+
 
             const ondoarding_modal = $.dialog( {
                 title: false,
@@ -292,16 +299,44 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                 containerFluid: true,
                 bgOpacity: 0.9,
                 useBootstrap: false,
-                closeIcon: true,
-                onClose: function () {
-
-                    let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                    let target_url = clear_url + '?page=limit-login-attempts&tab=dashboard';
-
-                    if (window.location.href === target_url) {
+                closeIcon: function() {
+                    // If onboarding is completed, prevent closing and reload page
+                    if ( onboardingCompleted ) {
                         window.location.reload();
-                    } else {
-                        window.location = target_url;
+                        return false; // Prevent closing
+                    }
+                    // Allow closing if onboarding is not completed
+                    return true;
+                },
+                backgroundDismiss: function() {
+                    // Prevent closing by clicking on background when onboarding is completed
+                    if ( onboardingCompleted ) {
+                        window.location.reload();
+                        return false; // Prevent closing
+                    }
+                    // Allow closing if onboarding is not completed
+                    return true;
+                },
+                escapeKey: function() {
+                    // Prevent closing by ESC key when onboarding is completed
+                    if ( onboardingCompleted ) {
+                        window.location.reload();
+                        return false; // Prevent closing
+                    }
+                    // Allow closing if onboarding is not completed
+                    return true;
+                },
+                onClose: function () {
+                    $body.removeClass( disabled );
+                    if ( ! onboardingCompleted ) {
+                        llar_ajax_callback_post( ajaxurl, {
+                            action: 'dismiss_onboarding_popup',
+                            sec: llar_vars.nonce_dismiss_onboarding_popup
+                        } ).catch( function() {
+                            $body.removeClass( disabled );
+                        } ).finally( function() {
+                            $body.removeClass( disabled );
+                        } );
                     }
                 },
                 buttons: {},
@@ -311,8 +346,10 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                     const $setup_code_key = $( '#llar-setup-code-field' );
                     const $activate_button = $( '#llar-app-install-btn' );
                     const $spinner = $activate_button.find( '.preloader-wrapper .spinner' );
-                    const disabled = 'llar-disabled';
                     const visibility = 'llar-visibility';
+                    const $button_go_to_dashboard = '.button.next_step.menu__item.button__orange';
+                    const $button_go_to_dashboard_spinner = '.preloader-wrapper,.preloader-wrapper .spinner';
+                    const spinner = '.preloader-wrapper .spinner';
                     let email;
 
                     $setup_code_key.on( 'input', function () {
@@ -336,7 +373,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                         $error.text( '' ).hide();
                         $activate_button.addClass( disabled );
                         $spinner.addClass( visibility );
-
+                        $body.addClass( disabled );
                         llar_activate_license_key( $setup_code )
                             .then( function () {
                                 setTimeout( function () {
@@ -348,7 +385,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 
                                 if ( ! response.success && response.data.msg ) {
                                     $error.text( response.data.msg ).show();
-
+                                    $body.removeClass( disabled );
                                     setTimeout( function () {
                                         $error.text( '' ).hide();
                                         $setup_code_key.val( '' );
@@ -356,11 +393,13 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                                     }, 4000 );
                                     $spinner.removeClass( visibility );
                                 }
+                            } )
+                            .finally( function() {
+                                $body.removeClass( disabled );
                             } );
                     } )
 
                     $( document ).on( 'click', button_next, function () {
-
                         let next_step = next_step_line();
                         const $html_onboarding_body = $( '.llar-onboarding__body' );
 
@@ -385,7 +424,6 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                             });
 
                             $subscribe_email_button.on( 'click', function () {
-
                                 const $is_subscribe = !! $( '.field-checkbox input[name="lockout_notify_email"]' ).prop( 'checked' );
 
                                 $subscribe_email_button.addClass( disabled );
@@ -397,13 +435,19 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                                     is_subscribe_yes: $is_subscribe,
                                     sec: llar_vars.nonce_subscribe_email
                                 }
-
+                                $body.addClass( disabled );
                                 llar_ajax_callback_post( ajaxurl, data )
                                     .then( function () {
                                         $subscribe_email_button.removeClass( disabled );
                                         $( button_next ).trigger( 'click' );
+                                    
                                     } )
-
+                                    .catch( function() {
+                                        $body.removeClass( disabled );
+                                    } )
+                                    .finally( function() {
+                                        $body.removeClass( disabled );
+                                    } )
                             } )
                         } else if ( next_step === 3 ) {
 
@@ -414,7 +458,6 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                             const $block_upgrade_subscribe = $( '.llar-upgrade-subscribe' );
                             const $button_next = $( '.button.next_step' );
                             const $button_skip = $button_next.filter( '.button-skip' );
-                            const spinner = '.preloader-wrapper .spinner';
                             const $description = $( '#llar-description-step-3' );
 
 
@@ -435,40 +478,37 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                                 $limited_upgrade_subscribe.addClass( disabled );
                                 $(this).find( spinner ).addClass( visibility );
 
+                                $body.addClass( disabled );
                                 llar_activate_micro_cloud( email )
                                     .then( function () {
-
                                         $description.addClass( 'llar-display-none' );
                                         $button_next.removeClass( disabled );
                                         $button_next.removeClass( 'llar-display-none' );
                                         $button_skip.addClass( 'llar-display-none' );
                                     })
                                     .catch( function ( response ) {
-
+                                        $body.removeClass( disabled );
                                         $button_skip.removeClass( disabled );
+                                        thank_you_for_completing_setup();
                                     })
                                     .finally( function () {
-
+                                        $body.removeClass( disabled );
                                         $block_upgrade_subscribe.addClass( 'llar-display-none' );
+                                        onboardingCompleted = true;
+                                        thank_you_for_completing_setup();
                                     } )
 
                             });
-                        } else if ( next_step === 4 ) {
-
-                            let data = {
-                                action: 'dismiss_onboarding_popup',
-                                sec: llar_vars.nonce_dismiss_onboarding_popup
-                            }
-                            llar_ajax_callback_post( ajaxurl, data )
-                                .then( function () {
-
-                                    setTimeout(function() {
-                                        $html_onboarding_body.replaceWith( <?php echo wp_json_encode( trim( $content_step_4 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
-                                    }, 1500);
-                                } )
+                        } else if ( next_step === 4 && !$body.hasClass( disabled ) ) {
+                            thank_you_for_completing_setup();
 
                         } else if ( !next_step ) {
-                            ondoarding_modal.close();
+                            if ( onboardingCompleted ) {
+                                $( $button_go_to_dashboard ).find( $button_go_to_dashboard_spinner ).addClass( visibility ).show();
+                                window.location.reload();
+                            } else {
+                                ondoarding_modal.close();
+                            }
                         }
                     } )
                 }
@@ -493,6 +533,20 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
             } else {
                 return false;
             }
+        }
+
+        function thank_you_for_completing_setup() {
+            const $html_onboarding_body = $( '.llar-onboarding__body' );
+            let data = {
+                action: 'dismiss_onboarding_popup',
+                sec: llar_vars.nonce_dismiss_onboarding_popup
+            }
+            $( '.jconfirm-closeIcon' ).remove();
+            llar_ajax_callback_post( ajaxurl, data )
+            .then( function () {
+                onboardingCompleted = true;
+                $html_onboarding_body.replaceWith( <?php echo wp_json_encode( trim( $content_step_4 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
+            } )
         }
 
     } )( jQuery )
