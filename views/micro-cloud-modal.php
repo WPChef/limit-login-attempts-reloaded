@@ -13,7 +13,7 @@ $setup_code = Config::get( 'app_setup_code' );
 if ( ! empty( $setup_code ) ) {
 	return;
 }
-
+$spinner = '<span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>';
 $admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 $url_site = parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
 
@@ -65,8 +65,7 @@ ob_start(); ?>
                     </div>
                     <div class="button_block-single">
                         <button class="button menu__item button__orange" id="llar-button_subscribe-email">
-                            <?php _e( 'Continue', 'limit-login-attempts-reloaded' ); ?>
-                            <span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>
+                            <?php _e( 'Continue', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
                         </button>
                         <div class="description_add">
                             <?php echo sprintf(
@@ -92,7 +91,7 @@ ob_start(); ?>
                     </div>
                     <div class="button_block-single">
                         <button class="button next_step menu__item button__orange" id="llar-button_dashboard">
-                            <?php _e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); ?>
+                            <?php _e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
                         </button>
                     </div>
                 </div>
@@ -108,7 +107,17 @@ $micro_cloud_popup_content = ob_get_clean();
 
         $( document ).ready( function() {
 
+            const $body = $( 'body' );
+
+            const redirectToDashboard = function () {
+                let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.location = clear_url + '?page=limit-login-attempts&tab=dashboard';
+            };
+
             const $button_micro_cloud = $( '.button.button_micro_cloud, a.button_micro_cloud' );
+
+            let microCloudActivationInProgress = false;
+            let microCloudActivationCompleted = false;
 
             $button_micro_cloud.on( 'click', function () {
                 micro_cloud_modal.open();
@@ -127,7 +136,27 @@ $micro_cloud_popup_content = ob_get_clean();
                 boxWidth: 1280,
                 bgOpacity: 0.9,
                 useBootstrap: false,
-                closeIcon: true,
+                closeIcon: function() {
+                    if ( microCloudActivationCompleted ) {
+                        redirectToDashboard();
+                        return false;
+                    }
+                    return true;
+                },
+                backgroundDismiss: function() {
+                    if ( microCloudActivationCompleted ) {
+                        redirectToDashboard();
+                        return false;
+                    }
+                    return true;
+                },
+                escapeKey: function() {
+                    if ( microCloudActivationCompleted ) {
+                        redirectToDashboard();
+                        return false;
+                    }
+                    return true;
+                },
                 buttons: {},
                 onOpenBefore: function () {
 
@@ -140,6 +169,7 @@ $micro_cloud_popup_content = ob_get_clean();
                     const $subscribe_notification = $( '.llar-upgrade-subscribe_notification' );
                     const $subscribe_notification_error = $( '.llar-upgrade-subscribe_notification__error' );
                     const $spinner = $button_subscribe_email.find( '.preloader-wrapper .spinner' );
+                    const $spinner_dashboard = $button_dashboard.find( '.preloader-wrapper .spinner' );
                     const disabled = 'llar-disabled';
                     const visibility = 'llar-visibility';
 
@@ -183,32 +213,43 @@ $micro_cloud_popup_content = ob_get_clean();
 
                         $button_subscribe_email.addClass( disabled );
                         $spinner.addClass( visibility );
-
+                        $body.addClass( disabled );
+                        microCloudActivationInProgress = true;
                         llar_activate_micro_cloud( email )
                             .then( function() {
 
+                                microCloudActivationCompleted = true;
                                 $button_subscribe_email.removeClass( disabled );
                             } )
                             .catch( function() {
 
+                                microCloudActivationCompleted = false;
                                 $subscribe_notification_error.removeClass( 'llar-display-none' );
                                 $subscribe_notification.addClass( 'llar-display-none' );
                             } )
                             .finally( function() {
-
                                 $card_body_first.addClass( 'llar-display-none' );
                                 $card_body_second.removeClass( 'llar-display-none' );
+                                $body.removeClass( disabled );
+                                microCloudActivationInProgress = false;
+                                $( '.jconfirm-closeIcon' ).remove();
+                                $button_dashboard.off( 'click.llarDashboardRedirect' ).on( 'click.llarDashboardRedirect', function () {
+                                    $button_dashboard.addClass( disabled );
+                                    $spinner_dashboard.addClass( visibility );
+                                    redirectToDashboard();
+                                } );
                             } );
-
-                        $button_dashboard.on( 'click', function () {
-                            let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                            window.location = clear_url + '?page=limit-login-attempts&tab=dashboard';
-
-                        } )
-
                     } )
                 },
                 onClose: function() {
+                    if ( microCloudActivationInProgress ) {
+                        return false; // Prevent closing during activation
+                    }
+                    // Redirect to dashboard after successful activation
+                    if ( microCloudActivationCompleted ) {
+                        redirectToDashboard();
+                        return false;
+                    }
                     // Remove hash from URL
                     if (window.location.hash === '#modal_micro_cloud') {
                         history.pushState('', document.title, window.location.pathname + window.location.search);
