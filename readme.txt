@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, spam
 License: GPLv2 or later
 Requires at least: 3.0
 Tested up to: 6.8
-Stable tag: 2.26.24
+Stable tag: 2.26.25
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -34,6 +34,7 @@ https://www.youtube.com/watch?v=JfkvIiQft14
 * **Wordfence** compatibility.
 * **Ultimate Member** compatibility.
 * **WPS Hide Login** compatibility.
+* **MemberPress** compatibility.
 * **XMLRPC** gateway protection.
 * **Woocommerce** login page protection.
 * **Multi-site compatibility** with extra MU settings.
@@ -145,6 +146,13 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 2.26.25 =
+* Fixed MemberPress compatibility.
+* Fixed a popup notice when a user was on the whitelist (local mode).
+* Added the individual domain to the notification email subject.
+* Updated formatting of the cloud login link.
+* Improved onboarding popup behavior.
 
 = 2.26.24 =
 * Fixed: json_decode(): Passing null to parameter #1 ($json) of type string is deprecated warning.

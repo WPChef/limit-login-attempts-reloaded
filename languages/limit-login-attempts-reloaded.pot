@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.24\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.25\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-29T18:14:07+03:00\n"
+"POT-Creation-Date: 2025-11-26T17:56:43+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -127,177 +127,177 @@ msgstr ""
 msgid "By proceeding you understand and give your consent that your IP address and browser information might be processed by the security plugins installed on this site."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:435
-#: core/LimitLoginAttempts.php:834
-#: views/options-page.php:146
+#: core/LimitLoginAttempts.php:441
+#: core/LimitLoginAttempts.php:840
+#: views/options-page.php:148
 msgid "Dashboard"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:436
-#: core/LimitLoginAttempts.php:839
-#: views/options-page.php:150
+#: core/LimitLoginAttempts.php:442
+#: core/LimitLoginAttempts.php:845
+#: views/options-page.php:152
 msgid "Settings"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:446
-#: core/LimitLoginAttempts.php:868
+#: core/LimitLoginAttempts.php:452
+#: core/LimitLoginAttempts.php:874
 msgid "Free Upgrade"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:453
+#: core/LimitLoginAttempts.php:459
 #: views/tab-dashboard.php:97
 #: views/tab-dashboard.php:253
 msgid "Upgrade to Premium"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:594
-#: core/LimitLoginAttempts.php:649
-#: core/LimitLoginAttempts.php:1157
-#: core/LimitLoginAttempts.php:1577
-#: core/LimitLoginAttempts.php:1636
+#: core/LimitLoginAttempts.php:600
+#: core/LimitLoginAttempts.php:655
+#: core/LimitLoginAttempts.php:1191
+#: core/LimitLoginAttempts.php:1612
+#: core/LimitLoginAttempts.php:1671
 msgid "<strong>ERROR</strong>: Too many failed login attempts."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:601
-#: core/LimitLoginAttempts.php:1164
-#: core/LimitLoginAttempts.php:1656
+#: core/LimitLoginAttempts.php:607
+#: core/LimitLoginAttempts.php:1198
+#: core/LimitLoginAttempts.php:1691
 msgid "Please try again in %d hour."
 msgid_plural "Please try again in %d hours."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:603
-#: core/LimitLoginAttempts.php:1166
-#: core/LimitLoginAttempts.php:1659
+#: core/LimitLoginAttempts.php:609
+#: core/LimitLoginAttempts.php:1200
+#: core/LimitLoginAttempts.php:1694
 msgid "Please try again in %d minute."
 msgid_plural "Please try again in %d minutes."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:845
+#: core/LimitLoginAttempts.php:851
 #: resources/compare-plans-data.php:72
-#: views/options-page.php:156
+#: views/options-page.php:158
 msgid "Login Firewall"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:850
-#: views/options-page.php:162
+#: core/LimitLoginAttempts.php:856
+#: views/options-page.php:164
 msgid "Logs"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:855
-#: views/options-page.php:168
+#: core/LimitLoginAttempts.php:861
+#: views/options-page.php:170
 msgid "Debug"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:860
-#: views/options-page.php:172
+#: core/LimitLoginAttempts.php:866
+#: views/options-page.php:174
 #: views/tab-dashboard.php:128
 msgid "Help"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:868
+#: core/LimitLoginAttempts.php:874
 msgid "Premium"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:951
+#: core/LimitLoginAttempts.php:957
 msgid "LLAR"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1351
+#: core/LimitLoginAttempts.php:1385
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:1358
+#: core/LimitLoginAttempts.php:1392
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:1395
-msgid "Failed login by IP %s www.limitloginattempts.com"
+#: core/LimitLoginAttempts.php:1429
+msgid "Failed login by IP %s %s"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1644
+#: core/LimitLoginAttempts.php:1679
 msgid "Please try again later."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1696
+#: core/LimitLoginAttempts.php:1731
 msgid "<strong>ERROR</strong>: Incorrect email address or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1699
+#: core/LimitLoginAttempts.php:1734
 msgid "<strong>ERROR</strong>: Incorrect username or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1719
+#: core/LimitLoginAttempts.php:1754
 msgid "WC Error"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1907
+#: core/LimitLoginAttempts.php:1942
 msgid "Cleared IP log"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1914
+#: core/LimitLoginAttempts.php:1949
 msgid "Reset lockout count"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1921
+#: core/LimitLoginAttempts.php:1956
 msgid "Cleared current lockouts"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1966
+#: core/LimitLoginAttempts.php:2001
 msgid "The %s IP range is invalid"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1993
-#: core/LimitLoginAttempts.php:2067
+#: core/LimitLoginAttempts.php:2028
+#: core/LimitLoginAttempts.php:2102
 msgid "Settings saved."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2220
+#: core/LimitLoginAttempts.php:2255
 msgid "Hey <strong>Limit Login Attempts Reloaded</strong> user!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2221
+#: core/LimitLoginAttempts.php:2256
 msgid "A <strong>crazy idea</strong> we wanted to share! What if we put an image from YOU on the <a href=\"https://wordpress.org/plugins/limit-login-attempts-reloaded/\" target=\"_blank\">LLAR page</a>?! (<a href=\"https://wordpress.org/plugins/hello-dolly/\" target=\"_blank\">example</a>) A drawing made by you or your child would cheer people up! Send us your drawing by <a href=\"mailto:wpchef.me@gmail.com\" target=\"_blank\">email</a> and we like it, we'll add it in the next release. Let's have some fun!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2222
+#: core/LimitLoginAttempts.php:2257
 msgid "We would really like to hear your feedback about the plugin! Please take a couple minutes to write a few words <a href=\"https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post\" target=\"_blank\">here</a>. Thank you!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2225
+#: core/LimitLoginAttempts.php:2260
 msgid "Don't show again"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2226
+#: core/LimitLoginAttempts.php:2261
 msgid "Maybe later"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2227
+#: core/LimitLoginAttempts.php:2262
 msgid "Leave a review"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2313
+#: core/LimitLoginAttempts.php:2348
 msgid "You have been upgraded to the latest version of <strong>Limit Login Attempts Reloaded</strong>.<br> Due to increased security threats around the holidays, we recommend turning on email notifications when you receive a failed login attempt."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2318
+#: core/LimitLoginAttempts.php:2353
 msgid "Yes, turn on email notifications"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2319
+#: core/LimitLoginAttempts.php:2354
 msgid "Remind me a month from now"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2320
+#: core/LimitLoginAttempts.php:2355
 msgid "Don't show this message again"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2464
+#: core/LimitLoginAttempts.php:2499
 msgid "<strong>Error</strong>: Registration is currently disabled."
 msgstr ""
 
@@ -1749,7 +1749,7 @@ msgid "Micro Cloud©."
 msgstr ""
 
 #: views/emails/failed-login.php:300
-msgid " Go to your LLAR dashboard to get starte."
+msgid " Go to your LLAR dashboard to get started."
 msgstr ""
 
 #: views/emails/failed-login.php:309
@@ -1821,7 +1821,7 @@ msgid "Please enter the email that will receive activation confirmation"
 msgstr ""
 
 #: views/micro-cloud-modal.php:53
-#: views/onboarding-popup.php:145
+#: views/onboarding-popup.php:147
 #: views/tab-settings.php:570
 #: views/tab-settings.php:594
 msgid "Your email"
@@ -1832,145 +1832,145 @@ msgid "I consent to registering my domain name <b>%s</b> with the Limit Login At
 msgstr ""
 
 #: views/micro-cloud-modal.php:68
-#: views/onboarding-popup.php:161
+#: views/onboarding-popup.php:163
 msgid "Continue"
 msgstr ""
 
-#: views/micro-cloud-modal.php:73
+#: views/micro-cloud-modal.php:72
 msgid "By signing up you agree to our <a href=\"%s\" class=\"llar_turquoise\">terms of service</a> and <a href=\"%s\" class=\"llar_turquoise\">privacy policy.</a>"
 msgstr ""
 
-#: views/micro-cloud-modal.php:82
+#: views/micro-cloud-modal.php:81
 msgid "The server is not working, try again later"
 msgstr ""
 
-#: views/micro-cloud-modal.php:90
+#: views/micro-cloud-modal.php:89
 msgid "Micro Cloud has been activated!"
 msgstr ""
 
-#: views/micro-cloud-modal.php:95
-#: views/onboarding-popup.php:241
+#: views/micro-cloud-modal.php:94
+#: views/onboarding-popup.php:240
 msgid "Go To Dashboard"
 msgstr ""
 
-#: views/onboarding-popup.php:35
-#: views/onboarding-popup.php:60
+#: views/onboarding-popup.php:37
+#: views/onboarding-popup.php:62
 msgid "Welcome"
 msgstr ""
 
-#: views/onboarding-popup.php:41
+#: views/onboarding-popup.php:43
 msgid "Notifications"
 msgstr ""
 
-#: views/onboarding-popup.php:47
+#: views/onboarding-popup.php:49
 msgid "Limited Upgrade"
 msgstr ""
 
-#: views/onboarding-popup.php:53
+#: views/onboarding-popup.php:55
 msgid "Completion"
 msgstr ""
 
-#: views/onboarding-popup.php:63
+#: views/onboarding-popup.php:65
 msgid "Before you start using the plugin, please complete onboarding (It only takes a minute)."
 msgstr ""
 
-#: views/onboarding-popup.php:68
+#: views/onboarding-popup.php:70
 msgid "Already using Premium? Add your Setup Code"
 msgstr ""
 
-#: views/onboarding-popup.php:71
+#: views/onboarding-popup.php:73
 msgid "Your Setup Code"
 msgstr ""
 
-#: views/onboarding-popup.php:73
+#: views/onboarding-popup.php:75
 msgid "Activate"
 msgstr ""
 
-#: views/onboarding-popup.php:80
+#: views/onboarding-popup.php:82
 msgid "The Setup Code can be found in your email confirmation."
 msgstr ""
 
-#: views/onboarding-popup.php:88
+#: views/onboarding-popup.php:90
 msgid "Not using Premium yet?"
 msgstr ""
 
 #. translators: %1$s: opening span tag, %2$s: closing span tag
-#: views/onboarding-popup.php:93
+#: views/onboarding-popup.php:95
 msgid "With Premium, your site becomes part of a powerful, real-time threat intelligence network built on the data of %1$s over 80,000 WordPress sites. %2$s That means you're not just blocking attackers after they strike — you're %1$s preventing them from making legitimate login attempts. %2$s"
 msgstr ""
 
-#: views/onboarding-popup.php:99
+#: views/onboarding-popup.php:101
 msgid "Cloud-based login protection with dynamic IP blocklists"
 msgstr ""
 
-#: views/onboarding-popup.php:103
+#: views/onboarding-popup.php:105
 msgid "97% of brute force attacks blocked before they begin"
 msgstr ""
 
-#: views/onboarding-popup.php:107
+#: views/onboarding-popup.php:109
 msgid "Real-time threat updates powered by our global network"
 msgstr ""
 
-#: views/onboarding-popup.php:111
+#: views/onboarding-popup.php:113
 msgid "Country & IP controls for greater control"
 msgstr ""
 
-#: views/onboarding-popup.php:115
+#: views/onboarding-popup.php:117
 msgid "Powerful login security from just $0.10/day - built for sites of all sizes"
 msgstr ""
 
-#: views/onboarding-popup.php:121
+#: views/onboarding-popup.php:123
 msgid "Yes, show me plan options"
 msgstr ""
 
-#: views/onboarding-popup.php:124
+#: views/onboarding-popup.php:126
 msgid "No, I don't want advanced protection"
 msgstr ""
 
-#: views/onboarding-popup.php:140
+#: views/onboarding-popup.php:142
 msgid "Notification Settings"
 msgstr ""
 
-#: views/onboarding-popup.php:149
+#: views/onboarding-popup.php:151
 msgid "This email will receive notifications of unauthorized access to your website. You may turn this off in your settings."
 msgstr ""
 
-#: views/onboarding-popup.php:154
+#: views/onboarding-popup.php:156
 msgid "Sign me up for the LLAR newsletter to receive important security alerts, plugin updates, and helpful guides."
 msgstr ""
 
-#: views/onboarding-popup.php:165
+#: views/onboarding-popup.php:166
 msgid "Skip"
 msgstr ""
 
-#: views/onboarding-popup.php:179
+#: views/onboarding-popup.php:180
 msgid "Limited Upgrade (Free)"
 msgstr ""
 
 #. translators: %s: line break
-#: views/onboarding-popup.php:186
+#: views/onboarding-popup.php:187
 msgid "Help us secure the WordPress network, and in return, we'll give you access to Micro Cloud - Our FREE premium plan. %s"
 msgstr ""
 
 #. translators: %1$s: opening span tag, %2$s: closing span tag, %3$s: line break
-#: views/onboarding-popup.php:190
+#: views/onboarding-popup.php:191
 msgid "You'll receive %1$s 1,000 monthly cloud requests %2$s to power advanced login protection tools that block more than 97%% of all attempted logins. %3$s"
 msgstr ""
 
 #. translators: %1$s: opening span tag, %2$s: closing span tag, %3$s: line break
-#: views/onboarding-popup.php:195
+#: views/onboarding-popup.php:196
 msgid "%1$s By proceeding, you agree to participate in our threat-sharing network. %2$s %3$s"
 msgstr ""
 
-#: views/onboarding-popup.php:197
+#: views/onboarding-popup.php:198
 msgid "You can switch back to the free version of the plugin at any time, which will deactivate Micro Cloud and stop all data sharing."
 msgstr ""
 
-#: views/onboarding-popup.php:200
+#: views/onboarding-popup.php:201
 msgid "Would you like to opt-in?"
 msgstr ""
 
-#: views/onboarding-popup.php:206
+#: views/onboarding-popup.php:207
 msgid "Yes"
 msgstr ""
 
@@ -1979,11 +1979,11 @@ msgid "No"
 msgstr ""
 
 #. translators: %1$s: opening link tag, %2$s: closing link tag
-#: views/onboarding-popup.php:217
+#: views/onboarding-popup.php:216
 msgid "We'll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our %1$s terms of service %2$s by participating in this program."
 msgstr ""
 
-#: views/onboarding-popup.php:233
+#: views/onboarding-popup.php:232
 msgid "Thank you for completing the setup"
 msgstr ""
 
@@ -2007,23 +2007,23 @@ msgstr ""
 msgid "No thanks"
 msgstr ""
 
-#: views/options-page.php:120
+#: views/options-page.php:121
 msgid "Account Login"
 msgstr ""
 
-#: views/options-page.php:129
+#: views/options-page.php:131
 msgid "Customer ID:"
 msgstr ""
 
-#: views/options-page.php:176
+#: views/options-page.php:178
 msgid "Premium / Extensions"
 msgstr ""
 
-#: views/options-page.php:181
+#: views/options-page.php:183
 msgid "Failover"
 msgstr ""
 
-#: views/options-page.php:186
+#: views/options-page.php:188
 msgid "Automatic switch to free version when premium stops working (usually due to non-payment or exceeding monthly resource budget)."
 msgstr ""
 
