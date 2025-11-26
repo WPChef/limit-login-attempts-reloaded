@@ -261,6 +261,8 @@ class LimitLoginAttempts
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
 		// hook for the plugin UM
 		add_action( 'um_submit_form_errors_hook_login', array( $this, 'um_limit_login_failed' ) );
+		// hook for the plugin MemberPress
+		add_filter( 'mepr_validate_login', array( $this, 'mepr_validate_login_handler' ), 10, 2 );
 
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
@@ -1122,6 +1124,34 @@ class LimitLoginAttempts
 
 		do_action( 'login_errors', '' );
 		$um_limit_login_failed = true;
+	}
+
+	/**
+	 * For plugin MemberPress
+	 * Triggers authenticate filter to allow Limit Login Attempts Reloaded
+	 * to track credentials and check lockouts before MemberPress validates the password
+	 * This enables the plugin to display remaining attempts messages
+	 *
+	 * @param array $errors Array of existing errors
+	 * @param array $params Login parameters (log, pwd)
+	 * @return array Unchanged errors array (we don't block, only track)
+	 */
+	public function mepr_validate_login_handler( $errors, $params = array() )
+	{
+		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
+			return $errors;
+		}
+
+		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
+		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
+
+		// Trigger authenticate filter to track credentials and check lockouts
+		// This sets $limit_login_nonempty_credentials and $_SESSION['login_attempts_left']
+		// We don't block here - MemberPress will handle blocking if needed
+		apply_filters( 'authenticate', null, $log, $pwd );
+
+		// Return errors unchanged - we're only tracking, not blocking
+		return $errors;
 	}
 
 	/**
