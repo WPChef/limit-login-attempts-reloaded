@@ -1,5 +1,5 @@
 === Limit Login Attempts Reloaded - Login Security, Brute Force Protection, Firewall ===
-Contributors: wpchefgadget
+Contributors: wpchefgadget, nikitaglobal
 Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login security, security, firewall, spam
 License: GPLv2 or later
