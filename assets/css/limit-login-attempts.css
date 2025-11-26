@@ -70,6 +70,12 @@
   position: relative;
 }
 
+.link__style_unlink > a {
+  color: rgb(33, 49, 70);
+  text-align: right;
+  text-decoration: none;
+}
+
 .link__style_unlink:hover, .llar-label:hover, .link__style_color_inherit:hover {
   color: inherit;
 }
@@ -420,7 +426,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   font-size: 18px;
   margin-right: 20px;
 }
@@ -431,6 +437,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .limit-login-page-settings__logo_block .info-box-icon img {
   width: 15px;
   vertical-align: middle;
+}
+.limit-login-page-settings__logo_block .link__style_unlink {
+  margin-top: 21px;
 }
 .limit-login-page-settings__logo {
   margin-top: 21px;

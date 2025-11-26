@@ -116,11 +116,13 @@ if ( $is_active_app_custom ) {
 	    <?php if ( $is_active_app_custom ) : 
             $app_config = get_option( 'limit_login_app_config' );
             ?>
-            <a href="https://my.limitloginattempts.com/" class="link__style_unlink" target="_blank">
-                <?php esc_html_e( 'Account Login', 'limit-login-attempts-reloaded' ); ?>
-                <div class="info-box-icon">
-                    <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-backup-big-bw.png">
-                </div>
+            <div class="link__style_unlink">
+                <a href="https://my.limitloginattempts.com/" target="_blank">
+                    &nbsp;&nbsp;&nbsp;<?php esc_html_e( 'Account Login', 'limit-login-attempts-reloaded' ); ?>
+                    <div class="info-box-icon">
+                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-backup-big-bw.png">
+                    </div>
+                </a>
             <?php
             if ( is_array( $app_config ) && ! empty( $app_config['key'] ) ) {
                 $customer_id = substr( $app_config['key'], 0, 8 );
@@ -132,7 +134,7 @@ if ( $is_active_app_custom ) {
                 <?php
             }
             ?>
-            </a>
+            </div>
             <?php
 
         endif; ?>
