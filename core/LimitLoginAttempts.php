@@ -340,6 +340,10 @@ class LimitLoginAttempts
 
 	public function login_page_render_js()
 	{
+		if ( isset( $_SESSION['llar_user_is_whitelisted'] ) && true === $_SESSION['llar_user_is_whitelisted'] ) {
+			unset( $_SESSION['llar_user_is_whitelisted'] );
+			return;
+		}
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $um_limit_login_failed;
 
 		if ( Config::get( 'active_app' ) === 'local' && ! $limit_login_nonempty_credentials ) {
@@ -662,7 +666,7 @@ class LimitLoginAttempts
 					}
 
 				} elseif ( $this->is_username_whitelisted( $username ) || $this->is_ip_whitelisted( $ip ) ) {
-
+					$_SESSION['llar_user_is_whitelisted'] = true;
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
