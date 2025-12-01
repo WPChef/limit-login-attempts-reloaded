@@ -261,6 +261,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                                     <li style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;margin-left:0;color:#333333;font-size:14px">
                                                                         <?php _e( 'IP was blocked for {blocked_duration}', 'limit-login-attempts-reloaded' ); ?>
                                                                     </li>
+                                                                    <li style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;margin-left:0;color:#333333;font-size:14px">
+                                                                        <?php _e( 'Login address: <b><a href="{current_url}" target="_blank">{current_url_label}</a></b>', 'limit-login-attempts-reloaded' ); ?>
+                                                                    </li>
                                                                 </ul>
                                                                 <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px">
                                                                     <?php _e( 'Please visit your WordPress dashboard for additional details, investigation options, and help articles.', 'limit-login-attempts-reloaded' ); ?></p></td>
