@@ -44,7 +44,8 @@ class HttpTransportWp implements HttpTransportInterface {
 		$return = array(
 			'data'      => null,
 			'status'    => 0,
-			'error'     => null
+			'error'     => null,
+			'context'   => null
 		);
 
 		if( is_wp_error( $response ) ) {
@@ -52,6 +53,7 @@ class HttpTransportWp implements HttpTransportInterface {
 		} else {
 			$return['data'] = wp_remote_retrieve_body( $response );
 			$return['status'] = intval( wp_remote_retrieve_response_code( $response ) );
+			$return['context'] = $this->get_context( $return['data'] );
 		}
 
 		return $return;
@@ -75,5 +77,20 @@ class HttpTransportWp implements HttpTransportInterface {
 		}
 
 		return $formatted_headers;
+	}
+
+	/**
+	 * Extracts the context from the response body.
+	 *
+	 * @param string $body The response body.
+	 *
+	 * @return string|null
+	 */
+	private function get_context( $body ) {
+		$json = json_decode( $body, true );
+		if( JSON_ERROR_NONE === json_last_error() && is_array( $json ) && !empty( $json['context'] ) ) {
+			return $json['context'];
+		}
+		return null;
 	}
 }
