@@ -2,6 +2,8 @@
 
 namespace LLAR\Core\Http;
 
+use LLAR\Core\Helpers;
+
 class HttpTransportFopen implements HttpTransportInterface {
 
 	/**
@@ -97,10 +99,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 			}
 
 			if( !empty( $response ) ) {
-				$response_json = json_decode( $response, true );
-				if( JSON_ERROR_NONE === json_last_error() && is_array( $response_json ) && isset( $response_json['context'] ) ) {
-					$context = $response_json['context'];
-				}
+				$context = Helpers::extract_response_context( $response );
 			}
 		}
 

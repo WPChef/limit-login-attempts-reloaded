@@ -515,6 +515,21 @@ class Helpers {
 
 		return $debug_info;
 	}
+
+	/**
+	 * Extracts the context from the response body.
+	 *
+	 * @param string $body The response body.
+	 *
+	 * @return string|null
+	 */
+	public static function extract_response_context( $body ) {
+		$json = json_decode( $body, true );
+		if( JSON_ERROR_NONE === json_last_error() && is_array( $json ) && !empty( $json['context'] ) ) {
+			return $json['context'];
+		}
+		return null;
+	}
 		
 	
 }

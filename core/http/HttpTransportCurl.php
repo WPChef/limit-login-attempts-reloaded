@@ -2,6 +2,8 @@
 
 namespace LLAR\Core\Http;
 
+use LLAR\Core\Helpers;
+
 class HttpTransportCurl implements HttpTransportInterface {
 
 	/**
@@ -64,10 +66,16 @@ class HttpTransportCurl implements HttpTransportInterface {
 
 		curl_close( $handle );
 
+		$context = null;
+		if( !empty( $response ) ) {
+			$context = Helpers::extract_response_context( $response );
+		}
+
 		return array(
 			'data'      => $response,
 			'status'    => intval( $response_status ),
-			'error'     => !$response ? curl_error( $handle ) : null
+			'error'     => !$response ? curl_error( $handle ) : null,
+			'context'   => $context
 		);
 	}
 }
