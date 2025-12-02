@@ -53,19 +53,21 @@ class HttpTransportFopen implements HttpTransportInterface {
 			$request_data = json_encode( $data, JSON_FORCE_OBJECT );
 		}
 
-		$context = stream_context_create( array(
+		$stream_context = stream_context_create( array(
 			'http' => array(
                 'method'  => $method,
                 'header'  => implode( "\r\n", $headers ),
-                'content' => $request_data
+                'content' => $request_data,
+                'ignore_errors' => true
             )
 		));
 
-		$fp = @fopen( $url, 'rb', false, $context );
+		$fp = @fopen( $url, 'rb', false, $stream_context );
 
 		$error = null;
 		$status = null;
 		$response = null;
+		$context = null;
 
 		if ( !$fp ) {
 
@@ -80,16 +82,33 @@ class HttpTransportFopen implements HttpTransportInterface {
 			}
 
 		} else {
-			list(, $code ) = explode( ' ', $http_response_header[0], 3 );
-			$status = $code;
+			if( !empty( $http_response_header[0] ) ) {
+				list(, $code, $message ) = explode( ' ', $http_response_header[0], 3 );
+				$status = $code;
+				if( 200 !== intval( $code ) ) {
+					$error = $message;
+				}
+			}
 
 			$response = stream_get_contents( $fp );
+
+			if( $fp ) {
+				fclose( $fp );
+			}
+
+			if( !empty( $response ) ) {
+				$response_json = json_decode( $response, true );
+				if( JSON_ERROR_NONE === json_last_error() && is_array( $response_json ) && isset( $response_json['context'] ) ) {
+					$context = $response_json['context'];
+				}
+			}
 		}
 
 		return array(
 			'data'      => $response,
 			'status'    => intval( $status ),
-			'error'     => $error
+			'error'     => $error,
+			'context'   => $context
 		);
 	}
 }
