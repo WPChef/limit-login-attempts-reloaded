@@ -116,6 +116,7 @@ class LimitLoginAttempts
 		$this->cloud_app_init();
 
 		( new Shortcodes() )->register();
+		( new Actions() )->register();
 		( new Ajax() )->register();
 	}
 
