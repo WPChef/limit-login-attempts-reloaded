@@ -30,6 +30,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 ?>
 
 <div id="llar-dashboard-page">
+    <?php include_once( LLA_PLUGIN_DIR . 'views/mode-toggle.php' ); ?>
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
             <?php include_once( LLA_PLUGIN_DIR . 'views/chart-circle-failed-attempts-today.php'); ?>
