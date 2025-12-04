@@ -1435,6 +1435,10 @@ class LimitLoginAttempts
 		include LLA_PLUGIN_DIR . 'views/emails/failed-login.php';
 		$email_body = ob_get_clean();
 
+		// get current url with the current page and the current query string
+		$current_url_label = preg_replace( '/^\/|\/$/', '', $_SERVER['REQUEST_URI'] );
+		$current_url = $_SERVER['HTTP_REFERER'] ?? get_site_url() . $_SERVER['REQUEST_URI'];
+
 		$placeholders = array(
 			'{name}'                => $admin_name,
 			'{domain}'              => $site_domain,
@@ -1448,6 +1452,8 @@ class LimitLoginAttempts
 			'{premium_url}'         => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
 			'{llar_url}'            => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
 			'{unsubscribe_url}'     => admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' ),
+			'{current_url}'         => $current_url,
+			'{current_url_label}'   => $current_url_label,
 		);
 
 		$email_body = str_replace(
