@@ -6,6 +6,9 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit();
+if ( !$free_requests_exhausted ) {
+    return;
+}
 ?>
 
 <div class="llar-mode-toggle-wrapper">

@@ -2176,7 +2176,11 @@ class LimitLoginAttempts
 			$this->info_data = $this->info();
 		}
 
-		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		$result = isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		if ( $result ) {
+			do_action( 'limit_login_free_requests_exhausted' );
+		}
+		return $result;
 	}
 
 

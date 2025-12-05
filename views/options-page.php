@@ -25,7 +25,7 @@ if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'log
 
 $auto_update_choice = Config::get( 'auto_update_choice' );
 $is_agency = false;
-$are_requests_exhausted = (bool) Config::get( 'free_requests_exhausted' );
+$free_requests_exhausted = Config::is_free_requests_exhausted();
 
 if ( $is_active_app_custom ) {
 

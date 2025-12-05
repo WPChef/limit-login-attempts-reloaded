@@ -82,7 +82,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
             <div class="info-box-3">
                 <div class="section-title__new">
                     <div class="title"><?php
-                    if ( $are_requests_exhausted ) {
+                    if ( $free_requests_exhausted ) {
                         _e( 'Micro Cloud Protection Paused', 'limit-login-attempts-reloaded' );
                     } else {
                         _e( 'Premium Protection Disabled', 'limit-login-attempts-reloaded' );
