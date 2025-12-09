@@ -204,7 +204,7 @@ class Config {
 	 *
 	 * @return bool
 	 */
-	public static function is_free_requests_exhausted() {
+	public static function are_free_requests_exhausted() {
 		$end_of_month_timestamp = self::get( 'free_requests_exhausted' );
 		if ( false === $end_of_month_timestamp ) {
 			return false;
