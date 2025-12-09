@@ -206,10 +206,11 @@ class Config {
 	 */
 	public static function is_free_requests_exhausted() {
 		$end_of_month_timestamp = self::get( 'free_requests_exhausted' );
-		if ( ! $end_of_month_timestamp ) {
+		if ( false === $end_of_month_timestamp ) {
 			return false;
 		}
-		return time() < ( int )$end_of_month_timestamp;
+		return true;
+
 	}
 
 	/**
