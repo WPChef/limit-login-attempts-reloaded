@@ -116,6 +116,7 @@ class LimitLoginAttempts
 		$this->cloud_app_init();
 
 		( new Shortcodes() )->register();
+		( new Actions() )->register();
 		( new Ajax() )->register();
 	}
 
@@ -2167,7 +2168,7 @@ class LimitLoginAttempts
 
 	private function info()
 	{
-		if ( self::$cloud_app ) {
+		if ( self::$cloud_app || Config::are_free_requests_exhausted() ) {
 			$this->info_data = self::$cloud_app->info();
 		}
 
@@ -2181,7 +2182,11 @@ class LimitLoginAttempts
 			$this->info_data = $this->info();
 		}
 
-		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		$result = isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		if ( $result ) {
+			do_action( 'limit_login_free_requests_exhausted' );
+		}
+		return $result;
 	}
 
 

@@ -2,6 +2,8 @@
 
 namespace LLAR\Core\Http;
 
+use LLAR\Core\Helpers;
+
 class HttpTransportWp implements HttpTransportInterface {
 
 	/**
@@ -44,7 +46,8 @@ class HttpTransportWp implements HttpTransportInterface {
 		$return = array(
 			'data'      => null,
 			'status'    => 0,
-			'error'     => null
+			'error'     => null,
+			'context'   => null
 		);
 
 		if( is_wp_error( $response ) ) {
@@ -52,6 +55,7 @@ class HttpTransportWp implements HttpTransportInterface {
 		} else {
 			$return['data'] = wp_remote_retrieve_body( $response );
 			$return['status'] = intval( wp_remote_retrieve_response_code( $response ) );
+			$return['context'] = Helpers::extract_response_context( $return['data'] );
 		}
 
 		return $return;

@@ -405,6 +405,10 @@ class CloudApp
 
 		$this->last_response_code = !empty( $response['status'] ) ? $response['status'] : 0;
 
+		if ( !empty( $response['context'] ) ) {
+			$context = $response['context'];
+			do_action( 'limit_login_response_context_'.$context, $response );
+		}
 		if ( $response['status'] !== 200 ) {
 			return false;
 		}

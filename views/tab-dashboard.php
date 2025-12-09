@@ -30,6 +30,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 ?>
 
 <div id="llar-dashboard-page">
+    <?php include_once( LLA_PLUGIN_DIR . 'views/mode-toggle.php' ); ?>
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
             <?php include_once( LLA_PLUGIN_DIR . 'views/chart-circle-failed-attempts-today.php'); ?>
@@ -80,7 +81,13 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         <?php elseif ( ! $is_active_app_custom && ! empty( $setup_code ) ) : ?>
             <div class="info-box-3">
                 <div class="section-title__new">
-                    <div class="title"><?php _e( 'Premium Protection Disabled', 'limit-login-attempts-reloaded' ); ?></div>
+                    <div class="title"><?php
+                    if ( $free_requests_exhausted ) {
+                        _e( 'Micro Cloud Protection Paused', 'limit-login-attempts-reloaded' );
+                    } else {
+                        _e( 'Premium Protection Disabled', 'limit-login-attempts-reloaded' );
+                    }
+                     ?></div>
                 </div>
                 <div class="section-content">
                     <div class="desc">
