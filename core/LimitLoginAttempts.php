@@ -2168,7 +2168,7 @@ class LimitLoginAttempts
 
 	private function info()
 	{
-		if ( self::$cloud_app ) {
+		if ( self::$cloud_app || Config::is_free_requests_exhausted() ) {
 			$this->info_data = self::$cloud_app->info();
 		}
 
