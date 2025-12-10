@@ -1437,7 +1437,7 @@ class LimitLoginAttempts
 
 		// get current url with the current page and the current query string
 		$current_url_label = preg_replace( '/^\/|\/$/', '', $_SERVER['REQUEST_URI'] );
-		$current_url = $_SERVER['HTTP_REFERER'] ?? get_site_url() . $_SERVER['REQUEST_URI'];
+		$current_url = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : get_site_url() . $_SERVER['REQUEST_URI'];
 
 		$placeholders = array(
 			'{name}'                => $admin_name,
