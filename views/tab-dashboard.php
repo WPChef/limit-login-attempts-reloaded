@@ -24,6 +24,7 @@ $is_tab_dashboard = true;
 
 $url_site =  is_multisite() ? network_site_url() : site_url();
 
+$free_requests_exhausted = Config::are_free_requests_exhausted();
 if ( ! $is_active_app_custom && empty( $setup_code ) ) {
     require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php');
 }

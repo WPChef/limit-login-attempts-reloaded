@@ -191,6 +191,15 @@
               margin-right: 2px;
             }
           }
+
+          &.exhausted {
+            color: $state-color__error;
+
+            .dashicons {
+              background-color: $state-color__error;
+              color: $background-body;
+            }
+          }
         }
       }
 

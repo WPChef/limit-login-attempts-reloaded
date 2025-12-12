@@ -2655,13 +2655,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
     margin-right: 2px;
   }
 }
-#llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label.exhausted {
-  color: #EC4652;
-}
-#llar-dashboard-page .dashboard-section-1 .info-box-1 .section-title__new .llar-premium-label.exhausted .dashicons {
-  background-color: #EC4652;
-  color: #FDFDFD;
-}
 #llar-dashboard-page .dashboard-section-1 .info-box-1 .section-content {
   clear: both;
   margin-top: 24px;

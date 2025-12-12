@@ -468,9 +468,14 @@ class LimitLoginAttempts
 	public function cloud_app_init()
 	{
 		if ( Config::get( 'active_app' ) === 'custom' && $config = Config::get( 'app_config' ) ) {
-
 			self::$cloud_app = new CloudApp( $config );
+			return;
 		}
+		if (Config::are_free_requests_exhausted() && $config = Config::get( 'app_config' ) ) {
+			self::$cloud_app = new CloudApp( $config );
+			return;
+		}
+
 	}
 
 	public function load_admin_scripts()
@@ -2110,7 +2115,6 @@ class LimitLoginAttempts
 				$this->cloud_app_init();
 			}
 		}
-
 		include_once( LLA_PLUGIN_DIR . 'views/options-page.php' );
 	}
 

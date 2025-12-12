@@ -205,8 +205,9 @@ class Config {
 	 * @return bool
 	 */
 	public static function are_free_requests_exhausted() {
+		return true;
 		$end_of_month_timestamp = self::get( 'free_requests_exhausted' );
-		if ( false === $end_of_month_timestamp ) {
+		if ( null === $end_of_month_timestamp || !is_numeric( $end_of_month_timestamp ) ) {
 			return false;
 		}
 		return true;

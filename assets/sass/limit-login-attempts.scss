@@ -2052,6 +2052,10 @@
       padding: 12px 25px;
       background-color: $state-color__error_back;
       border: 1px solid currentColor;
+
+      p .dashicons {
+        color: $state-color__error;
+      }
     }
 
     .close {
