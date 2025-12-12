@@ -2449,7 +2449,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   top: -50px;
   right: 20px;
   z-index: 10;
-  cursor: not-allowed;
 }
 #llar-dashboard-page .llar-mode-toggle-wrapper .llar-mode-toggle {
   display: inline-flex;
@@ -2458,7 +2457,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 4px;
   pointer-events: none;
   opacity: 0.6;
-  cursor: not-allowed;
 }
 #llar-dashboard-page .llar-mode-toggle-wrapper .llar-mode-toggle-item {
   padding: 8px 16px;

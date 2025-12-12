@@ -4,7 +4,6 @@
     top: -50px;
     right: 20px;
     z-index: 10;
-    cursor: not-allowed;
 
     .llar-mode-toggle {
       display: inline-flex;
@@ -13,7 +12,6 @@
       padding: 4px;
       pointer-events: none;
       opacity: 0.6;
-      cursor: not-allowed;
 
       &-item {
         padding: 8px 16px;

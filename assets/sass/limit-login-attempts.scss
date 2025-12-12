@@ -1,4 +1,12 @@
 @import "settings";
+@import "mode-toggle";
+@import "dashboard-page";
+@import "admin-dashboard-widgets";
+@import "onboarding-popup";
+@import "premium-tab";
+@import "help-page";
+@import "micro-cloud-modal";
+
 .toplevel_page_limit-login-attempts { // top level css
 
   #wpwrap {
@@ -2512,12 +2520,4 @@
     }
   }
 }
-@import "mode-toggle";
-@import "dashboard-page";
-@import "admin-dashboard-widgets";
-@import "onboarding-popup";
-@import "premium-tab";
-@import "help-page";
-@import "micro-cloud-modal";
-
 
