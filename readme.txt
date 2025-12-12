@@ -1,7 +1,7 @@
 === Limit Login Attempts Reloaded - Login Security, Brute Force Protection, Firewall ===
 Contributors: wpchefgadget, nikitaglobal
 Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
-Tags: brute force, login security, security, firewall, spam
+Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 3.0
 Tested up to: 6.8
@@ -23,6 +23,7 @@ Upgrade to <a href="https://www.limitloginattempts.com/plans/">Limit Login Attem
 https://www.youtube.com/watch?v=JfkvIiQft14
 
 = Features (Free Version): =
+* **2FA** - Coming soon.
 * **Limit Logins** - Limit the number of retry attempts when logging in (per each IP).
 * **Configurable Lockout Timings** - Modify the amount of time a user or IP must wait after a lockout.
 * **Remaining Tries** - Informs the user about the remaining retries or lockout time on the login page.
