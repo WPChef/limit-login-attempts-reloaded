@@ -29,6 +29,12 @@
           font-weight: 500;
         }
       }
+
+      a.llar-mode-toggle-item {
+        text-decoration: none;
+        cursor: pointer;
+        pointer-events: auto;
+      }
     }
   }
 }
