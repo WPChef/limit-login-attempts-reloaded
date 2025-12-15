@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 3.0
-Tested up to: 6.8
+Tested up to: 6.9
 Stable tag: 2.26.27
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
