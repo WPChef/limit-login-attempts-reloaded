@@ -14,24 +14,18 @@ if ( ! $free_requests_exhausted ) {
 
 <div class="llar-mode-toggle-wrapper">
 	<div class="llar-mode-toggle">
-		<?php if ( 'local' === $active_app ) : ?>
-			<span class="llar-mode-toggle-item active">
-				<?php _e( 'Local Mode', 'limit-login-attempts-reloaded' ); ?>
-			</span>
-		<?php else : ?>
-			<a href="#" class="llar-mode-toggle-item">
-				<?php _e( 'Local Mode', 'limit-login-attempts-reloaded' ); ?>
-			</a>
-		<?php endif; ?>
+		<span class="llar-mode-toggle-item active" data-mode="local" <?php echo ( 'local' !== $active_app ) ? 'style="display: none;"' : ''; ?>>
+			<?php _e( 'Local Mode', 'limit-login-attempts-reloaded' ); ?>
+		</span>
+		<a href="#" class="llar-mode-toggle-item" data-mode="local" <?php echo ( 'local' === $active_app ) ? 'style="display: none;"' : ''; ?>>
+			<?php _e( 'Local Mode', 'limit-login-attempts-reloaded' ); ?>
+		</a>
 
-		<?php if ( 'custom' === $active_app ) : ?>
-			<span class="llar-mode-toggle-item active">
-				<?php _e( 'Cloud Mode', 'limit-login-attempts-reloaded' ); ?>
-			</span>
-		<?php else : ?>
-			<a href="#" class="llar-mode-toggle-item">
-				<?php _e( 'Cloud Mode', 'limit-login-attempts-reloaded' ); ?>
-			</a>
-		<?php endif; ?>
+		<span class="llar-mode-toggle-item active" data-mode="cloud" <?php echo ( 'custom' !== $active_app ) ? 'style="display: none;"' : ''; ?>>
+			<?php _e( 'Cloud Mode', 'limit-login-attempts-reloaded' ); ?>
+		</span>
+		<a href="#" class="llar-mode-toggle-item" data-mode="cloud" <?php echo ( 'custom' === $active_app ) ? 'style="display: none;"' : ''; ?>>
+			<?php _e( 'Cloud Mode', 'limit-login-attempts-reloaded' ); ?>
+		</a>
 	</div>
 </div>

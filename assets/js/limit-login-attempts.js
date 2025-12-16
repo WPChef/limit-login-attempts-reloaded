@@ -218,6 +218,48 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
 
         } )
 
+        const $dashboard = $( '#llar-dashboard-page' );
+        const $toggle = $( '.llar-mode-toggle' );
+
+        if ( $dashboard.length && $toggle.length ) {
+            const $activeSpan = $toggle.find( 'span.llar-mode-toggle-item.active' ).filter( function() {
+                return $( this ).css( 'display' ) !== 'none';
+            } );
+
+            if ( $activeSpan.length ) {
+                const activeMode = $activeSpan.data( 'mode' );
+                if ( activeMode ) {
+                    $dashboard.attr( 'data-mode', activeMode );
+                }
+            }
+        }
+
+        $( document ).on( 'click', 'a.llar-mode-toggle-item', function ( e ) {
+            e.preventDefault();
+
+            const $clickedLink = $( this );
+            const mode = $clickedLink.data( 'mode' );
+            const $dashboard = $( '#llar-dashboard-page' );
+            const $toggle = $clickedLink.closest( '.llar-mode-toggle' );
+
+            if ( mode && $dashboard.length ) {
+                $dashboard.attr( 'data-mode', mode );
+
+                const $clickedModeSpan = $toggle.find( 'span.llar-mode-toggle-item[data-mode="' + mode + '"]' );
+                const $clickedModeLink = $toggle.find( 'a.llar-mode-toggle-item[data-mode="' + mode + '"]' );
+
+                const otherMode = mode === 'local' ? 'cloud' : 'local';
+                const $otherModeSpan = $toggle.find( 'span.llar-mode-toggle-item[data-mode="' + otherMode + '"]' );
+                const $otherModeLink = $toggle.find( 'a.llar-mode-toggle-item[data-mode="' + otherMode + '"]' );
+
+                $clickedModeLink.hide();
+                $clickedModeSpan.show();
+
+                $otherModeSpan.hide();
+                $otherModeLink.show();
+            }
+        } )
+
     } );
 
 } )(jQuery)
