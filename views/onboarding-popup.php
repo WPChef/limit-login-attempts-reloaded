@@ -308,15 +308,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                     // Allow closing if onboarding is not completed
                     return true;
                 },
-                backgroundDismiss: function() {
-                    // Prevent closing by clicking on background when onboarding is completed
-                    if ( onboardingCompleted ) {
-                        window.location.reload();
-                        return false; // Prevent closing
-                    }
-                    // Allow closing if onboarding is not completed
-                    return true;
-                },
+                backgroundDismiss: false,
                 escapeKey: function() {
                     // Prevent closing by ESC key when onboarding is completed
                     if ( onboardingCompleted ) {
@@ -370,10 +362,12 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 
                         const $error = $( '.field-error' );
                         const $setup_code = $setup_code_key.val();
+                        const $closeIcon = $( '.jconfirm-closeIcon' );
                         $error.text( '' ).hide();
                         $activate_button.addClass( disabled );
                         $spinner.addClass( visibility );
                         $body.addClass( disabled );
+                        $closeIcon.addClass( hidden );
                         llar_activate_license_key( $setup_code )
                             .then( function () {
                                 setTimeout( function () {
@@ -386,6 +380,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                                 if ( ! response.success && response.data.msg ) {
                                     $error.text( response.data.msg ).show();
                                     $body.removeClass( disabled );
+                                    $closeIcon.removeClass( hidden );
                                     setTimeout( function () {
                                         $error.text( '' ).hide();
                                         $setup_code_key.val( '' );
@@ -546,6 +541,12 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
             .then( function () {
                 onboardingCompleted = true;
                 $html_onboarding_body.replaceWith( <?php echo wp_json_encode( trim( $content_step_4 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
+                $( '.button.next_step.menu__item.button__orange' ).on( 'click', function ( e ) {
+                    e.preventDefault();
+                    $( this ).find( '.preloader-wrapper, .preloader-wrapper .spinner' ).addClass( 'llar-visibility' ).show();
+                    window.location.reload();
+                    return false;
+                } );
             } )
         }
 
