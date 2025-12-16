@@ -277,6 +277,9 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 
         const disabled = 'llar-disabled';
         const hidden = 'llar-hidden';
+        const visibility = 'llar-visibility';
+        const $button_go_to_dashboard = '.button.next_step.menu__item.button__orange';
+        const $button_go_to_dashboard_spinner = '.preloader-wrapper, .preloader-wrapper .spinner';
 
         $( document ).ready( function () {
             const $body = $( 'body' );
@@ -338,9 +341,6 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                     const $setup_code_key = $( '#llar-setup-code-field' );
                     const $activate_button = $( '#llar-app-install-btn' );
                     const $spinner = $activate_button.find( '.preloader-wrapper .spinner' );
-                    const visibility = 'llar-visibility';
-                    const $button_go_to_dashboard = '.button.next_step.menu__item.button__orange';
-                    const $button_go_to_dashboard_spinner = '.preloader-wrapper,.preloader-wrapper .spinner';
                     const spinner = '.preloader-wrapper .spinner';
                     let email;
 
@@ -541,9 +541,9 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
             .then( function () {
                 onboardingCompleted = true;
                 $html_onboarding_body.replaceWith( <?php echo wp_json_encode( trim( $content_step_4 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
-                $( '.button.next_step.menu__item.button__orange' ).on( 'click', function ( e ) {
+                $( $button_go_to_dashboard ).on( 'click', function ( e ) {
                     e.preventDefault();
-                    $( this ).find( '.preloader-wrapper, .preloader-wrapper .spinner' ).addClass( 'llar-visibility' ).show();
+                    $( this ).find( $button_go_to_dashboard_spinner ).addClass( visibility ).show();
                     window.location.reload();
                     return false;
                 } );
