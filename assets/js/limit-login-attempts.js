@@ -54,6 +54,8 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
 
     $( document ).ready(function() {
 
+        $( '#llar-dashboard-page' ).css( 'visibility', 'visible' );
+
         const poster = '#video-poster';
 
         $( document ).on( 'click', poster, function () {

@@ -435,6 +435,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #2b3442;
   font-weight: 500;
 }
+#llar-dashboard-page .llar-mode-toggle-wrapper .llar-mode-toggle a.llar-mode-toggle-item {
+  text-decoration: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
 
 #llar-dashboard-page {
   font-family: CoFo Sans, arial;
@@ -783,6 +788,26 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
     width: 100%;
     min-height: 126px;
   }
+}
+#llar-dashboard-page {
+  /* Mode-based visibility for info-box-2 */
+}
+#llar-dashboard-page[data-mode=cloud] .dashboard-section-1 .info-box-2 [class$="--local"] {
+  display: none;
+}
+#llar-dashboard-page[data-mode=cloud] .dashboard-section-1 .info-box-2 {
+  flex: 0 0 calc(66.666% - 16px);
+  width: calc(66.666% - 16px);
+}
+#llar-dashboard-page[data-mode=cloud] .dashboard-section-1 .info-box-3 {
+  display: none;
+}
+#llar-dashboard-page[data-mode=local] .dashboard-section-1 .info-box-2 [class$="--cloud"] {
+  display: none;
+}
+#llar-dashboard-page[data-mode=local] .dashboard-section-1 .info-box-2 {
+  width: calc(33.3% - 16px);
+  flex: 0 0 calc(33.3% - 16px);
 }
 #llar-dashboard-page .dashboard-section-2 {
   display: flex;

@@ -30,7 +30,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
 }
 ?>
 
-<div id="llar-dashboard-page">
+<div id="llar-dashboard-page" <?php if ( Config::are_free_requests_exhausted() ) : ?>style="visibility: hidden;"<?php endif; ?>>
     <?php include_once( LLA_PLUGIN_DIR . 'views/mode-toggle.php' ); ?>
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">
 		<div class="info-box-1">
@@ -81,7 +81,11 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         <?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php') ?>
         <?php elseif ( ! $is_active_app_custom && ! empty( $setup_code ) ) : ?>
 <?php include_once( LLA_PLUGIN_DIR . 'views/premium-protection-disabled.php'); ?>
-        <?php endif; ?>
+        <?php endif; 
+        if ( Config::are_free_requests_exhausted() ) :
+            include_once( LLA_PLUGIN_DIR . 'views/premium-protection-disabled.php');
+        endif;
+        ?>
 	</div>
 	<div class="dashboard-section-3">
         <div class="info-box-1">
