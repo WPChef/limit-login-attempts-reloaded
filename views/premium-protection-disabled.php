@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </div>
                 <div class="actions">
                     <div class="actions__buttons">
-                        <a href="https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta"
+                        <a href="<?php echo esc_url( str_replace('id=0', 'id=4', $this->info_upgrade_url()) ); ?>"
                            title="Upgrade To Premium"
                            target="_blank"
                            class="link__style_unlink">

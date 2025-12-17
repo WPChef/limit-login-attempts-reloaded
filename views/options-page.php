@@ -26,13 +26,14 @@ if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'log
 $auto_update_choice = Config::get( 'auto_update_choice' );
 $is_agency = false;
 
-if ( $is_active_app_custom ) {
+if ( $is_active_app_custom || Config::are_free_requests_exhausted() ) {
 
 	$block_sub_group = $this->info_sub_group();
 	$upgrade_premium_url = $this->info_upgrade_url();
 	$is_agency = $block_sub_group === 'Agency';
 	$requests = ! $is_agency ? $this->info_requests() : false;
 	$is_exhausted = ! $is_agency && $this->info_is_exhausted();
+    $b1 = 1;
 } else {
 
 	$is_exhausted = false;
