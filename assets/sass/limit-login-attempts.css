@@ -799,6 +799,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   flex: 0 0 calc(66.666% - 16px);
   width: calc(66.666% - 16px);
 }
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page[data-mode=cloud] .dashboard-section-1 .info-box-2 {
+    flex: 0 0 100%;
+    width: 100%;
+  }
+}
 #llar-dashboard-page[data-mode=cloud] .dashboard-section-1 .info-box-3 {
   display: none;
 }
@@ -808,6 +814,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page[data-mode=local] .dashboard-section-1 .info-box-2 {
   width: calc(33.3% - 16px);
   flex: 0 0 calc(33.3% - 16px);
+}
+@media screen and (max-width: 1399.5px) {
+  #llar-dashboard-page[data-mode=local] .dashboard-section-1 .info-box-2 {
+    flex: 0 0 100%;
+    width: 100%;
+  }
 }
 #llar-dashboard-page .dashboard-section-2 {
   display: flex;
@@ -4451,5 +4463,3 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   left: auto;
   right: 0;
 }
-
-/*# sourceMappingURL=limit-login-attempts.css.map */

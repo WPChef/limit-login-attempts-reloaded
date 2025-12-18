@@ -401,6 +401,10 @@
       }
       flex: 0 0 calc(66.666% - 16px);
       width: calc(66.666% - 16px);
+      @include _1399 {
+        flex: 0 0 100%;
+        width: 100%;
+      }
     }
     .info-box-3 {
       display: none;
@@ -413,6 +417,10 @@
     }
     width: calc(33.3% - 16px);
     flex: 0 0 calc(33.3% - 16px);
+    @include _1399 {
+      flex: 0 0 100%;
+      width: 100%;
+    }
   }
 
   .dashboard-section-2 {
@@ -462,7 +470,7 @@
     }
     .info-box-2 {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: wrap;      
 
       .info-box-icon {
         flex: 0 0 100px;
