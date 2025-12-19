@@ -33,7 +33,6 @@ if ( $is_active_app_custom || Config::are_free_requests_exhausted() ) {
 	$is_agency = $block_sub_group === 'Agency';
 	$requests = ! $is_agency ? $this->info_requests() : false;
 	$is_exhausted = ! $is_agency && $this->info_is_exhausted();
-    $b1 = 1;
 } else {
 
 	$is_exhausted = false;

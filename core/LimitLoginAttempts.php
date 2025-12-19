@@ -480,11 +480,11 @@ class LimitLoginAttempts
 		if ( Config::get( 'active_app' ) === 'custom' && $config = Config::get( 'app_config' ) ) {
 
 			self::$cloud_app = new CloudApp( $config );
+			return;
 		}
 
 		if (Config::are_free_requests_exhausted() && $config = Config::get( 'app_config' ) ) {
 			self::$cloud_app = new CloudApp( $config );
-			$b1 = 1;
 		}
 
 	}
@@ -2197,11 +2197,15 @@ class LimitLoginAttempts
 			$this->info_data = $this->info();
 		}
 
-		$result = isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
-		if ( $result ) {
+		$is_exhausted = isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		$sub_group = $this->info_data['sub_group'];
+		if ( $is_exhausted ) {
 			do_action( 'limit_login_free_requests_exhausted' );
 		}
-		return $result;
+		if ( 'free' !== $sub_group || !$is_exhausted ) {
+			do_action( 'limit_login_free_requests_not_exhausted' );
+		}
+		return $is_exhausted;
 	}
 
 

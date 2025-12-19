@@ -13,15 +13,23 @@ class Actions {
 	public function register() {
 		add_action( 'limit_login_free_requests_exhausted', array( $this, 'handle_free_requests_exhausted' ) );
 		add_action( 'limit_login_response_context_free_requests_exhausted', array( $this, 'handle_free_requests_exhausted' ) );
+		add_action( 'limit_login_free_requests_not_exhausted', array( $this, 'handle_free_requests_not_exhausted' ) );
 	}
 
 	/**
-	 * Handle free requests exhausted
+	 * Handle free requests exhausted.
 	 */
 	public function handle_free_requests_exhausted( $response ) {
 		Config::update( 'active_app', 'local' );
 		$end_of_month_timestamp = strtotime( 'last day of this month' );
 		Config::update( 'free_requests_exhausted', $end_of_month_timestamp );
+	}
+
+	/**
+	 * Handle free requests not exhausted.
+	 */
+	public function handle_free_requests_not_exhausted( $response ) {
+		Config::delete( 'free_requests_exhausted' );
 	}
 }
 
