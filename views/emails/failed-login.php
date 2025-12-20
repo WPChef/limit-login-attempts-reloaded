@@ -1,5 +1,6 @@
 <?php
 use LLAR\Core\Helpers;
+use LLAR\Core\Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -294,13 +295,24 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                                 <!--<![endif]--></td>
                                                         </tr>
                                                         <tr>
+                                                            <td style="padding:0;Margin:0;padding-top:20px"><p
+                                                                        style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px">
+                                                                    <?php
+                                                                    $micro_cloud_link = '<a href="{premium_url}" target="_blank" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#FDA33B;font-size:14px;font-weight:bold">' . __( 'Micro Cloud', 'limit-login-attempts-reloaded' ) . '</a>';
+                                                                    echo '<b>' . sprintf(
+                                                                        __( 'This domain has reached its %s resource limit so premium protection is paused.', 'limit-login-attempts-reloaded' ),
+                                                                        $micro_cloud_link
+                                                                    ) . '</b> ';
+                                                                    echo __( 'Upgrade to Premium Protection for increased resources and continuous coverage.', 'limit-login-attempts-reloaded' );
+                                                                    ?></p></td>
+                                                        </tr>
+                                                        <tr>
                                                             <td style="padding:0;Margin:0"><p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px">
                                                                     <?php _e( '<b>Experiencing frequent attacks or degraded performance?</b> You can now receive premium protection for FREE with ', 'limit-login-attempts-reloaded' ); ?><a href="{premium_url}"
                                                                                              target="_blank"
                                                                                              style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#FDA33B;font-size:14px">
-                                                                        <?php _e( 'Micro Cloud©.', 'limit-login-attempts-reloaded' ); ?></a>
-                                                                        <?php _e( ' Go to your LLAR dashboard to get started.', 'limit-login-attempts-reloaded' ); ?></p></td>
+                                                                        <?php _e( 'Micro Cloud©.', 'limit-login-attempts-reloaded' ); ?></a> <?php _e( 'Go to your LLAR dashboard to get started.', 'limit-login-attempts-reloaded' ); ?></p></td>
                                                         </tr>
                                                         <tr>
                                                             <td height="25" align="center"

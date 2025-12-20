@@ -200,6 +200,20 @@ class Config {
 	}
 
 	/**
+	 * Check if free requests are exhausted
+	 *
+	 * @return bool
+	 */
+	public static function are_free_requests_exhausted() {
+		$end_of_month_timestamp = self::get( 'free_requests_exhausted' );
+		if ( null === $end_of_month_timestamp || !is_numeric( $end_of_month_timestamp ) ) {
+			return false;
+		}
+		return true;
+
+	}
+
+	/**
 	 * @param $option_name
 	 *
 	 * @return string

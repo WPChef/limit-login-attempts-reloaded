@@ -26,7 +26,7 @@ if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'log
 $auto_update_choice = Config::get( 'auto_update_choice' );
 $is_agency = false;
 
-if ( $is_active_app_custom ) {
+if ( $is_active_app_custom || Config::are_free_requests_exhausted() ) {
 
 	$block_sub_group = $this->info_sub_group();
 	$upgrade_premium_url = $this->info_upgrade_url();
@@ -39,107 +39,37 @@ if ( $is_active_app_custom ) {
 	$block_sub_group = '';
 	$upgrade_premium_url = '';
 }?>
-
-<div class="header_massage">
-    <?php
-    if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' ) :
-
-	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
-	$upgrade_premium_url = $this->info_upgrade_url();
-
-    if ( $is_exhausted ) :
-
-        if ( time() > $notifications_message_shown ) : ?>
-            <div id="llar-header-upgrade-premium-message" class="exhausted">
-                <p>
-                    <span class="dashicons dashicons-superhero"></span>
-                    <?php
-					echo sprintf(
-                        __( 'You have exhausted your monthly quota of free Micro Cloud requests. The plugin has now reverted to the free version. <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to the premium</a> version today to maintain cloud protection and advanced features.', 'limit-login-attempts-reloaded' ),
-                        str_replace('id=0', 'id=4', $upgrade_premium_url) );
-                    ?>
-                </p>
-                <div class="close">
-                    <span class="dashicons dashicons-no-alt"></span>
-                </div>
-            </div>
-        <?php endif; ?>
-
-    <?php else : ?>
-        <div id="llar-header-upgrade-mc-message">
-            <p>
-                <span class="dashicons dashicons-superhero"></span>
-				<?php
-				echo sprintf(
-					__( 'Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
-					str_replace('id=0', 'id=4', $upgrade_premium_url) );
-				?>
-            </p>
-        </div>
-
-        <?php endif; ?>
-
-    <?php endif; ?>
-</div>
+<?php include_once( LLA_PLUGIN_DIR . 'views/header-message.php' ); ?>
 
 <?php if ( ( $auto_update_choice || $auto_update_choice === null ) && !Helpers::is_auto_update_enabled() ) : ?>
 <div class="notice notice-error llar-auto-update-notice">
-    <p>
-        <?php _e( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', 'limit-login-attempts-reloaded' ); ?>
-        <a href="#" class="auto-enable-update-option" data-val="yes">
-            <?php _e( 'Yes, enable auto-update', 'limit-login-attempts-reloaded' ); ?>
-        </a>
-        |
-        <a href="#" class="auto-enable-update-option" data-val="no">
-            <?php _e( 'No thanks', 'limit-login-attempts-reloaded' ); ?>
-        </a>
-    </p>
+<p>
+    <?php _e( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', 'limit-login-attempts-reloaded' ); ?>
+    <a href="#" class="auto-enable-update-option" data-val="yes">
+        <?php _e( 'Yes, enable auto-update', 'limit-login-attempts-reloaded' ); ?>
+    </a>
+    |
+    <a href="#" class="auto-enable-update-option" data-val="no">
+        <?php _e( 'No thanks', 'limit-login-attempts-reloaded' ); ?>
+    </a>
+</p>
 </div>
 <?php endif; ?>
 
 <div id="llar_popup_error_content" style="display: none">
-    <div class="popup_error_content__content">
-        <div class="popup_error_content__body">
-            <div class="card mx-auto">
-                <div class="card-body">
-                </div>
+<div class="popup_error_content__content">
+    <div class="popup_error_content__body">
+        <div class="card mx-auto">
+            <div class="card-body">
             </div>
         </div>
     </div>
 </div>
+</div>
 
 <div class="wrap limit-login-page-settings">
 
-    <div class="limit-login-page-settings__logo_block">
-        <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/logo-llap.png">
-
-	    <?php if ( $is_active_app_custom ) : 
-            $app_config = get_option( 'limit_login_app_config' );
-            ?>
-            <div class="link__style_unlink">
-                <a href="https://my.limitloginattempts.com/" target="_blank">
-                    &nbsp;&nbsp;&nbsp;<?php esc_html_e( 'Account Login', 'limit-login-attempts-reloaded' ); ?>
-                    <div class="info-box-icon">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-backup-big-bw.png">
-                    </div>
-                </a>
-            <?php
-            if ( is_array( $app_config ) && ! empty( $app_config['key'] ) ) {
-                $customer_id = substr( $app_config['key'], 0, 8 );
-                ?>
-                    <span class="llar-customer-id">
-                        <?php esc_html_e( 'Customer ID:', 'limit-login-attempts-reloaded' ); ?>
-                        <?php echo esc_html( $customer_id ); ?>
-                    </span>
-                <?php
-            }
-            ?>
-            </div>
-            <?php
-
-        endif; ?>
-
-    </div>
+<?php include_once(LLA_PLUGIN_DIR . 'views/logo-block.php'); ?>
 
     <?php $nav_tab_active = ' nav-tab-active'; ?>
     <div class="nav-tab-wrapper">

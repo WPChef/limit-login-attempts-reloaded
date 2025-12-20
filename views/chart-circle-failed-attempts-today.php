@@ -116,9 +116,13 @@ if ( ! $is_active_app_custom ) {
         <span class="llar-label__url">
         </span>
 	<?php endif; ?>
-	<?php echo ( $is_active_app_custom && ! $is_exhausted )
+	<?php echo ( $is_active_app_custom && ! Config::are_free_requests_exhausted() )
 		? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>'
 		: ''; ?>
+    <?php echo ( Config::are_free_requests_exhausted() )  
+        ? '<span class="llar-premium-label exhausted"><span class="dashicons dashicons-warning"></span>' . __( 'Cloud protection paused', 'limit-login-attempts-reloaded' ) . '</span>'
+        : '';
+    ?>
 </div>
 <div class="section-content">
     <div class="chart">

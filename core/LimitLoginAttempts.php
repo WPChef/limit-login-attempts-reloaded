@@ -116,6 +116,7 @@ class LimitLoginAttempts
 		$this->cloud_app_init();
 
 		( new Shortcodes() )->register();
+		( new Actions() )->register();
 		( new Ajax() )->register();
 	}
 
@@ -479,7 +480,13 @@ class LimitLoginAttempts
 		if ( Config::get( 'active_app' ) === 'custom' && $config = Config::get( 'app_config' ) ) {
 
 			self::$cloud_app = new CloudApp( $config );
+			return;
 		}
+
+		if (Config::are_free_requests_exhausted() && $config = Config::get( 'app_config' ) ) {
+			self::$cloud_app = new CloudApp( $config );
+		}
+
 	}
 
 	public function load_admin_scripts()
@@ -2119,7 +2126,6 @@ class LimitLoginAttempts
 				$this->cloud_app_init();
 			}
 		}
-
 		include_once( LLA_PLUGIN_DIR . 'views/options-page.php' );
 	}
 
@@ -2177,7 +2183,7 @@ class LimitLoginAttempts
 
 	private function info()
 	{
-		if ( self::$cloud_app ) {
+		if ( self::$cloud_app || Config::are_free_requests_exhausted() ) {
 			$this->info_data = self::$cloud_app->info();
 		}
 
@@ -2191,7 +2197,15 @@ class LimitLoginAttempts
 			$this->info_data = $this->info();
 		}
 
-		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		$is_exhausted = isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		$sub_group = $this->info_data['sub_group'];
+		if ( $is_exhausted ) {
+			do_action( 'limit_login_free_requests_exhausted' );
+		}
+		if ( 'free' !== $sub_group || !$is_exhausted ) {
+			do_action( 'limit_login_free_requests_not_exhausted' );
+		}
+		return $is_exhausted;
 	}
 
 
