@@ -75,7 +75,7 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
             <?php if ( ! $is_premium ) : ?>
                 <div class="action">
                     <a class="button menu__item button__orange" href="<?php echo esc_url( ( $block_sub_group === 'Micro Cloud' )
-                        ? str_replace('id=0', 'id=8', $this->info_upgrade_url())
+                        ? add_query_arg('id', '8', $this->info_upgrade_url())
                         : 'https://www.limitloginattempts.com/info.php?id=23' ); ?>" target="_blank">
                         <?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?>
                     </a>

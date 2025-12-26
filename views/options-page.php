@@ -56,7 +56,7 @@ if ( $is_active_app_custom ) {
                     <?php
 					echo sprintf(
                         __( 'You have exhausted your monthly quota of free Micro Cloud requests. The plugin has now reverted to the free version. <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to the premium</a> version today to maintain cloud protection and advanced features.', 'limit-login-attempts-reloaded' ),
-                        str_replace('id=0', 'id=4', $upgrade_premium_url) );
+                        add_query_arg('id', '4', $upgrade_premium_url) );
                     ?>
                 </p>
                 <div class="close">
@@ -72,7 +72,7 @@ if ( $is_active_app_custom ) {
 				<?php
 				echo sprintf(
 					__( 'Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
-					str_replace('id=0', 'id=4', $upgrade_premium_url) );
+					add_query_arg('id', '4', $upgrade_premium_url) );
 				?>
             </p>
         </div>
