@@ -75,7 +75,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <div class="actions mt-1_5">
                     <a class="button menu__item button__orange"
                        href="<?php echo esc_url( ( $block_sub_group === 'Micro Cloud' )
-                        ? str_replace('id=0', 'id=7', $this->info_upgrade_url())
+                        ? add_query_arg('id', '7', $this->info_upgrade_url())
                         : 'https://www.limitloginattempts.com/info.php?id=22' ); ?>" target="_blank">
 						<?php _e( 'Upgrade To Premium', 'limit-login-attempts-reloaded' ); ?>
                     </a>
