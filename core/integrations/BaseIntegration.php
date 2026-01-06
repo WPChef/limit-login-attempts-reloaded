@@ -5,10 +5,12 @@ namespace LLAR\Core\Integrations;
 use LLAR\Core\Config;
 use LLAR\Core\LimitLoginAttempts;
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-abstract class BaseIntegration implements IntegrationInterface
-{
+abstract class BaseIntegration implements IntegrationInterface {
+
 	/**
 	 * @var LimitLoginAttempts
 	 */
@@ -17,8 +19,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	/**
 	 * @param LimitLoginAttempts $llar_instance
 	 */
-	public function __construct( LimitLoginAttempts $llar_instance )
-	{
+	public function __construct( LimitLoginAttempts $llar_instance ) {
 		$this->llar_instance = $llar_instance;
 	}
 
@@ -27,8 +28,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return bool
 	 */
-	public function is_plugin_active()
-	{
+	public function is_plugin_active() {
 		return false;
 	}
 
@@ -37,8 +37,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return bool
 	 */
-	public function is_login_page()
-	{
+	public function is_login_page() {
 		return false;
 	}
 
@@ -47,8 +46,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return array|null
 	 */
-	public function get_login_credentials()
-	{
+	public function get_login_credentials() {
 		return null;
 	}
 
@@ -58,8 +56,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 * @param string $message
 	 * @return void
 	 */
-	public function display_error( $message )
-	{
+	public function display_error( $message ) {
 		// Default implementation
 	}
 
@@ -68,8 +65,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return string
 	 */
-	protected function get_error_message()
-	{
+	protected function get_error_message() {
 		return $this->llar_instance->error_msg();
 	}
 
@@ -78,8 +74,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return bool
 	 */
-	protected function is_login_allowed()
-	{
+	protected function is_login_allowed() {
 		return $this->llar_instance->is_limit_login_ok();
 	}
 
@@ -88,8 +83,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return bool
 	 */
-	public function is_registration_page()
-	{
+	public function is_registration_page() {
 		return false;
 	}
 
@@ -98,8 +92,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return array|null
 	 */
-	public function get_registration_data()
-	{
+	public function get_registration_data() {
 		return null;
 	}
 
@@ -109,8 +102,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 * @param string $message
 	 * @return void
 	 */
-	public function display_registration_error( $message )
-	{
+	public function display_registration_error( $message ) {
 		// Default implementation
 	}
 
@@ -119,19 +111,17 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return bool
 	 */
-	protected function is_registration_limited()
-	{
+	protected function is_registration_limited() {
 		// Check if registration limiting is enabled in cloud app
 		if ( ! $this->llar_instance::$cloud_app ) {
 			return false;
 		}
 
-		$app_config = Config::get( 'app_config' );
-		$limit_registration = isset( $app_config['settings']['limit_registration']['value'] ) 
-			? $app_config['settings']['limit_registration']['value'] 
+		$app_config         = Config::get( 'app_config' );
+		$limit_registration = isset( $app_config['settings']['limit_registration']['value'] )
+			? $app_config['settings']['limit_registration']['value']
 			: '';
 
 		return $limit_registration === 'on';
 	}
 }
-

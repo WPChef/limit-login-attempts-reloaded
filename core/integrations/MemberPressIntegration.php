@@ -2,17 +2,18 @@
 
 namespace LLAR\Core\Integrations;
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-class MemberPressIntegration extends BaseIntegration
-{
+class MemberPressIntegration extends BaseIntegration {
+
 	/**
 	 * Get the name of the plugin this integration supports
 	 *
 	 * @return string
 	 */
-	public function get_plugin_name()
-	{
+	public function get_plugin_name() {
 		return 'MemberPress';
 	}
 
@@ -21,8 +22,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return bool
 	 */
-	public function is_plugin_active()
-	{
+	public function is_plugin_active() {
 		return function_exists( 'mepr_validate_login' ) || class_exists( 'MeprUser' );
 	}
 
@@ -31,8 +31,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return void
 	 */
-	public function register_hooks()
-	{
+	public function register_hooks() {
 		if ( ! $this->is_plugin_active() ) {
 			return;
 		}
@@ -46,8 +45,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return bool
 	 */
-	public function is_login_page()
-	{
+	public function is_login_page() {
 		// MemberPress can determine its login page in different ways
 		// Check for standard login fields
 		return isset( $_POST['log'] ) && isset( $_POST['pwd'] );
@@ -58,8 +56,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return array|null
 	 */
-	public function get_login_credentials()
-	{
+	public function get_login_credentials() {
 		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
 			return null;
 		}
@@ -76,8 +73,7 @@ class MemberPressIntegration extends BaseIntegration
 	 * @param string $message Error message
 	 * @return void
 	 */
-	public function display_error( $message )
-	{
+	public function display_error( $message ) {
 		// MemberPress handles errors through its own mechanisms
 		// Errors are added through mepr_validate_login_handler
 	}
@@ -87,12 +83,11 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return bool
 	 */
-	public function is_registration_page()
-	{
+	public function is_registration_page() {
 		// Check for standard WordPress registration fields
 		// MemberPress may use different fields, but this is a common pattern
-		return isset( $_POST['user_login'] ) || isset( $_POST['user_email'] ) || 
-		       ( isset( $_POST['action'] ) && $_POST['action'] === 'register' );
+		return isset( $_POST['user_login'] ) || isset( $_POST['user_email'] ) ||
+				( isset( $_POST['action'] ) && $_POST['action'] === 'register' );
 	}
 
 	/**
@@ -100,8 +95,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return array|null
 	 */
-	public function get_registration_data()
-	{
+	public function get_registration_data() {
 		if ( empty( $_POST['user_login'] ) && empty( $_POST['user_email'] ) ) {
 			return null;
 		}
@@ -126,8 +120,7 @@ class MemberPressIntegration extends BaseIntegration
 	 * @param string $message Error message
 	 * @return void
 	 */
-	public function display_registration_error( $message )
-	{
+	public function display_registration_error( $message ) {
 		// MemberPress handles registration errors through WordPress registration_errors filter
 		// Errors should be added via the registration validation hooks
 	}
@@ -142,8 +135,7 @@ class MemberPressIntegration extends BaseIntegration
 	 * @param array $params Login parameters (log, pwd)
 	 * @return array Unchanged errors array (we don't block, only track)
 	 */
-	public function mepr_validate_login_handler( $errors, $params = array() )
-	{
+	public function mepr_validate_login_handler( $errors, $params = array() ) {
 		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
 			return $errors;
 		}
@@ -160,4 +152,3 @@ class MemberPressIntegration extends BaseIntegration
 		return $errors;
 	}
 }
-

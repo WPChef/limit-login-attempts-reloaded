@@ -4,10 +4,12 @@ namespace LLAR\Core\Integrations;
 
 use LLAR\Core\LimitLoginAttempts;
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-class IntegrationManager
-{
+class IntegrationManager {
+
 	/**
 	 * @var LimitLoginAttempts
 	 */
@@ -21,8 +23,7 @@ class IntegrationManager
 	/**
 	 * @param LimitLoginAttempts $llar_instance
 	 */
-	public function __construct( LimitLoginAttempts $llar_instance )
-	{
+	public function __construct( LimitLoginAttempts $llar_instance ) {
 		$this->llar_instance = $llar_instance;
 		$this->register_integrations();
 	}
@@ -32,8 +33,7 @@ class IntegrationManager
 	 *
 	 * @return void
 	 */
-	private function register_integrations()
-	{
+	private function register_integrations() {
 		$integrations = array(
 			new MemberPressIntegration( $this->llar_instance ),
 			// Other integrations can be added here in the future:
@@ -54,8 +54,7 @@ class IntegrationManager
 	 *
 	 * @return IntegrationInterface[]
 	 */
-	public function get_active_integrations()
-	{
+	public function get_active_integrations() {
 		return $this->integrations;
 	}
 
@@ -64,8 +63,7 @@ class IntegrationManager
 	 *
 	 * @return bool
 	 */
-	public function is_custom_login_page()
-	{
+	public function is_custom_login_page() {
 		foreach ( $this->integrations as $integration ) {
 			if ( $integration->is_login_page() ) {
 				return true;
@@ -80,8 +78,7 @@ class IntegrationManager
 	 *
 	 * @return array|null
 	 */
-	public function get_login_credentials()
-	{
+	public function get_login_credentials() {
 		foreach ( $this->integrations as $integration ) {
 			$credentials = $integration->get_login_credentials();
 			if ( $credentials ) {
@@ -98,8 +95,7 @@ class IntegrationManager
 	 * @param string $message
 	 * @return void
 	 */
-	public function display_error( $message )
-	{
+	public function display_error( $message ) {
 		foreach ( $this->integrations as $integration ) {
 			if ( $integration->is_login_page() ) {
 				$integration->display_error( $message );
@@ -114,8 +110,7 @@ class IntegrationManager
 	 * @param string $plugin_name
 	 * @return IntegrationInterface|null
 	 */
-	public function get_integration( $plugin_name )
-	{
+	public function get_integration( $plugin_name ) {
 		foreach ( $this->integrations as $integration ) {
 			if ( $integration->get_plugin_name() === $plugin_name ) {
 				return $integration;
@@ -130,8 +125,7 @@ class IntegrationManager
 	 *
 	 * @return bool
 	 */
-	public function is_custom_registration_page()
-	{
+	public function is_custom_registration_page() {
 		foreach ( $this->integrations as $integration ) {
 			if ( $integration->is_registration_page() ) {
 				return true;
@@ -146,8 +140,7 @@ class IntegrationManager
 	 *
 	 * @return array|null
 	 */
-	public function get_registration_data()
-	{
+	public function get_registration_data() {
 		foreach ( $this->integrations as $integration ) {
 			$data = $integration->get_registration_data();
 			if ( $data ) {
@@ -164,8 +157,7 @@ class IntegrationManager
 	 * @param string $message
 	 * @return void
 	 */
-	public function display_registration_error( $message )
-	{
+	public function display_registration_error( $message ) {
 		foreach ( $this->integrations as $integration ) {
 			if ( $integration->is_registration_page() ) {
 				$integration->display_registration_error( $message );
@@ -174,4 +166,3 @@ class IntegrationManager
 		}
 	}
 }
-
