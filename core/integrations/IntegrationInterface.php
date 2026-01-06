@@ -1,0 +1,76 @@
+<?php
+
+namespace LLAR\Core\Integrations;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+interface IntegrationInterface
+{
+	/**
+	 * Get the name of the plugin this integration supports
+	 *
+	 * @return string
+	 */
+	public function get_plugin_name(): string;
+
+	/**
+	 * Check if the plugin is active and available
+	 *
+	 * @return bool
+	 */
+	public function is_plugin_active(): bool;
+
+	/**
+	 * Register all hooks and filters for this integration
+	 *
+	 * @return void
+	 */
+	public function register_hooks(): void;
+
+	/**
+	 * Check if this is the plugin's login page
+	 *
+	 * @return bool
+	 */
+	public function is_login_page(): bool;
+
+	/**
+	 * Get login credentials from the request
+	 * Should return array with 'username' and 'password' keys
+	 *
+	 * @return array|null
+	 */
+	public function get_login_credentials(): ?array;
+
+	/**
+	 * Display error message on login page
+	 *
+	 * @param string $message Error message
+	 * @return void
+	 */
+	public function display_error( string $message ): void;
+
+	/**
+	 * Check if this is the plugin's registration page
+	 *
+	 * @return bool
+	 */
+	public function is_registration_page(): bool;
+
+	/**
+	 * Get registration data from the request
+	 * Should return array with 'username' and 'email' keys
+	 *
+	 * @return array|null
+	 */
+	public function get_registration_data(): ?array;
+
+	/**
+	 * Display error message on registration page
+	 *
+	 * @param string $message Error message
+	 * @return void
+	 */
+	public function display_registration_error( string $message ): void;
+}
+
