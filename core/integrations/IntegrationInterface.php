@@ -2,10 +2,12 @@
 
 namespace LLAR\Core\Integrations;
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-interface IntegrationInterface
-{
+interface IntegrationInterface {
+
 	/**
 	 * Get the name of the plugin this integration supports
 	 *
@@ -73,4 +75,3 @@ interface IntegrationInterface
 	 */
 	public function display_registration_error( $message );
 }
-
