@@ -48,6 +48,7 @@ class MemberPressIntegration extends BaseIntegration {
 	public function is_login_page() {
 		// MemberPress can determine its login page in different ways
 		// Check for standard login fields
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
 		return isset( $_POST['log'] ) && isset( $_POST['pwd'] );
 	}
 
@@ -57,12 +58,15 @@ class MemberPressIntegration extends BaseIntegration {
 	 * @return array|null
 	 */
 	public function get_login_credentials() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by MemberPress
 		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
 			return null;
 		}
 
 		return array(
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by MemberPress
 			'username' => sanitize_text_field( wp_unslash( $_POST['log'] ) ),
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by MemberPress
 			'password' => $_POST['pwd'], // Password should not be sanitized
 		);
 	}
@@ -86,8 +90,10 @@ class MemberPressIntegration extends BaseIntegration {
 	public function is_registration_page() {
 		// Check for standard WordPress registration fields
 		// MemberPress may use different fields, but this is a common pattern
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
 		return isset( $_POST['user_login'] ) || isset( $_POST['user_email'] ) ||
-				( isset( $_POST['action'] ) && $_POST['action'] === 'register' );
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
+			( isset( $_POST['action'] ) && $_POST['action'] === 'register' );
 	}
 
 	/**
@@ -96,11 +102,14 @@ class MemberPressIntegration extends BaseIntegration {
 	 * @return array|null
 	 */
 	public function get_registration_data() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by MemberPress
 		if ( empty( $_POST['user_login'] ) && empty( $_POST['user_email'] ) ) {
 			return null;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by MemberPress
 		$user_login = isset( $_POST['user_login'] ) ? sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by MemberPress
 		$user_email = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
 
 		// Only return if at least one field is present
@@ -136,11 +145,14 @@ class MemberPressIntegration extends BaseIntegration {
 	 * @return array Unchanged errors array (we don't block, only track)
 	 */
 	public function mepr_validate_login_handler( $errors, $params = array() ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- MemberPress handles nonce verification
 		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
 			return $errors;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- MemberPress handles nonce verification
 		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- MemberPress handles nonce verification
 		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
 
 		// Trigger authenticate filter to track credentials and check lockouts
