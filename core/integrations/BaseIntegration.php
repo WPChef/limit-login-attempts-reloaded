@@ -27,7 +27,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return bool
 	 */
-	public function is_plugin_active(): bool
+	public function is_plugin_active()
 	{
 		return false;
 	}
@@ -37,7 +37,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return bool
 	 */
-	public function is_login_page(): bool
+	public function is_login_page()
 	{
 		return false;
 	}
@@ -47,7 +47,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return array|null
 	 */
-	public function get_login_credentials(): ?array
+	public function get_login_credentials()
 	{
 		return null;
 	}
@@ -58,7 +58,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 * @param string $message
 	 * @return void
 	 */
-	public function display_error( string $message ): void
+	public function display_error( $message )
 	{
 		// Default implementation
 	}
@@ -68,7 +68,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return string
 	 */
-	protected function get_error_message(): string
+	protected function get_error_message()
 	{
 		return $this->llar_instance->error_msg();
 	}
@@ -78,7 +78,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return bool
 	 */
-	protected function is_login_allowed(): bool
+	protected function is_login_allowed()
 	{
 		return $this->llar_instance->is_limit_login_ok();
 	}
@@ -88,7 +88,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return bool
 	 */
-	public function is_registration_page(): bool
+	public function is_registration_page()
 	{
 		return false;
 	}
@@ -98,7 +98,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return array|null
 	 */
-	public function get_registration_data(): ?array
+	public function get_registration_data()
 	{
 		return null;
 	}
@@ -109,7 +109,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 * @param string $message
 	 * @return void
 	 */
-	public function display_registration_error( string $message ): void
+	public function display_registration_error( $message )
 	{
 		// Default implementation
 	}
@@ -119,7 +119,7 @@ abstract class BaseIntegration implements IntegrationInterface
 	 *
 	 * @return bool
 	 */
-	protected function is_registration_limited(): bool
+	protected function is_registration_limited()
 	{
 		// Check if registration limiting is enabled in cloud app
 		if ( ! $this->llar_instance::$cloud_app ) {
