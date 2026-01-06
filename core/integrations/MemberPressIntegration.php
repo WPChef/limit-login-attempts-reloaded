@@ -11,7 +11,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return string
 	 */
-	public function get_plugin_name(): string
+	public function get_plugin_name()
 	{
 		return 'MemberPress';
 	}
@@ -21,7 +21,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return bool
 	 */
-	public function is_plugin_active(): bool
+	public function is_plugin_active()
 	{
 		return function_exists( 'mepr_validate_login' ) || class_exists( 'MeprUser' );
 	}
@@ -31,7 +31,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return void
 	 */
-	public function register_hooks(): void
+	public function register_hooks()
 	{
 		if ( ! $this->is_plugin_active() ) {
 			return;
@@ -46,7 +46,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return bool
 	 */
-	public function is_login_page(): bool
+	public function is_login_page()
 	{
 		// MemberPress can determine its login page in different ways
 		// Check for standard login fields
@@ -58,7 +58,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return array|null
 	 */
-	public function get_login_credentials(): ?array
+	public function get_login_credentials()
 	{
 		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
 			return null;
@@ -76,7 +76,7 @@ class MemberPressIntegration extends BaseIntegration
 	 * @param string $message Error message
 	 * @return void
 	 */
-	public function display_error( string $message ): void
+	public function display_error( $message )
 	{
 		// MemberPress handles errors through its own mechanisms
 		// Errors are added through mepr_validate_login_handler
@@ -87,7 +87,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return bool
 	 */
-	public function is_registration_page(): bool
+	public function is_registration_page()
 	{
 		// Check for standard WordPress registration fields
 		// MemberPress may use different fields, but this is a common pattern
@@ -100,7 +100,7 @@ class MemberPressIntegration extends BaseIntegration
 	 *
 	 * @return array|null
 	 */
-	public function get_registration_data(): ?array
+	public function get_registration_data()
 	{
 		if ( empty( $_POST['user_login'] ) && empty( $_POST['user_email'] ) ) {
 			return null;
@@ -126,7 +126,7 @@ class MemberPressIntegration extends BaseIntegration
 	 * @param string $message Error message
 	 * @return void
 	 */
-	public function display_registration_error( string $message ): void
+	public function display_registration_error( $message )
 	{
 		// MemberPress handles registration errors through WordPress registration_errors filter
 		// Errors should be added via the registration validation hooks

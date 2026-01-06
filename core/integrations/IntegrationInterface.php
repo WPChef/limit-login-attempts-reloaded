@@ -11,28 +11,28 @@ interface IntegrationInterface
 	 *
 	 * @return string
 	 */
-	public function get_plugin_name(): string;
+	public function get_plugin_name();
 
 	/**
 	 * Check if the plugin is active and available
 	 *
 	 * @return bool
 	 */
-	public function is_plugin_active(): bool;
+	public function is_plugin_active();
 
 	/**
 	 * Register all hooks and filters for this integration
 	 *
 	 * @return void
 	 */
-	public function register_hooks(): void;
+	public function register_hooks();
 
 	/**
 	 * Check if this is the plugin's login page
 	 *
 	 * @return bool
 	 */
-	public function is_login_page(): bool;
+	public function is_login_page();
 
 	/**
 	 * Get login credentials from the request
@@ -40,7 +40,7 @@ interface IntegrationInterface
 	 *
 	 * @return array|null
 	 */
-	public function get_login_credentials(): ?array;
+	public function get_login_credentials();
 
 	/**
 	 * Display error message on login page
@@ -48,14 +48,14 @@ interface IntegrationInterface
 	 * @param string $message Error message
 	 * @return void
 	 */
-	public function display_error( string $message ): void;
+	public function display_error( $message );
 
 	/**
 	 * Check if this is the plugin's registration page
 	 *
 	 * @return bool
 	 */
-	public function is_registration_page(): bool;
+	public function is_registration_page();
 
 	/**
 	 * Get registration data from the request
@@ -63,7 +63,7 @@ interface IntegrationInterface
 	 *
 	 * @return array|null
 	 */
-	public function get_registration_data(): ?array;
+	public function get_registration_data();
 
 	/**
 	 * Display error message on registration page
@@ -71,6 +71,6 @@ interface IntegrationInterface
 	 * @param string $message Error message
 	 * @return void
 	 */
-	public function display_registration_error( string $message ): void;
+	public function display_registration_error( $message );
 }
 

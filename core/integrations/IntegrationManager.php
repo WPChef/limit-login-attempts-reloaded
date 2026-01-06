@@ -32,7 +32,7 @@ class IntegrationManager
 	 *
 	 * @return void
 	 */
-	private function register_integrations(): void
+	private function register_integrations()
 	{
 		$integrations = array(
 			new MemberPressIntegration( $this->llar_instance ),
@@ -54,7 +54,7 @@ class IntegrationManager
 	 *
 	 * @return IntegrationInterface[]
 	 */
-	public function get_active_integrations(): array
+	public function get_active_integrations()
 	{
 		return $this->integrations;
 	}
@@ -64,7 +64,7 @@ class IntegrationManager
 	 *
 	 * @return bool
 	 */
-	public function is_custom_login_page(): bool
+	public function is_custom_login_page()
 	{
 		foreach ( $this->integrations as $integration ) {
 			if ( $integration->is_login_page() ) {
@@ -80,7 +80,7 @@ class IntegrationManager
 	 *
 	 * @return array|null
 	 */
-	public function get_login_credentials(): ?array
+	public function get_login_credentials()
 	{
 		foreach ( $this->integrations as $integration ) {
 			$credentials = $integration->get_login_credentials();
@@ -98,7 +98,7 @@ class IntegrationManager
 	 * @param string $message
 	 * @return void
 	 */
-	public function display_error( string $message ): void
+	public function display_error( $message )
 	{
 		foreach ( $this->integrations as $integration ) {
 			if ( $integration->is_login_page() ) {
@@ -114,7 +114,7 @@ class IntegrationManager
 	 * @param string $plugin_name
 	 * @return IntegrationInterface|null
 	 */
-	public function get_integration( string $plugin_name ): ?IntegrationInterface
+	public function get_integration( $plugin_name )
 	{
 		foreach ( $this->integrations as $integration ) {
 			if ( $integration->get_plugin_name() === $plugin_name ) {
@@ -130,7 +130,7 @@ class IntegrationManager
 	 *
 	 * @return bool
 	 */
-	public function is_custom_registration_page(): bool
+	public function is_custom_registration_page()
 	{
 		foreach ( $this->integrations as $integration ) {
 			if ( $integration->is_registration_page() ) {
@@ -146,7 +146,7 @@ class IntegrationManager
 	 *
 	 * @return array|null
 	 */
-	public function get_registration_data(): ?array
+	public function get_registration_data()
 	{
 		foreach ( $this->integrations as $integration ) {
 			$data = $integration->get_registration_data();
@@ -164,7 +164,7 @@ class IntegrationManager
 	 * @param string $message
 	 * @return void
 	 */
-	public function display_registration_error( string $message ): void
+	public function display_registration_error( $message )
 	{
 		foreach ( $this->integrations as $integration ) {
 			if ( $integration->is_registration_page() ) {
