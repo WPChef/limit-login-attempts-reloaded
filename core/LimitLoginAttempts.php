@@ -298,8 +298,7 @@ class LimitLoginAttempts
 		// Add notices for XMLRPC request
 		add_filter( 'xmlrpc_login_error', array( $this, 'xmlrpc_error_messages' ) );
 
-		// Add notices to woocommerce login page
-		add_action( 'wp_head', array( $this, 'add_wc_notices' ) );
+		// WooCommerce hooks are registered via IntegrationManager
 
 		/*
 		* This action should really be changed to the 'authenticate' filter as
@@ -376,9 +375,9 @@ class LimitLoginAttempts
 		$custom_error = Config::get( 'custom_error_message' );
 		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
 		$is_wp_login_page = isset( $_POST['log'] );
-		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
+		$is_custom_login_page = $this->integration_manager->is_custom_login_page();
 
-		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) :
+		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_custom_login_page || $um_limit_login_failed ) ) :
             ?>
 
             <script>
@@ -560,28 +559,6 @@ class LimitLoginAttempts
 		return $error;
 	}
 
-	/**
-	 * Errors on WooCommerce account page
-	 */
-	public function add_wc_notices()
-	{
-		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $limit_login_my_error_shown;
-
-		if ( ! function_exists( 'is_account_page' ) || ! function_exists( 'wc_add_notice' ) || ! $limit_login_nonempty_credentials ) {
-			return;
-		}
-
-		/*
-		* During lockout we do not want to show any other error messages (like
-		* unknown user or empty password).
-		*/
-		if ( empty( $_POST ) && ! $this->is_limit_login_ok() && ! $limit_login_just_lockedout ) {
-
-			if ( is_account_page() ) {
-				wc_add_notice( $this->error_msg(), 'error' );
-			}
-		}
-	}
 
 	/**
 	 * @param $user
