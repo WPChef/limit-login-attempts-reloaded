@@ -36,8 +36,8 @@ class IntegrationManager {
 	private function register_integrations() {
 		$integrations = array(
 			new MemberPressIntegration( $this->llar_instance ),
+			new WooCommerceIntegration( $this->llar_instance ),
 			// Other integrations can be added here in the future:
-			// new WooCommerceIntegration( $this->llar_instance ),
 			// new UltimateMemberIntegration( $this->llar_instance ),
 		);
 
