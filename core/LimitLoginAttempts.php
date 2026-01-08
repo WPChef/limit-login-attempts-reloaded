@@ -275,9 +275,7 @@ class LimitLoginAttempts
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
 		// hook for the plugin UM
 		add_action( 'um_submit_form_errors_hook_login', array( $this, 'um_limit_login_failed' ) );
-		
-		// MemberPress hooks are registered via IntegrationManager
-
+	
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
 
@@ -297,8 +295,6 @@ class LimitLoginAttempts
 
 		// Add notices for XMLRPC request
 		add_filter( 'xmlrpc_login_error', array( $this, 'xmlrpc_error_messages' ) );
-
-		// WooCommerce hooks are registered via IntegrationManager
 
 		/*
 		* This action should really be changed to the 'authenticate' filter as
