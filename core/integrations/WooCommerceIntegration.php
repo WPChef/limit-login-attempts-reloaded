@@ -38,6 +38,10 @@ class WooCommerceIntegration extends BaseIntegration {
 
 		// Add notices to woocommerce login page
 		add_action( 'wp_head', array( $this, 'add_wc_notices' ) );
+
+		// Protect WooCommerce registration
+		add_action( 'woocommerce_register_post', array( $this, 'wc_register_post_handler' ), 10, 3 );
+		add_filter( 'woocommerce_registration_errors', array( $this, 'wc_registration_errors_handler' ), 10, 3 );
 	}
 
 	/**
@@ -89,7 +93,8 @@ class WooCommerceIntegration extends BaseIntegration {
 	public function is_registration_page() {
 		// WooCommerce uses standard WordPress registration fields
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
-		return $this->is_plugin_active() && is_account_page() && ( isset( $_POST['user_login'] ) || isset( $_POST['user_email'] ) );
+		$result = $this->is_plugin_active() && is_account_page() && ( isset( $_POST['user_login'] ) || isset( $_POST['user_email'] ) );
+		return $result;
 	}
 
 	/**
@@ -151,5 +156,69 @@ class WooCommerceIntegration extends BaseIntegration {
 				wc_add_notice( $this->get_error_message(), 'error' );
 			}
 		}
+	}
+
+	/**
+	 * For WooCommerce registration
+	 * Check registration attempt before WooCommerce processes it
+	 *
+	 * @param string $username Username
+	 * @param string $user_email User email
+	 * @param WP_Error $errors Error object
+	 * @return void
+	 */
+	public function wc_register_post_handler( $username, $user_email, $errors ) {
+		if ( ! $this->is_registration_limited() ) {
+			return;
+		}
+
+		if ( empty( $username ) && empty( $user_email ) ) {
+			return;
+		}
+
+		// Only if both fields are empty we exit the check
+		if ( ( empty( $username ) || ! validate_username( $username ) ) && ( empty( $user_email ) || ! is_email( $user_email ) ) ) {
+			return;
+		}
+
+		$user_login_sanitize = sanitize_user( $username );
+		$user_email_sanitize = sanitize_user( $user_email );
+
+		// Check any non-empty
+		$check_combo = ! empty( $user_login_sanitize ) ? $user_login_sanitize : $user_email_sanitize;
+
+		$response = $this->llar_instance->check_registration_api( $check_combo );
+
+		// If $user_login is not empty, we will also check $user_email
+		if ( ! empty( $user_login_sanitize ) && 'deny' !== $response['result'] ) {
+			if ( empty( $user_email ) || ! is_email( $user_email ) ) {
+				return;
+			}
+
+			$response = $this->llar_instance->check_registration_api( $user_email_sanitize );
+		}
+
+		if ( 'deny' === $response['result'] ) {
+			// Set the marker and the error
+			$this->llar_instance->user_blocking  = true;
+			$this->llar_instance->error_messages = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+		}
+	}
+
+	/**
+	 * Correcting errors in the presence of a registration prohibition marker for WooCommerce
+	 *
+	 * @param WP_Error $errors Error object
+	 * @param string $username Username
+	 * @param string $user_email User email
+	 * @return WP_Error
+	 */
+	public function wc_registration_errors_handler( $errors, $username, $user_email ) {
+		// Checking the marker
+		if ( $this->llar_instance->user_blocking ) {
+			$errors->add( 'user_blocking', $this->llar_instance->error_messages );
+		}
+
+		return $errors;
 	}
 }
