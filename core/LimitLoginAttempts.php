@@ -2425,6 +2425,61 @@ class LimitLoginAttempts
 		) );
 	}
 
+	/**
+	 * Public wrapper for llar_api_response to allow integrations to use it
+	 * Only allows calls from integration classes within this plugin
+	 *
+	 * @param string $user_data User data to check
+	 * @return array API response
+	 */
+	public function check_registration_api( $user_data ) {
+		// Check caller using Reflection API
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Used for security validation, not debugging
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
+
+		if ( empty( $backtrace[1] ) || empty( $backtrace[1]['class'] ) ) {
+			// Not called from a class, reject
+			return array( 'result' => 'deny' );
+		}
+
+		$caller_class = $backtrace[1]['class'];
+
+		// Check if caller is from our integrations namespace
+		if ( 0 !== strpos( $caller_class, 'LLAR\Core\Integrations' ) ) {
+			// Not called from an integration class, reject
+			return array( 'result' => 'deny' );
+		}
+
+		// Verify the class exists and is in the correct namespace
+		if ( ! class_exists( $caller_class ) ) {
+			return array( 'result' => 'deny' );
+		}
+
+		// Use Reflection to verify the class
+		// Check if ReflectionClass::getNamespaceName method exists for compatibility
+		if ( ! method_exists( 'ReflectionClass', 'getNamespaceName' ) ) {
+			// Fallback: if method doesn't exist, rely on strpos check only
+			// This should not happen in PHP 5.3+, but adds extra safety
+			return $this->llar_api_response( $user_data );
+		}
+
+		try {
+			$reflection = new \ReflectionClass( $caller_class );
+			$namespace  = $reflection->getNamespaceName();
+
+			if ( 'LLAR\Core\Integrations' !== $namespace ) {
+				return array( 'result' => 'deny' );
+			}
+		} catch ( \ReflectionException $e ) {
+			// Class reflection failed, reject
+			return array( 'result' => 'deny' );
+		}
+
+		$response = $this->llar_api_response( $user_data );
+
+		return $response;
+	}
+
 
 	/**
 	 * Register new user standard WP

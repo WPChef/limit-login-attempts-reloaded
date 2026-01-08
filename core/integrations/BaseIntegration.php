@@ -122,6 +122,6 @@ abstract class BaseIntegration implements IntegrationInterface {
 			? $app_config['settings']['limit_registration']['value']
 			: '';
 
-		return $limit_registration === 'on';
+		return 'on' === $limit_registration;
 	}
 }
