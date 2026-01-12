@@ -1,15 +1,15 @@
-# Copyright (C) 2025 Limit Login Attempts Reloaded
+# Copyright (C) 2026 Limit Login Attempts Reloaded
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 2.26.27\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 2.26.28\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-12-16T15:56:42+03:00\n"
+"POT-Creation-Date: 2026-01-12T17:58:20+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -121,6 +121,14 @@ msgstr ""
 
 #: core/CloudApp.php:159
 msgid "The app has been successfully imported."
+msgstr ""
+
+#: core/CloudApp.php:231
+msgid "Oops, it looks like the site is having a temporary network issue."
+msgstr ""
+
+#: core/CloudApp.php:232
+msgid "Click here to refresh the page"
 msgstr ""
 
 #: core/Config.php:96
