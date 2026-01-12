@@ -277,6 +277,9 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 
         const disabled = 'llar-disabled';
         const hidden = 'llar-hidden';
+        const visibility = 'llar-visibility';
+        const $button_go_to_dashboard = '.button.next_step.menu__item.button__orange';
+        const $button_go_to_dashboard_spinner = '.preloader-wrapper, .preloader-wrapper .spinner';
 
         $( document ).ready( function () {
             const $body = $( 'body' );
@@ -308,15 +311,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                     // Allow closing if onboarding is not completed
                     return true;
                 },
-                backgroundDismiss: function() {
-                    // Prevent closing by clicking on background when onboarding is completed
-                    if ( onboardingCompleted ) {
-                        window.location.reload();
-                        return false; // Prevent closing
-                    }
-                    // Allow closing if onboarding is not completed
-                    return true;
-                },
+                backgroundDismiss: false,
                 escapeKey: function() {
                     // Prevent closing by ESC key when onboarding is completed
                     if ( onboardingCompleted ) {
@@ -346,9 +341,6 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                     const $setup_code_key = $( '#llar-setup-code-field' );
                     const $activate_button = $( '#llar-app-install-btn' );
                     const $spinner = $activate_button.find( '.preloader-wrapper .spinner' );
-                    const visibility = 'llar-visibility';
-                    const $button_go_to_dashboard = '.button.next_step.menu__item.button__orange';
-                    const $button_go_to_dashboard_spinner = '.preloader-wrapper,.preloader-wrapper .spinner';
                     const spinner = '.preloader-wrapper .spinner';
                     let email;
 
@@ -370,10 +362,12 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 
                         const $error = $( '.field-error' );
                         const $setup_code = $setup_code_key.val();
+                        const $closeIcon = $( '.jconfirm-closeIcon' );
                         $error.text( '' ).hide();
                         $activate_button.addClass( disabled );
                         $spinner.addClass( visibility );
                         $body.addClass( disabled );
+                        $closeIcon.addClass( hidden );
                         llar_activate_license_key( $setup_code )
                             .then( function () {
                                 setTimeout( function () {
@@ -386,6 +380,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                                 if ( ! response.success && response.data.msg ) {
                                     $error.text( response.data.msg ).show();
                                     $body.removeClass( disabled );
+                                    $closeIcon.removeClass( hidden );
                                     setTimeout( function () {
                                         $error.text( '' ).hide();
                                         $setup_code_key.val( '' );
@@ -546,6 +541,12 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
             .then( function () {
                 onboardingCompleted = true;
                 $html_onboarding_body.replaceWith( <?php echo wp_json_encode( trim( $content_step_4 ), JSON_HEX_QUOT | JSON_HEX_TAG ); ?> );
+                $( $button_go_to_dashboard ).on( 'click', function ( e ) {
+                    e.preventDefault();
+                    $( this ).find( $button_go_to_dashboard_spinner ).addClass( visibility ).show();
+                    window.location.reload();
+                    return false;
+                } );
             } )
         }
 
