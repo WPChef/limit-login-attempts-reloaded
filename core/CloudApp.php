@@ -225,7 +225,13 @@ class CloudApp
      */
     public function info()
     {
-        return $this->request( 'info' );
+        $info = $this->request( 'info' );
+        if ( ! $info  && ! defined( 'LLAR_FAILED_INFO_NOTICE_SHOWN' )) {
+            define( 'LLAR_FAILED_INFO_NOTICE_SHOWN', true );
+            echo '<div class="notice notice-error" style="display: block;"><p>' . __( 'Oops, it looks like the site is having a temporary network issue.', 'limit-login-attempts-reloaded' ) . '</p>';
+            echo '<p><a href="javascript:void(0);" onclick="window.location.reload();" class="button button-primary">' . __( 'Click here to refresh the page', 'limit-login-attempts-reloaded' ) . '</a></p></div>';
+        }
+        return $info;
     }
 
 	/**
@@ -405,7 +411,8 @@ class CloudApp
 
 		$this->last_response_code = !empty( $response['status'] ) ? $response['status'] : 0;
 
-		if ( $response['status'] !== 200 ) {
+		if ( 200 !== $response['status'] ) {
+			error_log( 'LLAR: CloudApp request failed: ' . $this->api.'/'.$method . ' ' . $this->last_response_code );
 			return false;
 		}
 
