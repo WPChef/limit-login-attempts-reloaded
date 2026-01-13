@@ -185,8 +185,12 @@ class WooCommerceIntegration extends BaseIntegration {
 			return;
 		}
 
-		// Only if both fields are empty we exit the check
-		if ( ( empty( $username ) || ! validate_username( $username ) ) && ( empty( $user_email ) || ! is_email( $user_email ) ) ) {
+		// Exit only if BOTH fields are invalid (empty or invalid)
+		// Continue if at least one field is valid
+		// Logic: exit if (username is invalid) AND (email is invalid)
+		$username_invalid = empty( $username ) || ! validate_username( $username );
+		$email_invalid = empty( $user_email ) || ! is_email( $user_email );
+		if ( $username_invalid && $email_invalid ) {
 			return;
 		}
 

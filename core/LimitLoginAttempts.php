@@ -2468,7 +2468,7 @@ class LimitLoginAttempts
 		}
 
 		$user_login_sanitize = sanitize_user( $_POST['user_login'] );
-		$user_email_sanitize = sanitize_user( $_POST['user_email'] );
+		$user_email_sanitize = sanitize_email( $_POST['user_email'] );
 
 		// Check any non-empty
 		$check_combo = ! empty( $user_login_sanitize ) ? $user_login_sanitize : $user_email_sanitize;
