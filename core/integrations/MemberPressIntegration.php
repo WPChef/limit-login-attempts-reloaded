@@ -55,29 +55,42 @@ class MemberPressIntegration extends BaseIntegration {
 			return false;
 		}
 
-		// Exclude standard WordPress login page
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
-		if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], '/wp-login.php' ) !== false ) {
-			return false;
-		}
-
-		// Check if mepr_validate_login filter is registered (MemberPress-specific)
-		// This indicates that MemberPress is processing this login
-		if ( ! has_filter( 'mepr_validate_login' ) ) {
-			return false;
-		}
-
-		// Additional check: MemberPress login form has specific identifier
+		// Most reliable check: MemberPress login form has specific identifier
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
 		if ( isset( $_POST['mepr_process_login_form'] ) ) {
 			return true;
 		}
 
-		// If mepr_validate_login filter exists and we have login fields,
-		// and it's not standard WP login, assume it's MemberPress
-		// This is safe because MemberPress registers mepr_validate_login filter
-		// only when processing its own login forms
-		return true;
+		// Check if we're on MemberPress login page using MeprUser method (if available)
+		if ( class_exists( 'MeprUser' ) && method_exists( 'MeprUser', 'is_login_page' ) ) {
+			global $post;
+			if ( $post && MeprUser::is_login_page( $post ) ) {
+				return true;
+			}
+		}
+
+		// Check if we're on MemberPress login page via MeprOptions (if available)
+		if ( class_exists( 'MeprOptions' ) ) {
+			$mepr_options = MeprOptions::fetch();
+			if ( ! empty( $mepr_options->login_page_id ) && is_page( $mepr_options->login_page_id ) ) {
+				return true;
+			}
+		}
+
+		// Exclude standard WordPress login page more reliably
+		// Check if this is the standard WordPress login URL
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
+		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+			$request_uri = $_SERVER['REQUEST_URI'];
+			// Check for wp-login.php in various forms (handles custom paths, multisite, etc.)
+			if ( preg_match( '/wp-login\.php/i', $request_uri ) ) {
+				return false;
+			}
+		}
+
+		// If we have login fields but none of the MemberPress-specific checks passed,
+		// and it's not standard WP login, it's likely not a MemberPress login
+		return false;
 	}
 
 	/**
@@ -95,7 +108,7 @@ class MemberPressIntegration extends BaseIntegration {
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by MemberPress
 			'username' => sanitize_text_field( wp_unslash( $_POST['log'] ) ),
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by MemberPress
-			'password' => $_POST['pwd'], // Password should not be sanitized
+			'password' => wp_unslash( $_POST['pwd'] ), // Password should not be sanitized, but needs wp_unslash() to remove magic quotes
 		);
 	}
 
@@ -182,7 +195,7 @@ class MemberPressIntegration extends BaseIntegration {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- MemberPress handles nonce verification
 		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- MemberPress handles nonce verification
-		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
+		$pwd = isset( $_POST['pwd'] ) ? wp_unslash( $_POST['pwd'] ) : ''; // Password should not be sanitized, but needs wp_unslash() to remove magic quotes
 
 		// Trigger authenticate filter to track credentials and check lockouts
 		// This sets $limit_login_nonempty_credentials and $_SESSION['login_attempts_left']
