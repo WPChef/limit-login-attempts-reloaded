@@ -276,7 +276,7 @@ class LimitLoginAttempts
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
 		// hook for the plugin UM
 		add_action( 'um_submit_form_errors_hook_login', array( $this, 'um_limit_login_failed' ) );
-	
+
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
 
