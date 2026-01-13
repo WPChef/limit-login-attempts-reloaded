@@ -111,6 +111,8 @@ class WooCommerceIntegration extends BaseIntegration {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by WooCommerce
 		$user_login = isset( $_POST['user_login'] ) ? sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by WooCommerce
+		// Note: sanitize_email() is used here for form data retrieval, but sanitize_user() is used in wc_register_post_handler()
+		// for API calls to match the original API behavior
 		$user_email = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
 
 		// Only return if at least one field is present
@@ -140,9 +142,14 @@ class WooCommerceIntegration extends BaseIntegration {
 	 * Errors on WooCommerce account page
 	 */
 	public function add_wc_notices() {
-		global $limit_login_just_lockedout, $limit_login_nonempty_credentials;
+		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $limit_login_my_error_shown;
 
 		if ( ! $limit_login_nonempty_credentials ) {
+			return;
+		}
+
+		// Prevent duplicate error messages if already shown elsewhere
+		if ( ! empty( $limit_login_my_error_shown ) ) {
 			return;
 		}
 
@@ -154,6 +161,8 @@ class WooCommerceIntegration extends BaseIntegration {
 		if ( empty( $_POST ) && ! $this->is_login_allowed() && ! $limit_login_just_lockedout ) {
 			if ( is_account_page() ) {
 				wc_add_notice( $this->get_error_message(), 'error' );
+				// Mark error as shown to prevent duplicate messages
+				$limit_login_my_error_shown = true;
 			}
 		}
 	}
@@ -181,6 +190,8 @@ class WooCommerceIntegration extends BaseIntegration {
 			return;
 		}
 
+		// Use sanitize_user() for API calls to match original API behavior
+		// Note: This differs from get_registration_data() which uses sanitize_email() for form data retrieval
 		$user_login_sanitize = sanitize_user( $username );
 		$user_email_sanitize = sanitize_user( $user_email );
 
