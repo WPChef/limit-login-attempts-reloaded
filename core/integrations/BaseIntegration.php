@@ -24,11 +24,12 @@ abstract class BaseIntegration implements IntegrationInterface {
 	}
 
 	/**
-	 * Default implementation - check if plugin function exists
+	 * Static method to check if plugin is active (can be called without instance)
+	 * Should be overridden in child classes
 	 *
 	 * @return bool
 	 */
-	public function is_plugin_active() {
+	public static function is_plugin_active() {
 		return false;
 	}
 

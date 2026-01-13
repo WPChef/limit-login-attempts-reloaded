@@ -16,13 +16,6 @@ interface IntegrationInterface {
 	public function get_plugin_name();
 
 	/**
-	 * Check if the plugin is active and available
-	 *
-	 * @return bool
-	 */
-	public function is_plugin_active();
-
-	/**
 	 * Register all hooks and filters for this integration
 	 *
 	 * @return void
