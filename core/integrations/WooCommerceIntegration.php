@@ -182,7 +182,7 @@ class WooCommerceIntegration extends BaseIntegration {
 		}
 
 		$user_login_sanitize = sanitize_user( $username );
-		$user_email_sanitize = sanitize_email( $user_email );
+		$user_email_sanitize = sanitize_user( $user_email );
 
 		// Check any non-empty
 		$check_combo = ! empty( $user_login_sanitize ) ? $user_login_sanitize : $user_email_sanitize;
