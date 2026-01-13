@@ -194,10 +194,10 @@ class WooCommerceIntegration extends BaseIntegration {
 			return;
 		}
 
-		// Use sanitize_user() for API calls to match original API behavior
-		// Note: This differs from get_registration_data() which uses sanitize_email() for form data retrieval
+		// Use sanitize_user() for username and sanitize_email() for email to match original API behavior
+		// This matches the behavior in llar_submit_login_form_register()
 		$user_login_sanitize = sanitize_user( $username );
-		$user_email_sanitize = sanitize_user( $user_email );
+		$user_email_sanitize = sanitize_email( $user_email );
 
 		// Check any non-empty
 		$check_combo = ! empty( $user_login_sanitize ) ? $user_login_sanitize : $user_email_sanitize;
