@@ -182,12 +182,12 @@ class WooCommerceIntegration extends BaseIntegration {
 		}
 
 		$user_login_sanitize = sanitize_user( $username );
-		$user_email_sanitize = sanitize_user( $user_email );
+		$user_email_sanitize = sanitize_email( $user_email );
 
 		// Check any non-empty
 		$check_combo = ! empty( $user_login_sanitize ) ? $user_login_sanitize : $user_email_sanitize;
 
-		$response = $this->llar_instance->check_registration_api( $check_combo );
+		$response = $this->check_registration_api( $check_combo );
 
 		// If $user_login is not empty, we will also check $user_email
 		if ( ! empty( $user_login_sanitize ) && 'deny' !== $response['result'] ) {
@@ -195,7 +195,7 @@ class WooCommerceIntegration extends BaseIntegration {
 				return;
 			}
 
-			$response = $this->llar_instance->check_registration_api( $user_email_sanitize );
+			$response = $this->check_registration_api( $user_email_sanitize );
 		}
 
 		if ( 'deny' === $response['result'] ) {
