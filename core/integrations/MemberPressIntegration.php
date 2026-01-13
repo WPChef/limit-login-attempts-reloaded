@@ -46,10 +46,38 @@ class MemberPressIntegration extends BaseIntegration {
 	 * @return bool
 	 */
 	public function is_login_page() {
-		// MemberPress can determine its login page in different ways
-		// Check for standard login fields
+		if ( ! static::is_plugin_active() ) {
+			return false;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
-		return isset( $_POST['log'] ) && isset( $_POST['pwd'] );
+		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
+			return false;
+		}
+
+		// Exclude standard WordPress login page
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
+		if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], '/wp-login.php' ) !== false ) {
+			return false;
+		}
+
+		// Check if mepr_validate_login filter is registered (MemberPress-specific)
+		// This indicates that MemberPress is processing this login
+		if ( ! has_filter( 'mepr_validate_login' ) ) {
+			return false;
+		}
+
+		// Additional check: MemberPress login form has specific identifier
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
+		if ( isset( $_POST['mepr_process_login_form'] ) ) {
+			return true;
+		}
+
+		// If mepr_validate_login filter exists and we have login fields,
+		// and it's not standard WP login, assume it's MemberPress
+		// This is safe because MemberPress registers mepr_validate_login filter
+		// only when processing its own login forms
+		return true;
 	}
 
 	/**
