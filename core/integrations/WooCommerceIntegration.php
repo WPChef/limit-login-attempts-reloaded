@@ -22,7 +22,7 @@ class WooCommerceIntegration extends BaseIntegration {
 	 *
 	 * @return bool
 	 */
-	public function is_plugin_active() {
+	public static function is_plugin_active() {
 		return function_exists( 'is_account_page' ) && function_exists( 'wc_add_notice' );
 	}
 
@@ -32,7 +32,7 @@ class WooCommerceIntegration extends BaseIntegration {
 	 * @return void
 	 */
 	public function register_hooks() {
-		if ( ! $this->is_plugin_active() ) {
+		if ( ! static::is_plugin_active() ) {
 			return;
 		}
 
@@ -51,7 +51,7 @@ class WooCommerceIntegration extends BaseIntegration {
 	 */
 	public function is_login_page() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
-		return $this->is_plugin_active() && is_account_page() && isset( $_POST['username'] );
+		return static::is_plugin_active() && is_account_page() && isset( $_POST['username'] );
 	}
 
 	/**
@@ -80,7 +80,7 @@ class WooCommerceIntegration extends BaseIntegration {
 	 * @return void
 	 */
 	public function display_error( $message ) {
-		if ( $this->is_plugin_active() && is_account_page() ) {
+		if ( static::is_plugin_active() && is_account_page() ) {
 			wc_add_notice( $message, 'error' );
 		}
 	}
@@ -93,7 +93,7 @@ class WooCommerceIntegration extends BaseIntegration {
 	public function is_registration_page() {
 		// WooCommerce uses standard WordPress registration fields
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
-		$result = $this->is_plugin_active() && is_account_page() && ( isset( $_POST['user_login'] ) || isset( $_POST['user_email'] ) );
+		$result = static::is_plugin_active() && is_account_page() && ( isset( $_POST['user_login'] ) || isset( $_POST['user_email'] ) );
 		return $result;
 	}
 
@@ -131,7 +131,7 @@ class WooCommerceIntegration extends BaseIntegration {
 	 * @return void
 	 */
 	public function display_registration_error( $message ) {
-		if ( $this->is_plugin_active() && is_account_page() ) {
+		if ( static::is_plugin_active() && is_account_page() ) {
 			wc_add_notice( $message, 'error' );
 		}
 	}

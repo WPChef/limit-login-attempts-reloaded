@@ -2431,48 +2431,18 @@ class LimitLoginAttempts
 	 * @return array API response
 	 */
 	public function check_registration_api( $user_data, $integration = null ) {
-		// If integration object is provided, validate it directly
-		if ( null !== $integration ) {
-			// Verify the integration is an instance of BaseIntegration
-			if ( ! ( $integration instanceof BaseIntegration ) ) {
-				return array( 'result' => 'deny' );
-			}
+		// This method allows integrations to check registration via API. 
+		// Only trusted integration classes may call it.
+		if ( null !== $integration && $integration instanceof BaseIntegration ) {
 
 			$response = $this->llar_api_response( $user_data );
 
 			return $response;
 		}
 
-		// Fallback: check caller using backtrace (for backward compatibility)
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Used for security validation, not debugging
-		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
+		// If no integration object is provided, deny the request
+		return array( 'result' => 'deny' );
 
-		if ( empty( $backtrace[1] ) || empty( $backtrace[1]['class'] ) ) {
-			// Not called from a class, reject
-			return array( 'result' => 'deny' );
-		}
-
-		$caller_class = $backtrace[1]['class'];
-
-		// Check if caller is from our integrations namespace
-		if ( 0 !== strpos( $caller_class, 'LLAR\Core\Integrations' ) ) {
-			// Not called from an integration class, reject
-			return array( 'result' => 'deny' );
-		}
-
-		// Verify the class exists
-		if ( ! class_exists( $caller_class ) ) {
-			return array( 'result' => 'deny' );
-		}
-
-		// Verify the class extends BaseIntegration (which ensures it's a valid integration)
-		if ( ! is_subclass_of( $caller_class, 'LLAR\Core\Integrations\BaseIntegration' ) ) {
-			return array( 'result' => 'deny' );
-		}
-
-		$response = $this->llar_api_response( $user_data );
-
-		return $response;
 	}
 
 

@@ -22,7 +22,7 @@ class MemberPressIntegration extends BaseIntegration {
 	 *
 	 * @return bool
 	 */
-	public function is_plugin_active() {
+	public static function is_plugin_active() {
 		return function_exists( 'mepr_validate_login' ) || class_exists( 'MeprUser' );
 	}
 
@@ -32,7 +32,7 @@ class MemberPressIntegration extends BaseIntegration {
 	 * @return void
 	 */
 	public function register_hooks() {
-		if ( ! $this->is_plugin_active() ) {
+		if ( ! static::is_plugin_active() ) {
 			return;
 		}
 

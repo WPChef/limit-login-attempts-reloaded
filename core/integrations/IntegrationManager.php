@@ -34,18 +34,25 @@ class IntegrationManager {
 	 * @return void
 	 */
 	private function register_integrations() {
-		$integrations = array(
-			new MemberPressIntegration( $this->llar_instance ),
-			new WooCommerceIntegration( $this->llar_instance ),
+		$integration_classes = array(
+			'MemberPressIntegration',
+			'WooCommerceIntegration',
 			// Other integrations can be added here in the future:
-			// new UltimateMemberIntegration( $this->llar_instance ),
+			// 'UltimateMemberIntegration',
 		);
 
-		foreach ( $integrations as $integration ) {
-			if ( $integration->is_plugin_active() ) {
-				$this->integrations[] = $integration;
-				$integration->register_hooks();
+		foreach ( $integration_classes as $class_name ) {
+			$full_class_name = 'LLAR\Core\Integrations\\' . $class_name;
+
+			// Check if plugin is active using static method before creating instance
+			if ( ! $full_class_name::is_plugin_active() ) {
+				continue;
 			}
+
+			// Only create instance if plugin is active
+			$integration = new $full_class_name( $this->llar_instance );
+			$this->integrations[] = $integration;
+			$integration->register_hooks();
 		}
 	}
 
