@@ -69,7 +69,7 @@ class WooCommerceIntegration extends BaseIntegration {
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by WooCommerce
 			'username' => sanitize_text_field( wp_unslash( $_POST['username'] ) ),
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by WooCommerce
-			'password' => $_POST['password'], // Password should not be sanitized
+			'password' => wp_unslash( $_POST['password'] ), // Password should not be sanitized, but needs wp_unslash() to remove magic quotes
 		);
 	}
 
