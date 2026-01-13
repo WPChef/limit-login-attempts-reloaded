@@ -44,6 +44,12 @@ class IntegrationManager {
 		foreach ( $integration_classes as $class_name ) {
 			$full_class_name = 'LLAR\Core\Integrations\\' . $class_name;
 
+			// Ensure class is loaded before calling static method
+			// Autoloader should handle this, but we check for safety
+			if ( ! class_exists( $full_class_name ) ) {
+				continue;
+			}
+
 			// Check if plugin is active using static method before creating instance
 			if ( ! $full_class_name::is_plugin_active() ) {
 				continue;
