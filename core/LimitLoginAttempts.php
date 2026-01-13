@@ -5,6 +5,7 @@ namespace LLAR\Core;
 use Exception;
 use IXR_Error;
 use LLAR\Core\Http\Http;
+use LLAR\Core\Integrations\BaseIntegration;
 use LLAR\Core\Integrations\IntegrationManager;
 use WP_Error;
 use WP_User;
@@ -2426,10 +2427,23 @@ class LimitLoginAttempts
 	 * Only allows calls from integration classes within this plugin
 	 *
 	 * @param string $user_data User data to check
+	 * @param BaseIntegration|null $integration Integration instance (optional, for security validation)
 	 * @return array API response
 	 */
-	public function check_registration_api( $user_data ) {
-		// Check caller using Reflection API
+	public function check_registration_api( $user_data, $integration = null ) {
+		// If integration object is provided, validate it directly
+		if ( null !== $integration ) {
+			// Verify the integration is an instance of BaseIntegration
+			if ( ! ( $integration instanceof BaseIntegration ) ) {
+				return array( 'result' => 'deny' );
+			}
+
+			$response = $this->llar_api_response( $user_data );
+
+			return $response;
+		}
+
+		// Fallback: check caller using backtrace (for backward compatibility)
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Used for security validation, not debugging
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
 
@@ -2446,28 +2460,13 @@ class LimitLoginAttempts
 			return array( 'result' => 'deny' );
 		}
 
-		// Verify the class exists and is in the correct namespace
+		// Verify the class exists
 		if ( ! class_exists( $caller_class ) ) {
 			return array( 'result' => 'deny' );
 		}
 
-		// Use Reflection to verify the class
-		// Check if ReflectionClass::getNamespaceName method exists for compatibility
-		if ( ! method_exists( 'ReflectionClass', 'getNamespaceName' ) ) {
-			// Fallback: if method doesn't exist, rely on strpos check only
-			// This should not happen in PHP 5.3+, but adds extra safety
-			return $this->llar_api_response( $user_data );
-		}
-
-		try {
-			$reflection = new \ReflectionClass( $caller_class );
-			$namespace  = $reflection->getNamespaceName();
-
-			if ( 'LLAR\Core\Integrations' !== $namespace ) {
-				return array( 'result' => 'deny' );
-			}
-		} catch ( \ReflectionException $e ) {
-			// Class reflection failed, reject
+		// Verify the class extends BaseIntegration (which ensures it's a valid integration)
+		if ( ! is_subclass_of( $caller_class, 'LLAR\Core\Integrations\BaseIntegration' ) ) {
 			return array( 'result' => 'deny' );
 		}
 

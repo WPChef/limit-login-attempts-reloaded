@@ -124,4 +124,15 @@ abstract class BaseIntegration implements IntegrationInterface {
 
 		return 'on' === $limit_registration;
 	}
+
+	/**
+	 * Protected method to check registration via API
+	 * This method ensures only integration classes can call the API
+	 *
+	 * @param string $user_data User data to check
+	 * @return array API response
+	 */
+	protected function check_registration_api( $user_data ) {
+		return $this->llar_instance->check_registration_api( $user_data, $this );
+	}
 }
