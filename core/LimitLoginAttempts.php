@@ -2434,6 +2434,19 @@ class LimitLoginAttempts
 		// This method allows integrations to check registration via API. 
 		// Only trusted integration classes may call it.
 		if ( null !== $integration && $integration instanceof BaseIntegration ) {
+			// Additional security check: verify the class is in the correct namespace
+			// This prevents external code from extending BaseIntegration and calling this method
+			$integration_class = get_class( $integration );
+			$expected_namespace = 'LLAR\Core\Integrations\\';
+
+			// Check if the class is in the expected namespace
+			if ( strpos( $integration_class, $expected_namespace ) !== 0 ) {
+				// Class is not in the trusted namespace, deny the request
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( sprintf( 'LLAR: Security check failed - integration class %s is not in trusted namespace', $integration_class ) );
+				}
+				return array( 'result' => 'deny' );
+			}
 
 			$response = $this->llar_api_response( $user_data );
 

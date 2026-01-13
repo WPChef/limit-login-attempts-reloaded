@@ -50,10 +50,9 @@ class MemberPressIntegration extends BaseIntegration {
 			return false;
 		}
 
+		// Check for POST request with login credentials
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
-		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
-			return false;
-		}
+		$has_post_credentials = isset( $_POST['log'] ) && isset( $_POST['pwd'] );
 
 		// Most reliable check: MemberPress login form has specific identifier
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
@@ -62,6 +61,7 @@ class MemberPressIntegration extends BaseIntegration {
 		}
 
 		// Check if we're on MemberPress login page using MeprUser method (if available)
+		// This works for both GET and POST requests
 		if ( class_exists( 'MeprUser' ) && method_exists( 'MeprUser', 'is_login_page' ) ) {
 			global $post;
 			if ( $post && MeprUser::is_login_page( $post ) ) {
@@ -70,26 +70,49 @@ class MemberPressIntegration extends BaseIntegration {
 		}
 
 		// Check if we're on MemberPress login page via MeprOptions (if available)
+		// This works for both GET and POST requests
 		if ( class_exists( 'MeprOptions' ) ) {
 			$mepr_options = MeprOptions::fetch();
 			if ( ! empty( $mepr_options->login_page_id ) && is_page( $mepr_options->login_page_id ) ) {
-				return true;
+				// For GET requests, return true if we're on the login page
+				// For POST requests, also require login credentials
+				if ( ! $has_post_credentials ) {
+					// GET request - we're on the login page
+					return true;
+				} else {
+					// POST request with credentials - verify it's not standard WP login
+					// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
+					if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+						$request_uri = $_SERVER['REQUEST_URI'];
+						// Exclude standard WordPress login page
+						if ( ! preg_match( '/wp-login\.php/i', $request_uri ) ) {
+							return true;
+						}
+					} else {
+						return true;
+					}
+				}
 			}
 		}
 
-		// Exclude standard WordPress login page more reliably
-		// Check if this is the standard WordPress login URL
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
-		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-			$request_uri = $_SERVER['REQUEST_URI'];
-			// Check for wp-login.php in various forms (handles custom paths, multisite, etc.)
-			if ( preg_match( '/wp-login\.php/i', $request_uri ) ) {
-				return false;
+		// For POST requests only: check if we have login credentials
+		// but exclude standard WordPress login page
+		if ( $has_post_credentials ) {
+			// Exclude standard WordPress login page more reliably
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
+			if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+				$request_uri = $_SERVER['REQUEST_URI'];
+				// Check for wp-login.php in various forms (handles custom paths, multisite, etc.)
+				if ( preg_match( '/wp-login\.php/i', $request_uri ) ) {
+					return false;
+				}
 			}
+			// If we have login fields but none of the MemberPress-specific checks passed,
+			// and it's not standard WP login, it's likely not a MemberPress login
+			return false;
 		}
 
-		// If we have login fields but none of the MemberPress-specific checks passed,
-		// and it's not standard WP login, it's likely not a MemberPress login
+		// No POST credentials and not on MemberPress login page
 		return false;
 	}
 
@@ -129,12 +152,42 @@ class MemberPressIntegration extends BaseIntegration {
 	 * @return bool
 	 */
 	public function is_registration_page() {
-		// Check for standard WordPress registration fields
-		// MemberPress may use different fields, but this is a common pattern
+		if ( ! static::is_plugin_active() ) {
+			return false;
+		}
+
+		// Most reliable check: MemberPress registration form has specific identifier
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
-		return isset( $_POST['user_login'] ) || isset( $_POST['user_email'] ) ||
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
-			( isset( $_POST['action'] ) && $_POST['action'] === 'register' );
+		if ( isset( $_POST['mepr_process_signup_form'] ) || isset( $_POST['mepr_process_checkout_form'] ) ) {
+			return true;
+		}
+
+		// Check if we're on MemberPress signup/checkout page via MeprOptions (if available)
+		if ( class_exists( 'MeprOptions' ) ) {
+			$mepr_options = MeprOptions::fetch();
+			// Check if we're on signup page
+			if ( ! empty( $mepr_options->signup_page_id ) && is_page( $mepr_options->signup_page_id ) ) {
+				// Additional check: ensure we have registration-related POST data
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
+				if ( isset( $_POST['user_login'] ) || isset( $_POST['user_email'] ) ) {
+					return true;
+				}
+			}
+		}
+
+		// Fallback: check for MemberPress-specific registration fields
+		// Only if we have both user_login/user_email AND MemberPress is active
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
+		$has_registration_fields = isset( $_POST['user_login'] ) || isset( $_POST['user_email'] );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only checking for presence, not processing
+		$has_mepr_action = isset( $_POST['action'] ) && $_POST['action'] === 'register';
+
+		// Require both conditions to reduce false positives
+		if ( $has_registration_fields && $has_mepr_action ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

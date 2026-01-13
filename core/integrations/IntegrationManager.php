@@ -41,13 +41,29 @@ class IntegrationManager {
 			// 'UltimateMemberIntegration',
 		);
 
+		// Allow filtering the list of integration classes
+		$integration_classes = apply_filters( 'llar_integration_classes', $integration_classes );
+
 		foreach ( $integration_classes as $class_name ) {
 			$full_class_name = 'LLAR\Core\Integrations\\' . $class_name;
 
 			// Ensure class is loaded before calling static method
-			// Autoloader should handle this, but we check for safety
+			// Try autoloader first, then fallback to manual require
 			if ( ! class_exists( $full_class_name ) ) {
-				continue;
+				// Fallback: try to load the class file manually if autoloader failed
+				$class_file = $this->get_integration_file_path( $class_name );
+				if ( $class_file && file_exists( $class_file ) ) {
+					require_once $class_file;
+				}
+
+				// If still not loaded, skip this integration
+				if ( ! class_exists( $full_class_name ) ) {
+					// Log error for debugging (only if WP_DEBUG is enabled)
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( sprintf( 'LLAR: Failed to load integration class %s', $full_class_name ) );
+					}
+					continue;
+				}
 			}
 
 			// Check if plugin is active using static method before creating instance
@@ -60,6 +76,19 @@ class IntegrationManager {
 			$this->integrations[] = $integration;
 			$integration->register_hooks();
 		}
+	}
+
+	/**
+	 * Get file path for integration class
+	 *
+	 * @param string $class_name Class name without namespace
+	 * @return string|false File path or false if not found
+	 */
+	private function get_integration_file_path( $class_name ) {
+		$base_dir = dirname( __FILE__ );
+		$file_path = $base_dir . '/' . $class_name . '.php';
+
+		return file_exists( $file_path ) ? $file_path : false;
 	}
 
 	/**
