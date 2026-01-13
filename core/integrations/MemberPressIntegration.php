@@ -110,6 +110,7 @@ class MemberPressIntegration extends BaseIntegration {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by MemberPress
 		$user_login = isset( $_POST['user_login'] ) ? sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by MemberPress
+		// Note: sanitize_email() is used here for form data retrieval
 		$user_email = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
 
 		// Only return if at least one field is present
@@ -158,6 +159,7 @@ class MemberPressIntegration extends BaseIntegration {
 		// Trigger authenticate filter to track credentials and check lockouts
 		// This sets $limit_login_nonempty_credentials and $_SESSION['login_attempts_left']
 		// We don't block here - MemberPress will handle blocking if needed
+		// Note: Result is intentionally ignored - we only need side effects (setting global variables)
 		apply_filters( 'authenticate', null, $log, $pwd );
 
 		// Return errors unchanged - we're only tracking, not blocking
