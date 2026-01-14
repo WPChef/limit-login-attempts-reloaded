@@ -64,7 +64,7 @@ class MemberPressIntegration extends BaseIntegration {
 		// This works for both GET and POST requests
 		if ( class_exists( 'MeprUser' ) && method_exists( 'MeprUser', 'is_login_page' ) ) {
 			global $post;
-			if ( $post && MeprUser::is_login_page( $post ) ) {
+			if ( $post && \MeprUser::is_login_page( $post ) ) {
 				return true;
 			}
 		}
@@ -72,7 +72,7 @@ class MemberPressIntegration extends BaseIntegration {
 		// Check if we're on MemberPress login page via MeprOptions (if available)
 		// This works for both GET and POST requests
 		if ( class_exists( 'MeprOptions' ) ) {
-			$mepr_options = MeprOptions::fetch();
+			$mepr_options = \MeprOptions::fetch();
 			if ( ! empty( $mepr_options->login_page_id ) && is_page( $mepr_options->login_page_id ) ) {
 				// For GET requests, return true if we're on the login page
 				// For POST requests, also require login credentials
