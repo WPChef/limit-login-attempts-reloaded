@@ -23,7 +23,7 @@ class MemberPressIntegration extends BaseIntegration {
 	 * @return bool
 	 */
 	public static function is_plugin_active() {
-		return function_exists( 'mepr_validate_login' ) || class_exists( 'MeprUser' );
+		return function_exists( 'mepr_validate_login' ) || class_exists( '\MeprUser' );
 	}
 
 	/**
@@ -62,7 +62,7 @@ class MemberPressIntegration extends BaseIntegration {
 
 		// Check if we're on MemberPress login page using MeprUser method (if available)
 		// This works for both GET and POST requests
-		if ( class_exists( 'MeprUser' ) && method_exists( 'MeprUser', 'is_login_page' ) ) {
+		if ( class_exists( '\MeprUser' ) && method_exists( '\MeprUser', 'is_login_page' ) ) {
 			global $post;
 			if ( $post && \MeprUser::is_login_page( $post ) ) {
 				return true;
@@ -71,7 +71,7 @@ class MemberPressIntegration extends BaseIntegration {
 
 		// Check if we're on MemberPress login page via MeprOptions (if available)
 		// This works for both GET and POST requests
-		if ( class_exists( 'MeprOptions' ) ) {
+		if ( class_exists( '\MeprOptions' ) ) {
 			$mepr_options = \MeprOptions::fetch();
 			if ( ! empty( $mepr_options->login_page_id ) && is_page( $mepr_options->login_page_id ) ) {
 				// For GET requests, return true if we're on the login page
@@ -163,8 +163,8 @@ class MemberPressIntegration extends BaseIntegration {
 		}
 
 		// Check if we're on MemberPress signup/checkout page via MeprOptions (if available)
-		if ( class_exists( 'MeprOptions' ) ) {
-			$mepr_options = MeprOptions::fetch();
+		if ( class_exists( '\MeprOptions' ) ) {
+			$mepr_options = \MeprOptions::fetch();
 			// Check if we're on signup page
 			if ( ! empty( $mepr_options->signup_page_id ) && is_page( $mepr_options->signup_page_id ) ) {
 				// Additional check: ensure we have registration-related POST data
