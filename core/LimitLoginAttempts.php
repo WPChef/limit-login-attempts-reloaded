@@ -5,6 +5,8 @@ namespace LLAR\Core;
 use Exception;
 use IXR_Error;
 use LLAR\Core\Http\Http;
+use LLAR\Core\Integrations\BaseIntegration;
+use LLAR\Core\Integrations\IntegrationManager;
 use WP_Error;
 use WP_User;
 
@@ -60,6 +62,13 @@ class LimitLoginAttempts
 	 */
 	public static $cloud_app = null;
 
+	/**
+	 * Integration manager for third-party plugins
+	 *
+	 * @var IntegrationManager
+	 */
+	private $integration_manager = null;
+
 	private $info_data = array();
 
 	/**
@@ -110,6 +119,9 @@ class LimitLoginAttempts
 
 		Config::init();
 		Http::init();
+
+		// Initialize integrations manager
+		$this->integration_manager = new IntegrationManager( $this );
 
 		$this->hooks_init();
 		$this->setup();
@@ -264,8 +276,6 @@ class LimitLoginAttempts
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
 		// hook for the plugin UM
 		add_action( 'um_submit_form_errors_hook_login', array( $this, 'um_limit_login_failed' ) );
-		// hook for the plugin MemberPress
-		add_filter( 'mepr_validate_login', array( $this, 'mepr_validate_login_handler' ), 10, 2 );
 
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
@@ -286,9 +296,6 @@ class LimitLoginAttempts
 
 		// Add notices for XMLRPC request
 		add_filter( 'xmlrpc_login_error', array( $this, 'xmlrpc_error_messages' ) );
-
-		// Add notices to woocommerce login page
-		add_action( 'wp_head', array( $this, 'add_wc_notices' ) );
 
 		/*
 		* This action should really be changed to the 'authenticate' filter as
@@ -365,9 +372,9 @@ class LimitLoginAttempts
 		$custom_error = Config::get( 'custom_error_message' );
 		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
 		$is_wp_login_page = isset( $_POST['log'] );
-		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
+		$is_custom_login_page = $this->integration_manager->is_custom_login_page();
 
-		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) :
+		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_custom_login_page || $um_limit_login_failed ) ) :
             ?>
 
             <script>
@@ -549,28 +556,6 @@ class LimitLoginAttempts
 		return $error;
 	}
 
-	/**
-	 * Errors on WooCommerce account page
-	 */
-	public function add_wc_notices()
-	{
-		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $limit_login_my_error_shown;
-
-		if ( ! function_exists( 'is_account_page' ) || ! function_exists( 'wc_add_notice' ) || ! $limit_login_nonempty_credentials ) {
-			return;
-		}
-
-		/*
-		* During lockout we do not want to show any other error messages (like
-		* unknown user or empty password).
-		*/
-		if ( empty( $_POST ) && ! $this->is_limit_login_ok() && ! $limit_login_just_lockedout ) {
-
-			if ( is_account_page() ) {
-				wc_add_notice( $this->error_msg(), 'error' );
-			}
-		}
-	}
 
 	/**
 	 * @param $user
@@ -1136,33 +1121,6 @@ class LimitLoginAttempts
 		$um_limit_login_failed = true;
 	}
 
-	/**
-	 * For plugin MemberPress
-	 * Triggers authenticate filter to allow Limit Login Attempts Reloaded
-	 * to track credentials and check lockouts before MemberPress validates the password
-	 * This enables the plugin to display remaining attempts messages
-	 *
-	 * @param array $errors Array of existing errors
-	 * @param array $params Login parameters (log, pwd)
-	 * @return array Unchanged errors array (we don't block, only track)
-	 */
-	public function mepr_validate_login_handler( $errors, $params = array() )
-	{
-		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
-			return $errors;
-		}
-
-		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
-		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
-
-		// Trigger authenticate filter to track credentials and check lockouts
-		// This sets $limit_login_nonempty_credentials and $_SESSION['login_attempts_left']
-		// We don't block here - MemberPress will handle blocking if needed
-		apply_filters( 'authenticate', null, $log, $pwd );
-
-		// Return errors unchanged - we're only tracking, not blocking
-		return $errors;
-	}
 
 	/**
 	 * Action when login attempt failed
@@ -2464,6 +2422,42 @@ class LimitLoginAttempts
 		) );
 	}
 
+	/**
+	 * Public wrapper for llar_api_response to allow integrations to use it
+	 * Only allows calls from integration classes within this plugin
+	 *
+	 * @param string $user_data User data to check
+	 * @param BaseIntegration|null $integration Integration instance (optional, for security validation)
+	 * @return array API response
+	 */
+	public function check_registration_api( $user_data, $integration = null ) {
+		// This method allows integrations to check registration via API. 
+		// Only trusted integration classes may call it.
+		if ( null !== $integration && $integration instanceof BaseIntegration ) {
+			// Additional security check: verify the class is in the correct namespace
+			// This prevents external code from extending BaseIntegration and calling this method
+			$integration_class = get_class( $integration );
+			$expected_namespace = 'LLAR\Core\Integrations\\';
+
+			// Check if the class is in the expected namespace
+			if ( strpos( $integration_class, $expected_namespace ) !== 0 ) {
+				// Class is not in the trusted namespace, deny the request
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( sprintf( 'LLAR: Security check failed - integration class %s is not in trusted namespace', $integration_class ) );
+				}
+				return array( 'result' => 'deny' );
+			}
+
+			$response = $this->llar_api_response( $user_data );
+
+			return $response;
+		}
+
+		// If no integration object is provided, deny the request
+		return array( 'result' => 'deny' );
+
+	}
+
 
 	/**
 	 * Register new user standard WP
@@ -2487,7 +2481,7 @@ class LimitLoginAttempts
 		}
 
 		$user_login_sanitize = sanitize_user( $_POST['user_login'] );
-		$user_email_sanitize = sanitize_user( $_POST['user_email'] );
+		$user_email_sanitize = sanitize_email( $_POST['user_email'] );
 
 		// Check any non-empty
 		$check_combo = ! empty( $user_login_sanitize ) ? $user_login_sanitize : $user_email_sanitize;
