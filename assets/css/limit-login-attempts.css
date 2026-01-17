@@ -4386,166 +4386,30 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-right: 2px;
 }
 
-#llar-setting-page .llar-toggle-switch,
-#llar-setting-page-help .llar-toggle-switch,
-#llar-setting-page-premium .llar-toggle-switch,
-#llar-setting-page-debug .llar-toggle-switch,
-#llar-setting-page-logs .llar-toggle-switch,
-#llar-setting-page-logs__active .llar-toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 26px;
-  margin-right: 12px;
-  vertical-align: middle;
-}
-#llar-setting-page .llar-toggle-switch input,
-#llar-setting-page-help .llar-toggle-switch input,
-#llar-setting-page-premium .llar-toggle-switch input,
-#llar-setting-page-debug .llar-toggle-switch input,
-#llar-setting-page-logs .llar-toggle-switch input,
-#llar-setting-page-logs__active .llar-toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-#llar-setting-page .llar-toggle-switch input:checked + .llar-toggle-slider,
-#llar-setting-page-help .llar-toggle-switch input:checked + .llar-toggle-slider,
-#llar-setting-page-premium .llar-toggle-switch input:checked + .llar-toggle-slider,
-#llar-setting-page-debug .llar-toggle-switch input:checked + .llar-toggle-slider,
-#llar-setting-page-logs .llar-toggle-switch input:checked + .llar-toggle-slider,
-#llar-setting-page-logs__active .llar-toggle-switch input:checked + .llar-toggle-slider {
-  background-color: #FF7C06;
-}
-#llar-setting-page .llar-toggle-switch input:checked + .llar-toggle-slider:before,
-#llar-setting-page-help .llar-toggle-switch input:checked + .llar-toggle-slider:before,
-#llar-setting-page-premium .llar-toggle-switch input:checked + .llar-toggle-slider:before,
-#llar-setting-page-debug .llar-toggle-switch input:checked + .llar-toggle-slider:before,
-#llar-setting-page-logs .llar-toggle-switch input:checked + .llar-toggle-slider:before,
-#llar-setting-page-logs__active .llar-toggle-switch input:checked + .llar-toggle-slider:before {
-  transform: translateX(24px);
-}
-#llar-setting-page .llar-toggle-switch input:focus + .llar-toggle-slider,
-#llar-setting-page-help .llar-toggle-switch input:focus + .llar-toggle-slider,
-#llar-setting-page-premium .llar-toggle-switch input:focus + .llar-toggle-slider,
-#llar-setting-page-debug .llar-toggle-switch input:focus + .llar-toggle-slider,
-#llar-setting-page-logs .llar-toggle-switch input:focus + .llar-toggle-slider,
-#llar-setting-page-logs__active .llar-toggle-switch input:focus + .llar-toggle-slider {
-  box-shadow: 0 0 1px #FF7C06;
-}
-#llar-setting-page .llar-toggle-switch .llar-toggle-slider,
-#llar-setting-page-help .llar-toggle-switch .llar-toggle-slider,
-#llar-setting-page-premium .llar-toggle-switch .llar-toggle-slider,
-#llar-setting-page-debug .llar-toggle-switch .llar-toggle-slider,
-#llar-setting-page-logs .llar-toggle-switch .llar-toggle-slider,
-#llar-setting-page-logs__active .llar-toggle-switch .llar-toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ABBFC1;
-  transition: 0.4s;
-  border-radius: 26px;
-}
-#llar-setting-page .llar-toggle-switch .llar-toggle-slider:before,
-#llar-setting-page-help .llar-toggle-switch .llar-toggle-slider:before,
-#llar-setting-page-premium .llar-toggle-switch .llar-toggle-slider:before,
-#llar-setting-page-debug .llar-toggle-switch .llar-toggle-slider:before,
-#llar-setting-page-logs .llar-toggle-switch .llar-toggle-slider:before,
-#llar-setting-page-logs__active .llar-toggle-switch .llar-toggle-slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-#llar-setting-page .llar-toggle-label,
-#llar-setting-page-help .llar-toggle-label,
-#llar-setting-page-premium .llar-toggle-label,
-#llar-setting-page-debug .llar-toggle-label,
-#llar-setting-page-logs .llar-toggle-label,
-#llar-setting-page-logs__active .llar-toggle-label {
-  vertical-align: middle;
-  font-size: 16px;
-  color: #2A2F40;
-}
-#llar-setting-page .llar-mfa-description-box,
-#llar-setting-page-help .llar-mfa-description-box,
-#llar-setting-page-premium .llar-mfa-description-box,
-#llar-setting-page-debug .llar-mfa-description-box,
-#llar-setting-page-logs .llar-mfa-description-box,
-#llar-setting-page-logs__active .llar-mfa-description-box {
-  background-color: #ECFAFB;
-  border: 1px solid #E8E9EC;
-  border-radius: 16px;
-  padding: 16px 20px;
-  margin: 20px 0;
-}
-#llar-setting-page .llar-mfa-description-box p,
-#llar-setting-page-help .llar-mfa-description-box p,
-#llar-setting-page-premium .llar-mfa-description-box p,
-#llar-setting-page-debug .llar-mfa-description-box p,
-#llar-setting-page-logs .llar-mfa-description-box p,
-#llar-setting-page-logs__active .llar-mfa-description-box p {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.6;
-  color: #2A2F40;
-}
 #llar-setting-page .llar-mfa-roles-list,
 #llar-setting-page-help .llar-mfa-roles-list,
 #llar-setting-page-premium .llar-mfa-roles-list,
 #llar-setting-page-debug .llar-mfa-roles-list,
 #llar-setting-page-logs .llar-mfa-roles-list,
 #llar-setting-page-logs__active .llar-mfa-roles-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
   margin-top: 12px;
 }
-#llar-setting-page .llar-mfa-role-item label,
-#llar-setting-page-help .llar-mfa-role-item label,
-#llar-setting-page-premium .llar-mfa-role-item label,
-#llar-setting-page-debug .llar-mfa-role-item label,
-#llar-setting-page-logs .llar-mfa-role-item label,
-#llar-setting-page-logs__active .llar-mfa-role-item label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-size: 16px;
-  color: #2A2F40;
+#llar-setting-page .llar-mfa-roles-list .llar-mfa-role-item,
+#llar-setting-page-help .llar-mfa-roles-list .llar-mfa-role-item,
+#llar-setting-page-premium .llar-mfa-roles-list .llar-mfa-role-item,
+#llar-setting-page-debug .llar-mfa-roles-list .llar-mfa-role-item,
+#llar-setting-page-logs .llar-mfa-roles-list .llar-mfa-role-item,
+#llar-setting-page-logs__active .llar-mfa-roles-list .llar-mfa-role-item {
+  margin-bottom: 8px;
 }
-#llar-setting-page .llar-mfa-role-item label input[type=checkbox],
-#llar-setting-page-help .llar-mfa-role-item label input[type=checkbox],
-#llar-setting-page-premium .llar-mfa-role-item label input[type=checkbox],
-#llar-setting-page-debug .llar-mfa-role-item label input[type=checkbox],
-#llar-setting-page-logs .llar-mfa-role-item label input[type=checkbox],
-#llar-setting-page-logs__active .llar-mfa-role-item label input[type=checkbox] {
-  margin-right: 10px;
-}
-#llar-setting-page .llar-mfa-role-item label .llar-role-name,
-#llar-setting-page-help .llar-mfa-role-item label .llar-role-name,
-#llar-setting-page-premium .llar-mfa-role-item label .llar-role-name,
-#llar-setting-page-debug .llar-mfa-role-item label .llar-role-name,
-#llar-setting-page-logs .llar-mfa-role-item label .llar-role-name,
-#llar-setting-page-logs__active .llar-mfa-role-item label .llar-role-name {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-#llar-setting-page .llar-mfa-role-item label .llar-role-recommended,
-#llar-setting-page-help .llar-mfa-role-item label .llar-role-recommended,
-#llar-setting-page-premium .llar-mfa-role-item label .llar-role-recommended,
-#llar-setting-page-debug .llar-mfa-role-item label .llar-role-recommended,
-#llar-setting-page-logs .llar-mfa-role-item label .llar-role-recommended,
-#llar-setting-page-logs__active .llar-mfa-role-item label .llar-role-recommended {
+#llar-setting-page .llar-mfa-roles-list .llar-mfa-role-item .llar-role-recommended,
+#llar-setting-page-help .llar-mfa-roles-list .llar-mfa-role-item .llar-role-recommended,
+#llar-setting-page-premium .llar-mfa-roles-list .llar-mfa-role-item .llar-role-recommended,
+#llar-setting-page-debug .llar-mfa-roles-list .llar-mfa-role-item .llar-role-recommended,
+#llar-setting-page-logs .llar-mfa-roles-list .llar-mfa-role-item .llar-role-recommended,
+#llar-setting-page-logs__active .llar-mfa-roles-list .llar-mfa-role-item .llar-role-recommended {
   color: #FF7C06;
   font-size: 13px;
   font-style: italic;
+  margin-left: 4px;
 }
