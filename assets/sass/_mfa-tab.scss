@@ -1,5 +1,11 @@
 // MFA Tab Styles
-#llar-setting-page {
+// Use common selector for all setting pages to avoid CSS duplication
+#llar-setting-page,
+#llar-setting-page-help,
+#llar-setting-page-premium,
+#llar-setting-page-debug,
+#llar-setting-page-logs,
+#llar-setting-page-logs__active {
 	.llar-toggle-switch {
 		position: relative;
 		display: inline-block;
