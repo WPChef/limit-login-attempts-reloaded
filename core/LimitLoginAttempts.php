@@ -63,11 +63,18 @@ class LimitLoginAttempts
 	private $info_data = array();
 
 	/**
-	 * Prepared roles for MFA tab (with translated names)
+	 * Prepared roles for MFA tab (with translated and sanitized names)
 	 *
 	 * @var array
 	 */
 	public $mfa_prepared_roles = array();
+
+	/**
+	 * Editable roles data for MFA tab (for admin role check)
+	 *
+	 * @var array
+	 */
+	public $mfa_editable_roles = array();
 
 	/**
 	 * Class instance accessible in other classes
@@ -90,14 +97,19 @@ class LimitLoginAttempts
 	public static $allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'help' );
 
 	/**
-	 * Check if a role is an admin role (contains 'admin' in key or name)
+	 * Check if a role is an admin role
 	 *
 	 * @param string $role_key Role key (e.g., 'administrator')
-	 * @param string $role_name Role display name (e.g., 'Administrator')
+	 * @param string $role_name Role display name (e.g., 'Administrator') - optional, for fallback check
 	 * @return bool True if role is admin-related
 	 */
-	public static function is_admin_role( $role_key, $role_name ) {
-		return ( stripos( $role_key, 'admin' ) !== false || stripos( $role_name, 'admin' ) !== false );
+	public static function is_admin_role( $role_key, $role_name = '' ) {
+		// Primary check: exact match for administrator role
+		if ( $role_key === 'administrator' ) {
+			return true;
+		}
+		// Fallback: check if 'admin' appears in key or name (for custom admin roles)
+		return ( stripos( $role_key, 'admin' ) !== false || ( ! empty( $role_name ) && stripos( $role_name, 'admin' ) !== false ) );
 	}
 
 	private $plans = array(
@@ -2174,16 +2186,28 @@ class LimitLoginAttempts
 			}
 		}
 
-		// Prepare roles data for MFA tab (if needed)
-		if ( isset( $_GET['tab'] ) && $_GET['tab'] === 'mfa' ) {
-			// Get editable roles and prepare translated names
+		// Prepare roles data for MFA tab (before including view to ensure data is ready)
+		// Check if we're on MFA tab (GET or POST with tab parameter, or default after form submit)
+		$current_tab = 'settings';
+		if ( isset( $_GET['tab'] ) && in_array( $_GET['tab'], self::$allowed_tabs ) ) {
+			$current_tab = sanitize_text_field( $_GET['tab'] );
+		} elseif ( isset( $_POST['llar_update_mfa_settings'] ) ) {
+			// After MFA form submit, we're still on MFA tab
+			$current_tab = 'mfa';
+		}
+		
+		if ( $current_tab === 'mfa' ) {
+			// Get editable roles and prepare translated names with sanitization
 			$editable_roles = get_editable_roles();
 			$prepared_roles = array();
 			foreach ( $editable_roles as $role_key => $role_data ) {
-				$prepared_roles[ $role_key ] = translate_user_role( $role_data['name'] );
+				// Sanitize translated role name for security
+				$prepared_roles[ $role_key ] = esc_html( translate_user_role( $role_data['name'] ) );
 			}
 			// Make available to view
 			$this->mfa_prepared_roles = $prepared_roles;
+			// Also store editable roles for is_admin_role() check
+			$this->mfa_editable_roles = $editable_roles;
 		}
 
 		include_once( LLA_PLUGIN_DIR . 'views/options-page.php' );
