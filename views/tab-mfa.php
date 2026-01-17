@@ -49,15 +49,12 @@ $all_roles = $wp_roles->get_names();
                             <?php _e( 'Enable 2FA', 'limit-login-attempts-reloaded' ); ?>
                         </th>
                         <td>
-                            <label class="llar-toggle-switch">
-                                <input type="checkbox" 
-                                       name="mfa_enabled" 
-                                       value="1" 
-                                       id="mfa_enabled"
-                                       <?php checked( $mfa_enabled, true ); ?>/>
-                                <span class="llar-toggle-slider"></span>
-                            </label>
-                            <label for="mfa_enabled" class="llar-toggle-label" style="display: inline-block; vertical-align: middle; margin-left: 12px;">
+                            <input type="checkbox" 
+                                   name="mfa_enabled" 
+                                   value="1" 
+                                   id="mfa_enabled"
+                                   <?php checked( $mfa_enabled, true ); ?>/>
+                            <label for="mfa_enabled">
                                 <?php _e( 'Enable multi-factor authentication for selected user roles', 'limit-login-attempts-reloaded' ); ?>
                             </label>
                         </td>
@@ -97,10 +94,8 @@ $all_roles = $wp_roles->get_names();
                     <!-- Privacy Notice -->
                     <tr>
                         <td colspan="2">
-                            <div class="llar-mfa-description-box">
-                                <p>
-                                    <?php _e( 'By turning this feature ON, you consent that for the selected user groups and for all visitors without an assigned group (e.g., guests), the following data will be sent to a secure endpoint at limitloginattempts.com to facilitate multi-factor authentication: username, IP address, user group (if known), and user agent. We will use this data only for 2FA/MFA and will delete it from our servers as soon as the 2FA session ends, unless you (the admin) specify otherwise. The passwords will NOT be sent to us.', 'limit-login-attempts-reloaded' ); ?>
-                                </p>
+                            <div class="description-secondary">
+                                <?php _e( 'By turning this feature ON, you consent that for the selected user groups and for all visitors without an assigned group (e.g., guests), the following data will be sent to a secure endpoint at limitloginattempts.com to facilitate multi-factor authentication: username, IP address, user group (if known), and user agent. We will use this data only for 2FA/MFA and will delete it from our servers as soon as the 2FA session ends, unless you (the admin) specify otherwise. The passwords will NOT be sent to us.', 'limit-login-attempts-reloaded' ); ?>
                             </div>
                         </td>
                     </tr>
