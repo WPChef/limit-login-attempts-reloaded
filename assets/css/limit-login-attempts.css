@@ -2343,7 +2343,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-weight: 600;
 }
 #llar-welcome-page .llar-upgrade-btn-wrap a:hover {
-  background-color: #af5d00;
+  background-color: rgb(175, 92.9203539823, 0);
 }
 #llar-welcome-page .llar-upgrade-questions {
   font-size: 17px;

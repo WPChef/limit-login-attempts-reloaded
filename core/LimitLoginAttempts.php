@@ -63,6 +63,13 @@ class LimitLoginAttempts
 	private $info_data = array();
 
 	/**
+	 * Prepared roles for MFA tab (with translated names)
+	 *
+	 * @var array
+	 */
+	public $mfa_prepared_roles = array();
+
+	/**
 	 * Class instance accessible in other classes
 	 *
 	 * @var LimitLoginAttempts
@@ -80,7 +87,7 @@ class LimitLoginAttempts
 	/**
 	 * Allowed tabs for options page
 	 */
-	private static $allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'help' );
+	public static $allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'help' );
 
 	/**
 	 * Check if a role is an admin role (contains 'admin' in key or name)
@@ -2145,20 +2152,38 @@ class LimitLoginAttempts
 				// Save MFA enabled/disabled - use absint() for explicit type casting
 				Config::update( 'mfa_enabled', absint( isset( $_POST['mfa_enabled'] ) ) );
 
-				// Save selected roles - optimize with array_intersect_key
+				// Save selected roles - use editable roles and optimize validation
 				$mfa_roles = array();
 				if ( isset( $_POST['mfa_roles'] ) && is_array( $_POST['mfa_roles'] ) && ! empty( $_POST['mfa_roles'] ) ) {
-					$wp_roles = wp_roles();
-					$all_roles = $wp_roles->get_names();
-					// Sanitize and filter roles using array_intersect_key for better performance
-					$sanitized_roles = array_map( 'sanitize_text_field', wp_unslash( $_POST['mfa_roles'] ) );
-					$valid_roles = array_intersect_key( array_flip( $sanitized_roles ), $all_roles );
-					$mfa_roles = array_keys( $valid_roles );
+					// Get editable roles (cached by WordPress on request level)
+					$editable_roles = get_editable_roles();
+					$editable_role_keys = array_keys( $editable_roles );
+					
+					// Sanitize and filter roles - remove empty values and validate against editable roles
+					$sanitized_roles = array_filter( 
+						array_map( 'sanitize_text_field', wp_unslash( (array) $_POST['mfa_roles'] ) ),
+						'strlen' // Remove empty strings
+					);
+					
+					// Validate against editable roles only
+					$mfa_roles = array_intersect( $sanitized_roles, $editable_role_keys );
 				}
 				Config::update( 'mfa_roles', $mfa_roles );
 
 				$this->show_message( __( '2FA settings saved.', 'limit-login-attempts-reloaded' ) );
 			}
+		}
+
+		// Prepare roles data for MFA tab (if needed)
+		if ( isset( $_GET['tab'] ) && $_GET['tab'] === 'mfa' ) {
+			// Get editable roles and prepare translated names
+			$editable_roles = get_editable_roles();
+			$prepared_roles = array();
+			foreach ( $editable_roles as $role_key => $role_data ) {
+				$prepared_roles[ $role_key ] = translate_user_role( $role_data['name'] );
+			}
+			// Make available to view
+			$this->mfa_prepared_roles = $prepared_roles;
 		}
 
 		include_once( LLA_PLUGIN_DIR . 'views/options-page.php' );
