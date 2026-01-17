@@ -77,6 +77,22 @@ class LimitLoginAttempts
 	public static $capabilities = 'llar_admin';
 	public $has_capability = false;
 
+	/**
+	 * Allowed tabs for options page
+	 */
+	private static $allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'help' );
+
+	/**
+	 * Check if a role is an admin role (contains 'admin' in key or name)
+	 *
+	 * @param string $role_key Role key (e.g., 'administrator')
+	 * @param string $role_name Role display name (e.g., 'Administrator')
+	 * @return bool True if role is admin-related
+	 */
+	public static function is_admin_role( $role_key, $role_name ) {
+		return ( stripos( $role_key, 'admin' ) !== false || stripos( $role_name, 'admin' ) !== false );
+	}
+
 	private $plans = array(
 		'default'       => array(
 			'name'          => 'Free',
@@ -2121,21 +2137,23 @@ class LimitLoginAttempts
 
 				check_admin_referer( 'limit-login-attempts-options' );
 
-				// Save MFA enabled/disabled
-				Config::update( 'mfa_enabled', ( isset( $_POST['mfa_enabled'] ) ? 1 : 0 ) );
+				// Check user capabilities
+				if ( ! $this->has_capability ) {
+					wp_die( __( 'You do not have sufficient permissions to access this page.', 'limit-login-attempts-reloaded' ) );
+				}
 
-				// Save selected roles
+				// Save MFA enabled/disabled - use absint() for explicit type casting
+				Config::update( 'mfa_enabled', absint( isset( $_POST['mfa_enabled'] ) ) );
+
+				// Save selected roles - optimize with array_intersect_key
 				$mfa_roles = array();
-				if ( isset( $_POST['mfa_roles'] ) && is_array( $_POST['mfa_roles'] ) ) {
+				if ( isset( $_POST['mfa_roles'] ) && is_array( $_POST['mfa_roles'] ) && ! empty( $_POST['mfa_roles'] ) ) {
 					$wp_roles = wp_roles();
 					$all_roles = $wp_roles->get_names();
-					foreach ( $_POST['mfa_roles'] as $role_key ) {
-						$role_key = sanitize_text_field( $role_key );
-						// Validate that role exists
-						if ( array_key_exists( $role_key, $all_roles ) ) {
-							$mfa_roles[] = $role_key;
-						}
-					}
+					// Sanitize and filter roles using array_intersect_key for better performance
+					$sanitized_roles = array_map( 'sanitize_text_field', wp_unslash( $_POST['mfa_roles'] ) );
+					$valid_roles = array_intersect_key( array_flip( $sanitized_roles ), $all_roles );
+					$mfa_roles = array_keys( $valid_roles );
 				}
 				Config::update( 'mfa_roles', $mfa_roles );
 

@@ -71,8 +71,9 @@ $all_roles = $wp_roles->get_names();
                         <td>
                             <div class="llar-mfa-roles-list">
                                 <?php foreach ( $all_roles as $role_key => $role_name ) : 
-                                    $is_admin_role = ( stripos( $role_key, 'admin' ) !== false || stripos( $role_name, 'admin' ) !== false );
+                                    $is_admin_role = LimitLoginAttempts::is_admin_role( $role_key, $role_name );
                                     $is_checked = in_array( $role_key, $mfa_roles );
+                                    $role_display_name = translate_user_role( $role_name );
                                 ?>
                                     <div class="llar-mfa-role-item">
                                         <label>
@@ -81,7 +82,7 @@ $all_roles = $wp_roles->get_names();
                                                    value="<?php echo esc_attr( $role_key ); ?>"
                                                    <?php checked( $is_checked, true ); ?>/>
                                             <span class="llar-role-name">
-                                                <?php echo esc_html( translate_user_role( $role_name ) ); ?>
+                                                <?php echo esc_html( $role_display_name ); ?>
                                                 <?php if ( $is_admin_role ) : ?>
                                                     <span class="llar-role-recommended">(recommended)</span>
                                                 <?php endif; ?>

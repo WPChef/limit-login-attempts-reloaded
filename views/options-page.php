@@ -12,7 +12,8 @@ $active_tab = "dashboard";
 $active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $is_active_app_custom = $active_app === 'custom';
 
-if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'help' ) ) ) {
+$allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'help' );
+if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], $allowed_tabs ) ) {
 
 	if ( ! LimitLoginAttempts::$cloud_app && $_GET['tab'] === 'logs-custom' ) {
 
