@@ -9,6 +9,7 @@
  */
 
 use LLAR\Core\Config;
+use LLAR\Core\LimitLoginAttempts;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
