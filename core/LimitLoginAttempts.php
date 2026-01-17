@@ -2117,6 +2117,29 @@ class LimitLoginAttempts
 				}
 				$this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
 				$this->cloud_app_init();
+			} elseif ( isset( $_POST[ 'llar_update_mfa_settings' ] ) ) {
+
+				check_admin_referer( 'limit-login-attempts-options' );
+
+				// Save MFA enabled/disabled
+				Config::update( 'mfa_enabled', ( isset( $_POST['mfa_enabled'] ) ? 1 : 0 ) );
+
+				// Save selected roles
+				$mfa_roles = array();
+				if ( isset( $_POST['mfa_roles'] ) && is_array( $_POST['mfa_roles'] ) ) {
+					$wp_roles = wp_roles();
+					$all_roles = $wp_roles->get_names();
+					foreach ( $_POST['mfa_roles'] as $role_key ) {
+						$role_key = sanitize_text_field( $role_key );
+						// Validate that role exists
+						if ( array_key_exists( $role_key, $all_roles ) ) {
+							$mfa_roles[] = $role_key;
+						}
+					}
+				}
+				Config::update( 'mfa_roles', $mfa_roles );
+
+				$this->show_message( __( '2FA settings saved.', 'limit-login-attempts-reloaded' ) );
 			}
 		}
 
@@ -2536,5 +2559,6 @@ class LimitLoginAttempts
 
 		return $errors;
 	}
+
 }
 
