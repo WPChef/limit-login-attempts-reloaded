@@ -27,18 +27,12 @@ if ( ! is_array( $mfa_roles ) ) {
 	$mfa_roles = array();
 }
 
-// Get prepared roles from controller (with translated names) or fallback to editable roles
-$editable_roles = get_editable_roles();
-$all_roles = isset( $this->mfa_prepared_roles ) ? $this->mfa_prepared_roles : array();
-if ( empty( $all_roles ) ) {
-	// Fallback: prepare roles if not prepared by controller
-	foreach ( $editable_roles as $role_key => $role_data ) {
-		$all_roles[ $role_key ] = translate_user_role( $role_data['name'] );
-	}
-}
+// Get prepared roles from controller (with translated and sanitized names)
+$all_roles = isset( $this->mfa_prepared_roles ) && ! empty( $this->mfa_prepared_roles ) ? $this->mfa_prepared_roles : array();
+$editable_roles = isset( $this->mfa_editable_roles ) && ! empty( $this->mfa_editable_roles ) ? $this->mfa_editable_roles : array();
 
 ?>
-<div id="llar-setting-page">
+<div id="llar-setting-page" class="llar-admin">
     <form action="<?php echo $this->get_options_page_uri( 'mfa' ); ?>" method="post">
         <div class="llar-settings-wrap">
             <h3 class="title_page">
@@ -75,9 +69,8 @@ if ( empty( $all_roles ) ) {
                         <td>
                             <div class="llar-mfa-roles-list">
                                 <?php foreach ( $all_roles as $role_key => $role_display_name ) : 
-                                    // Get original role name for admin check (from editable_roles)
-                                    $original_role_name = isset( $editable_roles[ $role_key ]['name'] ) ? $editable_roles[ $role_key ]['name'] : $role_display_name;
-                                    $is_admin_role = LimitLoginAttempts::is_admin_role( $role_key, $original_role_name );
+                                    // Check if role is admin (role_display_name already sanitized, but we check role_key primarily)
+                                    $is_admin_role = LimitLoginAttempts::is_admin_role( $role_key );
                                     $is_checked = in_array( $role_key, $mfa_roles );
                                 ?>
                                     <div class="llar-mfa-role-item">
@@ -87,7 +80,7 @@ if ( empty( $all_roles ) ) {
                                                    value="<?php echo esc_attr( $role_key ); ?>"
                                                    <?php checked( $is_checked, true ); ?>/>
                                             <span class="llar-role-name">
-                                                <?php echo esc_html( $role_display_name ); ?>
+                                                <?php echo $role_display_name; // Already sanitized in controller ?>
                                                 <?php if ( $is_admin_role ) : ?>
                                                     <span class="llar-role-recommended"><?php echo esc_html__( '(recommended)', 'limit-login-attempts-reloaded' ); ?></span>
                                                 <?php endif; ?>

@@ -1,11 +1,6 @@
 // MFA Tab Styles
-// Minimal styles using only existing patterns from master
-#llar-setting-page,
-#llar-setting-page-help,
-#llar-setting-page-premium,
-#llar-setting-page-debug,
-#llar-setting-page-logs,
-#llar-setting-page-logs__active {
+// Minimal styles using common selector to reduce CSS duplication
+.llar-admin {
 	.llar-mfa-roles-list {
 		margin-top: 12px;
 
