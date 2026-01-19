@@ -358,19 +358,20 @@ jQuery(document).ready(function($) {
 			}
 		}
 		
-		// Create a simple, visible container for rendering
+		// Create a container for rendering - positioned off-screen
 		var tempDiv = document.createElement('div');
 		tempDiv.id = 'llar-pdf-temp-container';
 		tempDiv.style.position = 'absolute';
-		tempDiv.style.top = '0';
-		tempDiv.style.left = '0';
+		tempDiv.style.top = '-9999px'; // Move far above viewport
+		tempDiv.style.left = '-9999px'; // Move far left of viewport
 		tempDiv.style.width = '794px'; // A4 width at 96 DPI
 		tempDiv.style.padding = '20px';
 		tempDiv.style.backgroundColor = '#ffffff';
-		tempDiv.style.zIndex = '99999';
-		tempDiv.style.opacity = '1'; // Visible for html2canvas
+		tempDiv.style.zIndex = '-1'; // Behind everything
+		tempDiv.style.opacity = '1'; // Fully opaque for html2canvas
 		tempDiv.style.pointerEvents = 'none';
 		tempDiv.style.boxSizing = 'border-box';
+		tempDiv.style.overflow = 'hidden';
 		tempDiv.innerHTML = contentToUse;
 		
 		document.body.appendChild(tempDiv);
