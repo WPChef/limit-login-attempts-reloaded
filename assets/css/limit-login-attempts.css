@@ -4413,12 +4413,13 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .llar-admin .micro_cloud_modal__body #llar-rescue-links-display {
   margin-top: 30px !important;
+  padding-top: 20px !important;
   text-align: left !important;
 }
 .llar-admin .micro_cloud_modal__body #llar-rescue-links-display .field-title {
   text-align: left !important;
   margin-left: 0 !important;
-  margin-top: 20px !important;
+  margin-top: 0 !important;
 }
 .llar-admin .micro_cloud_modal__body #llar-rescue-links-display .field-desc, .llar-admin .micro_cloud_modal__body #llar-rescue-links-display .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-add, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .llar-admin .micro_cloud_modal__body #llar-rescue-links-display .field-desc-add {
   text-align: left !important;
