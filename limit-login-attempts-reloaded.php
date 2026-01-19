@@ -41,4 +41,97 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 	add_action( 'plugins_loaded', function() {
 		(new LLAR\Core\LimitLoginAttempts());
 	}, 9999 );
+
+	/**
+	 * Activation hook: Cleanup old cron events and transients
+	 */
+	register_activation_hook( __FILE__, 'llar_mfa_activation_cleanup' );
+
+	function llar_mfa_activation_cleanup() {
+		// Clear all scheduled llar_mfa_rescue_timeout events
+		wp_clear_scheduled_hook( 'llar_mfa_rescue_timeout' );
+
+		// Clear old rescue transients
+		llar_mfa_cleanup_rescue_transients();
+
+		// Optionally: clear temporary data if expired
+		$disabled_until = \LLAR\Core\Config::get( 'mfa_temporarily_disabled_until' );
+		if ( $disabled_until && $disabled_until < time() ) {
+			\LLAR\Core\Config::delete( 'mfa_temporarily_disabled_until' );
+		}
+
+		// Schedule daily cleanup if not already scheduled
+		if ( ! wp_next_scheduled( 'llar_mfa_daily_cleanup' ) ) {
+			wp_schedule_event( time(), 'daily', 'llar_mfa_daily_cleanup' );
+		}
+	}
+
+	/**
+	 * Deactivation hook: Cleanup cron events and transients (CRITICAL)
+	 */
+	register_deactivation_hook( __FILE__, 'llar_mfa_deactivation_cleanup' );
+
+	function llar_mfa_deactivation_cleanup() {
+		// Clear all scheduled events
+		wp_clear_scheduled_hook( 'llar_mfa_rescue_timeout' );
+		wp_clear_scheduled_hook( 'llar_mfa_daily_cleanup' );
+
+		// Clear all rescue transients
+		llar_mfa_cleanup_rescue_transients();
+	}
+
+	/**
+	 * Daily cleanup: Remove old transients (prevents DB accumulation)
+	 */
+	add_action( 'llar_mfa_daily_cleanup', 'llar_mfa_daily_cleanup' );
+
+	function llar_mfa_daily_cleanup() {
+		global $wpdb;
+
+		// Delete all transients older than 1 day
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} 
+				 WHERE option_name LIKE %s 
+				 AND option_value < %d",
+				$wpdb->esc_like( '_transient_llar_rescue_' ) . '%',
+				time() - DAY_IN_SECONDS
+			)
+		);
+
+		// Also delete timeout transients
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} 
+				 WHERE option_name LIKE %s 
+				 AND option_value < %d",
+				$wpdb->esc_like( '_transient_timeout_llar_rescue_' ) . '%',
+				time() - DAY_IN_SECONDS
+			)
+		);
+	}
+
+	/**
+	 * Helper function: Cleanup rescue transients
+	 */
+	function llar_mfa_cleanup_rescue_transients() {
+		global $wpdb;
+
+		// Delete all rescue transients
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} 
+				 WHERE option_name LIKE %s",
+				$wpdb->esc_like( '_transient_llar_rescue_' ) . '%'
+			)
+		);
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} 
+				 WHERE option_name LIKE %s",
+				$wpdb->esc_like( '_transient_timeout_llar_rescue_' ) . '%'
+			)
+		);
+	}
 }
