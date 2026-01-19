@@ -176,9 +176,7 @@ jQuery(document).ready(function($) {
 			animationBounce: 1,
 			offsetTop: 50,
 			offsetBottom: 0,
-			boxWidth: '90%',
-			maxWidth: '600px',
-			containerFluid: true,
+			boxWidth: 1280,
 			useBootstrap: false,
 			bgOpacity: 0.9,
 			closeIcon: function() {
@@ -284,29 +282,6 @@ jQuery(document).ready(function($) {
 		
 		// Hide the generate button
 		rescueModal.$content.find('.llar-generate-rescue-links').closest('.button_block-single').hide();
-		
-		// Force left alignment after content is set - only for rescue links display
-		setTimeout(function() {
-			const $displayContainer = rescueModal.$content.find('#llar-rescue-links-display');
-			const $modalLinksList = $displayContainer.find('.llar-rescue-links-list');
-			
-			// Apply inline styles only to rescue links display container
-			$displayContainer.css({
-				'text-align': 'left'
-			});
-			
-			$displayContainer.find('.field-title, .field-desc').css({
-				'text-align': 'left'
-			});
-			
-			$modalLinksList.css({
-				'text-align': 'left',
-				'margin-left': '0',
-				'margin-right': '0',
-				'padding-left': '15px',
-				'padding-right': '15px'
-			});
-		}, 100);
 	}
 
 	function downloadAsPDF(htmlContent) {

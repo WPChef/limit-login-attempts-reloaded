@@ -16,53 +16,53 @@
 		}
 	}
 
-	// MFA Rescue Popup styles - use existing classes from onboarding-popup
-	// Styles are applied automatically through .llar-onboarding-popup__content, .llar-onboarding__body, .card, .field-wrap, .field-title, .field-desc, .button_block-single
+	// MFA Rescue Popup styles - use Micro Cloud modal structure
+	// Styles are applied automatically through .micro_cloud_modal__content, .micro_cloud_modal__body, .card, .card-body, .field-wrap, .field-title, .field-desc, .button_block-single
 	
 	// Reduce popup size for MFA rescue popup
 	#llar-mfa-rescue-popup-content {
-		.llar-onboarding-popup__content {
-			min-height: auto !important;
-			max-height: 55vh !important;
+		.micro_cloud_modal__content {
+			max-height: 60vh !important;
 			overflow-y: auto !important;
-			padding: 10px 10px !important;
+		}
+		
+		.micro_cloud_modal__body {
+			padding: 30px 40px !important;
 		}
 		
 		.card {
-			min-width: auto !important;
-			margin-top: 0 !important;
-			padding: 10px 20px 12px !important;
+			margin-top: 15px !important;
+		}
+		
+		.card-body {
+			padding: 20px 40px !important;
 		}
 	}
 	
-	// Limit height of rescue links list to prevent overflow
-	.llar-onboarding-popup__content {
+	// Styles for rescue links display container - all styles in SCSS, no JS
+	.micro_cloud_modal__body {
 		#llar-rescue-links-display {
-			margin-top: 20px !important;
-			
-			.llar-rescue-links-list {
-				max-height: 150px !important;
-			}
-		}
-	}
-	
-	// Override text-align for rescue links display only - do not affect parent card/field-wrap
-	.llar-onboarding-popup__content {
-		#llar-rescue-links-display {
+			margin-top: 30px !important;
 			text-align: left !important;
 			
 			.field-title {
 				text-align: left !important;
 				margin-left: 0 !important;
+				margin-top: 20px !important;
 			}
 			
 			.field-desc {
 				text-align: left !important;
 				margin-left: 0 !important;
+				margin-top: 15px !important;
 			}
 			
 			.button_block-single {
 				text-align: left !important;
+			}
+			
+			.llar-rescue-links-list {
+				max-height: 150px !important;
 			}
 		}
 	}

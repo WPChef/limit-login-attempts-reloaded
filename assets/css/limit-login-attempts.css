@@ -4398,36 +4398,38 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-style: italic;
   margin-left: 4px;
 }
-.llar-admin #llar-mfa-rescue-popup-content .llar-onboarding-popup__content {
-  min-height: auto !important;
-  max-height: 55vh !important;
+.llar-admin #llar-mfa-rescue-popup-content .micro_cloud_modal__content {
+  max-height: 60vh !important;
   overflow-y: auto !important;
-  padding: 10px 10px !important;
+}
+.llar-admin #llar-mfa-rescue-popup-content .micro_cloud_modal__body {
+  padding: 30px 40px !important;
 }
 .llar-admin #llar-mfa-rescue-popup-content .card {
-  min-width: auto !important;
-  margin-top: 0 !important;
-  padding: 10px 20px 12px !important;
+  margin-top: 15px !important;
 }
-.llar-admin .llar-onboarding-popup__content #llar-rescue-links-display {
+.llar-admin #llar-mfa-rescue-popup-content .card-body {
+  padding: 20px 40px !important;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display {
+  margin-top: 30px !important;
+  text-align: left !important;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .field-title {
+  text-align: left !important;
+  margin-left: 0 !important;
   margin-top: 20px !important;
 }
-.llar-admin .llar-onboarding-popup__content #llar-rescue-links-display .llar-rescue-links-list {
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .field-desc, .llar-admin .micro_cloud_modal__body #llar-rescue-links-display .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-add, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .llar-admin .micro_cloud_modal__body #llar-rescue-links-display .field-desc-add {
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-top: 15px !important;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .button_block-single {
+  text-align: left !important;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-links-list {
   max-height: 150px !important;
-}
-.llar-admin .llar-onboarding-popup__content #llar-rescue-links-display {
-  text-align: left !important;
-}
-.llar-admin .llar-onboarding-popup__content #llar-rescue-links-display .field-title {
-  text-align: left !important;
-  margin-left: 0 !important;
-}
-.llar-admin .llar-onboarding-popup__content #llar-rescue-links-display .field-desc, .llar-admin .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content #llar-rescue-links-display .field-desc-add, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-admin .llar-onboarding-popup__content #llar-rescue-links-display .field-desc-add {
-  text-align: left !important;
-  margin-left: 0 !important;
-}
-.llar-admin .llar-onboarding-popup__content #llar-rescue-links-display .button_block-single {
-  text-align: left !important;
 }
 .llar-admin .llar-rescue-links-list {
   margin: 10px 0 !important;
