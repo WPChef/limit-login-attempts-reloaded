@@ -16,8 +16,8 @@
 		}
 	}
 
-	// MFA Rescue Popup styles - используем существующие классы из onboarding-popup
-	// Стили применяются автоматически через .card, .field-wrap, .field-title, .field-desc, .button_block-single
+	// MFA Rescue Popup styles - use existing classes from onboarding-popup
+	// Styles are applied automatically through .card, .field-wrap, .field-title, .field-desc, .button_block-single
 	
 	// Override card text-align for rescue links display - must be very specific
 	.jconfirm-box {
@@ -44,7 +44,7 @@
 		}
 	}
 	
-	// Стили для отображения списка rescue ссылок
+	// Styles for displaying rescue links list
 	.llar-rescue-links-list {
 		margin: 20px 0 !important;
 		margin-left: 0 !important;

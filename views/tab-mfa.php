@@ -135,10 +135,10 @@ include_once LLA_PLUGIN_DIR . 'views/mfa-rescue-popup.php';
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
-	var rescuePopupShown = false;
-	var rescueCodesDownloaded = false;
-	var rescueModal = null;
-	var htmlContentForPDF = null;
+	let rescuePopupShown = false;
+	let rescueCodesDownloaded = false;
+	let rescueModal = null;
+	let htmlContentForPDF = null;
 
 	<?php if ( isset( $this->mfa_show_rescue_popup ) && $this->mfa_show_rescue_popup ) : ?>
 	// Show popup if flag is set (MFA enabled without codes)
@@ -147,8 +147,8 @@ jQuery(document).ready(function($) {
 
 	// Handle form submission - check if MFA is being enabled
 	$('form').on('submit', function(e) {
-		var $form = $(this);
-		var $mfaCheckbox = $('#mfa_enabled');
+		const $form = $(this);
+		const $mfaCheckbox = $('#mfa_enabled');
 		
 		// Only intercept if MFA checkbox is checked
 		if ($mfaCheckbox.is(':checked')) {
@@ -164,7 +164,7 @@ jQuery(document).ready(function($) {
 		}
 		rescuePopupShown = true;
 
-		var popupContent = $('#llar-mfa-rescue-popup-content').html();
+		const popupContent = $('#llar-mfa-rescue-popup-content').html();
 
 		rescueModal = $.dialog({
 			title: false, // Hide default title, we have our own in content
@@ -202,7 +202,7 @@ jQuery(document).ready(function($) {
 			onContentReady: function() {
 				// Handle generate button click
 				$(document).off('click', '.llar-generate-rescue-links').on('click', '.llar-generate-rescue-links', function() {
-					var $button = $(this);
+					const $button = $(this);
 					$button.prop('disabled', true).text('<?php echo esc_js( __( 'Generating...', 'limit-login-attempts-reloaded' ) ); ?>');
 
 					// AJAX request to generate codes
@@ -260,20 +260,20 @@ jQuery(document).ready(function($) {
 
 	function displayRescueLinks(urls, domain) {
 		// Get the display container HTML
-		var displayHtml = $('#llar-rescue-links-display').html();
+		const displayHtml = $('#llar-rescue-links-display').html();
 		
 		// Create temporary container to build the list
-		var $tempContainer = $('<div>').html(displayHtml);
-		var $linksList = $tempContainer.find('#llar-rescue-links-list');
+		const $tempContainer = $('<div>').html(displayHtml);
+		const $linksList = $tempContainer.find('#llar-rescue-links-list');
 		
 		// Clear previous content
 		$linksList.empty();
 		
 		// Create ordered list of links
-		var $list = $('<ol class="llar-rescue-links-ol"></ol>');
+		const $list = $('<ol class="llar-rescue-links-ol"></ol>');
 		urls.forEach(function(url, index) {
-			var $listItem = $('<li class="llar-rescue-link-item"></li>');
-			var $link = $('<a href="' + url + '" target="_blank" class="llar-rescue-link" rel="noopener noreferrer">' + url + '</a>');
+			const $listItem = $('<li class="llar-rescue-link-item"></li>');
+			const $link = $('<a href="' + url + '" target="_blank" class="llar-rescue-link" rel="noopener noreferrer">' + url + '</a>');
 			$listItem.append($link);
 			$list.append($listItem);
 		});
@@ -285,9 +285,9 @@ jQuery(document).ready(function($) {
 		
 		// Force left alignment after content is set
 		setTimeout(function() {
-			var $modalCard = rescueModal.$content.find('.card');
-			var $modalFieldWrap = rescueModal.$content.find('.field-wrap');
-			var $modalLinksList = rescueModal.$content.find('.llar-rescue-links-list');
+			const $modalCard = rescueModal.$content.find('.card');
+			const $modalFieldWrap = rescueModal.$content.find('.field-wrap');
+			const $modalLinksList = rescueModal.$content.find('.llar-rescue-links-list');
 			
 			// Apply inline styles to force left alignment
 			$modalCard.css({
@@ -339,27 +339,27 @@ jQuery(document).ready(function($) {
 		}
 
 		// Remove any existing temp div
-		var existingDiv = document.getElementById('llar-pdf-temp-container');
+		const existingDiv = document.getElementById('llar-pdf-temp-container');
 		if (existingDiv) {
 			document.body.removeChild(existingDiv);
 		}
 
 		// Extract content if it's wrapped in body/html tags
-		var contentToUse = htmlContent;
-		var tempParser = document.createElement('div');
+		let contentToUse = htmlContent;
+		const tempParser = document.createElement('div');
 		tempParser.innerHTML = htmlContent;
-		var bodyContent = tempParser.querySelector('body');
+		const bodyContent = tempParser.querySelector('body');
 		if (bodyContent) {
 			contentToUse = bodyContent.innerHTML;
 		} else {
-			var divContent = tempParser.querySelector('div');
+			const divContent = tempParser.querySelector('div');
 			if (divContent) {
 				contentToUse = divContent.outerHTML;
 			}
 		}
 		
 		// Create a container for rendering - positioned off-screen
-		var tempDiv = document.createElement('div');
+		const tempDiv = document.createElement('div');
 		tempDiv.id = 'llar-pdf-temp-container';
 		tempDiv.style.position = 'absolute';
 		tempDiv.style.top = '-9999px'; // Move far above viewport
@@ -400,7 +400,7 @@ jQuery(document).ready(function($) {
 			console.log('Element has children:', tempDiv.children.length);
 
 			// Use html2canvas and jsPDF directly
-			var { jsPDF } = window.jspdf;
+			const { jsPDF } = window.jspdf;
 			
 			html2canvas(tempDiv, {
 				scale: 2,
@@ -410,14 +410,14 @@ jQuery(document).ready(function($) {
 				width: tempDiv.scrollWidth,
 				height: tempDiv.scrollHeight
 			}).then(function(canvas) {
-				var imgData = canvas.toDataURL('image/png');
-				var pdf = new jsPDF('p', 'mm', 'a4');
+				const imgData = canvas.toDataURL('image/png');
+				const pdf = new jsPDF('p', 'mm', 'a4');
 				
-				var imgWidth = 210; // A4 width in mm
-				var pageHeight = 297; // A4 height in mm
-				var imgHeight = (canvas.height * imgWidth) / canvas.width;
-				var heightLeft = imgHeight;
-				var position = 0;
+				const imgWidth = 210; // A4 width in mm
+				const pageHeight = 297; // A4 height in mm
+				const imgHeight = (canvas.height * imgWidth) / canvas.width;
+				let heightLeft = imgHeight;
+				let position = 0;
 				
 				// Add first page
 				pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
