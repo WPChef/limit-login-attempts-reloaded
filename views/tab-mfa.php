@@ -317,11 +317,11 @@ jQuery(document).ready(function($) {
 	}
 
 	function downloadAsPDF(htmlContent) {
-		// Check if html2pdf is available
-		if (typeof html2pdf === 'undefined') {
+		// Check if required libraries are available
+		if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
 			$.alert({
 				title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-				content: '<?php echo esc_js( __( 'PDF library not loaded. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>',
+				content: '<?php echo esc_js( __( 'PDF libraries not loaded. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>',
 				type: 'red'
 			});
 			return;
@@ -344,37 +344,45 @@ jQuery(document).ready(function($) {
 			document.body.removeChild(existingDiv);
 		}
 
-		// Create a wrapper div that will contain our content
-		var wrapperDiv = document.createElement('div');
-		wrapperDiv.id = 'llar-pdf-temp-container';
-		wrapperDiv.style.position = 'fixed';
-		wrapperDiv.style.top = '0';
-		wrapperDiv.style.left = '0';
-		wrapperDiv.style.width = '750px'; // A4 content width
-		wrapperDiv.style.backgroundColor = '#ffffff';
-		wrapperDiv.style.zIndex = '9999';
-		wrapperDiv.style.opacity = '0';
-		wrapperDiv.style.pointerEvents = 'none';
-		wrapperDiv.style.overflow = 'visible';
+		// Extract content if it's wrapped in body/html tags
+		var contentToUse = htmlContent;
+		var tempParser = document.createElement('div');
+		tempParser.innerHTML = htmlContent;
+		var bodyContent = tempParser.querySelector('body');
+		if (bodyContent) {
+			contentToUse = bodyContent.innerHTML;
+		} else {
+			var divContent = tempParser.querySelector('div');
+			if (divContent) {
+				contentToUse = divContent.outerHTML;
+			}
+		}
 		
-		// Create inner div with the actual content
-		var contentDiv = document.createElement('div');
-		contentDiv.style.width = '750px';
-		contentDiv.style.margin = '0 auto';
-		contentDiv.style.backgroundColor = '#ffffff';
-		contentDiv.innerHTML = htmlContent;
-		wrapperDiv.appendChild(contentDiv);
+		// Create a simple, visible container for rendering
+		var tempDiv = document.createElement('div');
+		tempDiv.id = 'llar-pdf-temp-container';
+		tempDiv.style.position = 'absolute';
+		tempDiv.style.top = '0';
+		tempDiv.style.left = '0';
+		tempDiv.style.width = '794px'; // A4 width at 96 DPI
+		tempDiv.style.padding = '20px';
+		tempDiv.style.backgroundColor = '#ffffff';
+		tempDiv.style.zIndex = '99999';
+		tempDiv.style.opacity = '1'; // Visible for html2canvas
+		tempDiv.style.pointerEvents = 'none';
+		tempDiv.style.boxSizing = 'border-box';
+		tempDiv.innerHTML = contentToUse;
 		
-		document.body.appendChild(wrapperDiv);
+		document.body.appendChild(tempDiv);
 
 		// Wait for content to render
 		setTimeout(function() {
 			// Check if element has content
-			if (!contentDiv.innerHTML || contentDiv.innerHTML.trim() === '' || contentDiv.children.length === 0) {
-				console.error('Content div has no content');
-				console.error('HTML content:', htmlContent.substring(0, 200));
-				if (document.body.contains(wrapperDiv)) {
-					document.body.removeChild(wrapperDiv);
+			if (!tempDiv.innerHTML || tempDiv.innerHTML.trim() === '' || tempDiv.children.length === 0) {
+				console.error('Temp div has no content');
+				console.error('HTML content:', htmlContent.substring(0, 500));
+				if (document.body.contains(tempDiv)) {
+					document.body.removeChild(tempDiv);
 				}
 				$.alert({
 					title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
@@ -385,65 +393,68 @@ jQuery(document).ready(function($) {
 			}
 
 			// Log for debugging
-			console.log('Generating PDF from element with height:', contentDiv.scrollHeight);
+			console.log('Generating PDF from element');
+			console.log('Element height:', tempDiv.scrollHeight);
+			console.log('Element width:', tempDiv.offsetWidth);
+			console.log('Element has children:', tempDiv.children.length);
 
-			// Generate PDF with A4 size (210mm x 297mm = 8.27in x 11.69in)
-			var opt = {
-				margin: [0.4, 0.4, 0.4, 0.4], // Smaller margins for A4
-				filename: 'llar-2fa-rescue-links.pdf',
-				image: { 
-					type: 'jpeg', 
-					quality: 0.98 
-				},
-				html2canvas: { 
-					scale: 2,
-					useCORS: true,
-					letterRendering: true,
-					logging: false,
-					width: 750, // Fixed width for A4 content
-					height: contentDiv.scrollHeight,
-					windowWidth: 750,
-					backgroundColor: '#ffffff'
-				},
-				jsPDF: { 
-					unit: 'mm', 
-					format: 'a4', // A4 format
-					orientation: 'portrait'
-				},
-				pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-			};
-
-			// Generate PDF from the content div, not wrapper
-			html2pdf()
-				.set(opt)
-				.from(contentDiv)
-				.save()
-				.then(function() {
-					console.log('PDF generated successfully');
-					// Cleanup
-					if (document.body.contains(wrapperDiv)) {
-						document.body.removeChild(wrapperDiv);
-					}
-				})
-				.catch(function(error) {
-					console.error('PDF generation error:', error);
-					console.error('HTML content length:', htmlContent ? htmlContent.length : 0);
-					console.error('Content div innerHTML length:', contentDiv.innerHTML ? contentDiv.innerHTML.length : 0);
-					console.error('Content div children count:', contentDiv.children.length);
-					console.error('Content div scrollHeight:', contentDiv.scrollHeight);
-					
-					$.alert({
-						title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-						content: '<?php echo esc_js( __( 'Failed to generate PDF. Please check browser console (F12) for details.', 'limit-login-attempts-reloaded' ) ); ?>',
-						type: 'red'
-					});
-					
-					// Cleanup
-					if (document.body.contains(wrapperDiv)) {
-						document.body.removeChild(wrapperDiv);
-					}
+			// Use html2canvas and jsPDF directly
+			var { jsPDF } = window.jspdf;
+			
+			html2canvas(tempDiv, {
+				scale: 2,
+				useCORS: true,
+				logging: false,
+				backgroundColor: '#ffffff',
+				width: tempDiv.scrollWidth,
+				height: tempDiv.scrollHeight
+			}).then(function(canvas) {
+				var imgData = canvas.toDataURL('image/png');
+				var pdf = new jsPDF('p', 'mm', 'a4');
+				
+				var imgWidth = 210; // A4 width in mm
+				var pageHeight = 297; // A4 height in mm
+				var imgHeight = (canvas.height * imgWidth) / canvas.width;
+				var heightLeft = imgHeight;
+				var position = 0;
+				
+				// Add first page
+				pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+				heightLeft -= pageHeight;
+				
+				// Add additional pages if needed
+				while (heightLeft > 0) {
+					position = heightLeft - imgHeight;
+					pdf.addPage();
+					pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+					heightLeft -= pageHeight;
+				}
+				
+				// Save PDF
+				pdf.save('llar-2fa-rescue-links.pdf');
+				
+				console.log('PDF generated successfully');
+				
+				// Cleanup
+				if (document.body.contains(tempDiv)) {
+					document.body.removeChild(tempDiv);
+				}
+			}).catch(function(error) {
+				console.error('PDF generation error:', error);
+				console.error('Error details:', error);
+				
+				$.alert({
+					title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
+					content: '<?php echo esc_js( __( 'Failed to generate PDF. Please check browser console (F12) for details.', 'limit-login-attempts-reloaded' ) ); ?>',
+					type: 'red'
 				});
-		}, 500);
+				
+				// Cleanup
+				if (document.body.contains(tempDiv)) {
+					document.body.removeChild(tempDiv);
+				}
+			});
+		}, 1000); // Wait 1 second for full rendering
 	}
 });
 </script>

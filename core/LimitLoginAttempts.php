@@ -844,10 +844,12 @@ class LimitLoginAttempts
 				'ajax_url'                        => admin_url( 'admin-ajax.php' ),
 			));
 
-			// Enqueue html2pdf.js only on MFA tab (admin only, to avoid loading on frontend)
+			// Enqueue PDF libraries only on MFA tab (admin only, to avoid loading on frontend)
 			$current_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'settings';
 			if ( $current_tab === 'mfa' ) {
-				wp_enqueue_script( 'html2pdf', 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js', array(), '0.10.1', true );
+				// Use html2canvas and jsPDF separately for better control
+				wp_enqueue_script( 'html2canvas', 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', array(), '1.4.1', true );
+				wp_enqueue_script( 'jspdf', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', array(), '2.5.1', true );
 			}
 
 			global $wp_scripts, $wp_styles;

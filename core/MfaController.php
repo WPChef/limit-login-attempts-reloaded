@@ -306,29 +306,16 @@ class MfaController {
 		$site_url = home_url();
 		$domain = wp_parse_url( $site_url, PHP_URL_HOST );
 
-		// Generate HTML optimized for PDF generation
-		// Use inline styles for better compatibility with html2pdf.js
-		// Use explicit dark colors (#000000) to ensure text is visible in PDF
-		// A4 size: 210mm x 297mm (8.27in x 11.69in)
-		// Content width for A4 with margins: ~750px
-		$html = '<div style="font-family: Arial, Helvetica, sans-serif; padding: 30px 40px; width: 750px; max-width: 750px; margin: 0 auto; background-color: #ffffff; color: #000000; box-sizing: border-box;">' . "\n";
-		$html .= '<h1 style="color: #000000 !important; font-size: 24px; font-weight: bold; margin: 0 0 25px 0; padding-bottom: 12px; border-bottom: 2px solid #4ACAD8; text-align: left;">' . esc_html( $domain ) . ' LLAR 2FA Rescue Links</h1>' . "\n";
-		$html .= '<ol style="margin: 0; padding-left: 30px; line-height: 1.8; list-style-type: decimal; color: #000000 !important; text-align: left;">' . "\n";
-
-		foreach ( $plain_codes as $index => $code ) {
-			$rescue_url = $this->get_rescue_url( $code );
-			$html .= '<li style="margin-bottom: 15px; padding: 12px; background-color: #f6fbff; border-radius: 4px; word-break: break-all; border: 1px solid #e0f0f5; color: #000000 !important; text-align: left;">';
-			$html .= '<span style="color: #0066cc !important; text-decoration: underline; font-size: 13px; display: block; font-weight: normal; text-align: left;">' . esc_html( $rescue_url ) . '</span>';
-			$html .= '</li>' . "\n";
+		// Generate rescue URLs
+		$rescue_urls = array();
+		foreach ( $plain_codes as $code ) {
+			$rescue_urls[] = $this->get_rescue_url( $code );
 		}
 
-		$html .= '</ol>' . "\n";
-		$html .= '<div style="margin-top: 30px; padding: 15px; background-color: #fff9e6; border-left: 4px solid #ff7c06; border-radius: 4px; text-align: left;">' . "\n";
-		$html .= '<p style="margin: 0; color: #000000 !important; font-size: 13px; line-height: 1.6; text-align: left;">';
-		$html .= '<strong style="color: #000000 !important; font-weight: bold;">Important:</strong> By clicking a link above, 2FA will be fully disabled on <strong style="color: #000000 !important; font-weight: bold;">' . esc_html( $domain ) . '</strong> for 1 hour. Each link can only be used once.';
-		$html .= '</p>' . "\n";
-		$html .= '</div>' . "\n";
-		$html .= '</div>';
+		// Load PDF template with variables
+		ob_start();
+		include LLA_PLUGIN_DIR . 'views/mfa-rescue-pdf.php';
+		$html = ob_get_clean();
 
 		return $html;
 	}
