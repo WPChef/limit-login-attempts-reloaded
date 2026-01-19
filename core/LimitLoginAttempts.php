@@ -890,6 +890,11 @@ class LimitLoginAttempts
 				'name'  => __( 'Settings', 'limit-login-attempts-reloaded' ),
 				'url'   => '&tab=settings'
 			),
+			array(
+				'id'    => 'mfa',
+				'name'  => __( '2FA', 'limit-login-attempts-reloaded' ),
+				'url'   => '&tab=mfa'
+			),
 			$is_cloud_app_enabled
 				? array(
 				'id'    => 'logs-custom',
