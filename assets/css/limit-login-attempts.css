@@ -4398,6 +4398,15 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-style: italic;
   margin-left: 4px;
 }
+.llar-admin #llar-mfa-rescue-popup-content .llar-onboarding-popup__content {
+  min-height: auto !important;
+  padding: 30px 15px !important;
+}
+.llar-admin #llar-mfa-rescue-popup-content .card {
+  min-width: auto !important;
+  margin-top: 0 !important;
+  padding: 20px 40px 30px !important;
+}
 .llar-admin .llar-onboarding-popup__content #llar-rescue-links-display .card {
   text-align: left !important;
 }

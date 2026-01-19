@@ -19,6 +19,20 @@
 	// MFA Rescue Popup styles - use existing classes from onboarding-popup
 	// Styles are applied automatically through .llar-onboarding-popup__content, .llar-onboarding__body, .card, .field-wrap, .field-title, .field-desc, .button_block-single
 	
+	// Reduce popup size for MFA rescue popup
+	#llar-mfa-rescue-popup-content {
+		.llar-onboarding-popup__content {
+			min-height: auto !important;
+			padding: 30px 15px !important;
+		}
+		
+		.card {
+			min-width: auto !important;
+			margin-top: 0 !important;
+			padding: 20px 40px 30px !important;
+		}
+	}
+	
 	// Override card text-align for rescue links display - must be very specific
 	.llar-onboarding-popup__content {
 		#llar-rescue-links-display {
