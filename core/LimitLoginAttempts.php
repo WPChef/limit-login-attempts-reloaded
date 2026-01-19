@@ -2199,9 +2199,13 @@ class LimitLoginAttempts
 						// MFA will be saved after file download via WordPress AJAX
 						// Set flag for JavaScript
 						$this->mfa_show_rescue_popup = true;
+						// Store checkbox state in transient so it persists after page reload
+						set_transient( 'llar_mfa_checkbox_state', 1, 300 ); // 5 minutes
 					} else {
 						// Codes already exist, just save MFA
 						Config::update( 'mfa_enabled', 1 );
+						// Clear transient if exists
+						delete_transient( 'llar_mfa_checkbox_state' );
 					}
 				} else {
 					// Disabling MFA - cleanup codes
@@ -2209,6 +2213,8 @@ class LimitLoginAttempts
 						$this->mfa_controller->cleanup_rescue_codes();
 					}
 					Config::update( 'mfa_enabled', 0 );
+					// Clear transient if exists
+					delete_transient( 'llar_mfa_checkbox_state' );
 				}
 
 				// Save selected roles - use editable roles and optimize validation

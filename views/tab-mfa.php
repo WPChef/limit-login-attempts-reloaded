@@ -26,8 +26,11 @@ $mfa_temporarily_disabled = false;
 if ( isset( $this->mfa_controller ) && method_exists( $this->mfa_controller, 'is_mfa_temporarily_disabled' ) ) {
 	$mfa_temporarily_disabled = $this->mfa_controller->is_mfa_temporarily_disabled();
 }
+// Check if checkbox state is stored in transient (when popup is shown)
+$mfa_checkbox_state = get_transient( 'llar_mfa_checkbox_state' );
 // MFA is considered enabled if it's enabled in config AND not temporarily disabled
-$mfa_enabled = $mfa_enabled_raw && ! $mfa_temporarily_disabled;
+// OR if checkbox state is stored (popup is shown)
+$mfa_enabled = ( $mfa_enabled_raw && ! $mfa_temporarily_disabled ) || ( $mfa_checkbox_state === 1 );
 
 $mfa_roles = Config::get( 'mfa_roles', array() );
 // Ensure $mfa_roles is always an array

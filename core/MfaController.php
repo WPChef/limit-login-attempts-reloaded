@@ -90,6 +90,9 @@ class MfaController {
 
 		// Enable MFA
 		Config::update( 'mfa_enabled', 1 );
+		
+		// Clear transient checkbox state since MFA is now saved
+		delete_transient( 'llar_mfa_checkbox_state' );
 
 		// Plain codes are removed from memory after this block
 		// URLs and HTML content are returned in response
