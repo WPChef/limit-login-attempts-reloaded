@@ -23,47 +23,56 @@
 	#llar-mfa-rescue-popup-content {
 		.llar-onboarding-popup__content {
 			min-height: auto !important;
-			padding: 30px 15px !important;
+			max-height: 55vh !important;
+			overflow-y: auto !important;
+			padding: 10px 10px !important;
 		}
 		
 		.card {
 			min-width: auto !important;
 			margin-top: 0 !important;
-			padding: 20px 40px 30px !important;
+			padding: 10px 20px 12px !important;
 		}
 	}
 	
-	// Override card text-align for rescue links display - must be very specific
+	// Limit height of rescue links list to prevent overflow
 	.llar-onboarding-popup__content {
 		#llar-rescue-links-display {
-			.card {
-				text-align: left !important; // Force left alignment
-				
-				.field-wrap {
-					text-align: left !important;
-					margin-left: 0;
-					margin-right: 0;
-					
-					.field-title {
-						text-align: left !important;
-						margin-left: 0;
-					}
-					
-					.field-desc {
-						text-align: left !important;
-						margin-left: 0;
-					}
-				}
+			margin-top: 20px !important;
+			
+			.llar-rescue-links-list {
+				max-height: 150px !important;
+			}
+		}
+	}
+	
+	// Override text-align for rescue links display only - do not affect parent card/field-wrap
+	.llar-onboarding-popup__content {
+		#llar-rescue-links-display {
+			text-align: left !important;
+			
+			.field-title {
+				text-align: left !important;
+				margin-left: 0 !important;
+			}
+			
+			.field-desc {
+				text-align: left !important;
+				margin-left: 0 !important;
+			}
+			
+			.button_block-single {
+				text-align: left !important;
 			}
 		}
 	}
 	
 	// Styles for displaying rescue links list
 	.llar-rescue-links-list {
-		margin: 20px 0 !important;
+		margin: 10px 0 !important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
-		max-height: 400px;
+		max-height: 150px;
 		overflow-y: auto;
 		padding: 15px !important;
 		padding-left: 15px !important;

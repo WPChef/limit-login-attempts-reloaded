@@ -261,12 +261,9 @@ jQuery(document).ready(function($) {
 	}
 
 	function displayRescueLinks(urls, domain) {
-		// Get the display container HTML
-		const displayHtml = $('#llar-rescue-links-display').html();
-		
-		// Create temporary container to build the list
-		const $tempContainer = $('<div>').html(displayHtml);
-		const $linksList = $tempContainer.find('#llar-rescue-links-list');
+		// Find the display container in the modal
+		const $displayContainer = rescueModal.$content.find('#llar-rescue-links-display');
+		const $linksList = $displayContainer.find('#llar-rescue-links-list');
 		
 		// Clear previous content
 		$linksList.empty();
@@ -282,26 +279,24 @@ jQuery(document).ready(function($) {
 		
 		$linksList.append($list);
 		
-		// Update modal content with the new HTML
-		rescueModal.setContent($tempContainer.html());
+		// Show the display container
+		$displayContainer.show();
 		
-		// Force left alignment after content is set
+		// Hide the generate button
+		rescueModal.$content.find('.llar-generate-rescue-links').closest('.button_block-single').hide();
+		
+		// Force left alignment after content is set - only for rescue links display
 		setTimeout(function() {
-			const $modalCard = rescueModal.$content.find('.card');
-			const $modalFieldWrap = rescueModal.$content.find('.field-wrap');
-			const $modalLinksList = rescueModal.$content.find('.llar-rescue-links-list');
+			const $displayContainer = rescueModal.$content.find('#llar-rescue-links-display');
+			const $modalLinksList = $displayContainer.find('.llar-rescue-links-list');
 			
-			// Apply inline styles to force left alignment
-			$modalCard.css({
-				'text-align': 'left',
-				'padding-left': '40px',
-				'padding-right': '40px'
+			// Apply inline styles only to rescue links display container
+			$displayContainer.css({
+				'text-align': 'left'
 			});
 			
-			$modalFieldWrap.css({
-				'text-align': 'left',
-				'margin-left': '0',
-				'margin-right': '0'
+			$displayContainer.find('.field-title, .field-desc').css({
+				'text-align': 'left'
 			});
 			
 			$modalLinksList.css({
@@ -310,10 +305,6 @@ jQuery(document).ready(function($) {
 				'margin-right': '0',
 				'padding-left': '15px',
 				'padding-right': '15px'
-			});
-			
-			rescueModal.$content.find('.field-title, .field-desc').css({
-				'text-align': 'left'
 			});
 		}, 100);
 	}

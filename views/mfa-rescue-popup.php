@@ -38,14 +38,10 @@ $domain = wp_parse_url( $site_url, PHP_URL_HOST );
 							<?php echo esc_html__( 'Generate Rescue Links', 'limit-login-attempts-reloaded' ); ?>
 						</button>
 					</div>
-				</div>
-			</div>
-			
-			<!-- Container for displaying generated links -->
-			<div id="llar-rescue-links-display" style="display: none;">
-				<div class="card mx-auto">
-					<div class="field-wrap">
-						<div class="field-title">
+					
+					<!-- Container for displaying generated links - inside the same card -->
+					<div id="llar-rescue-links-display" style="display: none; margin-top: 20px;">
+						<div class="field-title" style="margin-top: 20px;">
 							<?php echo esc_html__( 'Your Rescue Links', 'limit-login-attempts-reloaded' ); ?>
 						</div>
 						<div class="field-desc">
