@@ -36,6 +36,26 @@
 		
 		.card-body {
 			padding: 20px 40px !important;
+			text-align: left !important;
+			
+			.field-wrap {
+				text-align: left !important;
+				
+				.field-title {
+					text-align: left !important;
+					margin-left: 0 !important;
+				}
+				
+				.field-desc {
+					text-align: left !important;
+					margin-left: 0 !important;
+					margin-top: 15px !important;
+				}
+				
+				.button_block-single {
+					text-align: left !important;
+				}
+			}
 		}
 	}
 	
