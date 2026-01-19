@@ -170,13 +170,15 @@ jQuery(document).ready(function($) {
 			title: false, // Hide default title, we have our own in content
 			content: popupContent,
 			type: 'default',
-			typeAnimated: false,
+			typeAnimated: true,
 			draggable: false,
-			animation: 'scale',
+			animation: 'top',
 			animationBounce: 1,
 			offsetTop: 50,
 			offsetBottom: 0,
-			boxWidth: '700px',
+			boxWidth: '95%',
+			maxWidth: '768px',
+			containerFluid: true,
 			useBootstrap: false,
 			bgOpacity: 0.9,
 			closeIcon: function() {

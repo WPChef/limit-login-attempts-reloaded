@@ -17,10 +17,10 @@
 	}
 
 	// MFA Rescue Popup styles - use existing classes from onboarding-popup
-	// Styles are applied automatically through .card, .field-wrap, .field-title, .field-desc, .button_block-single
+	// Styles are applied automatically through .llar-onboarding-popup__content, .llar-onboarding__body, .card, .field-wrap, .field-title, .field-desc, .button_block-single
 	
 	// Override card text-align for rescue links display - must be very specific
-	.jconfirm-box {
+	.llar-onboarding-popup__content {
 		#llar-rescue-links-display {
 			.card {
 				text-align: left !important; // Force left alignment
