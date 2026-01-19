@@ -77,6 +77,20 @@ class LimitLoginAttempts
 	public $mfa_editable_roles = array();
 
 	/**
+	 * MFA Controller instance
+	 *
+	 * @var MfaController
+	 */
+	private $mfa_controller = null;
+
+	/**
+	 * Flag to show rescue popup (set when MFA is enabled without codes)
+	 *
+	 * @var bool
+	 */
+	public $mfa_show_rescue_popup = false;
+
+	/**
 	 * Class instance accessible in other classes
 	 *
 	 * @var LimitLoginAttempts
@@ -149,6 +163,10 @@ class LimitLoginAttempts
 		$this->hooks_init();
 		$this->setup();
 		$this->cloud_app_init();
+
+		// Initialize MFA Controller
+		$this->mfa_controller = new MfaController();
+		$this->mfa_controller->register();
 
 		( new Shortcodes() )->register();
 		( new Ajax() )->register();
@@ -809,6 +827,8 @@ class LimitLoginAttempts
 			$activate_micro_cloud       = wp_create_nonce( 'llar-activate-micro-cloud' );
 			$subscribe_email            = wp_create_nonce( 'llar-subscribe-email' );
 			$close_premium_message      = wp_create_nonce( 'llar-close-premium-message' );
+			$mfa_generate_codes         = wp_create_nonce( 'limit-login-attempts-options' );
+			
 			wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array('jquery'), $plugin_data['Version'], false );
 			wp_localize_script('lla-main', 'llar_vars', array(
 				'nonce_auto_update'               => $auto_update,
@@ -820,7 +840,17 @@ class LimitLoginAttempts
 				'nonce_activate_micro_cloud'      => $activate_micro_cloud,
 				'nonce_subscribe_email'           => $subscribe_email,
 				'nonce_close_premium_message'     => $close_premium_message,
+				'nonce_mfa_generate_codes'        => $mfa_generate_codes,
+				'ajax_url'                        => admin_url( 'admin-ajax.php' ),
 			));
+
+			// Enqueue PDF libraries only on MFA tab (admin only, to avoid loading on frontend)
+			$current_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'settings';
+			if ( $current_tab === 'mfa' ) {
+				// Use html2canvas and jsPDF separately for better control
+				wp_enqueue_script( 'html2canvas', 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', array(), '1.4.1', true );
+				wp_enqueue_script( 'jspdf', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', array(), '2.5.1', true );
+			}
 
 			global $wp_scripts, $wp_styles;
 				
@@ -2166,8 +2196,31 @@ class LimitLoginAttempts
 					wp_die( __( 'You do not have sufficient permissions to access this page.', 'limit-login-attempts-reloaded' ) );
 				}
 
-				// Save MFA enabled/disabled - use absint() for explicit type casting
-				Config::update( 'mfa_enabled', absint( isset( $_POST['mfa_enabled'] ) ) );
+				// Handle MFA enabled/disabled
+				if ( isset( $_POST['mfa_enabled'] ) && $_POST['mfa_enabled'] ) {
+					// Check if rescue popup should be shown
+					if ( $this->mfa_controller && $this->mfa_controller->should_show_rescue_popup() ) {
+						// Don't save MFA yet, show popup via JavaScript
+						// MFA will be saved after file download via WordPress AJAX
+						// Set flag for JavaScript
+						$this->mfa_show_rescue_popup = true;
+						// Store checkbox state in transient so it persists after page reload
+						set_transient( 'llar_mfa_checkbox_state', 1, 300 ); // 5 minutes
+					} else {
+						// Codes already exist, just save MFA
+						Config::update( 'mfa_enabled', 1 );
+						// Clear transient if exists
+						delete_transient( 'llar_mfa_checkbox_state' );
+					}
+				} else {
+					// Disabling MFA - cleanup codes
+					if ( $this->mfa_controller ) {
+						$this->mfa_controller->cleanup_rescue_codes();
+					}
+					Config::update( 'mfa_enabled', 0 );
+					// Clear transient if exists
+					delete_transient( 'llar_mfa_checkbox_state' );
+				}
 
 				// Save selected roles - use editable roles and optimize validation
 				$mfa_roles = array();
@@ -2187,7 +2240,9 @@ class LimitLoginAttempts
 				}
 				Config::update( 'mfa_roles', $mfa_roles );
 
-				$this->show_message( __( '2FA settings saved.', 'limit-login-attempts-reloaded' ) );
+				if ( ! $this->mfa_show_rescue_popup ) {
+					$this->show_message( __( '2FA settings saved.', 'limit-login-attempts-reloaded' ) );
+				}
 			}
 		}
 
