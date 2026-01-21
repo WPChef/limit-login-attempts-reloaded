@@ -1134,6 +1134,27 @@ class LimitLoginAttempts
 
 		do_action( 'login_errors', '' );
 		$um_limit_login_failed = true;
+
+		// Get username/email from POST for failed login tracking in cloud mode
+		$username = '';
+		if ( ! empty( $_POST['username'] ) ) {
+			$username = sanitize_text_field( $_POST['username'] );
+		} elseif ( ! empty( $_POST['user_login'] ) ) {
+			$username = sanitize_text_field( $_POST['user_login'] );
+		} elseif ( ! empty( $_POST['user_email'] ) ) {
+			$username = sanitize_email( $_POST['user_email'] );
+		} else {
+			// Try to find username field with dynamic key (e.g. username-93)
+			foreach ( $_POST as $key => $value ) {
+				if ( strpos( $key, 'username-' ) === 0 && ! empty( $value ) ) {
+					$username = sanitize_text_field( $value );
+					break;
+				}
+			}
+		}
+
+		// Call limit_login_failed for UM integration
+		$this->limit_login_failed( $username );
 	}
 
 	/**
