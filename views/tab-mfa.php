@@ -19,28 +19,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var $this LLAR\Core\LimitLoginAttempts
  */
 
-// Get MFA settings
-$mfa_enabled_raw = Config::get( 'mfa_enabled', false );
-// Check if MFA is temporarily disabled via rescue code
-$mfa_temporarily_disabled = false;
-if ( isset( $this->mfa_controller ) && method_exists( $this->mfa_controller, 'is_mfa_temporarily_disabled' ) ) {
-	$mfa_temporarily_disabled = $this->mfa_controller->is_mfa_temporarily_disabled();
-}
-// Check if checkbox state is stored in transient (when popup is shown)
-$mfa_checkbox_state = get_transient( 'llar_mfa_checkbox_state' );
-// MFA is considered enabled if it's enabled in config AND not temporarily disabled
-// OR if checkbox state is stored (popup is shown)
-$mfa_enabled = ( $mfa_enabled_raw && ! $mfa_temporarily_disabled ) || ( $mfa_checkbox_state === 1 );
-
-$mfa_roles = Config::get( 'mfa_roles', array() );
-// Ensure $mfa_roles is always an array
-if ( ! is_array( $mfa_roles ) ) {
-	$mfa_roles = array();
+// Get MFA settings from controller
+$mfa_settings = array();
+if ( isset( $this->mfa_controller ) && method_exists( $this->mfa_controller, 'get_settings_for_view' ) ) {
+	$mfa_settings = $this->mfa_controller->get_settings_for_view();
 }
 
-// Get prepared roles from controller (with translated and sanitized names)
-$all_roles = isset( $this->mfa_prepared_roles ) && ! empty( $this->mfa_prepared_roles ) ? $this->mfa_prepared_roles : array();
-$editable_roles = isset( $this->mfa_editable_roles ) && ! empty( $this->mfa_editable_roles ) ? $this->mfa_editable_roles : array();
+// Extract settings with defaults
+$mfa_enabled              = isset( $mfa_settings['mfa_enabled'] ) ? $mfa_settings['mfa_enabled'] : false;
+$mfa_temporarily_disabled = isset( $mfa_settings['mfa_temporarily_disabled'] ) ? $mfa_settings['mfa_temporarily_disabled'] : false;
+$mfa_roles                = isset( $mfa_settings['mfa_roles'] ) ? $mfa_settings['mfa_roles'] : array();
+$all_roles                = isset( $mfa_settings['prepared_roles'] ) ? $mfa_settings['prepared_roles'] : array();
+$editable_roles           = isset( $mfa_settings['editable_roles'] ) ? $mfa_settings['editable_roles'] : array();
 
 ?>
 <div id="llar-setting-page" class="llar-admin">
@@ -143,7 +133,7 @@ jQuery(document).ready(function($) {
 	let rescueModal = null;
 	let htmlContentForPDF = null;
 
-	<?php if ( isset( $this->mfa_show_rescue_popup ) && $this->mfa_show_rescue_popup ) : ?>
+	<?php if ( isset( $mfa_settings['show_rescue_popup'] ) && $mfa_settings['show_rescue_popup'] ) : ?>
 	// Show popup if flag is set (MFA enabled without codes)
 	showRescuePopup();
 	<?php endif; ?>
