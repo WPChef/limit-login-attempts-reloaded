@@ -156,6 +156,9 @@ class LimitLoginAttempts
 
 		add_action( 'login_form_register', array( $this, 'llar_submit_login_form_register' ), 10 );
 		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
+		add_action( 'login_form_lostpassword', array( $this, 'llar_lostpassword_post_hook' ), 10 );
+		add_filter( 'lostpassword_errors', array( $this, 'llar_submit_lostpassword_errors' ), 10, 2 );
+		add_action( 'lostpassword_post', array( $this, 'llar_lostpassword_post_replace_error_message_hook' ), 10, 2 );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 	}
@@ -2449,6 +2452,23 @@ class LimitLoginAttempts
 
 
 	/**
+	 * Check if the user is a cloud user and if limit_password_recovery is enabled
+	 * @return bool
+	 */
+	private function is_limit_password_recovery()
+	{
+		if ( ! self::$cloud_app ) {
+			return false;
+		}
+
+		$app_config = Config::get( 'app_config' );
+		$limit_password_recovery = isset( $app_config['settings']['limit_password_recovery']['value'] ) ? $app_config['settings']['limit_password_recovery']['value'] : '';
+
+		return $limit_password_recovery === 'on';
+	}
+
+
+	/**
 	 * API response
 	 * @param $user_data
 	 *
@@ -2535,6 +2555,61 @@ class LimitLoginAttempts
 		}
 
 		return $errors;
+	}
+
+
+	/**
+	 * Reset password standard WP
+	 */
+	public function llar_lostpassword_post_hook()
+	{
+		if ( ! $this->is_limit_password_recovery() ) {
+			return;
+		}
+
+		if ( ! empty( $_POST['user_login'] ) ) {
+			$user_login = sanitize_user( $_POST['user_login'] );
+		} else {
+			return;
+		}
+
+		$response = $this->llar_api_response( $user_login );
+
+		if ( $response['result'] === 'deny' ) {
+
+			$this->error_messages = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
+			$this->user_blocking = true;
+			$_POST['user_login'] = '';
+		}
+	}
+
+	/**
+     * Correction default errors
+	 * @return array
+	 */
+	public function llar_submit_lostpassword_errors( $errors, $user_data )
+	{
+		// Checking the marker and the presence of empty variables
+		if ( ( $this->user_blocking || $this->user_empty ) && empty( $user_data ) ) {
+			$errors->remove('empty_username');
+			$errors->add( 'user_blocking', $this->error_messages );
+		}
+
+		return $errors;
+	}
+
+
+	/**
+     * If user_data is empty (not found in the DB), correct the error massage
+	 * @param $errors
+	 * @param $user_data
+	 */
+	public function llar_lostpassword_post_replace_error_message_hook( $errors, $user_data )
+	{
+		if ( ! $user_data ) {
+			$this->error_messages = __( "If the account exists, you'll receive a password reset link. Please check your inbox.", 'limit-login-attempts-reloaded' );
+			$this->user_empty = true;
+		}
 	}
 }
 
