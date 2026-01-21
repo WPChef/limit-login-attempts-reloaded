@@ -198,16 +198,27 @@ jQuery(document).ready(function($) {
 					const $button = $(this);
 					$button.prop('disabled', true).text('<?php echo esc_js( __( 'Generating...', 'limit-login-attempts-reloaded' ) ); ?>');
 
+					// Check if nonce is available
+					if (!llar_vars || !llar_vars.nonce_mfa_generate_codes) {
+						$.alert({
+							title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
+							content: '<?php echo esc_js( __( 'Security token is missing. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>',
+							type: 'red'
+						});
+						$button.prop('disabled', false).text('<?php echo esc_js( __( 'Generate Rescue Links', 'limit-login-attempts-reloaded' ) ); ?>');
+						return;
+					}
+
 					// AJAX request to generate codes
 					$.ajax({
-						url: llar_vars.ajax_url,
+						url: llar_vars.ajax_url || '<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>',
 						type: 'POST',
 						data: {
 							action: 'llar_mfa_generate_rescue_codes',
-							nonce: llar_vars.nonce_mfa_generate_codes || ''
+							nonce: llar_vars.nonce_mfa_generate_codes
 						},
 						success: function(response) {
-							if (response.success && response.data && response.data.rescue_urls) {
+							if (response && response.success && response.data && response.data.rescue_urls) {
 								htmlContentForPDF = response.data.html_content;
 								
 								// Display links in popup
@@ -216,18 +227,36 @@ jQuery(document).ready(function($) {
 								// Mark as generated so popup can be closed
 								rescueCodesDownloaded = true;
 							} else {
+								const errorMessage = (response && response.data && response.data.message) 
+									? response.data.message 
+									: '<?php echo esc_js( __( 'Failed to generate rescue codes.', 'limit-login-attempts-reloaded' ) ); ?>';
 								$.alert({
 									title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-									content: response.data && response.data.message ? response.data.message : '<?php echo esc_js( __( 'Failed to generate rescue codes.', 'limit-login-attempts-reloaded' ) ); ?>',
+									content: errorMessage,
 									type: 'red'
 								});
 								$button.prop('disabled', false).text('<?php echo esc_js( __( 'Generate Rescue Links', 'limit-login-attempts-reloaded' ) ); ?>');
 							}
 						},
-						error: function() {
+						error: function(xhr, status, error) {
+							console.error('AJAX error:', status, error, xhr);
+							let errorMessage = '<?php echo esc_js( __( 'Failed to generate rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ); ?>';
+							
+							// Try to parse error response
+							if (xhr.responseText) {
+								try {
+									const errorResponse = JSON.parse(xhr.responseText);
+									if (errorResponse.data && errorResponse.data.message) {
+										errorMessage = errorResponse.data.message;
+									}
+								} catch (e) {
+									// Not JSON, use default message
+								}
+							}
+							
 							$.alert({
 								title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-								content: '<?php echo esc_js( __( 'Failed to generate rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ); ?>',
+								content: errorMessage,
 								type: 'red'
 							});
 							$button.prop('disabled', false).text('<?php echo esc_js( __( 'Generate Rescue Links', 'limit-login-attempts-reloaded' ) ); ?>');

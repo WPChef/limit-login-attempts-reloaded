@@ -90,14 +90,28 @@ class MfaController {
 	 * WordPress AJAX callback for generating rescue codes
 	 */
 	public function ajax_generate_rescue_codes() {
-		// Check user capabilities
+		// Check user capabilities first
 		$this->check_user_capabilities();
 
 		// Check nonce (standard WordPress way)
-		check_ajax_referer( 'limit-login-attempts-options', 'nonce' );
+		// Use check_ajax_referer with die=false to handle errors gracefully
+		if ( ! check_ajax_referer( 'limit-login-attempts-options', 'nonce', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ) );
+			return;
+		}
 
 		// Generate codes (returns plain codes)
-		$plain_codes = $this->generate_rescue_codes();
+		try {
+			$plain_codes = $this->generate_rescue_codes();
+		} catch ( \Exception $e ) {
+			wp_send_json_error( array( 'message' => __( 'Failed to generate codes: ', 'limit-login-attempts-reloaded' ) . $e->getMessage() ) );
+			return;
+		}
+
+		if ( empty( $plain_codes ) || ! is_array( $plain_codes ) ) {
+			wp_send_json_error( array( 'message' => __( 'Failed to generate rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ) );
+			return;
+		}
 
 		// Generate rescue URLs for display
 		$rescue_urls = array();
@@ -106,7 +120,12 @@ class MfaController {
 		}
 
 		// Generate HTML content for PDF generation
-		$html_content = $this->generate_rescue_file_html( $plain_codes );
+		try {
+			$html_content = $this->generate_rescue_file_html( $plain_codes );
+		} catch ( \Exception $e ) {
+			wp_send_json_error( array( 'message' => __( 'Failed to generate PDF content: ', 'limit-login-attempts-reloaded' ) . $e->getMessage() ) );
+			return;
+		}
 
 		// Generate token for download confirmation (optional, for logging)
 		$download_token = wp_generate_password( 32, false );
