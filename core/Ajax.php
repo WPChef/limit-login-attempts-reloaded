@@ -1094,17 +1094,18 @@ class Ajax
 
 		$this->check_user_capabilities();
 
-		if ( Helpers::is_block_automatic_update_disabled() ) {
-
-            wp_send_json_error( array( 'msg' => 'Can\'t turn auto-updates on. Please ask your hosting provider or developer for assistance.') );
-        }
-
 		check_ajax_referer( 'llar-toggle-auto-update', 'sec' );
 
 		$value = sanitize_text_field( $_POST['value'] );
 		$auto_update_plugins = get_site_option( 'auto_update_plugins', array() );
 
 		if( $value === 'yes' ) {
+
+			if ( Helpers::is_block_automatic_update_disabled() ) {
+
+				wp_send_json_error( array( 'msg' => 'Can\'t turn auto-updates on. Please ask your hosting provider or developer for assistance.') );
+			}
+
 			$auto_update_plugins[] = LLA_PLUGIN_BASENAME;
 			Config::update( 'auto_update_choice', 1 );
 

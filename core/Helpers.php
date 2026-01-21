@@ -147,20 +147,34 @@ class Helpers {
 	}
 
 
-	public static function is_auto_update_enabled() {
+	public static function is_auto_update_enabled()
+	{
 		$auto_update_plugins = get_site_option( 'auto_update_plugins' );
 		return is_array( $auto_update_plugins ) && in_array( LLA_PLUGIN_BASENAME, $auto_update_plugins );
 	}
 
-	public static function is_block_automatic_update_disabled() {
 
-        if ( ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS )
-            || ( defined( 'DOING_CRON' ) && DOING_CRON ) ) {
-            return true;
-        }
+	public static function is_block_automatic_update_disabled()
+	{
+		// Globally disable file modification
+		if ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS ) {
+			return true;
+		}
 
-        return apply_filters( 'automatic_updater_disabled', false ) || ! apply_filters( 'auto_update_plugin', true, 10, 2 );
+		// Checking global disabling of auto-updates
+		if ( defined( 'AUTOMATIC_UPDATER_DISABLED' ) && AUTOMATIC_UPDATER_DISABLED ) {
+			return true;
+		}
+
+		// Checking for cron shutdown
+		if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) {
+			return true;
+		}
+
+		// Checking through WordPress filters
+		return apply_filters( 'automatic_updater_disabled', false ) || ! apply_filters( 'auto_update_plugin', true, LLA_PLUGIN_BASENAME, null );
 	}
+
 
 	public static function get_wordpress_version() {
 		global $wp_version;
