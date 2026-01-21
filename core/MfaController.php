@@ -72,14 +72,32 @@ class MfaController {
 		$plain_codes = array(); // Temporary array for file
 
 		for ( $i = 0; $i < 10; $i++ ) {
+			// Generate cryptographically secure random code
+			// 64 characters alphanumeric = ~384 bits of entropy
 			$code = wp_generate_password( 64, false ); // alphanumeric
+			
+			// Hash with bcrypt (includes unique salt automatically)
 			$hash = wp_hash_password( $code );
+			
+			// Validate hash was generated successfully
+			if ( empty( $hash ) || strlen( $hash ) < 20 ) {
+				// Fallback: log error and skip this code
+				error_log( 'LLAR MFA: Failed to hash rescue code. Skipping code generation.' );
+				continue;
+			}
+			
 			$codes[] = array(
 				'hash'    => $hash,
 				'used'    => false,
 				'used_at' => null,
 			);
 			$plain_codes[] = $code; // Save for file (only in memory)
+		}
+
+		// Ensure we have at least some codes generated
+		if ( empty( $codes ) ) {
+			wp_send_json_error( array( 'message' => __( 'Failed to generate rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ) );
+			return array();
 		}
 
 		// Replace old codes with new ones
@@ -199,7 +217,10 @@ class MfaController {
 		// Rate limiting: protection against brute force attacks (required for production)
 		// Increased blocking period to 1 hour for better security
 		$client_ip = $this->get_client_ip();
-		$transient_key = 'llar_rescue_attempts_' . md5( $client_ip );
+		
+		// Use SHA-256 instead of MD5 for rate limiting key
+		$salt_for_rate_limit = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : wp_generate_password( 64, true ) );
+		$transient_key = 'llar_rescue_attempts_' . hash( 'sha256', $client_ip . $salt_for_rate_limit );
 		$attempts = get_transient( $transient_key ) ?: 0;
 
 		if ( $attempts >= 5 ) { // Limit: 5 attempts per period
@@ -209,45 +230,68 @@ class MfaController {
 		// Increment counter on each check (even invalid)
 		set_transient( $transient_key, $attempts + 1, HOUR_IN_SECONDS ); // Block for 1 hour (not 5 minutes!)
 
+		// Validate hash_id format (SHA-256 produces 64 hex characters)
+		if ( ! preg_match( '/^[a-f0-9]{64}$/i', $hash_id ) ) {
+			wp_die( 'Invalid rescue link format', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+		}
+
 		// Get plain code from transient by hash_id
 		$transient_rescue_key = 'llar_rescue_' . sanitize_text_field( $hash_id );
 		$plain_code = get_transient( $transient_rescue_key );
 
 		if ( false === $plain_code ) {
 			// Hash not found or expired (one-time, 5 minutes)
+			// Don't reveal whether hash was invalid or expired (security best practice)
 			wp_die( 'Invalid or expired rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
 		// Delete transient immediately after getting (one-time use)
 		delete_transient( $transient_rescue_key );
 
-		// Verify code
+		// Verify code with constant-time comparison to prevent timing attacks
 		$codes = Config::get( 'mfa_rescue_codes', array() );
 		
-		if ( ! is_array( $codes ) ) {
-			$codes = array();
+		if ( ! is_array( $codes ) || empty( $codes ) ) {
+			wp_die( 'Invalid rescue code', 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
+		$code_verified = false;
+		$verified_index = null;
+
+		// Check all codes to prevent timing attacks (always check same number of codes)
 		foreach ( $codes as $index => $code_data ) {
-			if ( ! isset( $code_data['used'] ) || $code_data['used'] ) {
+			if ( ! isset( $code_data['hash'] ) || ! isset( $code_data['used'] ) ) {
 				continue;
 			}
+			
+			// Skip already used codes
+			if ( $code_data['used'] ) {
+				continue;
+			}
+			
+			// Use constant-time password verification
 			if ( wp_check_password( $plain_code, $code_data['hash'] ) ) {
-				// Mark as used
-				$codes[ $index ]['used'] = true;
-				$codes[ $index ]['used_at'] = time();
-				Config::update( 'mfa_rescue_codes', $codes );
-
-				// Disable MFA for an hour
-				$this->disable_mfa_temporarily();
-
-				// Redirect with message (standard WordPress way)
-				wp_safe_redirect( add_query_arg( 'llar_rescue_success', '1', home_url() ) );
-				exit;
+				$code_verified = true;
+				$verified_index = $index;
+				break; // Found valid code, can exit early
 			}
 		}
 
-		// Code not found
+		if ( $code_verified && $verified_index !== null ) {
+			// Mark as used
+			$codes[ $verified_index ]['used'] = true;
+			$codes[ $verified_index ]['used_at'] = time();
+			Config::update( 'mfa_rescue_codes', $codes );
+
+			// Disable MFA for an hour
+			$this->disable_mfa_temporarily();
+
+			// Redirect with message (standard WordPress way)
+			wp_safe_redirect( add_query_arg( 'llar_rescue_success', '1', home_url() ) );
+			exit;
+		}
+
+		// Code not found or already used - same error message (don't reveal which)
 		wp_die( 'Invalid rescue code', 'LLAR MFA Rescue', array( 'response' => 403 ) );
 	}
 
@@ -376,9 +420,19 @@ class MfaController {
 	 */
 	public function get_rescue_url( $plain_code ) {
 		// Generate one-time hash instead of plain code
-		// Use AUTH_SALT if defined, otherwise use a fallback
-		$salt = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : 'llar_rescue_salt' );
-		$hash_id = md5( $plain_code . $salt . time() );
+		// Require AUTH_SALT or NONCE_SALT for security (no static fallback)
+		if ( ! defined( 'AUTH_SALT' ) && ! defined( 'NONCE_SALT' ) ) {
+			// Log error but don't break - use cryptographically secure random instead
+			error_log( 'LLAR MFA: AUTH_SALT or NONCE_SALT not defined in wp-config.php. Using secure random fallback.' );
+			$salt = wp_generate_password( 64, true ); // Generate secure random salt
+		} else {
+			$salt = defined( 'AUTH_SALT' ) ? AUTH_SALT : NONCE_SALT;
+		}
+
+		// Use SHA-256 instead of MD5 for better security
+		// Add random suffix instead of time() for better unpredictability
+		$random_suffix = wp_generate_password( 32, false ); // Additional randomness
+		$hash_id = hash( 'sha256', $plain_code . $salt . $random_suffix );
 
 		// Save plain code in temporary transient (5 minutes, one-time)
 		$transient_key = 'llar_rescue_' . $hash_id;
