@@ -63,18 +63,11 @@ class LimitLoginAttempts
 	private $info_data = array();
 
 	/**
-	 * Prepared roles for MFA tab (with translated and sanitized names)
+	 * MFA Controller instance
 	 *
-	 * @var array
+	 * @var MfaController
 	 */
-	public $mfa_prepared_roles = array();
-
-	/**
-	 * Editable roles data for MFA tab (for admin role check)
-	 *
-	 * @var array
-	 */
-	public $mfa_editable_roles = array();
+	private $mfa_controller = null;
 
 	/**
 	 * Class instance accessible in other classes
@@ -149,6 +142,10 @@ class LimitLoginAttempts
 		$this->hooks_init();
 		$this->setup();
 		$this->cloud_app_init();
+
+		// Initialize MFA Controller
+		$this->mfa_controller = new MfaController();
+		$this->mfa_controller->register();
 
 		( new Shortcodes() )->register();
 		( new Ajax() )->register();
@@ -2158,36 +2155,13 @@ class LimitLoginAttempts
 				$this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
 				$this->cloud_app_init();
 			} elseif ( isset( $_POST[ 'llar_update_mfa_settings' ] ) ) {
-
-				check_admin_referer( 'limit-login-attempts-options' );
-
-				// Check user capabilities
-				if ( ! $this->has_capability ) {
-					wp_die( __( 'You do not have sufficient permissions to access this page.', 'limit-login-attempts-reloaded' ) );
+				// Handle MFA settings submission via controller
+				if ( $this->mfa_controller ) {
+					$saved = $this->mfa_controller->handle_settings_submission( $this->has_capability );
+					if ( $saved ) {
+						$this->show_message( __( '2FA settings saved.', 'limit-login-attempts-reloaded' ) );
+					}
 				}
-
-				// Save MFA enabled/disabled - use absint() for explicit type casting
-				Config::update( 'mfa_enabled', absint( isset( $_POST['mfa_enabled'] ) ) );
-
-				// Save selected roles - use editable roles and optimize validation
-				$mfa_roles = array();
-				if ( isset( $_POST['mfa_roles'] ) && is_array( $_POST['mfa_roles'] ) && ! empty( $_POST['mfa_roles'] ) ) {
-					// Get editable roles (cached by WordPress on request level)
-					$editable_roles = get_editable_roles();
-					$editable_role_keys = array_keys( $editable_roles );
-					
-					// Sanitize and filter roles - remove empty values and validate against editable roles
-					$sanitized_roles = array_filter( 
-						array_map( 'sanitize_text_field', wp_unslash( (array) $_POST['mfa_roles'] ) ),
-						'strlen' // Remove empty strings
-					);
-					
-					// Validate against editable roles only
-					$mfa_roles = array_intersect( $sanitized_roles, $editable_role_keys );
-				}
-				Config::update( 'mfa_roles', $mfa_roles );
-
-				$this->show_message( __( '2FA settings saved.', 'limit-login-attempts-reloaded' ) );
 			}
 		}
 
@@ -2201,18 +2175,9 @@ class LimitLoginAttempts
 			$current_tab = 'mfa';
 		}
 		
-		if ( $current_tab === 'mfa' ) {
-			// Get editable roles and prepare translated names with sanitization
-			$editable_roles = get_editable_roles();
-			$prepared_roles = array();
-			foreach ( $editable_roles as $role_key => $role_data ) {
-				// Sanitize translated role name for security
-				$prepared_roles[ $role_key ] = esc_html( translate_user_role( $role_data['name'] ) );
-			}
-			// Make available to view
-			$this->mfa_prepared_roles = $prepared_roles;
-			// Also store editable roles for is_admin_role() check
-			$this->mfa_editable_roles = $editable_roles;
+		if ( $current_tab === 'mfa' && $this->mfa_controller ) {
+			// Prepare roles data via controller
+			$this->mfa_controller->prepare_roles_data();
 		}
 
 		include_once( LLA_PLUGIN_DIR . 'views/options-page.php' );
