@@ -9,6 +9,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 class MfaController {
 
 	/**
+	 * Flag to show rescue popup (set when MFA is enabled without codes)
+	 *
+	 * @var bool
+	 */
+	public $show_rescue_popup = false;
+
+	/**
+	 * Prepared roles for MFA tab (with translated and sanitized names)
+	 *
+	 * @var array
+	 */
+	public $prepared_roles = array();
+
+	/**
+	 * Editable roles data for MFA tab (for admin role check)
+	 *
+	 * @var array
+	 */
+	public $editable_roles = array();
+
+	/**
 	 * Register all hooks
 	 */
 	public function register() {
@@ -23,6 +44,9 @@ class MfaController {
 		
 		// WP Cron for automatic MFA re-enable
 		add_action( 'llar_mfa_rescue_timeout', array( $this, 'enable_mfa_after_timeout' ) );
+
+		// Enqueue scripts and styles for MFA tab
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 20 );
 	}
 
 	/**
@@ -342,5 +366,147 @@ class MfaController {
 
 		// URL contains only hash, not plain code
 		return add_query_arg( 'llar_rescue', $hash_id, home_url() );
+	}
+
+	/**
+	 * Enqueue scripts and styles for MFA tab
+	 */
+	public function enqueue_scripts() {
+		// Only on LLAR admin pages
+		if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'limit-login-attempts' ) {
+			return;
+		}
+
+		$current_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'settings';
+		if ( $current_tab !== 'mfa' ) {
+			return;
+		}
+
+		// Create nonce for MFA code generation
+		$mfa_generate_codes = wp_create_nonce( 'limit-login-attempts-options' );
+
+		// Add MFA-specific data to localized script
+		// Note: wp_localize_script will add/merge data with existing llar_vars
+		wp_localize_script( 'lla-main', 'llar_vars', array(
+			'nonce_mfa_generate_codes' => $mfa_generate_codes,
+			'ajax_url'                 => admin_url( 'admin-ajax.php' ),
+		) );
+
+		// Enqueue PDF libraries only on MFA tab (admin only, to avoid loading on frontend)
+		wp_enqueue_script( 'html2canvas', 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', array(), '1.4.1', true );
+		wp_enqueue_script( 'jspdf', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', array(), '2.5.1', true );
+	}
+
+	/**
+	 * Handle MFA settings form submission
+	 *
+	 * @param bool $has_capability Whether user has required capability
+	 * @return bool True if popup should be shown, false otherwise
+	 */
+	public function handle_settings_submission( $has_capability ) {
+		// Check if this is MFA settings form
+		if ( ! isset( $_POST['llar_update_mfa_settings'] ) ) {
+			return false;
+		}
+
+		check_admin_referer( 'limit-login-attempts-options' );
+
+		// Check user capabilities
+		if ( ! $has_capability ) {
+			wp_die( __( 'You do not have sufficient permissions to access this page.', 'limit-login-attempts-reloaded' ) );
+		}
+
+		// Handle MFA enabled/disabled
+		if ( isset( $_POST['mfa_enabled'] ) && $_POST['mfa_enabled'] ) {
+			// Check if rescue popup should be shown
+			if ( $this->should_show_rescue_popup() ) {
+				// Don't save MFA yet, show popup via JavaScript
+				// MFA will be saved after file download via WordPress AJAX
+				// Set flag for JavaScript
+				$this->show_rescue_popup = true;
+				// Store checkbox state in transient so it persists after page reload
+				set_transient( 'llar_mfa_checkbox_state', 1, 300 ); // 5 minutes
+				return true;
+			} else {
+				// Codes already exist, just save MFA
+				Config::update( 'mfa_enabled', 1 );
+				// Clear transient if exists
+				delete_transient( 'llar_mfa_checkbox_state' );
+			}
+		} else {
+			// Disabling MFA - cleanup codes
+			$this->cleanup_rescue_codes();
+			Config::update( 'mfa_enabled', 0 );
+			// Clear transient if exists
+			delete_transient( 'llar_mfa_checkbox_state' );
+		}
+
+		// Save selected roles - use editable roles and optimize validation
+		$mfa_roles = array();
+		if ( isset( $_POST['mfa_roles'] ) && is_array( $_POST['mfa_roles'] ) && ! empty( $_POST['mfa_roles'] ) ) {
+			// Get editable roles (cached by WordPress on request level)
+			$editable_roles = get_editable_roles();
+			$editable_role_keys = array_keys( $editable_roles );
+			
+			// Sanitize and filter roles - remove empty values and validate against editable roles
+			$sanitized_roles = array_filter( 
+				array_map( 'sanitize_text_field', wp_unslash( (array) $_POST['mfa_roles'] ) ),
+				'strlen' // Remove empty strings
+			);
+			
+			// Validate against editable roles only
+			$mfa_roles = array_intersect( $sanitized_roles, $editable_role_keys );
+		}
+		Config::update( 'mfa_roles', $mfa_roles );
+
+		return false;
+	}
+
+	/**
+	 * Prepare roles data for MFA tab
+	 * Should be called before including view to ensure data is ready
+	 */
+	public function prepare_roles_data() {
+		// Get editable roles and prepare translated names with sanitization
+		$editable_roles = get_editable_roles();
+		$prepared_roles = array();
+		foreach ( $editable_roles as $role_key => $role_data ) {
+			// Sanitize translated role name for security
+			$prepared_roles[ $role_key ] = esc_html( translate_user_role( $role_data['name'] ) );
+		}
+		// Store for view
+		$this->prepared_roles = $prepared_roles;
+		$this->editable_roles = $editable_roles;
+	}
+
+	/**
+	 * Get MFA settings for view
+	 *
+	 * @return array Array with mfa_enabled, mfa_temporarily_disabled, mfa_roles, prepared_roles, editable_roles, show_rescue_popup
+	 */
+	public function get_settings_for_view() {
+		$mfa_enabled_raw = Config::get( 'mfa_enabled', false );
+		$mfa_temporarily_disabled = $this->is_mfa_temporarily_disabled();
+		$mfa_checkbox_state = get_transient( 'llar_mfa_checkbox_state' );
+		
+		// MFA is considered enabled if it's enabled in config AND not temporarily disabled
+		// OR if checkbox state is stored (popup is shown)
+		$mfa_enabled = ( $mfa_enabled_raw && ! $mfa_temporarily_disabled ) || ( $mfa_checkbox_state === 1 );
+
+		$mfa_roles = Config::get( 'mfa_roles', array() );
+		
+		// Ensure $mfa_roles is always an array
+		if ( ! is_array( $mfa_roles ) ) {
+			$mfa_roles = array();
+		}
+
+		return array(
+			'mfa_enabled'              => $mfa_enabled,
+			'mfa_temporarily_disabled' => $mfa_temporarily_disabled,
+			'mfa_roles'                => $mfa_roles,
+			'prepared_roles'           => $this->prepared_roles,
+			'editable_roles'           => $this->editable_roles,
+			'show_rescue_popup'        => $this->show_rescue_popup,
+		);
 	}
 }
