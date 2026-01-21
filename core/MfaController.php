@@ -401,15 +401,38 @@ class MfaController {
 			return;
 		}
 
+		// Check if script is registered (should be registered by LimitLoginAttempts::enqueue())
+		if ( ! wp_script_is( 'lla-main', 'registered' ) ) {
+			return;
+		}
+
 		// Create nonce for MFA code generation
 		$mfa_generate_codes = wp_create_nonce( 'limit-login-attempts-options' );
 
-		// Add MFA-specific data to localized script
-		// Note: wp_localize_script will add/merge data with existing llar_vars
-		wp_localize_script( 'lla-main', 'llar_vars', array(
+		// Get existing llar_vars if any
+		global $wp_scripts;
+		$existing_data = array();
+		if ( isset( $wp_scripts->registered['lla-main']->extra['data'] ) ) {
+			// Parse existing data (it's a string like "var llar_vars = {...};")
+			$existing_data_string = $wp_scripts->registered['lla-main']->extra['data'];
+			// Extract JSON from the string
+			if ( preg_match( '/var\s+llar_vars\s*=\s*({.*?});/s', $existing_data_string, $matches ) ) {
+				$existing_data = json_decode( $matches[1], true );
+				if ( ! is_array( $existing_data ) ) {
+					$existing_data = array();
+				}
+			}
+		}
+
+		// Merge with new data
+		$mfa_data = array_merge( $existing_data, array(
 			'nonce_mfa_generate_codes' => $mfa_generate_codes,
 			'ajax_url'                 => admin_url( 'admin-ajax.php' ),
 		) );
+
+		// Add MFA-specific data to localized script
+		// Note: wp_localize_script will add/merge data with existing llar_vars
+		wp_localize_script( 'lla-main', 'llar_vars', $mfa_data );
 
 		// Enqueue PDF libraries only on MFA tab (admin only, to avoid loading on frontend)
 		wp_enqueue_script( 'html2canvas', 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', array(), '1.4.1', true );
