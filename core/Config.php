@@ -68,7 +68,6 @@ class Config {
 		/* MFA Rescue Codes */
 		'mfa_rescue_codes'              => array(),
 		'mfa_rescue_download_token'     => '',
-		'mfa_temporarily_disabled_until' => null,
 	);
 
 	private static $disable_autoload_options = array(
