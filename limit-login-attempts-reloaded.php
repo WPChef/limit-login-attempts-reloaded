@@ -48,17 +48,8 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 	register_activation_hook( __FILE__, 'llar_mfa_activation_cleanup' );
 
 	function llar_mfa_activation_cleanup() {
-		// Clear all scheduled llar_mfa_rescue_timeout events
-		wp_clear_scheduled_hook( 'llar_mfa_rescue_timeout' );
-
 		// Clear old rescue transients
 		llar_mfa_cleanup_rescue_transients();
-
-		// Optionally: clear temporary data if expired
-		$disabled_until = \LLAR\Core\Config::get( 'mfa_temporarily_disabled_until' );
-		if ( $disabled_until && $disabled_until < time() ) {
-			\LLAR\Core\Config::delete( 'mfa_temporarily_disabled_until' );
-		}
 
 		// Schedule daily cleanup if not already scheduled
 		if ( ! wp_next_scheduled( 'llar_mfa_daily_cleanup' ) ) {
@@ -73,7 +64,6 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 
 	function llar_mfa_deactivation_cleanup() {
 		// Clear all scheduled events
-		wp_clear_scheduled_hook( 'llar_mfa_rescue_timeout' );
 		wp_clear_scheduled_hook( 'llar_mfa_daily_cleanup' );
 
 		// Clear all rescue transients

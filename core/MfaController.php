@@ -41,9 +41,9 @@ class MfaController {
 		
 		// Handle public rescue endpoint
 		add_action( 'template_redirect', array( $this, 'handle_rescue_endpoint' ) );
-		
-		// WP Cron for automatic MFA re-enable
-		add_action( 'llar_mfa_rescue_timeout', array( $this, 'enable_mfa_after_timeout' ) );
+
+		// Display message on login page when MFA is disabled
+		add_filter( 'login_message', array( $this, 'display_mfa_disabled_message' ) );
 
 		// Enqueue scripts and styles for MFA tab
 		// Use priority 1000 to ensure LimitLoginAttempts::enqueue() (priority 999) runs first
@@ -71,7 +71,7 @@ class MfaController {
 		$codes = array();
 		$plain_codes = array(); // Temporary array for file
 
-		for ( $i = 0; $i < 10; $i++ ) {
+		for ( $i = 0; 10 > $i; $i++ ) {
 			// Generate cryptographically secure random code
 			// 64 characters alphanumeric = ~384 bits of entropy
 			$code = wp_generate_password( 64, false ); // alphanumeric
@@ -80,7 +80,7 @@ class MfaController {
 			$hash = wp_hash_password( $code );
 			
 			// Validate hash was generated successfully
-			if ( empty( $hash ) || strlen( $hash ) < 20 ) {
+			if ( empty( $hash ) || 20 > strlen( $hash ) ) {
 				// Fallback: log error and skip this code
 				error_log( 'LLAR MFA: Failed to hash rescue code. Skipping code generation.' );
 				continue;
@@ -194,7 +194,7 @@ class MfaController {
 			if ( ! empty( $_SERVER[ $key ] ) ) {
 				$ip = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
 				// For X-Forwarded-For take first IP
-				if ( strpos( $ip, ',' ) !== false ) {
+				if ( false !== strpos( $ip, ',' ) ) {
 					$ip = trim( explode( ',', $ip )[0] );
 				}
 				return $ip;
@@ -223,7 +223,7 @@ class MfaController {
 		$transient_key = 'llar_rescue_attempts_' . hash( 'sha256', $client_ip . $salt_for_rate_limit );
 		$attempts = get_transient( $transient_key ) ?: 0;
 
-		if ( $attempts >= 5 ) { // Limit: 5 attempts per period
+		if ( 5 <= $attempts ) { // Limit: 5 attempts per period
 			wp_die( 'Too many attempts. Please try again later.', 'LLAR MFA Rescue', array( 'response' => 429 ) );
 		}
 
@@ -265,7 +265,7 @@ class MfaController {
 			}
 			
 			// Skip already used codes
-			if ( $code_data['used'] ) {
+			if ( true === $code_data['used'] ) {
 				continue;
 			}
 			
@@ -277,7 +277,7 @@ class MfaController {
 			}
 		}
 
-		if ( $code_verified && $verified_index !== null ) {
+		if ( $code_verified && null !== $verified_index ) {
 			// Mark as used
 			$codes[ $verified_index ]['used'] = true;
 			$codes[ $verified_index ]['used_at'] = time();
@@ -286,8 +286,9 @@ class MfaController {
 			// Disable MFA for an hour
 			$this->disable_mfa_temporarily();
 
-			// Redirect with message (standard WordPress way)
-			wp_safe_redirect( add_query_arg( 'llar_rescue_success', '1', home_url() ) );
+			// Redirect to wp-login.php with success message
+			$login_url = add_query_arg( 'llar_mfa_disabled', '1', wp_login_url() );
+			wp_safe_redirect( $login_url );
 			exit;
 		}
 
@@ -296,25 +297,40 @@ class MfaController {
 	}
 
 	/**
+	 * Display message on login page when MFA is temporarily disabled
+	 *
+	 * @param string $message Existing login message
+	 * @return string Modified login message
+	 */
+	public function display_mfa_disabled_message( $message ) {
+		// Check if parameter is set
+		if ( ! isset( $_GET['llar_mfa_disabled'] ) || '1' !== $_GET['llar_mfa_disabled'] ) {
+			return $message;
+		}
+
+		// Add success message about MFA being disabled (English message as requested)
+		$mfa_message = '<div class="message llar-mfa-disabled-message">';
+		$mfa_message .= '<p>' . esc_html__( 'Multi-factor authentication has been temporarily disabled for 1 hour.', 'limit-login-attempts-reloaded' ) . '</p>';
+		$mfa_message .= '</div>';
+
+		return $message . $mfa_message;
+	}
+
+	/**
 	 * Disable MFA temporarily (for 1 hour)
 	 */
 	public function disable_mfa_temporarily() {
 		Config::update( 'mfa_enabled', 0 );
 
-		// If MFA is already disabled by another code, just update timeout
-		$current_timeout = Config::get( 'mfa_temporarily_disabled_until' );
-		$new_timeout = time() + HOUR_IN_SECONDS;
-
-		if ( $current_timeout && $current_timeout > $new_timeout ) {
-			// Already disabled for longer period, don't reduce it
+		// Check if transient already exists (MFA already disabled)
+		$existing_transient = get_transient( 'llar_mfa_temporarily_disabled' );
+		if ( false !== $existing_transient ) {
+			// MFA is already disabled, don't reduce the timeout
 			return;
 		}
 
-		Config::update( 'mfa_temporarily_disabled_until', $new_timeout );
-
-		// Always reschedule event to new time (clear old before creating new)
-		wp_clear_scheduled_hook( 'llar_mfa_rescue_timeout' );
-		wp_schedule_single_event( $new_timeout, 'llar_mfa_rescue_timeout' );
+		// Set transient for 1 hour (automatically expires)
+		set_transient( 'llar_mfa_temporarily_disabled', 1, HOUR_IN_SECONDS );
 	}
 
 	/**
@@ -323,25 +339,21 @@ class MfaController {
 	 * @return bool True if MFA is temporarily disabled
 	 */
 	public function is_mfa_temporarily_disabled() {
-		$disabled_until = Config::get( 'mfa_temporarily_disabled_until' );
-		if ( $disabled_until && $disabled_until > time() ) {
-			return true;
+		$disabled = get_transient( 'llar_mfa_temporarily_disabled' );
+		
+		if ( false === $disabled ) {
+			// Transient expired - automatically re-enable MFA
+			$mfa_enabled = Config::get( 'mfa_enabled', false );
+			if ( ! $mfa_enabled ) {
+				// MFA was disabled via rescue code, re-enable it now
+				Config::update( 'mfa_enabled', 1 );
+			}
+			return false;
 		}
-		// If timeout expired, clear it
-		if ( $disabled_until && $disabled_until <= time() ) {
-			Config::delete( 'mfa_temporarily_disabled_until' );
-		}
-		return false;
+		
+		return true;
 	}
 
-	/**
-	 * Enable MFA after timeout (WP Cron callback)
-	 */
-	public function enable_mfa_after_timeout() {
-		// Re-enable MFA after timeout
-		Config::update( 'mfa_enabled', 1 );
-		Config::update( 'mfa_temporarily_disabled_until', null );
-	}
 
 	/**
 	 * Check if rescue popup should be shown
@@ -362,7 +374,7 @@ class MfaController {
 		// Check if all codes are used
 		$all_used = true;
 		foreach ( $codes as $code_data ) {
-			if ( ! isset( $code_data['used'] ) || ! $code_data['used'] ) {
+			if ( ! isset( $code_data['used'] ) || true !== $code_data['used'] ) {
 				$all_used = false;
 				break;
 			}
@@ -377,14 +389,11 @@ class MfaController {
 		// Delete all rescue codes
 		Config::delete( 'mfa_rescue_codes' );
 
-		// Cancel WP Cron event if exists
-		wp_clear_scheduled_hook( 'llar_mfa_rescue_timeout' );
-
 		// Clear temporary token
 		Config::delete( 'mfa_rescue_download_token' );
 
-		// Clear temporary disable
-		Config::delete( 'mfa_temporarily_disabled_until' );
+		// Clear temporary disable transient
+		delete_transient( 'llar_mfa_temporarily_disabled' );
 	}
 
 	/**
@@ -447,12 +456,12 @@ class MfaController {
 	 */
 	public function enqueue_scripts() {
 		// Only on LLAR admin pages
-		if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'limit-login-attempts' ) {
+		if ( ! isset( $_GET['page'] ) || 'limit-login-attempts' !== $_GET['page'] ) {
 			return;
 		}
 
 		$current_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'settings';
-		if ( $current_tab !== 'mfa' ) {
+		if ( 'mfa' !== $current_tab ) {
 			return;
 		}
 
@@ -587,7 +596,7 @@ class MfaController {
 		
 		// MFA is considered enabled if it's enabled in config AND not temporarily disabled
 		// OR if checkbox state is stored (popup is shown)
-		$mfa_enabled = ( $mfa_enabled_raw && ! $mfa_temporarily_disabled ) || ( $mfa_checkbox_state === 1 );
+		$mfa_enabled = ( $mfa_enabled_raw && ! $mfa_temporarily_disabled ) || ( 1 === $mfa_checkbox_state );
 
 		$mfa_roles = Config::get( 'mfa_roles', array() );
 		
