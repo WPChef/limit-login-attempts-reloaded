@@ -8,8 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-$site_url = home_url();
-$domain = wp_parse_url( $site_url, PHP_URL_HOST );
+$site_url    = home_url();
+$site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 
 ?>
 <div id="llar-mfa-rescue-popup-content" style="display: none;">
@@ -30,7 +30,7 @@ $domain = wp_parse_url( $site_url, PHP_URL_HOST );
 							</p>
 							<p>
 								<?php echo esc_html__( 'By clicking a rescue link, 2FA will be fully disabled on', 'limit-login-attempts-reloaded' ); ?>
-								<strong><?php echo esc_html( $domain ); ?></strong>
+								<strong><?php echo esc_html( $site_domain ); ?></strong>
 								<?php echo esc_html__( 'for 1 hour.', 'limit-login-attempts-reloaded' ); ?>
 							</p>
 						</div>
