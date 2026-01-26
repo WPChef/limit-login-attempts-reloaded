@@ -32,6 +32,10 @@ $mfa_roles                = isset( $mfa_settings['mfa_roles'] ) ? $mfa_settings[
 $all_roles                = isset( $mfa_settings['prepared_roles'] ) ? $mfa_settings['prepared_roles'] : array();
 $editable_roles           = isset( $mfa_settings['editable_roles'] ) ? $mfa_settings['editable_roles'] : array();
 
+// Check if SSL is enabled
+$is_ssl_enabled  = is_ssl();
+$is_ssl_disabled = ! $is_ssl_enabled;
+
 ?>
 <div id="llar-setting-page" class="llar-admin">
 	<form action="<?php echo esc_url( $this->get_options_page_uri( 'mfa' ) ); ?>" method="post">
@@ -43,7 +47,20 @@ $editable_roles           = isset( $mfa_settings['editable_roles'] ) ? $mfa_sett
 			<div class="description-page">
 				<?php esc_html_e( 'Configure multi-factor authentication settings for user roles.', 'limit-login-attempts-reloaded' ); ?>
 			</div>
-			<div class="llar-settings-wrap">
+			<?php if ( $is_ssl_disabled ) : ?>
+				<div class="notice notice-error inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #dc3232; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
+					<p style="margin: 0 0 8px 0; font-weight: bold; font-size: 16px; color: #dc3232;">
+						<?php esc_html_e( '⚠️ SSL/HTTPS is Required', 'limit-login-attempts-reloaded' ); ?>
+					</p>
+					<p style="margin: 0 0 8px 0; font-size: 14px;">
+						<?php esc_html_e( 'Multi-factor authentication requires a secure connection (HTTPS) to protect sensitive data. 2FA cannot be enabled without SSL.', 'limit-login-attempts-reloaded' ); ?>
+					</p>
+					<p style="margin: 0; font-size: 14px; font-weight: bold; color: #dc3232;">
+						<?php esc_html_e( 'All 2FA settings are disabled until SSL is enabled on your site.', 'limit-login-attempts-reloaded' ); ?>
+					</p>
+				</div>
+			<?php endif; ?>
+			<div class="llar-settings-wrap<?php echo $is_ssl_disabled ? ' llar-mfa-disabled-no-ssl' : ''; ?>">
 				<table class="llar-form-table">
 					<!-- Global MFA Control -->
 					<tr>
@@ -57,13 +74,17 @@ $editable_roles           = isset( $mfa_settings['editable_roles'] ) ? $mfa_sett
 									id="mfa_enabled"
 									<?php checked( $mfa_enabled, true ); ?>
 									<?php
-									if ( $mfa_temporarily_disabled ) :
+									if ( $mfa_temporarily_disabled || $is_ssl_disabled ) :
 										?>
 										disabled<?php endif; ?>/>
 							<label for="mfa_enabled">
 								<?php esc_html_e( 'Enable multi-factor authentication for selected user roles', 'limit-login-attempts-reloaded' ); ?>
 							</label>
-							<?php if ( $mfa_temporarily_disabled ) : ?>
+							<?php if ( $is_ssl_disabled ) : ?>
+								<p class="description" style="color: #dc3232; font-weight: bold; margin-top: 8px;">
+									<?php esc_html_e( '⚠️ Cannot enable 2FA: SSL/HTTPS is required.', 'limit-login-attempts-reloaded' ); ?>
+								</p>
+							<?php elseif ( $mfa_temporarily_disabled ) : ?>
 								<p class="description">
 									<?php esc_html_e( '2FA is temporarily disabled via rescue link. It will be automatically re-enabled in 1 hour.', 'limit-login-attempts-reloaded' ); ?>
 								</p>
@@ -89,7 +110,8 @@ $editable_roles           = isset( $mfa_settings['editable_roles'] ) ? $mfa_sett
 											<input type="checkbox" 
 													name="mfa_roles[]" 
 													value="<?php echo esc_attr( $role_key ); ?>"
-													<?php checked( $is_checked, true ); ?>/>
+													<?php checked( $is_checked, true ); ?>
+													<?php echo $is_ssl_disabled ? 'disabled' : ''; ?>/>
 											<span class="llar-role-name">
 												<?php echo esc_html( $role_display_name ); ?>
 												<?php if ( $is_admin_role ) : ?>
@@ -119,7 +141,8 @@ $editable_roles           = isset( $mfa_settings['editable_roles'] ) ? $mfa_sett
 				<input class="button menu__item col button__orange" 
 						name="llar_update_mfa_settings"
 						value="<?php esc_attr_e( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
-						type="submit"/>
+						type="submit"
+						<?php echo $is_ssl_disabled ? 'disabled' : ''; ?>/>
 			</p>
 		</div>
 	</form>
@@ -453,4 +476,34 @@ jQuery(document).ready(function($) {
 	}
 });
 </script>
+<style type="text/css">
+/* Styles for disabled MFA settings when SSL is not enabled */
+.llar-mfa-disabled-no-ssl {
+	opacity: 0.6;
+	pointer-events: none;
+	position: relative;
+}
+
+.llar-mfa-disabled-no-ssl::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+	cursor: not-allowed;
+}
+
+.llar-mfa-disabled-no-ssl input[type="checkbox"],
+.llar-mfa-disabled-no-ssl input[type="submit"],
+.llar-mfa-disabled-no-ssl button {
+	cursor: not-allowed !important;
+	opacity: 0.5;
+}
+
+.llar-mfa-disabled-no-ssl label {
+	cursor: not-allowed !important;
+}
+</style>
 
