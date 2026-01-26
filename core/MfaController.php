@@ -237,11 +237,11 @@ class MfaController {
 			wp_die( 'Invalid rescue link format', 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
-		// Get plain code from transient by hash_id
+		// Get encrypted code from transient by hash_id
 		$transient_rescue_key = 'llar_rescue_' . sanitize_text_field( $hash_id );
-		$plain_code           = get_transient( $transient_rescue_key );
+		$encrypted_data       = get_transient( $transient_rescue_key );
 
-		if ( false === $plain_code ) {
+		if ( false === $encrypted_data ) {
 			// Hash not found or expired (one-time, 5 minutes)
 			// Don't reveal whether hash was invalid or expired (security best practice)
 			wp_die( 'Invalid or expired rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
@@ -249,6 +249,44 @@ class MfaController {
 
 		// Delete transient immediately after getting (one-time use)
 		delete_transient( $transient_rescue_key );
+
+		// Decrypt the code (security: codes are stored encrypted, not in plain text)
+		// Use same encryption key as in get_rescue_url() - AUTH_KEY and AUTH_SALT (constant WordPress salts)
+		if ( ! function_exists( 'openssl_decrypt' ) ) {
+			// Fallback: simple deobfuscation (for old data encrypted without OpenSSL)
+			// Try to get salt from hash_id context - but this won't work reliably
+			// Better to just fail if OpenSSL not available
+			wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+		} else {
+			// Use same logic as encryption: AUTH_KEY and AUTH_SALT (constant)
+			$auth_key_for_decryption = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : wp_generate_password( 64, true ) );
+			$auth_salt_for_decryption = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : wp_generate_password( 64, true ) );
+			
+			$encryption_key = hash( 'sha256', $auth_key_for_decryption . $auth_salt_for_decryption, true );
+			$decoded_data   = base64_decode( $encrypted_data );
+			$iv_length      = openssl_cipher_iv_length( 'AES-256-CBC' );
+			
+			// Check if data looks like encrypted (has IV prefix) or fallback obfuscation
+			if ( strlen( $decoded_data ) > $iv_length ) {
+				// Try AES decryption first
+				$iv             = substr( $decoded_data, 0, $iv_length );
+				$encrypted_code = substr( $decoded_data, $iv_length );
+				$plain_code     = openssl_decrypt( $encrypted_code, 'AES-256-CBC', $encryption_key, 0, $iv );
+				
+				if ( false === $plain_code ) {
+					// Decryption failed - invalid data
+					wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+				}
+			} else {
+				// Data too short to be encrypted - invalid format
+				wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+			}
+		}
+
+		if ( empty( $plain_code ) ) {
+			// Decryption failed - invalid data
+			wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+		}
 
 		// Verify code with constant-time comparison to prevent timing attacks
 		$codes = Config::get( 'mfa_rescue_codes', array() );
@@ -468,9 +506,36 @@ class MfaController {
 		$random_suffix = wp_generate_password( 32, false ); // Additional randomness
 		$hash_id       = hash( 'sha256', $plain_code . $salt . $random_suffix );
 
-		// Save plain code in temporary transient (5 minutes, one-time)
+		// Encrypt plain code before storing in transient (security: don't store plain codes in DB)
+		// Use AES-256-CBC encryption with WordPress salts (AUTH_KEY and AUTH_SALT are constant)
+		if ( ! function_exists( 'openssl_encrypt' ) || ! function_exists( 'openssl_decrypt' ) ) {
+			// Fallback: if OpenSSL not available, use simple obfuscation (not ideal, but better than plain text)
+			error_log( 'LLAR MFA: OpenSSL not available. Using fallback obfuscation for rescue codes.' );
+			$encrypted_data = base64_encode( $plain_code . $salt );
+		} else {
+			// Use AUTH_KEY and AUTH_SALT for encryption key (these are constant WordPress salts)
+			// Don't use $salt variable here - it's only for hash_id generation
+			$auth_key_for_encryption = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : wp_generate_password( 64, true ) );
+			$auth_salt_for_encryption = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : wp_generate_password( 64, true ) );
+			
+			$encryption_key = hash( 'sha256', $auth_key_for_encryption . $auth_salt_for_encryption, true );
+			$iv_length      = openssl_cipher_iv_length( 'AES-256-CBC' );
+			$iv             = openssl_random_pseudo_bytes( $iv_length );
+			$encrypted_code = openssl_encrypt( $plain_code, 'AES-256-CBC', $encryption_key, 0, $iv );
+			
+			if ( false === $encrypted_code ) {
+				// Encryption failed, use fallback
+				error_log( 'LLAR MFA: Encryption failed. Using fallback obfuscation.' );
+				$encrypted_data = base64_encode( $plain_code . $salt );
+			} else {
+				// Store encrypted code with IV (required for decryption)
+				$encrypted_data = base64_encode( $iv . $encrypted_code );
+			}
+		}
+		
+		// Save encrypted code in temporary transient (5 minutes, one-time)
 		$transient_key = 'llar_rescue_' . $hash_id;
-		set_transient( $transient_key, $plain_code, 300 ); // 5 minutes
+		set_transient( $transient_key, $encrypted_data, 300 ); // 5 minutes
 
 		// URL contains only hash, not plain code
 		return add_query_arg( 'llar_rescue', $hash_id, home_url() );
