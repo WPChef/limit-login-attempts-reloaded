@@ -95,7 +95,7 @@ class MfaSettingsManager {
 		}
 
 		// Check if rescue popup should be shown
-		$codes = Config::get( 'mfa_rescue_codes', array() );
+		$codes             = Config::get( 'mfa_rescue_codes', array() );
 		$show_rescue_popup = $this->rules->should_show_rescue_popup( $codes );
 
 		return array(
@@ -103,8 +103,8 @@ class MfaSettingsManager {
 			'mfa_temporarily_disabled' => $mfa_temporarily_disabled,
 			'mfa_roles'                => $mfa_roles,
 			'prepared_roles'           => $prepared_roles,
-			'editable_roles'            => $editable_roles,
-			'show_rescue_popup'         => $show_rescue_popup,
+			'editable_roles'           => $editable_roles,
+			'show_rescue_popup'        => $show_rescue_popup,
 		);
 	}
 

@@ -64,7 +64,7 @@ class MfaRescueEndpointHandler {
 
 		// Get encrypted code from transient by hash_id
 		$transient_rescue_key = MfaConstants::TRANSIENT_RESCUE_PREFIX . sanitize_text_field( $hash_id );
-		$encrypted_data        = get_transient( $transient_rescue_key );
+		$encrypted_data       = get_transient( $transient_rescue_key );
 
 		if ( false === $encrypted_data ) {
 			// Hash not found or expired (one-time, 5 minutes)
