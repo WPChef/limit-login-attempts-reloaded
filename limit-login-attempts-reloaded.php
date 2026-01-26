@@ -79,23 +79,26 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 		global $wpdb;
 
 		// Delete all transients older than 1 day
+		// Fix: esc_like() must be called before prepare(), not inside it
+		$like_pattern = $wpdb->esc_like( '_transient_llar_rescue_' ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} 
 				 WHERE option_name LIKE %s 
 				 AND option_value < %d",
-				$wpdb->esc_like( '_transient_llar_rescue_' ) . '%',
+				$like_pattern,
 				time() - DAY_IN_SECONDS
 			)
 		);
 
 		// Also delete timeout transients
+		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_llar_rescue_' ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} 
 				 WHERE option_name LIKE %s 
 				 AND option_value < %d",
-				$wpdb->esc_like( '_transient_timeout_llar_rescue_' ) . '%',
+				$like_pattern_timeout,
 				time() - DAY_IN_SECONDS
 			)
 		);
@@ -108,19 +111,22 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 		global $wpdb;
 
 		// Delete all rescue transients
+		// Fix: esc_like() must be called before prepare(), not inside it
+		$like_pattern = $wpdb->esc_like( '_transient_llar_rescue_' ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} 
 				 WHERE option_name LIKE %s",
-				$wpdb->esc_like( '_transient_llar_rescue_' ) . '%'
+				$like_pattern
 			)
 		);
 
+		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_llar_rescue_' ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} 
 				 WHERE option_name LIKE %s",
-				$wpdb->esc_like( '_transient_timeout_llar_rescue_' ) . '%'
+				$like_pattern_timeout
 			)
 		);
 	}
