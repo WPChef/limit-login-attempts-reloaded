@@ -2,6 +2,15 @@
 
 namespace LLAR\Core;
 
+use LLAR\Core\Mfa\MfaCodeGenerator;
+use LLAR\Core\Mfa\MfaEncryptionService;
+use LLAR\Core\Mfa\MfaRateLimiter;
+use LLAR\Core\Mfa\MfaRescueEndpointHandler;
+use LLAR\Core\Mfa\MfaRescueUrlGenerator;
+use LLAR\Core\Mfa\MfaRules;
+use LLAR\Core\Mfa\MfaSettingsManager;
+use LLAR\Core\MfaConstants;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -28,6 +37,69 @@ class MfaController {
 	 * @var array
 	 */
 	public $editable_roles = array();
+
+	/**
+	 * Code generator
+	 *
+	 * @var MfaCodeGenerator
+	 */
+	private $code_generator;
+
+	/**
+	 * Encryption service
+	 *
+	 * @var MfaEncryptionService
+	 */
+	private $encryption;
+
+	/**
+	 * Rate limiter
+	 *
+	 * @var MfaRateLimiter
+	 */
+	private $rate_limiter;
+
+	/**
+	 * Rescue endpoint handler
+	 *
+	 * @var MfaRescueEndpointHandler
+	 */
+	private $rescue_handler;
+
+	/**
+	 * Rescue URL generator
+	 *
+	 * @var MfaRescueUrlGenerator
+	 */
+	private $url_generator;
+
+	/**
+	 * Settings manager
+	 *
+	 * @var MfaSettingsManager
+	 */
+	private $settings_manager;
+
+	/**
+	 * Rules service
+	 *
+	 * @var MfaRules
+	 */
+	private $rules;
+
+	/**
+	 * Constructor - initialize dependencies
+	 */
+	public function __construct() {
+		// Initialize services
+		$this->encryption      = new MfaEncryptionService();
+		$this->rate_limiter    = new MfaRateLimiter();
+		$this->rules           = new MfaRules();
+		$this->code_generator  = new MfaCodeGenerator();
+		$this->url_generator   = new MfaRescueUrlGenerator( $this->encryption );
+		$this->rescue_handler  = new MfaRescueEndpointHandler( $this->encryption, $this->rate_limiter );
+		$this->settings_manager = new MfaSettingsManager( $this->rules );
+	}
 
 	/**
 	 * Register all hooks
@@ -69,40 +141,14 @@ class MfaController {
 	 * @return array Plain codes (for file generation only)
 	 */
 	public function generate_rescue_codes() {
-		$codes       = array();
-		$plain_codes = array(); // Temporary array for file
-
-		for ( $i = 0; 10 > $i; $i++ ) {
-			// Generate cryptographically secure random code
-			// 64 characters alphanumeric = ~384 bits of entropy
-			$code = wp_generate_password( 64, false ); // alphanumeric
-
-			// Hash with bcrypt (includes unique salt automatically)
-			$hash = wp_hash_password( $code );
-
-			// Validate hash was generated successfully
-			if ( empty( $hash ) || 20 > strlen( $hash ) ) {
-				// Fallback: log error and skip this code
-				error_log( 'LLAR MFA: Failed to hash rescue code. Skipping code generation.' );
-				continue;
-			}
-
-			$codes[]       = array(
-				'hash'    => $hash,
-				'used'    => false,
-				'used_at' => null,
-			);
-			$plain_codes[] = $code; // Save for file (only in memory)
-		}
+		$plain_codes = $this->code_generator->generate();
 
 		// Ensure we have at least some codes generated
-		if ( empty( $codes ) ) {
+		if ( empty( $plain_codes ) ) {
 			wp_send_json_error( array( 'message' => __( 'Failed to generate rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ) );
 			return array();
 		}
 
-		// Replace old codes with new ones
-		Config::update( 'mfa_rescue_codes', $codes );
 		return $plain_codes; // Return plain codes for file generation (only in memory)
 	}
 
@@ -472,7 +518,7 @@ class MfaController {
 		// Generate rescue URLs
 		$rescue_urls = array();
 		foreach ( $plain_codes as $code ) {
-			$rescue_urls[] = $this->get_rescue_url( $code );
+			$rescue_urls[] = $this->url_generator->get_rescue_url( $code );
 		}
 
 		// Load PDF template with variables
