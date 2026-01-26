@@ -92,12 +92,12 @@ class MfaController {
 	 */
 	public function __construct() {
 		// Initialize services
-		$this->encryption      = new MfaEncryptionService();
-		$this->rate_limiter    = new MfaRateLimiter();
-		$this->rules           = new MfaRules();
-		$this->code_generator  = new MfaCodeGenerator();
-		$this->url_generator   = new MfaRescueUrlGenerator( $this->encryption );
-		$this->rescue_handler  = new MfaRescueEndpointHandler( $this->encryption, $this->rate_limiter );
+		$this->encryption       = new MfaEncryptionService();
+		$this->rate_limiter     = new MfaRateLimiter();
+		$this->rules            = new MfaRules();
+		$this->code_generator   = new MfaCodeGenerator();
+		$this->url_generator    = new MfaRescueUrlGenerator( $this->encryption );
+		$this->rescue_handler   = new MfaRescueEndpointHandler( $this->encryption, $this->rate_limiter );
 		$this->settings_manager = new MfaSettingsManager( $this->rules );
 	}
 
@@ -305,20 +305,20 @@ class MfaController {
 			wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		} else {
 			// Use same logic as encryption: AUTH_KEY and AUTH_SALT (constant)
-			$auth_key_for_decryption = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : wp_generate_password( 64, true ) );
+			$auth_key_for_decryption  = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : wp_generate_password( 64, true ) );
 			$auth_salt_for_decryption = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : wp_generate_password( 64, true ) );
-			
+
 			$encryption_key = hash( 'sha256', $auth_key_for_decryption . $auth_salt_for_decryption, true );
 			$decoded_data   = base64_decode( $encrypted_data );
 			$iv_length      = openssl_cipher_iv_length( 'AES-256-CBC' );
-			
+
 			// Check if data looks like encrypted (has IV prefix) or fallback obfuscation
 			if ( strlen( $decoded_data ) > $iv_length ) {
 				// Try AES decryption first
 				$iv             = substr( $decoded_data, 0, $iv_length );
 				$encrypted_code = substr( $decoded_data, $iv_length );
 				$plain_code     = openssl_decrypt( $encrypted_code, 'AES-256-CBC', $encryption_key, 0, $iv );
-				
+
 				if ( false === $plain_code ) {
 					// Decryption failed - invalid data
 					wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
@@ -394,7 +394,7 @@ class MfaController {
 		}
 
 		// Check if we're on login page (wp-login.php or WooCommerce login)
-		$is_wp_login_page = ( isset( $GLOBALS['pagenow'] ) && 'wp-login.php' === $GLOBALS['pagenow'] );
+		$is_wp_login_page  = ( isset( $GLOBALS['pagenow'] ) && 'wp-login.php' === $GLOBALS['pagenow'] );
 		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() );
 
 		if ( ! $is_wp_login_page && ! $is_woo_login_page ) {
@@ -402,7 +402,7 @@ class MfaController {
 		}
 
 		// Get plugin URL (defined in main plugin file)
-		$plugin_url = defined( 'LLA_PLUGIN_URL' ) ? LLA_PLUGIN_URL : plugins_url( '/', dirname( __FILE__ ) . '/../limit-login-attempts-reloaded.php' );
+		$plugin_url = defined( 'LLA_PLUGIN_URL' ) ? LLA_PLUGIN_URL : plugins_url( '/', __DIR__ . '/../limit-login-attempts-reloaded.php' );
 
 		// Enqueue script with jQuery dependency
 		wp_enqueue_script(
@@ -561,14 +561,14 @@ class MfaController {
 		} else {
 			// Use AUTH_KEY and AUTH_SALT for encryption key (these are constant WordPress salts)
 			// Don't use $salt variable here - it's only for hash_id generation
-			$auth_key_for_encryption = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : wp_generate_password( 64, true ) );
+			$auth_key_for_encryption  = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : wp_generate_password( 64, true ) );
 			$auth_salt_for_encryption = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : wp_generate_password( 64, true ) );
-			
+
 			$encryption_key = hash( 'sha256', $auth_key_for_encryption . $auth_salt_for_encryption, true );
 			$iv_length      = openssl_cipher_iv_length( 'AES-256-CBC' );
 			$iv             = openssl_random_pseudo_bytes( $iv_length );
 			$encrypted_code = openssl_encrypt( $plain_code, 'AES-256-CBC', $encryption_key, 0, $iv );
-			
+
 			if ( false === $encrypted_code ) {
 				// Encryption failed, use fallback
 				error_log( 'LLAR MFA: Encryption failed. Using fallback obfuscation.' );
@@ -578,7 +578,7 @@ class MfaController {
 				$encrypted_data = base64_encode( $iv . $encrypted_code );
 			}
 		}
-		
+
 		// Save encrypted code in temporary transient (5 minutes, one-time)
 		$transient_key = 'llar_rescue_' . $hash_id;
 		set_transient( $transient_key, $encrypted_data, 300 ); // 5 minutes
@@ -638,7 +638,7 @@ class MfaController {
 
 		// Enqueue PDF libraries only on MFA tab (admin only, to avoid loading on frontend)
 		// Use local versions instead of CDN for better security and reliability
-		$plugin_url = defined( 'LLA_PLUGIN_URL' ) ? LLA_PLUGIN_URL : plugins_url( '/', dirname( __FILE__ ) . '/../limit-login-attempts-reloaded.php' );
+		$plugin_url = defined( 'LLA_PLUGIN_URL' ) ? LLA_PLUGIN_URL : plugins_url( '/', __DIR__ . '/../limit-login-attempts-reloaded.php' );
 		wp_enqueue_script( 'html2canvas', $plugin_url . 'assets/js/html2canvas.min.js', array(), '1.4.1', true );
 		wp_enqueue_script( 'jspdf', $plugin_url . 'assets/js/jspdf.umd.min.js', array(), '2.5.1', true );
 	}
@@ -660,6 +660,13 @@ class MfaController {
 		// Check user capabilities
 		if ( ! $has_capability ) {
 			wp_die( esc_html( __( 'You do not have sufficient permissions to access this page.', 'limit-login-attempts-reloaded' ) ) );
+		}
+
+		// Check if SSL is enabled - MFA requires HTTPS
+		if ( ! is_ssl() ) {
+			// SSL is required for MFA - this should not happen if form is properly disabled
+			// But we check server-side for security
+			wp_die( esc_html( __( 'SSL/HTTPS is required for 2FA functionality. Please enable SSL on your site.', 'limit-login-attempts-reloaded' ) ), esc_html__( 'SSL Required', 'limit-login-attempts-reloaded' ), array( 'response' => 403 ) );
 		}
 
 		// Handle MFA enabled/disabled
