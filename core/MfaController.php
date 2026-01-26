@@ -42,8 +42,9 @@ class MfaController {
 		// Handle public rescue endpoint
 		add_action( 'template_redirect', array( $this, 'handle_rescue_endpoint' ) );
 
-		// Display message on login page when MFA is disabled
-		add_filter( 'login_message', array( $this, 'display_mfa_disabled_message' ) );
+		// Enqueue script for MFA disabled message on login page
+		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_mfa_disabled_message_script' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_mfa_disabled_message_script' ) );
 
 		// Enqueue scripts and styles for MFA tab
 		// Use priority 1000 to ensure LimitLoginAttempts::enqueue() (priority 999) runs first
@@ -298,23 +299,46 @@ class MfaController {
 	}
 
 	/**
-	 * Display message on login page when MFA is temporarily disabled
-	 *
-	 * @param string $message Existing login message
-	 * @return string Modified login message
+	 * Enqueue script for MFA disabled message on login page
+	 * Uses the same JavaScript mechanism as other LLAR messages for consistency
+	 * This ensures the message displays correctly even if wp-login.php is customized
 	 */
-	public function display_mfa_disabled_message( $message ) {
-		// Check if parameter is set
+	public function enqueue_mfa_disabled_message_script() {
+		// Only if parameter is set
 		if ( ! isset( $_GET['llar_mfa_disabled'] ) || '1' !== $_GET['llar_mfa_disabled'] ) {
-			return $message;
+			return;
 		}
 
-		// Add success message about MFA being disabled (English message as requested)
-		$mfa_message  = '<div class="message llar-mfa-disabled-message">';
-		$mfa_message .= '<p>' . esc_html__( 'Multi-factor authentication has been temporarily disabled for 1 hour.', 'limit-login-attempts-reloaded' ) . '</p>';
-		$mfa_message .= '</div>';
+		// Check if we're on login page (wp-login.php or WooCommerce login)
+		$is_wp_login_page = ( isset( $GLOBALS['pagenow'] ) && 'wp-login.php' === $GLOBALS['pagenow'] );
+		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() );
 
-		return $message . $mfa_message;
+		if ( ! $is_wp_login_page && ! $is_woo_login_page ) {
+			return;
+		}
+
+		// Get plugin URL (defined in main plugin file)
+		$plugin_url = defined( 'LLA_PLUGIN_URL' ) ? LLA_PLUGIN_URL : plugins_url( '/', dirname( __FILE__ ) . '/../limit-login-attempts-reloaded.php' );
+
+		// Enqueue script with jQuery dependency
+		wp_enqueue_script(
+			'llar-mfa-disabled-message',
+			$plugin_url . 'assets/js/mfa-disabled-message.js',
+			array( 'jquery' ),
+			'1.0.0',
+			true
+		);
+
+		// Localize script with message
+		$message = esc_html__( 'Multi-factor authentication has been temporarily disabled for 1 hour.', 'limit-login-attempts-reloaded' );
+		wp_localize_script(
+			'llar-mfa-disabled-message',
+			'llarMfaDisabled',
+			array(
+				'showMessage' => true,
+				'message'     => $message,
+			)
+		);
 	}
 
 	/**
