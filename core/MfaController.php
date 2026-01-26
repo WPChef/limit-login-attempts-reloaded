@@ -526,8 +526,10 @@ class MfaController {
 		wp_localize_script( 'lla-main', 'llar_vars', $merged_data );
 
 		// Enqueue PDF libraries only on MFA tab (admin only, to avoid loading on frontend)
-		wp_enqueue_script( 'html2canvas', 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', array(), '1.4.1', true );
-		wp_enqueue_script( 'jspdf', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', array(), '2.5.1', true );
+		// Use local versions instead of CDN for better security and reliability
+		$plugin_url = defined( 'LLA_PLUGIN_URL' ) ? LLA_PLUGIN_URL : plugins_url( '/', dirname( __FILE__ ) . '/../limit-login-attempts-reloaded.php' );
+		wp_enqueue_script( 'html2canvas', $plugin_url . 'assets/js/html2canvas.min.js', array(), '1.4.1', true );
+		wp_enqueue_script( 'jspdf', $plugin_url . 'assets/js/jspdf.umd.min.js', array(), '2.5.1', true );
 	}
 
 	/**
