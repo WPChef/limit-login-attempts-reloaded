@@ -39,6 +39,9 @@ class MfaRescueEndpointHandler {
 		$this->rate_limiter = $rate_limiter;
 	}
 
+	/** Generic error message to avoid revealing format or state. */
+	const RESCUE_ERROR_MSG = 'Invalid or expired rescue link';
+
 	/**
 	 * Handle rescue endpoint request
 	 *
@@ -46,61 +49,56 @@ class MfaRescueEndpointHandler {
 	 * @return bool True if code verified and MFA disabled
 	 */
 	public function handle( $hash_id ) {
-		// Get client IP for rate limiting
 		$client_ip = $this->get_client_ip();
 
-		// Check rate limiting
 		if ( $this->rate_limiter->is_rate_limited( $client_ip ) ) {
 			wp_die( 'Too many attempts. Please try again later.', 'LLAR MFA Rescue', array( 'response' => 429 ) );
 		}
 
-		// Increment attempt counter
 		$this->rate_limiter->increment_attempts( $client_ip );
 
-		// Validate hash_id format (SHA-256 produces 64 hex characters)
-		if ( ! preg_match( '/^[a-f0-9]{64}$/i', $hash_id ) ) {
-			wp_die( 'Invalid rescue link format', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+		// Validate hash_id: length and format (SHA-256 = 64 hex chars). Consistent sanitization.
+		$hash_id = is_string( $hash_id ) ? sanitize_text_field( $hash_id ) : '';
+		if ( 64 !== strlen( $hash_id ) || ! preg_match( '/^[a-f0-9]{64}$/i', $hash_id ) ) {
+			wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
-		// Get encrypted code from Config (no expiration, one-time use; same as MfaRescueUrlGenerator)
-		$sanitized_hash = sanitize_text_field( $hash_id );
-		$pending        = Config::get( 'mfa_rescue_pending_links' );
-		if ( ! is_array( $pending ) || ! isset( $pending[ $sanitized_hash ] ) ) {
-			// Hash not found or already used
-			wp_die( 'Invalid or expired rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+		// Constant-time lookup: iterate all pending keys, use hash_equals (no early break)
+		$pending = Config::get( 'mfa_rescue_pending_links' );
+		if ( ! is_array( $pending ) ) {
+			wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
-		$encrypted_data = $pending[ $sanitized_hash ];
-		unset( $pending[ $sanitized_hash ] );
+		$matched_key = null;
+		foreach ( array_keys( $pending ) as $key ) {
+			if ( is_string( $key ) && hash_equals( $hash_id, $key ) ) {
+				$matched_key = $key;
+			}
+		}
+		if ( null === $matched_key ) {
+			wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+		}
+		$encrypted_data = $pending[ $matched_key ];
+		unset( $pending[ $matched_key ] );
 		Config::update( 'mfa_rescue_pending_links', $pending );
 
-		// Decrypt the code
 		$plain_code = $this->encryption->decrypt_code( $encrypted_data );
-
 		if ( false === $plain_code ) {
-			// Decryption failed - invalid data
-			wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+			wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
-		// Verify code with constant-time comparison to prevent timing attacks
 		$codes = Config::get( 'mfa_rescue_codes', array() );
-
 		if ( ! is_array( $codes ) || empty( $codes ) ) {
-			wp_die( 'Invalid rescue code', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+			wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
+		// Constant-time verification: iterate all codes, no early break. verify() uses wp_check_password (constant-time).
 		$code_verified  = false;
 		$verified_index = null;
-
-		// Constant-time verification: always iterate all codes to prevent timing attacks.
-		// Do not break early — otherwise response time leaks which code matched.
 		foreach ( $codes as $index => $code_data ) {
 			$rescue_code = RescueCode::from_array( $code_data );
-
-			// Skip already used codes
 			if ( $rescue_code->is_used() ) {
 				continue;
 			}
-
 			if ( $rescue_code->verify( $plain_code ) ) {
 				$code_verified  = true;
 				$verified_index = $index;
@@ -108,24 +106,17 @@ class MfaRescueEndpointHandler {
 		}
 
 		if ( $code_verified && null !== $verified_index ) {
-			// Mark as used
 			$rescue_code = RescueCode::from_array( $codes[ $verified_index ] );
 			$rescue_code->mark_as_used();
 			$codes[ $verified_index ] = $rescue_code->to_array();
-
 			Config::update( 'mfa_rescue_codes', $codes );
-
-			// Disable MFA for an hour
 			$this->disable_mfa_temporarily();
-
-			// Redirect to wp-login.php with success message
 			$login_url = add_query_arg( 'llar_mfa_disabled', '1', wp_login_url() );
 			wp_safe_redirect( $login_url );
 			exit;
 		}
 
-		// Code not found or already used - same error message (don't reveal which)
-		wp_die( 'Invalid rescue code', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+		wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 	}
 
 	/**
