@@ -37,6 +37,9 @@ $editable_roles           = isset( $mfa_settings['editable_roles'] ) ? $mfa_sett
 $mfa_block_reason = isset( $mfa_settings['mfa_block_reason'] ) ? $mfa_settings['mfa_block_reason'] : null;
 $is_mfa_disabled  = ( null !== $mfa_block_reason );
 
+// OpenSSL required for secure rescue links; without it, base64(plain_code . salt) is used (not encryption, salt exposed)
+$openssl_available = isset( $mfa_settings['openssl_available'] ) ? $mfa_settings['openssl_available'] : true;
+
 ?>
 <div id="llar-setting-page" class="llar-admin">
 	<form action="<?php echo esc_url( $this->get_options_page_uri( 'mfa' ) ); ?>" method="post">
@@ -48,6 +51,16 @@ $is_mfa_disabled  = ( null !== $mfa_block_reason );
 			<div class="description-page">
 				<?php esc_html_e( 'Configure multi-factor authentication settings for user roles.', 'limit-login-attempts-reloaded' ); ?>
 			</div>
+			<?php if ( ! $openssl_available ) : ?>
+				<div class="notice notice-warning inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #ffb900; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
+					<p style="margin: 0 0 8px 0; font-weight: bold; font-size: 16px; color: #94660c;">
+						<?php esc_html_e( 'OpenSSL is required for secure rescue links', 'limit-login-attempts-reloaded' ); ?>
+					</p>
+					<p style="margin: 0 0 8px 0; font-size: 14px;">
+						<?php esc_html_e( 'Without the OpenSSL PHP extension, rescue codes use base64 obfuscation only — this is not encryption. The salt is concatenated with the code and stored together, so it is exposed. Enable the OpenSSL extension in PHP for secure rescue links, or avoid generating rescue links until it is available.', 'limit-login-attempts-reloaded' ); ?>
+					</p>
+				</div>
+			<?php endif; ?>
 			<?php if ( $is_mfa_disabled ) : ?>
 				<div class="notice notice-error inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #dc3232; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
 					<p style="margin: 0 0 8px 0; font-weight: bold; font-size: 16px; color: #dc3232;">

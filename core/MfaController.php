@@ -779,6 +779,7 @@ class MfaController {
 			'editable_roles'           => $this->editable_roles,
 			'show_rescue_popup'        => $this->show_rescue_popup,
 			'mfa_block_reason'         => $this->get_mfa_block_reason(),
+			'openssl_available'        => MfaConstants::is_openssl_available(),
 		);
 	}
 }
