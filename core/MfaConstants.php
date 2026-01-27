@@ -65,4 +65,41 @@ class MfaConstants {
 	 * Checkbox state TTL in seconds (5 minutes)
 	 */
 	const CHECKBOX_STATE_TTL = 300;
+
+	/**
+	 * WordPress wp_salt() scheme used as fallback when AUTH_SALT/NONCE_SALT are not defined
+	 */
+	const WP_SALT_SCHEME_FALLBACK = 'auth';
+
+	/**
+	 * Block reason: SSL/HTTPS required
+	 */
+	const MFA_BLOCK_REASON_SSL = 'ssl';
+
+	/**
+	 * Block reason: deterministic salt required for rate limiting
+	 */
+	const MFA_BLOCK_REASON_SALT = 'salt';
+
+	/**
+	 * Return deterministic salt for rate limiting, or null if unavailable.
+	 * Chain: AUTH_SALT -> NONCE_SALT -> wp_salt( WP_SALT_SCHEME_FALLBACK ).
+	 *
+	 * @return string|null Salt string or null if none available
+	 */
+	public static function get_rate_limit_salt() {
+		if ( defined( 'AUTH_SALT' ) && AUTH_SALT ) {
+			return AUTH_SALT;
+		}
+		if ( defined( 'NONCE_SALT' ) && NONCE_SALT ) {
+			return NONCE_SALT;
+		}
+		if ( function_exists( 'wp_salt' ) ) {
+			$salt = wp_salt( self::WP_SALT_SCHEME_FALLBACK );
+			if ( is_string( $salt ) && '' !== $salt ) {
+				return $salt;
+			}
+		}
+		return null;
+	}
 }
