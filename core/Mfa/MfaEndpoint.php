@@ -17,6 +17,12 @@ class MfaEndpoint implements MfaEndpointInterface {
 
 	const RESCUE_ERROR_MSG = 'Invalid or expired rescue link';
 
+	/** Non-informative message for 429 (do not reveal retry timing). */
+	const MSG_TOO_MANY_REQUESTS = 'Too many requests.';
+
+	/** Non-informative message for 500 (do not reveal internal details). */
+	const MSG_ERROR = 'An error occurred.';
+
 	/**
 	 * Backup codes (decrypt, verify)
 	 *
@@ -115,12 +121,28 @@ class MfaEndpoint implements MfaEndpointInterface {
 	}
 
 	/**
-	 * Set rescue endpoint cooldown (transient expires after RESCUE_USE_COOLDOWN seconds).
+	 * Set rescue endpoint cooldown (transient expires after TTL seconds).
 	 *
+	 * @param int|null $ttl TTL in seconds; default MfaConstants::RESCUE_USE_COOLDOWN.
 	 * @return void
 	 */
-	private function set_rescue_cooldown() {
-		set_transient( MfaConstants::TRANSIENT_RESCUE_LAST_USE, 1, MfaConstants::RESCUE_USE_COOLDOWN );
+	private function set_rescue_cooldown( $ttl = null ) {
+		$ttl = ( null !== $ttl ) ? (int) $ttl : (int) MfaConstants::RESCUE_USE_COOLDOWN;
+		set_transient( MfaConstants::TRANSIENT_RESCUE_LAST_USE, 1, $ttl );
+	}
+
+	/**
+	 * Log rescue attempt for debugging (reason only; no hash_id in message to avoid leakage).
+	 *
+	 * @param string $hash_id Hash ID from request (unused in message).
+	 * @param bool   $success Whether the attempt succeeded.
+	 * @param string $reason  Reason code (e.g. cooldown, invalid).
+	 * @return void
+	 */
+	private function log_rescue_attempt( $hash_id, $success, $reason ) {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( 'LLAR MFA Rescue attempt: ' . $reason . ' (success=' . ( $success ? '1' : '0' ) . ')' );
+		}
 	}
 
 	private function disable_mfa_temporarily() {
