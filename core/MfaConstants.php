@@ -82,6 +82,17 @@ class MfaConstants {
 	const MFA_BLOCK_REASON_SALT = 'salt';
 
 	/**
+	 * Whether OpenSSL is available for secure rescue code encryption.
+	 * Without OpenSSL, MfaEncryptionService falls back to base64(plain_code . salt),
+	 * which is not encryption and exposes the salt.
+	 *
+	 * @return bool True if openssl_encrypt and openssl_decrypt are available
+	 */
+	public static function is_openssl_available() {
+		return function_exists( 'openssl_encrypt' ) && function_exists( 'openssl_decrypt' );
+	}
+
+	/**
 	 * Return deterministic salt for rate limiting, or null if unavailable.
 	 * Chain: AUTH_SALT -> NONCE_SALT -> wp_salt( WP_SALT_SCHEME_FALLBACK ).
 	 *
