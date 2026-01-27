@@ -335,11 +335,16 @@ jQuery(document).ready(function($) {
 		// Clear previous content
 		$linksList.empty();
 		
-		// Create ordered list of links
+		// Create ordered list of links (use .attr/.text to avoid XSS; url comes from backend)
 		const $list = $('<ol class="llar-rescue-links-ol"></ol>');
 		urls.forEach(function(url, index) {
 			const $listItem = $('<li class="llar-rescue-link-item"></li>');
-			const $link = $('<a href="' + url + '" target="_blank" class="llar-rescue-link" rel="noopener noreferrer">' + url + '</a>');
+			const $link = $('<a></a>')
+				.attr('href', url)
+				.attr('target', '_blank')
+				.attr('rel', 'noopener noreferrer')
+				.addClass('llar-rescue-link')
+				.text(url);
 			$listItem.append($link);
 			$list.append($listItem);
 		});

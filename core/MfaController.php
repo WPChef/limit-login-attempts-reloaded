@@ -255,132 +255,14 @@ class MfaController {
 
 	/**
 	 * Handle public rescue endpoint
-	 * Uses standard WordPress query vars mechanism
+	 * Delegates to MfaRescueEndpointHandler (single place for rate limit, decrypt, verify).
 	 */
 	public function handle_rescue_endpoint() {
-		// Get hash_id instead of plain code (security)
 		$hash_id = get_query_var( 'llar_rescue' );
 		if ( empty( $hash_id ) ) {
-			return; // Query var not set, exit
+			return;
 		}
-
-		// Rate limiting: protection against brute force attacks (required for production)
-		// Increased blocking period to 1 hour for better security
-		$client_ip = $this->get_client_ip();
-
-		// Use SHA-256 instead of MD5 for rate limiting key
-		$salt_for_rate_limit = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : wp_generate_password( 64, true ) );
-		$transient_key       = 'llar_rescue_attempts_' . hash( 'sha256', $client_ip . $salt_for_rate_limit );
-		$attempts            = get_transient( $transient_key );
-		$attempts            = ( false !== $attempts ) ? $attempts : 0;
-
-		if ( 5 <= $attempts ) { // Limit: 5 attempts per period
-			wp_die( 'Too many attempts. Please try again later.', 'LLAR MFA Rescue', array( 'response' => 429 ) );
-		}
-
-		// Increment counter on each check (even invalid)
-		set_transient( $transient_key, $attempts + 1, HOUR_IN_SECONDS ); // Block for 1 hour (not 5 minutes!)
-
-		// Validate hash_id format (SHA-256 produces 64 hex characters)
-		if ( ! preg_match( '/^[a-f0-9]{64}$/i', $hash_id ) ) {
-			wp_die( 'Invalid rescue link format', 'LLAR MFA Rescue', array( 'response' => 403 ) );
-		}
-
-		// Get encrypted code from persistent storage by hash_id (no expiration, one-time use)
-		$sanitized_hash = sanitize_text_field( $hash_id );
-		$pending        = Config::get( 'mfa_rescue_pending_links' );
-		if ( ! is_array( $pending ) || ! isset( $pending[ $sanitized_hash ] ) ) {
-			// Hash not found or already used
-			wp_die( 'Invalid or expired rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
-		}
-		$encrypted_data = $pending[ $sanitized_hash ];
-		unset( $pending[ $sanitized_hash ] );
-		Config::update( 'mfa_rescue_pending_links', $pending );
-
-		// Decrypt the code (security: codes are stored encrypted, not in plain text)
-		// Use same encryption key as in get_rescue_url() - AUTH_KEY and AUTH_SALT (constant WordPress salts)
-		if ( ! function_exists( 'openssl_decrypt' ) ) {
-			// Fallback: simple deobfuscation (for old data encrypted without OpenSSL)
-			// Try to get salt from hash_id context - but this won't work reliably
-			// Better to just fail if OpenSSL not available
-			wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
-		} else {
-			// Use same logic as encryption: AUTH_KEY and AUTH_SALT (constant)
-			$auth_key_for_decryption  = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : wp_generate_password( 64, true ) );
-			$auth_salt_for_decryption = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : wp_generate_password( 64, true ) );
-
-			$encryption_key = hash( 'sha256', $auth_key_for_decryption . $auth_salt_for_decryption, true );
-			$decoded_data   = base64_decode( $encrypted_data );
-			$iv_length      = openssl_cipher_iv_length( 'AES-256-CBC' );
-
-			// Check if data looks like encrypted (has IV prefix) or fallback obfuscation
-			if ( strlen( $decoded_data ) > $iv_length ) {
-				// Try AES decryption first
-				$iv             = substr( $decoded_data, 0, $iv_length );
-				$encrypted_code = substr( $decoded_data, $iv_length );
-				$plain_code     = openssl_decrypt( $encrypted_code, 'AES-256-CBC', $encryption_key, 0, $iv );
-
-				if ( false === $plain_code ) {
-					// Decryption failed - invalid data
-					wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
-				}
-			} else {
-				// Data too short to be encrypted - invalid format
-				wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
-			}
-		}
-
-		if ( empty( $plain_code ) ) {
-			// Decryption failed - invalid data
-			wp_die( 'Invalid rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
-		}
-
-		// Verify code with constant-time comparison to prevent timing attacks
-		$codes = Config::get( 'mfa_rescue_codes', array() );
-
-		if ( ! is_array( $codes ) || empty( $codes ) ) {
-			wp_die( 'Invalid rescue code', 'LLAR MFA Rescue', array( 'response' => 403 ) );
-		}
-
-		$code_verified  = false;
-		$verified_index = null;
-
-		// Check all codes to prevent timing attacks (always check same number of codes)
-		foreach ( $codes as $index => $code_data ) {
-			if ( ! isset( $code_data['hash'] ) || ! isset( $code_data['used'] ) ) {
-				continue;
-			}
-
-			// Skip already used codes
-			if ( true === $code_data['used'] ) {
-				continue;
-			}
-
-			// Use constant-time password verification
-			if ( wp_check_password( $plain_code, $code_data['hash'] ) ) {
-				$code_verified  = true;
-				$verified_index = $index;
-				break; // Found valid code, can exit early
-			}
-		}
-
-		if ( $code_verified && null !== $verified_index ) {
-			// Mark as used
-			$codes[ $verified_index ]['used']    = true;
-			$codes[ $verified_index ]['used_at'] = time();
-			Config::update( 'mfa_rescue_codes', $codes );
-
-			// Disable MFA for an hour
-			$this->disable_mfa_temporarily();
-
-			// Redirect to wp-login.php with success message
-			$login_url = add_query_arg( 'llar_mfa_disabled', '1', wp_login_url() );
-			wp_safe_redirect( $login_url );
-			exit;
-		}
-
-		// Code not found or already used - same error message (don't reveal which)
-		wp_die( 'Invalid rescue code', 'LLAR MFA Rescue', array( 'response' => 403 ) );
+		$this->rescue_handler->handle( $hash_id );
 	}
 
 	/**
