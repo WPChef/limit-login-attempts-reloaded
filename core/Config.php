@@ -68,6 +68,8 @@ class Config {
 		/* MFA Rescue Codes */
 		'mfa_rescue_codes'              => array(),
 		'mfa_rescue_download_token'     => '',
+		/* MFA Rescue pending links (hash_id => encrypted_data), no expiration, one-time use */
+		'mfa_rescue_pending_links'      => array(),
 	);
 
 	private static $disable_autoload_options = array(
