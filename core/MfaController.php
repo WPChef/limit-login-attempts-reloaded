@@ -286,18 +286,16 @@ class MfaController {
 			wp_die( 'Invalid rescue link format', 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
-		// Get encrypted code from transient by hash_id
-		$transient_rescue_key = 'llar_rescue_' . sanitize_text_field( $hash_id );
-		$encrypted_data       = get_transient( $transient_rescue_key );
-
-		if ( false === $encrypted_data ) {
-			// Hash not found or expired (one-time, 5 minutes)
-			// Don't reveal whether hash was invalid or expired (security best practice)
+		// Get encrypted code from persistent storage by hash_id (no expiration, one-time use)
+		$sanitized_hash = sanitize_text_field( $hash_id );
+		$pending        = Config::get( 'mfa_rescue_pending_links' );
+		if ( ! is_array( $pending ) || ! isset( $pending[ $sanitized_hash ] ) ) {
+			// Hash not found or already used
 			wp_die( 'Invalid or expired rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
-
-		// Delete transient immediately after getting (one-time use)
-		delete_transient( $transient_rescue_key );
+		$encrypted_data = $pending[ $sanitized_hash ];
+		unset( $pending[ $sanitized_hash ] );
+		Config::update( 'mfa_rescue_pending_links', $pending );
 
 		// Decrypt the code (security: codes are stored encrypted, not in plain text)
 		// Use same encryption key as in get_rescue_url() - AUTH_KEY and AUTH_SALT (constant WordPress salts)
@@ -503,6 +501,9 @@ class MfaController {
 
 		// Clear temporary token
 		Config::delete( 'mfa_rescue_download_token' );
+
+		// Clear pending rescue links (hash_id => encrypted_data)
+		Config::update( 'mfa_rescue_pending_links', array() );
 
 		// Clear temporary disable transient
 		delete_transient( 'llar_mfa_temporarily_disabled' );

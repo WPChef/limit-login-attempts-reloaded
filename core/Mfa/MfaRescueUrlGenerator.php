@@ -2,6 +2,7 @@
 
 namespace LLAR\Core\Mfa;
 
+use LLAR\Core\Config;
 use LLAR\Core\MfaConstants;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,12 +55,16 @@ class MfaRescueUrlGenerator {
 		$random_suffix = wp_generate_password( 32, false ); // Additional randomness
 		$hash_id       = hash( 'sha256', $plain_code . $salt . $random_suffix );
 
-		// Encrypt plain code before storing in transient (security: don't store plain codes in DB)
+		// Encrypt plain code before storing (security: don't store plain codes in DB)
 		$encrypted_data = $this->encryption->encrypt_code( $plain_code, $salt );
 
-		// Save encrypted code in temporary transient (5 minutes, one-time)
-		$transient_key = MfaConstants::TRANSIENT_RESCUE_PREFIX . $hash_id;
-		set_transient( $transient_key, $encrypted_data, MfaConstants::RESCUE_LINK_TTL );
+		// Save encrypted code in Config (no expiration, one-time use on first visit)
+		$pending = Config::get( 'mfa_rescue_pending_links' );
+		if ( ! is_array( $pending ) ) {
+			$pending = array();
+		}
+		$pending[ $hash_id ] = $encrypted_data;
+		Config::update( 'mfa_rescue_pending_links', $pending );
 
 		// URL contains only hash, not plain code
 		return add_query_arg( 'llar_rescue', $hash_id, home_url() );
