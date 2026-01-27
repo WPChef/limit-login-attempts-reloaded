@@ -28,16 +28,14 @@ class MfaValidator {
 
 	/**
 	 * Reason why MFA cannot be enabled, or null if it can.
-	 * Requires SSL, salt, and OpenSSL (no base64 fallback — do not enable without proper encryption).
+	 * Requires SSL and OpenSSL (no base64 fallback — do not enable without proper encryption).
+	 * Rescue endpoint rate limit uses global cooldown (no salt required).
 	 *
 	 * @return string|null One of MfaConstants::MFA_BLOCK_REASON_* or null
 	 */
 	public static function get_block_reason() {
 		if ( ! is_ssl() ) {
 			return MfaConstants::MFA_BLOCK_REASON_SSL;
-		}
-		if ( null === MfaConstants::get_rate_limit_salt() ) {
-			return MfaConstants::MFA_BLOCK_REASON_SALT;
 		}
 		if ( ! MfaConstants::is_openssl_available() ) {
 			return MfaConstants::MFA_BLOCK_REASON_OPENSSL;
