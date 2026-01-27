@@ -2167,9 +2167,9 @@ class LimitLoginAttempts
 				$this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
 				$this->cloud_app_init();
 			} elseif ( isset( $_POST['llar_update_mfa_settings'] ) ) {
-				// Handle MFA settings submission via controller
+				// Handle MFA settings submission via controller (capability checked inside)
 				if ( $this->mfa_controller ) {
-					$show_popup = $this->mfa_controller->handle_settings_submission( $this->has_capability );
+					$show_popup = $this->mfa_controller->handle_settings_submission();
 					if ( ! $show_popup ) {
 						$this->show_message( __( '2FA settings saved.', 'limit-login-attempts-reloaded' ) );
 					}

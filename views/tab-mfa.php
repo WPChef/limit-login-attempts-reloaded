@@ -8,9 +8,7 @@
  *
  */
 
-use LLAR\Core\Config;
 use LLAR\Core\LimitLoginAttempts;
-use LLAR\Core\MfaConstants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -33,12 +31,10 @@ $mfa_roles                = isset( $mfa_settings['mfa_roles'] ) ? $mfa_settings[
 $all_roles                = isset( $mfa_settings['prepared_roles'] ) ? $mfa_settings['prepared_roles'] : array();
 $editable_roles           = isset( $mfa_settings['editable_roles'] ) ? $mfa_settings['editable_roles'] : array();
 
-// Unified block reason: null = can enable; 'ssl' or 'salt' = cannot enable (same logic as server-side)
-$mfa_block_reason = isset( $mfa_settings['mfa_block_reason'] ) ? $mfa_settings['mfa_block_reason'] : null;
-$is_mfa_disabled  = ( null !== $mfa_block_reason );
-
-// OpenSSL required for secure rescue links; without it, base64(plain_code . salt) is used (not encryption, salt exposed)
-$openssl_available = isset( $mfa_settings['openssl_available'] ) ? $mfa_settings['openssl_available'] : true;
+// Single source: mfa_block_reason (ssl/salt/openssl) drives all "cannot enable" logic and messages
+$mfa_block_reason  = isset( $mfa_settings['mfa_block_reason'] ) ? $mfa_settings['mfa_block_reason'] : null;
+$mfa_block_message = isset( $mfa_settings['mfa_block_message'] ) ? $mfa_settings['mfa_block_message'] : '';
+$is_mfa_disabled   = ( null !== $mfa_block_reason );
 
 ?>
 <div id="llar-setting-page" class="llar-admin">
@@ -51,29 +47,13 @@ $openssl_available = isset( $mfa_settings['openssl_available'] ) ? $mfa_settings
 			<div class="description-page">
 				<?php esc_html_e( 'Configure multi-factor authentication settings for user roles.', 'limit-login-attempts-reloaded' ); ?>
 			</div>
-			<?php if ( ! $openssl_available ) : ?>
-				<div class="notice notice-warning inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #ffb900; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
-					<p style="margin: 0 0 8px 0; font-weight: bold; font-size: 16px; color: #94660c;">
-						<?php esc_html_e( 'OpenSSL is required for secure rescue links', 'limit-login-attempts-reloaded' ); ?>
-					</p>
-					<p style="margin: 0 0 8px 0; font-size: 14px;">
-						<?php esc_html_e( 'Without the OpenSSL PHP extension, rescue codes use base64 obfuscation only — this is not encryption. The salt is concatenated with the code and stored together, so it is exposed. Enable the OpenSSL extension in PHP for secure rescue links, or avoid generating rescue links until it is available.', 'limit-login-attempts-reloaded' ); ?>
-					</p>
-				</div>
-			<?php endif; ?>
 			<?php if ( $is_mfa_disabled ) : ?>
 				<div class="notice notice-error inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #dc3232; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
 					<p style="margin: 0 0 8px 0; font-weight: bold; font-size: 16px; color: #dc3232;">
-						<?php echo MfaConstants::MFA_BLOCK_REASON_SSL === $mfa_block_reason ? esc_html__( '⚠️ SSL/HTTPS is Required', 'limit-login-attempts-reloaded' ) : esc_html__( '⚠️ 2FA Unavailable: Salt Required', 'limit-login-attempts-reloaded' ); ?>
+						<?php esc_html_e( '⚠️ 2FA Unavailable', 'limit-login-attempts-reloaded' ); ?>
 					</p>
 					<p style="margin: 0 0 8px 0; font-size: 14px;">
-						<?php
-						if ( MfaConstants::MFA_BLOCK_REASON_SSL === $mfa_block_reason ) {
-							echo esc_html( __( 'Multi-factor authentication requires a secure connection (HTTPS) to protect sensitive data. 2FA cannot be enabled without SSL.', 'limit-login-attempts-reloaded' ) );
-						} else {
-							echo esc_html( __( '2FA cannot be enabled: WordPress salt (AUTH_SALT or NONCE_SALT) or wp_salt() is required for secure rate limiting. Please define salts in wp-config.php.', 'limit-login-attempts-reloaded' ) );
-						}
-						?>
+						<?php echo esc_html( $mfa_block_message ); ?>
 					</p>
 					<p style="margin: 0; font-size: 14px; font-weight: bold; color: #dc3232;">
 						<?php esc_html_e( 'All 2FA settings are disabled until the requirement above is met.', 'limit-login-attempts-reloaded' ); ?>
@@ -102,7 +82,7 @@ $openssl_available = isset( $mfa_settings['openssl_available'] ) ? $mfa_settings
 							</label>
 							<?php if ( $is_mfa_disabled ) : ?>
 								<p class="description" style="color: #dc3232; font-weight: bold; margin-top: 8px;">
-									<?php echo MfaConstants::MFA_BLOCK_REASON_SSL === $mfa_block_reason ? esc_html__( '⚠️ Cannot enable 2FA: SSL/HTTPS is required.', 'limit-login-attempts-reloaded' ) : esc_html__( '⚠️ Cannot enable 2FA: WordPress salt (AUTH_SALT or NONCE_SALT) is required.', 'limit-login-attempts-reloaded' ); ?>
+									<?php echo esc_html( $mfa_block_message ); ?>
 								</p>
 							<?php elseif ( $mfa_temporarily_disabled ) : ?>
 								<p class="description">
