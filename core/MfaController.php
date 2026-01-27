@@ -121,6 +121,9 @@ class MfaController {
 		// Enqueue scripts and styles for MFA tab
 		// Use priority 1000 to ensure LimitLoginAttempts::enqueue() (priority 999) runs first
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 1000 );
+
+		// Lazy-load PDF libs only when rescue popup is shown (admin_footer)
+		add_action( 'admin_footer', array( $this, 'enqueue_pdf_libs_if_needed' ), 20 );
 	}
 
 	/**
@@ -531,60 +534,13 @@ class MfaController {
 
 	/**
 	 * Get rescue URL for a code
-	 * Generates one-time hash instead of plain code (security)
+	 * Delegates to MfaRescueUrlGenerator (single source of truth for rescue URL logic).
 	 *
 	 * @param string $plain_code Plain rescue code
 	 * @return string Rescue URL with hash
 	 */
 	public function get_rescue_url( $plain_code ) {
-		// Generate one-time hash instead of plain code
-		// Require AUTH_SALT or NONCE_SALT for security (no static fallback)
-		if ( ! defined( 'AUTH_SALT' ) && ! defined( 'NONCE_SALT' ) ) {
-			// Log error but don't break - use cryptographically secure random instead
-			error_log( 'LLAR MFA: AUTH_SALT or NONCE_SALT not defined in wp-config.php. Using secure random fallback.' );
-			$salt = wp_generate_password( 64, true ); // Generate secure random salt
-		} else {
-			$salt = defined( 'AUTH_SALT' ) ? AUTH_SALT : NONCE_SALT;
-		}
-
-		// Use SHA-256 instead of MD5 for better security
-		// Add random suffix instead of time() for better unpredictability
-		$random_suffix = wp_generate_password( 32, false ); // Additional randomness
-		$hash_id       = hash( 'sha256', $plain_code . $salt . $random_suffix );
-
-		// Encrypt plain code before storing in transient (security: don't store plain codes in DB)
-		// Use AES-256-CBC encryption with WordPress salts (AUTH_KEY and AUTH_SALT are constant)
-		if ( ! function_exists( 'openssl_encrypt' ) || ! function_exists( 'openssl_decrypt' ) ) {
-			// Fallback: if OpenSSL not available, use simple obfuscation (not ideal, but better than plain text)
-			error_log( 'LLAR MFA: OpenSSL not available. Using fallback obfuscation for rescue codes.' );
-			$encrypted_data = base64_encode( $plain_code . $salt );
-		} else {
-			// Use AUTH_KEY and AUTH_SALT for encryption key (these are constant WordPress salts)
-			// Don't use $salt variable here - it's only for hash_id generation
-			$auth_key_for_encryption  = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : wp_generate_password( 64, true ) );
-			$auth_salt_for_encryption = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : wp_generate_password( 64, true ) );
-
-			$encryption_key = hash( 'sha256', $auth_key_for_encryption . $auth_salt_for_encryption, true );
-			$iv_length      = openssl_cipher_iv_length( 'AES-256-CBC' );
-			$iv             = openssl_random_pseudo_bytes( $iv_length );
-			$encrypted_code = openssl_encrypt( $plain_code, 'AES-256-CBC', $encryption_key, 0, $iv );
-
-			if ( false === $encrypted_code ) {
-				// Encryption failed, use fallback
-				error_log( 'LLAR MFA: Encryption failed. Using fallback obfuscation.' );
-				$encrypted_data = base64_encode( $plain_code . $salt );
-			} else {
-				// Store encrypted code with IV (required for decryption)
-				$encrypted_data = base64_encode( $iv . $encrypted_code );
-			}
-		}
-
-		// Save encrypted code in temporary transient (5 minutes, one-time)
-		$transient_key = 'llar_rescue_' . $hash_id;
-		set_transient( $transient_key, $encrypted_data, 300 ); // 5 minutes
-
-		// URL contains only hash, not plain code
-		return add_query_arg( 'llar_rescue', $hash_id, home_url() );
+		return $this->url_generator->get_rescue_url( $plain_code );
 	}
 
 	/**
@@ -636,8 +592,20 @@ class MfaController {
 		// Add MFA-specific data to localized script (merged with existing data)
 		wp_localize_script( 'lla-main', 'llar_vars', $merged_data );
 
-		// Enqueue PDF libraries only on MFA tab (admin only, to avoid loading on frontend)
-		// Use local versions instead of CDN for better security and reliability
+		// Fire action when PDF libs are needed (rescue popup) so admin_footer enqueues them lazily
+		if ( $this->should_show_rescue_popup() ) {
+			do_action( 'llar_mfa_generate_codes' );
+		}
+	}
+
+	/**
+	 * Lazy-load PDF libraries in admin_footer only when rescue codes UI is shown.
+	 * Enqueues html2canvas and jspdf when llar_mfa_generate_codes action was fired.
+	 */
+	public function enqueue_pdf_libs_if_needed() {
+		if ( ! did_action( 'llar_mfa_generate_codes' ) ) {
+			return;
+		}
 		$plugin_url = defined( 'LLA_PLUGIN_URL' ) ? LLA_PLUGIN_URL : plugins_url( '/', __DIR__ . '/../limit-login-attempts-reloaded.php' );
 		wp_enqueue_script( 'html2canvas', $plugin_url . 'assets/js/html2canvas.min.js', array(), '1.4.1', true );
 		wp_enqueue_script( 'jspdf', $plugin_url . 'assets/js/jspdf.umd.min.js', array(), '2.5.1', true );
