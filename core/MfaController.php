@@ -6,6 +6,7 @@ use LLAR\Core\Mfa\MfaCodeGenerator;
 use LLAR\Core\Mfa\MfaEncryptionService;
 use LLAR\Core\Mfa\MfaRateLimiter;
 use LLAR\Core\Mfa\MfaRescueEndpointHandler;
+use LLAR\Core\Mfa\MfaRescuePdfService;
 use LLAR\Core\Mfa\MfaRescueUrlGenerator;
 use LLAR\Core\Mfa\MfaRules;
 use LLAR\Core\Mfa\MfaSettingsManager;
@@ -74,6 +75,13 @@ class MfaController {
 	private $url_generator;
 
 	/**
+	 * Rescue PDF HTML service
+	 *
+	 * @var MfaRescuePdfService
+	 */
+	private $pdf_service;
+
+	/**
 	 * Settings manager
 	 *
 	 * @var MfaSettingsManager
@@ -97,6 +105,7 @@ class MfaController {
 		$this->rules            = new MfaRules();
 		$this->code_generator   = new MfaCodeGenerator();
 		$this->url_generator    = new MfaRescueUrlGenerator( $this->encryption );
+		$this->pdf_service      = new MfaRescuePdfService( $this->url_generator );
 		$this->rescue_handler   = new MfaRescueEndpointHandler( $this->encryption, $this->rate_limiter );
 		$this->settings_manager = new MfaSettingsManager( $this->rules );
 	}
@@ -159,15 +168,31 @@ class MfaController {
 	 * WordPress AJAX callback for generating rescue codes
 	 */
 	public function ajax_generate_rescue_codes() {
-		// Check user capabilities first
 		$this->check_user_capabilities();
 
-		// Check nonce (standard WordPress way)
-		// Use check_ajax_referer with die=false to handle errors gracefully
 		if ( ! check_ajax_referer( 'limit-login-attempts-options', 'nonce', false ) ) {
 			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ) );
 			return;
 		}
+
+		// Rate limit PDF/rescue HTML generation per user per minute
+		$user_id = get_current_user_id();
+		$rate_key = 'llar_mfa_pdf_gen_' . $user_id;
+		$rate_data = get_transient( $rate_key );
+		if ( false !== $rate_data && is_array( $rate_data ) ) {
+			$elapsed = time() - (int) $rate_data['t'];
+			if ( $elapsed < MfaConstants::PDF_RATE_LIMIT_PERIOD && (int) $rate_data['c'] >= MfaConstants::PDF_RATE_LIMIT_MAX ) {
+				wp_send_json_error( array( 'message' => __( 'Too many generations. Please try again in a minute.', 'limit-login-attempts-reloaded' ) ) );
+				return;
+			}
+			if ( $elapsed >= MfaConstants::PDF_RATE_LIMIT_PERIOD ) {
+				$rate_data = array( 'c' => 0, 't' => time() );
+			}
+		} else {
+			$rate_data = array( 'c' => 0, 't' => time() );
+		}
+		$rate_data['c'] = (int) $rate_data['c'] + 1;
+		set_transient( $rate_key, $rate_data, MfaConstants::PDF_RATE_LIMIT_PERIOD );
 
 		// Generate codes (returns plain codes)
 		try {
@@ -188,9 +213,9 @@ class MfaController {
 			$rescue_urls[] = $this->get_rescue_url( $code );
 		}
 
-		// Generate HTML content for PDF generation
+		// Generate HTML content for PDF (delegated to PDF service; path validation inside)
 		try {
-			$html_content = $this->generate_rescue_file_html( $plain_codes );
+			$html_content = $this->pdf_service->generate_html( $plain_codes );
 		} catch ( \Exception $e ) {
 			wp_send_json_error( array( 'message' => __( 'Failed to generate PDF content: ', 'limit-login-attempts-reloaded' ) . $e->getMessage() ) );
 			return;
@@ -220,16 +245,24 @@ class MfaController {
 	}
 
 	/**
-	 * Check user capabilities (supports Multisite)
+	 * Single source of truth: whether current user can manage MFA settings.
+	 * Multisite: super_admin; else: manage_options.
+	 *
+	 * @return bool
+	 */
+	public function user_can_manage_mfa() {
+		if ( is_multisite() ) {
+			return is_super_admin();
+		}
+		return current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * Enforce capability check; exits with JSON error if not allowed (for AJAX).
 	 */
 	private function check_user_capabilities() {
-		// Support Multisite: in network sites manage_options is super admin right
-		if ( is_multisite() ) {
-			if ( ! is_super_admin() ) {
-				wp_send_json_error( array( 'message' => 'Insufficient permissions' ) );
-			}
-		} elseif ( ! current_user_can( 'manage_options' ) ) {
-				wp_send_json_error( array( 'message' => 'Insufficient permissions' ) );
+		if ( ! $this->user_can_manage_mfa() ) {
+			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'limit-login-attempts-reloaded' ) ) );
 		}
 	}
 
@@ -375,44 +408,37 @@ class MfaController {
 	}
 
 	/**
-	 * Cleanup rescue codes when MFA is disabled
+	 * Cleanup rescue codes when MFA is disabled.
+	 * Uses prepared statements for bulk transient deletion.
 	 */
 	public function cleanup_rescue_codes() {
-		// Delete all rescue codes
 		Config::delete( 'mfa_rescue_codes' );
-
-		// Clear temporary token
 		Config::delete( 'mfa_rescue_download_token' );
-
-		// Clear pending rescue links (hash_id => encrypted_data)
 		Config::update( 'mfa_rescue_pending_links', array() );
 
-		// Clear temporary disable transient
-		delete_transient( 'llar_mfa_temporarily_disabled' );
+		$this->delete_mfa_transients();
 	}
 
 	/**
-	 * Generate HTML file with rescue links
+	 * Delete all MFA-related transients via prepared statements (no raw LIKE in SQL).
+	 */
+	private function delete_mfa_transients() {
+		global $wpdb;
+		$table = $wpdb->options;
+		$like  = $wpdb->esc_like( '_transient_llar_mfa' ) . '%';
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE %s", $like ) );
+		$like_timeout = $wpdb->esc_like( '_transient_timeout_llar_mfa' ) . '%';
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE %s", $like_timeout ) );
+	}
+
+	/**
+	 * Generate HTML file with rescue links (delegates to PDF service).
 	 *
 	 * @param array $plain_codes Plain rescue codes
 	 * @return string HTML content
 	 */
 	public function generate_rescue_file_html( $plain_codes ) {
-		$site_url = home_url();
-		$domain   = wp_parse_url( $site_url, PHP_URL_HOST );
-
-		// Generate rescue URLs
-		$rescue_urls = array();
-		foreach ( $plain_codes as $code ) {
-			$rescue_urls[] = $this->url_generator->get_rescue_url( $code );
-		}
-
-		// Load PDF template with variables
-		ob_start();
-		include LLA_PLUGIN_DIR . 'views/mfa-rescue-pdf.php';
-		$html = ob_get_clean();
-
-		return $html;
+		return $this->pdf_service->generate_html( $plain_codes );
 	}
 
 	/**
@@ -495,12 +521,12 @@ class MfaController {
 	}
 
 	/**
-	 * Handle MFA settings form submission
+	 * Handle MFA settings form submission.
+	 * Uses user_can_manage_mfa() as single source of truth for capability.
 	 *
-	 * @param bool $has_capability Whether user has required capability
 	 * @return bool True if popup should be shown, false otherwise
 	 */
-	public function handle_settings_submission( $has_capability ) {
+	public function handle_settings_submission() {
 		// Check if this is MFA settings form
 		if ( ! isset( $_POST['llar_update_mfa_settings'] ) ) {
 			return false;
@@ -508,17 +534,14 @@ class MfaController {
 
 		check_admin_referer( 'limit-login-attempts-options' );
 
-		// Check user capabilities
-		if ( ! $has_capability ) {
+		if ( ! $this->user_can_manage_mfa() ) {
 			wp_die( esc_html( __( 'You do not have sufficient permissions to access this page.', 'limit-login-attempts-reloaded' ) ) );
 		}
 
-		// Unified check: MFA requires SSL and deterministic salt (no duplicated logic with UI)
+		// Unified check: MFA requires SSL, salt, and OpenSSL (single source get_mfa_block_reason)
 		$block_reason = $this->get_mfa_block_reason();
 		if ( null !== $block_reason ) {
-			$msg = MfaConstants::MFA_BLOCK_REASON_SSL === $block_reason
-				? __( 'SSL/HTTPS is required for 2FA functionality. Please enable SSL on your site.', 'limit-login-attempts-reloaded' )
-				: __( '2FA cannot be enabled: WordPress salt (AUTH_SALT or NONCE_SALT) or wp_salt() is required for secure rate limiting. Please define salts in wp-config.php.', 'limit-login-attempts-reloaded' );
+			$msg = $this->get_mfa_block_message( $block_reason );
 			wp_die( esc_html( $msg ), esc_html__( '2FA Unavailable', 'limit-login-attempts-reloaded' ), array( 'response' => 403 ) );
 		}
 
@@ -547,21 +570,22 @@ class MfaController {
 			delete_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
 		}
 
-		// Save selected roles - use editable roles and optimize validation
+		// Save selected roles: validate against editable keys and ensure each role exists
 		$mfa_roles = array();
 		if ( isset( $_POST['mfa_roles'] ) && is_array( $_POST['mfa_roles'] ) && ! empty( $_POST['mfa_roles'] ) ) {
-			// Get editable roles (cached by WordPress on request level)
 			$editable_roles     = get_editable_roles();
 			$editable_role_keys = array_keys( $editable_roles );
 
-			// Sanitize and filter roles - remove empty values and validate against editable roles
 			$sanitized_roles = array_filter(
 				array_map( 'sanitize_text_field', wp_unslash( (array) $_POST['mfa_roles'] ) ),
-				'strlen' // Remove empty strings
+				'strlen'
 			);
 
-			// Validate against editable roles only
 			$mfa_roles = array_intersect( $sanitized_roles, $editable_role_keys );
+			// Ensure each role still exists in current WordPress configuration
+			$mfa_roles = array_filter( $mfa_roles, function ( $role ) {
+				return (bool) get_role( $role );
+			} );
 		}
 		Config::update( 'mfa_roles', $mfa_roles );
 
@@ -587,7 +611,7 @@ class MfaController {
 
 	/**
 	 * Return reason why MFA cannot be enabled, or null if it can.
-	 * Unified check for SSL and deterministic salt (no code duplication with UI).
+	 * Single source for SSL, salt, and OpenSSL (no duplication with view/JS).
 	 *
 	 * @return string|null One of MfaConstants::MFA_BLOCK_REASON_* or null
 	 */
@@ -598,7 +622,29 @@ class MfaController {
 		if ( null === MfaConstants::get_rate_limit_salt() ) {
 			return MfaConstants::MFA_BLOCK_REASON_SALT;
 		}
+		if ( ! MfaConstants::is_openssl_available() ) {
+			return MfaConstants::MFA_BLOCK_REASON_OPENSSL;
+		}
 		return null;
+	}
+
+	/**
+	 * Human-readable message for a block reason (for wp_die / view).
+	 *
+	 * @param string $block_reason One of MfaConstants::MFA_BLOCK_REASON_*
+	 * @return string
+	 */
+	public function get_mfa_block_message( $block_reason ) {
+		if ( MfaConstants::MFA_BLOCK_REASON_SSL === $block_reason ) {
+			return __( 'SSL/HTTPS is required for 2FA functionality. Please enable SSL on your site.', 'limit-login-attempts-reloaded' );
+		}
+		if ( MfaConstants::MFA_BLOCK_REASON_SALT === $block_reason ) {
+			return __( '2FA cannot be enabled: WordPress salt (AUTH_SALT or NONCE_SALT) or wp_salt() is required for secure rate limiting. Please define salts in wp-config.php.', 'limit-login-attempts-reloaded' );
+		}
+		if ( MfaConstants::MFA_BLOCK_REASON_OPENSSL === $block_reason ) {
+			return __( 'OpenSSL is required for secure rescue links. Enable the OpenSSL PHP extension.', 'limit-login-attempts-reloaded' );
+		}
+		return __( '2FA cannot be enabled.', 'limit-login-attempts-reloaded' );
 	}
 
 	/**
@@ -622,6 +668,8 @@ class MfaController {
 			$mfa_roles = array();
 		}
 
+		// Single source: mfa_block_reason drives all "cannot enable" logic (SSL, salt, OpenSSL)
+		$mfa_block_reason = $this->get_mfa_block_reason();
 		return array(
 			'mfa_enabled'              => $mfa_enabled,
 			'mfa_temporarily_disabled' => $mfa_temporarily_disabled,
@@ -629,8 +677,8 @@ class MfaController {
 			'prepared_roles'           => $this->prepared_roles,
 			'editable_roles'           => $this->editable_roles,
 			'show_rescue_popup'        => $this->show_rescue_popup,
-			'mfa_block_reason'         => $this->get_mfa_block_reason(),
-			'openssl_available'        => MfaConstants::is_openssl_available(),
+			'mfa_block_reason'         => $mfa_block_reason,
+			'mfa_block_message'        => $mfa_block_reason ? $this->get_mfa_block_message( $mfa_block_reason ) : '',
 		);
 	}
 }

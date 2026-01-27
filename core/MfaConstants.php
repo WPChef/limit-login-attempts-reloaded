@@ -67,6 +67,16 @@ class MfaConstants {
 	const CHECKBOX_STATE_TTL = 300;
 
 	/**
+	 * Max PDF/rescue HTML generations per user per period (rate limit)
+	 */
+	const PDF_RATE_LIMIT_MAX = 5;
+
+	/**
+	 * PDF generation rate limit period in seconds (1 minute)
+	 */
+	const PDF_RATE_LIMIT_PERIOD = 60;
+
+	/**
 	 * WordPress wp_salt() scheme used as fallback when AUTH_SALT/NONCE_SALT are not defined
 	 */
 	const WP_SALT_SCHEME_FALLBACK = 'auth';
@@ -80,6 +90,11 @@ class MfaConstants {
 	 * Block reason: deterministic salt required for rate limiting
 	 */
 	const MFA_BLOCK_REASON_SALT = 'salt';
+
+	/**
+	 * Block reason: OpenSSL required for secure rescue links
+	 */
+	const MFA_BLOCK_REASON_OPENSSL = 'openssl';
 
 	/**
 	 * Whether OpenSSL is available for secure rescue code encryption.
