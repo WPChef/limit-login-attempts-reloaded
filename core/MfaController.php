@@ -340,93 +340,28 @@ class MfaController {
 	}
 
 	/**
-	 * Disable MFA temporarily (for 1 hour)
-	 */
-	public function disable_mfa_temporarily() {
-		Config::update( 'mfa_enabled', 0 );
-
-		// Check if transient already exists (MFA already disabled)
-		$existing_transient = get_transient( 'llar_mfa_temporarily_disabled' );
-		if ( false !== $existing_transient ) {
-			// MFA is already disabled, don't reduce the timeout
-			return;
-		}
-
-		// Set transient for 1 hour (automatically expires)
-		set_transient( 'llar_mfa_temporarily_disabled', 1, HOUR_IN_SECONDS );
-	}
-
-	/**
-	 * Check if MFA is temporarily disabled via rescue code
+	 * Check if MFA is temporarily disabled (delegates to MfaSettingsManager).
 	 *
-	 * @return bool True if MFA is temporarily disabled
+	 * @return bool
 	 */
 	public function is_mfa_temporarily_disabled() {
-		$disabled = get_transient( 'llar_mfa_temporarily_disabled' );
-
-		if ( false === $disabled ) {
-			// Transient expired - automatically re-enable MFA
-			$mfa_enabled = Config::get( 'mfa_enabled', false );
-			if ( ! $mfa_enabled ) {
-				// MFA was disabled via rescue code, re-enable it now
-				Config::update( 'mfa_enabled', 1 );
-			}
-			return false;
-		}
-
-		return true;
+		return $this->settings_manager->is_mfa_temporarily_disabled();
 	}
 
-
 	/**
-	 * Check if rescue popup should be shown
+	 * Whether rescue popup should be shown (delegates to MfaRules).
 	 *
-	 * @return bool True if popup should be shown
+	 * @return bool
 	 */
 	public function should_show_rescue_popup() {
-		$codes = Config::get( 'mfa_rescue_codes', array() );
-
-		if ( ! is_array( $codes ) ) {
-			$codes = array();
-		}
-
-		// Show popup if no codes exist or all codes are used
-		if ( empty( $codes ) ) {
-			return true;
-		}
-		// Check if all codes are used
-		$all_used = true;
-		foreach ( $codes as $code_data ) {
-			if ( ! isset( $code_data['used'] ) || true !== $code_data['used'] ) {
-				$all_used = false;
-				break;
-			}
-		}
-		return $all_used;
+		return MfaRules::should_show_rescue_popup( Config::get( 'mfa_rescue_codes', array() ) );
 	}
 
 	/**
-	 * Cleanup rescue codes when MFA is disabled.
-	 * Uses prepared statements for bulk transient deletion.
+	 * Cleanup rescue codes when MFA is disabled (delegates to MfaSettingsManager).
 	 */
 	public function cleanup_rescue_codes() {
-		Config::delete( 'mfa_rescue_codes' );
-		Config::delete( 'mfa_rescue_download_token' );
-		Config::update( 'mfa_rescue_pending_links', array() );
-
-		$this->delete_mfa_transients();
-	}
-
-	/**
-	 * Delete all MFA-related transients via prepared statements (no raw LIKE in SQL).
-	 */
-	private function delete_mfa_transients() {
-		global $wpdb;
-		$table = $wpdb->options;
-		$like  = $wpdb->esc_like( '_transient_llar_mfa' ) . '%';
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE %s", $like ) );
-		$like_timeout = $wpdb->esc_like( '_transient_timeout_llar_mfa' ) . '%';
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE %s", $like_timeout ) );
+		$this->settings_manager->cleanup_rescue_codes();
 	}
 
 	/**
@@ -590,73 +525,20 @@ class MfaController {
 	}
 
 	/**
-	 * Prepare roles data for MFA tab
-	 * Should be called before including view to ensure data is ready
+	 * Prepare roles data for MFA tab (delegates to MfaSettingsManager; keeps compat for callers that set state).
 	 */
 	public function prepare_roles_data() {
-		// Get editable roles and prepare translated names with sanitization
-		$editable_roles = get_editable_roles();
-		$prepared_roles = array();
-		foreach ( $editable_roles as $role_key => $role_data ) {
-			// Sanitize translated role name for security
-			$prepared_roles[ $role_key ] = esc_html( translate_user_role( $role_data['name'] ) );
-		}
-		// Store for view
-		$this->prepared_roles = $prepared_roles;
-		$this->editable_roles = $editable_roles;
+		$data = $this->settings_manager->prepare_roles_data();
+		$this->prepared_roles = $data['prepared_roles'];
+		$this->editable_roles = $data['editable_roles'];
 	}
 
 	/**
-	 * Return reason why MFA cannot be enabled, or null (delegates to MfaAvailability).
+	 * Get MFA settings for view. Single source: MfaSettingsManager (includes MfaAvailability, no wrapper).
 	 *
-	 * @return string|null One of MfaConstants::MFA_BLOCK_REASON_* or null
-	 */
-	public function get_mfa_block_reason() {
-		return MfaAvailability::get_block_reason();
-	}
-
-	/**
-	 * Human-readable message for a block reason (delegates to MfaAvailability).
-	 *
-	 * @param string $block_reason One of MfaConstants::MFA_BLOCK_REASON_*
-	 * @return string
-	 */
-	public function get_mfa_block_message( $block_reason ) {
-		return MfaAvailability::get_block_message( $block_reason );
-	}
-
-	/**
-	 * Get MFA settings for view
-	 *
-	 * @return array Array with mfa_enabled, mfa_temporarily_disabled, mfa_roles, prepared_roles, editable_roles, show_rescue_popup, mfa_block_reason
+	 * @return array mfa_enabled, mfa_temporarily_disabled, mfa_roles, prepared_roles, editable_roles, show_rescue_popup, mfa_block_reason, mfa_block_message
 	 */
 	public function get_settings_for_view() {
-		$mfa_enabled_raw          = Config::get( 'mfa_enabled', false );
-		$mfa_temporarily_disabled = $this->is_mfa_temporarily_disabled();
-		$mfa_checkbox_state       = get_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
-
-		// MFA is considered enabled if it's enabled in config AND not temporarily disabled
-		// OR if checkbox state is stored (popup is shown)
-		$mfa_enabled = ( $mfa_enabled_raw && ! $mfa_temporarily_disabled ) || ( 1 === $mfa_checkbox_state );
-
-		$mfa_roles = Config::get( 'mfa_roles', array() );
-
-		// Ensure $mfa_roles is always an array
-		if ( ! is_array( $mfa_roles ) ) {
-			$mfa_roles = array();
-		}
-
-		// Single source: mfa_block_reason drives all "cannot enable" logic (SSL, salt, OpenSSL)
-		$mfa_block_reason = $this->get_mfa_block_reason();
-		return array(
-			'mfa_enabled'              => $mfa_enabled,
-			'mfa_temporarily_disabled' => $mfa_temporarily_disabled,
-			'mfa_roles'                => $mfa_roles,
-			'prepared_roles'           => $this->prepared_roles,
-			'editable_roles'           => $this->editable_roles,
-			'show_rescue_popup'        => $this->show_rescue_popup,
-			'mfa_block_reason'         => $mfa_block_reason,
-			'mfa_block_message'        => $mfa_block_reason ? $this->get_mfa_block_message( $mfa_block_reason ) : '',
-		);
+		return $this->settings_manager->get_settings_for_view( $this->show_rescue_popup );
 	}
 }

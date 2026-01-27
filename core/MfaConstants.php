@@ -98,8 +98,7 @@ class MfaConstants {
 
 	/**
 	 * Whether OpenSSL is available for secure rescue code encryption.
-	 * Without OpenSSL, MfaEncryptionService falls back to base64(plain_code . salt),
-	 * which is not encryption and exposes the salt.
+	 * MFA must not be enabled without OpenSSL; no base64 fallback.
 	 *
 	 * @return bool True if openssl_encrypt and openssl_decrypt are available
 	 */
