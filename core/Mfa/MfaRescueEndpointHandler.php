@@ -91,7 +91,8 @@ class MfaRescueEndpointHandler {
 		$code_verified  = false;
 		$verified_index = null;
 
-		// Check all codes to prevent timing attacks (always check same number of codes)
+		// Constant-time verification: always iterate all codes to prevent timing attacks.
+		// Do not break early — otherwise response time leaks which code matched.
 		foreach ( $codes as $index => $code_data ) {
 			$rescue_code = RescueCode::from_array( $code_data );
 
@@ -100,11 +101,9 @@ class MfaRescueEndpointHandler {
 				continue;
 			}
 
-			// Use constant-time password verification
 			if ( $rescue_code->verify( $plain_code ) ) {
 				$code_verified  = true;
 				$verified_index = $index;
-				break; // Found valid code, can exit early
 			}
 		}
 
