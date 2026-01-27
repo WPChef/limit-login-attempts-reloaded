@@ -63,9 +63,9 @@ class LimitLoginAttempts
 	private $info_data = array();
 
 	/**
-	 * MFA Controller instance
+	 * MFA manager instance (MfaManager: MfaBackupCodes, MfaEndpoint, MfaSettings, MfaValidator).
 	 *
-	 * @var MfaController
+	 * @var \LLAR\Core\Mfa\MfaManager
 	 */
 	private $mfa_controller = null;
 
@@ -160,8 +160,8 @@ class LimitLoginAttempts
 		$this->setup();
 		$this->cloud_app_init();
 
-		// Initialize MFA Controller
-		$this->mfa_controller = new MfaController();
+		// Initialize MFA (MfaManager: MfaBackupCodes, MfaEndpoint, MfaSettings, MfaValidator)
+		$this->mfa_controller = new \LLAR\Core\Mfa\MfaManager();
 		$this->mfa_controller->register();
 
 		( new Shortcodes() )->register();
@@ -2187,11 +2187,7 @@ class LimitLoginAttempts
 			$current_tab = 'mfa';
 		}
 
-		if ( 'mfa' === $current_tab && $this->mfa_controller ) {
-			// Prepare roles data via controller
-			$this->mfa_controller->prepare_roles_data();
-		}
-
+		// MFA tab data comes from get_settings_for_view() (single source in MfaSettingsManager)
 		include_once LLA_PLUGIN_DIR . 'views/options-page.php';
 	}
 
