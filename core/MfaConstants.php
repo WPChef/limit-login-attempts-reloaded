@@ -89,7 +89,11 @@ class MfaConstants {
 	 * @return bool True if openssl_encrypt and openssl_decrypt are available
 	 */
 	public static function is_openssl_available() {
-		return function_exists( 'openssl_encrypt' ) && function_exists( 'openssl_decrypt' );
+		static $available = null;
+		if ( null === $available ) {
+			$available = function_exists( 'openssl_encrypt' ) && function_exists( 'openssl_decrypt' );
+		}
+		return $available;
 	}
 
 	/**

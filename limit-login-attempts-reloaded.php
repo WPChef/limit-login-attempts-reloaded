@@ -77,13 +77,15 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 
 	function llar_mfa_daily_cleanup() {
 		global $wpdb;
+		// $wpdb->options is set by WordPress and safe to use (table name, not user input).
+		$table_name = $wpdb->options;
 
 		// Delete all transients older than 1 day
 		// Fix: esc_like() must be called before prepare(), not inside it
 		$like_pattern = $wpdb->esc_like( '_transient_llar_rescue_' ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} 
+				"DELETE FROM {$table_name} 
 				 WHERE option_name LIKE %s 
 				 AND option_value < %d",
 				$like_pattern,
@@ -95,7 +97,7 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_llar_rescue_' ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} 
+				"DELETE FROM {$table_name} 
 				 WHERE option_name LIKE %s 
 				 AND option_value < %d",
 				$like_pattern_timeout,
@@ -109,13 +111,15 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 	 */
 	function llar_mfa_cleanup_rescue_transients() {
 		global $wpdb;
+		// $wpdb->options is set by WordPress and safe to use (table name, not user input).
+		$table_name = $wpdb->options;
 
 		// Delete all rescue transients
 		// Fix: esc_like() must be called before prepare(), not inside it
 		$like_pattern = $wpdb->esc_like( '_transient_llar_rescue_' ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} 
+				"DELETE FROM {$table_name} 
 				 WHERE option_name LIKE %s",
 				$like_pattern
 			)
@@ -124,7 +128,7 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_llar_rescue_' ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} 
+				"DELETE FROM {$table_name} 
 				 WHERE option_name LIKE %s",
 				$like_pattern_timeout
 			)

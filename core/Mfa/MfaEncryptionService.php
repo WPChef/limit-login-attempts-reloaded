@@ -21,7 +21,9 @@ class MfaEncryptionService {
 	public function encrypt_code( $plain_code, $salt = '' ) {
 		if ( ! function_exists( 'openssl_encrypt' ) || ! function_exists( 'openssl_decrypt' ) ) {
 			// Fallback: if OpenSSL not available, use simple obfuscation
-			error_log( 'LLAR MFA: OpenSSL not available. Using fallback obfuscation for rescue codes.' );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'LLAR MFA: OpenSSL not available. Using fallback obfuscation for rescue codes.' );
+			}
 			return base64_encode( $plain_code . $salt );
 		}
 
@@ -36,7 +38,9 @@ class MfaEncryptionService {
 
 		if ( false === $encrypted_code ) {
 			// Encryption failed, use fallback
-			error_log( 'LLAR MFA: Encryption failed. Using fallback obfuscation.' );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'LLAR MFA: Encryption failed. Using fallback obfuscation.' );
+			}
 			return base64_encode( $plain_code . $salt );
 		}
 

@@ -41,7 +41,9 @@ class MfaRescueUrlGenerator {
 		// Require AUTH_SALT or NONCE_SALT for security (no static fallback)
 		if ( ! defined( 'AUTH_SALT' ) && ! defined( 'NONCE_SALT' ) ) {
 			// Log error but don't break - use cryptographically secure random instead
-			error_log( 'LLAR MFA: AUTH_SALT or NONCE_SALT not defined in wp-config.php. Using secure random fallback.' );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'LLAR MFA: AUTH_SALT or NONCE_SALT not defined in wp-config.php. Using secure random fallback.' );
+			}
 			$salt = wp_generate_password( 64, true ); // Generate secure random salt
 		} else {
 			$salt = defined( 'AUTH_SALT' ) ? AUTH_SALT : NONCE_SALT;
