@@ -62,18 +62,16 @@ class MfaRescueEndpointHandler {
 			wp_die( 'Invalid rescue link format', 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
-		// Get encrypted code from transient by hash_id
-		$transient_rescue_key = MfaConstants::TRANSIENT_RESCUE_PREFIX . sanitize_text_field( $hash_id );
-		$encrypted_data       = get_transient( $transient_rescue_key );
-
-		if ( false === $encrypted_data ) {
-			// Hash not found or expired (one-time, 5 minutes)
-			// Don't reveal whether hash was invalid or expired (security best practice)
+		// Get encrypted code from Config (no expiration, one-time use; same as MfaRescueUrlGenerator)
+		$sanitized_hash = sanitize_text_field( $hash_id );
+		$pending        = Config::get( 'mfa_rescue_pending_links' );
+		if ( ! is_array( $pending ) || ! isset( $pending[ $sanitized_hash ] ) ) {
+			// Hash not found or already used
 			wp_die( 'Invalid or expired rescue link', 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
-
-		// Delete transient immediately after getting (one-time use)
-		delete_transient( $transient_rescue_key );
+		$encrypted_data = $pending[ $sanitized_hash ];
+		unset( $pending[ $sanitized_hash ] );
+		Config::update( 'mfa_rescue_pending_links', $pending );
 
 		// Decrypt the code
 		$plain_code = $this->encryption->decrypt_code( $encrypted_data );
