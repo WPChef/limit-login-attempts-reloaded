@@ -2,6 +2,8 @@
 
 namespace LLAR\Core;
 
+use LLAR\Core\Mfa\MfaAvailability;
+use LLAR\Core\Mfa\MfaCapability;
 use LLAR\Core\Mfa\MfaCodeGenerator;
 use LLAR\Core\Mfa\MfaEncryptionService;
 use LLAR\Core\Mfa\MfaRateLimiter;
@@ -245,16 +247,12 @@ class MfaController {
 	}
 
 	/**
-	 * Single source of truth: whether current user can manage MFA settings.
-	 * Multisite: super_admin; else: manage_options.
+	 * Whether current user can manage MFA settings (delegates to MfaCapability).
 	 *
 	 * @return bool
 	 */
 	public function user_can_manage_mfa() {
-		if ( is_multisite() ) {
-			return is_super_admin();
-		}
-		return current_user_can( 'manage_options' );
+		return MfaCapability::current_user_can_manage();
 	}
 
 	/**
@@ -538,10 +536,9 @@ class MfaController {
 			wp_die( esc_html( __( 'You do not have sufficient permissions to access this page.', 'limit-login-attempts-reloaded' ) ) );
 		}
 
-		// Unified check: MFA requires SSL, salt, and OpenSSL (single source get_mfa_block_reason)
-		$block_reason = $this->get_mfa_block_reason();
+		$block_reason = MfaAvailability::get_block_reason();
 		if ( null !== $block_reason ) {
-			$msg = $this->get_mfa_block_message( $block_reason );
+			$msg = MfaAvailability::get_block_message( $block_reason );
 			wp_die( esc_html( $msg ), esc_html__( '2FA Unavailable', 'limit-login-attempts-reloaded' ), array( 'response' => 403 ) );
 		}
 
@@ -610,41 +607,22 @@ class MfaController {
 	}
 
 	/**
-	 * Return reason why MFA cannot be enabled, or null if it can.
-	 * Single source for SSL, salt, and OpenSSL (no duplication with view/JS).
+	 * Return reason why MFA cannot be enabled, or null (delegates to MfaAvailability).
 	 *
 	 * @return string|null One of MfaConstants::MFA_BLOCK_REASON_* or null
 	 */
 	public function get_mfa_block_reason() {
-		if ( ! is_ssl() ) {
-			return MfaConstants::MFA_BLOCK_REASON_SSL;
-		}
-		if ( null === MfaConstants::get_rate_limit_salt() ) {
-			return MfaConstants::MFA_BLOCK_REASON_SALT;
-		}
-		if ( ! MfaConstants::is_openssl_available() ) {
-			return MfaConstants::MFA_BLOCK_REASON_OPENSSL;
-		}
-		return null;
+		return MfaAvailability::get_block_reason();
 	}
 
 	/**
-	 * Human-readable message for a block reason (for wp_die / view).
+	 * Human-readable message for a block reason (delegates to MfaAvailability).
 	 *
 	 * @param string $block_reason One of MfaConstants::MFA_BLOCK_REASON_*
 	 * @return string
 	 */
 	public function get_mfa_block_message( $block_reason ) {
-		if ( MfaConstants::MFA_BLOCK_REASON_SSL === $block_reason ) {
-			return __( 'SSL/HTTPS is required for 2FA functionality. Please enable SSL on your site.', 'limit-login-attempts-reloaded' );
-		}
-		if ( MfaConstants::MFA_BLOCK_REASON_SALT === $block_reason ) {
-			return __( '2FA cannot be enabled: WordPress salt (AUTH_SALT or NONCE_SALT) or wp_salt() is required for secure rate limiting. Please define salts in wp-config.php.', 'limit-login-attempts-reloaded' );
-		}
-		if ( MfaConstants::MFA_BLOCK_REASON_OPENSSL === $block_reason ) {
-			return __( 'OpenSSL is required for secure rescue links. Enable the OpenSSL PHP extension.', 'limit-login-attempts-reloaded' );
-		}
-		return __( '2FA cannot be enabled.', 'limit-login-attempts-reloaded' );
+		return MfaAvailability::get_block_message( $block_reason );
 	}
 
 	/**
