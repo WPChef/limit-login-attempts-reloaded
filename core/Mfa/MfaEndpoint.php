@@ -15,12 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class MfaEndpoint implements MfaEndpointInterface {
 
-	const RESCUE_ERROR_MSG = 'Invalid or expired rescue link';
-
 	/** Non-informative message for 429 (do not reveal retry timing). */
 	const MSG_TOO_MANY_REQUESTS = 'Too many requests.';
 
-	/** Non-informative message for 500 (do not reveal internal details). */
+	/** Non-informative message for 403/500 (do not reveal internal details). */
 	const MSG_ERROR = 'An error occurred.';
 
 	/**
@@ -48,18 +46,18 @@ class MfaEndpoint implements MfaEndpointInterface {
 	 */
 	public function handle( $hash_id ) {
 		if ( $this->is_rescue_cooldown() ) {
-			wp_die( 'Too many attempts. Please try again in a minute.', 'LLAR MFA Rescue', array( 'response' => 429 ) );
+			wp_die( self::MSG_TOO_MANY_REQUESTS, 'LLAR MFA Rescue', array( 'response' => 429 ) );
 		}
 		$this->set_rescue_cooldown();
 
 		$hash_id = MfaValidator::validate_rescue_hash_id( $hash_id );
 		if ( false === $hash_id ) {
-			wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
 		$pending = Config::get( 'mfa_rescue_pending_links' );
 		if ( ! is_array( $pending ) ) {
-			wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 		$matched_key = null;
 		foreach ( array_keys( $pending ) as $key ) {
@@ -68,7 +66,7 @@ class MfaEndpoint implements MfaEndpointInterface {
 			}
 		}
 		if ( null === $matched_key ) {
-			wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 		$encrypted_data = $pending[ $matched_key ];
 		unset( $pending[ $matched_key ] );
@@ -76,12 +74,12 @@ class MfaEndpoint implements MfaEndpointInterface {
 
 		$plain_code = $this->backup_codes->decrypt_code( $encrypted_data );
 		if ( false === $plain_code ) {
-			wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
 		$codes = Config::get( 'mfa_rescue_codes', array() );
 		if ( ! is_array( $codes ) || empty( $codes ) ) {
-			wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
 		$code_verified  = false;
@@ -108,7 +106,7 @@ class MfaEndpoint implements MfaEndpointInterface {
 			exit;
 		}
 
-		wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+		wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 	}
 
 	/**
