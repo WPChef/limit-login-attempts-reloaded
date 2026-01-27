@@ -30,25 +30,28 @@ define( 'LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR' );
 define( 'LLA_LOCKOUT_NOTIFY_ALLOWED', 'log,email' );
 
 /***************************************************************************************
- * MFA constants (rescue codes, rate limiting, transients)
+ * MFA constants (rescue codes, rate limiting, transients).
+ * Overridable: define in wp-config.php before plugin load to override defaults.
  **************************************************************************************/
-define( 'LLA_MFA_CODE_LENGTH', 64 );
-define( 'LLA_MFA_CODE_COUNT', 10 );
-define( 'LLA_MFA_MAX_ATTEMPTS', 5 );
-define( 'LLA_MFA_RESCUE_LINK_TTL', 300 );
-define( 'LLA_MFA_DISABLE_DURATION', 3600 );
-define( 'LLA_MFA_RATE_LIMIT_PERIOD', 3600 );
-define( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX', 'llar_rescue_' );
-define( 'LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX', 'llar_rescue_attempts_' );
-define( 'LLA_MFA_TRANSIENT_MFA_DISABLED', 'llar_mfa_temporarily_disabled' );
-define( 'LLA_MFA_TRANSIENT_CHECKBOX_STATE', 'llar_mfa_checkbox_state' );
-define( 'LLA_MFA_CHECKBOX_STATE_TTL', 300 );
-define( 'LLA_MFA_PDF_RATE_LIMIT_MAX', 5 );
-define( 'LLA_MFA_PDF_RATE_LIMIT_PERIOD', 60 );
-define( 'LLA_MFA_WP_SALT_SCHEME_FALLBACK', 'auth' );
-define( 'LLA_MFA_BLOCK_REASON_SSL', 'ssl' );
-define( 'LLA_MFA_BLOCK_REASON_SALT', 'salt' );
-define( 'LLA_MFA_BLOCK_REASON_OPENSSL', 'openssl' );
+defined( 'LLA_MFA_CODE_LENGTH' ) || define( 'LLA_MFA_CODE_LENGTH', 64 );
+defined( 'LLA_MFA_CODE_COUNT' ) || define( 'LLA_MFA_CODE_COUNT', 10 );
+defined( 'LLA_MFA_MAX_ATTEMPTS' ) || define( 'LLA_MFA_MAX_ATTEMPTS', 5 );
+defined( 'LLA_MFA_RESCUE_LINK_TTL' ) || define( 'LLA_MFA_RESCUE_LINK_TTL', 300 );
+defined( 'LLA_MFA_DISABLE_DURATION' ) || define( 'LLA_MFA_DISABLE_DURATION', 3600 );
+defined( 'LLA_MFA_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_RATE_LIMIT_PERIOD', 3600 );
+defined( 'LLA_MFA_RESCUE_USE_COOLDOWN' ) || define( 'LLA_MFA_RESCUE_USE_COOLDOWN', 60 );
+defined( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX' ) || define( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX', 'llar_rescue_' );
+defined( 'LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX' ) || define( 'LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX', 'llar_rescue_attempts_' );
+defined( 'LLA_MFA_TRANSIENT_RESCUE_LAST_USE' ) || define( 'LLA_MFA_TRANSIENT_RESCUE_LAST_USE', 'llar_rescue_last_use' );
+defined( 'LLA_MFA_TRANSIENT_MFA_DISABLED' ) || define( 'LLA_MFA_TRANSIENT_MFA_DISABLED', 'llar_mfa_temporarily_disabled' );
+defined( 'LLA_MFA_TRANSIENT_CHECKBOX_STATE' ) || define( 'LLA_MFA_TRANSIENT_CHECKBOX_STATE', 'llar_mfa_checkbox_state' );
+defined( 'LLA_MFA_CHECKBOX_STATE_TTL' ) || define( 'LLA_MFA_CHECKBOX_STATE_TTL', 300 );
+defined( 'LLA_MFA_PDF_RATE_LIMIT_MAX' ) || define( 'LLA_MFA_PDF_RATE_LIMIT_MAX', 5 );
+defined( 'LLA_MFA_PDF_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_PDF_RATE_LIMIT_PERIOD', 60 );
+defined( 'LLA_MFA_WP_SALT_SCHEME_FALLBACK' ) || define( 'LLA_MFA_WP_SALT_SCHEME_FALLBACK', 'auth' );
+defined( 'LLA_MFA_BLOCK_REASON_SSL' ) || define( 'LLA_MFA_BLOCK_REASON_SSL', 'ssl' );
+defined( 'LLA_MFA_BLOCK_REASON_SALT' ) || define( 'LLA_MFA_BLOCK_REASON_SALT', 'salt' );
+defined( 'LLA_MFA_BLOCK_REASON_OPENSSL' ) || define( 'LLA_MFA_BLOCK_REASON_OPENSSL', 'openssl' );
 
 $um_limit_login_failed = false;
 $limit_login_my_error_shown = false; /* have we shown our stuff? */

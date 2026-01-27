@@ -34,17 +34,17 @@ class MfaEndpoint implements MfaEndpointInterface {
 	}
 
 	/**
-	 * Handle rescue endpoint request. Rate-limits, validates hash_id, decrypts, verifies code, disables MFA and redirects, or wp_die.
+	 * Handle rescue endpoint request. Global cooldown: one use per RESCUE_USE_COOLDOWN seconds (default 1 min).
+	 * Then validates hash_id, decrypts, verifies code, disables MFA and redirects, or wp_die.
 	 *
 	 * @param string $hash_id Hash ID from URL (llar_rescue query var).
 	 * @return void
 	 */
 	public function handle( $hash_id ) {
-		$client_ip = $this->get_client_ip();
-		if ( $this->is_rate_limited( $client_ip ) ) {
-			wp_die( 'Too many attempts. Please try again later.', 'LLAR MFA Rescue', array( 'response' => 429 ) );
+		if ( $this->is_rescue_cooldown() ) {
+			wp_die( 'Too many attempts. Please try again in a minute.', 'LLAR MFA Rescue', array( 'response' => 429 ) );
 		}
-		$this->increment_attempts( $client_ip );
+		$this->set_rescue_cooldown();
 
 		$hash_id = MfaValidator::validate_rescue_hash_id( $hash_id );
 		if ( false === $hash_id ) {
@@ -105,40 +105,22 @@ class MfaEndpoint implements MfaEndpointInterface {
 		wp_die( self::RESCUE_ERROR_MSG, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 	}
 
-	private function get_client_ip() {
-		$ip_keys = array( 'HTTP_CF_CONNECTING_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR' );
-		foreach ( $ip_keys as $key ) {
-			if ( ! empty( $_SERVER[ $key ] ) ) {
-				$ip = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
-				if ( false !== strpos( $ip, ',' ) ) {
-					$ip = trim( explode( ',', $ip )[0] );
-				}
-				return $ip;
-			}
-		}
-		return '0.0.0.0';
+	/**
+	 * Whether rescue endpoint is in cooldown (one use per RESCUE_USE_COOLDOWN seconds, globally).
+	 *
+	 * @return bool True if last use was within cooldown.
+	 */
+	private function is_rescue_cooldown() {
+		return false !== get_transient( MfaConstants::TRANSIENT_RESCUE_LAST_USE );
 	}
 
-	private function is_rate_limited( $client_ip ) {
-		$salt = MfaConstants::get_rate_limit_salt();
-		if ( null === $salt ) {
-			return true;
-		}
-		$transient_key = MfaConstants::TRANSIENT_ATTEMPTS_PREFIX . hash( 'sha256', $client_ip . $salt );
-		$attempts      = get_transient( $transient_key );
-		$attempts      = ( false !== $attempts ) ? $attempts : 0;
-		return $attempts >= MfaConstants::MAX_ATTEMPTS;
-	}
-
-	private function increment_attempts( $client_ip ) {
-		$salt = MfaConstants::get_rate_limit_salt();
-		if ( null === $salt ) {
-			return;
-		}
-		$transient_key = MfaConstants::TRANSIENT_ATTEMPTS_PREFIX . hash( 'sha256', $client_ip . $salt );
-		$attempts      = get_transient( $transient_key );
-		$attempts      = ( false !== $attempts ) ? $attempts : 0;
-		set_transient( $transient_key, $attempts + 1, MfaConstants::RATE_LIMIT_PERIOD );
+	/**
+	 * Set rescue endpoint cooldown (transient expires after RESCUE_USE_COOLDOWN seconds).
+	 *
+	 * @return void
+	 */
+	private function set_rescue_cooldown() {
+		set_transient( MfaConstants::TRANSIENT_RESCUE_LAST_USE, 1, MfaConstants::RESCUE_USE_COOLDOWN );
 	}
 
 	private function disable_mfa_temporarily() {

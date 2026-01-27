@@ -26,14 +26,20 @@ class MfaConstants {
 	/** @var int MFA temporary disable duration in seconds (1 hour) */
 	const MFA_DISABLE_DURATION = LLA_MFA_DISABLE_DURATION;
 
-	/** @var int Rate limiting period for rescue attempts (1 hour) */
+	/** @var int Rate limiting period for rescue attempts (1 hour). @deprecated Use RESCUE_USE_COOLDOWN for rescue endpoint. */
 	const RATE_LIMIT_PERIOD = LLA_MFA_RATE_LIMIT_PERIOD;
+
+	/** @var int Minimum seconds between two rescue endpoint uses (cooldown). Default 60 = one use per minute. */
+	const RESCUE_USE_COOLDOWN = LLA_MFA_RESCUE_USE_COOLDOWN;
 
 	/** @var string Transient key prefix for rescue codes */
 	const TRANSIENT_RESCUE_PREFIX = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
 
-	/** @var string Transient key prefix for rescue attempts rate limiting */
+	/** @var string Transient key prefix for rescue attempts rate limiting. @deprecated Rescue limit is now global via TRANSIENT_RESCUE_LAST_USE. */
 	const TRANSIENT_ATTEMPTS_PREFIX = LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX;
+
+	/** @var string Transient key for last rescue endpoint use (global cooldown, one use per RESCUE_USE_COOLDOWN seconds). */
+	const TRANSIENT_RESCUE_LAST_USE = LLA_MFA_TRANSIENT_RESCUE_LAST_USE;
 
 	/** @var string Transient key for MFA temporary disable */
 	const TRANSIENT_MFA_DISABLED = LLA_MFA_TRANSIENT_MFA_DISABLED;
