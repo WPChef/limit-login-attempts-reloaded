@@ -33,10 +33,10 @@ class RescueCode {
 	private $used_at;
 
 	/**
-	 * Create RescueCode from plain code
+	 * Create RescueCode from plain code. Returns null if hashing fails.
 	 *
-	 * @param string $plain_code Plain rescue code
-	 * @return self
+	 * @param string $plain_code Plain rescue code.
+	 * @return self|null RescueCode instance or null on failure.
 	 */
 	public static function from_plain_code( $plain_code ) {
 		$hash = wp_hash_password( $plain_code );
@@ -50,10 +50,10 @@ class RescueCode {
 	}
 
 	/**
-	 * Create RescueCode from stored data
+	 * Create RescueCode from stored data (hash, used, used_at).
 	 *
-	 * @param array $data Stored code data
-	 * @return self
+	 * @param array $data Stored code data.
+	 * @return self RescueCode instance.
 	 */
 	public static function from_array( $data ) {
 		$hash    = isset( $data['hash'] ) ? $data['hash'] : '';
@@ -91,7 +91,9 @@ class RescueCode {
 	}
 
 	/**
-	 * Mark code as used
+	 * Mark code as used and set used_at to current time.
+	 *
+	 * @return void
 	 */
 	public function mark_as_used() {
 		$this->used    = true;

@@ -19,11 +19,11 @@ class MfaManager {
 	public $prepared_roles    = array();
 	public $editable_roles    = array();
 
-	/** @var MfaBackupCodes */
+	/** @var MfaBackupCodesInterface */
 	private $backup_codes;
-	/** @var MfaEndpoint */
+	/** @var MfaEndpointInterface */
 	private $endpoint;
-	/** @var MfaSettings */
+	/** @var MfaSettingsInterface */
 	private $settings;
 
 	public function __construct() {
@@ -32,6 +32,11 @@ class MfaManager {
 		$this->settings     = new MfaSettings();
 	}
 
+	/**
+	 * Register hooks: AJAX, query vars, template_redirect, enqueue scripts.
+	 *
+	 * @return void
+	 */
 	public function register() {
 		add_action( 'wp_ajax_llar_mfa_generate_rescue_codes', array( $this, 'ajax_generate_rescue_codes' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
@@ -42,11 +47,22 @@ class MfaManager {
 		add_action( 'admin_footer', array( $this, 'enqueue_pdf_libs_if_needed' ), 20 );
 	}
 
+	/**
+	 * Add llar_rescue to public query vars for rescue links.
+	 *
+	 * @param array $vars Existing query vars.
+	 * @return array Query vars with llar_rescue.
+	 */
 	public function add_query_vars( $vars ) {
 		$vars[] = 'llar_rescue';
 		return $vars;
 	}
 
+	/**
+	 * Handle rescue endpoint: pass hash_id from query var to endpoint handler.
+	 *
+	 * @return void
+	 */
 	public function handle_rescue_endpoint() {
 		$hash_id = get_query_var( 'llar_rescue' );
 		if ( empty( $hash_id ) ) {
@@ -55,26 +71,60 @@ class MfaManager {
 		$this->endpoint->handle( $hash_id );
 	}
 
+	/**
+	 * Whether current user can manage MFA (capability check).
+	 *
+	 * @return bool True if user can manage MFA.
+	 */
 	public function user_can_manage_mfa() {
 		return MfaValidator::current_user_can_manage();
 	}
 
+	/**
+	 * Whether MFA is temporarily disabled (e.g. after rescue flow).
+	 *
+	 * @return bool True if temporarily disabled.
+	 */
 	public function is_mfa_temporarily_disabled() {
 		return $this->settings->is_mfa_temporarily_disabled();
 	}
 
+	/**
+	 * Whether to show rescue codes popup (no codes or all used).
+	 *
+	 * @return bool True if popup should be shown.
+	 */
 	public function should_show_rescue_popup() {
 		return MfaBackupCodes::should_show_rescue_popup( Config::get( 'mfa_rescue_codes', array() ) );
 	}
 
+	/**
+	 * Cleanup rescue codes and related transients (when MFA disabled).
+	 *
+	 * @return void
+	 */
 	public function cleanup_rescue_codes() {
 		$this->settings->cleanup_rescue_codes();
 	}
 
+	/**
+	 * Build rescue URL for a plain code. OpenSSL required.
+	 *
+	 * @param string $plain_code Plain rescue code.
+	 * @return string Rescue URL.
+	 * @throws \Exception When OpenSSL unavailable or encryption fails.
+	 */
 	public function get_rescue_url( $plain_code ) {
 		return $this->backup_codes->get_rescue_url( $plain_code );
 	}
 
+	/**
+	 * Generate HTML for rescue PDF from plain codes (builds URLs then PDF HTML).
+	 *
+	 * @param array $plain_codes List of plain rescue codes.
+	 * @return string HTML for PDF.
+	 * @throws \Exception When encryption or template fails.
+	 */
 	public function generate_rescue_file_html( $plain_codes ) {
 		$rescue_urls = array();
 		foreach ( (array) $plain_codes as $code ) {
@@ -83,16 +133,31 @@ class MfaManager {
 		return $this->backup_codes->generate_pdf_html( $rescue_urls );
 	}
 
+	/**
+	 * MFA settings data for view (tab template).
+	 *
+	 * @return array mfa_enabled, mfa_temporarily_disabled, mfa_roles, prepared_roles, editable_roles, show_rescue_popup, mfa_block_reason, mfa_block_message.
+	 */
 	public function get_settings_for_view() {
 		return $this->settings->get_settings_for_view( $this->show_rescue_popup );
 	}
 
+	/**
+	 * Load and prepare roles data; assign to $this->prepared_roles and $this->editable_roles.
+	 *
+	 * @return void
+	 */
 	public function prepare_roles_data() {
 		$data = $this->settings->prepare_roles_data();
 		$this->prepared_roles = $data['prepared_roles'];
 		$this->editable_roles = $data['editable_roles'];
 	}
 
+	/**
+	 * Process MFA settings form submission. Capability and block-reason checks, then update Config.
+	 *
+	 * @return bool True if rescued-popup flow triggered (codes needed); false if saved or not submitted.
+	 */
 	public function handle_settings_submission() {
 		if ( ! isset( $_POST['llar_update_mfa_settings'] ) ) {
 			return false;
@@ -140,6 +205,11 @@ class MfaManager {
 		return false;
 	}
 
+	/**
+	 * AJAX handler: generate rescue codes, build URLs and PDF HTML, update config. Sends JSON.
+	 *
+	 * @return void Exits with wp_send_json_*.
+	 */
 	public function ajax_generate_rescue_codes() {
 		if ( ! $this->user_can_manage_mfa() ) {
 			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'limit-login-attempts-reloaded' ) ) );
@@ -201,6 +271,11 @@ class MfaManager {
 		) );
 	}
 
+	/**
+	 * Enqueue script for "MFA temporarily disabled" message on wp-login and Woo account page.
+	 *
+	 * @return void
+	 */
 	public function enqueue_mfa_disabled_message_script() {
 		if ( ! isset( $_GET['llar_mfa_disabled'] ) || '1' !== $_GET['llar_mfa_disabled'] ) {
 			return;
@@ -218,6 +293,11 @@ class MfaManager {
 		) );
 	}
 
+	/**
+	 * Enqueue MFA tab scripts and localize nonce/URL when on MFA tab.
+	 *
+	 * @return void
+	 */
 	public function enqueue_scripts() {
 		if ( ! isset( $_GET['page'] ) || 'limit-login-attempts' !== $_GET['page'] ) {
 			return;
@@ -251,6 +331,11 @@ class MfaManager {
 		}
 	}
 
+	/**
+	 * Enqueue html2canvas and jsPDF when rescue codes popup is shown (after llar_mfa_generate_codes).
+	 *
+	 * @return void
+	 */
 	public function enqueue_pdf_libs_if_needed() {
 		if ( ! did_action( 'llar_mfa_generate_codes' ) ) {
 			return;

@@ -8,93 +8,59 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * MFA Constants
- * Centralized constants for MFA functionality
+ * Facade for MFA constants defined in limit-login-attempts-reloaded.php (LLA_MFA_*).
  */
 class MfaConstants {
-	/**
-	 * Length of each rescue code (characters)
-	 */
-	const CODE_LENGTH = 64;
+	/** @var int Length of each rescue code (characters) */
+	const CODE_LENGTH = LLA_MFA_CODE_LENGTH;
 
-	/**
-	 * Number of rescue codes to generate
-	 */
-	const CODE_COUNT = 10;
+	/** @var int Number of rescue codes to generate */
+	const CODE_COUNT = LLA_MFA_CODE_COUNT;
 
-	/**
-	 * Maximum rescue link verification attempts per IP per hour
-	 */
-	const MAX_ATTEMPTS = 5;
+	/** @var int Maximum rescue link verification attempts per IP per hour */
+	const MAX_ATTEMPTS = LLA_MFA_MAX_ATTEMPTS;
 
-	/**
-	 * Rescue link TTL in seconds (5 minutes)
-	 */
-	const RESCUE_LINK_TTL = 300;
+	/** @var int Rescue link TTL in seconds (5 minutes) */
+	const RESCUE_LINK_TTL = LLA_MFA_RESCUE_LINK_TTL;
 
-	/**
-	 * MFA temporary disable duration in seconds (1 hour)
-	 */
-	const MFA_DISABLE_DURATION = 3600; // HOUR_IN_SECONDS
+	/** @var int MFA temporary disable duration in seconds (1 hour) */
+	const MFA_DISABLE_DURATION = LLA_MFA_DISABLE_DURATION;
 
-	/**
-	 * Rate limiting period for rescue attempts (1 hour)
-	 */
-	const RATE_LIMIT_PERIOD = 3600; // HOUR_IN_SECONDS
+	/** @var int Rate limiting period for rescue attempts (1 hour) */
+	const RATE_LIMIT_PERIOD = LLA_MFA_RATE_LIMIT_PERIOD;
 
-	/**
-	 * Transient key prefix for rescue codes
-	 */
-	const TRANSIENT_RESCUE_PREFIX = 'llar_rescue_';
+	/** @var string Transient key prefix for rescue codes */
+	const TRANSIENT_RESCUE_PREFIX = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
 
-	/**
-	 * Transient key prefix for rescue attempts rate limiting
-	 */
-	const TRANSIENT_ATTEMPTS_PREFIX = 'llar_rescue_attempts_';
+	/** @var string Transient key prefix for rescue attempts rate limiting */
+	const TRANSIENT_ATTEMPTS_PREFIX = LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX;
 
-	/**
-	 * Transient key for MFA temporary disable
-	 */
-	const TRANSIENT_MFA_DISABLED = 'llar_mfa_temporarily_disabled';
+	/** @var string Transient key for MFA temporary disable */
+	const TRANSIENT_MFA_DISABLED = LLA_MFA_TRANSIENT_MFA_DISABLED;
 
-	/**
-	 * Transient key for MFA checkbox state
-	 */
-	const TRANSIENT_CHECKBOX_STATE = 'llar_mfa_checkbox_state';
+	/** @var string Transient key for MFA checkbox state */
+	const TRANSIENT_CHECKBOX_STATE = LLA_MFA_TRANSIENT_CHECKBOX_STATE;
 
-	/**
-	 * Checkbox state TTL in seconds (5 minutes)
-	 */
-	const CHECKBOX_STATE_TTL = 300;
+	/** @var int Checkbox state TTL in seconds (5 minutes) */
+	const CHECKBOX_STATE_TTL = LLA_MFA_CHECKBOX_STATE_TTL;
 
-	/**
-	 * Max PDF/rescue HTML generations per user per period (rate limit)
-	 */
-	const PDF_RATE_LIMIT_MAX = 5;
+	/** @var int Max PDF/rescue HTML generations per user per period (rate limit) */
+	const PDF_RATE_LIMIT_MAX = LLA_MFA_PDF_RATE_LIMIT_MAX;
 
-	/**
-	 * PDF generation rate limit period in seconds (1 minute)
-	 */
-	const PDF_RATE_LIMIT_PERIOD = 60;
+	/** @var int PDF generation rate limit period in seconds (1 minute) */
+	const PDF_RATE_LIMIT_PERIOD = LLA_MFA_PDF_RATE_LIMIT_PERIOD;
 
-	/**
-	 * WordPress wp_salt() scheme used as fallback when AUTH_SALT/NONCE_SALT are not defined
-	 */
-	const WP_SALT_SCHEME_FALLBACK = 'auth';
+	/** @var string WordPress wp_salt() scheme used as fallback when AUTH_SALT/NONCE_SALT are not defined */
+	const WP_SALT_SCHEME_FALLBACK = LLA_MFA_WP_SALT_SCHEME_FALLBACK;
 
-	/**
-	 * Block reason: SSL/HTTPS required
-	 */
-	const MFA_BLOCK_REASON_SSL = 'ssl';
+	/** @var string Block reason: SSL/HTTPS required */
+	const MFA_BLOCK_REASON_SSL = LLA_MFA_BLOCK_REASON_SSL;
 
-	/**
-	 * Block reason: deterministic salt required for rate limiting
-	 */
-	const MFA_BLOCK_REASON_SALT = 'salt';
+	/** @var string Block reason: deterministic salt required for rate limiting */
+	const MFA_BLOCK_REASON_SALT = LLA_MFA_BLOCK_REASON_SALT;
 
-	/**
-	 * Block reason: OpenSSL required for secure rescue links
-	 */
-	const MFA_BLOCK_REASON_OPENSSL = 'openssl';
+	/** @var string Block reason: OpenSSL required for secure rescue links */
+	const MFA_BLOCK_REASON_OPENSSL = LLA_MFA_BLOCK_REASON_OPENSSL;
 
 	/**
 	 * Whether OpenSSL is available for secure rescue code encryption.

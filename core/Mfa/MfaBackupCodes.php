@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * MFA backup/rescue codes: generation, encryption (OpenSSL only), URLs, PDF HTML.
  * No base64 fallback — do not enable MFA without proper encryption.
  */
-class MfaBackupCodes {
+class MfaBackupCodes implements MfaBackupCodesInterface {
 
 	/**
 	 * Encrypt plain code for storage. OpenSSL only; returns false if unavailable.
