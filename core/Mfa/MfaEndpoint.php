@@ -13,28 +13,31 @@ if ( ! defined( 'ABSPATH' ) ) {
  * MFA rescue endpoint: rate limiting, decrypt, verify, disable MFA.
  * Uses MfaValidator for hash_id validation; MfaBackupCodes for decrypt/verify.
  */
-class MfaEndpoint {
+class MfaEndpoint implements MfaEndpointInterface {
 
 	const RESCUE_ERROR_MSG = 'Invalid or expired rescue link';
 
 	/**
 	 * Backup codes (decrypt, verify)
 	 *
-	 * @var MfaBackupCodes
+	 * @var MfaBackupCodesInterface
 	 */
 	private $backup_codes;
 
 	/**
-	 * @param MfaBackupCodes $backup_codes Backup codes service
+	 * Constructor.
+	 *
+	 * @param MfaBackupCodesInterface $backup_codes Backup codes service (decrypt, verify).
 	 */
-	public function __construct( MfaBackupCodes $backup_codes ) {
+	public function __construct( MfaBackupCodesInterface $backup_codes ) {
 		$this->backup_codes = $backup_codes;
 	}
 
 	/**
-	 * Handle rescue endpoint request.
+	 * Handle rescue endpoint request. Rate-limits, validates hash_id, decrypts, verifies code, disables MFA and redirects, or wp_die.
 	 *
-	 * @param string $hash_id Hash ID from URL
+	 * @param string $hash_id Hash ID from URL (llar_rescue query var).
+	 * @return void
 	 */
 	public function handle( $hash_id ) {
 		$client_ip = $this->get_client_ip();

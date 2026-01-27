@@ -29,6 +29,27 @@ define( 'LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR' );
 /* Notify value checked against these in limit_login_sanitize_variables() */
 define( 'LLA_LOCKOUT_NOTIFY_ALLOWED', 'log,email' );
 
+/***************************************************************************************
+ * MFA constants (rescue codes, rate limiting, transients)
+ **************************************************************************************/
+define( 'LLA_MFA_CODE_LENGTH', 64 );
+define( 'LLA_MFA_CODE_COUNT', 10 );
+define( 'LLA_MFA_MAX_ATTEMPTS', 5 );
+define( 'LLA_MFA_RESCUE_LINK_TTL', 300 );
+define( 'LLA_MFA_DISABLE_DURATION', 3600 );
+define( 'LLA_MFA_RATE_LIMIT_PERIOD', 3600 );
+define( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX', 'llar_rescue_' );
+define( 'LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX', 'llar_rescue_attempts_' );
+define( 'LLA_MFA_TRANSIENT_MFA_DISABLED', 'llar_mfa_temporarily_disabled' );
+define( 'LLA_MFA_TRANSIENT_CHECKBOX_STATE', 'llar_mfa_checkbox_state' );
+define( 'LLA_MFA_CHECKBOX_STATE_TTL', 300 );
+define( 'LLA_MFA_PDF_RATE_LIMIT_MAX', 5 );
+define( 'LLA_MFA_PDF_RATE_LIMIT_PERIOD', 60 );
+define( 'LLA_MFA_WP_SALT_SCHEME_FALLBACK', 'auth' );
+define( 'LLA_MFA_BLOCK_REASON_SSL', 'ssl' );
+define( 'LLA_MFA_BLOCK_REASON_SALT', 'salt' );
+define( 'LLA_MFA_BLOCK_REASON_OPENSSL', 'openssl' );
+
 $um_limit_login_failed = false;
 $limit_login_my_error_shown = false; /* have we shown our stuff? */
 $limit_login_just_lockedout = false; /* started this pageload??? */

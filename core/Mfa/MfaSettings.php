@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * MFA settings: view data, cleanup, temporarily disabled state.
  * Uses MfaValidator for block reason; MfaBackupCodes for rescue-popup logic.
  */
-class MfaSettings {
+class MfaSettings implements MfaSettingsInterface {
 
 	/**
 	 * Whether MFA is temporarily disabled (rescue flow).
@@ -34,6 +34,8 @@ class MfaSettings {
 
 	/**
 	 * Cleanup rescue codes and MFA transients when MFA is disabled.
+	 *
+	 * @return void
 	 */
 	public function cleanup_rescue_codes() {
 		Config::delete( 'mfa_rescue_codes' );
