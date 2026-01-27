@@ -662,11 +662,13 @@ class MfaController {
 			wp_die( esc_html( __( 'You do not have sufficient permissions to access this page.', 'limit-login-attempts-reloaded' ) ) );
 		}
 
-		// Check if SSL is enabled - MFA requires HTTPS
-		if ( ! is_ssl() ) {
-			// SSL is required for MFA - this should not happen if form is properly disabled
-			// But we check server-side for security
-			wp_die( esc_html( __( 'SSL/HTTPS is required for 2FA functionality. Please enable SSL on your site.', 'limit-login-attempts-reloaded' ) ), esc_html__( 'SSL Required', 'limit-login-attempts-reloaded' ), array( 'response' => 403 ) );
+		// Unified check: MFA requires SSL and deterministic salt (no duplicated logic with UI)
+		$block_reason = $this->get_mfa_block_reason();
+		if ( null !== $block_reason ) {
+			$msg = MfaConstants::MFA_BLOCK_REASON_SSL === $block_reason
+				? __( 'SSL/HTTPS is required for 2FA functionality. Please enable SSL on your site.', 'limit-login-attempts-reloaded' )
+				: __( '2FA cannot be enabled: WordPress salt (AUTH_SALT or NONCE_SALT) or wp_salt() is required for secure rate limiting. Please define salts in wp-config.php.', 'limit-login-attempts-reloaded' );
+			wp_die( esc_html( $msg ), esc_html__( '2FA Unavailable', 'limit-login-attempts-reloaded' ), array( 'response' => 403 ) );
 		}
 
 		// Handle MFA enabled/disabled
@@ -678,20 +680,20 @@ class MfaController {
 				// Set flag for JavaScript
 				$this->show_rescue_popup = true;
 				// Store checkbox state in transient so it persists after page reload
-				set_transient( 'llar_mfa_checkbox_state', 1, 300 ); // 5 minutes
+				set_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE, 1, MfaConstants::CHECKBOX_STATE_TTL );
 				return true;
 			} else {
 				// Codes already exist, just save MFA
 				Config::update( 'mfa_enabled', 1 );
 				// Clear transient if exists
-				delete_transient( 'llar_mfa_checkbox_state' );
+				delete_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
 			}
 		} else {
 			// Disabling MFA - cleanup codes
 			$this->cleanup_rescue_codes();
 			Config::update( 'mfa_enabled', 0 );
 			// Clear transient if exists
-			delete_transient( 'llar_mfa_checkbox_state' );
+			delete_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
 		}
 
 		// Save selected roles - use editable roles and optimize validation
@@ -733,14 +735,30 @@ class MfaController {
 	}
 
 	/**
+	 * Return reason why MFA cannot be enabled, or null if it can.
+	 * Unified check for SSL and deterministic salt (no code duplication with UI).
+	 *
+	 * @return string|null One of MfaConstants::MFA_BLOCK_REASON_* or null
+	 */
+	public function get_mfa_block_reason() {
+		if ( ! is_ssl() ) {
+			return MfaConstants::MFA_BLOCK_REASON_SSL;
+		}
+		if ( null === MfaConstants::get_rate_limit_salt() ) {
+			return MfaConstants::MFA_BLOCK_REASON_SALT;
+		}
+		return null;
+	}
+
+	/**
 	 * Get MFA settings for view
 	 *
-	 * @return array Array with mfa_enabled, mfa_temporarily_disabled, mfa_roles, prepared_roles, editable_roles, show_rescue_popup
+	 * @return array Array with mfa_enabled, mfa_temporarily_disabled, mfa_roles, prepared_roles, editable_roles, show_rescue_popup, mfa_block_reason
 	 */
 	public function get_settings_for_view() {
 		$mfa_enabled_raw          = Config::get( 'mfa_enabled', false );
 		$mfa_temporarily_disabled = $this->is_mfa_temporarily_disabled();
-		$mfa_checkbox_state       = get_transient( 'llar_mfa_checkbox_state' );
+		$mfa_checkbox_state       = get_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
 
 		// MFA is considered enabled if it's enabled in config AND not temporarily disabled
 		// OR if checkbox state is stored (popup is shown)
@@ -760,6 +778,7 @@ class MfaController {
 			'prepared_roles'           => $this->prepared_roles,
 			'editable_roles'           => $this->editable_roles,
 			'show_rescue_popup'        => $this->show_rescue_popup,
+			'mfa_block_reason'         => $this->get_mfa_block_reason(),
 		);
 	}
 }

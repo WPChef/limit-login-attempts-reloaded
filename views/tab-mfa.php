@@ -10,6 +10,7 @@
 
 use LLAR\Core\Config;
 use LLAR\Core\LimitLoginAttempts;
+use LLAR\Core\MfaConstants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -32,9 +33,9 @@ $mfa_roles                = isset( $mfa_settings['mfa_roles'] ) ? $mfa_settings[
 $all_roles                = isset( $mfa_settings['prepared_roles'] ) ? $mfa_settings['prepared_roles'] : array();
 $editable_roles           = isset( $mfa_settings['editable_roles'] ) ? $mfa_settings['editable_roles'] : array();
 
-// Check if SSL is enabled
-$is_ssl_enabled  = is_ssl();
-$is_ssl_disabled = ! $is_ssl_enabled;
+// Unified block reason: null = can enable; 'ssl' or 'salt' = cannot enable (same logic as server-side)
+$mfa_block_reason = isset( $mfa_settings['mfa_block_reason'] ) ? $mfa_settings['mfa_block_reason'] : null;
+$is_mfa_disabled  = ( null !== $mfa_block_reason );
 
 ?>
 <div id="llar-setting-page" class="llar-admin">
@@ -47,20 +48,26 @@ $is_ssl_disabled = ! $is_ssl_enabled;
 			<div class="description-page">
 				<?php esc_html_e( 'Configure multi-factor authentication settings for user roles.', 'limit-login-attempts-reloaded' ); ?>
 			</div>
-			<?php if ( $is_ssl_disabled ) : ?>
+			<?php if ( $is_mfa_disabled ) : ?>
 				<div class="notice notice-error inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #dc3232; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
 					<p style="margin: 0 0 8px 0; font-weight: bold; font-size: 16px; color: #dc3232;">
-						<?php esc_html_e( '⚠️ SSL/HTTPS is Required', 'limit-login-attempts-reloaded' ); ?>
+						<?php echo MfaConstants::MFA_BLOCK_REASON_SSL === $mfa_block_reason ? esc_html__( '⚠️ SSL/HTTPS is Required', 'limit-login-attempts-reloaded' ) : esc_html__( '⚠️ 2FA Unavailable: Salt Required', 'limit-login-attempts-reloaded' ); ?>
 					</p>
 					<p style="margin: 0 0 8px 0; font-size: 14px;">
-						<?php esc_html_e( 'Multi-factor authentication requires a secure connection (HTTPS) to protect sensitive data. 2FA cannot be enabled without SSL.', 'limit-login-attempts-reloaded' ); ?>
+						<?php
+						if ( MfaConstants::MFA_BLOCK_REASON_SSL === $mfa_block_reason ) {
+							echo esc_html( __( 'Multi-factor authentication requires a secure connection (HTTPS) to protect sensitive data. 2FA cannot be enabled without SSL.', 'limit-login-attempts-reloaded' ) );
+						} else {
+							echo esc_html( __( '2FA cannot be enabled: WordPress salt (AUTH_SALT or NONCE_SALT) or wp_salt() is required for secure rate limiting. Please define salts in wp-config.php.', 'limit-login-attempts-reloaded' ) );
+						}
+						?>
 					</p>
 					<p style="margin: 0; font-size: 14px; font-weight: bold; color: #dc3232;">
-						<?php esc_html_e( 'All 2FA settings are disabled until SSL is enabled on your site.', 'limit-login-attempts-reloaded' ); ?>
+						<?php esc_html_e( 'All 2FA settings are disabled until the requirement above is met.', 'limit-login-attempts-reloaded' ); ?>
 					</p>
 				</div>
 			<?php endif; ?>
-			<div class="llar-settings-wrap<?php echo $is_ssl_disabled ? ' llar-mfa-disabled-no-ssl' : ''; ?>">
+			<div class="llar-settings-wrap<?php echo $is_mfa_disabled ? ' llar-mfa-disabled-no-ssl' : ''; ?>">
 				<table class="llar-form-table">
 					<!-- Global MFA Control -->
 					<tr>
@@ -74,15 +81,15 @@ $is_ssl_disabled = ! $is_ssl_enabled;
 									id="mfa_enabled"
 									<?php checked( $mfa_enabled, true ); ?>
 									<?php
-									if ( $mfa_temporarily_disabled || $is_ssl_disabled ) :
+									if ( $mfa_temporarily_disabled || $is_mfa_disabled ) :
 										?>
 										disabled<?php endif; ?>/>
 							<label for="mfa_enabled">
 								<?php esc_html_e( 'Enable multi-factor authentication for selected user roles', 'limit-login-attempts-reloaded' ); ?>
 							</label>
-							<?php if ( $is_ssl_disabled ) : ?>
+							<?php if ( $is_mfa_disabled ) : ?>
 								<p class="description" style="color: #dc3232; font-weight: bold; margin-top: 8px;">
-									<?php esc_html_e( '⚠️ Cannot enable 2FA: SSL/HTTPS is required.', 'limit-login-attempts-reloaded' ); ?>
+									<?php echo MfaConstants::MFA_BLOCK_REASON_SSL === $mfa_block_reason ? esc_html__( '⚠️ Cannot enable 2FA: SSL/HTTPS is required.', 'limit-login-attempts-reloaded' ) : esc_html__( '⚠️ Cannot enable 2FA: WordPress salt (AUTH_SALT or NONCE_SALT) is required.', 'limit-login-attempts-reloaded' ); ?>
 								</p>
 							<?php elseif ( $mfa_temporarily_disabled ) : ?>
 								<p class="description">
@@ -111,7 +118,7 @@ $is_ssl_disabled = ! $is_ssl_enabled;
 													name="mfa_roles[]" 
 													value="<?php echo esc_attr( $role_key ); ?>"
 													<?php checked( $is_checked, true ); ?>
-													<?php echo $is_ssl_disabled ? 'disabled' : ''; ?>/>
+													<?php echo $is_mfa_disabled ? 'disabled' : ''; ?>/>
 											<span class="llar-role-name">
 												<?php echo esc_html( $role_display_name ); ?>
 												<?php if ( $is_admin_role ) : ?>
@@ -142,7 +149,7 @@ $is_ssl_disabled = ! $is_ssl_enabled;
 						name="llar_update_mfa_settings"
 						value="<?php esc_attr_e( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
 						type="submit"
-						<?php echo $is_ssl_disabled ? 'disabled' : ''; ?>/>
+						<?php echo $is_mfa_disabled ? 'disabled' : ''; ?>/>
 			</p>
 		</div>
 	</form>
