@@ -2373,7 +2373,7 @@
       font-weight: 600;
 
       &:hover {
-        background-color: darken(#e27800, 10%);
+        background-color: #af5d00; // Fixed hex instead of darken() to avoid fractional RGB values
       }
     }
   }
@@ -2514,5 +2514,6 @@
 @import "premium-tab";
 @import "help-page";
 @import "micro-cloud-modal";
+@import "mfa-tab";
 
 
