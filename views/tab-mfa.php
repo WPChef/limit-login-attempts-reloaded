@@ -205,7 +205,8 @@ jQuery(document).ready(function($) {
 					$.alert({
 						title: '<?php echo esc_js( __( 'Action Required', 'limit-login-attempts-reloaded' ) ); ?>',
 						content: '<?php echo esc_js( __( 'You must generate and download the rescue links before closing this window. 2FA will not be enabled until you download the file.', 'limit-login-attempts-reloaded' ) ); ?>',
-						type: 'orange'
+						type: 'orange',
+						columnClass: 'llar-mfa-action-alert'
 					});
 					return false; // Prevent closing
 				}
