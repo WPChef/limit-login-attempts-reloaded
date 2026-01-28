@@ -99,7 +99,9 @@ class MfaSettings implements MfaSettingsInterface {
 
 		$roles_data    = $this->prepare_roles_data();
 		$codes         = Config::get( 'mfa_rescue_codes', array() );
-		$show_popup    = $show_rescue_popup || MfaBackupCodes::should_show_rescue_popup( $codes );
+		// Only show rescue popup when MFA is enabled or user just enabled it (checkbox state).
+		$mfa_should_show = $mfa_enabled_raw || ( 1 === $mfa_checkbox_state );
+		$show_popup     = $mfa_should_show && ( $show_rescue_popup || MfaBackupCodes::should_show_rescue_popup( $codes ) );
 		$mfa_block_reason = MfaValidator::get_block_reason();
 
 		return array(
