@@ -109,12 +109,10 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 		if ( false === $encrypted ) {
 			throw new \Exception( __( 'Encryption unavailable. OpenSSL is required for rescue links.', 'limit-login-attempts-reloaded' ) );
 		}
-		$pending = Config::get( 'mfa_rescue_pending_links' );
-		if ( ! is_array( $pending ) ) {
-			$pending = array();
-		}
-		$pending[ $hash_id ] = $encrypted;
-		Config::update( 'mfa_rescue_pending_links', $pending );
+		// Store encrypted payload in a dedicated transient per hash_id.
+		// This allows atomic, single-use consumption on the endpoint side.
+		$transient_key = MfaConstants::TRANSIENT_RESCUE_PREFIX . $hash_id;
+		set_transient( $transient_key, $encrypted, MfaConstants::RESCUE_LINK_TTL );
 		return add_query_arg( 'llar_rescue', $hash_id, home_url() );
 	}
 
