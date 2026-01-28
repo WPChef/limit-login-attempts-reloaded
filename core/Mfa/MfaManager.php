@@ -98,10 +98,16 @@ class MfaManager {
 
 	/**
 	 * Whether to show rescue codes popup (no codes or all used).
+	 * Only when MFA is enabled or user just enabled it (checkbox state transient).
 	 *
 	 * @return bool True if popup should be shown.
 	 */
 	public function should_show_rescue_popup() {
+		$mfa_enabled = Config::get( 'mfa_enabled', false );
+		$checkbox_state = get_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
+		if ( ! $mfa_enabled && 1 !== (int) $checkbox_state ) {
+			return false;
+		}
 		return MfaBackupCodes::should_show_rescue_popup( Config::get( 'mfa_rescue_codes', array() ) );
 	}
 
