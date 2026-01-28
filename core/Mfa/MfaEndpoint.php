@@ -55,24 +55,9 @@ class MfaEndpoint implements MfaEndpointInterface {
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
-		$pending = Config::get( 'mfa_rescue_pending_links' );
-		if ( ! is_array( $pending ) ) {
-			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
-		}
-		$matched_key = null;
-		foreach ( array_keys( $pending ) as $key ) {
-			if ( is_string( $key ) && hash_equals( $hash_id, $key ) ) {
-				$matched_key = $key;
-			}
-		}
-		if ( null === $matched_key ) {
-			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
-		}
-		$encrypted_data = $pending[ $matched_key ];
-		unset( $pending[ $matched_key ] );
-		Config::update( 'mfa_rescue_pending_links', $pending );
-
-		if ( ! $this->is_valid_encrypted_payload( $encrypted_data ) ) {
+		// Atomically consume encrypted payload for this hash_id (prevents double-spend).
+		$encrypted_data = $this->consume_encrypted_payload( $hash_id );
+		if ( false === $encrypted_data ) {
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
@@ -114,12 +99,20 @@ class MfaEndpoint implements MfaEndpointInterface {
 	}
 
 	/**
-	 * Validate encrypted payload from storage: non-empty string, reasonable length, base64 format.
+	 * Atomically consume encrypted payload for a given hash_id.
+	 * Uses dedicated transient per hash and low-level DELETE to prevent double-spend.
 	 *
-	 * @param mixed $encrypted_data Value from pending links (expected base64-encoded ciphertext).
-	 * @return bool True if valid for decrypt_code().
+	 * @param string $hash_id Validated hash_id from URL.
+	 * @return string|false Encrypted payload or false if not found/invalid.
 	 */
-	private function is_valid_encrypted_payload( $encrypted_data ) {
+	private function consume_encrypted_payload( $hash_id ) {
+		$transient_key  = MfaConstants::TRANSIENT_RESCUE_PREFIX . $hash_id;
+		$encrypted_data = get_transient( $transient_key );
+		if ( false === $encrypted_data ) {
+			return false;
+		}
+
+		// Basic sanity checks before touching the database.
 		if ( ! is_string( $encrypted_data ) || '' === $encrypted_data ) {
 			return false;
 		}
@@ -130,7 +123,34 @@ class MfaEndpoint implements MfaEndpointInterface {
 		if ( ! preg_match( '/^[A-Za-z0-9+\/=]+$/', $encrypted_data ) ) {
 			return false;
 		}
-		return true;
+
+		// Atomic delete of the transient row; only the first request will succeed.
+		global $wpdb;
+		$table       = $wpdb->options;
+		$option_name = '_transient_' . $transient_key;
+
+		$deleted = $wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$table} WHERE option_name = %s",
+				$option_name
+			)
+		);
+
+		if ( 1 !== (int) $deleted ) {
+			// Another request has already consumed this payload.
+			return false;
+		}
+
+		// Best-effort cleanup of the timeout row; result is not critical.
+		$timeout_name = '_transient_timeout_' . $transient_key;
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$table} WHERE option_name = %s",
+				$timeout_name
+			)
+		);
+
+		return $encrypted_data;
 	}
 
 	/**

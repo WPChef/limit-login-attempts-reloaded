@@ -40,7 +40,6 @@ class MfaSettings implements MfaSettingsInterface {
 	public function cleanup_rescue_codes() {
 		Config::delete( 'mfa_rescue_codes' );
 		Config::delete( 'mfa_rescue_download_token' );
-		Config::update( 'mfa_rescue_pending_links', array() );
 		$this->delete_mfa_transients();
 	}
 
@@ -50,10 +49,18 @@ class MfaSettings implements MfaSettingsInterface {
 	private function delete_mfa_transients() {
 		global $wpdb;
 		$table = $wpdb->options;
+
+		// Cleanup general MFA-related transients.
 		$like  = $wpdb->esc_like( '_transient_llar_mfa' ) . '%';
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE %s", $like ) );
 		$like_timeout = $wpdb->esc_like( '_transient_timeout_llar_mfa' ) . '%';
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE %s", $like_timeout ) );
+
+		// Cleanup rescue-link transients (one per hash_id).
+		$like_rescue = $wpdb->esc_like( '_transient_' . MfaConstants::TRANSIENT_RESCUE_PREFIX ) . '%';
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE %s", $like_rescue ) );
+		$like_rescue_timeout = $wpdb->esc_like( '_transient_timeout_' . MfaConstants::TRANSIENT_RESCUE_PREFIX ) . '%';
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE %s", $like_rescue_timeout ) );
 	}
 
 	/**
