@@ -160,8 +160,11 @@ class LimitLoginAttempts
 		$this->setup();
 		$this->cloud_app_init();
 
-		// Initialize MFA (MfaManager: MfaBackupCodes, MfaEndpoint, MfaSettings, MfaValidator)
-		$this->mfa_controller = new \LLAR\Core\Mfa\MfaManager();
+		// Initialize MFA (dependency injection: MfaBackupCodes, MfaEndpoint, MfaSettings)
+		$mfa_backup_codes = new \LLAR\Core\Mfa\MfaBackupCodes();
+		$mfa_endpoint     = new \LLAR\Core\Mfa\MfaEndpoint( $mfa_backup_codes );
+		$mfa_settings    = new \LLAR\Core\Mfa\MfaSettings();
+		$this->mfa_controller = new \LLAR\Core\Mfa\MfaManager( $mfa_backup_codes, $mfa_endpoint, $mfa_settings );
 		$this->mfa_controller->register();
 
 		( new Shortcodes() )->register();

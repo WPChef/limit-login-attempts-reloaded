@@ -57,12 +57,15 @@ class MfaSettings implements MfaSettingsInterface {
 	}
 
 	/**
-	 * Prepare roles for MFA tab.
+	 * Prepare roles for MFA tab. Caches get_editable_roles() per request to avoid repeated calls.
 	 *
 	 * @return array prepared_roles, editable_roles
 	 */
 	public function prepare_roles_data() {
-		$editable_roles = get_editable_roles();
+		static $editable_roles = null;
+		if ( null === $editable_roles ) {
+			$editable_roles = get_editable_roles();
+		}
 		$prepared_roles = array();
 		foreach ( $editable_roles as $role_key => $role_data ) {
 			$prepared_roles[ $role_key ] = esc_html( translate_user_role( $role_data['name'] ) );

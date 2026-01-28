@@ -26,10 +26,17 @@ class MfaManager {
 	/** @var MfaSettingsInterface */
 	private $settings;
 
-	public function __construct() {
-		$this->backup_codes = new MfaBackupCodes();
-		$this->endpoint     = new MfaEndpoint( $this->backup_codes );
-		$this->settings     = new MfaSettings();
+	/**
+	 * Constructor. Dependencies are injected for testability and single responsibility.
+	 *
+	 * @param MfaBackupCodesInterface $backup_codes Backup/rescue codes service.
+	 * @param MfaEndpointInterface    $endpoint    Rescue endpoint handler.
+	 * @param MfaSettingsInterface   $settings    MFA settings service.
+	 */
+	public function __construct( MfaBackupCodesInterface $backup_codes, MfaEndpointInterface $endpoint, MfaSettingsInterface $settings ) {
+		$this->backup_codes = $backup_codes;
+		$this->endpoint     = $endpoint;
+		$this->settings     = $settings;
 	}
 
 	/**
