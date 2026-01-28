@@ -87,7 +87,10 @@ class MfaSettings implements MfaSettingsInterface {
 		$mfa_temporarily_disabled = $this->is_mfa_temporarily_disabled();
 		$mfa_checkbox_state       = get_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
 
-		$mfa_enabled = ( $mfa_enabled_raw && ! $mfa_temporarily_disabled ) || ( 1 === $mfa_checkbox_state );
+		// When temporarily disabled, keep checkbox state aligned with persistent config so that
+		// after transient expires MFA is effectively on again without user action.
+		$mfa_enabled = ( $mfa_enabled_raw && ! $mfa_temporarily_disabled ) || ( 1 === $mfa_checkbox_state )
+			|| ( $mfa_temporarily_disabled && $mfa_enabled_raw );
 
 		$mfa_roles = Config::get( 'mfa_roles', array() );
 		if ( ! is_array( $mfa_roles ) ) {
