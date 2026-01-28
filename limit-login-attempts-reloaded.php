@@ -40,7 +40,7 @@ defined( 'LLA_MFA_RESCUE_LINK_TTL' ) || define( 'LLA_MFA_RESCUE_LINK_TTL', 300 )
 defined( 'LLA_MFA_DISABLE_DURATION' ) || define( 'LLA_MFA_DISABLE_DURATION', 3600 );
 defined( 'LLA_MFA_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_RATE_LIMIT_PERIOD', 3600 );
 defined( 'LLA_MFA_RESCUE_USE_COOLDOWN' ) || define( 'LLA_MFA_RESCUE_USE_COOLDOWN', 60 );
-defined( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX' ) || define( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX', 'llar_rescue_' );
+defined( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX' ) || define( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX', 'llar_mfa_rescue_' );
 defined( 'LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX' ) || define( 'LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX', 'llar_rescue_attempts_' );
 defined( 'LLA_MFA_TRANSIENT_RESCUE_LAST_USE' ) || define( 'LLA_MFA_TRANSIENT_RESCUE_LAST_USE', 'llar_rescue_last_use' );
 defined( 'LLA_MFA_TRANSIENT_MFA_DISABLED' ) || define( 'LLA_MFA_TRANSIENT_MFA_DISABLED', 'llar_mfa_temporarily_disabled' );
@@ -103,10 +103,10 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 		global $wpdb;
 		// $wpdb->options is set by WordPress and safe to use (table name, not user input).
 		$table_name = $wpdb->options;
+		$prefix     = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
 
-		// Delete all transients older than 1 day
-		// Fix: esc_like() must be called before prepare(), not inside it
-		$like_pattern = $wpdb->esc_like( '_transient_llar_rescue_' ) . '%';
+		// Delete rescue transients older than 1 day (use constant so overrides in wp-config are respected)
+		$like_pattern = $wpdb->esc_like( '_transient_' . $prefix ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$table_name} 
@@ -117,8 +117,7 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 			)
 		);
 
-		// Also delete timeout transients
-		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_llar_rescue_' ) . '%';
+		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_' . $prefix ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$table_name} 
@@ -137,10 +136,10 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 		global $wpdb;
 		// $wpdb->options is set by WordPress and safe to use (table name, not user input).
 		$table_name = $wpdb->options;
+		$prefix     = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
 
-		// Delete all rescue transients
-		// Fix: esc_like() must be called before prepare(), not inside it
-		$like_pattern = $wpdb->esc_like( '_transient_llar_rescue_' ) . '%';
+		// Delete all rescue transients (use constant so overrides in wp-config are respected)
+		$like_pattern = $wpdb->esc_like( '_transient_' . $prefix ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$table_name} 
@@ -149,7 +148,7 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 			)
 		);
 
-		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_llar_rescue_' ) . '%';
+		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_' . $prefix ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$table_name} 

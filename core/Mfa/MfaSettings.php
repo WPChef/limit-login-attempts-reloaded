@@ -17,19 +17,12 @@ class MfaSettings implements MfaSettingsInterface {
 
 	/**
 	 * Whether MFA is temporarily disabled (rescue flow).
+	 * When transient expires, we do not auto-enable MFA so admin's explicit disable is preserved.
 	 *
 	 * @return bool
 	 */
 	public function is_mfa_temporarily_disabled() {
-		$disabled = get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
-		if ( false === $disabled ) {
-			$mfa_enabled = Config::get( 'mfa_enabled', false );
-			if ( ! $mfa_enabled ) {
-				Config::update( 'mfa_enabled', 1 );
-			}
-			return false;
-		}
-		return true;
+		return false !== get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
 	}
 
 	/**
