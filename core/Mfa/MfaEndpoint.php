@@ -72,6 +72,10 @@ class MfaEndpoint implements MfaEndpointInterface {
 		unset( $pending[ $matched_key ] );
 		Config::update( 'mfa_rescue_pending_links', $pending );
 
+		if ( ! $this->is_valid_encrypted_payload( $encrypted_data ) ) {
+			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+		}
+
 		$plain_code = $this->backup_codes->decrypt_code( $encrypted_data );
 		if ( false === $plain_code ) {
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
@@ -107,6 +111,26 @@ class MfaEndpoint implements MfaEndpointInterface {
 		}
 
 		wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+	}
+
+	/**
+	 * Validate encrypted payload from storage: non-empty string, reasonable length, base64 format.
+	 *
+	 * @param mixed $encrypted_data Value from pending links (expected base64-encoded ciphertext).
+	 * @return bool True if valid for decrypt_code().
+	 */
+	private function is_valid_encrypted_payload( $encrypted_data ) {
+		if ( ! is_string( $encrypted_data ) || '' === $encrypted_data ) {
+			return false;
+		}
+		$max_len = 2048;
+		if ( strlen( $encrypted_data ) > $max_len ) {
+			return false;
+		}
+		if ( ! preg_match( '/^[A-Za-z0-9+\/=]+$/', $encrypted_data ) ) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
