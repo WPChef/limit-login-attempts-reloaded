@@ -188,7 +188,8 @@ class MfaEndpoint implements MfaEndpointInterface {
 	}
 
 	private function disable_mfa_temporarily() {
-		Config::update( 'mfa_enabled', 0 );
+		// Only set transient so MFA is disabled for LLA_MFA_DISABLE_DURATION. Do not change
+		// Config 'mfa_enabled' — when transient expires, MFA is effectively on again without user action.
 		if ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) ) {
 			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, 1, MfaConstants::MFA_DISABLE_DURATION );
 		}

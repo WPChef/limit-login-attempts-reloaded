@@ -70,7 +70,8 @@ class MfaValidator {
 	 */
 	public static function validate_rescue_hash_id( $hash_id ) {
 		$hash_id = is_string( $hash_id ) ? sanitize_text_field( $hash_id ) : '';
-		if ( 64 !== strlen( $hash_id ) || ! preg_match( '/^[a-f0-9]{64}$/i', $hash_id ) ) {
+		$len     = MfaConstants::CODE_LENGTH;
+		if ( $len !== strlen( $hash_id ) || ! preg_match( '/^[a-f0-9]{' . $len . '}$/i', $hash_id ) ) {
 			return false;
 		}
 		return $hash_id;
