@@ -28,7 +28,7 @@
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     font-size: 18px;
     margin-right: 20px;
 
@@ -40,6 +40,10 @@
         width: 15px;
         vertical-align: middle;
       }
+    }
+
+    .link__style_unlink {
+      margin-top: 21px;
     }
   }
 
