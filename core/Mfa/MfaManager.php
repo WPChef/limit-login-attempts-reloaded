@@ -339,9 +339,8 @@ class MfaManager {
 			'ajax_url'                 => admin_url( 'admin-ajax.php' ),
 		) );
 		wp_localize_script( 'lla-main', 'llar_vars', $merged );
-		if ( $this->should_show_rescue_popup() ) {
-			do_action( 'llar_mfa_generate_codes' );
-		}
+		// Fire action so PDF libs (html2canvas, jsPDF) are always enqueued on MFA tab for "Download as PDF".
+		do_action( 'llar_mfa_generate_codes' );
 	}
 
 	/**
