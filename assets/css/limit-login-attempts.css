@@ -4512,11 +4512,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   outline-offset: 2px;
 }
 
-.llar-mfa-action-alert {
+.llar-mfa-action-alert, .jconfirm-type-red {
   width: 50% !important;
   background-color: #fff !important;
   margin: auto !important;
 }
-.llar-mfa-action-alert .jconfirm-content-pane {
+.llar-mfa-action-alert .jconfirm-content-pane, .jconfirm-type-red .jconfirm-content-pane {
   padding: 15px !important;
 }
