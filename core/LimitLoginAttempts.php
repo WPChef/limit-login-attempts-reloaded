@@ -907,6 +907,11 @@ class LimitLoginAttempts
 				'name'  => __( 'Settings', 'limit-login-attempts-reloaded' ),
 				'url'   => '&tab=settings'
 			),
+			array(
+				'id'    => 'mfa',
+				'name'  => __( '2FA', 'limit-login-attempts-reloaded' ),
+				'url'   => '&tab=mfa'
+			),
 			$is_cloud_app_enabled
 				? array(
 				'id'    => 'logs-custom',
@@ -987,10 +992,12 @@ class LimitLoginAttempts
 			remove_submenu_page( $this->_options_page_slug, $this->_options_page_slug );
 
 			if ( ! $is_cloud_app_enabled && isset( $submenu[$this->_options_page_slug] ) ) {
-
-				$submenu[$this->_options_page_slug][6][4] =
-					! empty($submenu[$this->_options_page_slug][6][4])
-						? $submenu[$this->_options_page_slug][6][4] . ' llar-submenu-premium-item'
+				// Premium is the last submenu item (Dashboard, Settings, 2FA, Logs, Debug, Help, Premium).
+				$submenu_keys = array_keys( $submenu[$this->_options_page_slug] );
+				$premium_key  = end( $submenu_keys );
+				$submenu[$this->_options_page_slug][$premium_key][4] =
+					! empty( $submenu[$this->_options_page_slug][$premium_key][4] )
+						? $submenu[$this->_options_page_slug][$premium_key][4] . ' llar-submenu-premium-item'
 						: 'llar-submenu-premium-item';
 			}
 
