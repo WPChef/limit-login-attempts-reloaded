@@ -64,6 +64,10 @@ class Config {
 		'retries'                       => array(),
 		'lockouts'                      => array(),
 		'auto_update_choice'            => null,
+
+		/* MFA Rescue Codes */
+		'mfa_rescue_codes'              => array(),
+		'mfa_rescue_download_token'     => '',
 	);
 
 	private static $disable_autoload_options = array(

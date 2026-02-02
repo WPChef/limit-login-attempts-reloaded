@@ -12,7 +12,7 @@ $active_tab = "dashboard";
 $active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $is_active_app_custom = $active_app === 'custom';
 
-if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help' ) ) ) {
+if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], LimitLoginAttempts::$allowed_tabs ) ) {
 
 	if ( ! LimitLoginAttempts::$cloud_app && $_GET['tab'] === 'logs-custom' ) {
 
@@ -150,6 +150,10 @@ if ( $is_active_app_custom ) {
         <a href="<?php echo $this->get_options_page_uri( 'settings' ); ?>"
            class="nav-tab<?php echo $active_tab === 'settings' ? $nav_tab_active : '' ?>">
             <?php _e( 'Settings', 'limit-login-attempts-reloaded' ); ?>
+        </a>
+        <a href="<?php echo $this->get_options_page_uri( 'mfa' ); ?>"
+           class="nav-tab<?php echo $active_tab === 'mfa' ? $nav_tab_active : '' ?>">
+            <?php _e( '2FA', 'limit-login-attempts-reloaded' ); ?>
         </a>
 
         <?php if( $active_app === 'custom' ) : ?>

@@ -63,6 +63,13 @@ class LimitLoginAttempts
 	private $info_data = array();
 
 	/**
+	 * MFA manager instance (MfaManager: MfaBackupCodes, MfaEndpoint, MfaSettings, MfaValidator).
+	 *
+	 * @var \LLAR\Core\Mfa\MfaManager
+	 */
+	private $mfa_controller = null;
+
+	/**
 	 * Class instance accessible in other classes
 	 *
 	 * @var LimitLoginAttempts
@@ -76,6 +83,44 @@ class LimitLoginAttempts
 	 */
 	public static $capabilities = 'llar_admin';
 	public $has_capability = false;
+
+	/**
+	 * Allowed tabs for options page
+	 */
+	public static $allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'help' );
+
+	/**
+	 * Check if a role is an admin role
+	 *
+	 * @param string $role_key Role key (e.g., 'administrator')
+	 * @param string $role_name Role display name (e.g., 'Administrator') - optional, deprecated, not used
+	 * @return bool True if role is admin-related
+	 */
+	public static function is_admin_role( $role_key, $role_name = '' ) {
+		// Validate input
+		if ( ! is_string( $role_key ) || empty( $role_key ) ) {
+			return false;
+		}
+
+		// Primary check: exact match for administrator role
+		if ( 'administrator' === $role_key ) {
+			return true;
+		}
+
+		// Secondary check: verify role has admin capabilities (most reliable method)
+		$role = get_role( $role_key );
+		if ( $role && $role->has_cap( 'manage_options' ) ) {
+			return true;
+		}
+
+		// Fallback: check if role key is exactly 'admin' (common custom admin role name)
+		// Note: We don't check $role_name to avoid false positives (e.g., 'admin_peter' user name)
+		if ( 'admin' === strtolower( $role_key ) ) {
+			return true;
+		}
+
+		return false;
+	}
 
 	private $plans = array(
 		'default'       => array(
@@ -114,6 +159,13 @@ class LimitLoginAttempts
 		$this->hooks_init();
 		$this->setup();
 		$this->cloud_app_init();
+
+		// Initialize MFA (dependency injection: MfaBackupCodes, MfaEndpoint, MfaSettings)
+		$mfa_backup_codes = new \LLAR\Core\Mfa\MfaBackupCodes();
+		$mfa_endpoint     = new \LLAR\Core\Mfa\MfaEndpoint( $mfa_backup_codes );
+		$mfa_settings    = new \LLAR\Core\Mfa\MfaSettings();
+		$this->mfa_controller = new \LLAR\Core\Mfa\MfaManager( $mfa_backup_codes, $mfa_endpoint, $mfa_settings );
+		$this->mfa_controller->register();
 
 		( new Shortcodes() )->register();
 		( new Ajax() )->register();
@@ -855,6 +907,11 @@ class LimitLoginAttempts
 				'name'  => __( 'Settings', 'limit-login-attempts-reloaded' ),
 				'url'   => '&tab=settings'
 			),
+			array(
+				'id'    => 'mfa',
+				'name'  => __( '2FA', 'limit-login-attempts-reloaded' ),
+				'url'   => '&tab=mfa'
+			),
 			$is_cloud_app_enabled
 				? array(
 				'id'    => 'logs-custom',
@@ -935,10 +992,12 @@ class LimitLoginAttempts
 			remove_submenu_page( $this->_options_page_slug, $this->_options_page_slug );
 
 			if ( ! $is_cloud_app_enabled && isset( $submenu[$this->_options_page_slug] ) ) {
-
-				$submenu[$this->_options_page_slug][6][4] =
-					! empty($submenu[$this->_options_page_slug][6][4])
-						? $submenu[$this->_options_page_slug][6][4] . ' llar-submenu-premium-item'
+				// Premium is the last submenu item (Dashboard, Settings, 2FA, Logs, Debug, Help, Premium).
+				$submenu_keys = array_keys( $submenu[$this->_options_page_slug] );
+				$premium_key  = end( $submenu_keys );
+				$submenu[$this->_options_page_slug][$premium_key][4] =
+					! empty( $submenu[$this->_options_page_slug][$premium_key][4] )
+						? $submenu[$this->_options_page_slug][$premium_key][4] . ' llar-submenu-premium-item'
 						: 'llar-submenu-premium-item';
 			}
 
@@ -2117,10 +2176,29 @@ class LimitLoginAttempts
 				}
 				$this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
 				$this->cloud_app_init();
+			} elseif ( isset( $_POST['llar_update_mfa_settings'] ) ) {
+				// Handle MFA settings submission via controller (capability checked inside)
+				if ( $this->mfa_controller ) {
+					$show_popup = $this->mfa_controller->handle_settings_submission();
+					if ( ! $show_popup ) {
+						$this->show_message( __( '2FA settings saved.', 'limit-login-attempts-reloaded' ) );
+					}
+				}
 			}
 		}
 
-		include_once( LLA_PLUGIN_DIR . 'views/options-page.php' );
+		// Prepare roles data for MFA tab (before including view to ensure data is ready)
+		// Check if we're on MFA tab (GET or POST with tab parameter, or default after form submit)
+		$current_tab = 'settings';
+		if ( isset( $_GET['tab'] ) && in_array( $_GET['tab'], self::$allowed_tabs ) ) {
+			$current_tab = sanitize_text_field( $_GET['tab'] );
+		} elseif ( isset( $_POST['llar_update_mfa_settings'] ) ) {
+			// After MFA form submit, we're still on MFA tab
+			$current_tab = 'mfa';
+		}
+
+		// MFA tab data comes from get_settings_for_view() (single source in MfaSettingsManager)
+		include_once LLA_PLUGIN_DIR . 'views/options-page.php';
 	}
 
 	/**
