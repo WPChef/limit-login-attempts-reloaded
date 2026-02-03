@@ -82,20 +82,14 @@ if ( $is_active_app_custom ) {
     <?php endif; ?>
 </div>
 
-<?php if ( ( $auto_update_choice || $auto_update_choice === null ) && !Helpers::is_auto_update_enabled() ) : ?>
-<div class="notice notice-error llar-auto-update-notice">
-    <p>
-        <?php _e( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', 'limit-login-attempts-reloaded' ); ?>
-        <a href="#" class="auto-enable-update-option" data-val="yes">
-            <?php _e( 'Yes, enable auto-update', 'limit-login-attempts-reloaded' ); ?>
-        </a>
-        |
-        <a href="#" class="auto-enable-update-option" data-val="no">
-            <?php _e( 'No thanks', 'limit-login-attempts-reloaded' ); ?>
-        </a>
-    </p>
-</div>
-<?php endif; ?>
+<?php
+if ( ( $auto_update_choice || $auto_update_choice === null ) && ! Helpers::is_auto_update_enabled() ) {
+	$this->render_admin_notice( 'auto-update', array() );
+}
+if ( ! is_ssl() ) {
+	$this->render_admin_notice( 'https-recommended', array() );
+}
+?>
 
 <div id="llar_popup_error_content" style="display: none">
     <div class="popup_error_content__content">
