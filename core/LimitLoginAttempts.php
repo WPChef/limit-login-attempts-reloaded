@@ -70,6 +70,13 @@ class LimitLoginAttempts
 	private $mfa_controller = null;
 
 	/**
+	 * Admin notices controller (renders notice views for options page).
+	 *
+	 * @var \LLAR\Core\AdminNoticesController
+	 */
+	private $admin_notices_controller = null;
+
+	/**
 	 * Class instance accessible in other classes
 	 *
 	 * @var LimitLoginAttempts
@@ -2199,6 +2206,20 @@ class LimitLoginAttempts
 
 		// MFA tab data comes from get_settings_for_view() (single source in MfaSettingsManager)
 		include_once LLA_PLUGIN_DIR . 'views/options-page.php';
+	}
+
+	/**
+	 * Render an admin notice view by key (e.g. 'auto-update', 'mfa-no-ssl').
+	 *
+	 * @param string $notice_key Notice identifier.
+	 * @param array  $args       Variables to pass to the notice view.
+	 * @return void
+	 */
+	public function render_admin_notice( $notice_key, array $args = array() ) {
+		if ( null === $this->admin_notices_controller ) {
+			$this->admin_notices_controller = new AdminNoticesController();
+		}
+		$this->admin_notices_controller->render( $notice_key, $args );
 	}
 
 	/**
