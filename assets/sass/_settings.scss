@@ -264,8 +264,12 @@ a.llar_turquoise {
   }
 }
 
-.llar-auto-update-notice {
+.llar-options-notice {
   display: block !important;
+
+  p {
+    margin-left: 10px;
+  }
 }
 
 .llar_input_border {

@@ -177,7 +177,7 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   transform: translate(-50%, -50%);
 }
 
-.llar-auto-update-notice {
+.llar-options-notice {
   display: block !important;
 }
 
@@ -2350,16 +2350,16 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 
 .dashboard_page_llar-welcome .update-nag,
-.dashboard_page_llar-welcome .notice:not(.llar-notice-review),
+.dashboard_page_llar-welcome .notice:not(.llar-notice-review):not(.llar-options-notice),
 .toplevel_page_limit-login-attempts .update-nag,
-.toplevel_page_limit-login-attempts .notice:not(.llar-notice-review) {
+.toplevel_page_limit-login-attempts .notice:not(.llar-notice-review):not(.llar-options-notice) {
   margin-top: 15px;
   display: none;
 }
 .dashboard_page_llar-welcome .update-nag p,
-.dashboard_page_llar-welcome .notice:not(.llar-notice-review) p,
+.dashboard_page_llar-welcome .notice:not(.llar-notice-review):not(.llar-options-notice) p,
 .toplevel_page_limit-login-attempts .update-nag p,
-.toplevel_page_limit-login-attempts .notice:not(.llar-notice-review) p {
+.toplevel_page_limit-login-attempts .notice:not(.llar-notice-review):not(.llar-options-notice) p {
   margin-left: 10px;
 }
 .dashboard_page_llar-welcome .video-container,
@@ -2407,8 +2407,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: -3px;
 }
 
-.llar-auto-update-notice {
+.llar-options-notice {
   display: block !important;
+}
+
+.llar-options-notice p {
+  margin-left: 10px;
 }
 
 .llar-attempts-chart-legend > div {
