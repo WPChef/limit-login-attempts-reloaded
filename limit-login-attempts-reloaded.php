@@ -53,6 +53,13 @@ defined( 'LLA_MFA_BLOCK_REASON_SSL' ) || define( 'LLA_MFA_BLOCK_REASON_SSL', 'ss
 defined( 'LLA_MFA_BLOCK_REASON_SALT' ) || define( 'LLA_MFA_BLOCK_REASON_SALT', 'salt' );
 defined( 'LLA_MFA_BLOCK_REASON_OPENSSL' ) || define( 'LLA_MFA_BLOCK_REASON_OPENSSL', 'openssl' );
 
+/** MFA Flow: session and OTP transients (after failed login handshake). */
+defined( 'LLA_MFA_FLOW_TRANSIENT_SESSION_PREFIX' ) || define( 'LLA_MFA_FLOW_TRANSIENT_SESSION_PREFIX', 'llar_mfa_session_' );
+defined( 'LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX' ) || define( 'LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX', 'llar_mfa_otp_' );
+defined( 'LLA_MFA_FLOW_OTP_TTL' ) || define( 'LLA_MFA_FLOW_OTP_TTL', 180 );
+defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD', 60 );
+defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX', 5 );
+
 $um_limit_login_failed = false;
 $limit_login_my_error_shown = false; /* have we shown our stuff? */
 $limit_login_just_lockedout = false; /* started this pageload??? */

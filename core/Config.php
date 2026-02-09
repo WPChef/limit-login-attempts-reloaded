@@ -68,6 +68,17 @@ class Config {
 		/* MFA Rescue Codes */
 		'mfa_rescue_codes'              => array(),
 		'mfa_rescue_download_token'     => '',
+
+		/* MFA Flow (after failed login: handshake, verify, email code) */
+		'mfa_enabled'                   => 0,
+		'mfa_flow_enabled'              => 0,
+		'mfa_provider'                  => 'llar',
+		'mfa_provider_config'           => array(),
+		'mfa_roles'                     => array(),
+		'mfa_api_endpoint'              => 'https://api.limitloginattempts.com/mfa',
+		'mfa_session_ttl'               => 600,
+		'mfa_max_attempts'              => 5,
+		'mfa_flow_stats'                => array( 'handshake' => 0, 'verify' => 0, 'send_code' => 0 ),
 	);
 
 	private static $disable_autoload_options = array(
