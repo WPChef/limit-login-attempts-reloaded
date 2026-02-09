@@ -43,6 +43,8 @@ class Ajax
 		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
 		add_action( 'wp_ajax_activate_micro_cloud', array( $this, 'activate_micro_cloud_callback' ) );
 		add_action( 'wp_ajax_test_email_notifications', array( $this, 'test_email_notifications_callback' ) );
+		add_action( 'wp_ajax_nopriv_llar_mfa_flow_send_code', array( $this, 'mfa_flow_send_code_callback' ) );
+		add_action( 'wp_ajax_llar_mfa_flow_send_code', array( $this, 'mfa_flow_send_code_callback' ) );
 	}
 
 	public function ajax_unlock() {
@@ -1148,6 +1150,72 @@ class Ajax
 		}
 	}
 
+	/**
+	 * MFA flow: send code to user email (POST token, secret, code from MFA app).
+	 * Returns 404 if session not found or secret mismatch.
+	 */
+	public function mfa_flow_send_code_callback() {
+		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
+			status_header( 405 );
+			wp_send_json_error( array( 'message' => 'Method not allowed' ) );
+		}
+
+		$input = array();
+		$content_type = isset( $_SERVER['CONTENT_TYPE'] ) ? $_SERVER['CONTENT_TYPE'] : '';
+		if ( strpos( $content_type, 'application/json' ) !== false && function_exists( 'file_get_contents' ) ) {
+			$raw = file_get_contents( 'php://input' );
+			if ( is_string( $raw ) ) {
+				$input = json_decode( $raw, true );
+			}
+		}
+		if ( empty( $input ) && ! empty( $_POST ) ) {
+			$input = wp_unslash( $_POST );
+		}
+
+		$token  = isset( $input['token'] ) ? sanitize_text_field( $input['token'] ) : '';
+		$secret = isset( $input['secret'] ) ? sanitize_text_field( $input['secret'] ) : '';
+		$code   = isset( $input['code'] ) ? sanitize_text_field( $input['code'] ) : '';
+
+		if ( '' === $token || '' === $secret ) {
+			\LLAR\Core\MfaFlow\MfaFlowLogger::log( 'send_code', 'invalid_request', array() );
+			status_header( 404 );
+			wp_send_json_error( array( 'message' => 'Invalid request' ), 404 );
+		}
+
+		$store   = new \LLAR\Core\MfaFlow\SessionStore();
+		$session = $store->get_session( $token );
+
+		if ( ! $session || ! isset( $session['secret'] ) || $session['secret'] !== $secret ) {
+			\LLAR\Core\MfaFlow\MfaFlowLogger::log( 'send_code', 'session_not_found', array() );
+			status_header( 404 );
+			wp_send_json_error( array( 'message' => 'Session not found' ) );
+		}
+
+		$user_id = ! empty( $session['user_id'] ) ? (int) $session['user_id'] : 0;
+		$user    = $user_id ? get_user_by( 'id', $user_id ) : get_user_by( 'login', isset( $session['username'] ) ? $session['username'] : '' );
+
+		// No user enumeration: when user does not exist or has no email, return success without sending or saving OTP.
+		if ( ! $user || ! is_a( $user, 'WP_User' ) || empty( $user->user_email ) ) {
+			\LLAR\Core\MfaFlow\MfaFlowLogger::log( 'send_code', 'user_not_found_no_enum', array() );
+			wp_send_json_success();
+			return;
+		}
+
+		$subject = __( 'Your verification code', 'limit-login-attempts-reloaded' );
+		$body    = sprintf( __( 'Your verification code is: %s', 'limit-login-attempts-reloaded' ), $code );
+
+		$sent = wp_mail( $user->user_email, $subject, $body );
+
+		if ( $sent ) {
+			\LLAR\Core\MfaFlow\MfaFlowLogger::increment_usage( 'send_code' );
+			\LLAR\Core\MfaFlow\MfaFlowLogger::log( 'send_code', 'success', array() );
+			$store->save_otp( $token, $code );
+			wp_send_json_success();
+		} else {
+			\LLAR\Core\MfaFlow\MfaFlowLogger::log( 'send_code', 'email_failed', array() );
+			wp_send_json_error( array( 'message' => 'Failed to send email' ) );
+		}
+	}
 
 	/**
 	 * Access capabilities checks
