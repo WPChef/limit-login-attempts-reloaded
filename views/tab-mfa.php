@@ -37,17 +37,6 @@ $mfa_block_reason  = isset( $mfa_settings['mfa_block_reason'] ) ? $mfa_settings[
 $mfa_block_message = isset( $mfa_settings['mfa_block_message'] ) ? $mfa_settings['mfa_block_message'] : '';
 $is_mfa_disabled   = ( null !== $mfa_block_reason );
 
-// MFA Flow (on login: handshake, verify, email code; uses same "Enable 2FA" as 2FA; provider from LLA_MFA_PROVIDER constant)
-$mfa_flow_stats      = Config::get( 'mfa_flow_stats', array() );
-if ( ! is_array( $mfa_flow_stats ) ) {
-	$mfa_flow_stats = array( 'handshake' => 0, 'verify' => 0, 'send_code' => 0 );
-}
-$mfa_flow_stats_total = (int) ( isset( $mfa_flow_stats['handshake'] ) ? $mfa_flow_stats['handshake'] : 0 )
-	+ (int) ( isset( $mfa_flow_stats['verify'] ) ? $mfa_flow_stats['verify'] : 0 )
-	+ (int) ( isset( $mfa_flow_stats['send_code'] ) ? $mfa_flow_stats['send_code'] : 0 );
-
-$llar_mfa_last_flow = get_transient( 'llar_mfa_last_flow' );
-
 ?>
 <div id="llar-setting-page" class="llar-admin">
 	<form action="<?php echo esc_url( $this->get_options_page_uri( 'mfa' ) ); ?>" method="post">
@@ -59,24 +48,6 @@ $llar_mfa_last_flow = get_transient( 'llar_mfa_last_flow' );
 			<div class="description-page">
 				<?php esc_html_e( 'Configure multi-factor authentication settings for user roles.', 'limit-login-attempts-reloaded' ); ?>
 			</div>
-			<?php if ( ! empty( $llar_mfa_last_flow ) && is_array( $llar_mfa_last_flow ) ) : ?>
-				<div class="notice notice-info inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #0073aa; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
-					<p style="margin: 0 0 6px 0; font-weight: bold;"><?php esc_html_e( 'Last MFA flow', 'limit-login-attempts-reloaded' ); ?></p>
-					<p style="margin: 0; font-size: 13px; font-family: monospace;">
-						<?php
-						echo esc_html(
-							( isset( $llar_mfa_last_flow['time'] ) ? gmdate( 'Y-m-d H:i:s', (int) $llar_mfa_last_flow['time'] ) . ' ' : '' )
-							. ( isset( $llar_mfa_last_flow['user'] ) ? 'user=' . $llar_mfa_last_flow['user'] . ' ' : '' )
-							. ( isset( $llar_mfa_last_flow['step'] ) ? 'step=' . $llar_mfa_last_flow['step'] . ' ' : '' )
-							. ( isset( $llar_mfa_last_flow['detail'] ) ? $llar_mfa_last_flow['detail'] : '' )
-						);
-						?>
-					</p>
-					<p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">
-						<?php esc_html_e( 'Make a login attempt (success or failure) with a user that has an MFA role, then refresh this page.', 'limit-login-attempts-reloaded' ); ?>
-					</p>
-				</div>
-			<?php endif; ?>
 			<?php if ( $is_mfa_disabled ) : ?>
 				<div class="notice notice-error inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #dc3232; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
 					<p style="margin: 0 0 8px 0; font-weight: bold; font-size: 16px; color: #dc3232;">
@@ -164,37 +135,6 @@ $llar_mfa_last_flow = get_transient( 'llar_mfa_last_flow' );
 						</td>
 					</tr>
 
-					<!-- MFA Flow (on login: success or failure) -->
-					<tr>
-						<td colspan="2">
-							<h4 class="llar-subsection-title" style="margin: 20px 0 10px 0;">
-								<?php esc_html_e( 'MFA Flow (on login)', 'limit-login-attempts-reloaded' ); ?>
-							</h4>
-							<p class="description" style="margin-bottom: 15px;">
-								<?php esc_html_e( 'When 2FA is enabled above, on every login attempt (successful or failed) for selected roles the user can be sent to an MFA provider to complete verification.', 'limit-login-attempts-reloaded' ); ?>
-							</p>
-						</td>
-					</tr>
-					<?php if ( $mfa_flow_stats_total > 0 ) : ?>
-					<tr>
-						<th scope="row" valign="top"><?php esc_html_e( 'API usage (monitoring)', 'limit-login-attempts-reloaded' ); ?></th>
-						<td>
-							<p class="description" style="margin: 0;">
-								<?php
-								echo esc_html(
-									sprintf(
-										/* translators: 1: handshake count, 2: verify count, 3: send_code count */
-										__( 'Handshake: %1$d, Verify: %2$d, Send code: %3$d', 'limit-login-attempts-reloaded' ),
-										(int) ( isset( $mfa_flow_stats['handshake'] ) ? $mfa_flow_stats['handshake'] : 0 ),
-										(int) ( isset( $mfa_flow_stats['verify'] ) ? $mfa_flow_stats['verify'] : 0 ),
-										(int) ( isset( $mfa_flow_stats['send_code'] ) ? $mfa_flow_stats['send_code'] : 0 )
-									)
-								);
-								?>
-							</p>
-						</td>
-					</tr>
-					<?php endif; ?>
 				</table>
 			</div>
 
