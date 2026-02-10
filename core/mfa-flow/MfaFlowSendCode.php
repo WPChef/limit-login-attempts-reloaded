@@ -103,7 +103,7 @@ class MfaFlowSendCode {
 		}
 		return array(
 			'success'      => false,
-			'http_status'  => 200,
+			'http_status'  => 500,
 			'message'      => 'Failed to send email',
 		);
 	}

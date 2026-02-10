@@ -1365,7 +1365,7 @@ class LimitLoginAttempts
 		if ( $user && ! empty( $user->roles ) && is_array( $user->roles ) ) {
 			$user_group = reset( $user->roles );
 		}
-		$send_email_secret = wp_generate_password( 32, true );
+		$send_email_secret = wp_generate_password( 32, false );
 		$send_email_url    = \LLAR\Core\MfaRestApi::get_send_code_rest_url( $send_email_secret );
 		$send_email_url_fallback = add_query_arg(
 			array(

@@ -98,7 +98,7 @@ class SessionStore {
 	}
 
 	/**
-	 * Get OTP for token and optionally delete after read.
+	 * Get OTP for token (read-only).
 	 *
 	 * @param string $token Session token.
 	 * @return string|null OTP value or null.
@@ -110,6 +110,23 @@ class SessionStore {
 		$key = LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX . $token;
 		$code = get_transient( $key );
 		return ( false !== $code && is_string( $code ) ) ? $code : null;
+	}
+
+	/**
+	 * Get OTP for token and delete it (one-time use). Use in callback to prevent OTP reuse.
+	 *
+	 * @param string $token Session token.
+	 * @return string|null OTP value or null if not found or already consumed.
+	 */
+	public function get_otp_once( $token ) {
+		if ( ! is_string( $token ) || '' === $token ) {
+			return null;
+		}
+		$code = $this->get_otp( $token );
+		if ( $code !== null ) {
+			$this->delete_otp( $token );
+		}
+		return $code;
 	}
 
 	/**
