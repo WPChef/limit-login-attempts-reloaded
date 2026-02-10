@@ -1,6 +1,6 @@
 <?php
 
-namespace LLAR\Core\MfaFlow;
+namespace LLAR\Core\MfaFlow\Providers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,7 +26,7 @@ interface MfaProviderInterface {
 	public function get_label();
 
 	/**
-	 * Run handshake with MFA service. Payload: user_ip, login_url, send_email_url, optional user_group, is_pre_authenticated.
+	 * Run handshake with MFA service. Payload per API: user_ip, login_url, send_email_url, user_group, is_pre_authenticated.
 	 *
 	 * @param array $payload Request payload.
 	 * @return array { success: bool, data: array|null (token, secret, redirect_url), error: string|null }
@@ -43,7 +43,7 @@ interface MfaProviderInterface {
 	public function verify( $token, $secret );
 
 	/**
-	 * Config field definitions for admin (endpoint, api_key, etc.). Each item: id, label, type, placeholder, value.
+	 * Config field definitions for admin. Each item: id, label, type, placeholder, value. Empty if all from constants.
 	 *
 	 * @return array
 	 */

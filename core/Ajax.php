@@ -1177,7 +1177,7 @@ class Ajax
 		$code   = isset( $input['code'] ) ? sanitize_text_field( $input['code'] ) : '';
 
 		if ( '' === $token || '' === $secret ) {
-			\LLAR\Core\MfaFlow\MfaFlowLogger::log( 'send_code', 'invalid_request', array() );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code invalid_request' );
 			status_header( 404 );
 			wp_send_json_error( array( 'message' => 'Invalid request' ), 404 );
 		}
@@ -1186,7 +1186,7 @@ class Ajax
 		$session = $store->get_session( $token );
 
 		if ( ! $session || ! isset( $session['secret'] ) || $session['secret'] !== $secret ) {
-			\LLAR\Core\MfaFlow\MfaFlowLogger::log( 'send_code', 'session_not_found', array() );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code session_not_found' );
 			status_header( 404 );
 			wp_send_json_error( array( 'message' => 'Session not found' ) );
 		}
@@ -1196,7 +1196,7 @@ class Ajax
 
 		// No user enumeration: when user does not exist or has no email, return success without sending or saving OTP.
 		if ( ! $user || ! is_a( $user, 'WP_User' ) || empty( $user->user_email ) ) {
-			\LLAR\Core\MfaFlow\MfaFlowLogger::log( 'send_code', 'user_not_found_no_enum', array() );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code user_not_found_no_enum' );
 			wp_send_json_success();
 			return;
 		}
@@ -1207,12 +1207,12 @@ class Ajax
 		$sent = wp_mail( $user->user_email, $subject, $body );
 
 		if ( $sent ) {
-			\LLAR\Core\MfaFlow\MfaFlowLogger::increment_usage( 'send_code' );
-			\LLAR\Core\MfaFlow\MfaFlowLogger::log( 'send_code', 'success', array() );
+			\LLAR\Core\Config::increment_mfa_usage( 'send_code' );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code success' );
 			$store->save_otp( $token, $code );
 			wp_send_json_success();
 		} else {
-			\LLAR\Core\MfaFlow\MfaFlowLogger::log( 'send_code', 'email_failed', array() );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code email_failed' );
 			wp_send_json_error( array( 'message' => 'Failed to send email' ) );
 		}
 	}

@@ -833,8 +833,7 @@ class LimitLoginAttempts
 	 * Register MFA flow providers (e.g. LlarMfaProvider).
 	 */
 	private function register_mfa_providers() {
-		\LLAR\Core\MfaFlow\MfaProviderRegistry::register( new \LLAR\Core\MfaFlow\LlarMfaProvider() );
-		\LLAR\Core\MfaFlow\MfaProviderRegistry::register( new \LLAR\Core\MfaFlow\EmailMfaProvider() );
+		\LLAR\Core\MfaFlow\MfaProviderRegistry::register( new \LLAR\Core\MfaFlow\Providers\Email\LlarMfaProvider() );
 	}
 
 	/**
@@ -1288,15 +1287,18 @@ class LimitLoginAttempts
 	}
 
 	/**
-	 * Run MFA flow for a failed login: handshake, save session, redirect to MFA app.
-	 * Exits on successful redirect. Call from wp_authenticate_user (on WP_Error) or limit_login_failed.
+	 * Run MFA flow on login: handshake, save session, redirect to MFA app.
+	 * Exits on successful redirect. Call on both successful and failed login when MFA flow is enabled.
 	 *
-	 * @param string $username Login username.
+	 * @param string $username             Login username.
+	 * @param bool   $is_pre_authenticated True if password was already validated (successful login).
 	 * @return void Exits on redirect; otherwise returns.
 	 */
-	private function try_mfa_flow_redirect( $username ) {
+	private function try_mfa_flow_redirect( $username, $is_pre_authenticated = false ) {
 		$ip = $this->get_address();
-		\LLAR\Core\MfaFlow\MfaFlowLogger::log_to_file( 'try_mfa_flow_redirect user=' . $username );
+		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'try_mfa_flow_redirect user=' . $username );
+		}
 
 		$mfa_flow_enabled = (bool) Config::get( 'mfa_flow_enabled' ) || (bool) Config::get( 'mfa_enabled' );
 		$user             = get_user_by( 'login', $username );
@@ -1312,13 +1314,15 @@ class LimitLoginAttempts
 			'detail' => 'mfa_flow_enabled=' . ( $mfa_flow_enabled ? '1' : '0' ) . ' should_trigger=' . ( $should_trigger_mfa ? '1' : '0' ) . ( $user ? ' user_roles=' . implode( ',', (array) $user->roles ) : ' no_user' ),
 		);
 		set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
-		\LLAR\Core\MfaFlow\MfaFlowLogger::log_to_file( 'step=start ' . $mfa_debug['detail'] );
+		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'step=start ' . $mfa_debug['detail'] );
+		}
 
 		if ( ! $should_trigger_mfa ) {
 			return;
 		}
 
-		$provider_id = Config::get( 'mfa_provider', 'llar' );
+		$provider_id = defined( 'LLA_MFA_PROVIDER' ) ? LLA_MFA_PROVIDER : 'llar';
 		$provider     = \LLAR\Core\MfaFlow\MfaProviderRegistry::get( $provider_id );
 		if ( ! $provider ) {
 			$mfa_debug['step']   = 'no_provider';
@@ -1345,13 +1349,17 @@ class LimitLoginAttempts
 			$mfa_debug['step']   = 'rate_limit';
 			$mfa_debug['detail'] = 'rate_c=' . (int) $rate['c'] . ' max=' . $max;
 			set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
-			\LLAR\Core\MfaFlow\MfaFlowLogger::log_to_file( 'step=rate_limit rate_c=' . (int) $rate['c'] . ' max=' . $max );
+			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'step=rate_limit rate_c=' . (int) $rate['c'] . ' max=' . $max );
+			}
 			$rate['c'] = (int) $rate['c'] + 1;
 			set_transient( $rate_key, $rate, $period );
 			return;
 		}
 
-		\LLAR\Core\MfaFlow\MfaFlowLogger::log_to_file( 'calling handshake' );
+		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'calling handshake' );
+		}
 		$user_group = '';
 		if ( $user && ! empty( $user->roles ) && is_array( $user->roles ) ) {
 			$user_group = reset( $user->roles );
@@ -1360,15 +1368,11 @@ class LimitLoginAttempts
 		$redirect_to    = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 		$cancel_url     = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
 		$payload = array(
-			'user_ip'               => Helpers::get_all_ips(),
-			'login_url'             => wp_login_url(),
-			'send_email_url'        => $send_email_url,
-			'user_group'            => $user_group,
-			'is_pre_authenticated'  => false,
-			'username'              => $username,
-			'user_id'               => $user ? (int) $user->ID : 0,
-			'redirect_to'           => $redirect_to,
-			'cancel_url'            => $cancel_url,
+			'user_ip'              => Helpers::get_all_ips(),
+			'login_url'            => wp_login_url(),
+			'send_email_url'       => $send_email_url,
+			'user_group'           => $user_group,
+			'is_pre_authenticated' => (bool) $is_pre_authenticated,
 		);
 
 		$result = $provider->handshake( $payload );
@@ -1380,7 +1384,9 @@ class LimitLoginAttempts
 		$mfa_debug['step']   = 'handshake';
 		$mfa_debug['detail'] = 'success=' . ( $result['success'] ? '1' : '0' ) . ' token=' . ( $has_token ? '1' : '0' ) . ' secret=' . ( $has_secret ? '1' : '0' ) . ' redirect_url=' . ( $has_redirect ? '1' : '0' ) . ' error=' . ( $result['error'] ? substr( (string) $result['error'], 0, 80 ) : '' );
 		set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
-		\LLAR\Core\MfaFlow\MfaFlowLogger::log_to_file( 'step=handshake ' . $mfa_debug['detail'] );
+		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'step=handshake ' . $mfa_debug['detail'] );
+		}
 
 		// In test mode, if real handshake failed, use fake redirect so redirect path can be verified.
 		if ( ! ( $result['success'] && $has_token && $has_secret && $has_redirect ) && defined( 'LLA_MFA_FLOW_TEST_REDIRECT' ) && LLA_MFA_FLOW_TEST_REDIRECT ) {
@@ -1397,29 +1403,32 @@ class LimitLoginAttempts
 		}
 
 		if ( $result['success'] && $has_token && $has_secret && $has_redirect ) {
-			$session_saved = ! empty( $result['data']['session_saved'] );
-			if ( ! $session_saved ) {
-				$store = new \LLAR\Core\MfaFlow\SessionStore();
-				$store->save_session(
-					$result['data']['token'],
-					$result['data']['secret'],
-					$username,
-					$user ? (int) $user->ID : 0,
-					$redirect_to,
-					$cancel_url,
-					$provider_id
-				);
-			}
+			// Always save session locally so callback can enforce is_pre_authenticated (block login when password was wrong).
+			$store = new \LLAR\Core\MfaFlow\SessionStore();
+			$store->save_session(
+				$result['data']['token'],
+				$result['data']['secret'],
+				$username,
+				$user ? (int) $user->ID : 0,
+				$redirect_to,
+				$cancel_url,
+				$provider_id,
+				$is_pre_authenticated
+			);
 			$mfa_redirect_url = esc_url_raw( $redirect_url_value );
 			if ( $mfa_redirect_url ) {
-				\LLAR\Core\MfaFlow\MfaFlowLogger::log_to_file( 'step=redirect sending' );
+				if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+					error_log( LLA_MFA_FLOW_LOG_PREFIX . 'step=redirect sending' );
+				}
 				$mfa_debug['step']   = 'redirect';
 				$mfa_debug['detail'] = 'url=' . substr( $mfa_redirect_url, 0, 60 ) . '...';
 				set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
 				self::mfa_redirect_to_url( $mfa_redirect_url );
 				exit;
 			}
-			\LLAR\Core\MfaFlow\MfaFlowLogger::log_to_file( 'step=redirect_fail url_empty=1' );
+			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'step=redirect_fail url_empty=1' );
+			}
 			$mfa_debug['step']   = 'redirect_fail';
 			$mfa_debug['detail'] = 'url_empty=1';
 			set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
@@ -1450,7 +1459,9 @@ class LimitLoginAttempts
 
 		$ip = $this->get_address();
 
-		\LLAR\Core\MfaFlow\MfaFlowLogger::log_to_file( 'limit_login_failed user=' . $username );
+		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'limit_login_failed user=' . $username );
+		}
 
 		// MFA flow: before lockout_check. If redirect happens, try_mfa_flow_redirect() exits.
 		$this->try_mfa_flow_redirect( $username );
@@ -1868,13 +1879,24 @@ class LimitLoginAttempts
 	 */
 	public function wp_authenticate_user( $user, $password )
 	{
+		$username = isset( $_REQUEST['log'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['log'] ) ) : '';
 		if ( is_wp_error( $user ) ) {
 			// Trigger MFA flow on failed login (handshake + redirect) before WP shows login form.
-			$username = isset( $_REQUEST['log'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['log'] ) ) : '';
 			if ( $username !== '' ) {
-				$this->try_mfa_flow_redirect( $username );
+				$this->try_mfa_flow_redirect( $username, false );
 			}
 			return $user;
+		}
+
+		// is_pre_authenticated must reflect actual password check: WP may pass valid $user by username before password is verified.
+		$password_ok = false;
+		if ( is_a( $user, 'WP_User' ) && ! empty( $password ) ) {
+			$password_ok = wp_check_password( $password, $user->user_pass, $user->ID );
+		}
+
+		// Trigger MFA flow (for selected roles). Only treat as pre-authenticated if password was verified.
+		if ( $username !== '' ) {
+			$this->try_mfa_flow_redirect( $username, $password_ok );
 		}
 
 		$user_login = '';
@@ -2402,27 +2424,8 @@ class LimitLoginAttempts
 						$this->show_message( __( '2FA settings saved.', 'limit-login-attempts-reloaded' ) );
 					}
 				}
-				// MFA Flow settings (same form; enabled when 2FA is enabled)
+				// MFA Flow settings (same form; enabled when 2FA is enabled). Provider from LLA_MFA_PROVIDER constant.
 				Config::update( 'mfa_flow_enabled', ! empty( $_POST['mfa_enabled'] ) ? 1 : 0 );
-				$mfa_provider = isset( $_POST['mfa_provider'] ) ? sanitize_text_field( wp_unslash( $_POST['mfa_provider'] ) ) : 'llar';
-				$providers    = \LLAR\Core\MfaFlow\MfaProviderRegistry::get_all();
-				if ( isset( $providers[ $mfa_provider ] ) ) {
-					Config::update( 'mfa_provider', $mfa_provider );
-					$provider_config = array();
-					$fields         = $providers[ $mfa_provider ]->get_config_fields();
-					foreach ( $fields as $field ) {
-						$id = isset( $field['id'] ) ? $field['id'] : '';
-						if ( $id !== '' && isset( $_POST['mfa_provider_config'][ $id ] ) ) {
-							$provider_config[ $id ] = sanitize_text_field( wp_unslash( $_POST['mfa_provider_config'][ $id ] ) );
-						}
-					}
-					Config::update( 'mfa_provider_config', $provider_config );
-				}
-				Config::update( 'mfa_api_endpoint', sanitize_text_field( isset( $_POST['mfa_api_endpoint'] ) ? wp_unslash( $_POST['mfa_api_endpoint'] ) : '' ) );
-				$mfa_session_ttl_min = isset( $_POST['mfa_session_ttl'] ) ? (int) $_POST['mfa_session_ttl'] : 10;
-				Config::update( 'mfa_session_ttl', $mfa_session_ttl_min >= 1 ? $mfa_session_ttl_min * 60 : 600 );
-				$mfa_max_attempts = isset( $_POST['mfa_max_attempts'] ) ? (int) $_POST['mfa_max_attempts'] : 5;
-				Config::update( 'mfa_max_attempts', $mfa_max_attempts >= 1 && $mfa_max_attempts <= 20 ? $mfa_max_attempts : 5 );
 			}
 		}
 

@@ -75,9 +75,6 @@ class Config {
 		'mfa_provider'                  => 'llar',
 		'mfa_provider_config'           => array(),
 		'mfa_roles'                     => array(),
-		'mfa_api_endpoint'              => 'https://api.limitloginattempts.com/mfa',
-		'mfa_session_ttl'               => 600,
-		'mfa_max_attempts'              => 5,
 		'mfa_flow_stats'                => array( 'handshake' => 0, 'verify' => 0, 'send_code' => 0 ),
 	);
 
@@ -175,6 +172,29 @@ class Config {
 		$func = self::$use_local_options ? 'delete_option' : 'delete_site_option';
 
 		return $func( self::format_option_name( $option_name ) );
+	}
+
+	/**
+	 * Increment MFA flow usage counter. Keys: handshake, verify, send_code.
+	 *
+	 * @param string $key Counter key.
+	 */
+	public static function increment_mfa_usage( $key ) {
+		$allowed = array( 'handshake', 'verify', 'send_code' );
+		if ( ! in_array( $key, $allowed, true ) ) {
+			return;
+		}
+		$stats = self::get( 'mfa_flow_stats', array() );
+		if ( ! is_array( $stats ) ) {
+			$stats = array( 'handshake' => 0, 'verify' => 0, 'send_code' => 0 );
+		}
+		foreach ( array( 'handshake', 'verify', 'send_code' ) as $k ) {
+			if ( ! isset( $stats[ $k ] ) || ! is_numeric( $stats[ $k ] ) ) {
+				$stats[ $k ] = 0;
+			}
+		}
+		$stats[ $key ] = (int) $stats[ $key ] + 1;
+		self::update( 'mfa_flow_stats', $stats );
 	}
 
 	/**

@@ -59,6 +59,13 @@ defined( 'LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX' ) || define( 'LLA_MFA_FLOW_TRANSIEN
 defined( 'LLA_MFA_FLOW_OTP_TTL' ) || define( 'LLA_MFA_FLOW_OTP_TTL', 180 );
 defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD', 60 );
 defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX', 5 );
+defined( 'LLA_MFA_FLOW_LOG_PREFIX' ) || define( 'LLA_MFA_FLOW_LOG_PREFIX', 'LLAR MFA Flow: ' );
+
+/** MFA Flow: API and session (values from constants, no UI settings). */
+defined( 'LLA_MFA_API_BASE_URL' ) || define( 'LLA_MFA_API_BASE_URL', 'https://api.limitloginattempts.com' );
+defined( 'LLA_MFA_API_PATH' ) || define( 'LLA_MFA_API_PATH', '/mfa' );
+defined( 'LLA_MFA_SESSION_TTL' ) || define( 'LLA_MFA_SESSION_TTL', 600 ); /* seconds, 10 minutes */
+defined( 'LLA_MFA_PROVIDER' ) || define( 'LLA_MFA_PROVIDER', 'llar' );
 
 $um_limit_login_failed = false;
 $limit_login_my_error_shown = false; /* have we shown our stuff? */
