@@ -95,7 +95,7 @@ class CallbackHandler {
 			return;
 		}
 
-		$stored_otp = $store->get_otp( $token );
+		$stored_otp = $store->get_otp_once( $token );
 		$code_match = ( $stored_otp !== null && $stored_otp === $code );
 		if ( ! $code_match ) {
 			$store->delete_session( $token );
