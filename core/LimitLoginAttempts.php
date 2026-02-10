@@ -370,6 +370,7 @@ class LimitLoginAttempts
 		// MFA flow callback: llar_mfa=1&token=...&code=...
 		add_action( 'init', array( $this, 'mfa_flow_callback' ), 1 );
 		add_filter( 'query_vars', array( $this, 'add_mfa_flow_query_var' ) );
+		MfaRestApi::register();
 
 		$role = get_role( 'administrator' );
 
@@ -1364,15 +1365,24 @@ class LimitLoginAttempts
 		if ( $user && ! empty( $user->roles ) && is_array( $user->roles ) ) {
 			$user_group = reset( $user->roles );
 		}
-		$send_email_url = add_query_arg( 'action', 'llar_mfa_flow_send_code', admin_url( 'admin-ajax.php' ) );
+		$send_email_secret = wp_generate_password( 32, true );
+		$send_email_url    = \LLAR\Core\MfaRestApi::get_send_code_rest_url( $send_email_secret );
+		$send_email_url_fallback = add_query_arg(
+			array(
+				'action' => 'llar_mfa_flow_send_code',
+				'secret' => $send_email_secret,
+			),
+			admin_url( 'admin-ajax.php' )
+		);
 		$redirect_to    = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 		$cancel_url     = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
 		$payload = array(
-			'user_ip'              => Helpers::get_all_ips(),
-			'login_url'            => wp_login_url(),
-			'send_email_url'       => $send_email_url,
-			'user_group'           => $user_group,
-			'is_pre_authenticated' => (bool) $is_pre_authenticated,
+			'user_ip'                  => Helpers::get_all_ips(),
+			'login_url'                => wp_login_url(),
+			'send_email_url'           => $send_email_url,
+			'send_email_url_fallback'  => $send_email_url_fallback,
+			'user_group'               => $user_group,
+			'is_pre_authenticated'     => (bool) $is_pre_authenticated,
 		);
 
 		$result = $provider->handshake( $payload );
@@ -1405,6 +1415,7 @@ class LimitLoginAttempts
 		if ( $result['success'] && $has_token && $has_secret && $has_redirect ) {
 			// Always save session locally so callback can enforce is_pre_authenticated (block login when password was wrong).
 			$store = new \LLAR\Core\MfaFlow\SessionStore();
+			$store->save_send_email_secret( $result['data']['token'], $send_email_secret );
 			$store->save_session(
 				$result['data']['token'],
 				$result['data']['secret'],
