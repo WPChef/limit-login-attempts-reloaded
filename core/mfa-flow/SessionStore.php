@@ -77,6 +77,7 @@ class SessionStore {
 			return;
 		}
 		delete_transient( LLA_MFA_FLOW_TRANSIENT_SESSION_PREFIX . $token );
+		delete_transient( LLA_MFA_FLOW_TRANSIENT_SEND_SECRET_PREFIX . $token );
 		$this->delete_otp( $token );
 	}
 
@@ -109,6 +110,38 @@ class SessionStore {
 		$key = LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX . $token;
 		$code = get_transient( $key );
 		return ( false !== $code && is_string( $code ) ) ? $code : null;
+	}
+
+	/**
+	 * Save send_email secret for token (validates GET requests to send_code endpoint).
+	 *
+	 * @param string $token Session token.
+	 * @param string $secret Random secret for send_email_url query.
+	 * @return bool
+	 */
+	public function save_send_email_secret( $token, $secret ) {
+		if ( ! is_string( $token ) || '' === $token || ! is_string( $secret ) || '' === $secret ) {
+			return false;
+		}
+		$ttl = defined( 'LLA_MFA_SESSION_TTL' ) ? (int) LLA_MFA_SESSION_TTL : 600;
+		$ttl = $ttl > 0 ? $ttl : 600;
+		$key = LLA_MFA_FLOW_TRANSIENT_SEND_SECRET_PREFIX . $token;
+		return (bool) set_transient( $key, $secret, $ttl );
+	}
+
+	/**
+	 * Get send_email secret for token.
+	 *
+	 * @param string $token Session token.
+	 * @return string|null Secret or null if not found.
+	 */
+	public function get_send_email_secret( $token ) {
+		if ( ! is_string( $token ) || '' === $token ) {
+			return null;
+		}
+		$key    = LLA_MFA_FLOW_TRANSIENT_SEND_SECRET_PREFIX . $token;
+		$secret = get_transient( $key );
+		return ( false !== $secret && is_string( $secret ) ) ? $secret : null;
 	}
 
 	/**
