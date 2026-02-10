@@ -2,7 +2,6 @@
 
 namespace LLAR\Core\MfaFlow;
 
-use LLAR\Core\Config;
 use LLAR\Core\Helpers;
 use LLAR\Core\Http\Http;
 
@@ -54,7 +53,6 @@ class MfaApiClient {
 		}
 
 		$result = $this->parse_response( $response, $url );
-		Config::increment_mfa_usage( 'handshake' );
 		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
 			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'handshake ' . ( $result['success'] ? 'success' : 'fail' ) . ' status=' . $status . ( $result['error'] ? ' error=' . substr( $result['error'], 0, 60 ) : '' ) );
 		}
@@ -85,7 +83,6 @@ class MfaApiClient {
 		$response = Http::post( $url, $request_options );
 
 		$result = $this->parse_response( $response, $url );
-		Config::increment_mfa_usage( 'verify' );
 		$status = isset( $response['status'] ) ? (int) $response['status'] : 0;
 		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
 			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'verify ' . ( $result['success'] ? 'success' : 'fail' ) . ' status=' . $status . ( $result['error'] ? ' error=' . substr( $result['error'], 0, 60 ) : '' ) );
