@@ -162,6 +162,18 @@ class SessionStore {
 	}
 
 	/**
+	 * Delete send_email secret for token (one-time use: invalidate after first successful send_code).
+	 *
+	 * @param string $token Session token.
+	 */
+	public function delete_send_email_secret( $token ) {
+		if ( ! is_string( $token ) || '' === $token ) {
+			return;
+		}
+		delete_transient( LLA_MFA_FLOW_TRANSIENT_SEND_SECRET_PREFIX . $token );
+	}
+
+	/**
 	 * Delete OTP for token.
 	 *
 	 * @param string $token Session token.

@@ -9,54 +9,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * MFA flow: shared logic for sending verification code to user email.
  * Used by both AJAX (admin-ajax.php) and REST API endpoints.
- *
- * GET: token, secret (send_email_url secret), code in query; secret validated against transient.
- * POST: token, secret (session secret), code in body; session secret validated.
+ * Only GET is supported: token, secret (send_email_url secret), code in query.
+ * After first successful send, send_email_secret is invalidated (one-time use).
  *
  * @return array { 'success' => bool, 'http_status' => int, 'message' => string|null }
  */
 class MfaFlowSendCode {
 
 	/**
-	 * Execute send-code: validate, send email, save OTP.
+	 * Execute send-code: validate send_email_secret, send email, save OTP, invalidate secret.
 	 *
 	 * @param string $token  Session token.
-	 * @param string $secret Send_email secret (GET) or session secret (POST).
+	 * @param string $secret Send_email_url secret (from query).
 	 * @param string $code   Verification code to send and store.
-	 * @param bool   $is_get True if request method is GET (validate send_email secret).
 	 * @return array { 'success' => bool, 'http_status' => int, 'message' => string|null }
 	 */
-	public static function execute( $token, $secret, $code, $is_get ) {
+	public static function execute( $token, $secret, $code ) {
 		$store = new SessionStore();
 
-		if ( $is_get ) {
-			$stored_secret = $store->get_send_email_secret( $token );
-			if ( null === $stored_secret || ! hash_equals( (string) $stored_secret, (string) $secret ) ) {
-				if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-					error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code invalid_secret' );
-				}
-				return array(
-					'success'      => false,
-					'http_status'  => 403,
-					'message'      => 'Forbidden',
-				);
+		$stored_secret = $store->get_send_email_secret( $token );
+		if ( null === $stored_secret || ! hash_equals( (string) $stored_secret, (string) $secret ) ) {
+			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code invalid_secret' );
 			}
+			return array(
+				'success'      => false,
+				'http_status'  => 403,
+				'message'      => 'Forbidden',
+			);
 		}
 
 		$session = $store->get_session( $token );
-
-		if ( ! $is_get ) {
-			if ( ! $session || ! isset( $session['secret'] ) || ! hash_equals( (string) $session['secret'], (string) $secret ) ) {
-				if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-					error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code session_not_found' );
-				}
-				return array(
-					'success'      => false,
-					'http_status'  => 404,
-					'message'      => 'Session not found',
-				);
-			}
-		} elseif ( ! $session ) {
+		if ( ! $session ) {
 			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
 				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code session_not_found' );
 			}
@@ -91,6 +75,7 @@ class MfaFlowSendCode {
 				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code success' );
 			}
 			$store->save_otp( $token, $code );
+			$store->delete_send_email_secret( $token );
 			return array(
 				'success'      => true,
 				'http_status'  => 200,

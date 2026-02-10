@@ -92,6 +92,13 @@ class LimitLoginAttempts
 	public $has_capability = false;
 
 	/**
+	 * Guard: handshake already attempted this request (avoids double handshake from wp_authenticate_user + limit_login_failed).
+	 *
+	 * @var bool
+	 */
+	private static $mfa_flow_handshake_attempted = false;
+
+	/**
 	 * Allowed tabs for options page
 	 */
 	public static $allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'help' );
@@ -1323,6 +1330,13 @@ class LimitLoginAttempts
 			return;
 		}
 
+		if ( self::$mfa_flow_handshake_attempted ) {
+			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'try_mfa_flow_redirect skipped (handshake already attempted this request)' );
+			}
+			return;
+		}
+
 		$provider_id = defined( 'LLA_MFA_PROVIDER' ) ? LLA_MFA_PROVIDER : 'llar';
 		$provider     = \LLAR\Core\MfaFlow\MfaProviderRegistry::get( $provider_id );
 		if ( ! $provider ) {
@@ -1358,6 +1372,7 @@ class LimitLoginAttempts
 			return;
 		}
 
+		self::$mfa_flow_handshake_attempted = true;
 		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
 			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'calling handshake' );
 		}
@@ -1366,23 +1381,14 @@ class LimitLoginAttempts
 			$user_group = reset( $user->roles );
 		}
 		$send_email_secret = wp_generate_password( 32, false );
-		$send_email_url    = \LLAR\Core\MfaRestApi::get_send_code_rest_url( $send_email_secret );
-		$send_email_url_fallback = add_query_arg(
-			array(
-				'action' => 'llar_mfa_flow_send_code',
-				'secret' => $send_email_secret,
-			),
-			admin_url( 'admin-ajax.php' )
-		);
-		$redirect_to    = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
-		$cancel_url     = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
+		$redirect_to       = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+		$cancel_url        = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
 		$payload = array(
-			'user_ip'                  => Helpers::get_all_ips(),
-			'login_url'                => wp_login_url(),
-			'send_email_url'           => $send_email_url,
-			'send_email_url_fallback'  => $send_email_url_fallback,
-			'user_group'               => $user_group,
-			'is_pre_authenticated'     => (bool) $is_pre_authenticated,
+			'user_ip'              => Helpers::get_all_ips(),
+			'login_url'            => wp_login_url(),
+			'send_email_secret'    => $send_email_secret,
+			'user_group'           => $user_group,
+			'is_pre_authenticated' => (bool) $is_pre_authenticated,
 		);
 
 		$result = $provider->handshake( $payload );

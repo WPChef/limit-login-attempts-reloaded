@@ -31,7 +31,7 @@ class MfaRestApi {
 			self::REST_NAMESPACE,
 			self::SEND_CODE_ROUTE,
 			array(
-				'methods'             => array( 'GET', 'POST' ),
+				'methods'             => 'GET',
 				'callback'            => array( __CLASS__, 'send_code_callback' ),
 				'permission_callback' => '__return_true',
 				'args'                => array(
@@ -56,7 +56,7 @@ class MfaRestApi {
 	}
 
 	/**
-	 * REST callback: MFA send-code. GET uses query params; POST uses body (JSON or form).
+	 * REST callback: MFA send-code. GET only (token, secret, code in query).
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_REST_Response
@@ -77,8 +77,7 @@ class MfaRestApi {
 			);
 		}
 
-		$is_get = $request->get_method() === 'GET';
-		$result = MfaFlowSendCode::execute( $token, $secret, $code, $is_get );
+		$result = MfaFlowSendCode::execute( $token, $secret, $code );
 
 		$status = isset( $result['http_status'] ) ? (int) $result['http_status'] : 200;
 		$body   = array(
