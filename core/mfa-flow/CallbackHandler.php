@@ -17,23 +17,20 @@ class CallbackHandler {
 	 */
 	public static function maybe_handle() {
 		$token = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
-		if ( $token === '' && isset( $_POST['llar_mfa_token'] ) ) {
-			$token = sanitize_text_field( wp_unslash( $_POST['llar_mfa_token'] ) );
-		}
-		$code = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
-		if ( $code === '' && isset( $_POST['llar_mfa_code'] ) ) {
-			$code = sanitize_text_field( wp_unslash( $_POST['llar_mfa_code'] ) );
-		}
+		$code  = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
 
-		$is_mfa_callback = ( isset( $_GET['llar_mfa'] ) && ( $_GET['llar_mfa'] === '1' || $_GET['llar_mfa'] === 'true' ) ) || ( isset( $_POST['llar_mfa'] ) && $_POST['llar_mfa'] === '1' );
-		$is_mfa_callback = $is_mfa_callback && $token !== '';
+		$has_llar_mfa_param   = ( isset( $_GET['llar_mfa'] ) && ( $_GET['llar_mfa'] === '1' || $_GET['llar_mfa'] === 'true' ) );
+		$has_token_in_request = isset( $_GET['token'] );
+		$is_mfa_callback = $token !== '' && ( $has_llar_mfa_param || $has_token_in_request );
 
 		if ( ! $is_mfa_callback ) {
 			return;
 		}
 
 		if ( $code === '' ) {
-			self::render_enter_code_form( $token );
+			// Return from external MFA app with token only: try API verify; if not verified, redirect to login (no on-site code form).
+			self::try_verify_and_login( $token );
+			self::redirect_login( 'llar_mfa_session_expired' );
 			exit;
 		}
 
@@ -42,26 +39,42 @@ class CallbackHandler {
 	}
 
 	/**
-	 * Output minimal HTML form to enter OTP code (e.g. for email/SMS providers).
+	 * When we have token but no code (return from external app): call API verify; if is_verified, log user in and redirect.
 	 *
 	 * @param string $token Session token.
+	 * @return void Exits on success; returns otherwise.
 	 */
-	public static function render_enter_code_form( $token ) {
-		$action = add_query_arg( array( 'llar_mfa' => '1', 'token' => $token ), wp_login_url() );
-		$cancel_url = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		$title = __( 'Verification code', 'limit-login-attempts-reloaded' );
-		$label = __( 'Enter the code we sent to your email', 'limit-login-attempts-reloaded' );
-		$submit = __( 'Verify', 'limit-login-attempts-reloaded' );
-		$cancel = __( 'Cancel', 'limit-login-attempts-reloaded' );
-		header( 'Content-Type: text/html; charset=utf-8' );
-		echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' . esc_html( $title ) . '</title></head><body>';
-		echo '<form method="post" action="' . esc_attr( $action ) . '">';
-		echo '<input type="hidden" name="llar_mfa" value="1">';
-		echo '<input type="hidden" name="llar_mfa_token" value="' . esc_attr( $token ) . '">';
-		echo '<p><label for="llar_mfa_code">' . esc_html( $label ) . '</label></p>';
-		echo '<p><input type="text" name="llar_mfa_code" id="llar_mfa_code" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" maxlength="10" required></p>';
-		echo '<p><button type="submit">' . esc_html( $submit ) . '</button> <a href="' . esc_attr( $cancel_url ) . '">' . esc_html( $cancel ) . '</a></p>';
-		echo '</form></body></html>';
+	private static function try_verify_and_login( $token ) {
+		$store   = new SessionStore();
+		$session = $store->get_session( $token );
+		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
+			return;
+		}
+		if ( empty( $session['is_pre_authenticated'] ) ) {
+			return;
+		}
+		$provider_id = isset( $session['provider_id'] ) ? $session['provider_id'] : 'llar';
+		$provider    = MfaProviderRegistry::get( $provider_id );
+		if ( ! $provider ) {
+			return;
+		}
+		$result = $provider->verify( $token, $session['secret'] );
+		if ( ! $result['success'] || empty( $result['data']['is_verified'] ) ) {
+			return;
+		}
+		$user_id = ! empty( $session['user_id'] ) ? (int) $session['user_id'] : 0;
+		$user    = $user_id ? get_user_by( 'id', $user_id ) : get_user_by( 'login', $session['username'] );
+		if ( ! $user || ! is_a( $user, 'WP_User' ) ) {
+			return;
+		}
+		wp_clear_auth_cookie();
+		wp_set_current_user( $user->ID );
+		wp_set_auth_cookie( $user->ID, true );
+		$redirect_to = ! empty( $session['redirect_to'] ) ? $session['redirect_to'] : '';
+		$redirect_url = ( $redirect_to && self::is_safe_redirect( $redirect_to ) ) ? $redirect_to : admin_url();
+		wp_safe_redirect( $redirect_url );
+		$store->delete_session( $token );
+		exit;
 	}
 
 	/**
@@ -74,17 +87,19 @@ class CallbackHandler {
 		$store = new SessionStore();
 		$session = $store->get_session( $token );
 
+
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			$store->delete_session( $token );
-			MfaFlowLogger::log( 'callback', 'session_expired', array() );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback session_expired' );
 			self::redirect_login( 'llar_mfa_session_expired' );
 			return;
 		}
 
 		$stored_otp = $store->get_otp( $token );
-		if ( $stored_otp === null || $stored_otp !== $code ) {
+		$code_match = ( $stored_otp !== null && $stored_otp === $code );
+		if ( ! $code_match ) {
 			$store->delete_session( $token );
-			MfaFlowLogger::log( 'callback', 'code_invalid', array() );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback code_invalid' );
 			self::redirect_login( 'llar_mfa_code_invalid' );
 			return;
 		}
@@ -93,7 +108,7 @@ class CallbackHandler {
 		$provider    = MfaProviderRegistry::get( $provider_id );
 		if ( ! $provider ) {
 			$store->delete_session( $token );
-			MfaFlowLogger::log( 'callback', 'provider_not_found', array( 'provider_id' => $provider_id ) );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback provider_not_found provider_id=' . $provider_id );
 			self::redirect_login( 'llar_mfa_verify_failed' );
 			return;
 		}
@@ -101,7 +116,7 @@ class CallbackHandler {
 
 		if ( ! $result['success'] || empty( $result['data']['is_verified'] ) ) {
 			$store->delete_session( $token );
-			MfaFlowLogger::log( 'callback', 'verify_failed', array() );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback verify_failed' );
 			self::redirect_login( 'llar_mfa_verify_failed' );
 			return;
 		}
@@ -111,23 +126,26 @@ class CallbackHandler {
 
 		if ( ! $user || ! is_a( $user, 'WP_User' ) ) {
 			$store->delete_session( $token );
-			MfaFlowLogger::log( 'callback', 'user_invalid', array() );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback user_invalid' );
 			self::redirect_login( 'llar_mfa_user_invalid' );
 			return;
 		}
 
-		MfaFlowLogger::log( 'callback', 'success', array( 'user_id' => $user->ID ) );
+		if ( empty( $session['is_pre_authenticated'] ) ) {
+			$store->delete_session( $token );
+			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback pre_auth_required' );
+			self::redirect_login( 'llar_mfa_pre_auth_required' );
+			return;
+		}
+
+		defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback success user_id=' . $user->ID );
 		wp_clear_auth_cookie();
 		wp_set_current_user( $user->ID );
 		wp_set_auth_cookie( $user->ID, true );
 
 		$redirect_to = ! empty( $session['redirect_to'] ) ? $session['redirect_to'] : '';
-		if ( $redirect_to && self::is_safe_redirect( $redirect_to ) ) {
-			wp_safe_redirect( $redirect_to );
-		} else {
-			wp_safe_redirect( admin_url() );
-		}
-
+		$redirect_url = ( $redirect_to && self::is_safe_redirect( $redirect_to ) ) ? $redirect_to : admin_url();
+		wp_safe_redirect( $redirect_url );
 		$store->delete_session( $token );
 		exit;
 	}

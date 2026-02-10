@@ -2,12 +2,14 @@
 
 namespace LLAR\Core\MfaFlow;
 
+use LLAR\Core\MfaFlow\Providers\MfaProviderInterface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Registry of MFA providers. Default provider 'llar' is registered on init.
+ * Registry of MFA providers. Default provider 'llar' (email) is registered on init.
  */
 class MfaProviderRegistry {
 

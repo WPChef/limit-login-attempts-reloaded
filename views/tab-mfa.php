@@ -37,15 +37,7 @@ $mfa_block_reason  = isset( $mfa_settings['mfa_block_reason'] ) ? $mfa_settings[
 $mfa_block_message = isset( $mfa_settings['mfa_block_message'] ) ? $mfa_settings['mfa_block_message'] : '';
 $is_mfa_disabled   = ( null !== $mfa_block_reason );
 
-// MFA Flow (after failed login: handshake, verify, email code; uses same "Enable 2FA" as 2FA)
-$mfa_provider        = Config::get( 'mfa_provider', 'llar' );
-$mfa_provider_config = Config::get( 'mfa_provider_config', array() );
-$mfa_provider_config = is_array( $mfa_provider_config ) ? $mfa_provider_config : array();
-$mfa_providers       = \LLAR\Core\MfaFlow\MfaProviderRegistry::get_all();
-$mfa_api_endpoint    = Config::get( 'mfa_api_endpoint', 'https://api.limitloginattempts.com/mfa' );
-$mfa_session_ttl     = (int) Config::get( 'mfa_session_ttl', 600 );
-$mfa_session_ttl_min = $mfa_session_ttl > 0 ? (int) ( $mfa_session_ttl / 60 ) : 10;
-$mfa_max_attempts    = (int) Config::get( 'mfa_max_attempts', 5 );
+// MFA Flow (on login: handshake, verify, email code; uses same "Enable 2FA" as 2FA; provider from LLA_MFA_PROVIDER constant)
 $mfa_flow_stats      = Config::get( 'mfa_flow_stats', array() );
 if ( ! is_array( $mfa_flow_stats ) ) {
 	$mfa_flow_stats = array( 'handshake' => 0, 'verify' => 0, 'send_code' => 0 );
@@ -69,7 +61,7 @@ $llar_mfa_last_flow = get_transient( 'llar_mfa_last_flow' );
 			</div>
 			<?php if ( ! empty( $llar_mfa_last_flow ) && is_array( $llar_mfa_last_flow ) ) : ?>
 				<div class="notice notice-info inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #0073aa; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
-					<p style="margin: 0 0 6px 0; font-weight: bold;"><?php esc_html_e( 'Last MFA flow (after failed login)', 'limit-login-attempts-reloaded' ); ?></p>
+					<p style="margin: 0 0 6px 0; font-weight: bold;"><?php esc_html_e( 'Last MFA flow', 'limit-login-attempts-reloaded' ); ?></p>
 					<p style="margin: 0; font-size: 13px; font-family: monospace;">
 						<?php
 						echo esc_html(
@@ -81,7 +73,7 @@ $llar_mfa_last_flow = get_transient( 'llar_mfa_last_flow' );
 						?>
 					</p>
 					<p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">
-						<?php esc_html_e( 'Make a failed login attempt (wrong password) with a user that has an MFA role, then refresh this page.', 'limit-login-attempts-reloaded' ); ?>
+						<?php esc_html_e( 'Make a login attempt (success or failure) with a user that has an MFA role, then refresh this page.', 'limit-login-attempts-reloaded' ); ?>
 					</p>
 				</div>
 			<?php endif; ?>
@@ -172,119 +164,14 @@ $llar_mfa_last_flow = get_transient( 'llar_mfa_last_flow' );
 						</td>
 					</tr>
 
-					<!-- MFA Flow (after failed login) -->
+					<!-- MFA Flow (on login: success or failure) -->
 					<tr>
 						<td colspan="2">
 							<h4 class="llar-subsection-title" style="margin: 20px 0 10px 0;">
-								<?php esc_html_e( 'MFA Flow (after failed login)', 'limit-login-attempts-reloaded' ); ?>
+								<?php esc_html_e( 'MFA Flow (on login)', 'limit-login-attempts-reloaded' ); ?>
 							</h4>
 							<p class="description" style="margin-bottom: 15px;">
-								<?php esc_html_e( 'When 2FA is enabled above, after a failed login (for selected roles) the user can be sent to an MFA provider to complete verification. Choose provider and configure below.', 'limit-login-attempts-reloaded' ); ?>
-							</p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row" valign="top">
-							<label for="mfa_provider"><?php esc_html_e( 'MFA provider', 'limit-login-attempts-reloaded' ); ?></label>
-						</th>
-						<td>
-							<select name="mfa_provider" id="mfa_provider" class="regular-text">
-								<?php foreach ( $mfa_providers as $pid => $prov ) : ?>
-									<option value="<?php echo esc_attr( $pid ); ?>" <?php selected( $mfa_provider, $pid ); ?>><?php echo esc_html( $prov->get_label() ); ?></option>
-								<?php endforeach; ?>
-							</select>
-							<p class="description">
-								<?php esc_html_e( 'Provider used for handshake and verify.', 'limit-login-attempts-reloaded' ); ?>
-							</p>
-						</td>
-					</tr>
-					<?php
-					$active_provider = isset( $mfa_providers[ $mfa_provider ] ) ? $mfa_providers[ $mfa_provider ] : null;
-					if ( $active_provider ) :
-						$provider_fields = $active_provider->get_config_fields();
-						foreach ( $provider_fields as $field ) :
-							$fid   = isset( $field['id'] ) ? $field['id'] : '';
-							$label = isset( $field['label'] ) ? $field['label'] : $fid;
-							$type  = isset( $field['type'] ) ? $field['type'] : 'text';
-							$val   = isset( $mfa_provider_config[ $fid ] ) ? $mfa_provider_config[ $fid ] : ( isset( $field['value'] ) ? $field['value'] : '' );
-							$ph    = isset( $field['placeholder'] ) ? $field['placeholder'] : '';
-							if ( $fid === '' ) {
-								continue;
-							}
-							?>
-					<tr>
-						<th scope="row" valign="top">
-							<label for="mfa_provider_config_<?php echo esc_attr( $fid ); ?>"><?php echo esc_html( $label ); ?></label>
-						</th>
-						<td>
-							<?php if ( $type === 'password' ) : ?>
-								<input type="password"
-										class="regular-text"
-										name="mfa_provider_config[<?php echo esc_attr( $fid ); ?>]"
-										id="mfa_provider_config_<?php echo esc_attr( $fid ); ?>"
-										value="<?php echo esc_attr( $val ); ?>"
-										placeholder="<?php echo esc_attr( $ph ); ?>"/>
-							<?php else : ?>
-								<input type="<?php echo esc_attr( $type ); ?>"
-										class="regular-text"
-										name="mfa_provider_config[<?php echo esc_attr( $fid ); ?>]"
-										id="mfa_provider_config_<?php echo esc_attr( $fid ); ?>"
-										value="<?php echo esc_attr( $val ); ?>"
-										placeholder="<?php echo esc_attr( $ph ); ?>"/>
-							<?php endif; ?>
-						</td>
-					</tr>
-					<?php
-						endforeach;
-					endif;
-					?>
-					<tr>
-						<th scope="row" valign="top">
-							<label for="mfa_api_endpoint"><?php esc_html_e( 'MFA API endpoint (fallback)', 'limit-login-attempts-reloaded' ); ?></label>
-						</th>
-						<td>
-							<input type="url"
-									class="regular-text"
-									name="mfa_api_endpoint"
-									id="mfa_api_endpoint"
-									value="<?php echo esc_attr( $mfa_api_endpoint ); ?>"
-									placeholder="https://api.limitloginattempts.com/mfa"/>
-							<p class="description">
-								<?php esc_html_e( 'Fallback base URL for MFA API (used if provider config does not set endpoint).', 'limit-login-attempts-reloaded' ); ?>
-							</p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row" valign="top">
-							<label for="mfa_session_ttl"><?php esc_html_e( 'Session TTL (minutes)', 'limit-login-attempts-reloaded' ); ?></label>
-						</th>
-						<td>
-							<input type="number"
-									name="mfa_session_ttl"
-									id="mfa_session_ttl"
-									value="<?php echo esc_attr( (string) $mfa_session_ttl_min ); ?>"
-									min="1"
-									max="1440"
-									step="1"/>
-							<p class="description">
-								<?php esc_html_e( 'How long the MFA session is valid (1–1440 minutes).', 'limit-login-attempts-reloaded' ); ?>
-							</p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row" valign="top">
-							<label for="mfa_max_attempts"><?php esc_html_e( 'Max MFA attempts', 'limit-login-attempts-reloaded' ); ?></label>
-						</th>
-						<td>
-							<input type="number"
-									name="mfa_max_attempts"
-									id="mfa_max_attempts"
-									value="<?php echo esc_attr( (string) $mfa_max_attempts ); ?>"
-									min="1"
-									max="20"
-									step="1"/>
-							<p class="description">
-								<?php esc_html_e( 'Maximum verification attempts per session (1–20).', 'limit-login-attempts-reloaded' ); ?>
+								<?php esc_html_e( 'When 2FA is enabled above, on every login attempt (successful or failed) for selected roles the user can be sent to an MFA provider to complete verification.', 'limit-login-attempts-reloaded' ); ?>
 							</p>
 						</td>
 					</tr>

@@ -22,25 +22,27 @@ class SessionStore {
 	 * @param int    $user_id    Optional. User ID if known.
 	 * @param string $redirect_to Optional. URL to redirect after login.
 	 * @param string $cancel_url  Optional. URL for MFA app cancel.
-	 * @param string $provider_id Optional. Provider id (e.g. 'llar').
+	 * @param string $provider_id          Optional. Provider id (e.g. 'llar').
+	 * @param bool   $is_pre_authenticated  True if password was already validated at handshake.
 	 * @return bool True if saved.
 	 */
-	public function save_session( $token, $secret, $username, $user_id = 0, $redirect_to = '', $cancel_url = '', $provider_id = '' ) {
+	public function save_session( $token, $secret, $username, $user_id = 0, $redirect_to = '', $cancel_url = '', $provider_id = '', $is_pre_authenticated = false ) {
 		if ( ! is_string( $token ) || '' === $token ) {
 			return false;
 		}
-		$ttl = (int) Config::get( 'mfa_session_ttl', 600 );
+		$ttl = defined( 'LLA_MFA_SESSION_TTL' ) ? (int) LLA_MFA_SESSION_TTL : 600;
 		$ttl = $ttl > 0 ? $ttl : 600;
 
 		$data = array(
-			'token'        => $token,
-			'secret'       => $secret,
-			'username'     => $username,
-			'user_id'      => (int) $user_id,
-			'redirect_to'  => is_string( $redirect_to ) ? $redirect_to : '',
-			'cancel_url'   => is_string( $cancel_url ) ? $cancel_url : '',
-			'provider_id'  => is_string( $provider_id ) ? $provider_id : 'llar',
-			'created'      => time(),
+			'token'                => $token,
+			'secret'               => $secret,
+			'username'             => $username,
+			'user_id'              => (int) $user_id,
+			'redirect_to'          => is_string( $redirect_to ) ? $redirect_to : '',
+			'cancel_url'           => is_string( $cancel_url ) ? $cancel_url : '',
+			'provider_id'          => is_string( $provider_id ) ? $provider_id : 'llar',
+			'is_pre_authenticated' => (bool) $is_pre_authenticated,
+			'created'              => time(),
 		);
 
 		$key = LLA_MFA_FLOW_TRANSIENT_SESSION_PREFIX . $token;
