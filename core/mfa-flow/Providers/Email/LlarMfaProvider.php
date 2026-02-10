@@ -4,6 +4,7 @@ namespace LLAR\Core\MfaFlow\Providers\Email;
 
 use LLAR\Core\MfaFlow\MfaApiClient;
 use LLAR\Core\MfaFlow\Providers\MfaProviderInterface;
+use LLAR\Core\MfaRestApi;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -11,11 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Email MFA provider: handshake and verify via API (LLA_MFA_API_BASE_URL + LLA_MFA_API_PATH).
+ * Builds send_email_url and send_email_url_fallback from send_email_secret for the handshake payload.
  * External app redirects user here; app calls site send_email_url to deliver OTP.
  */
 class LlarMfaProvider implements MfaProviderInterface {
 
 	const PROVIDER_ID = 'llar';
+	const AJAX_ACTION  = 'llar_mfa_flow_send_code';
 
 	/**
 	 * @return string
@@ -32,10 +35,36 @@ class LlarMfaProvider implements MfaProviderInterface {
 	}
 
 	/**
-	 * @param array $payload user_ip, login_url, send_email_url, user_group, is_pre_authenticated (per API).
+	 * Build send_email_url (REST) and send_email_url_fallback (AJAX) from secret for handshake API.
+	 *
+	 * @param string $send_email_secret Secret for send_code endpoint (query arg); URL-safe.
+	 * @return array { send_email_url: string, send_email_url_fallback: string }
+	 */
+	public function build_send_email_urls( $send_email_secret ) {
+		$send_email_url = MfaRestApi::get_send_code_rest_url( $send_email_secret );
+		$send_email_url_fallback = add_query_arg(
+			array(
+				'action' => self::AJAX_ACTION,
+				'secret' => $send_email_secret,
+			),
+			admin_url( 'admin-ajax.php' )
+		);
+		return array(
+			'send_email_url'          => $send_email_url,
+			'send_email_url_fallback' => $send_email_url_fallback,
+		);
+	}
+
+	/**
+	 * @param array $payload user_ip, login_url, user_group, is_pre_authenticated; send_email_secret (provider builds send_email_url from it).
 	 * @return array { success: bool, data: array|null, error: string|null }
 	 */
 	public function handshake( array $payload ) {
+		if ( ! empty( $payload['send_email_secret'] ) ) {
+			$urls = $this->build_send_email_urls( $payload['send_email_secret'] );
+			unset( $payload['send_email_secret'] );
+			$payload = array_merge( $payload, $urls );
+		}
 		$opts = $this->get_request_options();
 		$api  = new MfaApiClient();
 		return $api->handshake( $payload, $opts );

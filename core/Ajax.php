@@ -1152,36 +1152,18 @@ class Ajax
 
 	/**
 	 * MFA flow: send code to user email (AJAX fallback when REST API is unavailable).
-	 * GET: token, secret (send_email_url secret), code in query; secret validated against transient. Invalid/missing secret → 403.
-	 * POST: token, secret (session secret), code in body; session secret validated. Returns 404 if session not found.
+	 * GET only: token, secret (send_email_url secret), code in query.
 	 */
 	public function mfa_flow_send_code_callback() {
 		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : '';
-		if ( 'GET' !== $method && 'POST' !== $method ) {
+		if ( 'GET' !== $method ) {
 			status_header( 405 );
 			wp_send_json_error( array( 'message' => 'Method not allowed' ) );
 		}
 
-		if ( 'GET' === $method ) {
-			$token  = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
-			$secret = isset( $_GET['secret'] ) ? sanitize_text_field( wp_unslash( $_GET['secret'] ) ) : '';
-			$code   = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
-		} else {
-			$input = array();
-			$content_type = isset( $_SERVER['CONTENT_TYPE'] ) ? $_SERVER['CONTENT_TYPE'] : '';
-			if ( strpos( $content_type, 'application/json' ) !== false && function_exists( 'file_get_contents' ) ) {
-				$raw = file_get_contents( 'php://input' );
-				if ( is_string( $raw ) ) {
-					$input = json_decode( $raw, true );
-				}
-			}
-			if ( empty( $input ) && ! empty( $_POST ) ) {
-				$input = wp_unslash( $_POST );
-			}
-			$token  = isset( $input['token'] ) ? sanitize_text_field( $input['token'] ) : '';
-			$secret = isset( $input['secret'] ) ? sanitize_text_field( $input['secret'] ) : '';
-			$code   = isset( $input['code'] ) ? sanitize_text_field( $input['code'] ) : '';
-		}
+		$token  = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
+		$secret = isset( $_GET['secret'] ) ? sanitize_text_field( wp_unslash( $_GET['secret'] ) ) : '';
+		$code   = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
 
 		if ( '' === $token || '' === $secret ) {
 			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code invalid_request' );
@@ -1189,8 +1171,7 @@ class Ajax
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}
 
-		$is_get  = ( 'GET' === $method );
-		$result  = \LLAR\Core\MfaFlow\MfaFlowSendCode::execute( $token, $secret, $code, $is_get );
+		$result  = \LLAR\Core\MfaFlow\MfaFlowSendCode::execute( $token, $secret, $code );
 		$status  = isset( $result['http_status'] ) ? (int) $result['http_status'] : 200;
 		$message = isset( $result['message'] ) ? $result['message'] : '';
 
