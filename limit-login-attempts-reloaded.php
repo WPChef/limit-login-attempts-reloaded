@@ -56,6 +56,7 @@ defined( 'LLA_MFA_BLOCK_REASON_OPENSSL' ) || define( 'LLA_MFA_BLOCK_REASON_OPENS
 /** MFA Flow: session and OTP transients (after failed login handshake). */
 defined( 'LLA_MFA_FLOW_TRANSIENT_SESSION_PREFIX' ) || define( 'LLA_MFA_FLOW_TRANSIENT_SESSION_PREFIX', 'llar_mfa_session_' );
 defined( 'LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX' ) || define( 'LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX', 'llar_mfa_otp_' );
+defined( 'LLA_MFA_FLOW_TRANSIENT_SEND_SECRET_PREFIX' ) || define( 'LLA_MFA_FLOW_TRANSIENT_SEND_SECRET_PREFIX', 'llar_mfa_send_secret_' );
 defined( 'LLA_MFA_FLOW_OTP_TTL' ) || define( 'LLA_MFA_FLOW_OTP_TTL', 180 );
 defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD', 60 );
 defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX', 5 );
