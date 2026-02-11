@@ -5,6 +5,7 @@ namespace LLAR\Core;
 use Exception;
 use IXR_Error;
 use LLAR\Core\Http\Http;
+use LLAR\Core\MfaFlow\MfaRestApi;
 use WP_Error;
 use WP_User;
 
@@ -1304,9 +1305,6 @@ class LimitLoginAttempts
 	 */
 	private function try_mfa_flow_redirect( $username, $is_pre_authenticated = false ) {
 		$ip = $this->get_address();
-		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'try_mfa_flow_redirect user=' . $username );
-		}
 
 		$mfa_flow_enabled = (bool) Config::get( 'mfa_flow_enabled' ) || (bool) Config::get( 'mfa_enabled' );
 		$user             = get_user_by( 'login', $username );
@@ -1315,34 +1313,17 @@ class LimitLoginAttempts
 		$user_excluded    = $user && ! empty( $mfa_roles ) && ! array_intersect( (array) $user->roles, $mfa_roles );
 		$should_trigger_mfa = $mfa_flow_enabled && ! $user_excluded;
 
-		$mfa_debug = array(
-			'time'   => time(),
-			'user'   => $username,
-			'step'   => 'start',
-			'detail' => 'mfa_flow_enabled=' . ( $mfa_flow_enabled ? '1' : '0' ) . ' should_trigger=' . ( $should_trigger_mfa ? '1' : '0' ) . ( $user ? ' user_roles=' . implode( ',', (array) $user->roles ) : ' no_user' ),
-		);
-		set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
-		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'step=start ' . $mfa_debug['detail'] );
-		}
-
 		if ( ! $should_trigger_mfa ) {
 			return;
 		}
 
 		if ( self::$mfa_flow_handshake_attempted ) {
-			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'try_mfa_flow_redirect skipped (handshake already attempted this request)' );
-			}
 			return;
 		}
 
 		$provider_id = defined( 'LLA_MFA_PROVIDER' ) ? LLA_MFA_PROVIDER : 'llar';
 		$provider     = \LLAR\Core\MfaFlow\MfaProviderRegistry::get( $provider_id );
 		if ( ! $provider ) {
-			$mfa_debug['step']   = 'no_provider';
-			$mfa_debug['detail'] = 'provider_id=' . $provider_id;
-			set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
 			return;
 		}
 
@@ -1361,21 +1342,12 @@ class LimitLoginAttempts
 
 		$rate_ok = ( (int) $rate['c'] < $max );
 		if ( ! $rate_ok ) {
-			$mfa_debug['step']   = 'rate_limit';
-			$mfa_debug['detail'] = 'rate_c=' . (int) $rate['c'] . ' max=' . $max;
-			set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
-			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'step=rate_limit rate_c=' . (int) $rate['c'] . ' max=' . $max );
-			}
 			$rate['c'] = (int) $rate['c'] + 1;
 			set_transient( $rate_key, $rate, $period );
 			return;
 		}
 
 		self::$mfa_flow_handshake_attempted = true;
-		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'calling handshake' );
-		}
 		$user_group = '';
 		if ( $user && ! empty( $user->roles ) && is_array( $user->roles ) ) {
 			$user_group = reset( $user->roles );
@@ -1397,12 +1369,6 @@ class LimitLoginAttempts
 		$has_secret        = ! empty( $result['data']['secret'] );
 		$redirect_url_value = isset( $result['data']['redirect_url'] ) ? $result['data']['redirect_url'] : ( isset( $result['data']['redirectUrl'] ) ? $result['data']['redirectUrl'] : '' );
 		$has_redirect      = ! empty( $redirect_url_value );
-		$mfa_debug['step']   = 'handshake';
-		$mfa_debug['detail'] = 'success=' . ( $result['success'] ? '1' : '0' ) . ' token=' . ( $has_token ? '1' : '0' ) . ' secret=' . ( $has_secret ? '1' : '0' ) . ' redirect_url=' . ( $has_redirect ? '1' : '0' ) . ' error=' . ( $result['error'] ? substr( (string) $result['error'], 0, 80 ) : '' );
-		set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
-		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'step=handshake ' . $mfa_debug['detail'] );
-		}
 
 		// In test mode, if real handshake failed, use fake redirect so redirect path can be verified.
 		if ( ! ( $result['success'] && $has_token && $has_secret && $has_redirect ) && defined( 'LLA_MFA_FLOW_TEST_REDIRECT' ) && LLA_MFA_FLOW_TEST_REDIRECT ) {
@@ -1421,7 +1387,9 @@ class LimitLoginAttempts
 		if ( $result['success'] && $has_token && $has_secret && $has_redirect ) {
 			// Always save session locally so callback can enforce is_pre_authenticated (block login when password was wrong).
 			$store = new \LLAR\Core\MfaFlow\SessionStore();
-			$store->save_send_email_secret( $result['data']['token'], $send_email_secret );
+			// In test mode (test-token) use fixed send_email_secret so curl can simulate MFA app send_code request.
+			$send_email_secret_to_save = ( $result['data']['token'] === 'test-token' && defined( 'LLA_MFA_FLOW_TEST_REDIRECT' ) && LLA_MFA_FLOW_TEST_REDIRECT ) ? 'test-secret' : $send_email_secret;
+			$store->save_send_email_secret( $result['data']['token'], $send_email_secret_to_save );
 			$store->save_session(
 				$result['data']['token'],
 				$result['data']['secret'],
@@ -1434,21 +1402,9 @@ class LimitLoginAttempts
 			);
 			$mfa_redirect_url = esc_url_raw( $redirect_url_value );
 			if ( $mfa_redirect_url ) {
-				if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-					error_log( LLA_MFA_FLOW_LOG_PREFIX . 'step=redirect sending' );
-				}
-				$mfa_debug['step']   = 'redirect';
-				$mfa_debug['detail'] = 'url=' . substr( $mfa_redirect_url, 0, 60 ) . '...';
-				set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
 				self::mfa_redirect_to_url( $mfa_redirect_url );
 				exit;
 			}
-			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'step=redirect_fail url_empty=1' );
-			}
-			$mfa_debug['step']   = 'redirect_fail';
-			$mfa_debug['detail'] = 'url_empty=1';
-			set_transient( 'llar_mfa_last_flow', $mfa_debug, 300 );
 		}
 
 		$rate['c'] = (int) $rate['c'] + 1;
@@ -1475,10 +1431,6 @@ class LimitLoginAttempts
 		$_SESSION['login_attempts_left'] = 0;
 
 		$ip = $this->get_address();
-
-		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'limit_login_failed user=' . $username );
-		}
 
 		// MFA flow: before lockout_check. If redirect happens, try_mfa_flow_redirect() exits.
 		$this->try_mfa_flow_redirect( $username );
