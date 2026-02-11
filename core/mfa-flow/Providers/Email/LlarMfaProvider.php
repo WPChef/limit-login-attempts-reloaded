@@ -4,7 +4,7 @@ namespace LLAR\Core\MfaFlow\Providers\Email;
 
 use LLAR\Core\MfaFlow\MfaApiClient;
 use LLAR\Core\MfaFlow\Providers\MfaProviderInterface;
-use LLAR\Core\MfaRestApi;
+use LLAR\Core\MfaFlow\MfaRestApi;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

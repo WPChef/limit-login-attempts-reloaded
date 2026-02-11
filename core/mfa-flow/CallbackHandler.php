@@ -16,6 +16,15 @@ class CallbackHandler {
 	 * Run on init: if request has llar_mfa and token, handle callback or show enter-code form.
 	 */
 	public static function maybe_handle() {
+		// Do not treat send-code endpoint as MFA callback (it also uses token in GET).
+		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
+		if ( $action === 'llar_mfa_flow_send_code' ) {
+			return;
+		}
+		if ( function_exists( 'rest_url' ) && isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'rest_route=' ) !== false && strpos( $_SERVER['REQUEST_URI'], 'llar/v1/mfa/send-code' ) !== false ) {
+			return;
+		}
+
 		$token = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
 		$code  = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
 

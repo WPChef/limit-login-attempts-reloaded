@@ -1,8 +1,6 @@
 <?php
 
-namespace LLAR\Core;
-
-use LLAR\Core\MfaFlow\MfaFlowSendCode;
+namespace LLAR\Core\MfaFlow;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,6 +13,7 @@ class MfaRestApi {
 
 	const REST_NAMESPACE = 'llar/v1';
 	const SEND_CODE_ROUTE = 'mfa/send-code';
+	const TEST_SESSION_ROUTE = 'mfa/test-handshake-session';
 
 	/**
 	 * Register REST routes on rest_api_init.
@@ -27,6 +26,20 @@ class MfaRestApi {
 	 * Register REST routes.
 	 */
 	public static function register_routes() {
+		// Optional: create test session (token=test-token, secret=test-secret) when LLA_MFA_FLOW_TEST_REDIRECT is set.
+		if ( defined( 'LLA_MFA_FLOW_TEST_REDIRECT' ) && LLA_MFA_FLOW_TEST_REDIRECT ) {
+			register_rest_route(
+				self::REST_NAMESPACE,
+				self::TEST_SESSION_ROUTE,
+				array(
+					'methods'             => 'GET',
+					'callback'            => array( __CLASS__, 'test_handshake_session_callback' ),
+					'permission_callback' => '__return_true',
+					'args'                => array(),
+				)
+			);
+		}
+
 		register_rest_route(
 			self::REST_NAMESPACE,
 			self::SEND_CODE_ROUTE,
@@ -88,6 +101,25 @@ class MfaRestApi {
 		}
 
 		return new \WP_REST_Response( $body, $status );
+	}
+
+	/**
+	 * Create a test session (simulates handshake) so send_code can be called with token=test-token, secret=test-secret.
+	 * Only registered when LLA_MFA_FLOW_TEST_REDIRECT is defined. Use first admin user for email.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return \WP_REST_Response
+	 */
+	public static function test_handshake_session_callback( $request ) {
+		$admins = get_users( array( 'role' => 'administrator', 'number' => 1 ) );
+		$user   = ! empty( $admins[0] ) ? $admins[0] : null;
+		if ( ! $user || ! is_a( $user, 'WP_User' ) ) {
+			return new \WP_REST_Response( array( 'success' => false, 'message' => 'No admin user' ), 500 );
+		}
+		$store = new SessionStore();
+		$store->save_send_email_secret( 'test-token', 'test-secret' );
+		$store->save_session( 'test-token', 'test-secret', $user->user_login, (int) $user->ID, '', '', 'llar', true );
+		return new \WP_REST_Response( array( 'success' => true, 'message' => 'Session created. Call send-code with token=test-token&secret=test-secret&code=123456' ), 200 );
 	}
 
 	/**
