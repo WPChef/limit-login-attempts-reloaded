@@ -144,6 +144,7 @@ class LimitLoginAttempts
 		add_action( 'admin_print_scripts-index.php', array( $this, 'load_admin_scripts' ) );
 
 		add_action( 'admin_init', array( $this, 'dashboard_page_redirect' ), 9999 );
+		add_action( 'admin_init', array( $this, 'onboarding_redirect_to_dashboard' ), 5 );
 		add_action( 'admin_init', array( $this, 'setup_cookie' ), 10 );
 
 		add_action( 'login_footer', array( $this, 'login_page_gdpr_message' ) );
@@ -221,6 +222,32 @@ class LimitLoginAttempts
 
 		wp_redirect( admin_url( 'index.php?page=' . $this->_options_page_slug ) );
 		exit();
+	}
+
+	/**
+	 * Redirect to dashboard when onboarding is not completed yet (so onboarding can start on any plugin page).
+	 * Runs on admin_init before any output to avoid "headers already sent" when using wp_safe_redirect().
+	 */
+	public function onboarding_redirect_to_dashboard()
+	{
+		if ( empty( $_GET['page'] ) || $_GET['page'] !== $this->_options_page_slug ) {
+			return;
+		}
+		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'dashboard';
+		if ( $tab === 'dashboard' ) {
+			return;
+		}
+		if ( Config::get( 'onboarding_popup_shown' ) ) {
+			return;
+		}
+		if ( Config::get( 'active_app' ) === 'custom' && self::$cloud_app ) {
+			return;
+		}
+		if ( ! empty( Config::get( 'app_setup_code' ) ) ) {
+			return;
+		}
+		wp_safe_redirect( $this->get_options_page_uri( 'dashboard' ) );
+		exit;
 	}
 
 	/**
