@@ -230,17 +230,17 @@ class LimitLoginAttempts
 	 */
 	public function onboarding_redirect_to_dashboard()
 	{
-		if ( empty( $_GET['page'] ) || $_GET['page'] !== $this->_options_page_slug ) {
+		if ( empty( $_GET['page'] ) || $this->_options_page_slug !== $_GET['page'] ) {
 			return;
 		}
 		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'dashboard';
-		if ( $tab === 'dashboard' ) {
+		if ( 'dashboard' === $tab ) {
 			return;
 		}
 		if ( Config::get( 'onboarding_popup_shown' ) ) {
 			return;
 		}
-		if ( Config::get( 'active_app' ) === 'custom' && self::$cloud_app ) {
+		if ( 'custom' === Config::get( 'active_app' ) && self::$cloud_app ) {
 			return;
 		}
 		if ( ! empty( Config::get( 'app_setup_code' ) ) ) {
