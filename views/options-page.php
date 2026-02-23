@@ -8,20 +8,16 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit();
 }
 
-$active_tab = "dashboard";
+$allowed_tabs = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help', 'mfa' );
+$requested_tab = isset( $_GET['tab'] ) && is_string( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : '';
+$active_tab = in_array( $requested_tab, $allowed_tabs, true ) ? $requested_tab : 'dashboard';
+
+if ( $active_tab === 'logs-custom' && ! LimitLoginAttempts::$cloud_app ) {
+	$active_tab = 'logs-local';
+}
+
 $active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $is_active_app_custom = $active_app === 'custom';
-
-if ( ! empty( $_GET["tab"]) && in_array( $_GET["tab"], array( 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help' ) ) ) {
-
-	if ( ! LimitLoginAttempts::$cloud_app && $_GET['tab'] === 'logs-custom' ) {
-
-		$active_tab = 'logs-local';
-	} else {
-
-		$active_tab = sanitize_text_field( $_GET["tab"] );
-	}
-}
 
 $auto_update_choice = Config::get( 'auto_update_choice' );
 $is_agency = false;
