@@ -1,0 +1,53 @@
+name: Code Style - PHPCS WordPress
+
+# AI: Run WordPress coding standard checks in GitHub Actions.
+on:
+  push:
+    paths:
+      - "**/*.php"
+      - ".github/workflows/phpcs-wordpress.yml"
+  pull_request:
+    paths:
+      - "**/*.php"
+      - ".github/workflows/phpcs-wordpress.yml"
+  workflow_dispatch:
+
+# AI: Minimal permission set for a read-only code check.
+permissions:
+  contents: read
+
+jobs:
+  phpcs:
+    name: PHPCS (WordPress-Extra)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        # AI: Pin action to a commit SHA to reduce supply-chain drift risk.
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Setup PHP
+        # AI: Pin action to a commit SHA to reduce supply-chain drift risk.
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1
+        with:
+          php-version: "8.2"
+          tools: composer:v2
+
+      - name: Install PHPCS + WordPress standards
+        run: |
+          # AI: Explicitly allow the installer plugin required by Composer 2.2+.
+          composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          # AI: Keep tooling local to CI and avoid changing project dependencies.
+          composer global require --no-interaction --no-progress squizlabs/php_codesniffer:^3.10 wp-coding-standards/wpcs:^3.1 dealerdirect/phpcodesniffer-composer-installer:^1.1
+          echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.config/composer/vendor/bin" >> "$GITHUB_PATH"
+
+      - name: Validate standards installation
+        run: |
+          # AI: Fail early if WordPress standards were not registered.
+          phpcs -i
+
+      - name: Run PHPCS
+        run: |
+          # AI: Use repo config to keep checks focused and public logs cleaner.
+          phpcs --standard=phpcs.xml.dist --report=full
