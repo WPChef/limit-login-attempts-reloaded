@@ -14,6 +14,8 @@ class CallbackHandler {
 
 	/**
 	 * Run on init: if request has llar_mfa and token, handle callback or show enter-code form.
+	 * 
+	 * @return void
 	 */
 	public static function maybe_handle() {
 		// Do not treat send-code endpoint as MFA callback (it also uses token in GET).
