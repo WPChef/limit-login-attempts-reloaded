@@ -51,14 +51,13 @@ jobs:
         id: modified_files
         uses: tj-actions/changed-files@v39
         with:
-          pattern: "**/*.php"
-          path: "wp-content/plugins/limit-login-attempts-reloaded/**"
+          files: "**/*.php"
 
       - name: Run PHPCS
         run: |
           modified_files="${{ steps.modified_files.outputs.all_changed_files }}"
           if [ -n "$modified_files" ]; then
-            echo "$modified_files" | tr '\n' ' ' | xargs phpcs --standard=wp-content/plugins/limit-login-attempts-reloaded/phpcs.xml.dist --report=full
+            echo "$modified_files" | tr '\n' ' ' | xargs phpcs --standard=phpcs.xml.dist --report=full
           else
             echo "No modified PHP files in plugin to check."
           fi
