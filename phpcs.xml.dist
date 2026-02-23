@@ -7,7 +7,7 @@
 
     <arg name="extensions" value="php"/>
     <arg name="report" value="full"/>
-    <arg name="colors" value="0"/>
+    <arg name="no-colors"/>
 
     <!-- AI: Scan project code while excluding non-source or third-party paths. -->
     <file>.</file>
