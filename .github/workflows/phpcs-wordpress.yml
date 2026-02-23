@@ -35,6 +35,8 @@ jobs:
 
       - name: Install PHPCS + WordPress standards
         run: |
+          # AI: Explicitly allow the installer plugin required by Composer 2.2+.
+          composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
           # AI: Keep tooling local to CI and avoid changing project dependencies.
           composer global require --no-interaction --no-progress squizlabs/php_codesniffer:^3.10 wp-coding-standards/wpcs:^3.1 dealerdirect/phpcodesniffer-composer-installer:^1.1
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"

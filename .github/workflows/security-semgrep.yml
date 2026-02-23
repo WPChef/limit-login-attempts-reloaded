@@ -40,7 +40,7 @@ jobs:
       - name: Upload Semgrep SARIF
         # AI: Skip SARIF upload for fork PRs where write access is restricted.
         if: always() && hashFiles('semgrep.sarif') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        # AI: Pin action to a commit SHA to reduce supply-chain drift risk.
-        uses: github/codeql-action/upload-sarif@45580472a5bb82c4681c4ac726cfdb60060c2ee1
+        # AI: Pin CodeQL v4 helper action to a commit SHA.
+        uses: github/codeql-action/upload-sarif@89a39a4e59826350b863aa6b6252a07ad50cf83e
         with:
           sarif_file: semgrep.sarif
