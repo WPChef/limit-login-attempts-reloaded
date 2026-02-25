@@ -22,8 +22,8 @@ $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 							<?php echo esc_html__( 'Important: Download Your Rescue Links', 'limit-login-attempts-reloaded' ); ?>
 						</h3>
 						<div class="description-page">
-							<p class="description">
-								<?php echo esc_html__( 'Before enabling 2FA, you must download your rescue links. These links allow you to regain access to your site if you lose access to your 2FA device.', 'limit-login-attempts-reloaded' ); ?>
+							<p class="description" style="color: #dc3232; font-weight: bold;">
+								&#9888;&#65039; <?php echo esc_html__( 'Before enabling 2FA, you must download your rescue links. These links allow you to regain access to your site if you lose access to your 2FA device.', 'limit-login-attempts-reloaded' ); ?>
 							</p>
 							<p class="description">
 								<strong><?php echo esc_html__( 'Each rescue link can only be used once.', 'limit-login-attempts-reloaded' ); ?></strong>
