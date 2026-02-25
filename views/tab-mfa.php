@@ -45,9 +45,6 @@ $is_mfa_disabled   = ( null !== $mfa_block_reason );
 				<img src="<?php echo esc_url( LLA_PLUGIN_URL . 'assets/css/images/icon-gears.png' ); ?>">
 				<?php esc_html_e( '2FA Settings', 'limit-login-attempts-reloaded' ); ?>
 			</h3>
-			<div class="description-page">
-				<?php esc_html_e( 'Configure multi-factor authentication settings for user roles.', 'limit-login-attempts-reloaded' ); ?>
-			</div>
 			<?php if ( $is_mfa_disabled ) : ?>
 				<div class="notice notice-error inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #dc3232; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
 					<p style="margin: 0 0 8px 0; font-weight: bold; font-size: 16px; color: #dc3232;">
@@ -81,6 +78,9 @@ $is_mfa_disabled   = ( null !== $mfa_block_reason );
 							<label for="mfa_enabled">
 								<?php esc_html_e( 'Enable multi-factor authentication for selected user roles', 'limit-login-attempts-reloaded' ); ?>
 							</label>
+							<div class="description-secondary" style="margin-top: 10px;">
+								<?php echo esc_html__( 'By turning this feature ON, you consent that for the selected user groups and for all visitors without an assigned group (e.g., guests), the following data will be sent to a secure endpoint at limitloginattempts.com to facilitate multi-factor authentication: username, IP address, user group (if known), and user agent. We will use this data only for 2FA/MFA and will delete it from our servers as soon as the 2FA session ends, unless you (the admin) specify otherwise. The passwords will NOT be sent to us.', 'limit-login-attempts-reloaded' ); ?>
+							</div>
 							<?php if ( $is_mfa_disabled ) : ?>
 								<p class="description" style="color: #dc3232; font-weight: bold; margin-top: 8px;">
 									<?php echo esc_html( $mfa_block_message ); ?>
@@ -122,15 +122,6 @@ $is_mfa_disabled   = ( null !== $mfa_block_reason );
 										</label>
 									</div>
 								<?php endforeach; ?>
-							</div>
-						</td>
-					</tr>
-
-					<!-- Privacy Notice -->
-					<tr>
-						<td colspan="2">
-							<div class="description-secondary">
-								<?php echo esc_html__( 'By turning this feature ON, you consent that for the selected user groups and for all visitors without an assigned group (e.g., guests), the following data will be sent to a secure endpoint at limitloginattempts.com to facilitate multi-factor authentication: username, IP address, user group (if known), and user agent. We will use this data only for 2FA/MFA and will delete it from our servers as soon as the 2FA session ends, unless you (the admin) specify otherwise. The passwords will NOT be sent to us.', 'limit-login-attempts-reloaded' ); ?>
 							</div>
 						</td>
 					</tr>
