@@ -66,10 +66,10 @@ $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 						<div class="llar-rescue-confirm-row" style="display: none; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ccc;">
 							<label style="display: block; margin-bottom: 10px;">
 								<input type="checkbox" id="llar-rescue-saved-confirm" name="llar_rescue_saved_confirm" value="1"/>
-								<?php echo esc_html__( 'I have saved my rescue links in a secure location.', 'limit-login-attempts-reloaded' ); ?>
+								<?php echo esc_html__( 'I have saved my rescue links in a secure location. I am ready to activate 2FA.', 'limit-login-attempts-reloaded' ); ?>
 							</label>
 							<button type="button" class="button menu__item button__orange llar-rescue-close-btn" disabled>
-								<?php echo esc_html__( 'Close', 'limit-login-attempts-reloaded' ); ?>
+								<?php echo esc_html__( 'Activate 2FA and Save Settings', 'limit-login-attempts-reloaded' ); ?>
 							</button>
 						</div>
 					</div>

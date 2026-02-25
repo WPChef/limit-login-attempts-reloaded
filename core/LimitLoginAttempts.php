@@ -2396,10 +2396,10 @@ class LimitLoginAttempts
 					$show_popup = $this->mfa_controller->handle_settings_submission();
 					if ( ! $show_popup ) {
 						$this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
+						// MFA Flow settings (same form; enabled when 2FA is enabled). Only save when not showing rescue popup.
+						Config::update( 'mfa_flow_enabled', ! empty( $_POST['mfa_enabled'] ) ? 1 : 0 );
 					}
 				}
-				// MFA Flow settings (same form; enabled when 2FA is enabled). Provider from LLA_MFA_PROVIDER constant.
-				Config::update( 'mfa_flow_enabled', ! empty( $_POST['mfa_enabled'] ) ? 1 : 0 );
 			}
 		}
 

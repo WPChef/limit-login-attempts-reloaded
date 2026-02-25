@@ -154,23 +154,18 @@ jQuery(document).ready(function($) {
 	let rescueUrlsForPDF = null;
 	let domainForPDF = null;
 
-	<?php if ( isset( $mfa_settings['show_rescue_popup'] ) && $mfa_settings['show_rescue_popup'] ) : ?>
-	// Show popup if flag is set (MFA enabled without codes)
-	showRescuePopup();
-	<?php endif; ?>
-
-	// Handle form submission - check if MFA is being enabled
-	$('form').on('submit', function(e) {
-		const $form = $(this);
-		const $mfaCheckbox = $('#mfa_enabled');
-		
-		// Only intercept if MFA checkbox is checked
-		if ($mfaCheckbox.is(':checked')) {
-			// Check if we need to show popup (no codes exist)
-			// This will be handled server-side, but we can prevent submission if popup should be shown
-			// The server will set the flag and reload the page
+	// Open popup when user checks "Enable multi-factor authentication"
+	$('#mfa_enabled').on('change', function() {
+		if ($(this).is(':checked') && !$(this).prop('disabled')) {
+			rescuePopupShown = false;
+			showRescuePopup();
 		}
 	});
+
+	<?php if ( isset( $mfa_settings['show_rescue_popup'] ) && $mfa_settings['show_rescue_popup'] ) : ?>
+	// Show popup if flag is set (e.g. page load with MFA enabled but no codes yet)
+	showRescuePopup();
+	<?php endif; ?>
 
 	function showRescuePopup() {
 		if (rescuePopupShown) {
@@ -181,7 +176,7 @@ jQuery(document).ready(function($) {
 		const popupContent = $('#llar-mfa-rescue-popup-content').html();
 
 		rescueModal = $.dialog({
-			title: false, // Hide default title, we have our own in content
+			title: false,
 			content: popupContent,
 			type: 'default',
 			typeAnimated: true,
@@ -193,7 +188,10 @@ jQuery(document).ready(function($) {
 			boxWidth: 1280,
 			useBootstrap: false,
 			bgOpacity: 0.9,
-			closeIcon: false,
+			closeIcon: function() {
+				window.location.reload();
+				return false;
+			},
 			backgroundDismiss: false,
 			escapeKey: function() {
 				if (!rescueCodesDownloaded) {
@@ -206,7 +204,12 @@ jQuery(document).ready(function($) {
 				return true;
 			},
 			onContentReady: function() {
-				rescueModal.$content.closest('.jconfirm').find('.jconfirm-closeIcon').remove();
+				// Bind click on close icon to reload (same pattern as onboarding / micro-cloud popups)
+				rescueModal.$content.closest('.jconfirm').find('.jconfirm-closeIcon').off('click.llarMfaRescue').on('click.llarMfaRescue', function(e) {
+					e.preventDefault();
+					e.stopImmediatePropagation();
+					window.location.reload();
+				});
 				runGenerateRescueCodes();
 
 				// Handle PDF download button click
@@ -352,8 +355,16 @@ jQuery(document).ready(function($) {
 			$closeBtn.prop('disabled', !$savedCheckbox.is(':checked'));
 		});
 		$closeBtn.off('click').on('click', function() {
-			if ($savedCheckbox.is(':checked')) {
-				rescueModal.close();
+			if (!$savedCheckbox.is(':checked')) {
+				return;
+			}
+			rescueModal.close();
+			// Click the real submit button so llar_update_mfa_settings is sent in POST
+			const saveBtn = document.querySelector('#llar-setting-page input[name="llar_update_mfa_settings"]');
+			if (saveBtn) {
+				saveBtn.click();
+			} else {
+				document.querySelector('#llar-setting-page form').submit();
 			}
 		});
 		$confirmRow.show();
