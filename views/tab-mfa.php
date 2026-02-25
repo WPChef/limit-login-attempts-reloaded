@@ -229,7 +229,6 @@ jQuery(document).ready(function($) {
 		const $loading = $displayContainer.find('#llar-rescue-links-loading');
 		const $list = $displayContainer.find('#llar-rescue-links-list');
 		$loading.show().text('<?php echo esc_js( __( 'Generating rescue links...', 'limit-login-attempts-reloaded' ) ); ?>');
-		$list.hide().empty();
 		$displayContainer.find('.llar-rescue-copy-row, .llar-rescue-pdf-row').hide();
 		if (!llar_vars || !llar_vars.nonce_mfa_generate_codes) {
 			showRescueError($displayContainer, '<?php echo esc_js( __( 'Security token is missing. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>');
@@ -303,20 +302,42 @@ jQuery(document).ready(function($) {
 		});
 		$displayContainer.find('.llar-print-rescue-links').off('click').on('click', function() {
 			const printTitle = '<?php echo esc_js( __( 'Rescue Links', 'limit-login-attempts-reloaded' ) ); ?>';
-			let html = '<!DOCTYPE html><html><head><title>' + printTitle + '</title></head><body style="font-family: sans-serif; padding: 20px;">';
-			html += '<h1>' + printTitle + '</h1><ol>';
+			const printId = 'llar-rescue-print-area';
+			const printClass = 'llar-rescue-print-area-offscreen';
+			let content = '<div class="llar-rescue-print-body" style="font-family: sans-serif; padding: 20px;">';
+			content += '<h1 style="margin-bottom: 16px;">' + printTitle + '</h1><ol style="padding-left: 24px;">';
 			urls.forEach(function(url) {
-				html += '<li style="margin: 8px 0; word-break: break-all;">' + url + '</li>';
+				content += '<li style="margin: 8px 0; word-break: break-all;">' + url + '</li>';
 			});
-			html += '</ol></body></html>';
-			const win = window.open('', '_blank');
-			win.document.write(html);
-			win.document.close();
-			win.focus();
-			setTimeout(function() {
-				win.print();
-				win.close();
-			}, 250);
+			content += '</ol></div>';
+			let area = document.getElementById(printId);
+			if (!area) {
+				area = document.createElement('div');
+				area.id = printId;
+				area.className = printClass;
+				document.body.appendChild(area);
+			} else {
+				area.className = printClass;
+			}
+			area.innerHTML = content;
+			const styleId = 'llar-rescue-print-style';
+			let styleEl = document.getElementById(styleId);
+			if (!styleEl) {
+				styleEl = document.createElement('style');
+				styleEl.id = styleId;
+				styleEl.textContent = '.' + printClass + ' { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; } ';
+				styleEl.textContent += '@media print { body > *:not(#' + printId + ') { display: none !important; } #' + printId + ' { display: block !important; position: fixed !important; left: 0 !important; top: 0 !important; right: 0 !important; width: 100% !important; height: auto !important; min-height: auto !important; overflow: visible !important; visibility: visible !important; } }';
+				document.head.appendChild(styleEl);
+			}
+			const cleanup = function() {
+				area.innerHTML = '';
+				if (styleEl.parentNode) {
+					styleEl.parentNode.removeChild(styleEl);
+				}
+			};
+			window.addEventListener('afterprint', cleanup, { once: true });
+			setTimeout(cleanup, 10000);
+			window.print();
 		});
 		$displayContainer.find('.llar-rescue-copy-row, .llar-rescue-pdf-row').show();
 
