@@ -4449,6 +4449,40 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .llar-admin .micro_cloud_modal__body #llar-rescue-links-display .button_block-single {
   text-align: left !important;
 }
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-copy-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-copy-row .llar-copy-rescue-links {
+  flex-shrink: 0;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-copy-row .llar-copy-feedback {
+  width: 100%;
+  font-size: 13px;
+  color: #4ACAD8;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-copy-row .llar-copy-feedback.llar-copy-feedback-visible {
+  opacity: 1;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-links-loading {
+  margin: 10px 0;
+  padding: 15px;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-error {
+  margin: 0 0 12px;
+  color: #b32d2e;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-retry {
+  margin-top: 8px;
+}
 .llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-links-list {
   max-height: 150px !important;
 }
@@ -4459,61 +4493,37 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   max-height: 150px;
   overflow-y: auto;
   padding: 15px !important;
-  padding-left: 15px !important;
-  padding-right: 15px !important;
   background-color: #FDFDFD;
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  text-align: left !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  display: block !important;
+  text-align: left !important;
 }
 .llar-admin .llar-rescue-links-list .llar-rescue-links-ol {
   margin: 0 !important;
-  margin-left: 0 !important;
   padding-left: 30px !important;
   list-style: decimal;
-  text-align: left !important;
-  width: 100%;
-  box-sizing: border-box;
 }
 .llar-admin .llar-rescue-links-list .llar-rescue-links-ol .llar-rescue-link-item {
   margin-bottom: 12px;
-  margin-left: 0 !important;
   padding: 8px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  text-align: left !important;
-  width: 100%;
-  box-sizing: border-box;
 }
 .llar-admin .llar-rescue-links-list .llar-rescue-links-ol .llar-rescue-link-item:last-child {
   border-bottom: none;
   margin-bottom: 0;
 }
-.llar-admin .llar-rescue-links-list .llar-rescue-links-ol .llar-rescue-link-item .llar-rescue-link {
+.llar-admin .llar-rescue-links-list .llar-rescue-links-ol .llar-rescue-link-item .llar-rescue-link-text {
   display: block;
-  color: #4ACAD8;
-  text-decoration: none;
   font-size: 14px;
   word-break: break-all;
   line-height: 1.5;
   padding: 8px 12px;
   border-radius: 8px;
   background-color: #F6FBFF;
-  transition: all 0.2s ease;
-  text-align: left !important;
-  margin-left: 0 !important;
-  width: 100%;
-  box-sizing: border-box;
-}
-.llar-admin .llar-rescue-links-list .llar-rescue-links-ol .llar-rescue-link-item .llar-rescue-link:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-  text-decoration: underline;
-}
-.llar-admin .llar-rescue-links-list .llar-rescue-links-ol .llar-rescue-link-item .llar-rescue-link:focus {
-  outline: 2px solid #4ACAD8;
-  outline-offset: 2px;
+  color: inherit;
+  cursor: default;
 }
 
 .llar-mfa-action-alert, .jconfirm-type-red {

@@ -202,17 +202,16 @@ jQuery(document).ready(function($) {
 			useBootstrap: false,
 			bgOpacity: 0.9,
 			closeIcon: function() {
-				// Prevent closing until codes are generated
 				if (!rescueCodesDownloaded) {
 					$.alert({
 						title: '<?php echo esc_js( __( 'Action Required', 'limit-login-attempts-reloaded' ) ); ?>',
-						content: '<?php echo esc_js( __( 'You must generate and download the rescue links before closing this window. 2FA will not be enabled until you download the file.', 'limit-login-attempts-reloaded' ) ); ?>',
+						content: '<?php echo esc_js( __( 'You must download or copy the rescue links before closing this window.', 'limit-login-attempts-reloaded' ) ); ?>',
 						type: 'orange',
 						columnClass: 'llar-mfa-action-alert'
 					});
-					return false; // Prevent closing
+					return false;
 				}
-				return true; // Allow closing
+				return true;
 			},
 			backgroundDismiss: false,
 			escapeKey: function() {
@@ -223,76 +222,7 @@ jQuery(document).ready(function($) {
 				return true; // Allow closing
 			},
 			onContentReady: function() {
-				// Handle generate button click
-				$(document).off('click', '.llar-generate-rescue-links').on('click', '.llar-generate-rescue-links', function() {
-					const $button = $(this);
-					$button.prop('disabled', true).text('<?php echo esc_js( __( 'Generating...', 'limit-login-attempts-reloaded' ) ); ?>');
-
-					// Check if nonce is available
-					if (!llar_vars || !llar_vars.nonce_mfa_generate_codes) {
-						$.alert({
-							title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-							content: '<?php echo esc_js( __( 'Security token is missing. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>',
-							type: 'red'
-						});
-						$button.prop('disabled', false).text('<?php echo esc_js( __( 'Generate Rescue Links', 'limit-login-attempts-reloaded' ) ); ?>');
-						return;
-					}
-
-					// AJAX request to generate codes
-					$.ajax({
-						url: llar_vars.ajax_url || '<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>',
-						type: 'POST',
-						data: {
-							action: 'llar_mfa_generate_rescue_codes',
-							nonce: llar_vars.nonce_mfa_generate_codes
-						},
-						success: function(response) {
-							if (response && response.success && response.data && response.data.rescue_urls) {
-								htmlContentForPDF = response.data.html_content;
-								
-								// Display links in popup
-								displayRescueLinks(response.data.rescue_urls, response.data.domain);
-								
-								// Mark as generated so popup can be closed
-								rescueCodesDownloaded = true;
-							} else {
-								const errorMessage = (response && response.data && response.data.message) 
-									? response.data.message 
-									: '<?php echo esc_js( __( 'Failed to generate rescue codes.', 'limit-login-attempts-reloaded' ) ); ?>';
-								$.alert({
-									title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-									content: errorMessage,
-									type: 'red'
-								});
-								$button.prop('disabled', false).text('<?php echo esc_js( __( 'Generate Rescue Links', 'limit-login-attempts-reloaded' ) ); ?>');
-							}
-						},
-						error: function(xhr, status, error) {
-							console.error('AJAX error:', status, error, xhr);
-							let errorMessage = '<?php echo esc_js( __( 'Failed to generate rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ); ?>';
-							
-							// Try to parse error response
-							if (xhr.responseText) {
-								try {
-									const errorResponse = JSON.parse(xhr.responseText);
-									if (errorResponse.data && errorResponse.data.message) {
-										errorMessage = errorResponse.data.message;
-									}
-								} catch (e) {
-									// Not JSON, use default message
-								}
-							}
-							
-							$.alert({
-								title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-								content: errorMessage,
-								type: 'red'
-							});
-							$button.prop('disabled', false).text('<?php echo esc_js( __( 'Generate Rescue Links', 'limit-login-attempts-reloaded' ) ); ?>');
-						}
-					});
-				});
+				runGenerateRescueCodes();
 
 				// Handle PDF download button click
 				$(document).off('click', '.llar-download-pdf').on('click', '.llar-download-pdf', function() {
@@ -310,35 +240,94 @@ jQuery(document).ready(function($) {
 		});
 	}
 
+	function runGenerateRescueCodes() {
+		const $displayContainer = rescueModal.$content.find('#llar-rescue-links-display');
+		const $loading = $displayContainer.find('#llar-rescue-links-loading');
+		const $list = $displayContainer.find('#llar-rescue-links-list');
+		$loading.show().text('<?php echo esc_js( __( 'Generating rescue links...', 'limit-login-attempts-reloaded' ) ); ?>');
+		$list.hide().empty();
+		$displayContainer.find('.llar-rescue-copy-row, .llar-rescue-pdf-row').hide();
+		if (!llar_vars || !llar_vars.nonce_mfa_generate_codes) {
+			showRescueError($displayContainer, '<?php echo esc_js( __( 'Security token is missing. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>');
+			return;
+		}
+		$.ajax({
+			url: llar_vars.ajax_url || '<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>',
+			type: 'POST',
+			data: {
+				action: 'llar_mfa_generate_rescue_codes',
+				nonce: llar_vars.nonce_mfa_generate_codes
+			},
+			success: function(response) {
+				if (response && response.success && response.data && response.data.rescue_urls) {
+					htmlContentForPDF = response.data.html_content;
+					$loading.hide();
+					displayRescueLinks(response.data.rescue_urls, response.data.domain);
+					rescueCodesDownloaded = true;
+				} else {
+					const msg = (response && response.data && response.data.message) ? response.data.message : '<?php echo esc_js( __( 'Failed to generate rescue codes.', 'limit-login-attempts-reloaded' ) ); ?>';
+					showRescueError($displayContainer, msg);
+				}
+			},
+			error: function(xhr) {
+				let msg = '<?php echo esc_js( __( 'Failed to generate rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ); ?>';
+				if (xhr.responseText) {
+					try {
+						const err = JSON.parse(xhr.responseText);
+						if (err.data && err.data.message) { msg = err.data.message; }
+					} catch (e) {}
+				}
+				showRescueError($displayContainer, msg);
+			}
+		});
+	}
+
+	function showRescueError($displayContainer, message) {
+		const $loading = $displayContainer.find('#llar-rescue-links-loading');
+		const $list = $displayContainer.find('#llar-rescue-links-list');
+		$loading.hide();
+		$list.empty().show();
+		const retryText = '<?php echo esc_js( __( 'Retry', 'limit-login-attempts-reloaded' ) ); ?>';
+		$list.html('<p class="llar-rescue-error">' + message + '</p><button type="button" class="button llar-rescue-retry">' + retryText + '</button>');
+		$displayContainer.find('.llar-rescue-retry').off('click').on('click', runGenerateRescueCodes);
+	}
+
 	function displayRescueLinks(urls, domain) {
-		// Find the display container in the modal
 		const $displayContainer = rescueModal.$content.find('#llar-rescue-links-display');
 		const $linksList = $displayContainer.find('#llar-rescue-links-list');
-		
-		// Clear previous content
-		$linksList.empty();
-		
-		// Create ordered list of links (use .attr/.text to avoid XSS; url comes from backend)
+		$linksList.empty().show();
 		const $list = $('<ol class="llar-rescue-links-ol"></ol>');
-		urls.forEach(function(url, index) {
+		urls.forEach(function(url) {
 			const $listItem = $('<li class="llar-rescue-link-item"></li>');
-			const $link = $('<a></a>')
-				.attr('href', url)
-				.attr('target', '_blank')
-				.attr('rel', 'noopener noreferrer')
-				.addClass('llar-rescue-link')
-				.text(url);
-			$listItem.append($link);
+			$listItem.append($('<span class="llar-rescue-link-text"></span>').text(url));
 			$list.append($listItem);
 		});
-		
 		$linksList.append($list);
-		
-		// Show the display container
-		$displayContainer.show();
-		
-		// Hide the generate button
-		rescueModal.$content.find('.llar-generate-rescue-links').closest('.button_block-single').hide();
+		const $feedback = $displayContainer.find('#llar-copy-feedback');
+		$displayContainer.find('.llar-copy-rescue-links').off('click').on('click', function() {
+			const text = urls.join(' \n\n');
+			$feedback.removeClass('llar-copy-feedback-visible').text('');
+			function showCopied() {
+				$feedback.text('<?php echo esc_js( __( 'Copied to clipboard.', 'limit-login-attempts-reloaded' ) ); ?>').addClass('llar-copy-feedback-visible');
+				setTimeout(function() { $feedback.removeClass('llar-copy-feedback-visible').text(''); }, 3000);
+			}
+			if (navigator.clipboard && navigator.clipboard.writeText) {
+				navigator.clipboard.writeText(text).then(showCopied).catch(function() { fallbackCopy(text, showCopied); });
+			} else {
+				fallbackCopy(text, showCopied);
+			}
+		});
+		$displayContainer.find('.llar-rescue-copy-row, .llar-rescue-pdf-row').show();
+	}
+
+	function fallbackCopy(text, onSuccess) {
+		const $ta = $('<textarea>').val(text).css({ position: 'fixed', left: '-9999px' }).appendTo(document.body);
+		$ta[0].select();
+		try {
+			document.execCommand('copy');
+			if (onSuccess) { onSuccess(); }
+		} catch (e) {}
+		$ta.remove();
 	}
 
 	function downloadAsPDF(htmlContent) {
