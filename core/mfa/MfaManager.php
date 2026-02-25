@@ -339,12 +339,12 @@ class MfaManager {
 			'ajax_url'                 => admin_url( 'admin-ajax.php' ),
 		) );
 		wp_localize_script( 'lla-main', 'llar_vars', $merged );
-		// Fire action so PDF libs (html2canvas, jsPDF) are always enqueued on MFA tab for "Download as PDF".
+		// Fire action so PDF lib (jsPDF) is enqueued on MFA tab for "Download as PDF".
 		do_action( 'llar_mfa_generate_codes' );
 	}
 
 	/**
-	 * Enqueue html2canvas and jsPDF when rescue codes popup is shown (after llar_mfa_generate_codes).
+	 * Enqueue jsPDF when rescue codes popup is shown (after llar_mfa_generate_codes).
 	 *
 	 * @return void
 	 */
@@ -353,7 +353,6 @@ class MfaManager {
 			return;
 		}
 		$plugin_url = defined( 'LLA_PLUGIN_URL' ) ? LLA_PLUGIN_URL : plugins_url( '/', __DIR__ . '/../limit-login-attempts-reloaded.php' );
-		wp_enqueue_script( 'html2canvas', $plugin_url . 'assets/js/html2canvas.min.js', array(), '1.4.1', true );
 		wp_enqueue_script( 'jspdf', $plugin_url . 'assets/js/jspdf.umd.min.js', array(), '2.5.1', true );
 	}
 }

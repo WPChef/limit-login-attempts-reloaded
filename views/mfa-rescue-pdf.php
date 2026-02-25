@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div style="font-family: Arial, Helvetica, sans-serif; padding: 20px; background-color: #ffffff; color: #000000; font-size: 14px; width: 100%; box-sizing: border-box;">
 	<h1 style="color: #000000; font-size: 20px; font-weight: bold; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #4ACAD8; text-align: left;">
-		<?php echo esc_html( $domain ); ?> LLAR 2FA Rescue Links
+		<?php esc_html_e( 'LLAR 2FA Rescue Links for', 'limit-login-attempts-reloaded' ); ?> <?php echo esc_html( $domain ); ?>
 	</h1>
 	<ol style="margin: 0; padding-left: 25px; line-height: 1.6; list-style-type: decimal; color: #000000;">
 		<?php foreach ( $rescue_urls as $rescue_url ) : ?>

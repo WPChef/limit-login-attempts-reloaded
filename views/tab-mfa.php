@@ -151,7 +151,8 @@ jQuery(document).ready(function($) {
 	let rescuePopupShown = false;
 	let rescueCodesDownloaded = false;
 	let rescueModal = null;
-	let htmlContentForPDF = null;
+	let rescueUrlsForPDF = null;
+	let domainForPDF = null;
 
 	<?php if ( isset( $mfa_settings['show_rescue_popup'] ) && $mfa_settings['show_rescue_popup'] ) : ?>
 	// Show popup if flag is set (MFA enabled without codes)
@@ -210,7 +211,7 @@ jQuery(document).ready(function($) {
 
 				// Handle PDF download button click
 				rescueModal.$content.find('.llar-download-pdf').off('click').on('click', function() {
-					if (!htmlContentForPDF) {
+					if (!rescueUrlsForPDF || !rescueUrlsForPDF.length || !domainForPDF) {
 						$.alert({
 							title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
 							content: '<?php echo esc_js( __( 'No content available for download. Please generate links first.', 'limit-login-attempts-reloaded' ) ); ?>',
@@ -218,7 +219,7 @@ jQuery(document).ready(function($) {
 						});
 						return;
 					}
-					downloadAsPDF(htmlContentForPDF);
+					downloadAsPDF(rescueUrlsForPDF, domainForPDF);
 				});
 			}
 		});
@@ -243,7 +244,8 @@ jQuery(document).ready(function($) {
 			},
 			success: function(response) {
 				if (response && response.success && response.data && response.data.rescue_urls) {
-					htmlContentForPDF = response.data.html_content;
+					rescueUrlsForPDF = response.data.rescue_urls;
+					domainForPDF = response.data.domain || '';
 					$loading.hide();
 					displayRescueLinks(response.data.rescue_urls, response.data.domain);
 					rescueCodesDownloaded = true;
@@ -367,146 +369,68 @@ jQuery(document).ready(function($) {
 		$ta.remove();
 	}
 
-	function downloadAsPDF(htmlContent) {
-		// Check if required libraries are available
-		if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+	function downloadAsPDF(rescueUrls, domain) {
+		if (typeof window.jspdf === 'undefined') {
 			$.alert({
 				title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-				content: '<?php echo esc_js( __( 'PDF libraries not loaded. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>',
+				content: '<?php echo esc_js( __( 'PDF library not loaded. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>',
 				type: 'red'
 			});
 			return;
 		}
-
-		// Debug: check if htmlContent is valid
-		if (!htmlContent || htmlContent.trim() === '') {
-			console.error('HTML content is empty');
-			$.alert({
-				title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-				content: '<?php echo esc_js( __( 'No content available for PDF generation.', 'limit-login-attempts-reloaded' ) ); ?>',
-				type: 'red'
-			});
-			return;
-		}
-
-		// Remove any existing temp div
-		const existingDiv = document.getElementById('llar-pdf-temp-container');
-		if (existingDiv) {
-			document.body.removeChild(existingDiv);
-		}
-
-		// Extract content if it's wrapped in body/html tags
-		let contentToUse = htmlContent;
-		const tempParser = document.createElement('div');
-		tempParser.innerHTML = htmlContent;
-		const bodyContent = tempParser.querySelector('body');
-		if (bodyContent) {
-			contentToUse = bodyContent.innerHTML;
-		} else {
-			const divContent = tempParser.querySelector('div');
-			if (divContent) {
-				contentToUse = divContent.outerHTML;
-			}
-		}
-		
-		// Create a container for rendering - positioned off-screen
-		const tempDiv = document.createElement('div');
-		tempDiv.id = 'llar-pdf-temp-container';
-		tempDiv.style.position = 'absolute';
-		tempDiv.style.top = '-9999px'; // Move far above viewport
-		tempDiv.style.left = '-9999px'; // Move far left of viewport
-		tempDiv.style.width = '794px'; // A4 width at 96 DPI
-		tempDiv.style.padding = '20px';
-		tempDiv.style.backgroundColor = '#ffffff';
-		tempDiv.style.zIndex = '-1'; // Behind everything
-		tempDiv.style.opacity = '1'; // Fully opaque for html2canvas
-		tempDiv.style.pointerEvents = 'none';
-		tempDiv.style.boxSizing = 'border-box';
-		tempDiv.style.overflow = 'hidden';
-		tempDiv.innerHTML = contentToUse;
-		
-		document.body.appendChild(tempDiv);
-
-		// Wait for content to render
-		setTimeout(function() {
-			// Check if element has content
-			if (!tempDiv.innerHTML || tempDiv.innerHTML.trim() === '' || tempDiv.children.length === 0) {
-				console.error('Temp div has no content');
-				console.error('HTML content:', htmlContent.substring(0, 500));
-				if (document.body.contains(tempDiv)) {
-					document.body.removeChild(tempDiv);
-				}
-				$.alert({
-					title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-					content: '<?php echo esc_js( __( 'Failed to prepare content for PDF. Please try again.', 'limit-login-attempts-reloaded' ) ); ?>',
-					type: 'red'
-				});
-				return;
-			}
-
-			// Log for debugging
-			console.log('Generating PDF from element');
-			console.log('Element height:', tempDiv.scrollHeight);
-			console.log('Element width:', tempDiv.offsetWidth);
-			console.log('Element has children:', tempDiv.children.length);
-
-			// Use html2canvas and jsPDF directly
-			const { jsPDF } = window.jspdf;
-			
-			html2canvas(tempDiv, {
-				scale: 2,
-				useCORS: true,
-				logging: false,
-				backgroundColor: '#ffffff',
-				width: tempDiv.scrollWidth,
-				height: tempDiv.scrollHeight
-			}).then(function(canvas) {
-				const imgData = canvas.toDataURL('image/png');
-				const pdf = new jsPDF('p', 'mm', 'a4');
-				
-				const imgWidth = 210; // A4 width in mm
-				const pageHeight = 297; // A4 height in mm
-				const imgHeight = (canvas.height * imgWidth) / canvas.width;
-				let heightLeft = imgHeight;
-				let position = 0;
-				
-				// Add first page
-				pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-				heightLeft -= pageHeight;
-				
-				// Add additional pages if needed
-				while (heightLeft > 0) {
-					position = heightLeft - imgHeight;
+		var pdfTitlePrefix = '<?php echo esc_js( __( 'LLAR 2FA Rescue Links for', 'limit-login-attempts-reloaded' ) ); ?>';
+		var pdfImportantPart1 = '<?php echo esc_js( __( 'Important: By clicking a link above, 2FA will be fully disabled on', 'limit-login-attempts-reloaded' ) ); ?>';
+		var pdfImportantPart2 = '<?php echo esc_js( __( 'for 1 hour. Each link can only be used once.', 'limit-login-attempts-reloaded' ) ); ?>';
+		var margin = 20;
+		var pageW = 210;
+		var pageH = 297;
+		var textW = pageW - margin * 2;
+		var lineHeight = 5;
+		var titleFontSize = 16;
+		var bodyFontSize = 10;
+		var noteFontSize = 9;
+		try {
+			var jsPDF = window.jspdf.jsPDF;
+			var pdf = new jsPDF('p', 'mm', 'a4');
+			pdf.setFontSize(titleFontSize);
+			pdf.text(pdfTitlePrefix + ' ' + domain, margin, margin + 5);
+			var y = margin + 18;
+			pdf.setFontSize(bodyFontSize);
+			for (var i = 0; i < rescueUrls.length; i++) {
+				if (y > pageH - margin - 20) {
 					pdf.addPage();
-					pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-					heightLeft -= pageHeight;
+					y = margin;
 				}
-				
-				// Save PDF
-				pdf.save('llar-2fa-rescue-links.pdf');
-				
-				console.log('PDF generated successfully');
-				
-				// Cleanup
-				if (document.body.contains(tempDiv)) {
-					document.body.removeChild(tempDiv);
-				}
-			}).catch(function(error) {
-				console.error('PDF generation error:', error);
-				console.error('Error details:', error);
-				
-				$.alert({
-					title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
-					content: '<?php echo esc_js( __( 'Failed to generate PDF. Please check browser console (F12) for details.', 'limit-login-attempts-reloaded' ) ); ?>',
-					type: 'red'
-				});
-				
-				// Cleanup
-				if (document.body.contains(tempDiv)) {
-					document.body.removeChild(tempDiv);
-				}
+				var num = (i + 1) + '. ';
+				var url = rescueUrls[i];
+				var lines = pdf.splitTextToSize(url, textW - pdf.getTextWidth(num));
+				var linkY = y - 3;
+				var linkH = lines.length * lineHeight + 2;
+				pdf.link(margin, linkY, textW, linkH, { url: url });
+				pdf.setTextColor(0, 102, 204);
+				pdf.text(num, margin, y);
+				var numW = pdf.getTextWidth(num);
+				pdf.text(lines, margin + numW, y);
+				pdf.setTextColor(0, 0, 0);
+				y += lines.length * lineHeight + 6;
+			}
+			y += 8;
+			if (y > pageH - margin - 25) {
+				pdf.addPage();
+				y = margin;
+			}
+			pdf.setFontSize(noteFontSize);
+			var noteLines = pdf.splitTextToSize(pdfImportantPart1 + ' ' + domain + ' ' + pdfImportantPart2, textW);
+			pdf.text(noteLines, margin, y);
+			pdf.save('llar-2fa-rescue-links.pdf');
+		} catch (err) {
+			console.error('PDF generation error:', err);
+			$.alert({
+				title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
+				content: '<?php echo esc_js( __( 'Failed to generate PDF. Please check browser console (F12) for details.', 'limit-login-attempts-reloaded' ) ); ?>',
+				type: 'red'
 			});
-		}, 1000); // Wait 1 second for full rendering
+		}
 	}
 });
 </script>
