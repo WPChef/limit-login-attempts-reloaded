@@ -17,15 +17,16 @@ class AdminNoticesController {
 	 *
 	 * @var array
 	 */
-	private static $allowed = array( 'auto-update', 'https-recommended' );
+	private static $allowed = array( 'auto-update', 'https-recommended', 'flash' );
 
 	/**
 	 * Get type, CSS class and HTML content for a notice key.
 	 *
 	 * @param string $notice_key Notice identifier.
+	 * @param array  $args       Optional. For 'flash' key: 'msg', 'is_error'.
 	 * @return array|null Array with 'type', 'class', 'content' or null if unknown.
 	 */
-	private function get_notice_config( $notice_key ) {
+	private function get_notice_config( $notice_key, array $args = array() ) {
 		$text_domain = 'limit-login-attempts-reloaded';
 		switch ( $notice_key ) {
 			case 'auto-update':
@@ -45,6 +46,17 @@ class AdminNoticesController {
 					'class'   => 'llar-options-notice',
 					'content' => \__( 'Your site is not using HTTPS. Enabling HTTPS is recommended for better security.', $text_domain ),
 				);
+			case 'flash':
+				$msg      = isset( $args['msg'] ) ? $args['msg'] : '';
+				$is_error = ! empty( $args['is_error'] );
+				if ( $msg === '' ) {
+					return null;
+				}
+				return array(
+					'type'    => $is_error ? 'notice-error' : 'notice-success',
+					'class'   => 'llar-options-notice llar-flash-notice',
+					'content' => $msg,
+				);
 			default:
 				return null;
 		}
@@ -62,7 +74,7 @@ class AdminNoticesController {
 		if ( ! in_array( $notice_key, self::$allowed, true ) ) {
 			return;
 		}
-		$config = $this->get_notice_config( $notice_key );
+		$config = $this->get_notice_config( $notice_key, $args );
 		if ( null === $config ) {
 			return;
 		}

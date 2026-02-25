@@ -78,6 +78,14 @@ class LimitLoginAttempts
 	private $admin_notices_controller = null;
 
 	/**
+	 * Pending flash message to display on options page (e.g. "Settings saved").
+	 * Rendered via AdminNoticesController when options-page is loaded.
+	 *
+	 * @var array|null Keys: 'msg', 'is_error'. Null when none.
+	 */
+	public $pending_admin_message = null;
+
+	/**
 	 * Class instance accessible in other classes
 	 *
 	 * @var LimitLoginAttempts
@@ -2390,7 +2398,7 @@ class LimitLoginAttempts
 				if ( $this->mfa_controller ) {
 					$show_popup = $this->mfa_controller->handle_settings_submission();
 					if ( ! $show_popup ) {
-						$this->show_message( __( '2FA settings saved.', 'limit-login-attempts-reloaded' ) );
+						$this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
 					}
 				}
 				// MFA Flow settings (same form; enabled when 2FA is enabled). Provider from LLA_MFA_PROVIDER constant.
@@ -2432,9 +2440,11 @@ class LimitLoginAttempts
 	 * @param $msg
 	 * @param bool $is_error
 	 */
-	public function show_message( $msg, $is_error = false )
-	{
-		Helpers::show_message( $msg, $is_error );
+	public function show_message( $msg, $is_error = false ) {
+		$this->pending_admin_message = array(
+			'msg'      => $msg,
+			'is_error' => $is_error,
+		);
 	}
 
 	/**

@@ -83,10 +83,14 @@ if ( $is_active_app_custom ) {
 </div>
 
 <?php
+if ( ! empty( $this->pending_admin_message ) ) {
+	$this->render_admin_notice( 'flash', $this->pending_admin_message );
+	$this->pending_admin_message = null;
+}
 if ( ( $auto_update_choice || $auto_update_choice === null ) && ! Helpers::is_auto_update_enabled() ) {
 	$this->render_admin_notice( 'auto-update', array() );
 }
-if ( ! is_ssl() ) {
+if ( $active_tab === 'debug' && ! is_ssl() ) {
 	$this->render_admin_notice( 'https-recommended', array() );
 }
 ?>
