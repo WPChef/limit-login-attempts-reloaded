@@ -378,38 +378,38 @@ jQuery(document).ready(function($) {
 			});
 			return;
 		}
-		var pdfTitlePrefix = '<?php echo esc_js( __( 'LLAR 2FA Rescue Links for', 'limit-login-attempts-reloaded' ) ); ?>';
-		var pdfImportantPart1 = '<?php echo esc_js( __( 'Important: By clicking a link above, 2FA will be fully disabled on', 'limit-login-attempts-reloaded' ) ); ?>';
-		var pdfImportantPart2 = '<?php echo esc_js( __( 'for 1 hour. Each link can only be used once.', 'limit-login-attempts-reloaded' ) ); ?>';
-		var margin = 20;
-		var pageW = 210;
-		var pageH = 297;
-		var textW = pageW - margin * 2;
-		var lineHeight = 5;
-		var titleFontSize = 16;
-		var bodyFontSize = 10;
-		var noteFontSize = 9;
+		const pdfTitlePrefix = '<?php echo esc_js( __( 'LLAR 2FA Rescue Links for', 'limit-login-attempts-reloaded' ) ); ?>';
+		const pdfImportantPart1 = '<?php echo esc_js( __( 'Important: By clicking a link above, 2FA will be fully disabled on', 'limit-login-attempts-reloaded' ) ); ?>';
+		const pdfImportantPart2 = '<?php echo esc_js( __( 'for 1 hour. Each link can only be used once.', 'limit-login-attempts-reloaded' ) ); ?>';
+		const margin = 20;
+		const pageW = 210;
+		const pageH = 297;
+		const textW = pageW - margin * 2;
+		const lineHeight = 5;
+		const titleFontSize = 16;
+		const bodyFontSize = 10;
+		const noteFontSize = 9;
 		try {
-			var jsPDF = window.jspdf.jsPDF;
-			var pdf = new jsPDF('p', 'mm', 'a4');
+			const jsPDF = window.jspdf.jsPDF;
+			const pdf = new jsPDF('p', 'mm', 'a4');
 			pdf.setFontSize(titleFontSize);
 			pdf.text(pdfTitlePrefix + ' ' + domain, margin, margin + 5);
-			var y = margin + 18;
+			let y = margin + 18;
 			pdf.setFontSize(bodyFontSize);
-			for (var i = 0; i < rescueUrls.length; i++) {
+			for (let i = 0; i < rescueUrls.length; i++) {
 				if (y > pageH - margin - 20) {
 					pdf.addPage();
 					y = margin;
 				}
-				var num = (i + 1) + '. ';
-				var url = rescueUrls[i];
-				var lines = pdf.splitTextToSize(url, textW - pdf.getTextWidth(num));
-				var linkY = y - 3;
-				var linkH = lines.length * lineHeight + 2;
+				const num = (i + 1) + '. ';
+				const url = rescueUrls[i];
+				const lines = pdf.splitTextToSize(url, textW - pdf.getTextWidth(num));
+				const linkY = y - 3;
+				const linkH = lines.length * lineHeight + 2;
 				pdf.link(margin, linkY, textW, linkH, { url: url });
 				pdf.setTextColor(0, 102, 204);
 				pdf.text(num, margin, y);
-				var numW = pdf.getTextWidth(num);
+				const numW = pdf.getTextWidth(num);
 				pdf.text(lines, margin + numW, y);
 				pdf.setTextColor(0, 0, 0);
 				y += lines.length * lineHeight + 6;
@@ -420,7 +420,7 @@ jQuery(document).ready(function($) {
 				y = margin;
 			}
 			pdf.setFontSize(noteFontSize);
-			var noteLines = pdf.splitTextToSize(pdfImportantPart1 + ' ' + domain + ' ' + pdfImportantPart2, textW);
+			const noteLines = pdf.splitTextToSize(pdfImportantPart1 + ' ' + domain + ' ' + pdfImportantPart2, textW);
 			pdf.text(noteLines, margin, y);
 			pdf.save('llar-2fa-rescue-links.pdf');
 		} catch (err) {
