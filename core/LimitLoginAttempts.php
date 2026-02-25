@@ -2596,7 +2596,7 @@ class LimitLoginAttempts
                         $( '.llar-review-dismiss' ).on( 'click', function( e ) {
                             e.preventDefault();
 
-                            var type = $( this ).data( 'type' );
+                            const type = $( this ).data( 'type' );
 
                             $.post( ajaxurl, {
                                 action: 'dismiss_review_notice',
@@ -2612,10 +2612,10 @@ class LimitLoginAttempts
                         } );
 
                         function createCookie( name, value, days ) {
-                            var expires;
+                            let expires;
 
                             if ( days ) {
-                                var date = new Date();
+                                const date = new Date();
                                 date.setTime( date.getTime() + (days * 24 * 60 * 60 * 1000 ) );
                                 expires = "; expires=" + date.toGMTString();
                             } else {
@@ -2689,7 +2689,7 @@ class LimitLoginAttempts
                         $( '.llar-notify-notice-dismiss' ).on( 'click', function( e ) {
                             e.preventDefault();
 
-                            var type = $( this ).data( 'type' );
+                            const type = $( this ).data( 'type' );
 
                             $.post( ajaxurl, {
                                 action: 'dismiss_notify_notice',
@@ -2721,10 +2721,10 @@ class LimitLoginAttempts
                         } );
 
                         function createCookie( name, value, days ) {
-                            var expires;
+                            let expires;
 
                             if ( days ) {
-                                var date = new Date();
+                                const date = new Date();
                                 date.setTime( date.getTime() + ( days * 24 * 60 * 60 * 1000 ) );
                                 expires = "; expires=" + date.toGMTString();
                             } else {
