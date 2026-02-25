@@ -233,7 +233,7 @@ jQuery(document).ready(function($) {
 		const $loading = $displayContainer.find('#llar-rescue-links-loading');
 		const $list = $displayContainer.find('#llar-rescue-links-list');
 		$loading.show().text('<?php echo esc_js( __( 'Generating rescue links...', 'limit-login-attempts-reloaded' ) ); ?>');
-		$displayContainer.find('.llar-rescue-copy-row, .llar-rescue-pdf-row').hide();
+		$displayContainer.find('.llar-rescue-copy-row').hide();
 		if (!llar_vars || !llar_vars.nonce_mfa_generate_codes) {
 			showRescueError($displayContainer, '<?php echo esc_js( __( 'Security token is missing. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>');
 			return;
@@ -344,7 +344,7 @@ jQuery(document).ready(function($) {
 			setTimeout(cleanup, 10000);
 			window.print();
 		});
-		$displayContainer.find('.llar-rescue-copy-row, .llar-rescue-pdf-row').show();
+		$displayContainer.find('.llar-rescue-copy-row').show();
 
 		const $confirmRow = rescueModal.$content.find('.llar-rescue-confirm-row');
 		const $savedCheckbox = rescueModal.$content.find('#llar-rescue-saved-confirm');
