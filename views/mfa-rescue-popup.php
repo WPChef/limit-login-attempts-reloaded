@@ -34,14 +34,8 @@ $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 								<?php echo esc_html__( 'for 1 hour.', 'limit-login-attempts-reloaded' ); ?>
 							</p>
 						</div>
-						<div class="button_block-single">
-							<button type="button" class="button menu__item button__orange llar-generate-rescue-links">
-								<?php echo esc_html__( 'Generate Rescue Links', 'limit-login-attempts-reloaded' ); ?>
-							</button>
-						</div>
-						
-						<!-- Container for displaying generated links - inside the same card -->
-						<div id="llar-rescue-links-display" style="display: none;">
+						<!-- Rescue links are generated automatically when popup opens -->
+						<div id="llar-rescue-links-display">
 							<div class="field-title">
 								<?php echo esc_html__( 'Your Rescue Links', 'limit-login-attempts-reloaded' ); ?>
 							</div>
@@ -50,10 +44,13 @@ $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 									<?php echo esc_html__( 'Save these links in a secure location. Each link can only be used once.', 'limit-login-attempts-reloaded' ); ?>
 								</p>
 							</div>
-							<div class="llar-rescue-links-list" id="llar-rescue-links-list">
-								<!-- Links will be inserted here via JavaScript -->
+							<div id="llar-rescue-links-loading" class="llar-rescue-links-loading"><?php echo esc_html__( 'Generating rescue links...', 'limit-login-attempts-reloaded' ); ?></div>
+							<div class="llar-rescue-links-list" id="llar-rescue-links-list" style="display: none;"></div>
+							<div class="llar-rescue-copy-row" style="display: none;">
+								<button type="button" class="button llar-copy-rescue-links" title="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>" aria-label="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>">📋 <?php echo esc_html__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?></button>
+								<span class="llar-copy-feedback" id="llar-copy-feedback" aria-live="polite"></span>
 							</div>
-							<div class="button_block-single">
+							<div class="button_block-single llar-rescue-pdf-row" style="display: none;">
 								<button type="button" class="button menu__item button__orange llar-download-pdf">
 									<?php echo esc_html__( 'Download as PDF', 'limit-login-attempts-reloaded' ); ?>
 								</button>
