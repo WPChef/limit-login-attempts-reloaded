@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * MFA flow: shared logic for sending verification code to user email.
  * Used by both AJAX (admin-ajax.php) and REST API endpoints.
- * Only GET is supported: token, secret (send_email_url secret), code in query.
+ * Endpoints accept POST with token, secret (send_email_secret), code in request body.
  * After first successful send, send_email_secret is invalidated (one-time use).
  *
  * @return array { 'success' => bool, 'http_status' => int, 'message' => string|null }
@@ -20,7 +20,7 @@ class MfaFlowSendCode {
 	 * Execute send-code: validate send_email_secret, send email, save OTP, invalidate secret.
 	 *
 	 * @param string $token  Session token.
-	 * @param string $secret Send_email_url secret (from query).
+	 * @param string $secret Send_email secret (from request body).
 	 * @param string $code   Verification code to send and store.
 	 * @return array { 'success' => bool, 'http_status' => int, 'message' => string|null }
 	 */

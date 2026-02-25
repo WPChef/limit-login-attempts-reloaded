@@ -18,7 +18,7 @@ class CallbackHandler {
 	 * @return void
 	 */
 	public static function maybe_handle() {
-		// Do not treat send-code endpoint as MFA callback (it also uses token in GET).
+		// Do not treat send-code endpoint as MFA callback (it uses token in POST body).
 		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
 		if ( $action === 'llar_mfa_flow_send_code' ) {
 			return;
