@@ -192,31 +192,24 @@ jQuery(document).ready(function($) {
 			boxWidth: 1280,
 			useBootstrap: false,
 			bgOpacity: 0.9,
-			closeIcon: function() {
+			closeIcon: false,
+			backgroundDismiss: false,
+			escapeKey: function() {
 				if (!rescueCodesDownloaded) {
-					$.alert({
-						title: '<?php echo esc_js( __( 'Action Required', 'limit-login-attempts-reloaded' ) ); ?>',
-						content: '<?php echo esc_js( __( 'You must download or copy the rescue links before closing this window.', 'limit-login-attempts-reloaded' ) ); ?>',
-						type: 'orange',
-						columnClass: 'llar-mfa-action-alert'
-					});
+					return false;
+				}
+				const $cb = rescueModal.$content.find('#llar-rescue-saved-confirm');
+				if (!$cb.length || !$cb.is(':checked')) {
 					return false;
 				}
 				return true;
 			},
-			backgroundDismiss: false,
-			escapeKey: function() {
-				// Prevent closing by ESC key until codes are generated
-				if (!rescueCodesDownloaded) {
-					return false; // Prevent closing
-				}
-				return true; // Allow closing
-			},
 			onContentReady: function() {
+				rescueModal.$content.closest('.jconfirm').find('.jconfirm-closeIcon').remove();
 				runGenerateRescueCodes();
 
 				// Handle PDF download button click
-				$(document).off('click', '.llar-download-pdf').on('click', '.llar-download-pdf', function() {
+				rescueModal.$content.find('.llar-download-pdf').off('click').on('click', function() {
 					if (!htmlContentForPDF) {
 						$.alert({
 							title: '<?php echo esc_js( __( 'Error', 'limit-login-attempts-reloaded' ) ); ?>',
@@ -308,7 +301,39 @@ jQuery(document).ready(function($) {
 				fallbackCopy(text, showCopied);
 			}
 		});
+		$displayContainer.find('.llar-print-rescue-links').off('click').on('click', function() {
+			const printTitle = '<?php echo esc_js( __( 'Rescue Links', 'limit-login-attempts-reloaded' ) ); ?>';
+			let html = '<!DOCTYPE html><html><head><title>' + printTitle + '</title></head><body style="font-family: sans-serif; padding: 20px;">';
+			html += '<h1>' + printTitle + '</h1><ol>';
+			urls.forEach(function(url) {
+				html += '<li style="margin: 8px 0; word-break: break-all;">' + url + '</li>';
+			});
+			html += '</ol></body></html>';
+			const win = window.open('', '_blank');
+			win.document.write(html);
+			win.document.close();
+			win.focus();
+			setTimeout(function() {
+				win.print();
+				win.close();
+			}, 250);
+		});
 		$displayContainer.find('.llar-rescue-copy-row, .llar-rescue-pdf-row').show();
+
+		const $confirmRow = rescueModal.$content.find('.llar-rescue-confirm-row');
+		const $savedCheckbox = rescueModal.$content.find('#llar-rescue-saved-confirm');
+		const $closeBtn = rescueModal.$content.find('.llar-rescue-close-btn');
+		$savedCheckbox.prop('checked', false);
+		$closeBtn.prop('disabled', true);
+		$savedCheckbox.off('change').on('change', function() {
+			$closeBtn.prop('disabled', !$savedCheckbox.is(':checked'));
+		});
+		$closeBtn.off('click').on('click', function() {
+			if ($savedCheckbox.is(':checked')) {
+				rescueModal.close();
+			}
+		});
+		$confirmRow.show();
 	}
 
 	function fallbackCopy(text, onSuccess) {
