@@ -1360,13 +1360,11 @@ class LimitLoginAttempts
 		if ( $user && ! empty( $user->roles ) && is_array( $user->roles ) ) {
 			$user_group = reset( $user->roles );
 		}
-		$send_email_secret = wp_generate_password( 32, false );
-		$redirect_to       = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
-		$cancel_url        = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		$payload = array(
+		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+		$cancel_url  = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
+		$payload     = array(
 			'user_ip'              => Helpers::get_all_ips(),
 			'login_url'            => wp_login_url(),
-			'send_email_secret'    => $send_email_secret,
 			'user_group'           => $user_group,
 			'is_pre_authenticated' => (bool) $is_pre_authenticated,
 		);
@@ -1395,9 +1393,8 @@ class LimitLoginAttempts
 		if ( $result['success'] && $has_token && $has_secret && $has_redirect ) {
 			// Always save session locally so callback can enforce is_pre_authenticated (block login when password was wrong).
 			$store = new \LLAR\Core\MfaFlow\SessionStore();
-			// In test mode (test-token) use fixed send_email_secret so curl can simulate MFA app send_code request.
-			$send_email_secret_to_save = ( $result['data']['token'] === 'test-token' && defined( 'LLA_MFA_FLOW_TEST_REDIRECT' ) && LLA_MFA_FLOW_TEST_REDIRECT ) ? 'test-secret' : $send_email_secret;
-			$store->save_send_email_secret( $result['data']['token'], $send_email_secret_to_save );
+			// Single secret from MFA app (handshake response): used for verify and for send_code endpoint authorization.
+			$store->save_send_email_secret( $result['data']['token'], $result['data']['secret'] );
 			$store->save_session(
 				$result['data']['token'],
 				$result['data']['secret'],

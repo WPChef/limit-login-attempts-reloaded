@@ -131,9 +131,10 @@ class SessionStore {
 
 	/**
 	 * Save send_email secret for token (validates POST send_code request body).
+	 * Secret is the same as session secret: from MFA app handshake response, used for verify and send_code.
 	 *
 	 * @param string $token Session token.
-	 * @param string $secret Random secret sent by MFA app in POST body.
+	 * @param string $secret Secret from handshake response (MFA app).
 	 * @return bool
 	 */
 	public function save_send_email_secret( $token, $secret ) {
