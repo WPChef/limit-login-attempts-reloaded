@@ -55,12 +55,8 @@ $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 							<div class="llar-rescue-copy-row" style="display: none;">
 								<button type="button" class="button llar-copy-rescue-links" title="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>" aria-label="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>">📋 <?php echo esc_html__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?></button>
 								<button type="button" class="button llar-print-rescue-links" title="<?php echo esc_attr__( 'Print', 'limit-login-attempts-reloaded' ); ?>" aria-label="<?php echo esc_attr__( 'Print', 'limit-login-attempts-reloaded' ); ?>">🖨️ <?php echo esc_html__( 'Print', 'limit-login-attempts-reloaded' ); ?></button>
+								<button type="button" class="button llar-download-pdf" title="<?php echo esc_attr__( 'Download as PDF', 'limit-login-attempts-reloaded' ); ?>" aria-label="<?php echo esc_attr__( 'Download as PDF', 'limit-login-attempts-reloaded' ); ?>">📄 <?php echo esc_html__( 'Download as PDF', 'limit-login-attempts-reloaded' ); ?></button>
 								<span class="llar-copy-feedback" id="llar-copy-feedback" aria-live="polite"></span>
-							</div>
-							<div class="button_block-single llar-rescue-pdf-row" style="display: none;">
-								<button type="button" class="button menu__item button__orange llar-download-pdf">
-									<?php echo esc_html__( 'Download as PDF', 'limit-login-attempts-reloaded' ); ?>
-								</button>
 							</div>
 						</div>
 						<div class="llar-rescue-confirm-row" style="display: none; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ccc;">
