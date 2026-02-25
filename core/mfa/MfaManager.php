@@ -201,6 +201,17 @@ class MfaManager {
 			delete_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
 		}
 
+		$mfa_roles = $this->get_sanitized_mfa_roles_from_post();
+		Config::update( 'mfa_roles', $mfa_roles );
+		return false;
+	}
+
+	/**
+	 * Get sanitized MFA roles array from POST data.
+	 *
+	 * @return array List of role keys.
+	 */
+	private function get_sanitized_mfa_roles_from_post() {
 		$mfa_roles = array();
 		if ( isset( $_POST['mfa_roles'] ) && is_array( $_POST['mfa_roles'] ) && ! empty( $_POST['mfa_roles'] ) ) {
 			$editable_roles     = get_editable_roles();
@@ -214,8 +225,7 @@ class MfaManager {
 				return (bool) get_role( $role );
 			} );
 		}
-		Config::update( 'mfa_roles', $mfa_roles );
-		return false;
+		return $mfa_roles;
 	}
 
 	/**
@@ -274,8 +284,7 @@ class MfaManager {
 		}
 
 		Config::update( 'mfa_rescue_download_token', wp_generate_password( 32, false ) );
-		Config::update( 'mfa_enabled', 1 );
-		delete_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
+		// MFA is enabled only when user clicks Save Settings (after confirming rescue codes in popup).
 
 		wp_send_json_success( array(
 			'rescue_urls'  => $rescue_urls,
