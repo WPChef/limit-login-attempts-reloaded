@@ -1152,18 +1152,18 @@ class Ajax
 
 	/**
 	 * MFA flow: send code to user email (AJAX fallback when REST API is unavailable).
-	 * GET only: token, secret (send_email_url secret), code in query.
+	 * POST only: token, secret (send_email secret), code in $_POST.
 	 */
 	public function mfa_flow_send_code_callback() {
 		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : '';
-		if ( 'GET' !== $method ) {
+		if ( 'POST' !== $method ) {
 			status_header( 405 );
 			wp_send_json_error( array( 'message' => 'Method not allowed' ) );
 		}
 
-		$token  = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
-		$secret = isset( $_GET['secret'] ) ? sanitize_text_field( wp_unslash( $_GET['secret'] ) ) : '';
-		$code   = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
+		$token  = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
+		$secret = isset( $_POST['secret'] ) ? sanitize_text_field( wp_unslash( $_POST['secret'] ) ) : '';
+		$code   = isset( $_POST['code'] ) ? sanitize_text_field( wp_unslash( $_POST['code'] ) ) : '';
 
 		if ( '' === $token || '' === $secret ) {
 			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code invalid_request' );

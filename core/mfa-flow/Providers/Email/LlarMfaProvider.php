@@ -35,20 +35,15 @@ class LlarMfaProvider implements MfaProviderInterface {
 	}
 
 	/**
-	 * Build send_email_url (REST) and send_email_url_fallback (AJAX) from secret for handshake API.
+	 * Build send_email_url (REST) and send_email_url_fallback (AJAX) for handshake API.
+	 * No secret in URL; caller must send secret in POST body. send_email_secret stays in payload for the API to use.
 	 *
-	 * @param string $send_email_secret Secret for send_code endpoint (query arg); URL-safe.
+	 * @param string|null $send_email_secret Unused (kept for interface); secret is passed in handshake payload for POST body.
 	 * @return array { send_email_url: string, send_email_url_fallback: string }
 	 */
-	public function build_send_email_urls( $send_email_secret ) {
-		$send_email_url = MfaRestApi::get_send_code_rest_url( $send_email_secret );
-		$send_email_url_fallback = add_query_arg(
-			array(
-				'action' => self::AJAX_ACTION,
-				'secret' => $send_email_secret,
-			),
-			admin_url( 'admin-ajax.php' )
-		);
+	public function build_send_email_urls( $send_email_secret = null ) {
+		$send_email_url = MfaRestApi::get_send_code_rest_url();
+		$send_email_url_fallback = add_query_arg( 'action', self::AJAX_ACTION, admin_url( 'admin-ajax.php' ) );
 		return array(
 			'send_email_url'          => $send_email_url,
 			'send_email_url_fallback' => $send_email_url_fallback,
@@ -56,13 +51,12 @@ class LlarMfaProvider implements MfaProviderInterface {
 	}
 
 	/**
-	 * @param array $payload user_ip, login_url, user_group, is_pre_authenticated; send_email_secret (provider builds send_email_url from it).
+	 * @param array $payload user_ip, login_url, user_group, is_pre_authenticated; send_email_secret (used by API in POST body; URLs have no secret).
 	 * @return array { success: bool, data: array|null, error: string|null }
 	 */
 	public function handshake( array $payload ) {
-		if ( ! empty( $payload['send_email_secret'] ) ) {
-			$urls = $this->build_send_email_urls( $payload['send_email_secret'] );
-			unset( $payload['send_email_secret'] );
+		if ( isset( $payload['send_email_secret'] ) ) {
+			$urls = $this->build_send_email_urls();
 			$payload = array_merge( $payload, $urls );
 		}
 		$opts = $this->get_request_options();

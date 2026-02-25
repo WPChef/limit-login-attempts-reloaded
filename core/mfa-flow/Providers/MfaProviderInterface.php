@@ -26,18 +26,18 @@ interface MfaProviderInterface {
 	public function get_label();
 
 	/**
-	 * Build send_email_url and send_email_url_fallback from secret for handshake API.
+	 * Build send_email_url and send_email_url_fallback for handshake API (no secret in URL).
 	 * Providers that use email OTP return REST and optional AJAX fallback URLs; others may return empty strings.
 	 *
-	 * @param string $send_email_secret Secret for send_code endpoint (query arg); URL-safe.
+	 * @param string|null $send_email_secret Optional; kept for interface compatibility. Secret is passed in handshake payload for POST body.
 	 * @return array { send_email_url: string, send_email_url_fallback: string }
 	 */
 	public function build_send_email_urls( $send_email_secret );
 
 	/**
 	 * Run handshake with MFA service.
-	 * Caller may pass send_email_secret in payload; provider builds send_email_url (and optionally
-	 * send_email_url_fallback) for the API. API payload: user_ip, login_url, send_email_url, user_group, is_pre_authenticated.
+	 * Caller may pass send_email_secret in payload; provider adds send_email_url and send_email_url_fallback (no secret in URL).
+	 * API payload: user_ip, login_url, send_email_url, send_email_url_fallback, send_email_secret, user_group, is_pre_authenticated.
 	 *
 	 * @param array $payload Request payload (user_ip, login_url, user_group, is_pre_authenticated; may include send_email_secret).
 	 * @return array { success: bool, data: array|null (token, secret, redirect_url), error: string|null }

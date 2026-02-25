@@ -44,7 +44,7 @@ class MfaRestApi {
 			self::REST_NAMESPACE,
 			self::SEND_CODE_ROUTE,
 			array(
-				'methods'             => 'GET',
+				'methods'             => 'POST',
 				'callback'            => array( __CLASS__, 'send_code_callback' ),
 				'permission_callback' => '__return_true',
 				'args'                => array(
@@ -69,7 +69,7 @@ class MfaRestApi {
 	}
 
 	/**
-	 * REST callback: MFA send-code. GET only (token, secret, code in query).
+	 * REST callback: MFA send-code. POST only (token, secret, code in request body).
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_REST_Response
@@ -119,18 +119,16 @@ class MfaRestApi {
 		$store = new SessionStore();
 		$store->save_send_email_secret( 'test-token', 'test-secret' );
 		$store->save_session( 'test-token', 'test-secret', $user->user_login, (int) $user->ID, '', '', 'llar', true );
-		return new \WP_REST_Response( array( 'success' => true, 'message' => 'Session created. Call send-code with token=test-token&secret=test-secret&code=123456' ), 200 );
+		return new \WP_REST_Response( array( 'success' => true, 'message' => 'Session created. POST send-code with body: token=test-token&secret=test-secret&code=123456' ), 200 );
 	}
 
 	/**
-	 * Build REST URL for send-code (GET). Used in handshake as primary send_email_url.
-	 * The MFA app will append token and code when calling this URL.
+	 * Build REST URL for send-code (POST). Used in handshake as primary send_email_url.
+	 * No query args; the MFA app must POST token, secret, and code in the request body.
 	 *
-	 * @param string $send_email_secret Secret for send_email_url (query arg).
 	 * @return string
 	 */
-	public static function get_send_code_rest_url( $send_email_secret ) {
-		$rest_url = rest_url( self::REST_NAMESPACE . '/' . self::SEND_CODE_ROUTE );
-		return add_query_arg( 'secret', $send_email_secret, $rest_url );
+	public static function get_send_code_rest_url() {
+		return rest_url( self::REST_NAMESPACE . '/' . self::SEND_CODE_ROUTE );
 	}
 }
