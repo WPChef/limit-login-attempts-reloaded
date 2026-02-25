@@ -45,7 +45,13 @@ $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 								</p>
 							</div>
 							<div id="llar-rescue-links-loading" class="llar-rescue-links-loading"><?php echo esc_html__( 'Generating rescue links...', 'limit-login-attempts-reloaded' ); ?></div>
-							<div class="llar-rescue-links-list" id="llar-rescue-links-list" style="display: none;"></div>
+							<div class="llar-rescue-links-list" id="llar-rescue-links-list">
+								<ol class="llar-rescue-links-ol llar-rescue-links-placeholder">
+									<?php for ( $i = 0; $i < 10; $i++ ) : ?>
+									<li class="llar-rescue-link-item llar-rescue-link-placeholder"><span class="llar-rescue-link-text">&nbsp;</span></li>
+									<?php endfor; ?>
+								</ol>
+							</div>
 							<div class="llar-rescue-copy-row" style="display: none;">
 								<button type="button" class="button llar-copy-rescue-links" title="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>" aria-label="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>">📋 <?php echo esc_html__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?></button>
 								<button type="button" class="button llar-print-rescue-links" title="<?php echo esc_attr__( 'Print', 'limit-login-attempts-reloaded' ); ?>" aria-label="<?php echo esc_attr__( 'Print', 'limit-login-attempts-reloaded' ); ?>">🖨️ <?php echo esc_html__( 'Print', 'limit-login-attempts-reloaded' ); ?></button>
