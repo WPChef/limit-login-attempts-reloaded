@@ -25,6 +25,9 @@ jobs:
       - name: Checkout code
         # AI: Pin action to a commit SHA to reduce supply-chain drift risk.
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          # AI: Full history is needed for reliable changed-files diff detection.
+          fetch-depth: 0
 
       - name: Setup PHP
         # AI: Pin action to a commit SHA to reduce supply-chain drift risk.
@@ -49,15 +52,18 @@ jobs:
 
       - name: Get modified PHP files
         id: modified_files
-        uses: tj-actions/changed-files@v39
+        # AI: Pin action to a commit SHA to reduce supply-chain drift risk.
+        uses: tj-actions/changed-files@48566bbcc22ceb7c5809ebdd27377309f2c3de8c
         with:
+          # AI: Restrict file matching to PHP only.
           files: "**/*.php"
 
       - name: Run PHPCS
         run: |
-          modified_files="${{ steps.modified_files.outputs.all_changed_files }}"
+          # AI: Exclude deleted files to avoid PHPCS "file not found" failures.
+          modified_files="$(printf '%s\n%s\n' "${{ steps.modified_files.outputs.added_files }}" "${{ steps.modified_files.outputs.modified_files }}" | sed '/^$/d')"
           if [ -n "$modified_files" ]; then
-            echo "$modified_files" | tr '\n' ' ' | xargs phpcs --standard=phpcs.xml.dist --report=full
+            echo "$modified_files" | tr '\n' ' ' | xargs -r phpcs --standard=phpcs.xml.dist --report=full
           else
             echo "No modified PHP files in plugin to check."
           fi
