@@ -79,7 +79,7 @@ $is_mfa_disabled   = ( null !== $mfa_block_reason );
 								<?php esc_html_e( 'Enable multi-factor authentication for selected user roles', 'limit-login-attempts-reloaded' ); ?>
 							</label>
 							<div class="description-secondary" style="margin-top: 10px;">
-								<?php echo esc_html__( 'By turning this feature ON, you consent that for the selected user groups and for all visitors without an assigned group (e.g., guests), the following data will be sent to a secure endpoint at limitloginattempts.com to facilitate multi-factor authentication: username, IP address, user group (if known), and user agent. We will use this data only for 2FA/MFA and will delete it from our servers as soon as the 2FA session ends, unless you (the admin) specify otherwise. The passwords will NOT be sent to us.', 'limit-login-attempts-reloaded' ); ?>
+								<?php echo esc_html__( 'By turning this feature ON, you consent to the following data being sent to a secure endpoint at limitloginattempts.com to facilitate multi-factor authentication for the selected user groups and for all visitors without an assigned group (e.g., guests): this website\'s domain, user ID, username and/or email address, IP addresses, user group (if known), and user agent. We will use this data only for 2FA/MFA and will delete it from our servers as soon as the 2FA session ends, unless you (the admin) specify otherwise. Passwords will NEVER be sent to us. If an email address is sent, it will NEVER be used for any purpose other than sending a one-time 2FA code, nor will it be shared with any third party.', 'limit-login-attempts-reloaded' ); ?>
 							</div>
 							<?php if ( $is_mfa_disabled ) : ?>
 								<p class="description" style="color: #dc3232; font-weight: bold; margin-top: 8px;">
