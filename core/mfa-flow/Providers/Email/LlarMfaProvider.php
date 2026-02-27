@@ -75,6 +75,29 @@ class LlarMfaProvider implements MfaProviderInterface {
 	}
 
 	/**
+	 * Send verification code to the user by email.
+	 *
+	 * @param \WP_User $user User to send code to.
+	 * @param string  $code Verification code.
+	 * @return array { success: bool, message: string|null }
+	 */
+	public function send_code( $user, $code ) {
+		if ( ! $user || ! is_a( $user, 'WP_User' ) || empty( $user->user_email ) ) {
+			return array( 'success' => true, 'message' => null );
+		}
+		$subject = __( 'Your verification code', 'limit-login-attempts-reloaded' );
+		$body    = sprintf( __( 'Your verification code is: %s', 'limit-login-attempts-reloaded' ), $code );
+		$sent    = wp_mail( $user->user_email, $subject, $body );
+		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) );
+		}
+		if ( $sent ) {
+			return array( 'success' => true, 'message' => null );
+		}
+		return array( 'success' => false, 'message' => 'Failed to send email' );
+	}
+
+	/**
 	 * Config fields for admin. Endpoint from constants (LLA_MFA_API_BASE_URL, LLA_MFA_API_PATH).
 	 *
 	 * @return array
