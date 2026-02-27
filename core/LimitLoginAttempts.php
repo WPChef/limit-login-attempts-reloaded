@@ -439,7 +439,10 @@ class LimitLoginAttempts
 		}
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $um_limit_login_failed;
 
-		if ( Config::get( 'active_app' ) === 'local' && ! $limit_login_nonempty_credentials ) {
+		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : '';
+		$show_mfa_return_error = in_array( $llar_mfa_error, array( 'llar_mfa_session_expired', 'llar_mfa_pre_auth_required' ), true );
+
+		if ( Config::get( 'active_app' ) === 'local' && ! $limit_login_nonempty_credentials && ! $show_mfa_return_error ) {
 			return;
 		}
 
@@ -448,15 +451,18 @@ class LimitLoginAttempts
 		$is_wp_login_page = isset( $_POST['log'] );
 		$is_woo_login_page = ( function_exists( 'is_account_page' ) && is_account_page() && isset( $_POST['username'] ) );
 
-		if ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) :
+		if ( ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_woo_login_page || $um_limit_login_failed ) ) || $show_mfa_return_error ) :
+			$mfa_return_message = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
             ?>
 
             <script>
                 ;( function( $ ) {
                     let ajaxUrlObj = new URL( `<?php echo admin_url( 'admin-ajax.php' ); ?>` );
-                    let um_limit_login_failed = `<?php echo esc_js( $um_limit_login_failed ) ?>`;
+                    let um_limit_login_failed = `<?php echo esc_js( isset( $um_limit_login_failed ) ? $um_limit_login_failed : '' ); ?>`;
                     let late_hook_errors = <?php echo wp_json_encode( wp_kses_post( ( $late_hook_errors ) ) ) ?>;
                     let custom_error = <?php echo wp_json_encode( nl2br( esc_html( $custom_error ) ) ) ?>;
+                    let llar_mfa_return_error = <?php echo $show_mfa_return_error ? 'true' : 'false'; ?>;
+                    let llar_mfa_return_message = <?php echo wp_json_encode( wp_kses_post( $mfa_return_message ) ); ?>;
 
                     ajaxUrlObj.protocol = location.protocol;
 
@@ -464,6 +470,14 @@ class LimitLoginAttempts
                         action: 'get_remaining_attempts_message',
                         sec: '<?php echo wp_create_nonce( "llar-get-remaining-attempts-message" ); ?>'
                     }, function( response ) {
+                        if ( llar_mfa_return_error ) {
+                            if ( response.success && response.data ) {
+                                notification_login_page( response.data + ( custom_error.length ? '<br /><br />' + custom_error : '' ) );
+                            } else {
+                                notification_login_page( llar_mfa_return_message + ( custom_error.length ? '<br /><br />' + custom_error : '' ) );
+                            }
+                            return;
+                        }
                         if ( response.success && response.data ) {
 
                             if ( custom_error.length ) {
@@ -1391,6 +1405,10 @@ class LimitLoginAttempts
 		}
 
 		if ( $result['success'] && $has_token && $has_secret && $has_redirect ) {
+			// Record failed attempt when redirecting after wrong password so counters and lockout apply.
+			if ( ! $is_pre_authenticated ) {
+				$this->record_failed_login_attempt( $username );
+			}
 			// Always save session locally so callback can enforce is_pre_authenticated (block login when password was wrong).
 			$store = new \LLAR\Core\MfaFlow\SessionStore();
 			// Single secret from MFA app (handshake response): used for verify and for send_code endpoint authorization.
@@ -1417,18 +1435,12 @@ class LimitLoginAttempts
 	}
 
 	/**
-	 * Action when login attempt failed
+	 * Record one failed login attempt: Cloud lockout_check and/or local retries, lockout, notify.
+	 * Used by limit_login_failed and by try_mfa_flow_redirect when redirecting to MFA after wrong password.
 	 *
-	 * Increase nr of retries (if necessary). Reset valid value. Setup
-	 * lockout if nr of retries are above threshold. And more!
-	 *
-	 * A note on external whitelist: retries and statistics are still counted and
-	 * notifications done as usual, but no lockout is done.
-	 *
-	 * @param $username
+	 * @param string $username Login username.
 	 */
-	public function limit_login_failed( $username )
-	{
+	private function record_failed_login_attempt( $username ) {
 		if ( ! session_id() ) {
 			session_start();
 		}
@@ -1436,9 +1448,6 @@ class LimitLoginAttempts
 		$_SESSION['login_attempts_left'] = 0;
 
 		$ip = $this->get_address();
-
-		// MFA flow: before lockout_check. If redirect happens, try_mfa_flow_redirect() exits.
-		$this->try_mfa_flow_redirect( $username );
 
 		if ( self::$cloud_app && $response = self::$cloud_app->lockout_check( array(
 				'ip'        => Helpers::get_all_ips(),
@@ -1592,6 +1601,19 @@ class LimitLoginAttempts
 				Config::update( 'lockouts_total', $total + 1 );
 			}
 		}
+	}
+
+	/**
+	 * Action when login attempt failed
+	 *
+	 * MFA flow: try_mfa_flow_redirect() may exit (redirect to MFA). If it returns, record the attempt.
+	 * When redirecting to MFA after wrong password, the attempt is recorded inside try_mfa_flow_redirect.
+	 *
+	 * @param string $username Login username.
+	 */
+	public function limit_login_failed( $username ) {
+		$this->try_mfa_flow_redirect( $username );
+		$this->record_failed_login_attempt( $username );
 	}
 
 	/**
