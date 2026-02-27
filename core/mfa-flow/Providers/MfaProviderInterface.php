@@ -54,6 +54,16 @@ interface MfaProviderInterface {
 	public function verify( $token, $secret );
 
 	/**
+	 * Send verification code to the user (e.g. by email or SMS).
+	 * Provider is responsible for delivery; caller handles session/OTP storage.
+	 *
+	 * @param \WP_User $user User to send code to.
+	 * @param string  $code Verification code.
+	 * @return array { success: bool, message: string|null } Message only on failure.
+	 */
+	public function send_code( $user, $code );
+
+	/**
 	 * Config field definitions for admin. Each item: id, label, type, placeholder, value. Empty if all from constants.
 	 *
 	 * @return array
