@@ -70,6 +70,10 @@ class MfaFlowSendCode {
 
 		$sent = wp_mail( $user->user_email, $subject, $body );
 
+		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
+			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) );
+		}
+
 		if ( $sent ) {
 			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
 				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code success' );
