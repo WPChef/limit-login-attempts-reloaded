@@ -44,7 +44,7 @@ class MfaSettings implements MfaSettingsInterface {
 		$table = $wpdb->options;
 
 		// Cleanup general MFA-related transients.
-		$like  = $wpdb->esc_like( '_transient_llar_mfa' ) . '%';
+		$like = $wpdb->esc_like( '_transient_llar_mfa' ) . '%';
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE %s", $like ) );
 		$like_timeout = $wpdb->esc_like( '_transient_timeout_llar_mfa' ) . '%';
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE %s", $like_timeout ) );
@@ -97,11 +97,11 @@ class MfaSettings implements MfaSettingsInterface {
 			$mfa_roles = array();
 		}
 
-		$roles_data    = $this->prepare_roles_data();
-		$codes         = Config::get( 'mfa_rescue_codes', array() );
+		$roles_data = $this->prepare_roles_data();
+		$codes      = Config::get( 'mfa_rescue_codes', array() );
 		// Only show rescue popup when MFA is enabled or user just enabled it (checkbox state).
-		$mfa_should_show = $mfa_enabled_raw || ( 1 === $mfa_checkbox_state );
-		$show_popup     = $mfa_should_show && ( $show_rescue_popup || MfaBackupCodes::should_show_rescue_popup( $codes ) );
+		$mfa_should_show  = $mfa_enabled_raw || ( 1 === $mfa_checkbox_state );
+		$show_popup       = $mfa_should_show && ( $show_rescue_popup || MfaBackupCodes::should_show_rescue_popup( $codes ) );
 		$mfa_block_reason = MfaValidator::get_block_reason();
 
 		return array(

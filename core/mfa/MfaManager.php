@@ -103,7 +103,7 @@ class MfaManager {
 	 * @return bool True if popup should be shown.
 	 */
 	public function should_show_rescue_popup() {
-		$mfa_enabled = Config::get( 'mfa_enabled', false );
+		$mfa_enabled    = Config::get( 'mfa_enabled', false );
 		$checkbox_state = get_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
 		if ( ! $mfa_enabled && 1 !== (int) $checkbox_state ) {
 			return false;
@@ -161,7 +161,7 @@ class MfaManager {
 	 * @return void
 	 */
 	public function prepare_roles_data() {
-		$data = $this->settings->prepare_roles_data();
+		$data                 = $this->settings->prepare_roles_data();
 		$this->prepared_roles = $data['prepared_roles'];
 		$this->editable_roles = $data['editable_roles'];
 	}
@@ -220,10 +220,13 @@ class MfaManager {
 				array_map( 'sanitize_text_field', wp_unslash( (array) $_POST['mfa_roles'] ) ),
 				'strlen'
 			);
-			$mfa_roles = array_intersect( $sanitized_roles, $editable_role_keys );
-			$mfa_roles = array_filter( $mfa_roles, function ( $role ) {
-				return (bool) get_role( $role );
-			} );
+			$mfa_roles          = array_intersect( $sanitized_roles, $editable_role_keys );
+			$mfa_roles          = array_filter(
+				$mfa_roles,
+				function ( $role ) {
+					return (bool) get_role( $role );
+				}
+			);
 		}
 		return $mfa_roles;
 	}
@@ -241,8 +244,8 @@ class MfaManager {
 			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ) );
 		}
 
-		$user_id  = get_current_user_id();
-		$rate_key = 'llar_mfa_pdf_gen_' . $user_id;
+		$user_id   = get_current_user_id();
+		$rate_key  = 'llar_mfa_pdf_gen_' . $user_id;
 		$rate_data = get_transient( $rate_key );
 		if ( false !== $rate_data && is_array( $rate_data ) ) {
 			$elapsed = time() - (int) $rate_data['t'];
@@ -250,10 +253,16 @@ class MfaManager {
 				wp_send_json_error( array( 'message' => __( 'Too many generations. Please try again in a minute.', 'limit-login-attempts-reloaded' ) ) );
 			}
 			if ( $elapsed >= MfaConstants::PDF_RATE_LIMIT_PERIOD ) {
-				$rate_data = array( 'c' => 0, 't' => time() );
+				$rate_data = array(
+					'c' => 0,
+					't' => time(),
+				);
 			}
 		} else {
-			$rate_data = array( 'c' => 0, 't' => time() );
+			$rate_data = array(
+				'c' => 0,
+				't' => time(),
+			);
 		}
 		$rate_data['c'] = (int) $rate_data['c'] + 1;
 		set_transient( $rate_key, $rate_data, MfaConstants::PDF_RATE_LIMIT_PERIOD );
@@ -286,11 +295,13 @@ class MfaManager {
 		Config::update( 'mfa_rescue_download_token', wp_generate_password( 32, false ) );
 		// MFA is enabled only when user clicks Save Settings (after confirming rescue codes in popup).
 
-		wp_send_json_success( array(
-			'rescue_urls'  => $rescue_urls,
-			'html_content' => $html_content,
-			'domain'       => wp_parse_url( home_url(), PHP_URL_HOST ),
-		) );
+		wp_send_json_success(
+			array(
+				'rescue_urls'  => $rescue_urls,
+				'html_content' => $html_content,
+				'domain'       => wp_parse_url( home_url(), PHP_URL_HOST ),
+			)
+		);
 	}
 
 	/**
@@ -309,10 +320,14 @@ class MfaManager {
 		}
 		$plugin_url = defined( 'LLA_PLUGIN_URL' ) ? LLA_PLUGIN_URL : plugins_url( '/', __DIR__ . '/../limit-login-attempts-reloaded.php' );
 		wp_enqueue_script( 'llar-mfa-disabled-message', $plugin_url . 'assets/js/mfa-disabled-message.js', array( 'jquery' ), '1.0.0', true );
-		wp_localize_script( 'llar-mfa-disabled-message', 'llarMfaDisabled', array(
-			'showMessage' => true,
-			'message'     => esc_html__( 'Multi-factor authentication has been temporarily disabled.', 'limit-login-attempts-reloaded' ),
-		) );
+		wp_localize_script(
+			'llar-mfa-disabled-message',
+			'llarMfaDisabled',
+			array(
+				'showMessage' => true,
+				'message'     => esc_html__( 'Multi-factor authentication has been temporarily disabled.', 'limit-login-attempts-reloaded' ),
+			)
+		);
 	}
 
 	/**
@@ -343,10 +358,13 @@ class MfaManager {
 				}
 			}
 		}
-		$merged = array_merge( $existing_data, array(
-			'nonce_mfa_generate_codes' => $mfa_generate_codes,
-			'ajax_url'                 => admin_url( 'admin-ajax.php' ),
-		) );
+		$merged = array_merge(
+			$existing_data,
+			array(
+				'nonce_mfa_generate_codes' => $mfa_generate_codes,
+				'ajax_url'                 => admin_url( 'admin-ajax.php' ),
+			)
+		);
 		wp_localize_script( 'lla-main', 'llar_vars', $merged );
 		// Fire action so PDF lib (jsPDF) is enqueued on MFA tab for "Download as PDF".
 		do_action( 'llar_mfa_generate_codes' );

@@ -34,9 +34,9 @@ class MfaFlowSendCode {
 				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code invalid_secret' );
 			}
 			return array(
-				'success'      => false,
-				'http_status'  => 403,
-				'message'      => 'Forbidden',
+				'success'     => false,
+				'http_status' => 403,
+				'message'     => 'Forbidden',
 			);
 		}
 
@@ -46,9 +46,9 @@ class MfaFlowSendCode {
 				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code session_not_found' );
 			}
 			return array(
-				'success'      => false,
-				'http_status'  => 403,
-				'message'      => 'Forbidden',
+				'success'     => false,
+				'http_status' => 403,
+				'message'     => 'Forbidden',
 			);
 		}
 
@@ -59,9 +59,9 @@ class MfaFlowSendCode {
 				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code user_not_found_no_enum' );
 			}
 			return array(
-				'success'      => true,
-				'http_status'  => 200,
-				'message'      => null,
+				'success'     => true,
+				'http_status' => 200,
+				'message'     => null,
 			);
 		}
 
@@ -72,9 +72,9 @@ class MfaFlowSendCode {
 				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code provider_not_found provider_id=' . $provider_id );
 			}
 			return array(
-				'success'      => false,
-				'http_status'  => 500,
-				'message'      => 'Provider not available',
+				'success'     => false,
+				'http_status' => 500,
+				'message'     => 'Provider not available',
 			);
 		}
 
@@ -86,9 +86,9 @@ class MfaFlowSendCode {
 			$store->save_otp( $token, $code );
 			$store->delete_send_email_secret( $token );
 			return array(
-				'success'      => true,
-				'http_status'  => 200,
-				'message'      => null,
+				'success'     => true,
+				'http_status' => 200,
+				'message'     => null,
 			);
 		}
 
@@ -97,9 +97,9 @@ class MfaFlowSendCode {
 		}
 		$message = isset( $result['message'] ) && is_string( $result['message'] ) ? $result['message'] : 'Failed to send code';
 		return array(
-			'success'      => false,
-			'http_status'  => 500,
-			'message'      => $message,
+			'success'     => false,
+			'http_status' => 500,
+			'message'     => $message,
 		);
 	}
 }

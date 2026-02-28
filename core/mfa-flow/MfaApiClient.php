@@ -39,7 +39,11 @@ class MfaApiClient {
 	public function handshake( array $payload, $options = array() ) {
 		$base = isset( $options['base_url'] ) && (string) $options['base_url'] !== '' ? rtrim( (string) $options['base_url'], '/' ) : self::get_default_base_url();
 		if ( '' === $base ) {
-			return array( 'success' => false, 'data' => null, 'error' => 'MFA API endpoint not configured' );
+			return array(
+				'success' => false,
+				'data'    => null,
+				'error'   => 'MFA API endpoint not configured',
+			);
 		}
 
 		$url = $base . '/wp/handshake';
@@ -70,17 +74,21 @@ class MfaApiClient {
 	public function verify( $token, $secret, $options = array() ) {
 		$base = isset( $options['base_url'] ) && (string) $options['base_url'] !== '' ? rtrim( (string) $options['base_url'], '/' ) : self::get_default_base_url();
 		if ( '' === $base ) {
-			return array( 'success' => false, 'data' => null, 'error' => 'MFA API endpoint not configured' );
+			return array(
+				'success' => false,
+				'data'    => null,
+				'error'   => 'MFA API endpoint not configured',
+			);
 		}
 
-		$url = $base . '/wp/verify';
+		$url             = $base . '/wp/verify';
 		$request_options = array(
 			'data' => array(
 				'token'  => $token,
 				'secret' => $secret,
 			),
 		);
-		$response = Http::post( $url, $request_options );
+		$response        = Http::post( $url, $request_options );
 
 		$result = $this->parse_response( $response, $url );
 		$status = isset( $response['status'] ) ? (int) $response['status'] : 0;
@@ -99,21 +107,33 @@ class MfaApiClient {
 	 */
 	private function parse_response( $response, $url ) {
 		$status = isset( $response['status'] ) ? (int) $response['status'] : 0;
-		$body = isset( $response['data'] ) ? $response['data'] : '';
-		$err = isset( $response['error'] ) ? $response['error'] : null;
+		$body   = isset( $response['data'] ) ? $response['data'] : '';
+		$err    = isset( $response['error'] ) ? $response['error'] : null;
 
 		if ( 200 !== $status ) {
 			$decoded = is_string( $body ) ? json_decode( $body, true ) : null;
 			$message = ( is_array( $decoded ) && ! empty( $decoded['message'] ) ) ? $decoded['message'] : $err;
-			return array( 'success' => false, 'data' => null, 'error' => $message ? $message : 'Request failed' );
+			return array(
+				'success' => false,
+				'data'    => null,
+				'error'   => $message ? $message : 'Request failed',
+			);
 		}
 
 		$data = is_string( $body ) ? json_decode( $body, true ) : null;
 		if ( ! is_array( $data ) ) {
-			return array( 'success' => false, 'data' => null, 'error' => 'Invalid response' );
+			return array(
+				'success' => false,
+				'data'    => null,
+				'error'   => 'Invalid response',
+			);
 		}
 
 		$data = Helpers::sanitize_stripslashes_deep( $data );
-		return array( 'success' => true, 'data' => $data, 'error' => null );
+		return array(
+			'success' => true,
+			'data'    => $data,
+			'error'   => null,
+		);
 	}
 }

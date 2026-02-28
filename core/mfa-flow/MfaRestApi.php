@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class MfaRestApi {
 
-	const REST_NAMESPACE = 'llar/v1';
-	const SEND_CODE_ROUTE = 'mfa/send-code';
+	const REST_NAMESPACE     = 'llar/v1';
+	const SEND_CODE_ROUTE    = 'mfa/send-code';
 	const TEST_SESSION_ROUTE = 'mfa/test-handshake-session';
 
 	/**
@@ -85,7 +85,10 @@ class MfaRestApi {
 				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code invalid_request' );
 			}
 			return new \WP_REST_Response(
-				array( 'success' => false, 'message' => 'Forbidden' ),
+				array(
+					'success' => false,
+					'message' => 'Forbidden',
+				),
 				403
 			);
 		}
@@ -111,15 +114,32 @@ class MfaRestApi {
 	 * @return \WP_REST_Response
 	 */
 	public static function test_handshake_session_callback( $request ) {
-		$admins = get_users( array( 'role' => 'administrator', 'number' => 1 ) );
+		$admins = get_users(
+			array(
+				'role'   => 'administrator',
+				'number' => 1,
+			)
+		);
 		$user   = ! empty( $admins[0] ) ? $admins[0] : null;
 		if ( ! $user || ! is_a( $user, 'WP_User' ) ) {
-			return new \WP_REST_Response( array( 'success' => false, 'message' => 'No admin user' ), 500 );
+			return new \WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => 'No admin user',
+				),
+				500
+			);
 		}
 		$store = new SessionStore();
 		$store->save_send_email_secret( 'test-token', 'test-secret' );
 		$store->save_session( 'test-token', 'test-secret', $user->user_login, (int) $user->ID, '', '', 'llar', true );
-		return new \WP_REST_Response( array( 'success' => true, 'message' => 'Session created. POST send-code with body: token=test-token&secret=test-secret&code=123456' ), 200 );
+		return new \WP_REST_Response(
+			array(
+				'success' => true,
+				'message' => 'Session created. POST send-code with body: token=test-token&secret=test-secret&code=123456',
+			),
+			200
+		);
 	}
 
 	/**
