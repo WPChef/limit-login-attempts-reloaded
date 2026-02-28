@@ -311,7 +311,7 @@ class MfaManager {
 		wp_enqueue_script( 'llar-mfa-disabled-message', $plugin_url . 'assets/js/mfa-disabled-message.js', array( 'jquery' ), '1.0.0', true );
 		wp_localize_script( 'llar-mfa-disabled-message', 'llarMfaDisabled', array(
 			'showMessage' => true,
-			'message'     => esc_html__( 'Multi-factor authentication has been temporarily disabled. Please try again later.', 'limit-login-attempts-reloaded' ),
+			'message'     => esc_html__( 'Multi-factor authentication has been temporarily disabled.', 'limit-login-attempts-reloaded' ),
 		) );
 	}
 
