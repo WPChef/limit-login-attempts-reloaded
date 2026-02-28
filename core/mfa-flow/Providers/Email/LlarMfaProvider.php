@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class LlarMfaProvider implements MfaProviderInterface {
 
 	const PROVIDER_ID = 'llar';
-	const AJAX_ACTION  = 'llar_mfa_flow_send_code';
+	const AJAX_ACTION = 'llar_mfa_flow_send_code';
 
 	/**
 	 * @return string
@@ -42,7 +42,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 	 * @return array { send_email_url: string, send_email_url_fallback: string }
 	 */
 	public function build_send_email_urls( $send_email_secret = null ) {
-		$send_email_url = MfaRestApi::get_send_code_rest_url();
+		$send_email_url          = MfaRestApi::get_send_code_rest_url();
 		$send_email_url_fallback = add_query_arg( 'action', self::AJAX_ACTION, admin_url( 'admin-ajax.php' ) );
 		return array(
 			'send_email_url'          => $send_email_url,
@@ -83,11 +83,14 @@ class LlarMfaProvider implements MfaProviderInterface {
 	 */
 	public function send_code( $user, $code ) {
 		if ( ! $user || ! is_a( $user, 'WP_User' ) || empty( $user->user_email ) ) {
-			return array( 'success' => true, 'message' => null );
+			return array(
+				'success' => true,
+				'message' => null,
+			);
 		}
-		$subject = __( 'Your verification code', 'limit-login-attempts-reloaded' );
-		$body    = sprintf( __( 'Your verification code is: %s', 'limit-login-attempts-reloaded' ), $code );
-		$headers = array( 'Content-Type: text/plain; charset=UTF-8' );
+		$subject  = __( 'Your verification code', 'limit-login-attempts-reloaded' );
+		$body     = sprintf( __( 'Your verification code is: %s', 'limit-login-attempts-reloaded' ), $code );
+		$headers  = array( 'Content-Type: text/plain; charset=UTF-8' );
 		$to_email = $user->user_email;
 		$sent     = wp_mail( $to_email, $subject, $body, $headers );
 		/* LLAR_DEBUG_MFA_WP_MAIL_START */
@@ -96,9 +99,15 @@ class LlarMfaProvider implements MfaProviderInterface {
 		self::log_wp_mail_result( $sent, $headers_log, $to_email );
 		/* LLAR_DEBUG_MFA_WP_MAIL_END */
 		if ( $sent ) {
-			return array( 'success' => true, 'message' => null );
+			return array(
+				'success' => true,
+				'message' => null,
+			);
 		}
-		return array( 'success' => false, 'message' => 'Failed to send email' );
+		return array(
+			'success' => false,
+			'message' => 'Failed to send email',
+		);
 	}
 
 	/**

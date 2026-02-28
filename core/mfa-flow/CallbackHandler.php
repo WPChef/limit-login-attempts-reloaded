@@ -14,7 +14,7 @@ class CallbackHandler {
 
 	/**
 	 * Run on init: if request has llar_mfa and token, handle callback or show enter-code form.
-	 * 
+	 *
 	 * @return void
 	 */
 	public static function maybe_handle() {
@@ -32,7 +32,7 @@ class CallbackHandler {
 
 		$has_llar_mfa_param   = ( isset( $_GET['llar_mfa'] ) && ( $_GET['llar_mfa'] === '1' || $_GET['llar_mfa'] === 'true' ) );
 		$has_token_in_request = isset( $_GET['token'] );
-		$is_mfa_callback = $token !== '' && ( $has_llar_mfa_param || $has_token_in_request );
+		$is_mfa_callback      = $token !== '' && ( $has_llar_mfa_param || $has_token_in_request );
 
 		if ( ! $is_mfa_callback ) {
 			return;
@@ -81,7 +81,7 @@ class CallbackHandler {
 		wp_clear_auth_cookie();
 		wp_set_current_user( $user->ID );
 		wp_set_auth_cookie( $user->ID, true );
-		$redirect_to = ! empty( $session['redirect_to'] ) ? $session['redirect_to'] : '';
+		$redirect_to  = ! empty( $session['redirect_to'] ) ? $session['redirect_to'] : '';
 		$redirect_url = ( $redirect_to && self::is_safe_redirect( $redirect_to ) ) ? $redirect_to : admin_url();
 		wp_safe_redirect( $redirect_url );
 		$store->delete_session( $token );
@@ -95,9 +95,8 @@ class CallbackHandler {
 	 * @param string $code  User-entered OTP code.
 	 */
 	public static function handle( $token, $code ) {
-		$store = new SessionStore();
+		$store   = new SessionStore();
 		$session = $store->get_session( $token );
-
 
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			$store->delete_session( $token );
@@ -154,7 +153,7 @@ class CallbackHandler {
 		wp_set_current_user( $user->ID );
 		wp_set_auth_cookie( $user->ID, true );
 
-		$redirect_to = ! empty( $session['redirect_to'] ) ? $session['redirect_to'] : '';
+		$redirect_to  = ! empty( $session['redirect_to'] ) ? $session['redirect_to'] : '';
 		$redirect_url = ( $redirect_to && self::is_safe_redirect( $redirect_to ) ) ? $redirect_to : admin_url();
 		wp_safe_redirect( $redirect_url );
 		$store->delete_session( $token );

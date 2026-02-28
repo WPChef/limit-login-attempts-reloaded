@@ -104,7 +104,7 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 		if ( '' === $salt ) {
 			$salt = wp_generate_password( 64, true );
 		}
-		$hash_id = hash( 'sha256', $plain_code . $salt . wp_generate_password( 32, false ) );
+		$hash_id   = hash( 'sha256', $plain_code . $salt . wp_generate_password( 32, false ) );
 		$encrypted = $this->encrypt_code( $plain_code, $salt );
 		if ( false === $encrypted ) {
 			throw new \Exception( __( 'Encryption unavailable. OpenSSL is required for rescue links.', 'limit-login-attempts-reloaded' ) );
@@ -125,7 +125,7 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 	 * @throws \Exception When template path invalid
 	 */
 	public function generate_pdf_html( $rescue_urls ) {
-		$domain = wp_parse_url( home_url(), PHP_URL_HOST );
+		$domain        = wp_parse_url( home_url(), PHP_URL_HOST );
 		$allowed_dir   = realpath( LLA_PLUGIN_DIR . 'views' );
 		$template_path = realpath( LLA_PLUGIN_DIR . 'views/mfa-rescue-pdf.php' );
 		if ( false === $allowed_dir || false === $template_path || 0 !== strpos( $template_path, $allowed_dir ) ) {

@@ -59,7 +59,7 @@ class SessionStore {
 		if ( ! is_string( $token ) || '' === $token ) {
 			return null;
 		}
-		$key = LLA_MFA_FLOW_TRANSIENT_SESSION_PREFIX . $token;
+		$key  = LLA_MFA_FLOW_TRANSIENT_SESSION_PREFIX . $token;
 		$data = get_transient( $key );
 		if ( false === $data || ! is_array( $data ) ) {
 			return null;
@@ -107,7 +107,7 @@ class SessionStore {
 		if ( ! is_string( $token ) || '' === $token ) {
 			return null;
 		}
-		$key = LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX . $token;
+		$key  = LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX . $token;
 		$code = get_transient( $key );
 		return ( false !== $code && is_string( $code ) ) ? $code : null;
 	}
