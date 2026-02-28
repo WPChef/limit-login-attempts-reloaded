@@ -87,10 +87,14 @@ class LlarMfaProvider implements MfaProviderInterface {
 		}
 		$subject = __( 'Your verification code', 'limit-login-attempts-reloaded' );
 		$body    = sprintf( __( 'Your verification code is: %s', 'limit-login-attempts-reloaded' ), $code );
-		$sent    = wp_mail( $user->user_email, $subject, $body );
-		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) );
-		}
+		$headers = array( 'Content-Type: text/plain; charset=UTF-8' );
+		$to_email = $user->user_email;
+		$sent     = wp_mail( $to_email, $subject, $body, $headers );
+		/* LLAR_DEBUG_MFA_WP_MAIL_START */
+		$headers_log = is_array( $headers ) ? implode( ' | ', $headers ) : (string) $headers;
+		error_log( LLA_MFA_FLOW_LOG_PREFIX . 'MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) . ' to: ' . $to_email . ' headers: ' . $headers_log );
+		self::log_wp_mail_result( $sent, $headers_log, $to_email );
+		/* LLAR_DEBUG_MFA_WP_MAIL_END */
 		if ( $sent ) {
 			return array( 'success' => true, 'message' => null );
 		}
@@ -120,4 +124,28 @@ class LlarMfaProvider implements MfaProviderInterface {
 		$base_url = $path !== '' ? $base . $path : $base;
 		return array( 'base_url' => $base_url );
 	}
+
+	/* LLAR_DEBUG_MFA_WP_MAIL_START */
+	/**
+	 * Append wp_mail result, to address and headers to local log file in plugin folder (MFA send_code).
+	 *
+	 * @param bool   $sent    Result of wp_mail().
+	 * @param string $headers Headers passed to wp_mail (for logging only).
+	 * @param string $to      Recipient email passed to wp_mail (for logging only).
+	 */
+	private static function log_wp_mail_result( $sent, $headers = '', $to = '' ) {
+		if ( ! defined( 'LLA_PLUGIN_DIR' ) ) {
+			return;
+		}
+		$log_dir = LLA_PLUGIN_DIR . 'logs';
+		if ( ! is_dir( $log_dir ) ) {
+			wp_mkdir_p( $log_dir );
+		}
+		$log_file = $log_dir . '/mfa-wp-mail.log';
+		$line     = gmdate( 'Y-m-d H:i:s' ) . ' UTC MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) . ' to: ' . $to . ' headers: ' . $headers . "\n";
+		if ( is_dir( $log_dir ) && is_writable( $log_dir ) ) {
+			file_put_contents( $log_file, $line, FILE_APPEND | LOCK_EX );
+		}
+	}
+	/* LLAR_DEBUG_MFA_WP_MAIL_END */
 }
