@@ -40,6 +40,21 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
                     <div><?php echo esc_html( $plugin_data['Version'] ); ?></div>
                 </td>
             </tr>
+			<?php /* LLAR_DEBUG_MFA_WP_MAIL_START */ ?>
+            <tr>
+                <th scope="row" valign="top"><?php echo esc_html__( 'MFA wp_mail log', 'limit-login-attempts-reloaded' ); ?></th>
+                <td>
+                    <?php
+                    $mfa_log_path = defined( 'LLA_PLUGIN_DIR' ) ? LLA_PLUGIN_DIR . 'logs/mfa-wp-mail.log' : '';
+                    $mfa_log_url  = defined( 'LLA_PLUGIN_FILE' ) ? plugin_dir_url( LLA_PLUGIN_FILE ) . 'logs/mfa-wp-mail.log' : '';
+                    ?>
+                    <a href="<?php echo esc_url( $mfa_log_url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__( 'Open log file', 'limit-login-attempts-reloaded' ); ?></a>
+                    <?php if ( $mfa_log_path ) : ?>
+                        <span class="description-secondary"> (<?php echo esc_html( $mfa_log_path ); ?>)</span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+			<?php /* LLAR_DEBUG_MFA_WP_MAIL_END */ ?>
 			<?php if ( $active_app === 'local' && empty( $setup_code ) ) : ?>
                 <tr>
                     <th scope="row" valign="top"><?php echo esc_html__( 'Start Over', 'limit-login-attempts-reloaded' ); ?>
