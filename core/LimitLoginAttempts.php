@@ -751,8 +751,9 @@ class LimitLoginAttempts
 				} elseif ( $response['result'] === 'pass' ) {
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
-					// Keep wp_login_failed when MFA is enabled so limit_login_failed runs (handshake + redirect to MFA app).
-					if ( ! Config::get( 'mfa_enabled' ) ) {
+					// Keep wp_login_failed when MFA is enabled (and not temporarily disabled) so limit_login_failed runs (handshake + redirect to MFA app).
+					$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
+					if ( ! $mfa_effectively_enabled ) {
 						remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 					}
 					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
@@ -795,8 +796,9 @@ class LimitLoginAttempts
 
 				} elseif ( $this->is_username_whitelisted( $username ) || $this->is_ip_whitelisted( $ip ) ) {
 					$_SESSION['llar_user_is_whitelisted'] = true;
-					// Keep wp_login_failed when MFA is enabled so limit_login_failed runs (handshake + redirect to MFA app).
-					if ( ! Config::get( 'mfa_enabled' ) ) {
+					// Keep wp_login_failed when MFA is enabled (and not temporarily disabled) so limit_login_failed runs (handshake + redirect to MFA app).
+					$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
+					if ( ! $mfa_effectively_enabled ) {
 						remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 					}
 					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
@@ -1328,8 +1330,9 @@ class LimitLoginAttempts
 	private function try_mfa_flow_redirect( $username, $is_pre_authenticated = false ) {
 		$ip = $this->get_address();
 
-		$mfa_flow_enabled = (bool) Config::get( 'mfa_flow_enabled' ) || (bool) Config::get( 'mfa_enabled' );
-		$user             = get_user_by( 'login', $username );
+		$mfa_temporarily_disabled = false !== get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
+		$mfa_flow_enabled         = ( (bool) Config::get( 'mfa_flow_enabled' ) || (bool) Config::get( 'mfa_enabled' ) ) && ! $mfa_temporarily_disabled;
+		$user                     = get_user_by( 'login', $username );
 		$mfa_roles        = Config::get( 'mfa_roles', array() );
 		$mfa_roles        = is_array( $mfa_roles ) ? $mfa_roles : array();
 		$user_excluded    = $user && ! empty( $mfa_roles ) && ! array_intersect( (array) $user->roles, $mfa_roles );
