@@ -507,7 +507,11 @@ class LimitLoginAttempts
                                 notification_login_page(custom_error);
                             }
                         }
-                    } )
+                    } ).fail( function() {
+                        if ( llar_mfa_return_error ) {
+                            notification_login_page( llar_mfa_return_message + ( custom_error.length ? '<br /><br />' + custom_error : '' ) );
+                        }
+                    } );
 
                     function notification_login_page( message ) {
 
