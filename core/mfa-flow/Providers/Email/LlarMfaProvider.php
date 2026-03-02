@@ -135,26 +135,27 @@ class LlarMfaProvider implements MfaProviderInterface {
 	}
 
 	/* LLAR_DEBUG_MFA_WP_MAIL_START */
+	/** Option name for MFA wp_mail debug log (remove with LLAR_DEBUG_MFA_WP_MAIL). */
+	const DEBUG_LOG_OPTION = 'llar_debug_mfa_wp_mail_log';
+
 	/**
-	 * Append wp_mail result, to address and headers to local log file in plugin folder (MFA send_code).
+	 * Append wp_mail result, to address and headers to option (MFA send_code). Displayed on Debug tab.
 	 *
 	 * @param bool   $sent    Result of wp_mail().
 	 * @param string $headers Headers passed to wp_mail (for logging only).
 	 * @param string $to      Recipient email passed to wp_mail (for logging only).
 	 */
 	private static function log_wp_mail_result( $sent, $headers = '', $to = '' ) {
-		if ( ! defined( 'LLA_PLUGIN_DIR' ) ) {
-			return;
+		$line   = gmdate( 'Y-m-d H:i:s' ) . ' UTC MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) . ' to: ' . $to . ' headers: ' . $headers . "\n";
+		$log    = get_option( self::DEBUG_LOG_OPTION, '' );
+		$log   .= $line;
+		$lines  = explode( "\n", trim( $log ) );
+		$max    = 500;
+		if ( count( $lines ) > $max ) {
+			$lines = array_slice( $lines, -$max );
+			$log   = implode( "\n", $lines ) . "\n";
 		}
-		$log_dir = LLA_PLUGIN_DIR . 'logs';
-		if ( ! is_dir( $log_dir ) ) {
-			wp_mkdir_p( $log_dir );
-		}
-		$log_file = $log_dir . '/mfa-wp-mail.log';
-		$line     = gmdate( 'Y-m-d H:i:s' ) . ' UTC MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) . ' to: ' . $to . ' headers: ' . $headers . "\n";
-		if ( is_dir( $log_dir ) && is_writable( $log_dir ) ) {
-			file_put_contents( $log_file, $line, FILE_APPEND | LOCK_EX );
-		}
+		update_option( self::DEBUG_LOG_OPTION, $log );
 	}
 	/* LLAR_DEBUG_MFA_WP_MAIL_END */
 }
