@@ -163,7 +163,7 @@ class SessionStore {
 	}
 
 	/**
-	 * Delete send_email secret for token (one-time use: invalidate after first successful send_code).
+	 * Delete send_email secret for token (e.g. when session is deleted).
 	 *
 	 * @param string $token Session token.
 	 */
