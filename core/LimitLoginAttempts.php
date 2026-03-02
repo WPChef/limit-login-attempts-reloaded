@@ -440,7 +440,8 @@ class LimitLoginAttempts
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $um_limit_login_failed;
 
 		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : '';
-		$show_mfa_return_error = in_array( $llar_mfa_error, array( 'llar_mfa_session_expired', 'llar_mfa_pre_auth_required' ), true );
+		// Same error output as failed login for any MFA redirect (session_expired, code_invalid, etc.).
+		$show_mfa_return_error = ( $llar_mfa_error !== '' );
 
 		if ( Config::get( 'active_app' ) === 'local' && ! $limit_login_nonempty_credentials && ! $show_mfa_return_error ) {
 			return;
