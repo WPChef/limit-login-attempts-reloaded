@@ -338,6 +338,7 @@ class LimitLoginAttempts
 		add_action( 'wp_login', array( $this, 'limit_login_success' ), 10, 2 );
 
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
+		add_filter( 'wp_login_errors', array( $this, 'inject_mfa_return_login_error' ), 10, 2 );
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
 		// hook for the plugin UM
 		add_action( 'um_submit_form_errors_hook_login', array( $this, 'um_limit_login_failed' ) );
@@ -2020,6 +2021,24 @@ class LimitLoginAttempts
 	}
 
 	/**
+	 * When returning from MFA with llar_mfa_error, inject an error so WordPress outputs the red #login_error block.
+	 *
+	 * @param \WP_Error $errors      WP_Error object passed to login_header().
+	 * @param string   $redirect_to  Redirect URL.
+	 * @return \WP_Error
+	 */
+	public function inject_mfa_return_login_error( $errors, $redirect_to ) {
+		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : '';
+		if ( $llar_mfa_error !== '' ) {
+			if ( ! is_wp_error( $errors ) ) {
+				$errors = new \WP_Error();
+			}
+			$errors->add( 'llar_mfa_return', __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' ) );
+		}
+		return $errors;
+	}
+
+	/**
 	 * Fix up the error message before showing it
 	 *
 	 * @param $content
@@ -2031,6 +2050,9 @@ class LimitLoginAttempts
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $limit_login_my_error_shown;
 
 		$error_msg = $this->get_message();
+
+		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : '';
+		$show_mfa_return_error = ( $llar_mfa_error !== '' );
 
 		if ( $limit_login_nonempty_credentials ) {
 
@@ -2053,6 +2075,9 @@ class LimitLoginAttempts
 					$content = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
 				}
 			}
+		} elseif ( $show_mfa_return_error ) {
+			/* Same red error as failed login when returning from MFA (e.g. pre_auth_required). */
+			$content = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
 		}
 
 		if ( ! empty( $error_msg ) ) {
