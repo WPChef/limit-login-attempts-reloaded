@@ -146,11 +146,11 @@ class LlarMfaProvider implements MfaProviderInterface {
 	 * @param string $to      Recipient email passed to wp_mail (for logging only).
 	 */
 	private static function log_wp_mail_result( $sent, $headers = '', $to = '' ) {
-		$line   = gmdate( 'Y-m-d H:i:s' ) . ' UTC MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) . ' to: ' . $to . ' headers: ' . $headers . "\n";
-		$log    = get_option( self::DEBUG_LOG_OPTION, '' );
-		$log   .= $line;
-		$lines  = explode( "\n", trim( $log ) );
-		$max    = 500;
+		$line  = gmdate( 'Y-m-d H:i:s' ) . ' UTC MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) . ' to: ' . $to . ' headers: ' . $headers . "\n";
+		$log   = get_option( self::DEBUG_LOG_OPTION, '' );
+		$log  .= $line;
+		$lines = explode( "\n", trim( $log ) );
+		$max   = 500;
 		if ( count( $lines ) > $max ) {
 			$lines = array_slice( $lines, -$max );
 			$log   = implode( "\n", $lines ) . "\n";
