@@ -116,17 +116,13 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 
 	function llar_mfa_daily_cleanup() {
 		global $wpdb;
-		// $wpdb->options is set by WordPress and safe to use (table name, not user input).
-		$table_name = $wpdb->options;
-		$prefix     = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
+		$prefix = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
 
 		// Delete rescue transients older than 1 day (use constant so overrides in wp-config are respected)
 		$like_pattern = $wpdb->esc_like( '_transient_' . $prefix ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table_name} 
-				 WHERE option_name LIKE %s 
-				 AND option_value < %d",
+				'DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s AND option_value < %d',
 				$like_pattern,
 				time() - DAY_IN_SECONDS
 			)
@@ -135,9 +131,7 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_' . $prefix ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table_name} 
-				 WHERE option_name LIKE %s 
-				 AND option_value < %d",
+				'DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s AND option_value < %d',
 				$like_pattern_timeout,
 				time() - DAY_IN_SECONDS
 			)
@@ -149,16 +143,13 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 	 */
 	function llar_mfa_cleanup_rescue_transients() {
 		global $wpdb;
-		// $wpdb->options is set by WordPress and safe to use (table name, not user input).
-		$table_name = $wpdb->options;
-		$prefix     = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
+		$prefix = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
 
 		// Delete all rescue transients (use constant so overrides in wp-config are respected)
 		$like_pattern = $wpdb->esc_like( '_transient_' . $prefix ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table_name} 
-				 WHERE option_name LIKE %s",
+				'DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s',
 				$like_pattern
 			)
 		);
@@ -166,8 +157,7 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_' . $prefix ) . '%';
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table_name} 
-				 WHERE option_name LIKE %s",
+				'DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s',
 				$like_pattern_timeout
 			)
 		);
