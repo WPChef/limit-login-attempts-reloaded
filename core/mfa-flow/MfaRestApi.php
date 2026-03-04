@@ -135,13 +135,17 @@ class MfaRestApi {
 		$store->save_session( 'test-token', 'test-secret', $user->user_login, (int) $user->ID, '', '', 'llar', true );
 		$nonce = wp_create_nonce( 'llar_mfa_callback' );
 		setcookie( 'llar_mfa_state', $nonce, time() + 600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
-		return new \WP_REST_Response(
-			array(
-				'success' => true,
-				'message' => 'Session created. POST send-code with body: token=test-token&secret=test-secret&code=123456',
-			),
-			200
+		$provider   = \LLAR\Core\MfaFlow\MfaProviderRegistry::get( 'llar' );
+		$urls       = $provider ? $provider->build_send_email_urls() : array();
+		$ajax_url   = isset( $urls['send_email_url_fallback'] ) ? $urls['send_email_url_fallback'] : '';
+		$data       = array(
+			'success' => true,
+			'message' => 'Session created. POST send-code with body: token=test-token&secret=test-secret&code=123456',
 		);
+		if ( $ajax_url ) {
+			$data['send_email_url_fallback'] = $ajax_url;
+		}
+		return new \WP_REST_Response( $data, 200 );
 	}
 
 	/**

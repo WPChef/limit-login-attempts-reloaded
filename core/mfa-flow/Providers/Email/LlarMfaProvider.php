@@ -43,7 +43,13 @@ class LlarMfaProvider implements MfaProviderInterface {
 	 */
 	public function build_send_email_urls( $send_email_secret = null ) {
 		$send_email_url          = MfaRestApi::get_send_code_rest_url();
-		$send_email_url_fallback = add_query_arg( 'action', self::AJAX_ACTION, admin_url( 'admin-ajax.php' ) );
+		$send_email_url_fallback = add_query_arg(
+			array(
+				'action'      => self::AJAX_ACTION,
+				'_ajax_nonce' => wp_create_nonce( self::AJAX_ACTION ),
+			),
+			admin_url( 'admin-ajax.php' )
+		);
 		return array(
 			'send_email_url'          => $send_email_url,
 			'send_email_url_fallback' => $send_email_url_fallback,

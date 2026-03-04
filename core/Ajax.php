@@ -1155,6 +1155,8 @@ class Ajax
 	 * POST only: token, secret (send_email secret), code in $_POST.
 	 */
 	public function mfa_flow_send_code_callback() {
+		check_ajax_referer( 'llar_mfa_flow_send_code', '_ajax_nonce', true );
+
 		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : '';
 		if ( 'POST' !== $method ) {
 			status_header( 405 );

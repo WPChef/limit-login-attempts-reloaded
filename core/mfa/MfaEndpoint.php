@@ -126,12 +126,11 @@ class MfaEndpoint implements MfaEndpointInterface {
 
 		// Atomic delete of the transient row; only the first request will succeed.
 		global $wpdb;
-		$table       = $wpdb->options;
 		$option_name = '_transient_' . $transient_key;
 
 		$deleted = $wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table} WHERE option_name = %s",
+				'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
 				$option_name
 			)
 		);
@@ -145,7 +144,7 @@ class MfaEndpoint implements MfaEndpointInterface {
 		$timeout_name = '_transient_timeout_' . $transient_key;
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table} WHERE option_name = %s",
+				'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
 				$timeout_name
 			)
 		);
