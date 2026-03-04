@@ -133,6 +133,8 @@ class MfaRestApi {
 		$store = new SessionStore();
 		$store->save_send_email_secret( 'test-token', 'test-secret' );
 		$store->save_session( 'test-token', 'test-secret', $user->user_login, (int) $user->ID, '', '', 'llar', true );
+		$nonce = wp_create_nonce( 'llar_mfa_callback' );
+		setcookie( 'llar_mfa_state', $nonce, time() + 600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
 		return new \WP_REST_Response(
 			array(
 				'success' => true,
