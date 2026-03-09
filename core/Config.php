@@ -71,7 +71,6 @@ class Config {
 
 		/* MFA Flow (after failed login: handshake, verify, email code) */
 		'mfa_enabled'                   => 0,
-		'mfa_flow_enabled'              => 0,
 		'mfa_provider'                  => 'llar',
 		'mfa_provider_config'           => array(),
 		'mfa_roles'                     => array(),
