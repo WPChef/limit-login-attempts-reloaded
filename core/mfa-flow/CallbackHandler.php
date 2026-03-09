@@ -87,7 +87,8 @@ class CallbackHandler {
 		}
 		wp_clear_auth_cookie();
 		wp_set_current_user( $user->ID );
-		wp_set_auth_cookie( $user->ID, true );
+		$remember_me = ! empty( $session['remember_me'] );
+		wp_set_auth_cookie( $user->ID, $remember_me );
 		$redirect_to  = ! empty( $session['redirect_to'] ) ? $session['redirect_to'] : '';
 		$redirect_url = ( $redirect_to && self::is_safe_redirect( $redirect_to ) ) ? $redirect_to : admin_url();
 		wp_safe_redirect( $redirect_url );
@@ -166,7 +167,8 @@ class CallbackHandler {
 		defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback success user_id=' . $user->ID );
 		wp_clear_auth_cookie();
 		wp_set_current_user( $user->ID );
-		wp_set_auth_cookie( $user->ID, true );
+		$remember_me = ! empty( $session['remember_me'] );
+		wp_set_auth_cookie( $user->ID, $remember_me );
 
 		$redirect_to  = ! empty( $session['redirect_to'] ) ? $session['redirect_to'] : '';
 		$redirect_url = ( $redirect_to && self::is_safe_redirect( $redirect_to ) ) ? $redirect_to : admin_url();

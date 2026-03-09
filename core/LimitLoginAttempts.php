@@ -1423,6 +1423,7 @@ class LimitLoginAttempts
 			// Single secret from MFA app (handshake response): used for verify and for send_code endpoint authorization.
 			$store->save_send_email_secret( $result['data']['token'], $result['data']['secret'] );
 			$nonce = wp_create_nonce( 'llar_mfa_callback' );
+			$remember_me = ! empty( $_REQUEST['rememberme'] );
 			$store->save_session(
 				$result['data']['token'],
 				$result['data']['secret'],
@@ -1431,7 +1432,8 @@ class LimitLoginAttempts
 				$redirect_to,
 				$cancel_url,
 				$provider_id,
-				$is_pre_authenticated
+				$is_pre_authenticated,
+				$remember_me
 			);
 			setcookie( 'llar_mfa_state', $nonce, time() + 600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
 			$mfa_redirect_url = esc_url_raw( $redirect_url_value );
