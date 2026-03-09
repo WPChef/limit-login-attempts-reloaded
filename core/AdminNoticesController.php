@@ -17,7 +17,7 @@ class AdminNoticesController {
 	 *
 	 * @var array
 	 */
-	private static $allowed = array( 'auto-update', 'https-recommended', 'flash' );
+	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'flash' );
 
 	/**
 	 * Get type, CSS class and HTML content for a notice key.
@@ -45,6 +45,12 @@ class AdminNoticesController {
 					'type'    => 'notice-warning',
 					'class'   => 'llar-options-notice',
 					'content' => \__( 'Your site is not using HTTPS. Enabling HTTPS is recommended for better security.', $text_domain ),
+				);
+			case 'https-recommended-mfa':
+				return array(
+					'type'    => 'notice-warning',
+					'class'   => 'llar-options-notice',
+					'content' => \__( 'Before enabling 2FA/MFA, we strongly recommend ensuring your website is accessible only via HTTPS.', $text_domain ),
 				);
 			case 'flash':
 				$msg      = isset( $args['msg'] ) ? $args['msg'] : '';

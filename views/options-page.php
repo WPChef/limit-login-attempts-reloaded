@@ -90,8 +90,8 @@ if ( ! empty( $this->pending_admin_message ) ) {
 if ( ( $auto_update_choice || $auto_update_choice === null ) && ! Helpers::is_auto_update_enabled() ) {
 	$this->render_admin_notice( 'auto-update', array() );
 }
-if ( $active_tab === 'debug' && ! is_ssl() ) {
-	$this->render_admin_notice( 'https-recommended', array() );
+if ( $active_tab === 'mfa' && ! is_ssl() ) {
+	$this->render_admin_notice( 'https-recommended-mfa', array() );
 }
 ?>
 
