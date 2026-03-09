@@ -1385,9 +1385,10 @@ class LimitLoginAttempts
 		}
 		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 		$cancel_url  = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
+		$login_url   = ( $redirect_to !== '' ) ? wp_login_url( $redirect_to ) : wp_login_url();
 		$payload     = array(
 			'user_ip'              => Helpers::get_all_ips(),
-			'login_url'            => wp_login_url(),
+			'login_url'            => $login_url,
 			'user_group'           => $user_group,
 			'is_pre_authenticated' => (bool) $is_pre_authenticated,
 		);
