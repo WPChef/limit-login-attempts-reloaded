@@ -24,9 +24,10 @@ class SessionStore {
 	 * @param string $cancel_url  Optional. URL for MFA app cancel.
 	 * @param string $provider_id          Optional. Provider id (e.g. 'llar').
 	 * @param bool   $is_pre_authenticated  True if password was already validated at handshake.
+	 * @param bool   $remember_me           True if user checked "Remember Me" on login form.
 	 * @return bool True if saved.
 	 */
-	public function save_session( $token, $secret, $username, $user_id = 0, $redirect_to = '', $cancel_url = '', $provider_id = '', $is_pre_authenticated = false ) {
+	public function save_session( $token, $secret, $username, $user_id = 0, $redirect_to = '', $cancel_url = '', $provider_id = '', $is_pre_authenticated = false, $remember_me = false ) {
 		if ( ! is_string( $token ) || '' === $token ) {
 			return false;
 		}
@@ -42,6 +43,7 @@ class SessionStore {
 			'cancel_url'           => is_string( $cancel_url ) ? $cancel_url : '',
 			'provider_id'          => is_string( $provider_id ) ? $provider_id : 'llar',
 			'is_pre_authenticated' => (bool) $is_pre_authenticated,
+			'remember_me'          => (bool) $remember_me,
 			'created'              => time(),
 		);
 
