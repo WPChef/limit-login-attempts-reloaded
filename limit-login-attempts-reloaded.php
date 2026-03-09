@@ -115,51 +115,75 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 	add_action( 'llar_mfa_daily_cleanup', 'llar_mfa_daily_cleanup' );
 
 	function llar_mfa_daily_cleanup() {
-		global $wpdb;
-		$prefix = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
-
-		// Delete rescue transients older than 1 day (use constant so overrides in wp-config are respected)
-		$like_pattern = $wpdb->esc_like( '_transient_' . $prefix ) . '%';
-		$wpdb->query(
-			$wpdb->prepare(
-				'DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s AND option_value < %d',
-				$like_pattern,
-				time() - DAY_IN_SECONDS
-			)
-		);
-
-		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_' . $prefix ) . '%';
-		$wpdb->query(
-			$wpdb->prepare(
-				'DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s AND option_value < %d',
-				$like_pattern_timeout,
-				time() - DAY_IN_SECONDS
-			)
-		);
+		$keys = llar_mfa_get_expired_rescue_transient_keys();
+		foreach ( $keys as $key ) {
+			delete_transient( $key );
+		}
 	}
 
 	/**
-	 * Helper function: Cleanup rescue transients
+	 * Get transient keys for rescue transients that are older than 1 day.
+	 * Uses _transient_timeout_* where option_value is the expiration timestamp.
+	 *
+	 * @return array List of transient keys (e.g. llar_mfa_rescue_xxx).
 	 */
-	function llar_mfa_cleanup_rescue_transients() {
+	function llar_mfa_get_expired_rescue_transient_keys() {
 		global $wpdb;
 		$prefix = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
-
-		// Delete all rescue transients (use constant so overrides in wp-config are respected)
-		$like_pattern = $wpdb->esc_like( '_transient_' . $prefix ) . '%';
-		$wpdb->query(
+		$cutoff = time() - DAY_IN_SECONDS;
+		$like   = $wpdb->esc_like( '_transient_timeout_' . $prefix ) . '%';
+		$names  = $wpdb->get_col(
 			$wpdb->prepare(
-				'DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s',
-				$like_pattern
+				'SELECT option_name FROM ' . $wpdb->options . ' WHERE option_name LIKE %s AND option_value < %d',
+				$like,
+				$cutoff
 			)
 		);
+		if ( ! is_array( $names ) ) {
+			return array();
+		}
+		$prefix_len = strlen( '_transient_timeout_' );
+		$keys      = array();
+		foreach ( $names as $name ) {
+			$keys[] = substr( $name, $prefix_len );
+		}
+		return $keys;
+	}
 
-		$like_pattern_timeout = $wpdb->esc_like( '_transient_timeout_' . $prefix ) . '%';
-		$wpdb->query(
+	/**
+	 * Helper: delete all rescue transients (e.g. on deactivation).
+	 * Uses delete_transient() so object cache stays in sync.
+	 */
+	function llar_mfa_cleanup_rescue_transients() {
+		$keys = llar_mfa_get_all_rescue_transient_keys();
+		foreach ( $keys as $key ) {
+			delete_transient( $key );
+		}
+	}
+
+	/**
+	 * Get all rescue transient keys (for full cleanup).
+	 *
+	 * @return array List of transient keys.
+	 */
+	function llar_mfa_get_all_rescue_transient_keys() {
+		global $wpdb;
+		$prefix = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
+		$like   = $wpdb->esc_like( '_transient_timeout_' . $prefix ) . '%';
+		$names  = $wpdb->get_col(
 			$wpdb->prepare(
-				'DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s',
-				$like_pattern_timeout
+				'SELECT option_name FROM ' . $wpdb->options . ' WHERE option_name LIKE %s',
+				$like
 			)
 		);
+		if ( ! is_array( $names ) ) {
+			return array();
+		}
+		$prefix_len = strlen( '_transient_timeout_' );
+		$keys      = array();
+		foreach ( $names as $name ) {
+			$keys[] = substr( $name, $prefix_len );
+		}
+		return $keys;
 	}
 }
