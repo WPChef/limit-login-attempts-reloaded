@@ -1399,20 +1399,6 @@ class LimitLoginAttempts
 		$redirect_url_value = isset( $result['data']['redirect_url'] ) ? $result['data']['redirect_url'] : ( isset( $result['data']['redirectUrl'] ) ? $result['data']['redirectUrl'] : '' );
 		$has_redirect      = ! empty( $redirect_url_value );
 
-		// In test mode, if real handshake failed, use fake redirect so redirect path can be verified.
-		if ( ! ( $result['success'] && $has_token && $has_secret && $has_redirect ) && defined( 'LLA_MFA_FLOW_TEST_REDIRECT' ) && LLA_MFA_FLOW_TEST_REDIRECT ) {
-			$redirect_url_value = add_query_arg( 'llar_mfa_test', '1', wp_login_url() );
-			$has_redirect       = true;
-			$has_token          = true;
-			$has_secret         = true;
-			$result['success']  = true;
-			$result['data']     = array(
-				'token'        => 'test-token',
-				'secret'       => 'test-secret',
-				'redirect_url' => $redirect_url_value,
-			);
-		}
-
 		if ( $result['success'] && $has_token && $has_secret && $has_redirect ) {
 			// Record failed attempt when redirecting after wrong password so counters and lockout apply.
 			if ( ! $is_pre_authenticated ) {
