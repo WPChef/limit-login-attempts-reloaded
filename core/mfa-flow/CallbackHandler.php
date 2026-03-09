@@ -30,9 +30,8 @@ class CallbackHandler {
 		$token = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
 		$code  = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
 
-		$has_llar_mfa_param   = ( isset( $_GET['llar_mfa'] ) && ( $_GET['llar_mfa'] === '1' || $_GET['llar_mfa'] === 'true' ) );
-		$has_token_in_request = isset( $_GET['token'] );
-		$is_mfa_callback      = $token !== '' && ( $has_llar_mfa_param || $has_token_in_request );
+		$has_llar_mfa_param = ( isset( $_GET['llar_mfa'] ) && ( $_GET['llar_mfa'] === '1' || $_GET['llar_mfa'] === 'true' ) );
+		$is_mfa_callback   = $token !== '' && $has_llar_mfa_param;
 
 		if ( ! $is_mfa_callback ) {
 			return;
