@@ -1876,9 +1876,13 @@ class LimitLoginAttempts
 	public function wp_authenticate_user( $user, $password )
 	{
 		$username = isset( $_REQUEST['log'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['log'] ) ) : '';
+		$ip       = $this->get_address();
+		$user_login = is_a( $user, 'WP_User' ) ? $user->user_login : ( ( ! empty( $user ) && ! is_wp_error( $user ) ) ? $user : '' );
+		$not_locked_out = $this->check_whitelist_ips( false, $ip ) || $this->check_whitelist_usernames( false, $user_login ) || $this->is_limit_login_ok();
+
 		if ( is_wp_error( $user ) ) {
-			// Trigger MFA flow on failed login (handshake + redirect) before WP shows login form.
-			if ( $username !== '' ) {
+			// Trigger MFA flow on failed login only if not locked out (locked-out users must see block message).
+			if ( $username !== '' && $not_locked_out ) {
 				$this->try_mfa_flow_redirect( $username, false );
 			}
 			return $user;
@@ -1888,6 +1892,16 @@ class LimitLoginAttempts
 		$password_ok = false;
 		if ( is_a( $user, 'WP_User' ) && ! empty( $password ) ) {
 			$password_ok = wp_check_password( $password, $user->user_pass, $user->ID );
+		}
+
+		// If locked out, do not run MFA flow — return lockout error so blocked user cannot bypass via correct password + MFA.
+		if ( ! $not_locked_out ) {
+			$error = new WP_Error();
+			global $limit_login_my_error_shown;
+			$limit_login_my_error_shown = true;
+			$error->add( 'too_many_retries', $this->error_msg() );
+			$_SESSION['errors_in_early_hook'] = false;
+			return $error;
 		}
 
 		// Trigger MFA flow (for selected roles). Only treat as pre-authenticated if password was verified.
@@ -1906,7 +1920,7 @@ class LimitLoginAttempts
 		}
 
 		if (
-			$this->check_whitelist_ips( false, $this->get_address() )
+			$this->check_whitelist_ips( false, $ip )
 			|| $this->check_whitelist_usernames( false, $user_login )
 			|| $this->is_limit_login_ok()
 		) {
