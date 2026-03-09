@@ -1337,12 +1337,12 @@ class LimitLoginAttempts
 		$ip = $this->get_address();
 
 		$mfa_temporarily_disabled = false !== get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
-		$mfa_flow_enabled         = ( (bool) Config::get( 'mfa_flow_enabled' ) || (bool) Config::get( 'mfa_enabled' ) ) && ! $mfa_temporarily_disabled;
+		$mfa_enabled              = (bool) Config::get( 'mfa_enabled' ) && ! $mfa_temporarily_disabled;
 		$user                     = get_user_by( 'login', $username );
 		$mfa_roles        = Config::get( 'mfa_roles', array() );
 		$mfa_roles        = is_array( $mfa_roles ) ? $mfa_roles : array();
 		$user_excluded    = $user && ! empty( $mfa_roles ) && ! array_intersect( (array) $user->roles, $mfa_roles );
-		$should_trigger_mfa = $mfa_flow_enabled && ! $user_excluded;
+		$should_trigger_mfa = $mfa_enabled && ! $user_excluded;
 
 		if ( ! $should_trigger_mfa ) {
 			return;
@@ -2456,8 +2456,6 @@ class LimitLoginAttempts
 					$show_popup = $this->mfa_controller->handle_settings_submission();
 					if ( ! $show_popup ) {
 						$this->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
-						// MFA Flow settings (same form; enabled when 2FA is enabled). Only save when not showing rescue popup.
-						Config::update( 'mfa_flow_enabled', ! empty( $_POST['mfa_enabled'] ) ? 1 : 0 );
 					}
 				}
 			}
