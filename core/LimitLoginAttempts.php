@@ -747,6 +747,7 @@ class LimitLoginAttempts
 					$user->add( 'username_blacklisted', $err );
 
 					$_SESSION['errors_in_early_hook'] = true;
+					$_SESSION['llar_early_hook_error_message'] = $err;
 					$this->all_errors_array['early_hook_errors'] = $err;
 
 					if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
@@ -2056,6 +2057,11 @@ class LimitLoginAttempts
 
 		$error_msg = $this->get_message();
 
+		if ( isset( $_SESSION['llar_early_hook_error_message'] ) && $_SESSION['llar_early_hook_error_message'] !== '' ) {
+			$content = $_SESSION['llar_early_hook_error_message'];
+			unset( $_SESSION['llar_early_hook_error_message'] );
+			$_SESSION['errors_in_early_hook'] = false;
+		} else {
 		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : '';
 		$show_mfa_return_error = ( $llar_mfa_error !== '' );
 
@@ -2088,6 +2094,7 @@ class LimitLoginAttempts
 		if ( ! empty( $error_msg ) ) {
 
 			$content = $error_msg;
+		}
 		}
 
 		$content = ! empty( $content ) ? '<span>' . $content . '</span>' : '';
