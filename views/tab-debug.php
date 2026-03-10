@@ -40,20 +40,6 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
                     <div><?php echo esc_html( $plugin_data['Version'] ); ?></div>
                 </td>
             </tr>
-			<?php /* LLAR_DEBUG_MFA_WP_MAIL_START */ ?>
-            <tr>
-                <th scope="row" valign="top"><?php echo esc_html__( 'MFA wp_mail log', 'limit-login-attempts-reloaded' ); ?></th>
-                <td>
-                    <?php
-                    $mfa_log_content = get_option( \LLAR\Core\MfaFlow\Providers\Email\LlarMfaProvider::DEBUG_LOG_OPTION, '' );
-                    ?>
-                    <div class="textarea_border">
-                        <textarea cols="70" rows="8" readonly class="large-text code"><?php echo esc_textarea( $mfa_log_content ? $mfa_log_content : __( '(empty)', 'limit-login-attempts-reloaded' ) ); ?></textarea>
-                    </div>
-                    <p class="description-secondary"><?php esc_html_e( 'Debug only. Last 500 entries. Remove with LLAR_DEBUG_MFA_WP_MAIL.', 'limit-login-attempts-reloaded' ); ?></p>
-                </td>
-            </tr>
-			<?php /* LLAR_DEBUG_MFA_WP_MAIL_END */ ?>
 			<?php if ( $active_app === 'local' && empty( $setup_code ) ) : ?>
                 <tr>
                     <th scope="row" valign="top"><?php echo esc_html__( 'Start Over', 'limit-login-attempts-reloaded' ); ?>

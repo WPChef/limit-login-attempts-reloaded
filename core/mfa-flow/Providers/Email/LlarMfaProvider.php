@@ -98,12 +98,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 		$body     = sprintf( __( 'Your verification code is: %s', 'limit-login-attempts-reloaded' ), $code );
 		$headers  = array( 'Content-Type: text/plain; charset=UTF-8' );
 		$to_email = $user->user_email;
-		$sent     = wp_mail( $to_email, $subject, $body, $headers );
-		/* LLAR_DEBUG_MFA_WP_MAIL_START */
-		$headers_log = is_array( $headers ) ? implode( ' | ', $headers ) : (string) $headers;
-		error_log( LLA_MFA_FLOW_LOG_PREFIX . 'MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) . ' to: ' . $to_email . ' headers: ' . $headers_log );
-		self::log_wp_mail_result( $sent, $headers_log, $to_email );
-		/* LLAR_DEBUG_MFA_WP_MAIL_END */
+		$sent = wp_mail( $to_email, $subject, $body, $headers );
 		if ( $sent ) {
 			return array(
 				'success' => true,
@@ -139,29 +134,4 @@ class LlarMfaProvider implements MfaProviderInterface {
 		$base_url = $path !== '' ? $base . $path : $base;
 		return array( 'base_url' => $base_url );
 	}
-
-	/* LLAR_DEBUG_MFA_WP_MAIL_START */
-	/** Option name for MFA wp_mail debug log (remove with LLAR_DEBUG_MFA_WP_MAIL). */
-	const DEBUG_LOG_OPTION = 'llar_debug_mfa_wp_mail_log';
-
-	/**
-	 * Append wp_mail result, to address and headers to option (MFA send_code). Displayed on Debug tab.
-	 *
-	 * @param bool   $sent    Result of wp_mail().
-	 * @param string $headers Headers passed to wp_mail (for logging only).
-	 * @param string $to      Recipient email passed to wp_mail (for logging only).
-	 */
-	private static function log_wp_mail_result( $sent, $headers = '', $to = '' ) {
-		$line  = gmdate( 'Y-m-d H:i:s' ) . ' UTC MFA send_code wp_mail result: ' . ( $sent ? 'true' : 'false' ) . ' to: ' . $to . ' headers: ' . $headers . "\n";
-		$log   = get_option( self::DEBUG_LOG_OPTION, '' );
-		$log  .= $line;
-		$lines = explode( "\n", trim( $log ) );
-		$max   = 500;
-		if ( count( $lines ) > $max ) {
-			$lines = array_slice( $lines, -$max );
-			$log   = implode( "\n", $lines ) . "\n";
-		}
-		update_option( self::DEBUG_LOG_OPTION, $log );
-	}
-	/* LLAR_DEBUG_MFA_WP_MAIL_END */
 }
