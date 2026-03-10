@@ -37,6 +37,9 @@ $mfa_block_reason  = isset( $mfa_settings['mfa_block_reason'] ) ? $mfa_settings[
 $mfa_block_message = isset( $mfa_settings['mfa_block_message'] ) ? $mfa_settings['mfa_block_message'] : '';
 $is_mfa_disabled   = ( null !== $mfa_block_reason );
 
+// When MFA is temporarily disabled via rescue, show checkbox as unchecked (effective state) and active.
+$mfa_enabled_effective = $mfa_enabled && ! $mfa_temporarily_disabled;
+
 ?>
 <div id="llar-setting-page" class="llar-admin">
 	<form action="<?php echo esc_url( $this->get_options_page_uri( 'mfa' ) ); ?>" method="post">
@@ -70,9 +73,9 @@ $is_mfa_disabled   = ( null !== $mfa_block_reason );
 									name="mfa_enabled" 
 									value="1" 
 									id="mfa_enabled"
-									<?php checked( $mfa_enabled, true ); ?>
+									<?php checked( $mfa_enabled_effective, true ); ?>
 									<?php
-									if ( $mfa_temporarily_disabled || $is_mfa_disabled ) :
+									if ( $is_mfa_disabled ) :
 										?>
 										disabled<?php endif; ?>/>
 							<label for="mfa_enabled">
