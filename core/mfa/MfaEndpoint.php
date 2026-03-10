@@ -48,7 +48,6 @@ class MfaEndpoint implements MfaEndpointInterface {
 		if ( $this->is_rescue_cooldown() ) {
 			wp_die( self::MSG_TOO_MANY_REQUESTS, 'LLAR MFA Rescue', array( 'response' => 429 ) );
 		}
-		$this->set_rescue_cooldown();
 
 		$hash_id = MfaValidator::validate_rescue_hash_id( $hash_id );
 		if ( false === $hash_id ) {
@@ -90,6 +89,8 @@ class MfaEndpoint implements MfaEndpointInterface {
 			$codes[ $verified_index ] = $rescue_code->to_array();
 			Config::update( 'mfa_rescue_codes', $codes );
 			$this->disable_mfa_temporarily();
+			// Set cooldown only on success so failed attempts (invalid link, already used) don't block retries.
+			$this->set_rescue_cooldown();
 			$login_url = add_query_arg( 'llar_mfa_disabled', '1', wp_login_url() );
 			wp_safe_redirect( $login_url );
 			exit;

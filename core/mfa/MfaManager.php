@@ -195,6 +195,8 @@ class MfaManager {
 			}
 			Config::update( 'mfa_enabled', 1 );
 			delete_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
+			// Re-enable 2FA immediately when admin explicitly turns it on (clear rescue temporary disable).
+			delete_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
 		} else {
 			$this->cleanup_rescue_codes();
 			Config::update( 'mfa_enabled', 0 );
