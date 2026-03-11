@@ -40,6 +40,15 @@ $is_mfa_disabled   = ( null !== $mfa_block_reason );
 // When MFA is temporarily disabled via rescue, show checkbox as unchecked (effective state) and active.
 $mfa_enabled_effective = $mfa_enabled && ! $mfa_temporarily_disabled;
 
+// Current user email (2FA codes are sent to this address for the user logging in).
+$current_user       = wp_get_current_user();
+$current_user_email = ! empty( $current_user->user_email ) ? $current_user->user_email : '';
+
+$mfa_email_confirm_required = (bool) get_transient( 'llar_mfa_email_confirm_required' );
+if ( $mfa_email_confirm_required ) {
+	delete_transient( 'llar_mfa_email_confirm_required' );
+}
+
 ?>
 <div id="llar-setting-page" class="llar-admin">
 	<form action="<?php echo esc_url( $this->get_options_page_uri( 'mfa' ) ); ?>" method="post">
@@ -48,6 +57,13 @@ $mfa_enabled_effective = $mfa_enabled && ! $mfa_temporarily_disabled;
 				<img src="<?php echo esc_url( LLA_PLUGIN_URL . 'assets/css/images/icon-gears.png' ); ?>">
 				<?php esc_html_e( '2FA Settings', 'limit-login-attempts-reloaded' ); ?>
 			</h3>
+			<?php if ( $mfa_email_confirm_required ) : ?>
+				<div class="notice notice-error inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #dc3232; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
+					<p style="margin: 0; font-size: 14px;">
+						<?php esc_html_e( 'Please confirm your email address by checking the box below before enabling 2FA. One-time codes will be sent to that address.', 'limit-login-attempts-reloaded' ); ?>
+					</p>
+				</div>
+			<?php endif; ?>
 			<?php if ( $is_mfa_disabled ) : ?>
 				<div class="notice notice-error inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #dc3232; background: #fff; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
 					<p style="margin: 0 0 8px 0; font-weight: bold; font-size: 16px; color: #dc3232;">
@@ -147,6 +163,7 @@ $mfa_enabled_effective = $mfa_enabled && ! $mfa_temporarily_disabled;
 
 			<p class="submit">
 				<?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
+				<input type="hidden" name="mfa_confirm_email" id="llar_mfa_confirm_email_input" value="0"/>
 				<input class="button menu__item col button__orange" 
 						name="llar_update_mfa_settings"
 						value="<?php esc_attr_e( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
@@ -225,6 +242,22 @@ jQuery(document).ready(function($) {
 					e.preventDefault();
 					e.stopImmediatePropagation();
 					window.location.reload();
+				});
+				// Form submit: after HTML5 validation, prevent actual submit and trigger main form
+				rescueModal.$content.find('#llar-rescue-confirm-form').off('submit.llarRescue').on('submit.llarRescue', function(e) {
+					e.preventDefault();
+					var hiddenInput = document.getElementById('llar_mfa_confirm_email_input');
+					if (hiddenInput) {
+						hiddenInput.value = '1';
+					}
+					rescueModal.close();
+					var saveBtn = document.querySelector('#llar-setting-page input[name="llar_update_mfa_settings"]');
+					if (saveBtn) {
+						saveBtn.click();
+					} else {
+						document.querySelector('#llar-setting-page form').submit();
+					}
+					return false;
 				});
 				runGenerateRescueCodes();
 
@@ -373,25 +406,23 @@ jQuery(document).ready(function($) {
 
 		const $confirmRow = rescueModal.$content.find('.llar-rescue-confirm-row');
 		const $savedCheckbox = rescueModal.$content.find('#llar-rescue-saved-confirm');
+		const $emailConfirmCheckbox = rescueModal.$content.find('#llar-rescue-confirm-email');
 		const $closeBtn = rescueModal.$content.find('.llar-rescue-close-btn');
 		$savedCheckbox.prop('checked', false);
-		$closeBtn.prop('disabled', true);
-		$savedCheckbox.off('change').on('change', function() {
-			$closeBtn.prop('disabled', !$savedCheckbox.is(':checked'));
-		});
-		$closeBtn.off('click').on('click', function() {
-			if (!$savedCheckbox.is(':checked')) {
-				return;
-			}
-			rescueModal.close();
-			// Click the real submit button so llar_update_mfa_settings is sent in POST
-			const saveBtn = document.querySelector('#llar-setting-page input[name="llar_update_mfa_settings"]');
-			if (saveBtn) {
-				saveBtn.click();
-			} else {
-				document.querySelector('#llar-setting-page form').submit();
-			}
-		});
+		if ($emailConfirmCheckbox.length) {
+			$emailConfirmCheckbox.prop('checked', false);
+		}
+		function updateActivateButtonVisual() {
+			var savedOk = $savedCheckbox.is(':checked');
+			var emailOk = $emailConfirmCheckbox.length > 0 && $emailConfirmCheckbox.is(':checked');
+			$closeBtn.toggleClass('llar-rescue-close-btn--inactive', !(savedOk && emailOk));
+			$closeBtn.toggleClass('llar-rescue-close-btn--active', savedOk && emailOk);
+		}
+		updateActivateButtonVisual();
+		$savedCheckbox.off('change').on('change', updateActivateButtonVisual);
+		if ($emailConfirmCheckbox.length) {
+			$emailConfirmCheckbox.off('change').on('change', updateActivateButtonVisual);
+		}
 		$confirmRow.show();
 	}
 

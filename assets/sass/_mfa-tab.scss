@@ -181,6 +181,16 @@
   }
 }
 
+// Rescue modal: button always clickable; inactive state when required checkboxes not all checked
+.llar-rescue-close-btn--inactive {
+  opacity: 0.65;
+  cursor: pointer;
+}
+
+.llar-rescue-close-btn--active {
+  opacity: 1;
+}
+
 @keyframes llar-rescue-dots-blink {
   0%,
   100% {
