@@ -188,6 +188,12 @@ class MfaManager {
 		}
 
 		if ( isset( $_POST['mfa_enabled'] ) && $_POST['mfa_enabled'] ) {
+			// Require admin to confirm their email before enabling 2FA (codes are sent to that address).
+			if ( empty( $_POST['mfa_confirm_email'] ) ) {
+				set_transient( 'llar_mfa_email_confirm_required', 1, 60 );
+				return false;
+			}
+			delete_transient( 'llar_mfa_email_confirm_required' );
 			if ( $this->should_show_rescue_popup() ) {
 				$this->show_rescue_popup = true;
 				set_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE, 1, MfaConstants::CHECKBOX_STATE_TTL );

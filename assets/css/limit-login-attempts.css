@@ -4530,6 +4530,13 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .llar-admin .llar-rescue-links-list .llar-rescue-links-scroll .llar-rescue-link-line:last-child {
   margin-bottom: 0;
 }
+.llar-rescue-close-btn--inactive {
+  opacity: 0.65;
+  cursor: pointer;
+}
+.llar-rescue-close-btn--active {
+  opacity: 1;
+}
 @keyframes llar-rescue-dots-blink {
   0%,
   100% {

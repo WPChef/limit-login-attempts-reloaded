@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $site_url    = home_url();
 $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
+$current_user_email = isset( $current_user_email ) ? $current_user_email : '';
 
 ?>
 <div id="llar-mfa-rescue-popup-content" style="display: none;">
@@ -34,6 +35,26 @@ $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 								<?php echo esc_html__( 'for 1 hour.', 'limit-login-attempts-reloaded' ); ?>
 							</p>
 						</div>
+						<form id="llar-rescue-confirm-form" class="llar-rescue-confirm-form">
+						<div class="llar-rescue-email-confirm" style="margin: 18px 0; padding: 12px 0; border-top: 1px solid #ddd;">
+							<h4 style="margin: 0 0 8px 0; font-size: 14px;"><?php esc_html_e( 'Your email for 2FA', 'limit-login-attempts-reloaded' ); ?></h4>
+							<?php if ( ! empty( $current_user_email ) ) : ?>
+								<p class="description" style="margin-bottom: 8px;">
+									<strong><?php echo esc_html( $current_user_email ); ?></strong>
+								</p>
+								<p class="description" style="margin-bottom: 10px;">
+									<?php esc_html_e( 'One-time 2FA codes will be sent to this address. Please confirm it is correct before activating.', 'limit-login-attempts-reloaded' ); ?>
+								</p>
+								<label style="display: block;">
+									<input type="checkbox" id="llar-rescue-confirm-email" name="llar_rescue_confirm_email" value="1" required aria-required="true"/>
+									<?php esc_html_e( 'I confirm this email address is correct and I will receive 2FA codes here.', 'limit-login-attempts-reloaded' ); ?>
+								</label>
+							<?php else : ?>
+								<p class="description" style="color: #dc3232;">
+									<?php esc_html_e( 'Your account has no email address. Please set an email in your profile; 2FA requires it to send codes.', 'limit-login-attempts-reloaded' ); ?>
+								</p>
+							<?php endif; ?>
+						</div>
 						<!-- Rescue links are generated automatically when popup opens -->
 						<div id="llar-rescue-links-display">
 							<h3 class="title_page">
@@ -57,13 +78,14 @@ $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 						</div>
 						<div class="llar-rescue-confirm-row" style="display: none; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ccc;">
 							<label style="display: block; margin-bottom: 10px;">
-								<input type="checkbox" id="llar-rescue-saved-confirm" name="llar_rescue_saved_confirm" value="1"/>
+								<input type="checkbox" id="llar-rescue-saved-confirm" name="llar_rescue_saved_confirm" value="1" required aria-required="true"/>
 								<?php echo esc_html__( 'I have saved my rescue links in a secure location. I am ready to activate 2FA.', 'limit-login-attempts-reloaded' ); ?>
 							</label>
-							<button type="button" class="button menu__item button__orange llar-rescue-close-btn" disabled>
+							<button type="submit" class="button menu__item button__orange llar-rescue-close-btn llar-rescue-close-btn--inactive">
 								<?php echo esc_html__( 'Activate 2FA and Save Settings', 'limit-login-attempts-reloaded' ); ?>
 							</button>
 						</div>
+						</form>
 					</div>
 				</div>
 			</div>
