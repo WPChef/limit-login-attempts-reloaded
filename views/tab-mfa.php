@@ -248,7 +248,8 @@ jQuery(document).ready(function($) {
 		const $displayContainer = rescueModal.$content.find('#llar-rescue-links-display');
 		const $loading = $displayContainer.find('#llar-rescue-links-loading');
 		const $list = $displayContainer.find('#llar-rescue-links-list');
-		$loading.show().text('<?php echo esc_js( __( 'Generating rescue links...', 'limit-login-attempts-reloaded' ) ); ?>');
+		$list.empty();
+		$loading.show();
 		$displayContainer.find('.llar-rescue-copy-row').hide();
 		if (!llar_vars || !llar_vars.nonce_mfa_generate_codes) {
 			showRescueError($displayContainer, '<?php echo esc_js( __( 'Security token is missing. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>');
@@ -300,16 +301,27 @@ jQuery(document).ready(function($) {
 		const $displayContainer = rescueModal.$content.find('#llar-rescue-links-display');
 		const $linksList = $displayContainer.find('#llar-rescue-links-list');
 		$linksList.empty().show();
-		const $list = $('<ol class="llar-rescue-links-ol"></ol>');
+		const linksText = urls.join('\n');
+		const $scrollDiv = $('<div class="llar-rescue-links-scroll" aria-label="Rescue links" role="region"></div>');
 		urls.forEach(function(url) {
-			const $listItem = $('<li class="llar-rescue-link-item"></li>');
-			$listItem.append($('<span class="llar-rescue-link-text"></span>').text(url));
-			$list.append($listItem);
+			$scrollDiv.append($('<div class="llar-rescue-link-line"></div>').text(url));
 		});
-		$linksList.append($list);
+		$linksList.append($scrollDiv);
+		// Force full width: jconfirm can constrain width, so set from content box (innerWidth = width minus padding)
+		var $box = rescueModal.$content.closest('.jconfirm-box');
+		var contentWidth = $box.length ? $box.innerWidth() : 0;
+		if (contentWidth && contentWidth > 0) {
+			$displayContainer.css('width', contentWidth + 'px');
+			$linksList.css('width', contentWidth + 'px');
+			$scrollDiv.css({ 'width': contentWidth + 'px', 'max-width': '100%', 'box-sizing': 'border-box' });
+		} else {
+			$displayContainer.css('width', '100%');
+			$linksList.css('width', '100%');
+			$scrollDiv.css({ 'width': '100%', 'max-width': '100%', 'box-sizing': 'border-box' });
+		}
 		const $feedback = $displayContainer.find('#llar-copy-feedback');
 		$displayContainer.find('.llar-copy-rescue-links').off('click').on('click', function() {
-			const text = urls.join(' \n\n');
+			const text = linksText;
 			$feedback.removeClass('llar-copy-feedback-visible').text('');
 			function showCopied() {
 				$feedback.text('<?php echo esc_js( __( 'Copied to clipboard.', 'limit-login-attempts-reloaded' ) ); ?>').addClass('llar-copy-feedback-visible');
@@ -325,12 +337,9 @@ jQuery(document).ready(function($) {
 			const printTitle = '<?php echo esc_js( __( 'Rescue Links', 'limit-login-attempts-reloaded' ) ); ?>';
 			const printId = 'llar-rescue-print-area';
 			const printClass = 'llar-rescue-print-area-offscreen';
+			const escapedLines = urls.map(function(url) { return url.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); });
 			let content = '<div class="llar-rescue-print-body" style="font-family: sans-serif; padding: 20px;">';
-			content += '<h1 style="margin-bottom: 16px;">' + printTitle + '</h1><ol style="padding-left: 24px;">';
-			urls.forEach(function(url) {
-				content += '<li style="margin: 8px 0; word-break: break-all;">' + url + '</li>';
-			});
-			content += '</ol></div>';
+			content += '<h1 style="margin-bottom: 16px;">' + printTitle + '</h1><pre style="white-space: pre-wrap; word-break: break-all;">' + escapedLines.join('\n') + '</pre></div>';
 			let area = document.getElementById(printId);
 			if (!area) {
 				area = document.createElement('div');
