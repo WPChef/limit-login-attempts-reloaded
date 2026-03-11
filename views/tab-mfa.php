@@ -136,6 +136,9 @@ $mfa_enabled_effective = $mfa_enabled && ! $mfa_temporarily_disabled;
 									</div>
 								<?php endforeach; ?>
 							</div>
+							<p class="description">
+								<?php esc_html_e( 'You can also create custom user groups using a plugin that adds user grouping functionality to WordPress, to better control which users are required to use 2FA.', 'limit-login-attempts-reloaded' ); ?>
+							</p>
 						</td>
 					</tr>
 
