@@ -100,6 +100,9 @@ $mfa_enabled_effective = $mfa_enabled && ! $mfa_temporarily_disabled;
 									<?php esc_html_e( '2FA is temporarily disabled via rescue link. It will be automatically re-enabled in 1 hour.', 'limit-login-attempts-reloaded' ); ?>
 								</p>
 							<?php endif; ?>
+							<p class="description" style="margin-top: 10px; font-weight: bold;">
+								<?php esc_html_e( 'Please note: 2FA is available with email only. SMS and authenticator app support is in development.', 'limit-login-attempts-reloaded' ); ?>
+							</p>
 						</td>
 					</tr>
 
