@@ -82,7 +82,14 @@ $mfa_enabled_effective = $mfa_enabled && ! $mfa_temporarily_disabled;
 								<?php esc_html_e( 'Enable multi-factor authentication for selected user roles', 'limit-login-attempts-reloaded' ); ?>
 							</label>
 							<div class="description-secondary" style="margin-top: 10px;">
-								<?php echo esc_html__( 'By turning this feature ON, you consent to the following data being sent to a secure endpoint at limitloginattempts.com to facilitate multi-factor authentication for the selected user groups and for all visitors without an assigned group (e.g., guests): this website\'s domain, user ID, username and/or email address, IP addresses, user group (if known), and user agent. We will use this data only for 2FA/MFA and will delete it from our servers as soon as the 2FA session ends, unless you (the admin) specify otherwise. Passwords will NEVER be sent to us. If an email address is sent, it will NEVER be used for any purpose other than sending a one-time 2FA code, nor will it be shared with any third party.', 'limit-login-attempts-reloaded' ); ?>
+								<ul style="margin: 0.5em 0 0 1.2em; padding-left: 0;">
+									<li><?php echo esc_html__( 'Enabling this feature sends limited data to a secure endpoint at limitloginattempts.com to process 2FA authentication.', 'limit-login-attempts-reloaded' ); ?></li>
+									<li><?php echo esc_html__( 'Data may include the site domain, user ID (if known), username, a partially hidden email address (e.g., a***b@*****.***), IP addresses, user role (if known), and browser/device information.', 'limit-login-attempts-reloaded' ); ?></li>
+									<li><?php echo esc_html__( 'This data is used only to verify login attempts with 2FA.', 'limit-login-attempts-reloaded' ); ?></li>
+									<li><?php echo esc_html__( 'Passwords are never transmitted.', 'limit-login-attempts-reloaded' ); ?></li>
+									<li><?php echo esc_html__( 'Any data sent is deleted once the 2FA session ends, unless the site administrator specifies otherwise.', 'limit-login-attempts-reloaded' ); ?></li>
+									<li><?php echo esc_html__( 'If a full email address is sent (this will be clearly stated in advance), it is only used to deliver a one-time 2FA code and is never shared with third parties.', 'limit-login-attempts-reloaded' ); ?></li>
+								</ul>
 							</div>
 							<?php if ( $is_mfa_disabled ) : ?>
 								<p class="description" style="color: #dc3232; font-weight: bold; margin-top: 8px;">
