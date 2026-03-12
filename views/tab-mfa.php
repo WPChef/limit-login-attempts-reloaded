@@ -186,17 +186,21 @@ jQuery(document).ready(function($) {
 	let rescueModal = null;
 	let rescueUrlsForPDF = null;
 	let domainForPDF = null;
+	/** @type {JQuery.jqXHR|null} Started early when checkbox checked; consumed in popup. */
+	let pendingRescueCodesRequest = null;
 
 	// Open popup when user checks "Enable multi-factor authentication"
 	$('#mfa_enabled').on('change', function() {
 		if ($(this).is(':checked') && !$(this).prop('disabled')) {
 			rescuePopupShown = false;
+			startRescueCodesRequest();
 			showRescuePopup();
 		}
 	});
 
 	<?php if ( isset( $mfa_settings['show_rescue_popup'] ) && $mfa_settings['show_rescue_popup'] ) : ?>
-	// Show popup if flag is set (e.g. page load with MFA enabled but no codes yet)
+	// Popup will show on load; start generating rescue links during page load so they may be ready when popup opens
+	startRescueCodesRequest();
 	showRescuePopup();
 	<?php endif; ?>
 
@@ -278,6 +282,23 @@ jQuery(document).ready(function($) {
 		});
 	}
 
+	function startRescueCodesRequest() {
+		if (!llar_vars || !llar_vars.nonce_mfa_generate_codes) {
+			return;
+		}
+		if (pendingRescueCodesRequest != null) {
+			return;
+		}
+		pendingRescueCodesRequest = $.ajax({
+			url: llar_vars.ajax_url || '<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>',
+			type: 'POST',
+			data: {
+				action: 'llar_mfa_generate_rescue_codes',
+				nonce: llar_vars.nonce_mfa_generate_codes
+			}
+		});
+	}
+
 	function runGenerateRescueCodes() {
 		const $displayContainer = rescueModal.$content.find('#llar-rescue-links-display');
 		const $loading = $displayContainer.find('#llar-rescue-links-loading');
@@ -289,6 +310,37 @@ jQuery(document).ready(function($) {
 			showRescueError($displayContainer, '<?php echo esc_js( __( 'Security token is missing. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>');
 			return;
 		}
+
+		function onRescueSuccess(response) {
+			if (response && response.success && response.data && response.data.rescue_urls) {
+				rescueUrlsForPDF = response.data.rescue_urls;
+				domainForPDF = response.data.domain || '';
+				$loading.hide();
+				displayRescueLinks(response.data.rescue_urls, response.data.domain);
+				rescueCodesDownloaded = true;
+			} else {
+				const msg = (response && response.data && response.data.message) ? response.data.message : '<?php echo esc_js( __( 'Failed to generate rescue codes.', 'limit-login-attempts-reloaded' ) ); ?>';
+				showRescueError($displayContainer, msg);
+			}
+		}
+		function onRescueError(xhr) {
+			let msg = '<?php echo esc_js( __( 'Failed to generate rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ); ?>';
+			if (xhr && xhr.responseText) {
+				try {
+					const err = JSON.parse(xhr.responseText);
+					if (err.data && err.data.message) { msg = err.data.message; }
+				} catch (e) {}
+			}
+			showRescueError($displayContainer, msg);
+		}
+
+		if (pendingRescueCodesRequest != null) {
+			const req = pendingRescueCodesRequest;
+			pendingRescueCodesRequest = null;
+			req.done(onRescueSuccess).fail(onRescueError);
+			return;
+		}
+
 		$.ajax({
 			url: llar_vars.ajax_url || '<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>',
 			type: 'POST',
@@ -296,28 +348,8 @@ jQuery(document).ready(function($) {
 				action: 'llar_mfa_generate_rescue_codes',
 				nonce: llar_vars.nonce_mfa_generate_codes
 			},
-			success: function(response) {
-				if (response && response.success && response.data && response.data.rescue_urls) {
-					rescueUrlsForPDF = response.data.rescue_urls;
-					domainForPDF = response.data.domain || '';
-					$loading.hide();
-					displayRescueLinks(response.data.rescue_urls, response.data.domain);
-					rescueCodesDownloaded = true;
-				} else {
-					const msg = (response && response.data && response.data.message) ? response.data.message : '<?php echo esc_js( __( 'Failed to generate rescue codes.', 'limit-login-attempts-reloaded' ) ); ?>';
-					showRescueError($displayContainer, msg);
-				}
-			},
-			error: function(xhr) {
-				let msg = '<?php echo esc_js( __( 'Failed to generate rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ); ?>';
-				if (xhr.responseText) {
-					try {
-						const err = JSON.parse(xhr.responseText);
-						if (err.data && err.data.message) { msg = err.data.message; }
-					} catch (e) {}
-				}
-				showRescueError($displayContainer, msg);
-			}
+			success: onRescueSuccess,
+			error: onRescueError
 		});
 	}
 
