@@ -36,7 +36,7 @@ $current_user_email = isset( $current_user_email ) ? $current_user_email : '';
 							</p>
 						</div>
 						<form id="llar-rescue-confirm-form" class="llar-rescue-confirm-form">
-						<div class="llar-rescue-email-confirm" style="margin: 18px 0; padding: 12px 0; border-top: 1px solid #ddd;">
+						<div class="llar-rescue-email-confirm" style="margin: 18px 0; padding: 12px 0; border-top: 1px solid #ddd; visibility: hidden;">
 							<h4 style="margin: 0 0 8px 0; font-size: 14px;"><?php esc_html_e( 'Your email for 2FA', 'limit-login-attempts-reloaded' ); ?></h4>
 							<?php if ( ! empty( $current_user_email ) ) : ?>
 								<p class="description" style="margin-bottom: 8px;">
@@ -76,7 +76,7 @@ $current_user_email = isset( $current_user_email ) ? $current_user_email : '';
 								<span class="llar-copy-feedback" id="llar-copy-feedback" aria-live="polite"></span>
 							</div>
 						</div>
-						<div class="llar-rescue-confirm-row" style="display: none; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ccc;">
+						<div class="llar-rescue-confirm-row" style="display: none; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ccc; visibility: hidden;">
 							<label style="display: block; margin-bottom: 10px;">
 								<input type="checkbox" id="llar-rescue-saved-confirm" name="llar_rescue_saved_confirm" value="1" required aria-required="true"/>
 								<?php echo esc_html__( 'I have saved my rescue links in a secure location. I am ready to activate 2FA.', 'limit-login-attempts-reloaded' ); ?>

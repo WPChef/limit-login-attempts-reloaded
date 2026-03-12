@@ -237,6 +237,7 @@ jQuery(document).ready(function($) {
 				return true;
 			},
 			onContentReady: function() {
+				// Checkboxes stay hidden (visibility in HTML) until displayRescueLinks runs
 				// Bind click on close icon to reload (same pattern as onboarding / micro-cloud popups)
 				rescueModal.$content.closest('.jconfirm').find('.jconfirm-closeIcon').off('click.llarMfaRescue').on('click.llarMfaRescue', function(e) {
 					e.preventDefault();
@@ -404,6 +405,8 @@ jQuery(document).ready(function($) {
 		});
 		$displayContainer.find('.llar-rescue-copy-row').show();
 
+		rescueModal.$content.find('.llar-rescue-email-confirm').css('visibility', '');
+		rescueModal.$content.find('.llar-rescue-confirm-row').css('visibility', '').show();
 		const $confirmRow = rescueModal.$content.find('.llar-rescue-confirm-row');
 		const $savedCheckbox = rescueModal.$content.find('#llar-rescue-saved-confirm');
 		const $emailConfirmCheckbox = rescueModal.$content.find('#llar-rescue-confirm-email');
