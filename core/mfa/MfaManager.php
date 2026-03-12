@@ -187,6 +187,10 @@ class MfaManager {
 			wp_die( esc_html( $msg ), esc_html__( '2FA Unavailable', 'limit-login-attempts-reloaded' ), array( 'response' => 403 ) );
 		}
 
+		// Always save role selection on submit so it persists even when rescue popup is shown (early return).
+		$mfa_roles = $this->get_sanitized_mfa_roles_from_post();
+		Config::update( 'mfa_roles', $mfa_roles );
+
 		if ( isset( $_POST['mfa_enabled'] ) && $_POST['mfa_enabled'] ) {
 			// Require admin to confirm their email before enabling 2FA (codes are sent to that address).
 			if ( empty( $_POST['mfa_confirm_email'] ) ) {
@@ -209,8 +213,6 @@ class MfaManager {
 			delete_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
 		}
 
-		$mfa_roles = $this->get_sanitized_mfa_roles_from_post();
-		Config::update( 'mfa_roles', $mfa_roles );
 		return false;
 	}
 
