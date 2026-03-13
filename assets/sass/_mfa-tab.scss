@@ -16,6 +16,16 @@
     }
   }
 
+  .llar-mfa-privacy-list {
+    margin-top: 10px;
+
+    ul {
+      margin: 0.5em 0 0 1.4em;
+      padding-left: 0;
+      list-style: disc;
+    }
+  }
+
   // MFA Rescue Popup styles - use Micro Cloud modal structure
   // Styles are applied automatically through .micro_cloud_modal__content, .micro_cloud_modal__body, .card, .card-body, .field-wrap, .field-title, .field-desc, .button_block-single
 
