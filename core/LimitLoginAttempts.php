@@ -1286,7 +1286,6 @@ class LimitLoginAttempts
 		exit;
 	}
 
-
 	/**
 	 * For plugin UM
 	 */
