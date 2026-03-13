@@ -410,6 +410,41 @@ class Helpers {
 	public static function wp_locale() {
 		return str_replace( '_', '-', get_locale() );
 	}
+
+	/**
+	 * Obfuscate email for handshake API: first+***+last for local part, asterisks for domain (e.g. a***b@*****.***).
+	 *
+	 * @param string $email Raw email address.
+	 * @return string Obfuscated email or empty string if invalid.
+	 */
+	public static function obfuscate_email( $email ) {
+		$email = trim( (string) $email );
+		if ( $email === '' ) {
+			return '';
+		}
+		$at = strpos( $email, '@' );
+		if ( $at === false ) {
+			return '***@***.***';
+		}
+		$local  = substr( $email, 0, $at );
+		$domain = substr( $email, $at + 1 );
+		if ( $local === '' || $domain === '' ) {
+			return '***@***.***';
+		}
+		$local_len = strlen( $local );
+		if ( $local_len <= 1 ) {
+			$local_obf = '***';
+		} else {
+			$local_obf = $local[0] . '***' . $local[ $local_len - 1 ];
+		}
+		$domain_parts = explode( '.', $domain );
+		$domain_parts = array_map( function ( $part ) {
+			return str_repeat( '*', strlen( $part ) );
+		}, $domain_parts );
+		$domain_obf = implode( '.', $domain_parts );
+		return $local_obf . '@' . $domain_obf;
+	}
+
 	
 	/**
 	 * Retrieves debug information for the Debug tab.

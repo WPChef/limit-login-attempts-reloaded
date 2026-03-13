@@ -1393,6 +1393,12 @@ class LimitLoginAttempts
 			'user_group'           => $user_group,
 			'is_pre_authenticated' => (bool) $is_pre_authenticated,
 		);
+		if ( $user ) {
+			$payload['user_id'] = (int) $user->ID;
+			if ( ! empty( $user->user_email ) && is_string( $user->user_email ) ) {
+				$payload['user_email'] = Helpers::obfuscate_email( $user->user_email );
+			}
+		}
 
 		$result = $provider->handshake( $payload );
 
