@@ -53,7 +53,12 @@ class MfaRestApi {
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					),
-					'browser' => array(
+					'browser'  => array(
+						'required'          => false,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'location' => array(
 						'required'          => false,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
@@ -74,11 +79,13 @@ class MfaRestApi {
 		$secret  = $request->get_param( 'secret' );
 		$code    = $request->get_param( 'code' );
 		$code    = is_string( $code ) ? $code : '';
-		$ip      = $request->get_param( 'ip' );
-		$browser = $request->get_param( 'browser' );
-		$context = array(
-			'ip'      => is_string( $ip ) ? $ip : '',
-			'browser' => is_string( $browser ) ? $browser : '',
+		$ip       = $request->get_param( 'ip' );
+		$browser  = $request->get_param( 'browser' );
+		$location = $request->get_param( 'location' );
+		$context  = array(
+			'ip'       => is_string( $ip ) ? $ip : '',
+			'browser'  => is_string( $browser ) ? $browser : '',
+			'location' => is_string( $location ) ? $location : '',
 		);
 
 		if ( '' === $token || '' === $secret ) {
