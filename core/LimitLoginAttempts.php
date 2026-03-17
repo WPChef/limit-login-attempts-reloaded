@@ -1437,6 +1437,12 @@ class LimitLoginAttempts
 			}
 		}
 
+		// When external MFA API does not respond, behave as if MFA is absent (same mechanism as rescue; 1 min).
+		if ( ! $result['success'] && ! empty( $result['server_unreachable'] ) ) {
+			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, 'api_unreachable', 60 );
+			return;
+		}
+
 		$rate['c'] = (int) $rate['c'] + 1;
 		set_transient( $rate_key, $rate, $period );
 	}

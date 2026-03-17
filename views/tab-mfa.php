@@ -28,6 +28,7 @@ if ( isset( $this->mfa_controller ) && method_exists( $this->mfa_controller, 'ge
 // Extract settings with defaults
 $mfa_enabled              = isset( $mfa_settings['mfa_enabled'] ) ? $mfa_settings['mfa_enabled'] : false;
 $mfa_temporarily_disabled = isset( $mfa_settings['mfa_temporarily_disabled'] ) ? $mfa_settings['mfa_temporarily_disabled'] : false;
+$mfa_disabled_reason      = isset( $mfa_settings['mfa_disabled_reason'] ) ? $mfa_settings['mfa_disabled_reason'] : null;
 $mfa_roles                = isset( $mfa_settings['mfa_roles'] ) ? $mfa_settings['mfa_roles'] : array();
 $all_roles                = isset( $mfa_settings['prepared_roles'] ) ? $mfa_settings['prepared_roles'] : array();
 $editable_roles           = isset( $mfa_settings['editable_roles'] ) ? $mfa_settings['editable_roles'] : array();
@@ -113,7 +114,13 @@ if ( $mfa_email_confirm_required ) {
 								</p>
 							<?php elseif ( $mfa_temporarily_disabled ) : ?>
 								<p class="description">
-									<?php esc_html_e( '2FA is temporarily disabled via rescue link. It will be automatically re-enabled in 1 hour.', 'limit-login-attempts-reloaded' ); ?>
+									<?php
+									if ( 'api_unreachable' === $mfa_disabled_reason ) {
+										esc_html_e( '2FA is temporarily disabled because the verification server was unreachable. It will be re-enabled in about 1 minute.', 'limit-login-attempts-reloaded' );
+									} else {
+										esc_html_e( '2FA is temporarily disabled via rescue link. It will be automatically re-enabled in 1 hour.', 'limit-login-attempts-reloaded' );
+									}
+									?>
 								</p>
 							<?php endif; ?>
 							<p class="description" style="margin-top: 10px; font-weight: bold;">

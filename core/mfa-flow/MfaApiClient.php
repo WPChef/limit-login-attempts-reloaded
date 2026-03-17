@@ -34,7 +34,7 @@ class MfaApiClient {
 	 *
 	 * @param array $payload  user_ip, login_url, send_email_url (required per API), user_group, is_pre_authenticated.
 	 * @param array $options Optional. base_url (override constants).
-	 * @return array { success: bool, data: array|null, error: string|null }
+	 * @return array { success: bool, data: array|null, error: string|null, server_unreachable?: bool }
 	 */
 	public function handshake( array $payload, $options = array() ) {
 		$base = isset( $options['base_url'] ) && (string) $options['base_url'] !== '' ? rtrim( (string) $options['base_url'], '/' ) : self::get_default_base_url();
@@ -61,6 +61,9 @@ class MfaApiClient {
 		}
 
 		$result = $this->parse_response( $response, $url );
+		if ( ! $result['success'] && 0 === $status ) {
+			$result['server_unreachable'] = true;
+		}
 		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
 			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'handshake ' . ( $result['success'] ? 'success' : 'fail' ) . ' status=' . $status . ( $result['error'] ? ' error=' . substr( $result['error'], 0, 60 ) : '' ) );
 		}

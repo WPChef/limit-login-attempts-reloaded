@@ -26,6 +26,19 @@ class MfaSettings implements MfaSettingsInterface {
 	}
 
 	/**
+	 * Reason MFA is temporarily disabled: 'api_unreachable' or 1 (rescue link). Null when not disabled.
+	 *
+	 * @return string|int|null
+	 */
+	public function get_mfa_disabled_reason() {
+		if ( ! $this->is_mfa_temporarily_disabled() ) {
+			return null;
+		}
+		$value = get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
+		return $value;
+	}
+
+	/**
 	 * Cleanup rescue codes and MFA transients when MFA is disabled.
 	 *
 	 * @return void
@@ -79,11 +92,12 @@ class MfaSettings implements MfaSettingsInterface {
 	 * MFA settings for view. Single source; uses MfaValidator for block reason.
 	 *
 	 * @param bool $show_rescue_popup From form submit when popup should open.
-	 * @return array mfa_enabled, mfa_temporarily_disabled, mfa_roles, prepared_roles, editable_roles, show_rescue_popup, mfa_block_reason, mfa_block_message
+	 * @return array mfa_enabled, mfa_temporarily_disabled, mfa_disabled_reason, mfa_roles, prepared_roles, editable_roles, show_rescue_popup, mfa_block_reason, mfa_block_message
 	 */
 	public function get_settings_for_view( $show_rescue_popup = false ) {
 		$mfa_enabled_raw          = Config::get( 'mfa_enabled', false );
 		$mfa_temporarily_disabled = $this->is_mfa_temporarily_disabled();
+		$mfa_disabled_reason      = $this->get_mfa_disabled_reason();
 		$mfa_checkbox_state       = get_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
 
 		// When temporarily disabled, keep checkbox state aligned with persistent config so that
@@ -106,6 +120,7 @@ class MfaSettings implements MfaSettingsInterface {
 		return array(
 			'mfa_enabled'              => $mfa_enabled,
 			'mfa_temporarily_disabled' => $mfa_temporarily_disabled,
+			'mfa_disabled_reason'      => $mfa_disabled_reason,
 			'mfa_roles'                => $mfa_roles,
 			'prepared_roles'           => $roles_data['prepared_roles'],
 			'editable_roles'           => $roles_data['editable_roles'],
