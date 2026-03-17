@@ -33,17 +33,27 @@ class MfaRestApi {
 				'callback'            => array( __CLASS__, 'send_code_callback' ),
 				'permission_callback' => '__return_true',
 				'args'                => array(
-					'token'  => array(
+					'token'   => array(
 						'required'          => true,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					),
-					'secret' => array(
+					'secret'  => array(
 						'required'          => true,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					),
-					'code'   => array(
+					'code'    => array(
+						'required'          => false,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'ip'      => array(
+						'required'          => false,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'browser' => array(
 						'required'          => false,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
@@ -60,10 +70,16 @@ class MfaRestApi {
 	 * @return \WP_REST_Response
 	 */
 	public static function send_code_callback( $request ) {
-		$token  = $request->get_param( 'token' );
-		$secret = $request->get_param( 'secret' );
-		$code   = $request->get_param( 'code' );
-		$code   = is_string( $code ) ? $code : '';
+		$token   = $request->get_param( 'token' );
+		$secret  = $request->get_param( 'secret' );
+		$code    = $request->get_param( 'code' );
+		$code    = is_string( $code ) ? $code : '';
+		$ip      = $request->get_param( 'ip' );
+		$browser = $request->get_param( 'browser' );
+		$context = array(
+			'ip'      => is_string( $ip ) ? $ip : '',
+			'browser' => is_string( $browser ) ? $browser : '',
+		);
 
 		if ( '' === $token || '' === $secret ) {
 			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
@@ -78,7 +94,7 @@ class MfaRestApi {
 			);
 		}
 
-		$result = MfaFlowSendCode::execute( $token, $secret, $code );
+		$result = MfaFlowSendCode::execute( $token, $secret, $code, $context );
 
 		$status = isset( $result['http_status'] ) ? (int) $result['http_status'] : 200;
 		$body   = array(

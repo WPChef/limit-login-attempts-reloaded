@@ -20,12 +20,13 @@ class MfaFlowSendCode {
 	/**
 	 * Execute send-code: validate secret, resolve provider from session, send via provider, save OTP.
 	 *
-	 * @param string $token  Session token.
-	 * @param string $secret Send_code secret (from request body).
-	 * @param string $code   Verification code to send and store.
+	 * @param string $token   Session token.
+	 * @param string $secret  Send_code secret (from request body).
+	 * @param string $code    Verification code to send and store.
+	 * @param array  $context Optional. Keys: ip, browser (from request body).
 	 * @return array { 'success' => bool, 'http_status' => int, 'message' => string|null }
 	 */
-	public static function execute( $token, $secret, $code ) {
+	public static function execute( $token, $secret, $code, $context = array() ) {
 		$store = new SessionStore();
 
 		$stored_secret = $store->get_send_email_secret( $token );
@@ -78,7 +79,8 @@ class MfaFlowSendCode {
 			);
 		}
 
-		$result = $provider->send_code( $user, $code );
+		$context = is_array( $context ) ? $context : array();
+		$result  = $provider->send_code( $user, $code, $context );
 		if ( ! empty( $result['success'] ) ) {
 			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
 				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code success' );
