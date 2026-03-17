@@ -29,6 +29,13 @@ define( 'LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR' );
 /* Notify value checked against these in limit_login_sanitize_variables() */
 define( 'LLA_LOCKOUT_NOTIFY_ALLOWED', 'log,email' );
 
+/** Regex: valid email for obfuscation (1=first, 2=middle, 3=last, 4=domain). */
+define( 'LLA_EMAIL_OBFUSCATE_REGEX', '/^(.)([^@]*)(.?)@(.*)$/' );
+/** Regex: one char in local part to mask (not first, not last). (?<=.) = at least one char before; [^@*] avoids re-matching asterisks. */
+define( 'LLA_EMAIL_OBFUSCATE_LOCAL', '/(?<=.)[^@*](?=[^@]+@)/' );
+/** Regex: one char in domain to mask (non-dot). */
+define( 'LLA_EMAIL_OBFUSCATE_DOMAIN', '/(?<=^[^@]*@.*)[^.]/' );
+
 /***************************************************************************************
  * MFA constants (rescue codes, rate limiting, transients).
  * Overridable: define in wp-config.php before plugin load to override defaults.

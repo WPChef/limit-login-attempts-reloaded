@@ -100,7 +100,7 @@ if ( $mfa_email_confirm_required ) {
 							<div class="description-secondary llar-mfa-privacy-list">
 								<ul>
 									<li><?php echo esc_html__( 'Enabling this feature sends limited data to a secure endpoint at limitloginattempts.com to process 2FA authentication.', 'limit-login-attempts-reloaded' ); ?></li>
-									<li><?php echo esc_html__( 'Data may include the site domain, user ID (if known), username, a partially hidden email address (e.g., a***b@*****.***), IP addresses, user role (if known), and browser/device information.', 'limit-login-attempts-reloaded' ); ?></li>
+									<li><?php echo esc_html__( 'Data may include the site domain, user ID (if known), username, a partially hidden email address (e.g., t**t@*******.***), IP addresses, user role (if known), and browser/device information.', 'limit-login-attempts-reloaded' ); ?></li>
 									<li><?php echo esc_html__( 'This data is used only to verify login attempts with 2FA.', 'limit-login-attempts-reloaded' ); ?></li>
 									<li><?php echo esc_html__( 'Passwords are never transmitted.', 'limit-login-attempts-reloaded' ); ?></li>
 									<li><?php echo esc_html__( 'Any data sent is deleted once the 2FA session ends, unless the site administrator specifies otherwise.', 'limit-login-attempts-reloaded' ); ?></li>
