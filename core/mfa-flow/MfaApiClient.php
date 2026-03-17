@@ -98,7 +98,7 @@ class MfaApiClient {
 		if ( defined( 'LLA_MFA_API_TOKEN' ) && LLA_MFA_API_TOKEN !== '' ) {
 			$request_options['headers'] = array( 'Authorization: Bearer ' . (string) LLA_MFA_API_TOKEN );
 		}
-		$response        = Http::post( $url, $request_options );
+		$response = Http::post( $url, $request_options );
 
 		$result = $this->parse_response( $response, $url );
 		$status = isset( $response['status'] ) ? (int) $response['status'] : 0;

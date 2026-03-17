@@ -107,24 +107,24 @@ class LlarMfaProvider implements MfaProviderInterface {
 		$location_from_ctx = isset( $context['location'] ) && is_string( $context['location'] ) ? $context['location'] : '';
 
 		$timestamp   = current_time( 'timestamp' );
-		$date_format  = get_option( 'date_format' );
-		$time_format  = get_option( 'time_format' );
-		$format       = is_string( $date_format ) && is_string( $time_format ) && $date_format !== '' && $time_format !== ''
+		$date_format = get_option( 'date_format' );
+		$time_format = get_option( 'time_format' );
+		$format      = is_string( $date_format ) && is_string( $time_format ) && $date_format !== '' && $time_format !== ''
 			? $date_format . ' ' . $time_format
 			: 'F j, Y \a\t g:i A';
-		$time_label   = date_i18n( $format, $timestamp );
+		$time_label  = date_i18n( $format, $timestamp );
 
-		$ttl_seconds    = defined( 'LLA_MFA_FLOW_OTP_TTL' ) ? (int) LLA_MFA_FLOW_OTP_TTL : 180;
-		$ttl_seconds   = $ttl_seconds > 0 ? $ttl_seconds : 180;
-		$code_ttl      = (int) max( 1, ceil( $ttl_seconds / 60 ) );
+		$ttl_seconds = defined( 'LLA_MFA_FLOW_OTP_TTL' ) ? (int) LLA_MFA_FLOW_OTP_TTL : 180;
+		$ttl_seconds = $ttl_seconds > 0 ? $ttl_seconds : 180;
+		$code_ttl    = (int) max( 1, ceil( $ttl_seconds / 60 ) );
 
-		$code_safe         = (string) $code;
-		$site_domain_safe  = (string) $site_domain;
-		$ip_safe           = (string) $ip_from_ctx;
-		$location_safe     = (string) $location_from_ctx;
-		$browser_safe      = (string) $browser_from_ctx;
-		$time_safe         = (string) $time_label;
-		$code_ttl_minutes  = $code_ttl;
+		$code_safe        = (string) $code;
+		$site_domain_safe = (string) $site_domain;
+		$ip_safe          = (string) $ip_from_ctx;
+		$location_safe    = (string) $location_from_ctx;
+		$browser_safe     = (string) $browser_from_ctx;
+		$time_safe        = (string) $time_label;
+		$code_ttl_minutes = $code_ttl;
 
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/mfa-verification.php';

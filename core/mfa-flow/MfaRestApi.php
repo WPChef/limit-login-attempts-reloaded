@@ -33,22 +33,22 @@ class MfaRestApi {
 				'callback'            => array( __CLASS__, 'send_code_callback' ),
 				'permission_callback' => '__return_true',
 				'args'                => array(
-					'token'   => array(
+					'token'    => array(
 						'required'          => true,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					),
-					'secret'  => array(
+					'secret'   => array(
 						'required'          => true,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					),
-					'code'    => array(
+					'code'     => array(
 						'required'          => false,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					),
-					'ip'      => array(
+					'ip'       => array(
 						'required'          => false,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
@@ -75,10 +75,10 @@ class MfaRestApi {
 	 * @return \WP_REST_Response
 	 */
 	public static function send_code_callback( $request ) {
-		$token   = $request->get_param( 'token' );
-		$secret  = $request->get_param( 'secret' );
-		$code    = $request->get_param( 'code' );
-		$code    = is_string( $code ) ? $code : '';
+		$token    = $request->get_param( 'token' );
+		$secret   = $request->get_param( 'secret' );
+		$code     = $request->get_param( 'code' );
+		$code     = is_string( $code ) ? $code : '';
 		$ip       = $request->get_param( 'ip' );
 		$browser  = $request->get_param( 'browser' );
 		$location = $request->get_param( 'location' );
