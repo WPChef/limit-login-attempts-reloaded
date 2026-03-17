@@ -23,7 +23,7 @@ class MfaFlowSendCode {
 	 * @param string $token   Session token.
 	 * @param string $secret  Send_code secret (from request body).
 	 * @param string $code    Verification code to send and store.
-	 * @param array  $context Optional. Keys: ip, browser (from request body).
+	 * @param array  $context Optional. Keys: ip, browser, location (from request body).
 	 * @return array { 'success' => bool, 'http_status' => int, 'message' => string|null }
 	 */
 	public static function execute( $token, $secret, $code, $context = array() ) {

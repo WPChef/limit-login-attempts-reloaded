@@ -223,6 +223,8 @@ if ( defined( 'LLA_PLUGIN_DIR' ) ) {
 						<div class="meta-value"><?php echo esc_html( $site_domain_safe ); ?></div>
 						<div class="meta-label"><?php esc_html_e( 'IP Address:', 'limit-login-attempts-reloaded' ); ?></div>
 						<div class="meta-value"><?php echo esc_html( $ip_safe ); ?></div>
+						<div class="meta-label"><?php esc_html_e( 'Location:', 'limit-login-attempts-reloaded' ); ?></div>
+						<div class="meta-value"><?php echo esc_html( $location_safe ); ?></div>
 						<div class="meta-label"><?php esc_html_e( 'Browser:', 'limit-login-attempts-reloaded' ); ?></div>
 						<div class="meta-value"><?php echo esc_html( $browser_safe ); ?></div>
 						<div class="meta-label"><?php esc_html_e( 'Time:', 'limit-login-attempts-reloaded' ); ?></div>

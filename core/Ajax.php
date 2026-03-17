@@ -1166,11 +1166,13 @@ class Ajax
 		$token   = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
 		$secret  = isset( $_POST['secret'] ) ? sanitize_text_field( wp_unslash( $_POST['secret'] ) ) : '';
 		$code    = isset( $_POST['code'] ) ? sanitize_text_field( wp_unslash( $_POST['code'] ) ) : '';
-		$ip      = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
-		$browser = isset( $_POST['browser'] ) ? sanitize_text_field( wp_unslash( $_POST['browser'] ) ) : '';
-		$context = array(
-			'ip'      => is_string( $ip ) ? $ip : '',
-			'browser' => is_string( $browser ) ? $browser : '',
+		$ip       = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
+		$browser  = isset( $_POST['browser'] ) ? sanitize_text_field( wp_unslash( $_POST['browser'] ) ) : '';
+		$location = isset( $_POST['location'] ) ? sanitize_text_field( wp_unslash( $_POST['location'] ) ) : '';
+		$context  = array(
+			'ip'       => is_string( $ip ) ? $ip : '',
+			'browser'  => is_string( $browser ) ? $browser : '',
+			'location' => is_string( $location ) ? $location : '',
 		);
 
 		if ( '' === $token || '' === $secret ) {

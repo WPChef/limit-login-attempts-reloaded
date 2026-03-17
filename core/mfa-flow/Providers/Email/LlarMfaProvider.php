@@ -85,7 +85,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 	 *
 	 * @param \WP_User $user    User to send code to.
 	 * @param string   $code    Verification code.
-	 * @param array    $context Optional. Keys: ip, browser (from email endpoint request).
+	 * @param array    $context Optional. Keys: ip, browser, location (from email endpoint request).
 	 * @return array { success: bool, message: string|null }
 	 */
 	public function send_code( $user, $code, $context = array() ) {
@@ -102,8 +102,9 @@ class LlarMfaProvider implements MfaProviderInterface {
 		$site_parsed = wp_parse_url( $site_url );
 		$site_domain = ( is_array( $site_parsed ) && ! empty( $site_parsed['host'] ) ) ? $site_parsed['host'] : str_replace( array( 'http://', 'https://' ), '', $site_url );
 
-		$ip_from_ctx     = isset( $context['ip'] ) && is_string( $context['ip'] ) ? $context['ip'] : '';
-		$browser_from_ctx = isset( $context['browser'] ) && is_string( $context['browser'] ) ? $context['browser'] : '';
+		$ip_from_ctx       = isset( $context['ip'] ) && is_string( $context['ip'] ) ? $context['ip'] : '';
+		$browser_from_ctx  = isset( $context['browser'] ) && is_string( $context['browser'] ) ? $context['browser'] : '';
+		$location_from_ctx = isset( $context['location'] ) && is_string( $context['location'] ) ? $context['location'] : '';
 
 		$timestamp   = current_time( 'timestamp' );
 		$date_format  = get_option( 'date_format' );
@@ -117,12 +118,13 @@ class LlarMfaProvider implements MfaProviderInterface {
 		$ttl_seconds   = $ttl_seconds > 0 ? $ttl_seconds : 180;
 		$code_ttl      = (int) max( 1, ceil( $ttl_seconds / 60 ) );
 
-		$code_safe        = (string) $code;
-		$site_domain_safe = (string) $site_domain;
-		$ip_safe          = (string) $ip_from_ctx;
-		$browser_safe     = (string) $browser_from_ctx;
-		$time_safe        = (string) $time_label;
-		$code_ttl_minutes = $code_ttl;
+		$code_safe         = (string) $code;
+		$site_domain_safe  = (string) $site_domain;
+		$ip_safe           = (string) $ip_from_ctx;
+		$location_safe     = (string) $location_from_ctx;
+		$browser_safe      = (string) $browser_from_ctx;
+		$time_safe         = (string) $time_label;
+		$code_ttl_minutes  = $code_ttl;
 
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/mfa-verification.php';
