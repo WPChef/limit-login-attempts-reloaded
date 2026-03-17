@@ -5,7 +5,6 @@ namespace LLAR\Core\MfaFlow\Providers\Email;
 use LLAR\Core\MfaFlow\MfaApiClient;
 use LLAR\Core\MfaFlow\Providers\MfaProviderInterface;
 use LLAR\Core\MfaFlow\MfaRestApi;
-use LLAR\Core\Helpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -84,11 +83,12 @@ class LlarMfaProvider implements MfaProviderInterface {
 	/**
 	 * Send verification code to the user by email.
 	 *
-	 * @param \WP_User $user User to send code to.
-	 * @param string  $code Verification code.
+	 * @param \WP_User $user    User to send code to.
+	 * @param string   $code    Verification code.
+	 * @param array    $context Optional. Keys: ip, browser (from email endpoint request).
 	 * @return array { success: bool, message: string|null }
 	 */
-	public function send_code( $user, $code ) {
+	public function send_code( $user, $code, $context = array() ) {
 		if ( ! $user || ! is_a( $user, 'WP_User' ) || empty( $user->user_email ) ) {
 			return array(
 				'success' => true,
@@ -99,36 +99,30 @@ class LlarMfaProvider implements MfaProviderInterface {
 		$subject = __( 'Verify your login', 'limit-login-attempts-reloaded' );
 
 		$site_url    = home_url();
-		$site_domain = str_replace( array( 'http://', 'https://' ), '', $site_url );
+		$site_parsed = wp_parse_url( $site_url );
+		$site_domain = ( is_array( $site_parsed ) && ! empty( $site_parsed['host'] ) ) ? $site_parsed['host'] : str_replace( array( 'http://', 'https://' ), '', $site_url );
 
-		$ips        = Helpers::get_all_ips();
-		$ip_address = '';
-		if ( isset( $ips['HTTP_X_FORWARDED_FOR'] ) && is_string( $ips['HTTP_X_FORWARDED_FOR'] ) && $ips['HTTP_X_FORWARDED_FOR'] !== '' ) {
-			$ip_address = $ips['HTTP_X_FORWARDED_FOR'];
-		} elseif ( isset( $ips['REMOTE_ADDR'] ) && is_string( $ips['REMOTE_ADDR'] ) && $ips['REMOTE_ADDR'] !== '' ) {
-			$ip_address = $ips['REMOTE_ADDR'];
-		}
-
-		$browser_label = isset( $_SERVER['HTTP_USER_AGENT'] ) && is_string( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
+		$ip_from_ctx     = isset( $context['ip'] ) && is_string( $context['ip'] ) ? $context['ip'] : '';
+		$browser_from_ctx = isset( $context['browser'] ) && is_string( $context['browser'] ) ? $context['browser'] : '';
 
 		$timestamp   = current_time( 'timestamp' );
-		$date_format = get_option( 'date_format' );
-		$time_format = get_option( 'time_format' );
-		$format      = is_string( $date_format ) && is_string( $time_format ) && $date_format !== '' && $time_format !== ''
+		$date_format  = get_option( 'date_format' );
+		$time_format  = get_option( 'time_format' );
+		$format       = is_string( $date_format ) && is_string( $time_format ) && $date_format !== '' && $time_format !== ''
 			? $date_format . ' ' . $time_format
 			: 'F j, Y \a\t g:i A';
-		$time_label  = date_i18n( $format, $timestamp );
+		$time_label   = date_i18n( $format, $timestamp );
 
-		$ttl_seconds = defined( 'LLA_MFA_FLOW_OTP_TTL' ) ? (int) LLA_MFA_FLOW_OTP_TTL : 180;
-		$ttl_seconds = $ttl_seconds > 0 ? $ttl_seconds : 180;
-		$code_ttl    = (int) max( 1, ceil( $ttl_seconds / 60 ) );
+		$ttl_seconds    = defined( 'LLA_MFA_FLOW_OTP_TTL' ) ? (int) LLA_MFA_FLOW_OTP_TTL : 180;
+		$ttl_seconds   = $ttl_seconds > 0 ? $ttl_seconds : 180;
+		$code_ttl      = (int) max( 1, ceil( $ttl_seconds / 60 ) );
 
-		$code_safe         = (string) $code;
-		$site_domain_safe  = (string) $site_domain;
-		$ip_safe           = (string) $ip_address;
-		$browser_safe      = (string) $browser_label;
-		$time_safe         = (string) $time_label;
-		$code_ttl_minutes  = $code_ttl;
+		$code_safe        = (string) $code;
+		$site_domain_safe = (string) $site_domain;
+		$ip_safe          = (string) $ip_from_ctx;
+		$browser_safe     = (string) $browser_from_ctx;
+		$time_safe        = (string) $time_label;
+		$code_ttl_minutes = $code_ttl;
 
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/mfa-verification.php';

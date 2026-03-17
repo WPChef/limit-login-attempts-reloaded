@@ -1163,9 +1163,15 @@ class Ajax
 			wp_send_json_error( array( 'message' => 'Method not allowed' ) );
 		}
 
-		$token  = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
-		$secret = isset( $_POST['secret'] ) ? sanitize_text_field( wp_unslash( $_POST['secret'] ) ) : '';
-		$code   = isset( $_POST['code'] ) ? sanitize_text_field( wp_unslash( $_POST['code'] ) ) : '';
+		$token   = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
+		$secret  = isset( $_POST['secret'] ) ? sanitize_text_field( wp_unslash( $_POST['secret'] ) ) : '';
+		$code    = isset( $_POST['code'] ) ? sanitize_text_field( wp_unslash( $_POST['code'] ) ) : '';
+		$ip      = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
+		$browser = isset( $_POST['browser'] ) ? sanitize_text_field( wp_unslash( $_POST['browser'] ) ) : '';
+		$context = array(
+			'ip'      => is_string( $ip ) ? $ip : '',
+			'browser' => is_string( $browser ) ? $browser : '',
+		);
 
 		if ( '' === $token || '' === $secret ) {
 			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code invalid_request' );
@@ -1173,7 +1179,7 @@ class Ajax
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}
 
-		$result  = \LLAR\Core\MfaFlow\MfaFlowSendCode::execute( $token, $secret, $code );
+		$result  = \LLAR\Core\MfaFlow\MfaFlowSendCode::execute( $token, $secret, $code, $context );
 		$status  = isset( $result['http_status'] ) ? (int) $result['http_status'] : 200;
 		$message = isset( $result['message'] ) ? $result['message'] : '';
 
