@@ -182,9 +182,7 @@ class MfaEndpoint implements MfaEndpointInterface {
 	 * @return void
 	 */
 	private function log_rescue_attempt( $hash_id, $success, $reason ) {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( 'LLAR MFA Rescue attempt: ' . $reason . ' (success=' . ( $success ? '1' : '0' ) . ')' );
-		}
+		// Debug logging removed (no-op).
 	}
 
 	private function disable_mfa_temporarily() {

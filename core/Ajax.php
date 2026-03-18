@@ -1176,7 +1176,6 @@ class Ajax
 		);
 
 		if ( '' === $token || '' === $secret ) {
-			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code invalid_request' );
 			status_header( 403 );
 			wp_send_json_error( array( 'message' => 'Forbidden' ) );
 		}

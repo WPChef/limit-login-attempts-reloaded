@@ -47,25 +47,16 @@ class MfaApiClient {
 		}
 
 		$url = $base . '/wp/handshake';
-		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'handshake request url=' . $url );
-		}
 		$request_options = array( 'data' => $payload );
 		if ( defined( 'LLA_MFA_API_TOKEN' ) && LLA_MFA_API_TOKEN !== '' ) {
 			$request_options['headers'] = array( 'Authorization: Bearer ' . (string) LLA_MFA_API_TOKEN );
 		}
 		$response = Http::post( $url, $request_options );
 		$status   = isset( $response['status'] ) ? (int) $response['status'] : 0;
-		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'handshake response status=' . $status . ' error=' . ( isset( $response['error'] ) ? substr( (string) $response['error'], 0, 60 ) : '' ) );
-		}
 
 		$result = $this->parse_response( $response, $url );
 		if ( ! $result['success'] && 0 === $status ) {
 			$result['server_unreachable'] = true;
-		}
-		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'handshake ' . ( $result['success'] ? 'success' : 'fail' ) . ' status=' . $status . ( $result['error'] ? ' error=' . substr( $result['error'], 0, 60 ) : '' ) );
 		}
 		return $result;
 	}
@@ -102,9 +93,6 @@ class MfaApiClient {
 
 		$result = $this->parse_response( $response, $url );
 		$status = isset( $response['status'] ) ? (int) $response['status'] : 0;
-		if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-			error_log( LLA_MFA_FLOW_LOG_PREFIX . 'verify ' . ( $result['success'] ? 'success' : 'fail' ) . ' status=' . $status . ( $result['error'] ? ' error=' . substr( $result['error'], 0, 60 ) : '' ) );
-		}
 		return $result;
 	}
 
