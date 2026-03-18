@@ -1327,13 +1327,17 @@ class LimitLoginAttempts
 
 	/**
 	 * Run MFA flow on login: handshake, save session, redirect to MFA app.
-	 * Exits on successful redirect. Call on both successful and failed login when MFA flow is enabled.
+	 * Exits on successful redirect. Call only after password verification.
 	 *
 	 * @param string $username             Login username.
 	 * @param bool   $is_pre_authenticated True if password was already validated (successful login).
 	 * @return void Exits on redirect; otherwise returns.
 	 */
 	private function try_mfa_flow_redirect( $username, $is_pre_authenticated = false ) {
+		// CRITICAL: never fetch or disclose any user info unless password was verified.
+		if ( ! $is_pre_authenticated ) {
+			return;
+		}
 		$ip = $this->get_address();
 
 		$mfa_temporarily_disabled = false !== get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
@@ -1408,11 +1412,7 @@ class LimitLoginAttempts
 		$has_redirect      = ! empty( $redirect_url_value );
 
 		if ( $result['success'] && $has_token && $has_secret && $has_redirect ) {
-			// Record failed attempt when redirecting after wrong password so counters and lockout apply.
-			if ( ! $is_pre_authenticated ) {
-				$this->record_failed_login_attempt( $username );
-			}
-			// Always save session locally so callback can enforce is_pre_authenticated (block login when password was wrong).
+			// Save session locally so callback can enforce is_pre_authenticated.
 			$store = new \LLAR\Core\MfaFlow\SessionStore();
 			// Single secret from MFA app (handshake response): used for verify and for send_code endpoint authorization.
 			$store->save_send_email_secret( $result['data']['token'], $result['data']['secret'] );
@@ -1619,13 +1619,9 @@ class LimitLoginAttempts
 	/**
 	 * Action when login attempt failed
 	 *
-	 * MFA flow: try_mfa_flow_redirect() may exit (redirect to MFA). If it returns, record the attempt.
-	 * When redirecting to MFA after wrong password, the attempt is recorded inside try_mfa_flow_redirect.
-	 *
 	 * @param string $username Login username.
 	 */
 	public function limit_login_failed( $username ) {
-		$this->try_mfa_flow_redirect( $username );
 		$this->record_failed_login_attempt( $username );
 	}
 
@@ -1894,10 +1890,6 @@ class LimitLoginAttempts
 		$not_locked_out = $this->check_whitelist_ips( false, $ip ) || $this->check_whitelist_usernames( false, $user_login ) || $this->is_limit_login_ok();
 
 		if ( is_wp_error( $user ) ) {
-			// Trigger MFA flow on failed login only if not locked out (locked-out users must see block message).
-			if ( $username !== '' && $not_locked_out ) {
-				$this->try_mfa_flow_redirect( $username, false );
-			}
 			return $user;
 		}
 
