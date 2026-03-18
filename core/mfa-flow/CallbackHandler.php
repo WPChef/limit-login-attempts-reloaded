@@ -58,16 +58,16 @@ class CallbackHandler {
 		$store   = new SessionStore();
 		$session = $store->get_session( $token );
 		$cookie  = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
-		$verify  = wp_verify_nonce( $cookie, 'llar_mfa_callback' );
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			return;
 		}
+		$verify = $store->consume_callback_state( $cookie, $token );
+		setcookie( 'llar_mfa_state', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
 		if ( ! $verify ) {
 			$store->delete_session( $token );
 			self::redirect_login( 'llar_mfa_session_expired' );
 			exit;
 		}
-		setcookie( 'llar_mfa_state', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
 		if ( empty( $session['is_pre_authenticated'] ) ) {
 			return;
 		}
@@ -106,20 +106,20 @@ class CallbackHandler {
 		$store   = new SessionStore();
 		$session = $store->get_session( $token );
 		$cookie  = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
-		$verify  = wp_verify_nonce( $cookie, 'llar_mfa_callback' );
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			$store->delete_session( $token );
 			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback session_expired' );
 			self::redirect_login( 'llar_mfa_session_expired' );
 			return;
 		}
+		$verify = $store->consume_callback_state( $cookie, $token );
+		setcookie( 'llar_mfa_state', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
 		if ( ! $verify ) {
 			$store->delete_session( $token );
 			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback nonce_invalid' );
 			self::redirect_login( 'llar_mfa_session_expired' );
 			return;
 		}
-		setcookie( 'llar_mfa_state', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
 
 		$stored_otp = $store->get_otp_once( $token );
 		$code_match = ( $stored_otp !== null && $stored_otp === $code );
