@@ -118,12 +118,12 @@ class LlarMfaProvider implements MfaProviderInterface {
 		$ttl_seconds = $ttl_seconds > 0 ? $ttl_seconds : 180;
 		$code_ttl    = (int) max( 1, ceil( $ttl_seconds / 60 ) );
 
-		$code_safe        = (string) $code;
-		$site_domain_safe = (string) $site_domain;
-		$ip_safe          = (string) $ip_from_ctx;
-		$location_safe    = (string) $location_from_ctx;
-		$browser_safe     = (string) $browser_from_ctx;
-		$time_safe        = (string) $time_label;
+		$code_safe        = $this->sanitize_mfa_email_code( $code );
+		$site_domain_safe = $this->sanitize_mfa_email_field( (string) $site_domain, 253 );
+		$ip_safe          = $this->sanitize_mfa_email_ip( $ip_from_ctx );
+		$location_safe    = $this->sanitize_mfa_email_field( $location_from_ctx, 500 );
+		$browser_safe     = $this->sanitize_mfa_email_field( $browser_from_ctx, 500 );
+		$time_safe        = $this->sanitize_mfa_email_field( (string) $time_label, 200 );
 		$code_ttl_minutes = $code_ttl;
 
 		ob_start();
@@ -152,6 +152,56 @@ class LlarMfaProvider implements MfaProviderInterface {
 	 */
 	public function get_config_fields() {
 		return array();
+	}
+
+	/**
+	 * OTP / code for email body: no HTML, length-limited.
+	 *
+	 * @param mixed $code Raw code from API.
+	 * @return string
+	 */
+	private function sanitize_mfa_email_code( $code ) {
+		$s = is_string( $code ) ? $code : '';
+		$s = preg_replace( '/\s+/', '', wp_strip_all_tags( $s ) );
+		if ( strlen( $s ) > 64 ) {
+			$s = substr( $s, 0, 64 );
+		}
+		return $s;
+	}
+
+	/**
+	 * Single-line display field for email meta rows.
+	 *
+	 * @param mixed $value      Context value.
+	 * @param int   $max_length Max bytes (ASCII-safe truncation).
+	 * @return string
+	 */
+	private function sanitize_mfa_email_field( $value, $max_length ) {
+		if ( ! is_string( $value ) ) {
+			$value = '';
+		}
+		$out = sanitize_text_field( $value );
+		if ( $max_length > 0 && strlen( $out ) > $max_length ) {
+			$out = substr( $out, 0, $max_length );
+		}
+		return $out;
+	}
+
+	/**
+	 * IP for display: valid IPv4/IPv6 or sanitized fallback.
+	 *
+	 * @param mixed $ip Context IP string.
+	 * @return string
+	 */
+	private function sanitize_mfa_email_ip( $ip ) {
+		if ( ! is_string( $ip ) ) {
+			return '';
+		}
+		$ip = trim( $ip );
+		if ( $ip !== '' && filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 ) ) {
+			return $ip;
+		}
+		return $this->sanitize_mfa_email_field( $ip, 45 );
 	}
 
 	/**
