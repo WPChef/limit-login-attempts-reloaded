@@ -84,6 +84,44 @@ class SessionStore {
 	}
 
 	/**
+	 * Save callback state for token (CSRF protection for anonymous users).
+	 * State is stored server-side and mirrored in a HttpOnly cookie.
+	 *
+	 * @param string $state Random state string.
+	 * @param string $token MFA session token.
+	 * @return bool
+	 */
+	public function save_callback_state( $state, $token ) {
+		if ( ! is_string( $state ) || '' === $state || ! is_string( $token ) || '' === $token ) {
+			return false;
+		}
+		$ttl = defined( 'LLA_MFA_SESSION_TTL' ) ? (int) LLA_MFA_SESSION_TTL : 600;
+		$ttl = $ttl > 0 ? $ttl : 600;
+		$key = ( defined( 'LLA_MFA_FLOW_TRANSIENT_STATE_PREFIX' ) ? LLA_MFA_FLOW_TRANSIENT_STATE_PREFIX : 'llar_mfa_state_' ) . $state;
+		return (bool) set_transient( $key, $token, $ttl );
+	}
+
+	/**
+	 * Consume callback state (one-time). Returns true if state matches token.
+	 *
+	 * @param string $state Cookie state value.
+	 * @param string $token MFA session token from request.
+	 * @return bool
+	 */
+	public function consume_callback_state( $state, $token ) {
+		if ( ! is_string( $state ) || '' === $state || ! is_string( $token ) || '' === $token ) {
+			return false;
+		}
+		$key   = ( defined( 'LLA_MFA_FLOW_TRANSIENT_STATE_PREFIX' ) ? LLA_MFA_FLOW_TRANSIENT_STATE_PREFIX : 'llar_mfa_state_' ) . $state;
+		$value = get_transient( $key );
+		if ( false === $value || ! is_string( $value ) || $value !== $token ) {
+			return false;
+		}
+		delete_transient( $key );
+		return true;
+	}
+
+	/**
 	 * Save OTP code for token (for callback verification).
 	 *
 	 * @param string $token Session token.
