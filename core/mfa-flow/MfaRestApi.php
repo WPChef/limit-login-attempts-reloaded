@@ -89,9 +89,6 @@ class MfaRestApi {
 		);
 
 		if ( '' === $token || '' === $secret ) {
-			if ( defined( 'WP_DEBUG' ) && \WP_DEBUG ) {
-				error_log( LLA_MFA_FLOW_LOG_PREFIX . 'send_code invalid_request' );
-			}
 			return new \WP_REST_Response(
 				array(
 					'success' => false,

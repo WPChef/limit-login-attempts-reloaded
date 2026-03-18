@@ -108,7 +108,6 @@ class CallbackHandler {
 		$cookie  = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			$store->delete_session( $token );
-			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback session_expired' );
 			self::redirect_login( 'llar_mfa_session_expired' );
 			return;
 		}
@@ -116,7 +115,6 @@ class CallbackHandler {
 		setcookie( 'llar_mfa_state', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
 		if ( ! $verify ) {
 			$store->delete_session( $token );
-			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback nonce_invalid' );
 			self::redirect_login( 'llar_mfa_session_expired' );
 			return;
 		}
@@ -125,7 +123,6 @@ class CallbackHandler {
 		$code_match = ( $stored_otp !== null && $stored_otp === $code );
 		if ( ! $code_match ) {
 			$store->delete_session( $token );
-			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback code_invalid' );
 			self::redirect_login( 'llar_mfa_code_invalid' );
 			return;
 		}
@@ -134,7 +131,6 @@ class CallbackHandler {
 		$provider    = MfaProviderRegistry::get( $provider_id );
 		if ( ! $provider ) {
 			$store->delete_session( $token );
-			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback provider_not_found provider_id=' . $provider_id );
 			self::redirect_login( 'llar_mfa_verify_failed' );
 			return;
 		}
@@ -142,7 +138,6 @@ class CallbackHandler {
 
 		if ( ! $result['success'] || empty( $result['data']['is_verified'] ) ) {
 			$store->delete_session( $token );
-			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback verify_failed' );
 			self::redirect_login( 'llar_mfa_verify_failed' );
 			return;
 		}
@@ -152,19 +147,16 @@ class CallbackHandler {
 
 		if ( ! $user || ! is_a( $user, 'WP_User' ) ) {
 			$store->delete_session( $token );
-			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback user_invalid' );
 			self::redirect_login( 'llar_mfa_user_invalid' );
 			return;
 		}
 
 		if ( empty( $session['is_pre_authenticated'] ) ) {
 			$store->delete_session( $token );
-			defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback pre_auth_required' );
 			self::redirect_login( 'llar_mfa_pre_auth_required' );
 			return;
 		}
 
-		defined( 'WP_DEBUG' ) && \WP_DEBUG && error_log( LLA_MFA_FLOW_LOG_PREFIX . 'callback success user_id=' . $user->ID );
 		wp_clear_auth_cookie();
 		wp_set_current_user( $user->ID );
 		$remember_me = ! empty( $session['remember_me'] );
