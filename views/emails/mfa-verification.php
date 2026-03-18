@@ -1,4 +1,8 @@
 <?php
+/**
+ * MFA verification email HTML. Dynamic values must be output only via esc_html(), esc_attr(), or wp_kses().
+ * Context strings are sanitized in LlarMfaProvider::send_code() before include; escaping here prevents HTML injection if the template changes.
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -194,7 +198,11 @@ if ( defined( 'LLA_PLUGIN_DIR' ) ) {
 <body>
 	<div class="wrapper">
 		<div class="container">
-			<div class="header"><?php if ( $logo_src !== '' ) : ?><img src="<?php echo esc_attr( $logo_src ); ?>" alt="" class="header-logo" width="40" height="40"><?php endif; ?><?php esc_html_e( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ); ?></div>
+			<div class="header">
+			<?php
+			if ( $logo_src !== '' ) :
+				?>
+				<img src="<?php echo esc_attr( $logo_src ); ?>" alt="" class="header-logo" width="40" height="40"><?php endif; ?><?php esc_html_e( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ); ?></div>
 			<div class="content">
 				<div class="title"><?php esc_html_e( 'Verify your login', 'limit-login-attempts-reloaded' ); ?></div>
 				<div class="description">
@@ -249,7 +257,11 @@ if ( defined( 'LLA_PLUGIN_DIR' ) ) {
 						__( 'This verification email was sent by<wbr> <wbr><strong><a href="https://www.limitloginattempts.com" target="_blank" rel="noopener">Limit&nbsp;Login&nbsp;Attempts&nbsp;Reloaded</a></strong>.<br>Never share this code with anyone.<wbr> Support will never ask for it.', 'limit-login-attempts-reloaded' ),
 						array(
 							'strong' => array(),
-							'a'      => array( 'href' => array(), 'target' => array(), 'rel' => array() ),
+							'a'      => array(
+						'href'   => array(),
+						'target' => array(),
+						'rel'    => array(),
+						),
 							'br'     => array(),
 							'wbr'    => array(),
 						)
