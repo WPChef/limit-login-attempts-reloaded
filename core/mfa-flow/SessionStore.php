@@ -177,11 +177,56 @@ class SessionStore {
 		if ( ! is_string( $token ) || '' === $token ) {
 			return null;
 		}
-		$hash = $this->get_otp( $token );
-		if ( $hash !== null ) {
-			$this->delete_otp( $token );
+
+		$transient_key = LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX . $token;
+		$hash          = get_transient( $transient_key );
+		if ( false === $hash || ! is_string( $hash ) ) {
+			return null;
 		}
-		return $hash;
+
+		// For DB-backed transients consume OTP atomically via low-level DELETE.
+		if ( ! wp_using_ext_object_cache() ) {
+			global $wpdb;
+
+			$option_name = '_transient_' . $transient_key;
+			$deleted     = $wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
+					$option_name
+				)
+			);
+
+			if ( 1 !== (int) $deleted ) {
+				return null;
+			}
+
+			// Best-effort cleanup of the timeout row.
+			$timeout_name = '_transient_timeout_' . $transient_key;
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
+					$timeout_name
+				)
+			);
+
+			return $hash;
+		}
+
+		// For external object cache use short lock to avoid non-atomic get+delete.
+		$lock_key = 'llar_mfa_otp_lock_' . $token;
+		if ( ! wp_cache_add( $lock_key, 1, 'transient', 5 ) ) {
+			return null;
+		}
+
+		$cached_hash = $this->get_otp( $token );
+		if ( null === $cached_hash ) {
+			wp_cache_delete( $lock_key, 'transient' );
+			return null;
+		}
+		$this->delete_otp( $token );
+		wp_cache_delete( $lock_key, 'transient' );
+
+		return $cached_hash;
 	}
 
 	/**
