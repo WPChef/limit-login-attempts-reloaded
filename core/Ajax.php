@@ -43,6 +43,8 @@ class Ajax
 		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
 		add_action( 'wp_ajax_activate_micro_cloud', array( $this, 'activate_micro_cloud_callback' ) );
 		add_action( 'wp_ajax_test_email_notifications', array( $this, 'test_email_notifications_callback' ) );
+		add_action( 'wp_ajax_nopriv_llar_mfa_flow_send_code', array( $this, 'mfa_flow_send_code_callback' ) );
+		add_action( 'wp_ajax_llar_mfa_flow_send_code', array( $this, 'mfa_flow_send_code_callback' ) );
 	}
 
 	public function ajax_unlock() {
@@ -1148,6 +1150,46 @@ class Ajax
 		}
 	}
 
+	/**
+	 * MFA flow: send code to user email (AJAX fallback when REST API is unavailable).
+	 * POST only: token, secret (send_email secret), code in $_POST.
+	 */
+	public function mfa_flow_send_code_callback() {
+		check_ajax_referer( 'llar_mfa_flow_send_code', '_ajax_nonce', true );
+
+		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : '';
+		if ( 'POST' !== $method ) {
+			status_header( 405 );
+			wp_send_json_error( array( 'message' => 'Method not allowed' ) );
+		}
+
+		$token   = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
+		$secret  = isset( $_POST['secret'] ) ? sanitize_text_field( wp_unslash( $_POST['secret'] ) ) : '';
+		$code    = isset( $_POST['code'] ) ? sanitize_text_field( wp_unslash( $_POST['code'] ) ) : '';
+		$ip       = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
+		$browser  = isset( $_POST['browser'] ) ? sanitize_text_field( wp_unslash( $_POST['browser'] ) ) : '';
+		$location = isset( $_POST['location'] ) ? sanitize_text_field( wp_unslash( $_POST['location'] ) ) : '';
+		$context  = array(
+			'ip'       => is_string( $ip ) ? $ip : '',
+			'browser'  => is_string( $browser ) ? $browser : '',
+			'location' => is_string( $location ) ? $location : '',
+		);
+
+		if ( '' === $token || '' === $secret ) {
+			status_header( 403 );
+			wp_send_json_error( array( 'message' => 'Forbidden' ) );
+		}
+
+		$result  = \LLAR\Core\MfaFlow\MfaFlowSendCode::execute( $token, $secret, $code, $context );
+		$status  = isset( $result['http_status'] ) ? (int) $result['http_status'] : 200;
+		$message = isset( $result['message'] ) ? $result['message'] : '';
+
+		status_header( $status );
+		if ( ! empty( $result['success'] ) ) {
+			wp_send_json_success();
+		}
+		wp_send_json_error( array( 'message' => $message ? $message : 'Forbidden' ) );
+	}
 
 	/**
 	 * Access capabilities checks
