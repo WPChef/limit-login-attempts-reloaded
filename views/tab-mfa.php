@@ -171,6 +171,7 @@ if ( $mfa_email_confirm_required ) {
 			<p class="submit">
 				<?php wp_nonce_field( 'limit-login-attempts-options' ); ?>
 				<input type="hidden" name="mfa_confirm_email" id="llar_mfa_confirm_email_input" value="0"/>
+				<input type="hidden" name="mfa_rescue_codes_confirmed" id="llar_mfa_rescue_codes_confirmed_input" value="0"/>
 				<input class="button menu__item col button__orange" 
 						name="llar_update_mfa_settings"
 						value="<?php esc_attr_e( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
@@ -258,12 +259,16 @@ jQuery(document).ready(function($) {
 				// Form submit: after HTML5 validation, prevent actual submit and trigger main form
 				rescueModal.$content.find('#llar-rescue-confirm-form').off('submit.llarRescue').on('submit.llarRescue', function(e) {
 					e.preventDefault();
-					var hiddenInput = document.getElementById('llar_mfa_confirm_email_input');
+					const hiddenInput = document.getElementById('llar_mfa_confirm_email_input');
 					if (hiddenInput) {
 						hiddenInput.value = '1';
 					}
+					const rescueConfirmedInput = document.getElementById('llar_mfa_rescue_codes_confirmed_input');
+					if (rescueConfirmedInput) {
+						rescueConfirmedInput.value = '1';
+					}
 					rescueModal.close();
-					var saveBtn = document.querySelector('#llar-setting-page input[name="llar_update_mfa_settings"]');
+					const saveBtn = document.querySelector('#llar-setting-page input[name="llar_update_mfa_settings"]');
 					if (saveBtn) {
 						saveBtn.click();
 					} else {
@@ -381,8 +386,8 @@ jQuery(document).ready(function($) {
 		});
 		$linksList.append($scrollDiv);
 		// Force full width: jconfirm can constrain width, so set from content box (innerWidth = width minus padding)
-		var $box = rescueModal.$content.closest('.jconfirm-box');
-		var contentWidth = $box.length ? $box.innerWidth() : 0;
+		const $box = rescueModal.$content.closest('.jconfirm-box');
+		const contentWidth = $box.length ? $box.innerWidth() : 0;
 		if (contentWidth && contentWidth > 0) {
 			$displayContainer.css('width', contentWidth + 'px');
 			$linksList.css('width', contentWidth + 'px');
@@ -455,8 +460,8 @@ jQuery(document).ready(function($) {
 			$emailConfirmCheckbox.prop('checked', false);
 		}
 		function updateActivateButtonVisual() {
-			var savedOk = $savedCheckbox.is(':checked');
-			var emailOk = $emailConfirmCheckbox.length > 0 && $emailConfirmCheckbox.is(':checked');
+			const savedOk = $savedCheckbox.is(':checked');
+			const emailOk = $emailConfirmCheckbox.length > 0 && $emailConfirmCheckbox.is(':checked');
 			$closeBtn.toggleClass('llar-rescue-close-btn--inactive', !(savedOk && emailOk));
 			$closeBtn.toggleClass('llar-rescue-close-btn--active', savedOk && emailOk);
 		}
