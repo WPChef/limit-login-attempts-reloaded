@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Uses MfaBackupCodes, MfaEndpoint, MfaSettings, MfaValidator (4 dependencies).
  */
 class MfaManager {
+	/** Pending rescue codes transient lifetime (seconds). */
+	const PENDING_RESCUE_CODES_TTL = 1800;
 
 	public $show_rescue_popup = false;
 	public $prepared_roles    = array();
@@ -25,6 +27,58 @@ class MfaManager {
 	private $endpoint;
 	/** @var MfaSettingsInterface */
 	private $settings;
+
+	/**
+	 * Build per-user transient key for pending rescue hashes.
+	 *
+	 * @param int $user_id Current user ID.
+	 * @return string
+	 */
+	private function get_pending_rescue_codes_key( $user_id ) {
+		return 'llar_mfa_pending_rescue_codes_' . (int) $user_id;
+	}
+
+	/**
+	 * Save pending rescue hashes for current user until settings are confirmed.
+	 *
+	 * @param array $codes Hashed rescue codes.
+	 * @return void
+	 */
+	private function set_pending_rescue_codes( $codes ) {
+		$user_id = get_current_user_id();
+		if ( 0 >= (int) $user_id || empty( $codes ) || ! is_array( $codes ) ) {
+			return;
+		}
+		set_transient( $this->get_pending_rescue_codes_key( $user_id ), $codes, self::PENDING_RESCUE_CODES_TTL );
+	}
+
+	/**
+	 * Read pending rescue hashes for current user.
+	 *
+	 * @return array
+	 */
+	private function get_pending_rescue_codes() {
+		$user_id = get_current_user_id();
+		if ( 0 >= (int) $user_id ) {
+			return array();
+		}
+		$codes = get_transient( $this->get_pending_rescue_codes_key( $user_id ) );
+		return is_array( $codes ) ? $codes : array();
+	}
+
+	/**
+	 * Remove pending rescue hashes for current user.
+	 *
+	 * @return void
+	 */
+	private function delete_pending_rescue_codes() {
+		$user_id = get_current_user_id();
+		if ( 0 >= (int) $user_id ) {
+			return;
+		}
+		delete_transient( $this->get_pending_rescue_codes_key( $user_id ) );
+	}
+
 
 	/**
 	 * Constructor. Dependencies are injected for testability and single responsibility.
@@ -198,6 +252,14 @@ class MfaManager {
 				return false;
 			}
 			delete_transient( 'llar_mfa_email_confirm_required' );
+			$rescue_confirmed = ! empty( $_POST['mfa_rescue_codes_confirmed'] );
+			if ( $rescue_confirmed ) {
+				$pending_codes = $this->get_pending_rescue_codes();
+				if ( ! empty( $pending_codes ) ) {
+					Config::update( 'mfa_rescue_codes', $pending_codes );
+					$this->delete_pending_rescue_codes();
+				}
+			}
 			if ( $this->should_show_rescue_popup() ) {
 				$this->show_rescue_popup = true;
 				set_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE, 1, MfaConstants::CHECKBOX_STATE_TTL );
@@ -205,12 +267,14 @@ class MfaManager {
 			}
 			Config::update( 'mfa_enabled', 1 );
 			delete_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
+			$this->delete_pending_rescue_codes();
 			// Re-enable 2FA immediately when admin explicitly turns it on (clear rescue temporary disable).
 			delete_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
 		} else {
 			$this->cleanup_rescue_codes();
 			Config::update( 'mfa_enabled', 0 );
 			delete_transient( MfaConstants::TRANSIENT_CHECKBOX_STATE );
+			$this->delete_pending_rescue_codes();
 		}
 
 		return false;
@@ -286,6 +350,16 @@ class MfaManager {
 		if ( empty( $plain_codes ) || ! is_array( $plain_codes ) ) {
 			wp_send_json_error( array( 'message' => __( 'Failed to generate rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ) );
 		}
+
+		$pending_codes = array();
+		foreach ( $plain_codes as $code ) {
+			$rescue_code = RescueCode::from_plain_code( $code );
+			if ( null === $rescue_code ) {
+				wp_send_json_error( array( 'message' => __( 'Failed to hash rescue codes. Please try again.', 'limit-login-attempts-reloaded' ) ) );
+			}
+			$pending_codes[] = $rescue_code->to_array();
+		}
+		$this->set_pending_rescue_codes( $pending_codes );
 
 		$rescue_urls = array();
 		foreach ( $plain_codes as $code ) {

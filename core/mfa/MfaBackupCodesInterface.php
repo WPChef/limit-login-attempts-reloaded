@@ -32,7 +32,8 @@ interface MfaBackupCodesInterface {
 	public function decrypt_code( $encrypted_data );
 
 	/**
-	 * Generate rescue codes. Stores hashes in Config, returns plain codes.
+	 * Generate rescue codes and return plain values.
+	 * Persisting hashes is handled by MFA settings submit flow after confirmation.
 	 *
 	 * @return array Plain codes.
 	 * @throws \Exception When hashing fails.

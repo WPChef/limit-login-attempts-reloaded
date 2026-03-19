@@ -2,7 +2,6 @@
 
 namespace LLAR\Core\Mfa;
 
-use LLAR\Core\Config;
 use LLAR\Core\MfaConstants;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,13 +68,13 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 	}
 
 	/**
-	 * Generate rescue codes. Stores hashes in Config, returns plain codes.
+	 * Generate rescue codes and return plain values.
+	 * Persisting hashes is handled by MFA settings submit flow after confirmation.
 	 *
 	 * @return array Plain codes
 	 * @throws \Exception When hashing fails
 	 */
 	public function generate() {
-		$codes       = array();
 		$plain_codes = array();
 		for ( $i = 0; MfaConstants::CODE_COUNT > $i; $i++ ) {
 			$code        = wp_generate_password( MfaConstants::CODE_LENGTH, false );
@@ -83,11 +82,7 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 			if ( null === $rescue_code ) {
 				throw new \Exception( __( 'Failed to hash rescue code. Generation aborted.', 'limit-login-attempts-reloaded' ) );
 			}
-			$codes[]       = $rescue_code->to_array();
 			$plain_codes[] = $code;
-		}
-		if ( ! empty( $codes ) ) {
-			Config::update( 'mfa_rescue_codes', $codes );
 		}
 		return $plain_codes;
 	}
