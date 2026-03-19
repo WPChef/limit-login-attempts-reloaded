@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 3.0
 Tested up to: 6.9
-Stable tag: 2.26.28
+Stable tag: 3.0.0
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -23,7 +23,7 @@ Upgrade to <a href="https://www.limitloginattempts.com/plans/">Limit Login Attem
 https://www.youtube.com/watch?v=JfkvIiQft14
 
 = Features (Free Version): =
-* **2FA** - Coming soon.
+* **2FA** - Enable two-factor authentication for extra login security.
 * **Limit Logins** - Limit the number of retry attempts when logging in (per each IP).
 * **Configurable Lockout Timings** - Modify the amount of time a user or IP must wait after a lockout.
 * **Remaining Tries** - Informs the user about the remaining retries or lockout time on the login page.
@@ -147,6 +147,10 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 3.0.0 =
+* Implemented two-factor authentication.
+* Refactored the codebase.
 
 = 2.26.28 =
 * Added user notification for failed /info API requests.
