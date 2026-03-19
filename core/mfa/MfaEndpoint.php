@@ -192,4 +192,5 @@ class MfaEndpoint implements MfaEndpointInterface {
 			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, 1, MfaConstants::MFA_DISABLE_DURATION );
 		}
 	}
+
 }
