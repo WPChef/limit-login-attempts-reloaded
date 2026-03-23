@@ -82,9 +82,6 @@ $profile_url = admin_url( 'profile.php' );
 									<?php echo esc_html__( 'Save these links in a secure location. Each link can only be used once.', 'limit-login-attempts-reloaded' ); ?>
 								</p>
 							</div>
-							<div id="llar-rescue-links-loading" class="llar-rescue-links-loading" style="display: none;">
-								<span class="llar-rescue-loading-text"><strong><?php echo esc_html__( 'Generating Rescue Links', 'limit-login-attempts-reloaded' ); ?></strong><span class="llar-rescue-loading-dots">...</span></span>
-							</div>
 							<div class="llar-rescue-links-list" id="llar-rescue-links-list"></div>
 							<div class="llar-rescue-copy-row" style="display: none;">
 								<button type="button" class="button llar-copy-rescue-links" title="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>" aria-label="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>">📋 <?php echo esc_html__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?></button>
@@ -105,6 +102,12 @@ $profile_url = admin_url( 'profile.php' );
 						</form>
 					</div>
 				</div>
+			</div>
+			<div id="llar-rescue-links-loading" class="llar-rescue-links-loading" style="display: none;">
+				<span class="llar-rescue-loading-icon-wrap" aria-hidden="true">
+					<img class="llar-rescue-loading-icon" src="<?php echo esc_url( LLA_PLUGIN_URL . 'assets/img/llar-spinner.svg' ); ?>" alt="">
+				</span>
+				<span class="llar-rescue-loading-text"><strong><?php echo esc_html__( 'Generating Rescue Links', 'limit-login-attempts-reloaded' ); ?></strong><span class="llar-rescue-loading-dots">...</span></span>
 			</div>
 		</div>
 	</div>

@@ -313,9 +313,10 @@ jQuery(document).ready(function($) {
 
 	function runGenerateRescueCodes() {
 		const $displayContainer = rescueModal.$content.find('#llar-rescue-links-display');
-		const $loading = $displayContainer.find('#llar-rescue-links-loading');
+		const $loading = rescueModal.$content.find('#llar-rescue-links-loading');
 		const $list = $displayContainer.find('#llar-rescue-links-list');
 		$list.empty();
+		rescueModal.$content.addClass('llar-rescue-is-loading');
 		$loading.show();
 		$displayContainer.find('.llar-rescue-copy-row').hide();
 		if (!llar_vars || !llar_vars.nonce_mfa_generate_codes) {
@@ -327,6 +328,7 @@ jQuery(document).ready(function($) {
 			if (response && response.success && response.data && response.data.rescue_urls) {
 				rescueUrlsForPDF = response.data.rescue_urls;
 				domainForPDF = response.data.domain || '';
+				rescueModal.$content.removeClass('llar-rescue-is-loading');
 				$loading.hide();
 				displayRescueLinks(response.data.rescue_urls, response.data.domain);
 				rescueCodesDownloaded = true;
@@ -366,8 +368,9 @@ jQuery(document).ready(function($) {
 	}
 
 	function showRescueError($displayContainer, message) {
-		const $loading = $displayContainer.find('#llar-rescue-links-loading');
+		const $loading = rescueModal.$content.find('#llar-rescue-links-loading');
 		const $list = $displayContainer.find('#llar-rescue-links-list');
+		rescueModal.$content.removeClass('llar-rescue-is-loading');
 		$loading.hide();
 		$list.empty().show();
 		const retryText = '<?php echo esc_js( __( 'Retry', 'limit-login-attempts-reloaded' ) ); ?>';
