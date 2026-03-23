@@ -1329,11 +1329,12 @@ class LimitLoginAttempts
 	 * Run MFA flow on login: handshake, save session, redirect to MFA app.
 	 * Exits on successful redirect. Call only after password verification.
 	 *
-	 * @param string $username             Login username.
-	 * @param bool   $is_pre_authenticated True if password was already validated (successful login).
+	 * @param string  $username             Value from login form (user_login or email).
+	 * @param bool    $is_pre_authenticated True if password was already validated (successful login).
+	 * @param WP_User $authenticated_user  Optional. User after password check (use when log field is email).
 	 * @return void Exits on redirect; otherwise returns.
 	 */
-	private function try_mfa_flow_redirect( $username, $is_pre_authenticated = false ) {
+	private function try_mfa_flow_redirect( $username, $is_pre_authenticated = false, $authenticated_user = null ) {
 		// CRITICAL: never fetch or disclose any user info unless password was verified.
 		if ( ! $is_pre_authenticated ) {
 			return;
@@ -1342,7 +1343,16 @@ class LimitLoginAttempts
 
 		$mfa_temporarily_disabled = false !== get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
 		$mfa_enabled              = (bool) Config::get( 'mfa_enabled' ) && ! $mfa_temporarily_disabled;
-		$user                     = get_user_by( 'login', $username );
+		$user = null;
+		if ( is_a( $authenticated_user, 'WP_User' ) ) {
+			$user = $authenticated_user;
+		} elseif ( is_string( $username ) && '' !== $username ) {
+			$user = get_user_by( 'login', $username );
+			if ( ! $user && function_exists( 'is_email' ) && is_email( $username ) ) {
+				$user = get_user_by( 'email', $username );
+			}
+		}
+
 		$mfa_roles        = Config::get( 'mfa_roles', array() );
 		$mfa_roles        = is_array( $mfa_roles ) ? $mfa_roles : array();
 		$user_excluded    = $user && ! empty( $mfa_roles ) && ! array_intersect( (array) $user->roles, $mfa_roles );
@@ -1418,10 +1428,11 @@ class LimitLoginAttempts
 			$store->save_send_email_secret( $result['data']['token'], $result['data']['secret'] );
 			$state = wp_generate_password( 32, false, false );
 			$remember_me = ! empty( $_REQUEST['rememberme'] );
+			$session_username = ( $user && ! empty( $user->user_login ) ) ? $user->user_login : $username;
 			$store->save_session(
 				$result['data']['token'],
 				$result['data']['secret'],
-				$username,
+				$session_username,
 				$user ? (int) $user->ID : 0,
 				$redirect_to,
 				$cancel_url,
@@ -1909,7 +1920,8 @@ class LimitLoginAttempts
 
 		// Trigger MFA flow (for selected roles). Only treat as pre-authenticated if password was verified.
 		if ( $username !== '' ) {
-			$this->try_mfa_flow_redirect( $username, $password_ok );
+			$auth_user_for_mfa = ( $password_ok && is_a( $user, 'WP_User' ) ) ? $user : null;
+			$this->try_mfa_flow_redirect( $username, $password_ok, $auth_user_for_mfa );
 		}
 
 		$user_login = '';
