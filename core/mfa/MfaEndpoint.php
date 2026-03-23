@@ -121,7 +121,14 @@ class MfaEndpoint implements MfaEndpointInterface {
 		if ( strlen( $encrypted_data ) > $max_len ) {
 			return false;
 		}
-		if ( ! preg_match( '/^[A-Za-z0-9+\/=]+$/', $encrypted_data ) ) {
+		// v2 authenticated payloads use prefix "v2:" + base64; legacy is base64 only.
+		$v2_prefix = 'v2:';
+		if ( 0 === strpos( $encrypted_data, $v2_prefix ) ) {
+			$payload = substr( $encrypted_data, strlen( $v2_prefix ) );
+			if ( '' === $payload || ! preg_match( '/^[A-Za-z0-9+\/=]+$/', $payload ) ) {
+				return false;
+			}
+		} elseif ( ! preg_match( '/^[A-Za-z0-9+\/=]+$/', $encrypted_data ) ) {
 			return false;
 		}
 
