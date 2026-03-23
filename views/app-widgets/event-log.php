@@ -157,7 +157,6 @@ $full_log_url = !empty( $app_config['key'] ) ? 'https://my.limitloginattempts.co
                             page_offset = response.data.offset;
 
                             if(response.data.total_items < page_limit && total_loaded < page_limit) {
-                                console.log('extra load');
                                 load_log_data();
                             }
 
