@@ -2373,7 +2373,7 @@
       font-weight: 600;
 
       &:hover {
-        background-color: darken(#e27800, 10%);
+        background-color: #af5d00; // Fixed hex instead of darken() to avoid fractional RGB values
       }
     }
   }
@@ -2386,7 +2386,7 @@
 .dashboard_page_llar-welcome,
 .toplevel_page_limit-login-attempts {
   .update-nag,
-  .notice:not(.llar-notice-review) {
+  .notice:not(.llar-notice-review):not(.llar-options-notice) {
     margin-top: 15px;
     display: none;
 
@@ -2462,8 +2462,12 @@
   }
 }
 
-.llar-auto-update-notice {
+.llar-options-notice {
   display: block !important;
+
+  p {
+    margin-left: 10px;
+  }
 }
 
 .llar-attempts-chart-legend {
@@ -2514,5 +2518,6 @@
 @import "premium-tab";
 @import "help-page";
 @import "micro-cloud-modal";
+@import "mfa-tab";
 
 
