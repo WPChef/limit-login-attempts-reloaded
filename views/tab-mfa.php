@@ -387,19 +387,11 @@ jQuery(document).ready(function($) {
 		urls.forEach(function(url) {
 			$scrollDiv.append($('<div class="llar-rescue-link-line"></div>').text(url));
 		});
-		$linksList.append($scrollDiv);
-		// Force full width: jconfirm can constrain width, so set from content box (innerWidth = width minus padding)
-		const $box = rescueModal.$content.closest('.jconfirm-box');
-		const contentWidth = $box.length ? $box.innerWidth() : 0;
-		if (contentWidth && contentWidth > 0) {
-			$displayContainer.css('width', contentWidth + 'px');
-			$linksList.css('width', contentWidth + 'px');
-			$scrollDiv.css({ 'width': contentWidth + 'px', 'max-width': '100%', 'box-sizing': 'border-box' });
-		} else {
-			$displayContainer.css('width', '100%');
-			$linksList.css('width', '100%');
-			$scrollDiv.css({ 'width': '100%', 'max-width': '100%', 'box-sizing': 'border-box' });
-		}
+		const $frame = $('<div class="llar-rescue-links-frame"></div>');
+		$frame.append($scrollDiv);
+		$linksList.append($frame);
+		$displayContainer.css({ 'width': '100%', 'max-width': '100%', 'box-sizing': 'border-box', 'overflow-x': 'hidden' });
+		$linksList.css({ 'width': '100%', 'max-width': '100%', 'box-sizing': 'border-box', 'overflow-x': 'hidden' });
 		const $feedback = $displayContainer.find('#llar-copy-feedback');
 		$displayContainer.find('.llar-copy-rescue-links').off('click').on('click', function() {
 			const text = linksText;
