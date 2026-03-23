@@ -90,6 +90,12 @@
     }
   }
 
+  .llar-mfa-rescue-temp-disabled-msg {
+    color: #dc3232;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
   // MFA Rescue Popup styles - use Micro Cloud modal structure
   // Styles are applied automatically through .micro_cloud_modal__content, .micro_cloud_modal__body, .card, .card-body, .field-wrap, .field-title, .field-desc, .button_block-single
 

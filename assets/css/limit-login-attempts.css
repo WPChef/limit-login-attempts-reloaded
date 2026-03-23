@@ -4528,6 +4528,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding-left: 0;
   list-style: disc;
 }
+.llar-admin .llar-mfa-rescue-temp-disabled-msg {
+  color: #dc3232;
+  font-weight: 600;
+  margin-top: 8px;
+}
 .llar-admin #llar-mfa-rescue-popup-content .micro_cloud_modal__content {
   max-height: 60vh !important;
   overflow-y: auto !important;
