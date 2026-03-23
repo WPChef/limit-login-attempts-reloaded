@@ -803,11 +803,9 @@ class LimitLoginAttempts
 
 				} elseif ( $this->is_username_whitelisted( $username ) || $this->is_ip_whitelisted( $ip ) ) {
 					$_SESSION['llar_user_is_whitelisted'] = true;
-					// Keep wp_login_failed when MFA is enabled (and not temporarily disabled) so limit_login_failed runs (handshake + redirect to MFA app).
-					$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
-					if ( ! $mfa_effectively_enabled ) {
-						remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
-					}
+					// Do not run limit_login_failed for whitelist: no lockout, but lockout_check / retries would still run and hit the API.
+					// MFA handshake runs in wp_authenticate_user, which is removed below for this branch.
+					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 
@@ -1450,7 +1448,7 @@ class LimitLoginAttempts
 
 	/**
 	 * Record one failed login attempt: Cloud lockout_check and/or local retries, lockout, notify.
-	 * Used by limit_login_failed and by try_mfa_flow_redirect when redirecting to MFA after wrong password.
+	 * Used by limit_login_failed (wp_login_failed hook).
 	 *
 	 * @param string $username Login username.
 	 */
