@@ -180,6 +180,18 @@ class MfaEndpoint implements MfaEndpointInterface {
 		set_transient( MfaConstants::TRANSIENT_RESCUE_LAST_USE, 1, $ttl );
 	}
 
+	/**
+	 * Log rescue attempt for debugging (reason only; no hash_id in message to avoid leakage).
+	 *
+	 * @param string $hash_id Hash ID from request (unused in message).
+	 * @param bool   $success Whether the attempt succeeded.
+	 * @param string $reason  Reason code (e.g. cooldown, invalid).
+	 * @return void
+	 */
+	private function log_rescue_attempt( $hash_id, $success, $reason ) {
+		// Debug logging removed (no-op).
+	}
+
 	private function disable_mfa_temporarily() {
 		// Only set transient so MFA is disabled for LLA_MFA_DISABLE_DURATION. Do not change
 		// Config 'mfa_enabled' — when transient expires, MFA is effectively on again without user action.
