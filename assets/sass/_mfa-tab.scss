@@ -1,6 +1,70 @@
 // MFA Tab Styles
 // Minimal styles using common selector to reduce CSS duplication
+.jconfirm .jconfirm-content {
+  .micro_cloud_modal__content {
+    position: relative;
+  }
+
+  .llar-rescue-links-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 11;
+
+    .llar-rescue-loading-icon-wrap {
+      display: block;
+    }
+  }
+
+  &.llar-rescue-is-loading .micro_cloud_modal__content::before {
+    display: block;
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+    background-color: #000;
+    z-index: 10;
+  }
+}
+
 .llar-admin {
+  .jconfirm .jconfirm-content {
+    .micro_cloud_modal__content {
+      position: relative;
+    }
+
+    .llar-rescue-links-loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 11;
+
+      .llar-rescue-loading-icon-wrap {
+        display: block;
+      }
+    }
+
+    &.llar-rescue-is-loading .micro_cloud_modal__content::before {
+      display: block;
+      content: " ";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.5;
+      background-color: #000;
+      z-index: 10;
+    }
+  }
+
   .llar-mfa-roles-list {
     margin-top: 12px;
 
@@ -34,6 +98,7 @@
     .micro_cloud_modal__content {
       max-height: 60vh !important;
       overflow-y: auto !important;
+      position: relative !important;
     }
 
     .micro_cloud_modal__body {
@@ -65,6 +130,52 @@
         .button_block-single {
           text-align: left !important;
         }
+      }
+    }
+
+    .llar-rescue-links-loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0;
+      padding: 15px;
+      color: rgba(0, 0, 0, 0.75);
+      font-size: 14px;
+      display: none;
+      text-align: center;
+      z-index: 11;
+
+      .llar-rescue-loading-icon-wrap {
+        display: block;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 10px;
+      }
+
+      .llar-rescue-loading-icon {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .llar-rescue-loading-dots {
+        animation: llar-rescue-dots-blink 0.8s ease-in-out infinite;
+      }
+    }
+
+    &.llar-rescue-is-loading {
+      .micro_cloud_modal__content::before {
+        display: block;
+        content: " ";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.5;
+        background-color: #000;
+        z-index: 10;
       }
     }
   }
@@ -114,17 +225,6 @@
           &.llar-copy-feedback-visible {
             opacity: 1;
           }
-        }
-      }
-
-      .llar-rescue-links-loading {
-        margin: 10px 0;
-        padding: 15px;
-        color: rgba(0, 0, 0, 0.6);
-        font-size: 14px;
-
-        .llar-rescue-loading-dots {
-          animation: llar-rescue-dots-blink 0.8s ease-in-out infinite;
         }
       }
 
