@@ -153,6 +153,8 @@ if( !defined( 'ABSPATH' ) ) exit();
                         pattern = $this.data('pattern');
 
                     if(!pattern) {
+
+                        console.log('Wrong pattern');
                         return false;
                     }
 
