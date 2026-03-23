@@ -416,6 +416,8 @@ class CloudApp
 			return false;
 		}
 
-		return Helpers::sanitize_stripslashes_deep( json_decode( $response['data'], true ) );
+		$decoded = json_decode( $response['data'], true );
+
+		return Helpers::sanitize_stripslashes_deep( $decoded );
 	}
 }

@@ -70,14 +70,14 @@
   position: relative;
 }
 
-.link__style_unlink > a {
+.link__style_unlink:hover, .llar-label:hover, .link__style_color_inherit:hover {
+  color: inherit;
+}
+
+.link__style_unlink > a, .llar-label > a {
   color: rgb(33, 49, 70);
   text-align: right;
   text-decoration: none;
-}
-
-.link__style_unlink:hover, .llar-label:hover, .link__style_color_inherit:hover {
-  color: inherit;
 }
 
 .link__style_color_inherit {
@@ -177,8 +177,11 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   transform: translate(-50%, -50%);
 }
 
-.llar-auto-update-notice {
+.llar-options-notice {
   display: block !important;
+}
+.llar-options-notice p {
+  margin-left: 10px;
 }
 
 .llar_input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode select.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td input.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td select.input_border, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border {
@@ -402,6 +405,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .limit-login-page-settings__logo_block > a {
   text-align: right;
 }
+.limit-login-page-settings__logo_block .link__style_unlink, .limit-login-page-settings__logo_block .llar-label {
+  margin-top: 21px;
+}
 
 .toplevel_page_limit-login-attempts #wpwrap {
   background-color: #F6FBFF;
@@ -426,7 +432,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   font-size: 18px;
   margin-right: 20px;
 }
@@ -437,9 +443,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .limit-login-page-settings__logo_block .info-box-icon img {
   width: 15px;
   vertical-align: middle;
-}
-.limit-login-page-settings__logo_block .link__style_unlink {
-  margin-top: 21px;
 }
 .limit-login-page-settings__logo {
   margin-top: 21px;
@@ -2350,16 +2353,16 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 
 .dashboard_page_llar-welcome .update-nag,
-.dashboard_page_llar-welcome .notice:not(.llar-notice-review),
+.dashboard_page_llar-welcome .notice:not(.llar-notice-review):not(.llar-options-notice),
 .toplevel_page_limit-login-attempts .update-nag,
-.toplevel_page_limit-login-attempts .notice:not(.llar-notice-review) {
+.toplevel_page_limit-login-attempts .notice:not(.llar-notice-review):not(.llar-options-notice) {
   margin-top: 15px;
   display: none;
 }
 .dashboard_page_llar-welcome .update-nag p,
-.dashboard_page_llar-welcome .notice:not(.llar-notice-review) p,
+.dashboard_page_llar-welcome .notice:not(.llar-notice-review):not(.llar-options-notice) p,
 .toplevel_page_limit-login-attempts .update-nag p,
-.toplevel_page_limit-login-attempts .notice:not(.llar-notice-review) p {
+.toplevel_page_limit-login-attempts .notice:not(.llar-notice-review):not(.llar-options-notice) p {
   margin-left: 10px;
 }
 .dashboard_page_llar-welcome .video-container,
@@ -2407,8 +2410,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: -3px;
 }
 
-.llar-auto-update-notice {
+.llar-options-notice {
   display: block !important;
+}
+.llar-options-notice p {
+  margin-left: 10px;
 }
 
 .llar-attempts-chart-legend > div {
@@ -4386,4 +4392,177 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-right: 2px;
 }
 
-/*# sourceMappingURL=limit-login-attempts.css.map */
+.llar-admin .llar-mfa-roles-list {
+  margin-top: 12px;
+}
+.llar-admin .llar-mfa-roles-list .llar-mfa-role-item {
+  margin-bottom: 8px;
+}
+.llar-admin .llar-mfa-roles-list .llar-mfa-role-item .llar-role-recommended {
+  color: #FF7C06;
+  font-size: 13px;
+  font-style: italic;
+  margin-left: 4px;
+}
+.llar-admin .llar-mfa-privacy-list {
+  margin-top: 10px;
+}
+.llar-admin .llar-mfa-privacy-list ul {
+  margin: 0.5em 0 0 1.4em;
+  padding-left: 0;
+  list-style: disc;
+}
+.llar-admin #llar-mfa-rescue-popup-content .micro_cloud_modal__content {
+  max-height: 60vh !important;
+  overflow-y: auto !important;
+}
+.llar-admin #llar-mfa-rescue-popup-content .micro_cloud_modal__body {
+  padding: 30px 40px !important;
+}
+.llar-admin #llar-mfa-rescue-popup-content .card {
+  margin-top: 15px !important;
+}
+.llar-admin #llar-mfa-rescue-popup-content .card-body {
+  padding: 20px 40px !important;
+  text-align: left !important;
+}
+.llar-admin #llar-mfa-rescue-popup-content .card-body .field-wrap {
+  text-align: left !important;
+}
+.llar-admin #llar-mfa-rescue-popup-content .card-body .field-wrap .field-title {
+  text-align: left !important;
+  margin-left: 0 !important;
+}
+.llar-admin #llar-mfa-rescue-popup-content .card-body .field-wrap .field-desc, .llar-admin #llar-mfa-rescue-popup-content .card-body .field-wrap .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-add, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .llar-admin #llar-mfa-rescue-popup-content .card-body .field-wrap .field-desc-add {
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-top: 15px !important;
+}
+.llar-admin #llar-mfa-rescue-popup-content .card-body .field-wrap .button_block-single {
+  text-align: left !important;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display {
+  margin-top: 30px !important;
+  padding-top: 20px !important;
+  text-align: left !important;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .field-title {
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .field-desc, .llar-admin .micro_cloud_modal__body #llar-rescue-links-display .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-add, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .llar-admin .micro_cloud_modal__body #llar-rescue-links-display .field-desc-add {
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-top: 15px !important;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .button_block-single {
+  text-align: left !important;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-copy-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-copy-row .llar-copy-rescue-links {
+  flex-shrink: 0;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-copy-row .llar-copy-feedback {
+  width: 100%;
+  font-size: 13px;
+  color: #4ACAD8;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-copy-row .llar-copy-feedback.llar-copy-feedback-visible {
+  opacity: 1;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-links-loading {
+  margin: 10px 0;
+  padding: 15px;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-links-loading .llar-rescue-loading-dots {
+  animation: llar-rescue-dots-blink 0.8s ease-in-out infinite;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-error {
+  margin: 0 0 12px;
+  color: #b32d2e;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-retry {
+  margin-top: 8px;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display .llar-rescue-links-list {
+  max-height: none !important;
+  width: 100% !important;
+}
+.llar-admin .micro_cloud_modal__body #llar-rescue-links-display #llar-rescue-links-display {
+  width: 100% !important;
+}
+.llar-admin .llar-rescue-links-list {
+  margin: 10px 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
+}
+.llar-admin .llar-rescue-links-list .llar-rescue-links-scroll {
+  display: block;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 280px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  font-family: inherit;
+  background-color: #fff;
+  border: 1px solid #8c8f94;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.07);
+  box-sizing: border-box !important;
+  -webkit-overflow-scrolling: touch;
+}
+.llar-admin .llar-rescue-links-list .llar-rescue-links-scroll .llar-rescue-link-line {
+  display: block;
+  word-break: break-all;
+  margin-bottom: 6px;
+  padding: 4px 0;
+}
+.llar-admin .llar-rescue-links-list .llar-rescue-links-scroll .llar-rescue-link-line:last-child {
+  margin-bottom: 0;
+}
+
+.llar-rescue-close-btn--inactive {
+  opacity: 0.65;
+  cursor: pointer;
+}
+
+.llar-rescue-close-btn--active {
+  opacity: 1;
+}
+
+@keyframes llar-rescue-dots-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+.llar-mfa-action-alert, .jconfirm-type-red {
+  width: 50% !important;
+  background-color: #fff !important;
+  margin: auto !important;
+}
+.llar-mfa-action-alert .jconfirm-content-pane, .jconfirm-type-red .jconfirm-content-pane {
+  padding: 15px !important;
+}
