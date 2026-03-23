@@ -1,0 +1,222 @@
+// MFA Tab Styles
+// Minimal styles using common selector to reduce CSS duplication
+.llar-admin {
+  .llar-mfa-roles-list {
+    margin-top: 12px;
+
+    .llar-mfa-role-item {
+      margin-bottom: 8px;
+
+      .llar-role-recommended {
+        color: $primary-colors__orange;
+        font-size: 13px;
+        font-style: italic;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  .llar-mfa-privacy-list {
+    margin-top: 10px;
+
+    ul {
+      margin: 0.5em 0 0 1.4em;
+      padding-left: 0;
+      list-style: disc;
+    }
+  }
+
+  // MFA Rescue Popup styles - use Micro Cloud modal structure
+  // Styles are applied automatically through .micro_cloud_modal__content, .micro_cloud_modal__body, .card, .card-body, .field-wrap, .field-title, .field-desc, .button_block-single
+
+  // Reduce popup size for MFA rescue popup
+  #llar-mfa-rescue-popup-content {
+    .micro_cloud_modal__content {
+      max-height: 60vh !important;
+      overflow-y: auto !important;
+    }
+
+    .micro_cloud_modal__body {
+      padding: 30px 40px !important;
+    }
+
+    .card {
+      margin-top: 15px !important;
+    }
+
+    .card-body {
+      padding: 20px 40px !important;
+      text-align: left !important;
+
+      .field-wrap {
+        text-align: left !important;
+
+        .field-title {
+          text-align: left !important;
+          margin-left: 0 !important;
+        }
+
+        .field-desc {
+          text-align: left !important;
+          margin-left: 0 !important;
+          margin-top: 15px !important;
+        }
+
+        .button_block-single {
+          text-align: left !important;
+        }
+      }
+    }
+  }
+
+  // Styles for rescue links display container - all styles in SCSS, no JS
+  .micro_cloud_modal__body {
+    #llar-rescue-links-display {
+      margin-top: 30px !important;
+      padding-top: 20px !important;
+      text-align: left !important;
+
+      .field-title {
+        text-align: left !important;
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+      }
+
+      .field-desc {
+        text-align: left !important;
+        margin-left: 0 !important;
+        margin-top: 15px !important;
+      }
+
+      .button_block-single {
+        text-align: left !important;
+      }
+
+      .llar-rescue-copy-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+        margin-bottom: 0;
+
+        .llar-copy-rescue-links {
+          flex-shrink: 0;
+        }
+
+        .llar-copy-feedback {
+          width: 100%;
+          font-size: 13px;
+          color: $primary-colors__turquoise;
+          opacity: 0;
+          transition: opacity 0.2s ease;
+
+          &.llar-copy-feedback-visible {
+            opacity: 1;
+          }
+        }
+      }
+
+      .llar-rescue-links-loading {
+        margin: 10px 0;
+        padding: 15px;
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 14px;
+
+        .llar-rescue-loading-dots {
+          animation: llar-rescue-dots-blink 0.8s ease-in-out infinite;
+        }
+      }
+
+      .llar-rescue-error {
+        margin: 0 0 12px;
+        color: #b32d2e;
+      }
+
+      .llar-rescue-retry {
+        margin-top: 8px;
+      }
+
+      .llar-rescue-links-list {
+        max-height: none !important;
+        width: 100% !important;
+      }
+
+      #llar-rescue-links-display {
+        width: 100% !important;
+      }
+    }
+  }
+
+  // Rescue links: scrollable area (one link per line), textarea-like look with vertical scroll
+  .llar-rescue-links-list {
+    margin: 10px 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: left !important;
+
+    .llar-rescue-links-scroll {
+      display: block;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 280px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      font-family: inherit;
+      background-color: #fff;
+      border: 1px solid #8c8f94;
+      border-radius: 2px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.07);
+      box-sizing: border-box !important;
+      -webkit-overflow-scrolling: touch;
+
+      .llar-rescue-link-line {
+        display: block;
+        word-break: break-all;
+        margin-bottom: 6px;
+        padding: 4px 0;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+// Rescue modal: button always clickable; inactive state when required checkboxes not all checked
+.llar-rescue-close-btn--inactive {
+  opacity: 0.65;
+  cursor: pointer;
+}
+
+.llar-rescue-close-btn--active {
+  opacity: 1;
+}
+
+@keyframes llar-rescue-dots-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.llar-mfa-action-alert, .jconfirm-type-red {
+  width: 50% !important;
+  background-color: #fff !important;
+  margin: auto !important;
+
+  .jconfirm-content-pane {
+    padding: 15px !important;
+  }
+}
