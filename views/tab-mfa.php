@@ -113,15 +113,15 @@ if ( $mfa_email_confirm_required ) {
 									<?php echo esc_html( $mfa_block_message ); ?>
 								</p>
 							<?php elseif ( $mfa_temporarily_disabled ) : ?>
-								<p class="description">
-									<?php
-									if ( 'api_unreachable' === $mfa_disabled_reason ) {
-										esc_html_e( '2FA is temporarily disabled because the verification server was unreachable. It will be re-enabled in about 1 minute.', 'limit-login-attempts-reloaded' );
-									} else {
-										esc_html_e( '2FA is temporarily disabled via rescue link. It will be automatically re-enabled in 1 hour.', 'limit-login-attempts-reloaded' );
-									}
-									?>
-								</p>
+								<?php if ( 'api_unreachable' === $mfa_disabled_reason ) : ?>
+									<p class="description">
+										<?php esc_html_e( '2FA is temporarily disabled because the verification server was unreachable. It will be re-enabled in about 1 minute.', 'limit-login-attempts-reloaded' ); ?>
+									</p>
+								<?php else : ?>
+									<p class="description llar-mfa-rescue-temp-disabled-msg">
+										<?php esc_html_e( '2FA is temporarily disabled via rescue link. It will be automatically re-enabled in 1 hour.', 'limit-login-attempts-reloaded' ); ?>
+									</p>
+								<?php endif; ?>
 							<?php endif; ?>
 							<p class="description" style="margin-top: 10px; font-weight: bold;">
 								<?php esc_html_e( 'Please note: 2FA is available with email only. SMS and authenticator app support is in development.', 'limit-login-attempts-reloaded' ); ?>
