@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $site_url    = home_url();
 $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 $current_user_email = isset( $current_user_email ) ? $current_user_email : '';
+$profile_url = admin_url( 'profile.php' );
 
 ?>
 <div id="llar-mfa-rescue-popup-content" style="display: none;">
@@ -43,7 +44,23 @@ $current_user_email = isset( $current_user_email ) ? $current_user_email : '';
 									<strong><?php echo esc_html( $current_user_email ); ?></strong>
 								</p>
 								<p class="description" style="margin-bottom: 10px;">
-									<?php esc_html_e( 'One-time 2FA codes will be sent to this address. Please confirm it is correct before activating.', 'limit-login-attempts-reloaded' ); ?>
+									<?php
+									echo wp_kses(
+										sprintf(
+											/* translators: 1: opening link tag to user profile, 2: closing link tag. */
+											__( 'One-time 2FA codes will be sent to this address. Please confirm it is correct before activating. You can %1$schange your email in your user profile%2$s.', 'limit-login-attempts-reloaded' ),
+											'<a href="' . esc_url( $profile_url ) . '" target="_blank" rel="noopener noreferrer">',
+											'</a>'
+										),
+										array(
+											'a' => array(
+												'href'   => array(),
+												'target' => array(),
+												'rel'    => array(),
+											),
+										)
+									);
+									?>
 								</p>
 								<label style="display: block;">
 									<input type="checkbox" id="llar-rescue-confirm-email" name="llar_rescue_confirm_email" value="1" required aria-required="true"/>
