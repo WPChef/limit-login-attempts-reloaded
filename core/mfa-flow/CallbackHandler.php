@@ -2,6 +2,9 @@
 
 namespace LLAR\Core\MfaFlow;
 
+use LLAR\Core\Helpers;
+use LLAR\Core\LimitLoginAttempts;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -11,6 +14,50 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Verifies session and OTP, calls API verify, then logs user in and redirects.
  */
 class CallbackHandler {
+	/**
+	 * Record successful login in Cloud App for MFA-based auth.
+	 *
+	 * Note: MFA callback logs the user in via cookies and does not trigger `wp_login`.
+	 *
+	 * @param WP_User $user
+	 * @param string  $username
+	 *
+	 * @return void
+	 */
+	private static function record_successful_login( $user, $username ) {
+		if ( empty( $username ) ) {
+			return;
+		}
+
+		if ( ! $user || ! is_object( $user ) || empty( $user->ID ) ) {
+			return;
+		}
+
+		if ( ! LimitLoginAttempts::$cloud_app ) {
+			return;
+		}
+
+		$clean_url = '';
+		if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+			$referer_url    = $_SERVER['HTTP_REFERER'];
+			$referer_parsed = parse_url( $referer_url );
+			$clean_url      = isset( $referer_parsed['path'] ) ? $referer_parsed['path'] : '';
+			$clean_url      = trim( $clean_url, '/' );
+		}
+
+		$gateway = Helpers::detect_gateway();
+		$data    = array(
+			'ip'        => Helpers::get_all_ips(),
+			'login'     => $username,
+			'user_id'   => (int) $user->ID,
+			'gateway'   => $gateway,
+			'roles'     => isset( $user->roles ) ? $user->roles : array(),
+			'agent'     => isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '',
+			'url'       => $clean_url,
+		);
+
+		LimitLoginAttempts::$cloud_app->request( 'login', 'post', $data );
+	}
 
 	/**
 	 * Run on init: if request has llar_mfa and token, handle callback or show enter-code form.
@@ -106,6 +153,7 @@ class CallbackHandler {
 		wp_set_current_user( $user->ID );
 		$remember_me = ! empty( $session['remember_me'] );
 		wp_set_auth_cookie( $user->ID, $remember_me );
+		self::record_successful_login( $user, $session['username'] );
 		$redirect_to  = ! empty( $session['redirect_to'] ) ? $session['redirect_to'] : '';
 		$redirect_url = ( $redirect_to && self::is_safe_redirect( $redirect_to ) ) ? $redirect_to : admin_url();
 		wp_safe_redirect( $redirect_url );
@@ -176,6 +224,7 @@ class CallbackHandler {
 		wp_set_current_user( $user->ID );
 		$remember_me = ! empty( $session['remember_me'] );
 		wp_set_auth_cookie( $user->ID, $remember_me );
+		self::record_successful_login( $user, $session['username'] );
 
 		$redirect_to  = ! empty( $session['redirect_to'] ) ? $session['redirect_to'] : '';
 		$redirect_url = ( $redirect_to && self::is_safe_redirect( $redirect_to ) ) ? $redirect_to : admin_url();
