@@ -168,16 +168,11 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 	 * Persisting hashes is handled by MFA settings submit flow after confirmation.
 	 *
 	 * @return array Plain codes
-	 * @throws \Exception When hashing fails
 	 */
 	public function generate() {
 		$plain_codes = array();
 		for ( $i = 0; MfaConstants::CODE_COUNT > $i; $i++ ) {
-			$code        = wp_generate_password( MfaConstants::CODE_LENGTH, false );
-			$rescue_code = RescueCode::from_plain_code( $code );
-			if ( null === $rescue_code ) {
-				throw new \Exception( __( 'Failed to hash rescue code. Generation aborted.', 'limit-login-attempts-reloaded' ) );
-			}
+			$code = wp_generate_password( MfaConstants::CODE_LENGTH, false );
 			$plain_codes[] = $code;
 		}
 		return $plain_codes;
