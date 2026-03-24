@@ -8,15 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$logo_src = '';
-if ( defined( 'LLA_PLUGIN_DIR' ) ) {
-	$logo_path = LLA_PLUGIN_DIR . 'assets/img/llar-logo-email.svg';
-	if ( file_exists( $logo_path ) ) {
-		$logo_content = file_get_contents( $logo_path );
-		if ( false !== $logo_content && '' !== $logo_content ) {
-			$logo_src = 'data:image/svg+xml;base64,' . base64_encode( $logo_content );
-		}
-	}
+/**
+ * Embedded logo: multipart/related CID (set in LlarMfaProvider::send_code). Empty = no image.
+ *
+ * @var string
+ */
+if ( ! isset( $llar_mfa_otp_logo_cid ) || ! is_string( $llar_mfa_otp_logo_cid ) ) {
+	$llar_mfa_otp_logo_cid = '';
 }
 
 ?>
@@ -208,8 +206,8 @@ if ( defined( 'LLA_PLUGIN_DIR' ) ) {
 	<div class="wrapper">
 		<div class="container">
 			<div class="header">
-				<?php if ( '' !== $logo_src ) : ?>
-				<img src="<?php echo esc_attr( $logo_src ); ?>" alt="" class="header-logo" width="40" height="40">
+				<?php if ( '' !== $llar_mfa_otp_logo_cid ) : ?>
+				<img src="<?php echo esc_attr( 'cid:' . $llar_mfa_otp_logo_cid ); ?>" alt="" class="header-logo" width="40" height="40">
 				<?php endif; ?>
 				<?php esc_html_e( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ); ?>
 			</div>
