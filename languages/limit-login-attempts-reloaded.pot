@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Limit Login Attempts Reloaded plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Limit Login Attempts Reloaded 3.0.0\n"
+"Project-Id-Version: Limit Login Attempts Reloaded 3.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/limit-login-attempts-reloaded\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-19T21:06:59+03:00\n"
+"POT-Creation-Date: 2026-03-25T12:55:27+03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: limit-login-attempts-reloaded\n"
@@ -17,8 +17,8 @@ msgstr ""
 #. Plugin Name of the plugin
 #. Author of the plugin
 #: core/LimitLoginAttempts.php:269
-#: views/emails/mfa-verification.php:205
-#: views/emails/mfa-verification.php:274
+#: views/emails/mfa-verification.php:212
+#: views/emails/mfa-verification.php:292
 msgid "Limit Login Attempts Reloaded"
 msgstr ""
 
@@ -99,21 +99,21 @@ msgstr ""
 msgid "No rules yet."
 msgstr ""
 
-#: core/Ajax.php:996
+#: core/Ajax.php:992
 msgid "<strong>%d</strong> attempt remaining."
 msgid_plural "<strong>%d</strong> attempts remaining."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/Ajax.php:1136
+#: core/Ajax.php:1132
 msgid "Wrong email format."
 msgstr ""
 
-#: core/Ajax.php:1142
+#: core/Ajax.php:1138
 msgid "LLAR Security Notifications [TEST]"
 msgstr ""
 
-#: core/Ajax.php:1143
+#: core/Ajax.php:1139
 msgid "Your email notifications for Limit Login Attempts Reloaded are working correctly. If this email is going to spam, please be sure to add this address to your safelist."
 msgstr ""
 
@@ -138,9 +138,9 @@ msgid "By proceeding you understand and give your consent that your IP address a
 msgstr ""
 
 #: core/LimitLoginAttempts.php:457
-#: core/LimitLoginAttempts.php:2047
-#: core/LimitLoginAttempts.php:2091
-#: core/LimitLoginAttempts.php:2096
+#: core/LimitLoginAttempts.php:2056
+#: core/LimitLoginAttempts.php:2105
+#: core/LimitLoginAttempts.php:2110
 msgid "<strong>ERROR</strong>: Incorrect username or password."
 msgstr ""
 
@@ -167,25 +167,25 @@ msgstr ""
 msgid "Upgrade to Premium"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:729
-#: core/LimitLoginAttempts.php:789
-#: core/LimitLoginAttempts.php:1481
-#: core/LimitLoginAttempts.php:1943
-#: core/LimitLoginAttempts.php:2002
+#: core/LimitLoginAttempts.php:727
+#: core/LimitLoginAttempts.php:791
+#: core/LimitLoginAttempts.php:1489
+#: core/LimitLoginAttempts.php:1952
+#: core/LimitLoginAttempts.php:2011
 msgid "<strong>ERROR</strong>: Too many failed login attempts."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:736
-#: core/LimitLoginAttempts.php:1488
-#: core/LimitLoginAttempts.php:2022
+#: core/LimitLoginAttempts.php:734
+#: core/LimitLoginAttempts.php:1496
+#: core/LimitLoginAttempts.php:2031
 msgid "Please try again in %d hour."
 msgid_plural "Please try again in %d hours."
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:738
-#: core/LimitLoginAttempts.php:1490
-#: core/LimitLoginAttempts.php:2025
+#: core/LimitLoginAttempts.php:736
+#: core/LimitLoginAttempts.php:1498
+#: core/LimitLoginAttempts.php:2034
 msgid "Please try again in %d minute."
 msgid_plural "Please try again in %d minutes."
 msgstr[0] ""
@@ -226,120 +226,116 @@ msgstr ""
 msgid "LLAR"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:1684
+#: core/LimitLoginAttempts.php:1692
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:1691
+#: core/LimitLoginAttempts.php:1699
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: core/LimitLoginAttempts.php:1728
+#: core/LimitLoginAttempts.php:1736
 msgid "Failed login by IP %s %s"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2010
+#: core/LimitLoginAttempts.php:2019
 msgid "Please try again later."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2088
+#: core/LimitLoginAttempts.php:2102
 msgid "<strong>ERROR</strong>: Incorrect email address or password."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2115
+#: core/LimitLoginAttempts.php:2129
 msgid "WC Error"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2303
+#: core/LimitLoginAttempts.php:2317
 msgid "Cleared IP log"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2310
+#: core/LimitLoginAttempts.php:2324
 msgid "Reset lockout count"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2317
+#: core/LimitLoginAttempts.php:2331
 msgid "Cleared current lockouts"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2362
+#: core/LimitLoginAttempts.php:2376
 msgid "The %s IP range is invalid"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2389
-#: core/LimitLoginAttempts.php:2463
-#: core/LimitLoginAttempts.php:2470
+#: core/LimitLoginAttempts.php:2403
+#: core/LimitLoginAttempts.php:2477
+#: core/LimitLoginAttempts.php:2484
 msgid "Settings saved."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2651
+#: core/LimitLoginAttempts.php:2665
 msgid "Hey <strong>Limit Login Attempts Reloaded</strong> user!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2652
+#: core/LimitLoginAttempts.php:2666
 msgid "A <strong>crazy idea</strong> we wanted to share! What if we put an image from YOU on the <a href=\"https://wordpress.org/plugins/limit-login-attempts-reloaded/\" target=\"_blank\">LLAR page</a>?! (<a href=\"https://wordpress.org/plugins/hello-dolly/\" target=\"_blank\">example</a>) A drawing made by you or your child would cheer people up! Send us your drawing by <a href=\"mailto:wpchef.me@gmail.com\" target=\"_blank\">email</a> and we like it, we'll add it in the next release. Let's have some fun!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2653
+#: core/LimitLoginAttempts.php:2667
 msgid "We would really like to hear your feedback about the plugin! Please take a couple minutes to write a few words <a href=\"https://wordpress.org/support/plugin/limit-login-attempts-reloaded/reviews/#new-post\" target=\"_blank\">here</a>. Thank you!"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2656
+#: core/LimitLoginAttempts.php:2670
 msgid "Don't show again"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2657
+#: core/LimitLoginAttempts.php:2671
 msgid "Maybe later"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2658
+#: core/LimitLoginAttempts.php:2672
 msgid "Leave a review"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2744
+#: core/LimitLoginAttempts.php:2758
 msgid "You have been upgraded to the latest version of <strong>Limit Login Attempts Reloaded</strong>.<br> Due to increased security threats around the holidays, we recommend turning on email notifications when you receive a failed login attempt."
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2749
+#: core/LimitLoginAttempts.php:2763
 msgid "Yes, turn on email notifications"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2750
+#: core/LimitLoginAttempts.php:2764
 msgid "Remind me a month from now"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2751
+#: core/LimitLoginAttempts.php:2765
 msgid "Don't show this message again"
 msgstr ""
 
-#: core/LimitLoginAttempts.php:2895
+#: core/LimitLoginAttempts.php:2909
 msgid "<strong>Error</strong>: Registration is currently disabled."
 msgstr ""
 
-#: core/mfa-flow/Providers/Email/LlarMfaProvider.php:34
+#: core/mfa-flow/Providers/Email/LlarMfaProvider.php:49
 msgid "External app (LLAR MFA API)"
 msgstr ""
 
-#: core/mfa-flow/Providers/Email/LlarMfaProvider.php:99
-#: views/emails/mfa-verification.php:28
-#: views/emails/mfa-verification.php:207
+#: core/mfa-flow/Providers/Email/LlarMfaProvider.php:114
+#: views/emails/mfa-verification.php:26
+#: views/emails/mfa-verification.php:215
 msgid "Verify your login"
 msgstr ""
 
-#: core/mfa/MfaBackupCodes.php:83
-msgid "Failed to hash rescue code. Generation aborted."
-msgstr ""
-
-#: core/mfa/MfaBackupCodes.php:105
+#: core/mfa/MfaBackupCodes.php:196
 #: core/mfa/MfaManager.php:369
 msgid "Encryption unavailable. OpenSSL is required for rescue links."
 msgstr ""
 
-#: core/mfa/MfaBackupCodes.php:127
+#: core/mfa/MfaBackupCodes.php:218
 msgid "Invalid file path for PDF template."
 msgstr ""
 
@@ -368,7 +364,7 @@ msgid "Failed to generate codes: "
 msgstr ""
 
 #: core/mfa/MfaManager.php:351
-#: views/tab-mfa.php:339
+#: views/tab-mfa.php:341
 msgid "Failed to generate rescue codes. Please try again."
 msgstr ""
 
@@ -1903,139 +1899,139 @@ msgstr ""
 msgid "from these notifications."
 msgstr ""
 
-#: views/emails/mfa-verification.php:209
+#: views/emails/mfa-verification.php:217
 msgid "We received a login attempt to your WordPress site and need to confirm it is you."
 msgstr ""
 
-#: views/emails/mfa-verification.php:210
+#: views/emails/mfa-verification.php:218
 msgid "Enter the verification code below to complete your login."
 msgstr ""
 
 #. translators: %1$d: minutes until the code expires (WP); %2$d: session expiry minutes (cloud).
-#: views/emails/mfa-verification.php:219
+#: views/emails/mfa-verification.php:227
 msgid "This code will expire in %1$d minutes. Your verification session expires %2$d minutes after the login attempt."
 msgstr ""
 
-#: views/emails/mfa-verification.php:228
+#: views/emails/mfa-verification.php:236
 msgid "Login attempt from:"
 msgstr ""
 
-#: views/emails/mfa-verification.php:230
+#: views/emails/mfa-verification.php:239
 msgid "Site:"
 msgstr ""
 
-#: views/emails/mfa-verification.php:232
+#: views/emails/mfa-verification.php:243
 msgid "IP Address:"
 msgstr ""
 
-#: views/emails/mfa-verification.php:234
+#: views/emails/mfa-verification.php:247
 msgid "Location:"
 msgstr ""
 
-#: views/emails/mfa-verification.php:236
+#: views/emails/mfa-verification.php:251
 msgid "Browser:"
 msgstr ""
 
-#: views/emails/mfa-verification.php:238
+#: views/emails/mfa-verification.php:255
 msgid "Time:"
 msgstr ""
 
-#: views/emails/mfa-verification.php:244
+#: views/emails/mfa-verification.php:262
 msgid "If this was not you, secure your account."
 msgstr ""
 
-#: views/emails/mfa-verification.php:246
+#: views/emails/mfa-verification.php:264
 msgid "Change your WordPress password immediately."
 msgstr ""
 
-#: views/emails/mfa-verification.php:247
+#: views/emails/mfa-verification.php:265
 msgid "Enable additional login protections."
 msgstr ""
 
-#: views/emails/mfa-verification.php:248
+#: views/emails/mfa-verification.php:266
 msgid "Review recent login activity."
 msgstr ""
 
-#: views/emails/mfa-verification.php:257
+#: views/emails/mfa-verification.php:275
 msgid "This verification email was sent by<wbr> <wbr><strong><a href=\"https://www.limitloginattempts.com\" target=\"_blank\" rel=\"noopener\">Limit&nbsp;Login&nbsp;Attempts&nbsp;Reloaded</a></strong>.<br>Never share this code with anyone.<wbr> Support will never ask for it."
 msgstr ""
 
-#: views/emails/mfa-verification.php:275
+#: views/emails/mfa-verification.php:293
 msgid "WordPress Security Plugin"
 msgstr ""
 
 #: views/mfa-rescue-pdf.php:16
-#: views/tab-mfa.php:495
+#: views/tab-mfa.php:490
 msgid "LLAR 2FA Rescue Links for"
 msgstr ""
 
-#: views/mfa-rescue-popup.php:23
+#: views/mfa-rescue-popup.php:24
 msgid "Important: Download Your Rescue Links"
 msgstr ""
 
-#: views/mfa-rescue-popup.php:27
+#: views/mfa-rescue-popup.php:28
 msgid "Before enabling 2FA, you must download your rescue links. These links allow you to regain access to your site if you lose access to your 2FA device or encounter another technical issue (e.g., email is not working)."
 msgstr ""
 
-#: views/mfa-rescue-popup.php:30
+#: views/mfa-rescue-popup.php:31
 msgid "Each rescue link can only be used once."
 msgstr ""
 
-#: views/mfa-rescue-popup.php:33
+#: views/mfa-rescue-popup.php:34
 msgid "By clicking a rescue link, 2FA will be fully disabled on"
 msgstr ""
 
-#: views/mfa-rescue-popup.php:35
+#: views/mfa-rescue-popup.php:36
 msgid "for 1 hour."
 msgstr ""
 
-#: views/mfa-rescue-popup.php:40
+#: views/mfa-rescue-popup.php:41
 msgid "Your email for 2FA"
 msgstr ""
 
 #. translators: 1: opening link tag to user profile, 2: closing link tag.
-#: views/mfa-rescue-popup.php:50
+#: views/mfa-rescue-popup.php:51
 msgid "One-time 2FA codes will be sent to this address. Please confirm it is correct before activating. You can %1$schange your email in your user profile%2$s."
 msgstr ""
 
-#: views/mfa-rescue-popup.php:50
+#: views/mfa-rescue-popup.php:67
 msgid "I confirm this email address is correct and I will receive 2FA codes here."
 msgstr ""
 
-#: views/mfa-rescue-popup.php:54
+#: views/mfa-rescue-popup.php:71
 msgid "Your account has no email address. Please set an email in your profile; 2FA requires it to send codes."
 msgstr ""
 
-#: views/mfa-rescue-popup.php:61
+#: views/mfa-rescue-popup.php:78
 msgid "Your Rescue Links"
 msgstr ""
 
-#: views/mfa-rescue-popup.php:65
+#: views/mfa-rescue-popup.php:82
 msgid "Save these links in a secure location. Each link can only be used once."
 msgstr ""
 
-#: views/mfa-rescue-popup.php:69
-msgid "Generating Rescue Links"
-msgstr ""
-
-#: views/mfa-rescue-popup.php:73
+#: views/mfa-rescue-popup.php:87
 msgid "Copy to clipboard"
 msgstr ""
 
-#: views/mfa-rescue-popup.php:74
+#: views/mfa-rescue-popup.php:88
 msgid "Print"
 msgstr ""
 
-#: views/mfa-rescue-popup.php:75
+#: views/mfa-rescue-popup.php:89
 msgid "Download as PDF"
 msgstr ""
 
-#: views/mfa-rescue-popup.php:82
+#: views/mfa-rescue-popup.php:96
 msgid "I have saved my rescue links in a secure location. I am ready to activate 2FA."
 msgstr ""
 
-#: views/mfa-rescue-popup.php:85
+#: views/mfa-rescue-popup.php:99
 msgid "Activate 2FA and Save Settings"
+msgstr ""
+
+#: views/mfa-rescue-popup.php:110
+msgid "Generating Rescue Links"
 msgstr ""
 
 #: views/micro-cloud-modal.php:26
@@ -2765,11 +2761,11 @@ msgstr ""
 msgid "If a full email address is sent (this will be clearly stated in advance), it is only used to deliver a one-time 2FA code and is never shared with third parties."
 msgstr ""
 
-#: views/tab-mfa.php:119
+#: views/tab-mfa.php:118
 msgid "2FA is temporarily disabled because the verification server was unreachable. It will be re-enabled in about 1 minute."
 msgstr ""
 
-#: views/tab-mfa.php:121
+#: views/tab-mfa.php:122
 msgid "2FA is temporarily disabled via rescue link. It will be automatically re-enabled in 1 hour."
 msgstr ""
 
@@ -2790,8 +2786,8 @@ msgid "You can also create custom user groups using a plugin that adds user grou
 msgstr ""
 
 #: views/tab-mfa.php:285
-#: views/tab-mfa.php:489
-#: views/tab-mfa.php:543
+#: views/tab-mfa.php:484
+#: views/tab-mfa.php:538
 msgid "Error"
 msgstr ""
 
@@ -2799,39 +2795,39 @@ msgstr ""
 msgid "No content available for download. Please generate links first."
 msgstr ""
 
-#: views/tab-mfa.php:322
+#: views/tab-mfa.php:323
 msgid "Security token is missing. Please refresh the page and try again."
 msgstr ""
 
-#: views/tab-mfa.php:334
+#: views/tab-mfa.php:336
 msgid "Failed to generate rescue codes."
 msgstr ""
 
-#: views/tab-mfa.php:373
+#: views/tab-mfa.php:376
 msgid "Retry"
 msgstr ""
 
-#: views/tab-mfa.php:405
+#: views/tab-mfa.php:400
 msgid "Copied to clipboard."
 msgstr ""
 
-#: views/tab-mfa.php:415
+#: views/tab-mfa.php:410
 msgid "Rescue Links"
 msgstr ""
 
-#: views/tab-mfa.php:490
+#: views/tab-mfa.php:485
 msgid "PDF library not loaded. Please refresh the page and try again."
 msgstr ""
 
-#: views/tab-mfa.php:496
+#: views/tab-mfa.php:491
 msgid "Important: By clicking a link above, 2FA will be fully disabled on"
 msgstr ""
 
-#: views/tab-mfa.php:497
+#: views/tab-mfa.php:492
 msgid "for 1 hour. Each link can only be used once."
 msgstr ""
 
-#: views/tab-mfa.php:544
+#: views/tab-mfa.php:539
 msgid "Failed to generate PDF. Please check browser console (F12) for details."
 msgstr ""
 
