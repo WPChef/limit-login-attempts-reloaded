@@ -113,15 +113,15 @@ if ( $mfa_email_confirm_required ) {
 									<?php echo esc_html( $mfa_block_message ); ?>
 								</p>
 							<?php elseif ( $mfa_temporarily_disabled ) : ?>
-								<p class="description">
-									<?php
-									if ( 'api_unreachable' === $mfa_disabled_reason ) {
-										esc_html_e( '2FA is temporarily disabled because the verification server was unreachable. It will be re-enabled in about 1 minute.', 'limit-login-attempts-reloaded' );
-									} else {
-										esc_html_e( '2FA is temporarily disabled via rescue link. It will be automatically re-enabled in 1 hour.', 'limit-login-attempts-reloaded' );
-									}
-									?>
-								</p>
+								<?php if ( 'api_unreachable' === $mfa_disabled_reason ) : ?>
+									<p class="description">
+										<?php esc_html_e( '2FA is temporarily disabled because the verification server was unreachable. It will be re-enabled in about 1 minute.', 'limit-login-attempts-reloaded' ); ?>
+									</p>
+								<?php else : ?>
+									<p class="description llar-mfa-rescue-temp-disabled-msg">
+										<?php esc_html_e( '2FA is temporarily disabled via rescue link. It will be automatically re-enabled in 1 hour.', 'limit-login-attempts-reloaded' ); ?>
+									</p>
+								<?php endif; ?>
 							<?php endif; ?>
 							<p class="description" style="margin-top: 10px; font-weight: bold;">
 								<?php esc_html_e( 'Please note: 2FA is available with email only. SMS and authenticator app support is in development.', 'limit-login-attempts-reloaded' ); ?>
@@ -313,9 +313,10 @@ jQuery(document).ready(function($) {
 
 	function runGenerateRescueCodes() {
 		const $displayContainer = rescueModal.$content.find('#llar-rescue-links-display');
-		const $loading = $displayContainer.find('#llar-rescue-links-loading');
+		const $loading = rescueModal.$content.find('#llar-rescue-links-loading');
 		const $list = $displayContainer.find('#llar-rescue-links-list');
 		$list.empty();
+		rescueModal.$content.addClass('llar-rescue-is-loading');
 		$loading.show();
 		$displayContainer.find('.llar-rescue-copy-row').hide();
 		if (!llar_vars || !llar_vars.nonce_mfa_generate_codes) {
@@ -327,6 +328,7 @@ jQuery(document).ready(function($) {
 			if (response && response.success && response.data && response.data.rescue_urls) {
 				rescueUrlsForPDF = response.data.rescue_urls;
 				domainForPDF = response.data.domain || '';
+				rescueModal.$content.removeClass('llar-rescue-is-loading');
 				$loading.hide();
 				displayRescueLinks(response.data.rescue_urls, response.data.domain);
 				rescueCodesDownloaded = true;
@@ -366,8 +368,9 @@ jQuery(document).ready(function($) {
 	}
 
 	function showRescueError($displayContainer, message) {
-		const $loading = $displayContainer.find('#llar-rescue-links-loading');
+		const $loading = rescueModal.$content.find('#llar-rescue-links-loading');
 		const $list = $displayContainer.find('#llar-rescue-links-list');
+		rescueModal.$content.removeClass('llar-rescue-is-loading');
 		$loading.hide();
 		$list.empty().show();
 		const retryText = '<?php echo esc_js( __( 'Retry', 'limit-login-attempts-reloaded' ) ); ?>';
@@ -384,19 +387,11 @@ jQuery(document).ready(function($) {
 		urls.forEach(function(url) {
 			$scrollDiv.append($('<div class="llar-rescue-link-line"></div>').text(url));
 		});
-		$linksList.append($scrollDiv);
-		// Force full width: jconfirm can constrain width, so set from content box (innerWidth = width minus padding)
-		const $box = rescueModal.$content.closest('.jconfirm-box');
-		const contentWidth = $box.length ? $box.innerWidth() : 0;
-		if (contentWidth && contentWidth > 0) {
-			$displayContainer.css('width', contentWidth + 'px');
-			$linksList.css('width', contentWidth + 'px');
-			$scrollDiv.css({ 'width': contentWidth + 'px', 'max-width': '100%', 'box-sizing': 'border-box' });
-		} else {
-			$displayContainer.css('width', '100%');
-			$linksList.css('width', '100%');
-			$scrollDiv.css({ 'width': '100%', 'max-width': '100%', 'box-sizing': 'border-box' });
-		}
+		const $frame = $('<div class="llar-rescue-links-frame"></div>');
+		$frame.append($scrollDiv);
+		$linksList.append($frame);
+		$displayContainer.css({ 'width': '100%', 'max-width': '100%', 'box-sizing': 'border-box', 'overflow-x': 'hidden' });
+		$linksList.css({ 'width': '100%', 'max-width': '100%', 'box-sizing': 'border-box', 'overflow-x': 'hidden' });
 		const $feedback = $displayContainer.find('#llar-copy-feedback');
 		$displayContainer.find('.llar-copy-rescue-links').off('click').on('click', function() {
 			const text = linksText;

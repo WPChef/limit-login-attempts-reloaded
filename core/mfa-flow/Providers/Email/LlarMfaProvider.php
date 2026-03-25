@@ -20,6 +20,21 @@ class LlarMfaProvider implements MfaProviderInterface {
 	const PROVIDER_ID = 'llar';
 	const AJAX_ACTION = 'llar_mfa_flow_send_code';
 
+	/** Content-ID token for embedded OTP email logo (multipart/related). */
+	const OTP_EMAIL_LOGO_CID = 'llar_mfa_otp_logo';
+
+	/**
+	 * Absolute path to logo file for one-shot phpmailer_init embed (cleared after wp_mail).
+	 *
+	 * @var string
+	 */
+	private static $otp_email_embed_path = '';
+
+	/**
+	 * @var string
+	 */
+	private static $otp_email_embed_cid = '';
+
 	/**
 	 * @return string
 	 */
@@ -126,13 +141,38 @@ class LlarMfaProvider implements MfaProviderInterface {
 		$time_safe        = $this->sanitize_mfa_email_field( (string) $time_label, 200 );
 		$code_ttl_minutes = $code_ttl;
 
+		$llar_mfa_otp_logo_cid = '';
+		$otp_logo_path        = '';
+		if ( defined( 'LLA_PLUGIN_DIR' ) ) {
+			$otp_logo_path = LLA_PLUGIN_DIR . 'assets/img/llar-logo-email.svg';
+			if ( file_exists( $otp_logo_path ) && is_readable( $otp_logo_path ) ) {
+				$llar_mfa_otp_logo_cid = self::OTP_EMAIL_LOGO_CID;
+			}
+		}
+
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/mfa-verification.php';
 		$body = (string) ob_get_clean();
 
 		$headers  = array( 'Content-Type: text/html; charset=UTF-8' );
 		$to_email = $user->user_email;
-		$sent     = wp_mail( $to_email, $subject, $body, $headers );
+
+		if ( $llar_mfa_otp_logo_cid !== '' ) {
+			self::$otp_email_embed_path = $otp_logo_path;
+			self::$otp_email_embed_cid  = $llar_mfa_otp_logo_cid;
+			add_action( 'phpmailer_init', array( __CLASS__, 'phpmailer_embed_otp_logo' ), 10, 1 );
+		}
+
+		$sent = false;
+		try {
+			$sent = wp_mail( $to_email, $subject, $body, $headers );
+		} finally {
+			if ( $llar_mfa_otp_logo_cid !== '' ) {
+				remove_action( 'phpmailer_init', array( __CLASS__, 'phpmailer_embed_otp_logo' ), 10 );
+				self::$otp_email_embed_path = '';
+				self::$otp_email_embed_cid  = '';
+			}
+		}
 		if ( $sent ) {
 			return array(
 				'success' => true,
@@ -217,5 +257,25 @@ class LlarMfaProvider implements MfaProviderInterface {
 		}
 		$base_url = $path !== '' ? $base . $path : $base;
 		return array( 'base_url' => $base_url );
+	}
+
+	/**
+	 * Add bundled SVG as inline image (CID) for HTML multipart/related.
+	 *
+	 * @param object $phpmailer PHPMailer instance from wp_mail.
+	 */
+	public static function phpmailer_embed_otp_logo( $phpmailer ) {
+		if ( self::$otp_email_embed_path === '' || ! is_string( self::$otp_email_embed_path ) ) {
+			return;
+		}
+		if ( ! file_exists( self::$otp_email_embed_path ) || ! is_readable( self::$otp_email_embed_path ) ) {
+			return;
+		}
+		$cid = self::$otp_email_embed_cid !== '' ? self::$otp_email_embed_cid : self::OTP_EMAIL_LOGO_CID;
+		if ( method_exists( $phpmailer, 'addEmbeddedImage' ) ) {
+			$phpmailer->addEmbeddedImage( self::$otp_email_embed_path, $cid, 'llar-logo.svg', 'base64', 'image/svg+xml' );
+		} elseif ( method_exists( $phpmailer, 'AddEmbeddedImage' ) ) {
+			$phpmailer->AddEmbeddedImage( self::$otp_email_embed_path, $cid, 'llar-logo.svg', 'base64', 'image/svg+xml' );
+		}
 	}
 }

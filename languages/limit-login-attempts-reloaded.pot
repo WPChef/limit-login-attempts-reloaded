@@ -1993,8 +1993,9 @@ msgstr ""
 msgid "Your email for 2FA"
 msgstr ""
 
-#: views/mfa-rescue-popup.php:46
-msgid "One-time 2FA codes will be sent to this address. Please confirm it is correct before activating."
+#. translators: 1: opening link tag to user profile, 2: closing link tag.
+#: views/mfa-rescue-popup.php:50
+msgid "One-time 2FA codes will be sent to this address. Please confirm it is correct before activating. You can %1$schange your email in your user profile%2$s."
 msgstr ""
 
 #: views/mfa-rescue-popup.php:50

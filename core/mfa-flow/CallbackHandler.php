@@ -74,10 +74,22 @@ class CallbackHandler {
 			return;
 		}
 
-		$token = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
+		$token            = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
+		$token_from_query = $token;
 		$code  = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
+		if ( '' === $code && isset( $_POST['code'] ) ) {
+			$code = sanitize_text_field( wp_unslash( $_POST['code'] ) );
+		}
 
 		$has_llar_mfa_param = ( isset( $_GET['llar_mfa'] ) && ( $_GET['llar_mfa'] === '1' || $_GET['llar_mfa'] === 'true' ) );
+		$cookie_state       = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
+		if ( '' === $token && $has_llar_mfa_param && '' !== $cookie_state ) {
+			$store          = new SessionStore();
+			$resolved_token = $store->get_callback_token( $cookie_state );
+			if ( is_string( $resolved_token ) && '' !== $resolved_token ) {
+				$token = $resolved_token;
+			}
+		}
 		$is_mfa_callback    = $token !== '' && $has_llar_mfa_param;
 
 		if ( ! $is_mfa_callback ) {
@@ -85,6 +97,11 @@ class CallbackHandler {
 		}
 
 		if ( $code === '' ) {
+			// If callback arrived without explicit token in URL, treat it as local MFA screen entry.
+			// Do not consume callback state yet; wait for a code submit.
+			if ( '' === $token_from_query ) {
+				return;
+			}
 			// Return from external MFA app with token only: try API verify; if not verified, redirect to login (no on-site code form).
 			self::try_verify_and_login( $token );
 			self::redirect_login( 'llar_mfa_session_expired' );
@@ -167,9 +184,7 @@ class CallbackHandler {
 			return;
 		}
 
-		$stored_otp = $store->get_otp_once( $token );
-		$code_match = ( $stored_otp !== null && $stored_otp === $code );
-		if ( ! $code_match ) {
+		if ( ! $store->verify_otp_once( $token, $code ) ) {
 			$store->delete_session( $token );
 			self::redirect_login( 'llar_mfa_code_invalid' );
 			return;
@@ -241,4 +256,5 @@ class CallbackHandler {
 		$allowed = wp_validate_redirect( $url, false );
 		return ( $allowed !== false );
 	}
+
 }
