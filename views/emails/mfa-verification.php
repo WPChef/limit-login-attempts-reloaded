@@ -8,15 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$logo_src = '';
-if ( defined( 'LLA_PLUGIN_DIR' ) ) {
-	$logo_path = LLA_PLUGIN_DIR . 'assets/img/icon-logo-menu.png';
-	if ( file_exists( $logo_path ) ) {
-		$logo_content = file_get_contents( $logo_path );
-		if ( $logo_content !== false ) {
-			$logo_src = 'data:image/png;base64,' . base64_encode( $logo_content );
-		}
-	}
+/**
+ * Embedded logo: multipart/related CID (set in LlarMfaProvider::send_code). Empty = no image.
+ *
+ * @var string
+ */
+if ( ! isset( $llar_mfa_otp_logo_cid ) || ! is_string( $llar_mfa_otp_logo_cid ) ) {
+	$llar_mfa_otp_logo_cid = '';
 }
 
 ?>
@@ -117,19 +115,28 @@ if ( defined( 'LLA_PLUGIN_DIR' ) ) {
 			color: #111827;
 			margin: 0 0 8px;
 		}
-		.meta-table {
-			display: grid;
-			grid-template-columns: auto 1fr;
-			gap: 2px 16px;
+		/* Table layout: grid is unreliable in email clients (misaligned label/value rows). */
+		table.meta-table {
+			width: 100%;
+			border-collapse: collapse;
 			font-size: 13px;
 			color: #4b5563;
+			line-height: 1.45;
 		}
-		.meta-label {
+		table.meta-table td {
+			vertical-align: middle;
+			padding: 6px 0;
+		}
+		table.meta-table td.meta-label {
 			font-weight: 500;
 			color: #111827;
+			padding-right: 16px;
+			white-space: nowrap;
 		}
-		.meta-value {
+		table.meta-table td.meta-value {
 			text-align: right;
+			width: 99%;
+			word-break: break-word;
 		}
 		.notice {
 			border-top: 1px solid #e5e7eb;
@@ -199,10 +206,11 @@ if ( defined( 'LLA_PLUGIN_DIR' ) ) {
 	<div class="wrapper">
 		<div class="container">
 			<div class="header">
-			<?php
-			if ( $logo_src !== '' ) :
-				?>
-				<img src="<?php echo esc_attr( $logo_src ); ?>" alt="" class="header-logo" width="40" height="40"><?php endif; ?><?php esc_html_e( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ); ?></div>
+				<?php if ( '' !== $llar_mfa_otp_logo_cid ) : ?>
+				<img src="<?php echo esc_attr( 'cid:' . $llar_mfa_otp_logo_cid ); ?>" alt="" class="header-logo" width="40" height="40">
+				<?php endif; ?>
+				<?php esc_html_e( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ); ?>
+			</div>
 			<div class="content">
 				<div class="title"><?php esc_html_e( 'Verify your login', 'limit-login-attempts-reloaded' ); ?></div>
 				<div class="description">
@@ -226,18 +234,28 @@ if ( defined( 'LLA_PLUGIN_DIR' ) ) {
 				</div>
 				<div class="section">
 					<div class="section-title"><?php esc_html_e( 'Login attempt from:', 'limit-login-attempts-reloaded' ); ?></div>
-					<div class="meta-table">
-						<div class="meta-label"><?php esc_html_e( 'Site:', 'limit-login-attempts-reloaded' ); ?></div>
-						<div class="meta-value"><?php echo esc_html( $site_domain_safe ); ?></div>
-						<div class="meta-label"><?php esc_html_e( 'IP Address:', 'limit-login-attempts-reloaded' ); ?></div>
-						<div class="meta-value"><?php echo esc_html( $ip_safe ); ?></div>
-						<div class="meta-label"><?php esc_html_e( 'Location:', 'limit-login-attempts-reloaded' ); ?></div>
-						<div class="meta-value"><?php echo esc_html( $location_safe ); ?></div>
-						<div class="meta-label"><?php esc_html_e( 'Browser:', 'limit-login-attempts-reloaded' ); ?></div>
-						<div class="meta-value"><?php echo esc_html( $browser_safe ); ?></div>
-						<div class="meta-label"><?php esc_html_e( 'Time:', 'limit-login-attempts-reloaded' ); ?></div>
-						<div class="meta-value"><?php echo esc_html( $time_safe ); ?></div>
-					</div>
+					<table class="meta-table" role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+						<tr>
+							<td class="meta-label" valign="middle" style="vertical-align:middle;padding:6px 16px 6px 0;"><?php esc_html_e( 'Site:', 'limit-login-attempts-reloaded' ); ?></td>
+							<td class="meta-value" valign="middle" style="vertical-align:middle;text-align:right;padding:6px 0;"><?php echo esc_html( $site_domain_safe ); ?></td>
+						</tr>
+						<tr>
+							<td class="meta-label" valign="middle" style="vertical-align:middle;padding:6px 16px 6px 0;"><?php esc_html_e( 'IP Address:', 'limit-login-attempts-reloaded' ); ?></td>
+							<td class="meta-value" valign="middle" style="vertical-align:middle;text-align:right;padding:6px 0;"><?php echo esc_html( $ip_safe ); ?></td>
+						</tr>
+						<tr>
+							<td class="meta-label" valign="middle" style="vertical-align:middle;padding:6px 16px 6px 0;"><?php esc_html_e( 'Location:', 'limit-login-attempts-reloaded' ); ?></td>
+							<td class="meta-value" valign="middle" style="vertical-align:middle;text-align:right;padding:6px 0;"><?php echo esc_html( $location_safe ); ?></td>
+						</tr>
+						<tr>
+							<td class="meta-label" valign="middle" style="vertical-align:middle;padding:6px 16px 6px 0;"><?php esc_html_e( 'Browser:', 'limit-login-attempts-reloaded' ); ?></td>
+							<td class="meta-value" valign="middle" style="vertical-align:middle;text-align:right;padding:6px 0;"><?php echo esc_html( $browser_safe ); ?></td>
+						</tr>
+						<tr>
+							<td class="meta-label" valign="middle" style="vertical-align:middle;padding:6px 16px 6px 0;"><?php esc_html_e( 'Time:', 'limit-login-attempts-reloaded' ); ?></td>
+							<td class="meta-value" valign="middle" style="vertical-align:middle;text-align:right;padding:6px 0;"><?php echo esc_html( $time_safe ); ?></td>
+						</tr>
+					</table>
 				</div>
 				<div class="notice">
 					<div class="notice-content">

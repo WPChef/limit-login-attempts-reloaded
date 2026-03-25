@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * No base64 fallback — do not enable MFA without proper encryption.
  */
 class MfaBackupCodes implements MfaBackupCodesInterface {
+	const CIPHER_METHOD = 'AES-256-CBC';
+	const PAYLOAD_VERSION = 'v2:';
 
 	/**
 	 * Encrypt plain code for storage. OpenSSL only; returns false if unavailable.
@@ -25,19 +27,71 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 		if ( ! function_exists( 'openssl_encrypt' ) || ! function_exists( 'openssl_decrypt' ) ) {
 			return false;
 		}
-		$auth_key  = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : '' );
-		$auth_salt = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : '' );
-		if ( '' === $auth_key || '' === $auth_salt ) {
+		$keys = $this->get_crypto_keys();
+		if ( false === $keys ) {
 			return false;
 		}
-		$encryption_key = hash( 'sha256', $auth_key . $auth_salt, true );
-		$iv_length      = openssl_cipher_iv_length( 'AES-256-CBC' );
-		$iv             = openssl_random_pseudo_bytes( $iv_length );
-		$encrypted      = openssl_encrypt( $plain_code, 'AES-256-CBC', $encryption_key, 0, $iv );
-		if ( false === $encrypted ) {
+		$iv_length = openssl_cipher_iv_length( self::CIPHER_METHOD );
+		if ( false === $iv_length || $iv_length <= 0 ) {
 			return false;
 		}
-		return base64_encode( $iv . $encrypted );
+		$iv = openssl_random_pseudo_bytes( $iv_length );
+		if ( false === $iv || strlen( $iv ) !== (int) $iv_length ) {
+			return false;
+		}
+		$ciphertext = openssl_encrypt( $plain_code, self::CIPHER_METHOD, $keys['enc'], OPENSSL_RAW_DATA, $iv );
+		if ( false === $ciphertext || '' === $ciphertext ) {
+			return false;
+		}
+		$mac = hash_hmac( 'sha256', $iv . $ciphertext, $keys['mac'], true );
+		if ( false === $mac || '' === $mac ) {
+			return false;
+		}
+		$encoded = base64_encode( $iv . $ciphertext . $mac );
+		if ( false === $encoded ) {
+			return false;
+		}
+		return self::PAYLOAD_VERSION . $encoded;
+	}
+
+	/**
+	 * Decrypt v2 payload with HMAC verification.
+	 *
+	 * @param string $encrypted_data Versioned payload.
+	 * @return string|false
+	 */
+	private function decrypt_v2_code( $encrypted_data ) {
+		$payload = substr( $encrypted_data, strlen( self::PAYLOAD_VERSION ) );
+		$decoded = base64_decode( $payload, true );
+		if ( false === $decoded ) {
+			return false;
+		}
+		$keys = $this->get_crypto_keys();
+		if ( false === $keys ) {
+			return false;
+		}
+		$iv_length = openssl_cipher_iv_length( self::CIPHER_METHOD );
+		if ( false === $iv_length || $iv_length <= 0 ) {
+			return false;
+		}
+		$mac_length = 32;
+		if ( strlen( $decoded ) <= ( $iv_length + $mac_length ) ) {
+			return false;
+		}
+
+		$iv         = substr( $decoded, 0, $iv_length );
+		$mac        = substr( $decoded, -$mac_length );
+		$ciphertext = substr( $decoded, $iv_length, -$mac_length );
+		$calc_mac   = hash_hmac( 'sha256', $iv . $ciphertext, $keys['mac'], true );
+		if ( ! hash_equals( $mac, $calc_mac ) ) {
+			return false;
+		}
+
+		$plain = openssl_decrypt( $ciphertext, self::CIPHER_METHOD, $keys['enc'], OPENSSL_RAW_DATA, $iv );
+		if ( false === $plain ) {
+			return false;
+		}
+		return $plain;
 	}
 
 	/**
@@ -50,21 +104,63 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 		if ( ! function_exists( 'openssl_decrypt' ) ) {
 			return false;
 		}
-		$auth_key  = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : '' );
-		$auth_salt = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : '' );
-		if ( '' === $auth_key || '' === $auth_salt ) {
+		if ( ! is_string( $encrypted_data ) || '' === $encrypted_data ) {
 			return false;
 		}
-		$encryption_key = hash( 'sha256', $auth_key . $auth_salt, true );
-		$decoded        = base64_decode( $encrypted_data, true );
-		$iv_length      = openssl_cipher_iv_length( 'AES-256-CBC' );
+
+		// New authenticated format.
+		if ( 0 === strpos( $encrypted_data, self::PAYLOAD_VERSION ) ) {
+			return $this->decrypt_v2_code( $encrypted_data );
+		}
+
+		// Legacy format fallback: base64(iv + openssl_encrypt output with options=0).
+		$legacy_key = $this->get_legacy_encryption_key();
+		if ( false === $legacy_key ) {
+			return false;
+		}
+		$decoded   = base64_decode( $encrypted_data, true );
+		$iv_length = openssl_cipher_iv_length( self::CIPHER_METHOD );
 		if ( false === $decoded || strlen( $decoded ) <= $iv_length ) {
 			return false;
 		}
 		$iv         = substr( $decoded, 0, $iv_length );
 		$ciphertext = substr( $decoded, $iv_length );
-		$plain      = openssl_decrypt( $ciphertext, 'AES-256-CBC', $encryption_key, 0, $iv );
+		// Pre-v2 code used hash('sha256', AUTH_KEY . AUTH_SALT, true), not derived enc key.
+		$plain = openssl_decrypt( $ciphertext, self::CIPHER_METHOD, $legacy_key, 0, $iv );
 		return false === $plain ? false : $plain;
+	}
+
+	/**
+	 * Build encryption and MAC keys from WordPress salts.
+	 *
+	 * @return array|false
+	 */
+	private function get_crypto_keys() {
+		$auth_key  = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : '' );
+		$auth_salt = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : '' );
+		if ( '' === $auth_key || '' === $auth_salt ) {
+			return false;
+		}
+
+		$master_key = hash( 'sha256', $auth_key . $auth_salt, true );
+		return array(
+			'enc' => hash_hmac( 'sha256', 'llar-mfa-rescue-enc', $master_key, true ),
+			'mac' => hash_hmac( 'sha256', 'llar-mfa-rescue-mac', $master_key, true ),
+		);
+	}
+
+	/**
+	 * Legacy AES key (pre-encrypt-then-MAC format).
+	 *
+	 * @return string|false 32-byte key or false.
+	 */
+	private function get_legacy_encryption_key() {
+		$auth_key  = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'NONCE_KEY' ) ? NONCE_KEY : '' );
+		$auth_salt = defined( 'AUTH_SALT' ) ? AUTH_SALT : ( defined( 'NONCE_SALT' ) ? NONCE_SALT : '' );
+		if ( '' === $auth_key || '' === $auth_salt ) {
+			return false;
+		}
+		return hash( 'sha256', $auth_key . $auth_salt, true );
 	}
 
 	/**
@@ -72,16 +168,11 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 	 * Persisting hashes is handled by MFA settings submit flow after confirmation.
 	 *
 	 * @return array Plain codes
-	 * @throws \Exception When hashing fails
 	 */
 	public function generate() {
 		$plain_codes = array();
 		for ( $i = 0; MfaConstants::CODE_COUNT > $i; $i++ ) {
-			$code        = wp_generate_password( MfaConstants::CODE_LENGTH, false );
-			$rescue_code = RescueCode::from_plain_code( $code );
-			if ( null === $rescue_code ) {
-				throw new \Exception( __( 'Failed to hash rescue code. Generation aborted.', 'limit-login-attempts-reloaded' ) );
-			}
+			$code = wp_generate_password( MfaConstants::CODE_LENGTH, false );
 			$plain_codes[] = $code;
 		}
 		return $plain_codes;

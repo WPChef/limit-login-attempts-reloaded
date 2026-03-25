@@ -434,8 +434,8 @@ class LimitLoginAttempts
 
 	public function login_page_render_js()
 	{
-		if ( isset( $_SESSION['llar_user_is_whitelisted'] ) && true === $_SESSION['llar_user_is_whitelisted'] ) {
-			unset( $_SESSION['llar_user_is_whitelisted'] );
+		if ( true === LoginFlowTransientStore::get( 'llar_user_is_whitelisted', false ) ) {
+			LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => null ) );
 			return;
 		}
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $um_limit_login_failed;
@@ -701,10 +701,8 @@ class LimitLoginAttempts
 	 */
 	public function authenticate_filter( $user, $username, $password )
 	{
-		if ( ! session_id() ) {
-			session_start();
-		}
-		$_SESSION['errors_in_early_hook'] = false;
+		LoginFlowTransientStore::ensure_token();
+		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
 		if ( ! empty( $username ) && ! empty( $password ) ) {
 
@@ -716,7 +714,7 @@ class LimitLoginAttempts
 
 				if ( $response['result'] === 'deny' ) {
 
-					unset( $_SESSION['login_attempts_left'] );
+					LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
@@ -746,8 +744,12 @@ class LimitLoginAttempts
 					$user = new WP_Error();
 					$user->add( 'username_blacklisted', $err );
 
-					$_SESSION['errors_in_early_hook'] = true;
-					$_SESSION['llar_early_hook_error_message'] = $err;
+					LoginFlowTransientStore::merge(
+						array(
+							'errors_in_early_hook'           => true,
+							'llar_early_hook_error_message' => $err,
+						)
+					);
 					$this->all_errors_array['early_hook_errors'] = $err;
 
 					if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
@@ -775,7 +777,7 @@ class LimitLoginAttempts
 					&& ( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
 				) {
 
-					unset( $_SESSION['login_attempts_left'] );
+					LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
@@ -792,7 +794,7 @@ class LimitLoginAttempts
 
 					$user->add( 'username_blacklisted', $err );
 
-					$_SESSION['errors_in_early_hook'] = true;
+					LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => true ) );
 					$this->all_errors_array['early_hook_errors'] = $err;
 
 					if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
@@ -802,12 +804,10 @@ class LimitLoginAttempts
 					}
 
 				} elseif ( $this->is_username_whitelisted( $username ) || $this->is_ip_whitelisted( $ip ) ) {
-					$_SESSION['llar_user_is_whitelisted'] = true;
-					// Keep wp_login_failed when MFA is enabled (and not temporarily disabled) so limit_login_failed runs (handshake + redirect to MFA app).
-					$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
-					if ( ! $mfa_effectively_enabled ) {
-						remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
-					}
+					LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => true ) );
+					// Do not run limit_login_failed for whitelist: no lockout, but lockout_check / retries would still run and hit the API.
+					// MFA handshake runs in wp_authenticate_user, which is removed below for this branch.
+					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 
@@ -1317,7 +1317,7 @@ class LimitLoginAttempts
 		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
 
 		// Trigger authenticate filter to track credentials and check lockouts
-		// This sets $limit_login_nonempty_credentials and $_SESSION['login_attempts_left']
+		// This sets $limit_login_nonempty_credentials and login_attempts_left in LoginFlowTransientStore.
 		// We don't block here - MemberPress will handle blocking if needed
 		apply_filters( 'authenticate', null, $log, $pwd );
 
@@ -1329,11 +1329,12 @@ class LimitLoginAttempts
 	 * Run MFA flow on login: handshake, save session, redirect to MFA app.
 	 * Exits on successful redirect. Call only after password verification.
 	 *
-	 * @param string $username             Login username.
-	 * @param bool   $is_pre_authenticated True if password was already validated (successful login).
+	 * @param string  $username             Value from login form (user_login or email).
+	 * @param bool    $is_pre_authenticated True if password was already validated (successful login).
+	 * @param WP_User $authenticated_user  Optional. User after password check (use when log field is email).
 	 * @return void Exits on redirect; otherwise returns.
 	 */
-	private function try_mfa_flow_redirect( $username, $is_pre_authenticated = false ) {
+	private function try_mfa_flow_redirect( $username, $is_pre_authenticated = false, $authenticated_user = null ) {
 		// CRITICAL: never fetch or disclose any user info unless password was verified.
 		if ( ! $is_pre_authenticated ) {
 			return;
@@ -1342,7 +1343,16 @@ class LimitLoginAttempts
 
 		$mfa_temporarily_disabled = false !== get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
 		$mfa_enabled              = (bool) Config::get( 'mfa_enabled' ) && ! $mfa_temporarily_disabled;
-		$user                     = get_user_by( 'login', $username );
+		$user = null;
+		if ( is_a( $authenticated_user, 'WP_User' ) ) {
+			$user = $authenticated_user;
+		} elseif ( is_string( $username ) && '' !== $username ) {
+			$user = get_user_by( 'login', $username );
+			if ( ! $user && function_exists( 'is_email' ) && is_email( $username ) ) {
+				$user = get_user_by( 'email', $username );
+			}
+		}
+
 		$mfa_roles        = Config::get( 'mfa_roles', array() );
 		$mfa_roles        = is_array( $mfa_roles ) ? $mfa_roles : array();
 		$user_excluded    = $user && ! empty( $mfa_roles ) && ! array_intersect( (array) $user->roles, $mfa_roles );
@@ -1418,10 +1428,11 @@ class LimitLoginAttempts
 			$store->save_send_email_secret( $result['data']['token'], $result['data']['secret'] );
 			$state = wp_generate_password( 32, false, false );
 			$remember_me = ! empty( $_REQUEST['rememberme'] );
+			$session_username = ( $user && ! empty( $user->user_login ) ) ? $user->user_login : $username;
 			$store->save_session(
 				$result['data']['token'],
 				$result['data']['secret'],
-				$username,
+				$session_username,
 				$user ? (int) $user->ID : 0,
 				$redirect_to,
 				$cancel_url,
@@ -1450,16 +1461,13 @@ class LimitLoginAttempts
 
 	/**
 	 * Record one failed login attempt: Cloud lockout_check and/or local retries, lockout, notify.
-	 * Used by limit_login_failed and by try_mfa_flow_redirect when redirecting to MFA after wrong password.
+	 * Used by limit_login_failed (wp_login_failed hook).
 	 *
 	 * @param string $username Login username.
 	 */
 	private function record_failed_login_attempt( $username ) {
-		if ( ! session_id() ) {
-			session_start();
-		}
-
-		$_SESSION['login_attempts_left'] = 0;
+		LoginFlowTransientStore::ensure_token();
+		LoginFlowTransientStore::merge( array( 'login_attempts_left' => 0 ) );
 
 		$ip = $this->get_address();
 
@@ -1471,7 +1479,7 @@ class LimitLoginAttempts
 
 			if ( $response['result'] === 'allow' ) {
 
-				$_SESSION['login_attempts_left'] = (int)$response['attempts_left'];
+				LoginFlowTransientStore::merge( array( 'login_attempts_left' => (int) $response['attempts_left'] ) );
 
 			} elseif ( $response['result'] === 'deny' ) {
 
@@ -1491,7 +1499,7 @@ class LimitLoginAttempts
 				}
 
 				self::$cloud_app->add_error( $err );
-				$_SESSION['errors_in_early_hook'] = false;
+				LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 			}
 
 		} else {
@@ -1560,7 +1568,7 @@ class LimitLoginAttempts
 				*/
 				$this->cleanup( $retries, null, $valid );
 
-				$_SESSION['login_attempts_left'] = $this->calculate_retries_remaining();
+				LoginFlowTransientStore::merge( array( 'login_attempts_left' => $this->calculate_retries_remaining() ) );
 
 				return;
 			}
@@ -1906,13 +1914,14 @@ class LimitLoginAttempts
 			global $limit_login_my_error_shown;
 			$limit_login_my_error_shown = true;
 			$error->add( 'too_many_retries', $this->error_msg() );
-			$_SESSION['errors_in_early_hook'] = false;
+			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 			return $error;
 		}
 
 		// Trigger MFA flow (for selected roles). Only treat as pre-authenticated if password was verified.
 		if ( $username !== '' ) {
-			$this->try_mfa_flow_redirect( $username, $password_ok );
+			$auth_user_for_mfa = ( $password_ok && is_a( $user, 'WP_User' ) ) ? $user : null;
+			$this->try_mfa_flow_redirect( $username, $password_ok, $auth_user_for_mfa );
 		}
 
 		$user_login = '';
@@ -1951,7 +1960,7 @@ class LimitLoginAttempts
 			$error->add( 'too_many_retries', $this->error_msg() );
 		}
 
-		$_SESSION['errors_in_early_hook'] = false;
+		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
 		return $error;
 	}
@@ -2010,7 +2019,7 @@ class LimitLoginAttempts
 			$msg .= __( 'Please try again later.', 'limit-login-attempts-reloaded' );
 
 			$this->all_errors_array['late_hook_errors'] = $msg;
-			$_SESSION['errors_in_early_hook'] = false;
+			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
 			return $msg;
 		}
@@ -2026,7 +2035,7 @@ class LimitLoginAttempts
 		}
 
 		$this->all_errors_array['late_hook_errors'] = $msg;
-		$_SESSION['errors_in_early_hook'] = false;
+		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
 		return $msg;
 	}
@@ -2062,10 +2071,15 @@ class LimitLoginAttempts
 
 		$error_msg = $this->get_message();
 
-		if ( isset( $_SESSION['llar_early_hook_error_message'] ) && $_SESSION['llar_early_hook_error_message'] !== '' ) {
-			$content = $_SESSION['llar_early_hook_error_message'];
-			unset( $_SESSION['llar_early_hook_error_message'] );
-			$_SESSION['errors_in_early_hook'] = false;
+		$early_hook_msg = LoginFlowTransientStore::get( 'llar_early_hook_error_message', '' );
+		if ( $early_hook_msg !== '' && is_string( $early_hook_msg ) ) {
+			$content = $early_hook_msg;
+			LoginFlowTransientStore::merge(
+				array(
+					'llar_early_hook_error_message' => null,
+					'errors_in_early_hook'           => false,
+				)
+			);
 		} else {
 		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : '';
 		$show_mfa_return_error = ( $llar_mfa_error !== '' );
@@ -2105,7 +2119,7 @@ class LimitLoginAttempts
 		$content = ! empty( $content ) ? '<span>' . $content . '</span>' : '';
 
 		$this->all_errors_array['late_hook_errors'] = $content;
-		$_SESSION['errors_in_early_hook'] = false;
+		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
 		return $content;
 	}

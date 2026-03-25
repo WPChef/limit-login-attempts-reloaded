@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $site_url    = home_url();
 $site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 $current_user_email = isset( $current_user_email ) ? $current_user_email : '';
+$profile_url = admin_url( 'profile.php' );
 
 ?>
 <div id="llar-mfa-rescue-popup-content" style="display: none;">
@@ -43,7 +44,23 @@ $current_user_email = isset( $current_user_email ) ? $current_user_email : '';
 									<strong><?php echo esc_html( $current_user_email ); ?></strong>
 								</p>
 								<p class="description" style="margin-bottom: 10px;">
-									<?php esc_html_e( 'One-time 2FA codes will be sent to this address. Please confirm it is correct before activating.', 'limit-login-attempts-reloaded' ); ?>
+									<?php
+									echo wp_kses(
+										sprintf(
+											/* translators: 1: opening link tag to user profile, 2: closing link tag. */
+											__( 'One-time 2FA codes will be sent to this address. Please confirm it is correct before activating. You can %1$schange your email in your user profile%2$s.', 'limit-login-attempts-reloaded' ),
+											'<a href="' . esc_url( $profile_url ) . '" target="_blank" rel="noopener noreferrer">',
+											'</a>'
+										),
+										array(
+											'a' => array(
+												'href'   => array(),
+												'target' => array(),
+												'rel'    => array(),
+											),
+										)
+									);
+									?>
 								</p>
 								<label style="display: block;">
 									<input type="checkbox" id="llar-rescue-confirm-email" name="llar_rescue_confirm_email" value="1" required aria-required="true"/>
@@ -65,9 +82,6 @@ $current_user_email = isset( $current_user_email ) ? $current_user_email : '';
 									<?php echo esc_html__( 'Save these links in a secure location. Each link can only be used once.', 'limit-login-attempts-reloaded' ); ?>
 								</p>
 							</div>
-							<div id="llar-rescue-links-loading" class="llar-rescue-links-loading" style="display: none;">
-								<span class="llar-rescue-loading-text"><strong><?php echo esc_html__( 'Generating Rescue Links', 'limit-login-attempts-reloaded' ); ?></strong><span class="llar-rescue-loading-dots">...</span></span>
-							</div>
 							<div class="llar-rescue-links-list" id="llar-rescue-links-list"></div>
 							<div class="llar-rescue-copy-row" style="display: none;">
 								<button type="button" class="button llar-copy-rescue-links" title="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>" aria-label="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>">📋 <?php echo esc_html__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?></button>
@@ -88,6 +102,12 @@ $current_user_email = isset( $current_user_email ) ? $current_user_email : '';
 						</form>
 					</div>
 				</div>
+			</div>
+			<div id="llar-rescue-links-loading" class="llar-rescue-links-loading" style="display: none;">
+				<span class="llar-rescue-loading-icon-wrap" aria-hidden="true">
+					<img class="llar-rescue-loading-icon" src="<?php echo esc_url( LLA_PLUGIN_URL . 'assets/img/llar-spinner.svg' ); ?>" alt="">
+				</span>
+				<span class="llar-rescue-loading-text"><strong><?php echo esc_html__( 'Generating Rescue Links', 'limit-login-attempts-reloaded' ); ?></strong><span class="llar-rescue-loading-dots">...</span></span>
 			</div>
 		</div>
 	</div>

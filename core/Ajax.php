@@ -985,11 +985,7 @@ class Ajax
 
 		check_ajax_referer( 'llar-get-remaining-attempts-message', 'sec' );
 
-		if ( ! session_id() ) {
-			session_start();
-		}
-
-		$remaining = ! empty( $_SESSION['login_attempts_left'] ) ? (int)$_SESSION['login_attempts_left'] : 0;
+		$remaining = (int) LoginFlowTransientStore::get( 'login_attempts_left', 0 );
 
 		if ( ! empty( $remaining ) && $remaining > 0 ) {
 
