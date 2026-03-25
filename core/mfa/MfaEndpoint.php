@@ -121,7 +121,14 @@ class MfaEndpoint implements MfaEndpointInterface {
 		if ( strlen( $encrypted_data ) > $max_len ) {
 			return false;
 		}
-		if ( ! preg_match( '/^[A-Za-z0-9+\/=]+$/', $encrypted_data ) ) {
+		// v2 authenticated payloads use prefix "v2:" + base64; legacy is base64 only.
+		$v2_prefix = 'v2:';
+		if ( 0 === strpos( $encrypted_data, $v2_prefix ) ) {
+			$payload = substr( $encrypted_data, strlen( $v2_prefix ) );
+			if ( '' === $payload || ! preg_match( '/^[A-Za-z0-9+\/=]+$/', $payload ) ) {
+				return false;
+			}
+		} elseif ( ! preg_match( '/^[A-Za-z0-9+\/=]+$/', $encrypted_data ) ) {
 			return false;
 		}
 
@@ -171,18 +178,6 @@ class MfaEndpoint implements MfaEndpointInterface {
 	private function set_rescue_cooldown( $ttl = null ) {
 		$ttl = ( null !== $ttl ) ? (int) $ttl : (int) MfaConstants::RESCUE_USE_COOLDOWN;
 		set_transient( MfaConstants::TRANSIENT_RESCUE_LAST_USE, 1, $ttl );
-	}
-
-	/**
-	 * Log rescue attempt for debugging (reason only; no hash_id in message to avoid leakage).
-	 *
-	 * @param string $hash_id Hash ID from request (unused in message).
-	 * @param bool   $success Whether the attempt succeeded.
-	 * @param string $reason  Reason code (e.g. cooldown, invalid).
-	 * @return void
-	 */
-	private function log_rescue_attempt( $hash_id, $success, $reason ) {
-		// Debug logging removed (no-op).
 	}
 
 	private function disable_mfa_temporarily() {

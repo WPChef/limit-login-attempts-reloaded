@@ -122,51 +122,170 @@ class SessionStore {
 	}
 
 	/**
-	 * Save OTP code for token (for callback verification).
+	 * Resolve token by callback state without consuming it.
+	 *
+	 * @param string $state Cookie state value.
+	 * @return string|null
+	 */
+	public function get_callback_token( $state ) {
+		if ( ! is_string( $state ) || '' === $state ) {
+			return null;
+		}
+		$key   = ( defined( 'LLA_MFA_FLOW_TRANSIENT_STATE_PREFIX' ) ? LLA_MFA_FLOW_TRANSIENT_STATE_PREFIX : 'llar_mfa_state_' ) . $state;
+		$value = get_transient( $key );
+		return ( false !== $value && is_string( $value ) && '' !== $value ) ? $value : null;
+	}
+
+	/**
+	 * Save OTP hash for token (for callback verification).
 	 *
 	 * @param string $token Session token.
 	 * @param string $code  OTP code.
 	 * @return bool
 	 */
 	public function save_otp( $token, $code ) {
-		if ( ! is_string( $token ) || '' === $token ) {
+		if ( ! is_string( $token ) || '' === $token || ! is_string( $code ) || '' === $code ) {
 			return false;
 		}
 		$ttl = defined( 'LLA_MFA_FLOW_OTP_TTL' ) ? (int) LLA_MFA_FLOW_OTP_TTL : 180;
 		$key = LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX . $token;
-		return (bool) set_transient( $key, (string) $code, $ttl );
+		return (bool) set_transient( $key, $this->hash_otp_code( $code ), $ttl );
 	}
 
 	/**
-	 * Get OTP for token (read-only).
+	 * Get OTP hash for token (read-only).
 	 *
 	 * @param string $token Session token.
-	 * @return string|null OTP value or null.
+	 * @return string|null OTP hash value or null.
 	 */
 	public function get_otp( $token ) {
 		if ( ! is_string( $token ) || '' === $token ) {
 			return null;
 		}
 		$key  = LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX . $token;
-		$code = get_transient( $key );
-		return ( false !== $code && is_string( $code ) ) ? $code : null;
+		$hash = get_transient( $key );
+		return ( false !== $hash && is_string( $hash ) ) ? $hash : null;
 	}
 
 	/**
-	 * Get OTP for token and delete it (one-time use). Use in callback to prevent OTP reuse.
+	 * Get OTP hash for token and delete it (one-time use). Use in callback to prevent OTP reuse.
 	 *
 	 * @param string $token Session token.
-	 * @return string|null OTP value or null if not found or already consumed.
+	 * @return string|null OTP hash value or null if not found or already consumed.
 	 */
 	public function get_otp_once( $token ) {
 		if ( ! is_string( $token ) || '' === $token ) {
 			return null;
 		}
-		$code = $this->get_otp( $token );
-		if ( $code !== null ) {
-			$this->delete_otp( $token );
+
+		$lock_name = 'llar_mfa_otp_lock_' . hash( 'sha256', $token );
+		if ( ! add_option( $lock_name, time(), '', 'no' ) ) {
+			return null;
 		}
-		return $code;
+
+		try {
+			$transient_key = LLA_MFA_FLOW_TRANSIENT_OTP_PREFIX . $token;
+			$hash          = get_transient( $transient_key );
+			if ( false === $hash || ! is_string( $hash ) ) {
+				return null;
+			}
+
+			// For DB-backed transients consume OTP atomically via low-level DELETE.
+			if ( ! wp_using_ext_object_cache() ) {
+				global $wpdb;
+
+				$option_name = '_transient_' . $transient_key;
+				$deleted     = $wpdb->query(
+					$wpdb->prepare(
+						'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
+						$option_name
+					)
+				);
+
+				if ( 1 !== (int) $deleted ) {
+					return null;
+				}
+
+				// Best-effort cleanup of the timeout row.
+				$timeout_name = '_transient_timeout_' . $transient_key;
+				$wpdb->query(
+					$wpdb->prepare(
+						'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
+						$timeout_name
+					)
+				);
+
+				return $hash;
+			}
+
+			$this->delete_otp( $token );
+			return $hash;
+		} finally {
+			delete_option( $lock_name );
+		}
+	}
+
+	/**
+	 * Verify provided OTP against stored one-time hash and consume it.
+	 *
+	 * @param string $token Session token.
+	 * @param string $code  User-provided OTP code.
+	 * @return bool
+	 */
+	public function verify_otp_once( $token, $code ) {
+		if ( ! is_string( $token ) || '' === $token || ! is_string( $code ) || '' === $code ) {
+			return false;
+		}
+
+		$stored_hash = $this->get_otp_once( $token );
+		if ( null === $stored_hash ) {
+			return false;
+		}
+
+		$expected_hash = $this->hash_otp_code( $code );
+		if ( hash_equals( (string) $stored_hash, (string) $expected_hash ) ) {
+			return true;
+		}
+
+		// Backward compatibility: accept plaintext OTP that may still be in transient during rollout.
+		return hash_equals( (string) $stored_hash, (string) $code );
+	}
+
+	/**
+	 * Hash OTP code with server-side pepper before storing/comparing.
+	 *
+	 * @param string $code OTP code.
+	 * @return string
+	 */
+	private function hash_otp_code( $code ) {
+		return hash_hmac( 'sha256', (string) $code, $this->get_otp_pepper() );
+	}
+
+	/**
+	 * Resolve server-side pepper for OTP HMAC.
+	 *
+	 * @return string
+	 */
+	private function get_otp_pepper() {
+		if ( function_exists( 'wp_salt' ) ) {
+			$salt = wp_salt( 'auth' );
+			if ( is_string( $salt ) && '' !== $salt ) {
+				return $salt;
+			}
+		}
+		if ( defined( 'AUTH_SALT' ) ) {
+			$auth_salt = constant( 'AUTH_SALT' );
+			if ( is_string( $auth_salt ) && '' !== $auth_salt ) {
+				return $auth_salt;
+			}
+		}
+		if ( defined( 'AUTH_KEY' ) ) {
+			$auth_key = constant( 'AUTH_KEY' );
+			if ( is_string( $auth_key ) && '' !== $auth_key ) {
+				return $auth_key;
+			}
+		}
+		return 'llar-mfa-otp-fallback-pepper';
 	}
 
 	/**
