@@ -333,8 +333,13 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                             $body.removeClass( disabled );
                         } );
                     }
+
+                    $body.css('overflow', '');
                 },
                 buttons: {},
+                onContentReady: function () {
+                    this.$contentPane.attr('tabindex', '-1').focus();
+                },
                 onOpenBefore: function () {
 
                     const button_next = 'button.button.next_step';
@@ -343,6 +348,8 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                     const $spinner = $activate_button.find( '.preloader-wrapper .spinner' );
                     const spinner = '.preloader-wrapper .spinner';
                     let email;
+
+                    $body.css('overflow', 'hidden');
 
                     $setup_code_key.on( 'input', function () {
 
