@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 3.0
 Tested up to: 6.9
-Stable tag: 3.0.1
+Stable tag: 3.0.2
 
 Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
@@ -147,6 +147,12 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 3.0.2 =
+* Hardened admin tab parameter (whitelist, strict checks) before loading tab views.
+* Onboarding: redirect to Dashboard when setup is incomplete and a tab other than Dashboard is opened.
+* Failed-login email subject: numbered placeholders for translation-friendly word order (e.g. for Dutch).
+* Onboarding popup: hide body scroll while open, restore on close; focus modal content.
 
 = 3.0.1 =
 * Hardened MFA security.

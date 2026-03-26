@@ -5,7 +5,7 @@ Description: Block excessive login attempts and protect your site against brute 
 Author: Limit Login Attempts Reloaded
 Author URI: https://www.limitloginattempts.com/
 Text Domain: limit-login-attempts-reloaded
-Version: 3.0.1
+Version: 3.0.2
 
 Copyright 2008-2012 Johan Eenfeldt, 2016–present Limit Login Attempts Reloaded
 */
