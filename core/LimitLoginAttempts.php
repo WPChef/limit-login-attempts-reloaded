@@ -386,13 +386,13 @@ class LimitLoginAttempts
 					$retries_chart_desc = __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' );
 					$retries_chart_color = '#FFCC66';
 					break;
-				case 500 > $retries_count:
+				case 300 > $retries_count:
 					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
 					$retries_chart_desc = __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' );
-					$retries_chart_color = '#FF4D4F';
+					$retries_chart_color = '#FFCC66';
 					break;
 				default:
-					$retries_chart_title = __( 'Warning: Your site has experienced over 500 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
+					$retries_chart_title = __( 'Warning: Your site has experienced over 300 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
 					$retries_chart_desc = $this->get_recommendation_desc( $setup_code, $upgrade_premium_url );
 					$retries_chart_color = '#FF6633';
 					break;
