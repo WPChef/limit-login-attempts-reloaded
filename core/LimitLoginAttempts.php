@@ -282,6 +282,222 @@ class LimitLoginAttempts
 	}
 
 	/**
+	 * Get failed login attempts count for the last 24 hours in local mode.
+	 *
+	 * @return int
+	 */
+	public function get_local_retries_count_for_last_day() {
+		$retries_count = 0;
+		$retries_stats = Config::get( 'retries_stats' );
+
+		if ( $retries_stats ) {
+			foreach ( $retries_stats as $key => $count ) {
+				if ( is_numeric( $key ) && strtotime( '-24 hours' ) < $key ) {
+					$retries_count += $count;
+				} elseif ( ! is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+					$retries_count += $count;
+				}
+			}
+		}
+
+		return (int) $retries_count;
+	}
+
+	/**
+	 * Build localized retries chart title with attempts count.
+	 *
+	 * @param int $retries_count Number of retries.
+	 *
+	 * @return string
+	 */
+	private function get_retries_chart_title_with_count( $retries_count ) {
+		$risk_texts = LLA_RISK_CONFIG['texts'];
+
+		return sprintf(
+			_n( $risk_texts['count_attempt_single'], $risk_texts['count_attempt_plural'], $retries_count, 'limit-login-attempts-reloaded' ),
+			$retries_count
+		) . __( $risk_texts['count_attempt_suffix'], 'limit-login-attempts-reloaded' );
+	}
+
+	/**
+	 * Build recommendation description for elevated brute force activity.
+	 *
+	 * @param string $setup_code          App setup code.
+	 * @param string $upgrade_premium_url Premium upgrade URL.
+	 *
+	 * @return string
+	 */
+	private function get_recommendation_desc( $setup_code, $upgrade_premium_url ) {
+		$risk_texts = LLA_RISK_CONFIG['texts'];
+
+		if ( ! empty( $setup_code ) ) {
+			return $this->get_premium_recommendation_desc( $upgrade_premium_url );
+		}
+
+		return sprintf(
+			__( $risk_texts['recommend_micro_cloud'], 'limit-login-attempts-reloaded' ),
+			'button_micro_cloud'
+		);
+	}
+
+	/**
+	 * Build recommendation description with premium upgrade link.
+	 *
+	 * @param string $upgrade_premium_url Premium upgrade URL.
+	 *
+	 * @return string
+	 */
+	private function get_premium_recommendation_desc( $upgrade_premium_url ) {
+		$risk_texts = LLA_RISK_CONFIG['texts'];
+
+		return sprintf(
+			__( $risk_texts['recommend_premium'], 'limit-login-attempts-reloaded' ),
+			$upgrade_premium_url
+		);
+	}
+
+	/**
+	 * Resolve risk level by retries count using configured ranges.
+	 *
+	 * @param int   $retries_count Retries count.
+	 * @param array $levels        Risk levels config.
+	 *
+	 * @return array
+	 */
+	private function resolve_risk_level( $retries_count, $levels ) {
+		foreach ( $levels as $level ) {
+			if ( isset( $level['exact'] ) && (int) $level['exact'] === $retries_count ) {
+				return $level;
+			}
+
+			if ( isset( $level['max_exclusive'] ) && (int) $level['max_exclusive'] > $retries_count ) {
+				return $level;
+			}
+
+			if ( ! empty( $level['default'] ) ) {
+				return $level;
+			}
+		}
+
+		return array();
+	}
+
+	/**
+	 * Build chart title/description/color from matched risk level.
+	 *
+	 * @param array  $matched_level        Matched level config.
+	 * @param int    $retries_count        Retries count.
+	 * @param array  $risk_config          Risk config.
+	 * @param string $setup_code           App setup code.
+	 * @param string $upgrade_premium_url  Premium upgrade URL.
+	 *
+	 * @return array
+	 */
+	private function build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url ) {
+		$risk_texts = $risk_config['texts'];
+		$risk_colors = $risk_config['colors'];
+
+		$retries_chart_title = '';
+		$retries_chart_desc = '';
+		$retries_chart_color = $risk_colors['green'];
+
+		foreach ( array( 'title', 'count_title', 'warning_title', 'desc', 'recommendation', 'premium_recommendation', 'color' ) as $rule_key ) {
+			if ( empty( $matched_level[ $rule_key ] ) ) {
+				continue;
+			}
+
+			switch ( $rule_key ) {
+				case 'title':
+					$retries_chart_title = __( $risk_texts[ $matched_level['title'] ], 'limit-login-attempts-reloaded' );
+					break;
+				case 'count_title':
+					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
+					break;
+				case 'warning_title':
+					$retries_chart_title = sprintf(
+						__( $risk_texts['warning_title_template'], 'limit-login-attempts-reloaded' ),
+						(int) $risk_config['bounds']['medium_upper']
+					);
+					break;
+				case 'desc':
+					$retries_chart_desc = __( $risk_texts[ $matched_level['desc'] ], 'limit-login-attempts-reloaded' );
+					break;
+				case 'recommendation':
+					$retries_chart_desc = $this->get_recommendation_desc( $setup_code, $upgrade_premium_url );
+					break;
+				case 'premium_recommendation':
+					$retries_chart_desc = $this->get_premium_recommendation_desc( $upgrade_premium_url );
+					break;
+				case 'color':
+					if ( isset( $risk_colors[ $matched_level['color'] ] ) ) {
+						$retries_chart_color = $risk_colors[ $matched_level['color'] ];
+					}
+					break;
+			}
+		}
+
+		return array(
+			'retries_chart_title' => $retries_chart_title,
+			'retries_chart_desc'  => $retries_chart_desc,
+			'retries_chart_color' => $retries_chart_color,
+		);
+	}
+
+	/**
+	 * Build data for failed attempts circle widget.
+	 *
+	 * @param bool        $is_active_app_custom Cloud mode flag.
+	 * @param bool|string $is_exhausted         Cloud exhausted flag.
+	 * @param string      $block_sub_group      Cloud plan name.
+	 * @param string      $setup_code           App setup code.
+	 * @param string      $upgrade_premium_url  Premium upgrade URL.
+	 * @param bool|array  $api_stats            Cloud API stats.
+	 *
+	 * @return array
+	 */
+	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
+		$risk_config         = LLA_RISK_CONFIG;
+		$risk_texts          = $risk_config['texts'];
+		$risk_levels         = $risk_config['levels'];
+		$risk_colors         = $risk_config['colors'];
+		$retries_chart_title = '';
+		$retries_chart_desc  = '';
+		$retries_chart_color = '';
+		$retries_count       = 0;
+
+		if ( ! $is_active_app_custom ) {
+			$retries_count = $this->get_local_retries_count_for_last_day();
+			$matched_level = $this->resolve_risk_level( $retries_count, $risk_levels['local'] );
+			$display_data = $this->build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url );
+			$retries_chart_title = $display_data['retries_chart_title'];
+			$retries_chart_desc = $display_data['retries_chart_desc'];
+			$retries_chart_color = $display_data['retries_chart_color'];
+		} else {
+			if ( $api_stats && ! empty( $api_stats['attempts']['count'] ) ) {
+				$retries_count = (int) end( $api_stats['attempts']['count'] );
+			}
+
+			if ( $is_exhausted && 'Micro Cloud' === $block_sub_group ) {
+				$matched_level = $this->resolve_risk_level( $retries_count, $risk_levels['cloud_exhausted_micro'] );
+				$display_data = $this->build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url );
+				$retries_chart_title = $display_data['retries_chart_title'];
+				$retries_chart_desc = $display_data['retries_chart_desc'];
+				$retries_chart_color = $display_data['retries_chart_color'];
+			} else {
+				$retries_chart_title = __( $risk_texts['failed_today_title'], 'limit-login-attempts-reloaded' );
+				$retries_chart_color = $risk_colors['green'];
+			}
+		}
+
+		return array(
+			'retries_chart_title' => $retries_chart_title,
+			'retries_chart_desc'  => $retries_chart_desc,
+			'retries_chart_color' => $retries_chart_color,
+			'retries_count'       => (int) $retries_count,
+		);
+	}
+
+	/**
 	 * Redirect to dashboard page after installed
 	 */
 	public function dashboard_page_redirect()
