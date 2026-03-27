@@ -282,6 +282,157 @@ class LimitLoginAttempts
 	}
 
 	/**
+	 * Get failed login attempts count for the last 24 hours in local mode.
+	 *
+	 * @return int
+	 */
+	public function get_local_retries_count_for_last_day() {
+		$retries_count = 0;
+		$retries_stats = Config::get( 'retries_stats' );
+
+		if ( $retries_stats ) {
+			foreach ( $retries_stats as $key => $count ) {
+				if ( is_numeric( $key ) && strtotime( '-24 hours' ) < $key ) {
+					$retries_count += $count;
+				} elseif ( ! is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+					$retries_count += $count;
+				}
+			}
+		}
+
+		return (int) $retries_count;
+	}
+
+	/**
+	 * Build localized retries chart title with attempts count.
+	 *
+	 * @param int $retries_count Number of retries.
+	 *
+	 * @return string
+	 */
+	private function get_retries_chart_title_with_count( $retries_count ) {
+		return sprintf(
+			_n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ),
+			$retries_count
+		) . __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
+	}
+
+	/**
+	 * Build recommendation description for elevated brute force activity.
+	 *
+	 * @param string $setup_code          App setup code.
+	 * @param string $upgrade_premium_url Premium upgrade URL.
+	 *
+	 * @return string
+	 */
+	private function get_recommendation_desc( $setup_code, $upgrade_premium_url ) {
+		if ( ! empty( $setup_code ) ) {
+			return $this->get_premium_recommendation_desc( $upgrade_premium_url );
+		}
+
+		return sprintf(
+			__( 'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
+			'button_micro_cloud'
+		);
+	}
+
+	/**
+	 * Build recommendation description with premium upgrade link.
+	 *
+	 * @param string $upgrade_premium_url Premium upgrade URL.
+	 *
+	 * @return string
+	 */
+	private function get_premium_recommendation_desc( $upgrade_premium_url ) {
+		return sprintf(
+			__( 'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
+			$upgrade_premium_url
+		);
+	}
+
+	/**
+	 * Build data for failed attempts circle widget.
+	 *
+	 * @param bool        $is_active_app_custom Cloud mode flag.
+	 * @param bool|string $is_exhausted         Cloud exhausted flag.
+	 * @param string      $block_sub_group      Cloud plan name.
+	 * @param string      $setup_code           App setup code.
+	 * @param string      $upgrade_premium_url  Premium upgrade URL.
+	 * @param bool|array  $api_stats            Cloud API stats.
+	 *
+	 * @return array
+	 */
+	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
+		$retries_chart_title = '';
+		$retries_chart_desc  = '';
+		$retries_chart_color = '';
+		$retries_count       = 0;
+
+		if ( ! $is_active_app_custom ) {
+			$retries_count = $this->get_local_retries_count_for_last_day();
+
+			switch ( true ) {
+				case 0 === $retries_count:
+					$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
+					$retries_chart_color = '#97F6C8';
+					break;
+				case 100 > $retries_count:
+					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
+					$retries_chart_desc = __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
+					$retries_chart_color = '#FFE066';
+					break;
+				case 300 > $retries_count:
+					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
+					$retries_chart_desc = __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' );
+					$retries_chart_color = '#FFCC66';
+					break;
+				case 500 > $retries_count:
+					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
+					$retries_chart_desc = __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' );
+					$retries_chart_color = '#FF4D4F';
+					break;
+				default:
+					$retries_chart_title = __( 'Warning: Your site has experienced over 500 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
+					$retries_chart_desc = $this->get_recommendation_desc( $setup_code, $upgrade_premium_url );
+					$retries_chart_color = '#FF6633';
+					break;
+			}
+		} else {
+			if ( $api_stats && ! empty( $api_stats['attempts']['count'] ) ) {
+				$retries_count = (int) end( $api_stats['attempts']['count'] );
+			}
+
+			if ( $is_exhausted && 'Micro Cloud' === $block_sub_group ) {
+				switch ( true ) {
+					case 0 === $retries_count:
+						$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
+						$retries_chart_color = '#97F6C8';
+						break;
+					case 100 > $retries_count:
+						$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
+						$retries_chart_desc = __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
+						$retries_chart_color = '#FFCC66';
+						break;
+					default:
+						$retries_chart_desc = $this->get_premium_recommendation_desc( $upgrade_premium_url );
+						$retries_chart_color = '#FF6633';
+						break;
+				}
+			} else {
+				$retries_chart_title = __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
+				$retries_chart_color = '#97F6C8';
+			}
+		}
+
+		return array(
+			'retries_chart_title' => $retries_chart_title,
+			'retries_chart_desc'  => $retries_chart_desc,
+			'retries_chart_color' => $retries_chart_color,
+			'retries_count'       => (int) $retries_count,
+		);
+	}
+
+	/**
 	 * Redirect to dashboard page after installed
 	 */
 	public function dashboard_page_redirect()
