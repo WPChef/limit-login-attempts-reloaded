@@ -19,6 +19,52 @@ define( 'LLA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'LLA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LLA_PLUGIN_FILE', __FILE__ );
 define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+/**
+ * Define risk widget config after i18n is ready.
+ *
+ * @return void
+ */
+function llar_define_risk_config() {
+	define( 'LLA_RISK_CONFIG', array(
+		'bounds' => array(
+			'low_upper'    => 100,
+			'medium_upper' => 300,
+		),
+		'colors' => array(
+			'green'  => '#97F6C8',
+			'yellow' => '#FFE066',
+			'orange' => '#FFCC66',
+			'red'    => '#FF6633',
+		),
+		'texts' => array(
+			'zero_title'             => __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' ),
+			'count_attempt_single'   => __( '%d failed login attempt ', 'limit-login-attempts-reloaded' ),
+			'count_attempt_plural'   => __( '%d failed login attempts ', 'limit-login-attempts-reloaded' ),
+			'count_attempt_suffix'   => __( '(past 24 hrs)', 'limit-login-attempts-reloaded' ),
+			'desc_low'               => __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' ),
+			'desc_medium'            => __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' ),
+			'warning_title_template' => __( 'Warning: Your site has experienced over %d failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' ),
+			'recommend_premium'      => __( 'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
+			'recommend_micro_cloud'  => __( 'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
+			'failed_today_title'     => __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' ),
+		),
+		'levels' => array(
+			'local' => array(
+				array( 'exact' => 0, 'title' => 'zero_title', 'color' => 'green' ),
+				array( 'max_exclusive' => 100, 'count_title' => true, 'desc' => 'desc_low', 'color' => 'yellow' ),
+				array( 'max_exclusive' => 300, 'count_title' => true, 'desc' => 'desc_medium', 'color' => 'orange' ),
+				array( 'default' => true, 'warning_title' => true, 'recommendation' => true, 'color' => 'red' ),
+			),
+			'cloud_exhausted_micro' => array(
+				array( 'exact' => 0, 'title' => 'zero_title', 'color' => 'green' ),
+				array( 'max_exclusive' => 100, 'count_title' => true, 'desc' => 'desc_low', 'color' => 'orange' ),
+				array( 'default' => true, 'premium_recommendation' => true, 'color' => 'red' ),
+			),
+		),
+	) );
+}
+
+add_action( 'init', 'llar_define_risk_config', 1 );
 
 /***************************************************************************************
  * Different ways to get remote address: direct & behind proxy
