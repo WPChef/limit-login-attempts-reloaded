@@ -468,7 +468,7 @@ class CloudApp
 			}
 		}
 
-		if ( strlen( $reason ) > 220 ) {
+		if ( 220 < strlen( $reason ) ) {
 			$reason = substr( $reason, 0, 217 ) . '...';
 		}
 
