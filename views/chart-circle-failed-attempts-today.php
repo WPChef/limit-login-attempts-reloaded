@@ -45,10 +45,22 @@ if ( ! $is_active_app_custom ) {
 		$retries_chart_title = sprintf( _n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
 		$retries_chart_title .= __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
 		$retries_chart_desc = __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
+		$retries_chart_color = '#FFE066';
+	} else if ( $retries_count < 300 ) {
+
+		$retries_chart_title = sprintf( _n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
+		$retries_chart_title .= __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
+		$retries_chart_desc = __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' );
 		$retries_chart_color = '#FFCC66';
+	} else if ( $retries_count < 500 ) {
+
+		$retries_chart_title = sprintf( _n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
+		$retries_chart_title .= __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
+		$retries_chart_desc = __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' );
+		$retries_chart_color = '#FF4D4F';
 	} else {
 
-		$retries_chart_title = __( 'Warning: Your site has experienced over 100 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
+		$retries_chart_title = __( 'Warning: Your site has experienced over 500 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
 
 		if ( ! empty( $setup_code ) ) {
 			$retries_chart_desc = sprintf(
