@@ -744,9 +744,10 @@ class LimitLoginAttempts
 					'gateway'   => Helpers::detect_gateway()
 				) ) ) {
 
-				if ( 'deny' === $response['result'] ) {
+				switch ( $response['result'] ) {
+					case 'deny':
 
-					LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
+						LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
@@ -771,20 +772,22 @@ class LimitLoginAttempts
 					);
 					$this->all_errors_array['early_hook_errors'] = $err;
 
-					if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
+						if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
 
-						header('HTTP/1.0 403 Forbidden' );
-						exit;
-					}
-				} elseif ( 'pass' === $response['result'] ) {
+							header('HTTP/1.0 403 Forbidden' );
+							exit;
+						}
+						break;
+					case 'pass':
 
-					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
-					// Keep wp_login_failed when MFA is enabled (and not temporarily disabled) so limit_login_failed runs (handshake + redirect to MFA app).
-					$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
-					if ( ! $mfa_effectively_enabled ) {
-						remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
-					}
-					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
+						remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
+						// Keep wp_login_failed when MFA is enabled (and not temporarily disabled) so limit_login_failed runs (handshake + redirect to MFA app).
+						$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
+						if ( ! $mfa_effectively_enabled ) {
+							remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+						}
+						remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
+						break;
 				}
 			} else {
 
@@ -854,18 +857,19 @@ class LimitLoginAttempts
 			'login'   => $username,
 			'gateway' => Helpers::detect_gateway(),
 		) ) ) {
-			if ( isset( $response['result'] ) && 'deny' === $response['result'] ) {
-				$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
-				$err = $this->build_lockout_error_message( $time_left );
-				LoginFlowTransientStore::ensure_token();
-				LoginFlowTransientStore::merge(
-					array(
-						'errors_in_early_hook'          => true,
-						'llar_early_hook_error_message' => $err,
-					)
-				);
+			switch ( isset( $response['result'] ) ? $response['result'] : '' ) {
+				case 'deny':
+					$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
+					$err = $this->build_lockout_error_message( $time_left );
+					LoginFlowTransientStore::ensure_token();
+					LoginFlowTransientStore::merge(
+						array(
+							'errors_in_early_hook'          => true,
+							'llar_early_hook_error_message' => $err,
+						)
+					);
 
-				return $this->create_username_blacklisted_error( $err );
+					return $this->create_username_blacklisted_error( $err );
 			}
 		}
 
