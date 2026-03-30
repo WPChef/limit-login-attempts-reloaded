@@ -744,7 +744,7 @@ class LimitLoginAttempts
 					'gateway'   => Helpers::detect_gateway()
 				) ) ) {
 
-				if ( $response['result'] === 'deny' ) {
+				if ( 'deny' === $response['result'] ) {
 
 					LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
 
@@ -776,7 +776,7 @@ class LimitLoginAttempts
 						header('HTTP/1.0 403 Forbidden' );
 						exit;
 					}
-				} elseif ( $response['result'] === 'pass' ) {
+				} elseif ( 'pass' === $response['result'] ) {
 
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 					// Keep wp_login_failed when MFA is enabled (and not temporarily disabled) so limit_login_failed runs (handshake + redirect to MFA app).
@@ -854,7 +854,7 @@ class LimitLoginAttempts
 			'login'   => $username,
 			'gateway' => Helpers::detect_gateway(),
 		) ) ) {
-			if ( isset( $response['result'] ) && $response['result'] === 'deny' ) {
+			if ( isset( $response['result'] ) && 'deny' === $response['result'] ) {
 				$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
 				$err = $this->build_lockout_error_message( $time_left );
 				LoginFlowTransientStore::ensure_token();
@@ -893,8 +893,8 @@ class LimitLoginAttempts
 	private function build_lockout_error_message( $time_left = 0 ) {
 		$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
-		if ( $time_left > 0 ) {
-			if ( $time_left > 60 ) {
+		if ( 0 < $time_left ) {
+			if ( 60 < $time_left ) {
 				$time_left = ceil( $time_left / 60 );
 				$err .= ' ' . sprintf( _n( 'Please try again in %d hour.', 'Please try again in %d hours.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
 			} else {

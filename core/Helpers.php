@@ -371,25 +371,25 @@ class Helpers {
 
 		// Some plugins hide wp-login.php and mask REQUEST_URI.
 		// Prefer core routing marker when available.
-		if ( isset( $GLOBALS['pagenow'] ) && $GLOBALS['pagenow'] === 'wp-login.php' ) {
-			if ( $action === 'lostpassword' ) {
+		if ( isset( $GLOBALS['pagenow'] ) && 'wp-login.php' === $GLOBALS['pagenow'] ) {
+			if ( 'lostpassword' === $action ) {
 				return 'wp_lostpassword';
-			} elseif ( $action === 'register' ) {
+			} elseif ( 'register' === $action ) {
 				return 'wp_register';
 			}
 
 			return 'wp_login';
 		}
 
-		if ( strpos( $request_uri, 'wp-login.php' ) !== false && ( ! $action || $action === 'login' ) ) {
+		if ( false !== strpos( $request_uri, 'wp-login.php' ) && ( ! $action || 'login' === $action ) ) {
 			$gateway = 'wp_login';
-		} elseif ( $action === 'lostpassword' && strpos( $request_uri, 'wp-login.php' ) !== false ) {
+		} elseif ( 'lostpassword' === $action && false !== strpos( $request_uri, 'wp-login.php' ) ) {
 			$gateway = 'wp_lostpassword';
-		} elseif ( $action === 'register' && strpos( $request_uri, 'wp-login.php' ) !== false ) {
+		} elseif ( 'register' === $action && false !== strpos( $request_uri, 'wp-login.php' ) ) {
 			$gateway = 'wp_register';
 		} elseif ( isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ) ) {
 			$gateway = 'wp_xmlrpc';
-		} elseif ( strpos( $request_uri, 'wp-login.php' ) === false ) {
+		} elseif ( false === strpos( $request_uri, 'wp-login.php' ) ) {
 			$gateway = trim( $request_uri, '/' );
 		}
 
