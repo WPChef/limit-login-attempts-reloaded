@@ -366,17 +366,31 @@ class Helpers {
 	public static function detect_gateway() {
 
 		$gateway = 'wp_login';
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? rawurldecode( $_SERVER['REQUEST_URI'] ) : '';
 
-		if ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false && ( !isset( $_GET['action'] ) || $_GET['action'] === 'login' ) ) {
+		// WPS Hide Login masks wp-login.php requests with "/-/-/-/-/-/-/-/-/-/-/".
+		if ( preg_match( '#^(?:/-){10}/?$#', $request_uri ) ) {
+			if ( isset( $_GET['action'] ) && $_GET['action'] === 'lostpassword' ) {
+				return 'wp_lostpassword';
+			} elseif ( isset( $_GET['action'] ) && $_GET['action'] === 'register' ) {
+				return 'wp_register';
+			} elseif ( isset( $GLOBALS['pagenow'] ) && $GLOBALS['pagenow'] === 'wp-login.php' ) {
+				return 'wp_login';
+			}
+
+			return 'hidden_login';
+		}
+
+		if ( strpos( $request_uri, 'wp-login.php' ) !== false && ( ! isset( $_GET['action'] ) || $_GET['action'] === 'login' ) ) {
 			$gateway = 'wp_login';
-		} elseif ( isset( $_GET['action'] ) && $_GET['action'] === 'lostpassword' && strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false ) {
+		} elseif ( isset( $_GET['action'] ) && $_GET['action'] === 'lostpassword' && strpos( $request_uri, 'wp-login.php' ) !== false ) {
 			$gateway = 'wp_lostpassword';
-		} elseif ( isset($_GET['action']) && $_GET['action'] === 'register' && strpos($_SERVER['REQUEST_URI'], 'wp-login.php') !== false ) {
+		} elseif ( isset( $_GET['action'] ) && $_GET['action'] === 'register' && strpos( $request_uri, 'wp-login.php' ) !== false ) {
 			$gateway = 'wp_register';
 		} elseif ( isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ) ) {
 			$gateway = 'wp_xmlrpc';
-		} elseif ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) === false ) {
-			$gateway = trim( $_SERVER['REQUEST_URI'], '/' );
+		} elseif ( strpos( $request_uri, 'wp-login.php' ) === false ) {
+			$gateway = trim( $request_uri, '/' );
 		}
 
 		return $gateway;
