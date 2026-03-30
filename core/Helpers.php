@@ -372,25 +372,32 @@ class Helpers {
 		// Some plugins hide wp-login.php and mask REQUEST_URI.
 		// Prefer core routing marker when available.
 		if ( isset( $GLOBALS['pagenow'] ) && 'wp-login.php' === $GLOBALS['pagenow'] ) {
-			if ( 'lostpassword' === $action ) {
-				return 'wp_lostpassword';
-			} elseif ( 'register' === $action ) {
-				return 'wp_register';
+			switch ( $action ) {
+				case 'lostpassword':
+					return 'wp_lostpassword';
+				case 'register':
+					return 'wp_register';
+				default:
+					return 'wp_login';
 			}
-
-			return 'wp_login';
 		}
 
-		if ( false !== strpos( $request_uri, 'wp-login.php' ) && ( ! $action || 'login' === $action ) ) {
-			$gateway = 'wp_login';
-		} elseif ( 'lostpassword' === $action && false !== strpos( $request_uri, 'wp-login.php' ) ) {
-			$gateway = 'wp_lostpassword';
-		} elseif ( 'register' === $action && false !== strpos( $request_uri, 'wp-login.php' ) ) {
-			$gateway = 'wp_register';
-		} elseif ( isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ) ) {
-			$gateway = 'wp_xmlrpc';
-		} elseif ( false === strpos( $request_uri, 'wp-login.php' ) ) {
-			$gateway = trim( $request_uri, '/' );
+		switch ( true ) {
+			case false !== strpos( $request_uri, 'wp-login.php' ) && ( ! $action || 'login' === $action ):
+				$gateway = 'wp_login';
+				break;
+			case 'lostpassword' === $action && false !== strpos( $request_uri, 'wp-login.php' ):
+				$gateway = 'wp_lostpassword';
+				break;
+			case 'register' === $action && false !== strpos( $request_uri, 'wp-login.php' ):
+				$gateway = 'wp_register';
+				break;
+			case isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ):
+				$gateway = 'wp_xmlrpc';
+				break;
+			case false === strpos( $request_uri, 'wp-login.php' ):
+				$gateway = trim( $request_uri, '/' );
+				break;
 		}
 
 		return $gateway;
