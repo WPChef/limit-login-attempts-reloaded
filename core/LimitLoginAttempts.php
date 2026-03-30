@@ -400,6 +400,7 @@ class LimitLoginAttempts
 		* it will probably be deprecated. That is however only available in
 		* later versions of WP.
 		*/
+		add_filter( 'authenticate', array( $this, 'authenticate_guard_filter' ), -9999, 3 );
 		add_action( 'authenticate', array( $this, 'track_credentials' ), 1, 3 ); // to replace the deprecated wp_authenticate hook
 		add_action( 'authenticate', array( $this, 'authenticate_filter' ), 0, 3 );
 
@@ -728,6 +729,10 @@ class LimitLoginAttempts
 	 */
 	public function authenticate_filter( $user, $username, $password )
 	{
+		if ( is_wp_error( $user ) ) {
+			return $user;
+		}
+
 		LoginFlowTransientStore::ensure_token();
 		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
@@ -751,25 +756,12 @@ class LimitLoginAttempts
 					remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
 					remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
 
-					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
-
-					$time_left = ( ! empty( $response['time_left'] ) ) ? $response['time_left'] : 0;
-					if ( $time_left ) {
-
-						if ( $time_left > 60 ) {
-							$time_left = ceil( $time_left / 60 );
-							$err .= ' ' . sprintf( _n( 'Please try again in %d hour.', 'Please try again in %d hours.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
-						} else {
-							$err .= ' ' . sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
-						}
-					}
-
-					$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
+					$time_left = ( ! empty( $response['time_left'] ) ) ? (int) $response['time_left'] : 0;
+					$err = $this->build_lockout_error_message( $time_left );
 
 					self::$cloud_app->add_error( $err );
 
-					$user = new WP_Error();
-					$user->add( 'username_blacklisted', $err );
+					$user = $this->create_username_blacklisted_error( $err );
 
 					LoginFlowTransientStore::merge(
 						array(
@@ -814,12 +806,8 @@ class LimitLoginAttempts
 					remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
 					remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
 
-					$user = new WP_Error();
-					$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
-
-					$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
-
-					$user->add( 'username_blacklisted', $err );
+					$err = $this->build_lockout_error_message();
+					$user = $this->create_username_blacklisted_error( $err );
 
 					LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => true ) );
 					$this->all_errors_array['early_hook_errors'] = $err;
@@ -845,6 +833,86 @@ class LimitLoginAttempts
 		}
 
 		return $user;
+	}
+
+	/**
+	 * Run ACL / blacklist checks before third-party late authenticate hooks.
+	 *
+	 * @param mixed  $user
+	 * @param string $username
+	 * @param string $password
+	 * @return mixed
+	 */
+	public function authenticate_guard_filter( $user, $username, $password ) {
+
+		if ( is_wp_error( $user ) || empty( $username ) || empty( $password ) ) {
+			return $user;
+		}
+
+		if ( self::$cloud_app && $response = self::$cloud_app->acl_check( array(
+			'ip'      => Helpers::get_all_ips(),
+			'login'   => $username,
+			'gateway' => Helpers::detect_gateway(),
+		) ) ) {
+			if ( isset( $response['result'] ) && $response['result'] === 'deny' ) {
+				$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
+				$err = $this->build_lockout_error_message( $time_left );
+				LoginFlowTransientStore::ensure_token();
+				LoginFlowTransientStore::merge(
+					array(
+						'errors_in_early_hook'          => true,
+						'llar_early_hook_error_message' => $err,
+					)
+				);
+
+				return $this->create_username_blacklisted_error( $err );
+			}
+		}
+
+		$ip = $this->get_address();
+		if (
+			( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) )
+			&& ( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
+		) {
+			$err = $this->build_lockout_error_message();
+			LoginFlowTransientStore::ensure_token();
+			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => true ) );
+
+			return $this->create_username_blacklisted_error( $err );
+		}
+
+		return $user;
+	}
+
+	/**
+	 * Build lockout error message with optional time left.
+	 *
+	 * @param int $time_left
+	 * @return string
+	 */
+	private function build_lockout_error_message( $time_left = 0 ) {
+		$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
+
+		if ( $time_left > 0 ) {
+			if ( $time_left > 60 ) {
+				$time_left = ceil( $time_left / 60 );
+				$err .= ' ' . sprintf( _n( 'Please try again in %d hour.', 'Please try again in %d hours.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
+			} else {
+				$err .= ' ' . sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
+			}
+		}
+
+		return '<span>' . $err . '</span>';
+	}
+
+	/**
+	 * Create standardized lockout WP_Error.
+	 *
+	 * @param string $error_message
+	 * @return WP_Error
+	 */
+	private function create_username_blacklisted_error( $error_message ) {
+		return new WP_Error( 'username_blacklisted', $error_message );
 	}
 
 
