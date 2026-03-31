@@ -53,8 +53,6 @@ class HttpTransportCurl implements HttpTransportInterface {
 		curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $handle, CURLOPT_TIMEOUT, (int) $request_options['timeout'] );
 		curl_setopt( $handle, CURLOPT_CONNECTTIMEOUT, (int) $request_options['timeout'] );
-		curl_setopt( $handle, CURLOPT_SSL_VERIFYPEER, $request_options['sslverify'] ? 1 : 0 );
-		curl_setopt( $handle, CURLOPT_SSL_VERIFYHOST, $request_options['sslverify'] ? 2 : 0 );
 
 		if( $method === 'POST' ) {
 			curl_setopt($handle, CURLOPT_POST, true);
@@ -89,7 +87,6 @@ class HttpTransportCurl implements HttpTransportInterface {
 
 		return array(
 			'timeout'   => $timeout,
-			'sslverify' => ! ( isset( $options['sslverify'] ) && false === $options['sslverify'] ),
 		);
 	}
 }
