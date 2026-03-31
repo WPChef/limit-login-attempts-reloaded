@@ -998,7 +998,6 @@ class LimitLoginAttempts
 		$response = self::$cloud_app->acl_check(
 			$payload,
 			array(
-				'sslverify' => true,
 				'timeout'   => 3,
 			)
 		);
