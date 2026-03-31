@@ -46,23 +46,24 @@ if ( ! isset( $llar_mfa_otp_logo_cid ) || ! is_string( $llar_mfa_otp_logo_cid ) 
 			overflow: hidden;
 		}
 		.header {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			gap: 12px;
 			padding: 24px 32px 16px;
 			background-color: #f3f1f5;
 			font-size: 14px;
 			font-weight: 600;
 			color: #111827;
 			line-height: 1.4;
-			min-height: 48px;
+			text-align: center;
 		}
-		.header-logo {
-			display: inline-block;
-			width: 40px;
-			height: 40px;
+		table.header-table {
+			margin: 0 auto;
+			border-collapse: collapse;
+		}
+		table.header-table td {
 			vertical-align: middle;
+			padding: 0;
+		}
+		td.header-logo-cell {
+			padding-right: 12px;
 		}
 		.content, .footer, .brand {
 			width: 80%;
@@ -206,10 +207,18 @@ if ( ! isset( $llar_mfa_otp_logo_cid ) || ! is_string( $llar_mfa_otp_logo_cid ) 
 	<div class="wrapper">
 		<div class="container">
 			<div class="header">
-				<?php if ( '' !== $llar_mfa_otp_logo_cid ) : ?>
-				<img src="<?php echo esc_attr( 'cid:' . $llar_mfa_otp_logo_cid ); ?>" alt="" class="header-logo" width="40" height="40">
-				<?php endif; ?>
-				<?php esc_html_e( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ); ?>
+				<table class="header-table" role="presentation" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<?php if ( '' !== $llar_mfa_otp_logo_cid ) : ?>
+						<td class="header-logo-cell" valign="middle">
+							<img src="<?php echo esc_attr( 'cid:' . $llar_mfa_otp_logo_cid ); ?>" alt="" width="40" height="40" style="display:block;width:40px;height:40px;border:0;outline:none;text-decoration:none;">
+						</td>
+						<?php endif; ?>
+						<td valign="middle">
+							<?php esc_html_e( 'Limit Login Attempts Reloaded', 'limit-login-attempts-reloaded' ); ?>
+						</td>
+					</tr>
+				</table>
 			</div>
 			<div class="content">
 				<div class="title"><?php esc_html_e( 'Verify your login', 'limit-login-attempts-reloaded' ); ?></div>

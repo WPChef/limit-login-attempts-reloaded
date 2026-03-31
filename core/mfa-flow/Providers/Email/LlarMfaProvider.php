@@ -144,7 +144,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 		$llar_mfa_otp_logo_cid = '';
 		$otp_logo_path        = '';
 		if ( defined( 'LLA_PLUGIN_DIR' ) ) {
-			$otp_logo_path = LLA_PLUGIN_DIR . 'assets/img/llar-logo-email.svg';
+			$otp_logo_path = LLA_PLUGIN_DIR . 'assets/img/llar-logo-email.png';
 			if ( file_exists( $otp_logo_path ) && is_readable( $otp_logo_path ) ) {
 				$llar_mfa_otp_logo_cid = self::OTP_EMAIL_LOGO_CID;
 			}
@@ -260,7 +260,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 	}
 
 	/**
-	 * Add bundled SVG as inline image (CID) for HTML multipart/related.
+	 * Add bundled PNG as inline image (CID) for HTML multipart/related.
 	 *
 	 * @param object $phpmailer PHPMailer instance from wp_mail.
 	 */
@@ -273,9 +273,9 @@ class LlarMfaProvider implements MfaProviderInterface {
 		}
 		$cid = self::$otp_email_embed_cid !== '' ? self::$otp_email_embed_cid : self::OTP_EMAIL_LOGO_CID;
 		if ( method_exists( $phpmailer, 'addEmbeddedImage' ) ) {
-			$phpmailer->addEmbeddedImage( self::$otp_email_embed_path, $cid, 'llar-logo.svg', 'base64', 'image/svg+xml' );
+			$phpmailer->addEmbeddedImage( self::$otp_email_embed_path, $cid, 'llar-logo.png', 'base64', 'image/png' );
 		} elseif ( method_exists( $phpmailer, 'AddEmbeddedImage' ) ) {
-			$phpmailer->AddEmbeddedImage( self::$otp_email_embed_path, $cid, 'llar-logo.svg', 'base64', 'image/svg+xml' );
+			$phpmailer->AddEmbeddedImage( self::$otp_email_embed_path, $cid, 'llar-logo.png', 'base64', 'image/png' );
 		}
 	}
 }
