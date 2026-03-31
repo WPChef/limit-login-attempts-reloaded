@@ -76,6 +76,7 @@ class LimitLoginAttempts
 	 * @var \LLAR\Core\AdminNoticesController
 	 */
 	private $admin_notices_controller = null;
+	private $auth_acl_response_cache = array();
 
 	/**
 	 * Pending flash message to display on options page (e.g. "Settings saved").
@@ -729,48 +730,42 @@ class LimitLoginAttempts
 	 */
 	public function authenticate_filter( $user, $username, $password )
 	{
-		if ( is_wp_error( $user ) ) {
-			return $user;
-		}
-
 		LoginFlowTransientStore::ensure_token();
-		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
+		if ( ! is_wp_error( $user ) ) {
+			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
+		}
 
 		if ( ! empty( $username ) && ! empty( $password ) ) {
 
-			if ( self::$cloud_app && $response = self::$cloud_app->acl_check( array(
-					'ip'        => Helpers::get_all_ips(),
-					'login'     => $username,
-					'gateway'   => Helpers::detect_gateway()
-				) ) ) {
+			if ( self::$cloud_app && $response = $this->get_auth_acl_response( $username ) ) {
 
 				switch ( $response['result'] ) {
 					case 'deny':
 
 						LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
 
-					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
-					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
-					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
+						remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
+						remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+						remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
 
 					// Remove default WP authentication filters
-					remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
-					remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
+						remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
+						remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
 
-					$time_left = ( ! empty( $response['time_left'] ) ) ? (int) $response['time_left'] : 0;
-					$err = $this->build_lockout_error_message( $time_left );
+						$time_left = ( ! empty( $response['time_left'] ) ) ? (int) $response['time_left'] : 0;
+						$err = $this->build_lockout_error_message( $time_left );
 
-					self::$cloud_app->add_error( $err );
+						self::$cloud_app->add_error( $err );
 
-					$user = $this->create_username_blacklisted_error( $err );
+						$user = $this->create_username_blacklisted_error( $err );
 
-					LoginFlowTransientStore::merge(
-						array(
-							'errors_in_early_hook'           => true,
-							'llar_early_hook_error_message' => $err,
-						)
-					);
-					$this->all_errors_array['early_hook_errors'] = $err;
+						LoginFlowTransientStore::merge(
+							array(
+								'errors_in_early_hook'           => true,
+								'llar_early_hook_error_message' => $err,
+							)
+						);
+						$this->all_errors_array['early_hook_errors'] = $err;
 
 						if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
 
@@ -852,15 +847,12 @@ class LimitLoginAttempts
 			return $user;
 		}
 
-		if ( self::$cloud_app && $response = self::$cloud_app->acl_check( array(
-			'ip'      => Helpers::get_all_ips(),
-			'login'   => $username,
-			'gateway' => Helpers::detect_gateway(),
-		) ) ) {
+		if ( self::$cloud_app && $response = $this->get_auth_acl_response( $username ) ) {
 			switch ( isset( $response['result'] ) ? $response['result'] : '' ) {
 				case 'deny':
 					$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
 					$err = $this->build_lockout_error_message( $time_left );
+					self::$cloud_app->add_error( $err );
 					LoginFlowTransientStore::ensure_token();
 					LoginFlowTransientStore::merge(
 						array(
@@ -868,6 +860,14 @@ class LimitLoginAttempts
 							'llar_early_hook_error_message' => $err,
 						)
 					);
+					$this->all_errors_array['early_hook_errors'] = $err;
+					remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
+					remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
+
+					if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
+						header('HTTP/1.0 403 Forbidden' );
+						exit;
+					}
 
 					return $this->create_username_blacklisted_error( $err );
 			}
@@ -917,6 +917,31 @@ class LimitLoginAttempts
 	 */
 	private function create_username_blacklisted_error( $error_message ) {
 		return new WP_Error( 'username_blacklisted', $error_message );
+	}
+
+	/**
+	 * Cached Cloud ACL response for current authenticate request.
+	 *
+	 * @param string $username
+	 * @return array|false
+	 * @throws Exception
+	 */
+	private function get_auth_acl_response( $username ) {
+		$payload = array(
+			'ip'      => Helpers::get_all_ips(),
+			'login'   => $username,
+			'gateway' => Helpers::detect_gateway(),
+		);
+		$cache_key = md5( wp_json_encode( $payload ) );
+
+		if ( isset( $this->auth_acl_response_cache[ $cache_key ] ) ) {
+			return $this->auth_acl_response_cache[ $cache_key ];
+		}
+
+		$response = self::$cloud_app->acl_check( $payload );
+		$this->auth_acl_response_cache[ $cache_key ] = $response;
+
+		return $response;
 	}
 
 
