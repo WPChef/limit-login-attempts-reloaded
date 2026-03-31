@@ -397,6 +397,11 @@ class Helpers {
 				break;
 			case false === strpos( $request_uri, 'wp-login.php' ):
 				$gateway = trim( $request_uri, '/' );
+				$gateway = str_replace( '/', '_', $gateway );
+				$gateway = substr( sanitize_key( $gateway ), 0, 100 );
+				if ( empty( $gateway ) ) {
+					$gateway = 'custom_login';
+				}
 				break;
 		}
 
