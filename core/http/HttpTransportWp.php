@@ -11,9 +11,12 @@ class HttpTransportWp implements HttpTransportInterface {
 	 * @return array
 	 */
 	public function get( $url, $options = array() ) {
+		$request_options = $this->build_request_options( $options );
 		$response = wp_remote_get( $url, array(
 			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
-			'body' 		=> !empty( $options['data'] ) ? $options['data'] : array()
+			'body' 		=> !empty( $options['data'] ) ? $options['data'] : array(),
+			'timeout'   => $request_options['timeout'],
+			'sslverify' => $request_options['sslverify'],
 		) );
 
 		return $this->prepare_response( $response );
@@ -26,9 +29,12 @@ class HttpTransportWp implements HttpTransportInterface {
 	 * @return array
 	 */
 	public function post( $url, $options = array() ) {
+		$request_options = $this->build_request_options( $options );
 		$response = wp_remote_post( $url, array(
 			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
-			'body' 		=> !empty( $options['data'] ) ? json_encode( $options['data'], JSON_FORCE_OBJECT ) : null
+			'body' 		=> !empty( $options['data'] ) ? json_encode( $options['data'], JSON_FORCE_OBJECT ) : null,
+			'timeout'   => $request_options['timeout'],
+			'sslverify' => $request_options['sslverify'],
 		) );
 
 		return $this->prepare_response( $response );
@@ -75,5 +81,21 @@ class HttpTransportWp implements HttpTransportInterface {
 		}
 
 		return $formatted_headers;
+	}
+
+	/**
+	 * @param array $options
+	 * @return array
+	 */
+	private function build_request_options( $options ) {
+		$timeout = isset( $options['timeout'] ) ? (int) $options['timeout'] : 5;
+		if ( $timeout <= 0 ) {
+			$timeout = 5;
+		}
+
+		return array(
+			'timeout'   => $timeout,
+			'sslverify' => ! ( isset( $options['sslverify'] ) && false === $options['sslverify'] ),
+		);
 	}
 }

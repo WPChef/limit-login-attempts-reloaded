@@ -201,11 +201,11 @@ class CloudApp
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function acl_check( $data )
+	public function acl_check( $data, $request_options = array() )
 	{
 		$this->prepare_settings( 'acl', $data );
 
-		return $this->request( 'acl', 'post', $data );
+		return $this->request( 'acl', 'post', $data, $request_options );
 	}
 
 	/**
@@ -395,7 +395,7 @@ class CloudApp
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function request( $method, $type = 'get', $data = null )
+	public function request( $method, $type = 'get', $data = null, $request_options = array() )
 	{
 		if ( ! $method ) {
 			throw new Exception( 'You must specify API method.' );
@@ -404,10 +404,10 @@ class CloudApp
 		$headers = array();
 		$headers[] = "{$this->config['header']}: {$this->config['key']}";
 
-		$response = Http::$type( $this->api.'/'.$method, array(
+		$response = Http::$type( $this->api.'/'.$method, array_merge( array(
 			'data'      => $data,
 			'headers'   => $headers
-		) );
+		), $request_options ) );
 
 		$this->last_response_code = !empty( $response['status'] ) ? $response['status'] : 0;
 
