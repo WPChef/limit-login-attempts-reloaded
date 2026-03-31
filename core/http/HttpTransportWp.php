@@ -16,7 +16,6 @@ class HttpTransportWp implements HttpTransportInterface {
 			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
 			'body' 		=> !empty( $options['data'] ) ? $options['data'] : array(),
 			'timeout'   => $request_options['timeout'],
-			'sslverify' => $request_options['sslverify'],
 		) );
 
 		return $this->prepare_response( $response );
@@ -34,7 +33,6 @@ class HttpTransportWp implements HttpTransportInterface {
 			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
 			'body' 		=> !empty( $options['data'] ) ? json_encode( $options['data'], JSON_FORCE_OBJECT ) : null,
 			'timeout'   => $request_options['timeout'],
-			'sslverify' => $request_options['sslverify'],
 		) );
 
 		return $this->prepare_response( $response );
@@ -95,7 +93,6 @@ class HttpTransportWp implements HttpTransportInterface {
 
 		return array(
 			'timeout'   => $timeout,
-			'sslverify' => ! ( isset( $options['sslverify'] ) && false === $options['sslverify'] ),
 		);
 	}
 }

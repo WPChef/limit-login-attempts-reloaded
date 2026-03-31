@@ -62,10 +62,6 @@ class HttpTransportFopen implements HttpTransportInterface {
                 'content' => $request_data,
 				'timeout' => (int) $request_options['timeout'],
             ),
-			'ssl' => array(
-				'verify_peer'      => (bool) $request_options['sslverify'],
-				'verify_peer_name' => (bool) $request_options['sslverify'],
-			),
 		));
 
 		$fp = @fopen( $url, 'rb', false, $context );
@@ -112,7 +108,6 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 		return array(
 			'timeout'   => $timeout,
-			'sslverify' => ! ( isset( $options['sslverify'] ) && false === $options['sslverify'] ),
 		);
 	}
 }
