@@ -77,6 +77,7 @@ class LimitLoginAttempts
 	 */
 	private $admin_notices_controller = null;
 	private $auth_acl_response_cache = array();
+	private $auth_acl_response_cache_max_size = 50;
 
 	/**
 	 * Pending flash message to display on options page (e.g. "Settings saved").
@@ -939,6 +940,9 @@ class LimitLoginAttempts
 		}
 
 		$response = self::$cloud_app->acl_check( $payload );
+		if ( $this->auth_acl_response_cache_max_size <= count( $this->auth_acl_response_cache ) ) {
+			array_shift( $this->auth_acl_response_cache );
+		}
 		$this->auth_acl_response_cache[ $cache_key ] = $response;
 
 		return $response;
