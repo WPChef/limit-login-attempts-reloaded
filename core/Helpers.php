@@ -366,7 +366,7 @@ class Helpers {
 	public static function detect_gateway() {
 
 		$gateway = 'wp_login';
-		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? rawurldecode( $_SERVER['REQUEST_URI'] ) : '';
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( rawurldecode( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) : '';
 		$action = isset( $_GET['action'] ) ? $_GET['action'] : '';
 
 		// Some plugins hide wp-login.php and mask REQUEST_URI.
