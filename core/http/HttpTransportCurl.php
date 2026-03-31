@@ -18,8 +18,9 @@ class HttpTransportCurl implements HttpTransportInterface {
 		}
 
 		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
+		$request_options = $this->build_request_options( $options );
 
-		return $this->request( $url, 'GET', $headers );
+		return $this->request( $url, 'GET', $headers, array(), $request_options );
 	}
 
 	/**
@@ -32,8 +33,9 @@ class HttpTransportCurl implements HttpTransportInterface {
 
 		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
 		$data = !empty( $options['data'] ) ? $options['data'] : array();
+		$request_options = $this->build_request_options( $options );
 
-		return $this->request( $url, 'POST', $headers, $data );
+		return $this->request( $url, 'POST', $headers, $data, $request_options );
 	}
 
 	/**
@@ -44,11 +46,15 @@ class HttpTransportCurl implements HttpTransportInterface {
 	 *
 	 * @return array
 	 */
-	private function request( $url, $method, $headers = array(), $data = array() ) {
+	private function request( $url, $method, $headers = array(), $data = array(), $request_options = array() ) {
 
 		$handle = curl_init( $url );
 		
 		curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $handle, CURLOPT_TIMEOUT, (int) $request_options['timeout'] );
+		curl_setopt( $handle, CURLOPT_CONNECTTIMEOUT, (int) $request_options['timeout'] );
+		curl_setopt( $handle, CURLOPT_SSL_VERIFYPEER, $request_options['sslverify'] ? 1 : 0 );
+		curl_setopt( $handle, CURLOPT_SSL_VERIFYHOST, $request_options['sslverify'] ? 2 : 0 );
 
 		if( $method === 'POST' ) {
 			curl_setopt($handle, CURLOPT_POST, true);
@@ -68,6 +74,22 @@ class HttpTransportCurl implements HttpTransportInterface {
 			'data'      => $response,
 			'status'    => intval( $response_status ),
 			'error'     => !$response ? curl_error( $handle ) : null
+		);
+	}
+
+	/**
+	 * @param array $options
+	 * @return array
+	 */
+	private function build_request_options( $options ) {
+		$timeout = isset( $options['timeout'] ) ? (int) $options['timeout'] : 5;
+		if ( $timeout <= 0 ) {
+			$timeout = 5;
+		}
+
+		return array(
+			'timeout'   => $timeout,
+			'sslverify' => ! ( isset( $options['sslverify'] ) && false === $options['sslverify'] ),
 		);
 	}
 }
