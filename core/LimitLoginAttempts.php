@@ -803,6 +803,10 @@ class LimitLoginAttempts
 			return false;
 		}
 
+		if ( ! $this->check_login_rate_limit( $this->get_address() ) ) {
+			return false;
+		}
+
 		if ( self::$cloud_app && $response = $this->get_auth_acl_response( $username ) ) {
 			if ( 'deny' === $response['result'] ) {
 				$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
@@ -913,13 +917,63 @@ class LimitLoginAttempts
 			'[LLAR Security] ' . wp_json_encode(
 				array(
 					'event'    => $event_type,
-					'username' => $username,
+					'username' => $this->mask_username_for_log( $username ),
 					'ip'       => $ip,
 					'gateway'  => Helpers::detect_gateway(),
 					'details'  => $details,
 				)
 			)
 		);
+	}
+
+	/**
+	 * Mask username in logs to reduce sensitive data exposure.
+	 *
+	 * @param string $username
+	 * @return string
+	 */
+	private function mask_username_for_log( $username ) {
+		$username = (string) $username;
+		$length = strlen( $username );
+		if ( $length <= 0 ) {
+			return '';
+		}
+		if ( $length <= 2 ) {
+			return str_repeat( '*', $length );
+		}
+
+		return substr( $username, 0, 2 ) . str_repeat( '*', $length - 2 );
+	}
+
+	/**
+	 * Lightweight per-IP rate limiter for login attempts.
+	 *
+	 * @param string $ip
+	 * @return bool
+	 */
+	private function check_login_rate_limit( $ip ) {
+		$ip = (string) $ip;
+		if ( '' === $ip ) {
+			return true;
+		}
+
+		$window_seconds = (int) apply_filters( 'llar_auth_rate_limit_window', 60 );
+		$max_attempts = (int) apply_filters( 'llar_auth_rate_limit_max_attempts', 20 );
+		if ( $window_seconds <= 0 || $max_attempts <= 0 ) {
+			return true;
+		}
+
+		$transient_key = 'llar_auth_rate_' . md5( $ip );
+		$attempts = (int) get_transient( $transient_key );
+		$attempts++;
+		set_transient( $transient_key, $attempts, $window_seconds );
+
+		if ( $attempts > $max_attempts ) {
+			$this->log_security_event( 'rate_limit_exceeded', '', $ip, array( 'attempts' => $attempts, 'window' => $window_seconds ) );
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -941,7 +995,13 @@ class LimitLoginAttempts
 			return $this->auth_acl_response_cache[ $cache_key ];
 		}
 
-		$response = self::$cloud_app->acl_check( $payload );
+		$response = self::$cloud_app->acl_check(
+			$payload,
+			array(
+				'sslverify' => true,
+				'timeout'   => 3,
+			)
+		);
 		if ( $this->auth_acl_response_cache_max_size <= count( $this->auth_acl_response_cache ) ) {
 			array_shift( $this->auth_acl_response_cache );
 		}
