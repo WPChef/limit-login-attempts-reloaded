@@ -843,7 +843,7 @@ class LimitLoginAttempts
 	 */
 	public function authenticate_guard_filter( $user, $username, $password ) {
 
-		if ( is_wp_error( $user ) || empty( $username ) || empty( $password ) ) {
+		if ( empty( $username ) || empty( $password ) ) {
 			return $user;
 		}
 
