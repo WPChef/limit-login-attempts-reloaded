@@ -744,6 +744,7 @@ class LimitLoginAttempts
 					case 'deny':
 
 						LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
+						$this->log_security_event( 'cloud_acl_deny', $username, $this->get_address(), array( 'time_left' => isset( $response['time_left'] ) ? (int) $response['time_left'] : 0 ) );
 
 						remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 						remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
@@ -854,6 +855,7 @@ class LimitLoginAttempts
 					$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
 					$err = $this->build_lockout_error_message( $time_left );
 					self::$cloud_app->add_error( $err );
+					$this->log_security_event( 'cloud_acl_deny', $username, $this->get_address(), array( 'time_left' => $time_left ) );
 					LoginFlowTransientStore::ensure_token();
 					LoginFlowTransientStore::merge(
 						array(
@@ -907,7 +909,7 @@ class LimitLoginAttempts
 			}
 		}
 
-		return '<span>' . $err . '</span>';
+		return '<span>' . wp_kses_post( $err ) . '</span>';
 	}
 
 	/**
@@ -918,6 +920,33 @@ class LimitLoginAttempts
 	 */
 	private function create_username_blacklisted_error( $error_message ) {
 		return new WP_Error( 'username_blacklisted', $error_message );
+	}
+
+	/**
+	 * Lightweight security event logging (enabled when WP debug log is active).
+	 *
+	 * @param string $event_type
+	 * @param string $username
+	 * @param string $ip
+	 * @param array  $details
+	 * @return void
+	 */
+	private function log_security_event( $event_type, $username, $ip, $details = array() ) {
+		if ( ! defined( 'WP_DEBUG_LOG' ) || ! WP_DEBUG_LOG ) {
+			return;
+		}
+
+		error_log(
+			'[LLAR Security] ' . wp_json_encode(
+				array(
+					'event'    => $event_type,
+					'username' => $username,
+					'ip'       => $ip,
+					'gateway'  => Helpers::detect_gateway(),
+					'details'  => $details,
+				)
+			)
+		);
 	}
 
 	/**

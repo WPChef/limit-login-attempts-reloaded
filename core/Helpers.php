@@ -367,7 +367,7 @@ class Helpers {
 
 		$gateway = 'wp_login';
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( rawurldecode( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) : '';
-		$action = isset( $_GET['action'] ) ? $_GET['action'] : '';
+		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
 
 		// Some plugins hide wp-login.php and mask REQUEST_URI.
 		// Prefer core routing marker when available.
