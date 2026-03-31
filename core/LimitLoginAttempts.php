@@ -995,12 +995,7 @@ class LimitLoginAttempts
 			return $this->auth_acl_response_cache[ $cache_key ];
 		}
 
-		$response = self::$cloud_app->acl_check(
-			$payload,
-			array(
-				'timeout'   => 3,
-			)
-		);
+		$response = self::$cloud_app->acl_check( $payload );
 		if ( $this->auth_acl_response_cache_max_size <= count( $this->auth_acl_response_cache ) ) {
 			array_shift( $this->auth_acl_response_cache );
 		}
