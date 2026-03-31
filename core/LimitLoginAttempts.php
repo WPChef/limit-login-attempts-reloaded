@@ -736,99 +736,33 @@ class LimitLoginAttempts
 			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 		}
 
+		$error_message = '';
+		if ( $this->check_login_blocked( $username, $password, $error_message ) ) {
+			return $this->create_username_blacklisted_error( $error_message );
+		}
+
 		if ( ! empty( $username ) && ! empty( $password ) ) {
+			$ip = $this->get_address();
 
 			if ( self::$cloud_app && $response = $this->get_auth_acl_response( $username ) ) {
-
-				switch ( $response['result'] ) {
-					case 'deny':
-
-						LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
-						$this->log_security_event( 'cloud_acl_deny', $username, $this->get_address(), array( 'time_left' => isset( $response['time_left'] ) ? (int) $response['time_left'] : 0 ) );
-
-						remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
+				if ( 'pass' === $response['result'] ) {
+					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
+					// Keep wp_login_failed when MFA is enabled (and not temporarily disabled) so limit_login_failed runs (handshake + redirect to MFA app).
+					$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
+					if ( ! $mfa_effectively_enabled ) {
 						remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
-						remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
-
-					// Remove default WP authentication filters
-						remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
-						remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
-
-						$time_left = ( ! empty( $response['time_left'] ) ) ? (int) $response['time_left'] : 0;
-						$err = $this->build_lockout_error_message( $time_left );
-
-						self::$cloud_app->add_error( $err );
-
-						$user = $this->create_username_blacklisted_error( $err );
-
-						LoginFlowTransientStore::merge(
-							array(
-								'errors_in_early_hook'           => true,
-								'llar_early_hook_error_message' => $err,
-							)
-						);
-						$this->all_errors_array['early_hook_errors'] = $err;
-
-						if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
-
-							header('HTTP/1.0 403 Forbidden' );
-							exit;
-						}
-						break;
-					case 'pass':
-
-						remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
-						// Keep wp_login_failed when MFA is enabled (and not temporarily disabled) so limit_login_failed runs (handshake + redirect to MFA app).
-						$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
-						if ( ! $mfa_effectively_enabled ) {
-							remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
-						}
-						remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
-						break;
-				}
-			} else {
-
-				$ip = $this->get_address();
-
-				// Check if username is blacklisted
-				if (
-					( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) )
-					&& ( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
-				) {
-
-					LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
-
-					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
-					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
-					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
-
-					// Remove default WP authentication filters
-					remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
-					remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
-
-					$err = $this->build_lockout_error_message();
-					$user = $this->create_username_blacklisted_error( $err );
-
-					LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => true ) );
-					$this->all_errors_array['early_hook_errors'] = $err;
-
-					if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
-
-						header('HTTP/1.0 403 Forbidden');
-						exit;
 					}
-
-				} elseif ( $this->is_username_whitelisted( $username ) || $this->is_ip_whitelisted( $ip ) ) {
-					LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => true ) );
-					// Do not run limit_login_failed for whitelist: no lockout, but lockout_check / retries would still run and hit the API.
-					// MFA handshake runs in wp_authenticate_user, which is removed below for this branch.
-					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
 					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
-					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
-
-				} elseif ( self::$cloud_app && self::$cloud_app->last_response_code === 403 ) {
-					add_action('wp_login', array( $this, 'cloud_app_null' ), 999);
 				}
+			} elseif ( $this->is_username_whitelisted( $username ) || $this->is_ip_whitelisted( $ip ) ) {
+				LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => true ) );
+				// Do not run limit_login_failed for whitelist: no lockout, but lockout_check / retries would still run and hit the API.
+				// MFA handshake runs in wp_authenticate_user, which is removed below for this branch.
+				remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+				remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
+				remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
+			} elseif ( self::$cloud_app && self::$cloud_app->last_response_code === 403 ) {
+				add_action('wp_login', array( $this, 'cloud_app_null' ), 999);
 			}
 		}
 
@@ -845,34 +779,57 @@ class LimitLoginAttempts
 	 */
 	public function authenticate_guard_filter( $user, $username, $password ) {
 
+		$error_message = '';
+		if ( $this->check_login_blocked( $username, $password, $error_message ) ) {
+			remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
+			remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
+			return $this->create_username_blacklisted_error( $error_message );
+		}
+
+		return $user;
+	}
+
+	/**
+	 * Unified blocked-login check for cloud ACL and local blacklist.
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @param string $error_message
+	 * @return bool
+	 * @throws Exception
+	 */
+	private function check_login_blocked( $username, $password, &$error_message ) {
 		if ( empty( $username ) || empty( $password ) ) {
-			return $user;
+			return false;
 		}
 
 		if ( self::$cloud_app && $response = $this->get_auth_acl_response( $username ) ) {
-			switch ( isset( $response['result'] ) ? $response['result'] : '' ) {
-				case 'deny':
-					$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
-					$err = $this->build_lockout_error_message( $time_left );
-					self::$cloud_app->add_error( $err );
-					$this->log_security_event( 'cloud_acl_deny', $username, $this->get_address(), array( 'time_left' => $time_left ) );
-					LoginFlowTransientStore::ensure_token();
-					LoginFlowTransientStore::merge(
-						array(
-							'errors_in_early_hook'          => true,
-							'llar_early_hook_error_message' => $err,
-						)
-					);
-					$this->all_errors_array['early_hook_errors'] = $err;
-					remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
-					remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
+			if ( 'deny' === $response['result'] ) {
+				$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
+				$error_message = $this->build_lockout_error_message( $time_left );
 
-					if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
-						header('HTTP/1.0 403 Forbidden' );
-						exit;
-					}
+				self::$cloud_app->add_error( $error_message );
+				$this->log_security_event( 'cloud_acl_deny', $username, $this->get_address(), array( 'time_left' => $time_left ) );
+				LoginFlowTransientStore::ensure_token();
+				LoginFlowTransientStore::merge(
+					array(
+						'errors_in_early_hook'           => true,
+						'llar_early_hook_error_message' => $error_message,
+						'login_attempts_left'            => null,
+					)
+				);
+				$this->all_errors_array['early_hook_errors'] = $error_message;
 
-					return $this->create_username_blacklisted_error( $err );
+				if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
+					header('HTTP/1.0 403 Forbidden' );
+					exit;
+				}
+
+				remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
+				remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+				remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
+
+				return true;
 			}
 		}
 
@@ -881,14 +838,30 @@ class LimitLoginAttempts
 			( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) )
 			&& ( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
 		) {
-			$err = $this->build_lockout_error_message();
+			$error_message = $this->build_lockout_error_message();
+			$this->log_security_event( 'local_blacklist_block', $username, $ip );
 			LoginFlowTransientStore::ensure_token();
-			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => true ) );
+			LoginFlowTransientStore::merge(
+				array(
+					'errors_in_early_hook' => true,
+					'login_attempts_left'  => null,
+				)
+			);
+			$this->all_errors_array['early_hook_errors'] = $error_message;
 
-			return $this->create_username_blacklisted_error( $err );
+			remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
+			remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+			remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
+
+			if ( defined('XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
+				header('HTTP/1.0 403 Forbidden' );
+				exit;
+			}
+
+			return true;
 		}
 
-		return $user;
+		return false;
 	}
 
 	/**
