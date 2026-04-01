@@ -64,6 +64,16 @@ class Config {
 		'retries'                       => array(),
 		'lockouts'                      => array(),
 		'auto_update_choice'            => null,
+
+		/* MFA Rescue Codes */
+		'mfa_rescue_codes'              => array(),
+		'mfa_rescue_download_token'     => '',
+
+		/* MFA Flow (after failed login: handshake, verify, email code) */
+		'mfa_enabled'                   => 0,
+		'mfa_provider'                  => 'llar',
+		'mfa_provider_config'           => array(),
+		'mfa_roles'                     => array(),
 	);
 
 	private static $disable_autoload_options = array(
