@@ -52,6 +52,20 @@ abstract class BaseIntegration implements IntegrationInterface {
 	}
 
 	/**
+	 * Default implementation - derive identifier from credentials.
+	 *
+	 * @return string
+	 */
+	public function get_login_identifier() {
+		$credentials = $this->get_login_credentials();
+		if ( is_array( $credentials ) && ! empty( $credentials['username'] ) ) {
+			return (string) $credentials['username'];
+		}
+
+		return '';
+	}
+
+	/**
 	 * Default implementation - do nothing
 	 *
 	 * @param string $message

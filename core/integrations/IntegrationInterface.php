@@ -38,6 +38,13 @@ interface IntegrationInterface {
 	public function get_login_credentials();
 
 	/**
+	 * Get login identifier used by current integration for auth flow (username/email).
+	 *
+	 * @return string
+	 */
+	public function get_login_identifier();
+
+	/**
 	 * Display error message on login page
 	 *
 	 * @param string $message Error message

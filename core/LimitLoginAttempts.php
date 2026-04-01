@@ -818,9 +818,11 @@ class LimitLoginAttempts
 				} elseif ( $this->is_username_whitelisted( $username ) || $this->is_ip_whitelisted( $ip ) ) {
 					LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => true ) );
 					// Do not run limit_login_failed for whitelist: no lockout, but lockout_check / retries would still run and hit the API.
-					// MFA handshake runs in wp_authenticate_user, which is removed below for this branch.
 					remove_filter( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
-					remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
+					$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
+					if ( ! $mfa_effectively_enabled ) {
+						remove_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999 );
+					}
 					remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 
 				} elseif ( self::$cloud_app && self::$cloud_app->last_response_code === 403 ) {
@@ -1906,6 +1908,15 @@ class LimitLoginAttempts
 	public function wp_authenticate_user( $user, $password )
 	{
 		$username = isset( $_REQUEST['log'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['log'] ) ) : '';
+		if ( '' === $username && $this->integration_manager ) {
+			$username = $this->integration_manager->get_login_identifier();
+		}
+		if ( empty( $password ) && $this->integration_manager ) {
+			$integration_credentials = $this->integration_manager->get_login_credentials();
+			if ( is_array( $integration_credentials ) && ! empty( $integration_credentials['password'] ) ) {
+				$password = $integration_credentials['password'];
+			}
+		}
 		$ip       = $this->get_address();
 		$user_login = is_a( $user, 'WP_User' ) ? $user->user_login : ( ( ! empty( $user ) && ! is_wp_error( $user ) ) ? $user : '' );
 		$not_locked_out = $this->check_whitelist_ips( false, $ip ) || $this->check_whitelist_usernames( false, $user_login ) || $this->is_limit_login_ok();

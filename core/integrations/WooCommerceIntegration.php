@@ -74,6 +74,21 @@ class WooCommerceIntegration extends BaseIntegration {
 	}
 
 	/**
+	 * Get login identifier for WooCommerce auth flow.
+	 *
+	 * @return string
+	 */
+	public function get_login_identifier() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only access to request data
+		if ( ! isset( $_REQUEST['username'] ) ) {
+			return '';
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only access to request data
+		return sanitize_text_field( wp_unslash( $_REQUEST['username'] ) );
+	}
+
+	/**
 	 * Display error message on WooCommerce login page
 	 *
 	 * @param string $message Error message
