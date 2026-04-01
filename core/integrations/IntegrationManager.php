@@ -132,6 +132,22 @@ class IntegrationManager {
 	}
 
 	/**
+	 * Get login identifier from active integration login page.
+	 *
+	 * @return string
+	 */
+	public function get_login_identifier() {
+		foreach ( $this->integrations as $integration ) {
+			$identifier = $integration->get_login_identifier();
+			if ( '' !== $identifier ) {
+				return $identifier;
+			}
+		}
+
+		return '';
+	}
+
+	/**
 	 * Display error on the appropriate login page
 	 *
 	 * @param string $message
