@@ -282,16 +282,61 @@ class LimitLoginAttempts
 	}
 
 	/**
+	 * Ensure LLA_RISK_CONFIG exists if something runs before init.
+	 *
+	 * @return void
+	 */
+	private function ensure_llar_risk_config_defined() {
+		if ( ! defined( 'LLA_RISK_CONFIG' ) && function_exists( 'llar_define_risk_config' ) ) {
+			llar_define_risk_config();
+		}
+	}
+
+	/**
+	 * Translated string for failed-attempts circle (whitelist keys; static msgids only).
+	 *
+	 * @param string $key Level text key, e.g. zero_title, desc_low, recommend_premium.
+	 *
+	 * @return string
+	 */
+	private function get_risk_circle_string( $key ) {
+		switch ( $key ) {
+			case 'zero_title':
+				return __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
+			case 'desc_low':
+				return __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
+			case 'desc_medium':
+				return __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' );
+			case 'warning_title_template':
+				return __( 'Warning: Your site has experienced 300+ failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
+			case 'recommend_premium':
+				return __( 'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' );
+			case 'recommend_micro_cloud':
+				return __( 'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' );
+			case 'failed_today_title':
+				return __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
+			default:
+				return '';
+		}
+	}
+
+	/**
 	 * Get failed login attempts count for the last 24 hours in local mode.
 	 *
 	 * @return int
 	 */
 	public function get_local_retries_count_for_last_day() {
+		$cache_key = 'llar_local_retries_24h_v1';
+		$cached    = wp_cache_get( $cache_key, 'limit-login-attempts-reloaded' );
+		if ( false !== $cached ) {
+			return (int) $cached;
+		}
+
 		$retries_count = 0;
 		$retries_stats = Config::get( 'retries_stats' );
 
 		if ( $retries_stats ) {
-			$cutoff_ts = current_time( 'timestamp' ) - DAY_IN_SECONDS;
+			$cutoff_ts = time() - DAY_IN_SECONDS;
 			foreach ( $retries_stats as $key => $count ) {
 				if ( is_numeric( $key ) && (int) $key > $cutoff_ts ) {
 					$retries_count += $count;
@@ -301,7 +346,19 @@ class LimitLoginAttempts
 			}
 		}
 
-		return (int) $retries_count;
+		$retries_count = (int) $retries_count;
+		wp_cache_set( $cache_key, $retries_count, 'limit-login-attempts-reloaded', 60 );
+
+		return $retries_count;
+	}
+
+	/**
+	 * Invalidate cached 24h retries total (call when retries_stats changes).
+	 *
+	 * @return void
+	 */
+	private function bust_local_retries_count_cache() {
+		wp_cache_delete( 'llar_local_retries_24h_v1', 'limit-login-attempts-reloaded' );
 	}
 
 	/**
@@ -312,15 +369,15 @@ class LimitLoginAttempts
 	 * @return string
 	 */
 	private function get_retries_chart_title_with_count( $retries_count ) {
-		$risk_texts = LLA_RISK_CONFIG['texts'];
-		$single     = isset( $risk_texts['count_attempt_single'] ) ? $risk_texts['count_attempt_single'] : '';
-		$plural     = isset( $risk_texts['count_attempt_plural'] ) ? $risk_texts['count_attempt_plural'] : '';
-		$suffix     = isset( $risk_texts['count_attempt_suffix'] ) ? $risk_texts['count_attempt_suffix'] : '';
-
 		return sprintf(
-			_n( $single, $plural, $retries_count, 'limit-login-attempts-reloaded' ),
+			_n(
+				__( '%d failed login attempt ', 'limit-login-attempts-reloaded' ),
+				__( '%d failed login attempts ', 'limit-login-attempts-reloaded' ),
+				$retries_count,
+				'limit-login-attempts-reloaded'
+			),
 			$retries_count
-		) . __( $suffix, 'limit-login-attempts-reloaded' );
+		) . __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
 	}
 
 	/**
@@ -332,17 +389,13 @@ class LimitLoginAttempts
 	 * @return string
 	 */
 	private function get_recommendation_desc( $setup_code, $upgrade_premium_url ) {
-		$risk_texts = LLA_RISK_CONFIG['texts'];
-
 		if ( ! empty( $setup_code ) ) {
 			return $this->get_premium_recommendation_desc( $upgrade_premium_url );
 		}
 
-		$template = isset( $risk_texts['recommend_micro_cloud'] ) ? $risk_texts['recommend_micro_cloud'] : '';
-
 		return sprintf(
-			__( $template, 'limit-login-attempts-reloaded' ),
-			'button_micro_cloud'
+			$this->get_risk_circle_string( 'recommend_micro_cloud' ),
+			esc_attr( 'button_micro_cloud' )
 		);
 	}
 
@@ -354,11 +407,8 @@ class LimitLoginAttempts
 	 * @return string
 	 */
 	private function get_premium_recommendation_desc( $upgrade_premium_url ) {
-		$risk_texts = LLA_RISK_CONFIG['texts'];
-		$template   = isset( $risk_texts['recommend_premium'] ) ? $risk_texts['recommend_premium'] : '';
-
 		return sprintf(
-			__( $template, 'limit-login-attempts-reloaded' ),
+			$this->get_risk_circle_string( 'recommend_premium' ),
 			esc_url( $upgrade_premium_url )
 		);
 	}
@@ -403,7 +453,6 @@ class LimitLoginAttempts
 	 * @return array
 	 */
 	private function build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url ) {
-		$risk_texts = $risk_config['texts'];
 		$risk_colors = $risk_config['colors'];
 
 		$retries_chart_title = '';
@@ -417,21 +466,19 @@ class LimitLoginAttempts
 
 			switch ( $rule_key ) {
 				case 'title':
-					if ( isset( $matched_level['title'], $risk_texts[ $matched_level['title'] ] ) ) {
-						$retries_chart_title = __( $risk_texts[ $matched_level['title'] ], 'limit-login-attempts-reloaded' );
+					if ( ! empty( $matched_level['title'] ) ) {
+						$retries_chart_title = $this->get_risk_circle_string( $matched_level['title'] );
 					}
 					break;
 				case 'count_title':
 					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
 					break;
 				case 'warning_title':
-					if ( isset( $risk_texts['warning_title_template'] ) ) {
-						$retries_chart_title = __( $risk_texts['warning_title_template'], 'limit-login-attempts-reloaded' );
-					}
+					$retries_chart_title = $this->get_risk_circle_string( 'warning_title_template' );
 					break;
 				case 'desc':
-					if ( isset( $matched_level['desc'], $risk_texts[ $matched_level['desc'] ] ) ) {
-						$retries_chart_desc = __( $risk_texts[ $matched_level['desc'] ], 'limit-login-attempts-reloaded' );
+					if ( ! empty( $matched_level['desc'] ) ) {
+						$retries_chart_desc = $this->get_risk_circle_string( $matched_level['desc'] );
 					}
 					break;
 				case 'recommendation':
@@ -473,8 +520,9 @@ class LimitLoginAttempts
 	 * @return array
 	 */
 	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
+		$this->ensure_llar_risk_config_defined();
+
 		$risk_config         = LLA_RISK_CONFIG;
-		$risk_texts          = $risk_config['texts'];
 		$risk_levels         = $risk_config['levels'];
 		$risk_colors         = $risk_config['colors'];
 		$retries_chart_title = '';
@@ -506,7 +554,7 @@ class LimitLoginAttempts
 				$retries_chart_desc = $display_data['retries_chart_desc'];
 				$retries_chart_color = $display_data['retries_chart_color'];
 			} else {
-				$retries_chart_title = __( $risk_texts['failed_today_title'], 'limit-login-attempts-reloaded' );
+				$retries_chart_title = $this->get_risk_circle_string( 'failed_today_title' );
 				$retries_chart_color = $risk_colors['green'];
 			}
 		}
@@ -1814,6 +1862,7 @@ class LimitLoginAttempts
 				$retries_stats[ $date_key ] = 1;
 			}
 			Config::update( 'retries_stats', $retries_stats );
+			$this->bust_local_retries_count_cache();
 
 			/* Check validity and add one to retries */
 			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ] ) {
@@ -2546,6 +2595,7 @@ class LimitLoginAttempts
 			}
 
 			Config::update( 'retries_stats', $retries_stats );
+			$this->bust_local_retries_count_cache();
 		}
 
 		Config::update( 'retries', $retries );
