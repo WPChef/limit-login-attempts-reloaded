@@ -17,7 +17,7 @@ class AdminNoticesController {
 	 *
 	 * @var array
 	 */
-	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'flash' );
+	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash' );
 
 	/**
 	 * Get type, CSS class and HTML content for a notice key.
@@ -51,6 +51,27 @@ class AdminNoticesController {
 					'type'    => 'notice-warning',
 					'class'   => 'llar-options-notice',
 					'content' => \__( 'Before enabling 2FA/MFA, we strongly recommend ensuring your website is accessible only via HTTPS.', $text_domain ),
+				);
+			case 'debug-foreign-auth-hooks':
+				$hooks = isset( $args['hooks'] ) && is_array( $args['hooks'] ) ? $args['hooks'] : array();
+				if ( empty( $hooks ) ) {
+					return null;
+				}
+
+				$content = \__( 'Detected third-party callbacks on the authenticate filter. They may affect LLAR login protection flow.', $text_domain );
+				$content .= '<br /><ul style="margin-left: 18px; list-style: disc;">';
+				foreach ( $hooks as $hook ) {
+					$callback = isset( $hook['callback'] ) ? \esc_html( (string) $hook['callback'] ) : '';
+					$priority = isset( $hook['priority'] ) ? (int) $hook['priority'] : 0;
+					$accepted = isset( $hook['accepted_args'] ) ? (int) $hook['accepted_args'] : 0;
+					$content .= '<li>' . $callback . ' (priority: ' . $priority . ', args: ' . $accepted . ')</li>';
+				}
+				$content .= '</ul>';
+
+				return array(
+					'type'    => 'notice-warning',
+					'class'   => 'llar-options-notice',
+					'content' => $content,
 				);
 			case 'flash':
 				$msg      = isset( $args['msg'] ) ? $args['msg'] : '';

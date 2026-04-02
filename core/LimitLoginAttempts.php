@@ -2665,6 +2665,83 @@ class LimitLoginAttempts
 	}
 
 	/**
+	 * Return non-LLAR callbacks attached to authenticate filter.
+	 *
+	 * @return array
+	 */
+	public static function get_foreign_authenticate_hooks() {
+		global $wp_filter;
+
+		if ( empty( $wp_filter['authenticate'] ) || ! is_object( $wp_filter['authenticate'] ) || ! isset( $wp_filter['authenticate']->callbacks ) ) {
+			return array();
+		}
+
+		$allowed_callbacks = array(
+			'wp_authenticate_username_password',
+			'wp_authenticate_email_password',
+			'wp_authenticate_spam_check',
+		);
+
+		$foreign = array();
+		foreach ( $wp_filter['authenticate']->callbacks as $priority => $callbacks ) {
+			if ( ! is_array( $callbacks ) ) {
+				continue;
+			}
+
+			foreach ( $callbacks as $callback_data ) {
+				if ( empty( $callback_data['function'] ) ) {
+					continue;
+				}
+
+				$callback_name = self::normalize_hook_callback_name( $callback_data['function'] );
+				if ( '' === $callback_name ) {
+					continue;
+				}
+
+				$is_llar = ( 0 === strpos( $callback_name, __CLASS__ . '::' ) );
+				if ( $is_llar || in_array( $callback_name, $allowed_callbacks, true ) ) {
+					continue;
+				}
+
+				$foreign[] = array(
+					'priority'      => (int) $priority,
+					'callback'      => $callback_name,
+					'accepted_args' => isset( $callback_data['accepted_args'] ) ? (int) $callback_data['accepted_args'] : 0,
+				);
+			}
+		}
+
+		return $foreign;
+	}
+
+	/**
+	 * Convert callback to stable printable format.
+	 *
+	 * @param mixed $callback
+	 * @return string
+	 */
+	private static function normalize_hook_callback_name( $callback ) {
+		if ( is_string( $callback ) ) {
+			return $callback;
+		}
+
+		if ( is_array( $callback ) && 2 === count( $callback ) ) {
+			if ( is_object( $callback[0] ) ) {
+				return get_class( $callback[0] ) . '::' . $callback[1];
+			}
+			if ( is_string( $callback[0] ) ) {
+				return $callback[0] . '::' . $callback[1];
+			}
+		}
+
+		if ( $callback instanceof \Closure ) {
+			return 'Closure';
+		}
+
+		return '';
+	}
+
+	/**
 	 * Show error message
 	 *
 	 * @param $msg
