@@ -2667,6 +2667,12 @@ class LimitLoginAttempts
 	/**
 	 * Return non-LLAR callbacks attached to authenticate filter.
 	 *
+	 * When the owning plugin cannot be resolved (empty plugin metadata), we still want to warn
+	 * if the hook runs at an unusual priority (often security plugins use very early/late priorities).
+	 * Callbacks with unknown origin but a typical priority are skipped to avoid noisy Debug notices:
+	 * many benign cases (themes, mu-plugins, shared vendor paths) sit in the same numeric range as
+	 * core and common plugins. Filter hooks below can widen the "normal" window if needed.
+	 *
 	 * @return array
 	 */
 	public static function get_foreign_authenticate_hooks() {
@@ -2703,15 +2709,46 @@ class LimitLoginAttempts
 					continue;
 				}
 
+				$plugin_meta = self::detect_plugin_for_hook_callback( $callback_data['function'] );
+				$hook_priority = (int) $priority;
+				// Unknown source + normal-looking priority: omit from the list (see docblock on this method).
+				if ( empty( $plugin_meta ) && ! self::is_anomalous_authenticate_priority( $hook_priority ) ) {
+					continue;
+				}
+
 				$foreign[] = array(
-					'priority'      => (int) $priority,
+					'priority'      => $hook_priority,
 					'callback'      => $callback_name,
 					'accepted_args' => isset( $callback_data['accepted_args'] ) ? (int) $callback_data['accepted_args'] : 0,
+					'plugin'        => $plugin_meta,
 				);
 			}
 		}
 
 		return $foreign;
+	}
+
+	/**
+	 * Whether authenticate hook priority is unusual enough to surface unknown callbacks.
+	 *
+	 * Default "normal" band is [-10000, 999]: covers LLAR early hooks, core (e.g. 20), and typical
+	 * third-party priorities. Outside that band we treat priority as anomalous and list the callback
+	 * even when plugin metadata is missing. The optional filter can force anomalous for edge cases
+	 * inside the band.
+	 *
+	 * @param int $priority Hook priority.
+	 * @return bool
+	 */
+	private static function is_anomalous_authenticate_priority( $priority ) {
+		$priority = (int) $priority;
+		$min = (int) apply_filters( 'llar_foreign_auth_hook_normal_priority_min', -10000 );
+		$max = (int) apply_filters( 'llar_foreign_auth_hook_normal_priority_max', 999 );
+		if ( $priority < $min || $priority > $max ) {
+			return true;
+		}
+
+		// Allow hosts to flag specific in-band priorities as worth showing without plugin resolution.
+		return (bool) apply_filters( 'llar_foreign_auth_hook_force_anomalous_priority', false, $priority );
 	}
 
 	/**
@@ -2736,6 +2773,94 @@ class LimitLoginAttempts
 
 		if ( $callback instanceof \Closure ) {
 			return 'Closure';
+		}
+
+		return '';
+	}
+
+	/**
+	 * Resolve plugin metadata for callback, if callback comes from plugin file.
+	 *
+	 * @param mixed $callback
+	 * @return array
+	 */
+	private static function detect_plugin_for_hook_callback( $callback ) {
+		$source_file = self::get_hook_callback_source_file( $callback );
+		if ( '' === $source_file ) {
+			return array();
+		}
+
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$plugins = get_plugins();
+		$source_file = wp_normalize_path( $source_file );
+		$plugins_dir = trailingslashit( wp_normalize_path( WP_PLUGIN_DIR ) );
+
+		if ( 0 !== strpos( $source_file, $plugins_dir ) ) {
+			return array();
+		}
+
+		$relative_file = ltrim( substr( $source_file, strlen( $plugins_dir ) ), '/' );
+		foreach ( $plugins as $plugin_file => $plugin_data ) {
+			$plugin_file = wp_normalize_path( $plugin_file );
+			$plugin_dir = dirname( $plugin_file );
+			$is_main_file = ( $relative_file === $plugin_file );
+			$is_inside_plugin_dir = ( '.' !== $plugin_dir && 0 === strpos( $relative_file, trailingslashit( $plugin_dir ) ) );
+
+			if ( ! $is_main_file && ! $is_inside_plugin_dir ) {
+				continue;
+			}
+
+			$slug = explode( '/', $plugin_file );
+			$slug = sanitize_key( $slug[0] );
+
+			return array(
+				'slug'    => $slug,
+				'name'    => isset( $plugin_data['Name'] ) ? $plugin_data['Name'] : '',
+				'version' => isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '',
+				'file'    => $plugin_file,
+			);
+		}
+
+		return array();
+	}
+
+	/**
+	 * Get callback source file path using reflection.
+	 *
+	 * @param mixed $callback
+	 * @return string
+	 */
+	private static function get_hook_callback_source_file( $callback ) {
+		try {
+			if ( is_string( $callback ) && function_exists( $callback ) ) {
+				$reflection = new \ReflectionFunction( $callback );
+				return (string) $reflection->getFileName();
+			}
+
+			if ( is_array( $callback ) && 2 === count( $callback ) ) {
+				$object_or_class = $callback[0];
+				$method = $callback[1];
+
+				if ( is_object( $object_or_class ) && method_exists( $object_or_class, $method ) ) {
+					$reflection = new \ReflectionMethod( $object_or_class, $method );
+					return (string) $reflection->getFileName();
+				}
+
+				if ( is_string( $object_or_class ) && method_exists( $object_or_class, $method ) ) {
+					$reflection = new \ReflectionMethod( $object_or_class, $method );
+					return (string) $reflection->getFileName();
+				}
+			}
+
+			if ( $callback instanceof \Closure ) {
+				$reflection = new \ReflectionFunction( $callback );
+				return (string) $reflection->getFileName();
+			}
+		} catch ( \Exception $e ) {
+			return '';
 		}
 
 		return '';
