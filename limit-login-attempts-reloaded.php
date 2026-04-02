@@ -37,18 +37,6 @@ function llar_define_risk_config() {
 			'orange' => '#FFCC66',
 			'red'    => '#FF6633',
 		),
-		'texts' => array(
-			'zero_title'             => __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' ),
-			'count_attempt_single'   => __( '%d failed login attempt ', 'limit-login-attempts-reloaded' ),
-			'count_attempt_plural'   => __( '%d failed login attempts ', 'limit-login-attempts-reloaded' ),
-			'count_attempt_suffix'   => __( '(past 24 hrs)', 'limit-login-attempts-reloaded' ),
-			'desc_low'               => __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' ),
-			'desc_medium'            => __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' ),
-			'warning_title_template' => __( 'Warning: Your site has experienced 300+ failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' ),
-			'recommend_premium'      => __( 'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
-			'recommend_micro_cloud'  => __( 'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
-			'failed_today_title'     => __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' ),
-		),
 		'levels' => array(
 			'local' => array(
 				array( 'exact' => 0, 'title' => 'zero_title', 'color' => 'green' ),
