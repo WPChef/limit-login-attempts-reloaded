@@ -19,13 +19,87 @@ define( 'LLA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'LLA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LLA_PLUGIN_FILE', __FILE__ );
 define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+
+/**
+ * Merge JSON override into base failed-attempts risk config (bounds, colors, texts, levels, qa).
+ *
+ * @param array $base     Base config.
+ * @param array $override Decoded JSON (partial).
+ *
+ * @return array
+ */
+function llar_risk_config_merge_override( $base, $override ) {
+	if ( ! is_array( $override ) ) {
+		return $base;
+	}
+
+	foreach ( array( 'bounds', 'colors', 'texts' ) as $key ) {
+		if ( isset( $override[ $key ] ) && is_array( $override[ $key ] ) ) {
+			$base[ $key ] = array_merge( $base[ $key ], $override[ $key ] );
+		}
+	}
+
+	if ( isset( $override['levels'] ) && is_array( $override['levels'] ) ) {
+		foreach ( $override['levels'] as $level_key => $level_val ) {
+			if ( is_array( $level_val ) ) {
+				$base['levels'][ $level_key ] = $level_val;
+			}
+		}
+	}
+
+	if ( isset( $override['qa'] ) && is_array( $override['qa'] ) ) {
+		$base['qa'] = array_merge( $base['qa'], $override['qa'] );
+	}
+
+	return $base;
+}
+
+/**
+ * QA: forced retries count from LLA_RISK_CONFIG['qa'] (set via LLA_RISK_CIRCLE_CONFIG_JSON or legacy LLA_DEBUG_CHART_RETRIES).
+ *
+ * @return int|null Null if not forcing.
+ */
+function llar_risk_qa_force_retries() {
+	if ( ! defined( 'LLA_RISK_CONFIG' ) ) {
+		return null;
+	}
+
+	$qa = isset( LLA_RISK_CONFIG['qa'] ) ? LLA_RISK_CONFIG['qa'] : array();
+	if ( array_key_exists( 'force_retries_count', $qa ) && is_numeric( $qa['force_retries_count'] ) ) {
+		return (int) $qa['force_retries_count'];
+	}
+
+	return null;
+}
+
+/**
+ * QA: when forcing retries, rebuild title/desc/color from local risk levels (e.g. Cloud App on).
+ *
+ * @return bool
+ */
+function llar_risk_qa_force_local_risk_ui() {
+	if ( null === llar_risk_qa_force_retries() ) {
+		return false;
+	}
+
+	$qa = defined( 'LLA_RISK_CONFIG' ) && isset( LLA_RISK_CONFIG['qa'] ) ? LLA_RISK_CONFIG['qa'] : array();
+	if ( isset( $qa['force_local_risk_ui'] ) ) {
+		return (bool) $qa['force_local_risk_ui'];
+	}
+
+	return true;
+}
+
 /**
  * Define risk widget config after i18n is ready.
+ *
+ * Optional: define LLA_RISK_CIRCLE_CONFIG_JSON in wp-config.php as a JSON string (see plugin docs).
+ * Legacy: LLA_DEBUG_CHART_RETRIES still sets qa.force_retries_count after merge.
  *
  * @return void
  */
 function llar_define_risk_config() {
-	define( 'LLA_RISK_CONFIG', array(
+	$config = array(
 		'bounds' => array(
 			'low_upper'    => 100,
 			'medium_upper' => 300,
@@ -61,7 +135,24 @@ function llar_define_risk_config() {
 				array( 'default' => true, 'premium_recommendation' => true, 'color' => 'red' ),
 			),
 		),
-	) );
+		'qa' => array(
+			'force_retries_count'  => null,
+			'force_local_risk_ui'  => true,
+		),
+	);
+
+	if ( defined( 'LLA_RISK_CIRCLE_CONFIG_JSON' ) && is_string( LLA_RISK_CIRCLE_CONFIG_JSON ) && '' !== LLA_RISK_CIRCLE_CONFIG_JSON ) {
+		$decoded = json_decode( LLA_RISK_CIRCLE_CONFIG_JSON, true );
+		if ( is_array( $decoded ) ) {
+			$config = llar_risk_config_merge_override( $config, $decoded );
+		}
+	}
+
+	if ( defined( 'LLA_DEBUG_CHART_RETRIES' ) ) {
+		$config['qa']['force_retries_count'] = (int) LLA_DEBUG_CHART_RETRIES;
+	}
+
+	define( 'LLA_RISK_CONFIG', $config );
 }
 
 add_action( 'init', 'llar_define_risk_config', 1 );
