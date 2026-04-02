@@ -456,6 +456,8 @@ class LimitLoginAttempts
 	 * @param bool|array  $api_stats            Cloud API stats.
 	 *
 	 * @return array
+	 *
+	 * QA: use LLA_RISK_CIRCLE_CONFIG_JSON in wp-config.php (see llar_define_risk_config) or legacy LLA_DEBUG_CHART_RETRIES.
 	 */
 	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
 		$risk_config         = LLA_RISK_CONFIG;
@@ -468,7 +470,13 @@ class LimitLoginAttempts
 		$retries_count       = 0;
 
 		if ( ! $is_active_app_custom ) {
-			$retries_count = $this->get_local_retries_count_for_last_day();
+			$retries_raw   = $this->get_local_retries_count_for_last_day();
+			$retries_count = $retries_raw;
+			$qa_force        = llar_risk_qa_force_retries();
+			if ( null !== $qa_force ) {
+				$retries_count = $qa_force;
+			}
+
 			$matched_level = $this->resolve_risk_level( $retries_count, $risk_levels['local'] );
 			$display_data = $this->build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url );
 			$retries_chart_title = $display_data['retries_chart_title'];
@@ -489,6 +497,24 @@ class LimitLoginAttempts
 				$retries_chart_title = __( $risk_texts['failed_today_title'], 'limit-login-attempts-reloaded' );
 				$retries_chart_color = $risk_colors['green'];
 			}
+		}
+
+		// QA: optional local risk display (count + color/title/desc) when Cloud App would otherwise show green cloud copy.
+		if ( llar_risk_qa_force_local_risk_ui() ) {
+			$qa_force = llar_risk_qa_force_retries();
+			if ( null !== $qa_force ) {
+				$retries_count = $qa_force;
+				$matched_level = $this->resolve_risk_level( $retries_count, $risk_levels['local'] );
+				$display_data = $this->build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url );
+				$retries_chart_title = $display_data['retries_chart_title'];
+				$retries_chart_desc = $display_data['retries_chart_desc'];
+				$retries_chart_color = $display_data['retries_chart_color'];
+			}
+		}
+
+		$qa_force_final = llar_risk_qa_force_retries();
+		if ( null !== $qa_force_final ) {
+			$retries_count = $qa_force_final;
 		}
 
 		return array(
