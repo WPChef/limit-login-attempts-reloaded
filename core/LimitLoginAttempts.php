@@ -414,16 +414,18 @@ class LimitLoginAttempts
 					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
 					break;
 				case 'warning_title':
-					$retries_chart_title = sprintf(
-						__( $risk_texts['warning_title_template'], 'limit-login-attempts-reloaded' ),
-						(int) $risk_config['bounds']['medium_upper']
-					);
+					$retries_chart_title = __( $risk_texts['warning_title_template'], 'limit-login-attempts-reloaded' );
 					break;
 				case 'desc':
 					$retries_chart_desc = __( $risk_texts[ $matched_level['desc'] ], 'limit-login-attempts-reloaded' );
 					break;
 				case 'recommendation':
-					$retries_chart_desc = $this->get_recommendation_desc( $setup_code, $upgrade_premium_url );
+					$recommendation_html = $this->get_recommendation_desc( $setup_code, $upgrade_premium_url );
+					if ( ! empty( $retries_chart_desc ) ) {
+						$retries_chart_desc .= '<br><br>' . $recommendation_html;
+					} else {
+						$retries_chart_desc = $recommendation_html;
+					}
 					break;
 				case 'premium_recommendation':
 					$retries_chart_desc = $this->get_premium_recommendation_desc( $upgrade_premium_url );
