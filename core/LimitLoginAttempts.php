@@ -291,8 +291,9 @@ class LimitLoginAttempts
 		$retries_stats = Config::get( 'retries_stats' );
 
 		if ( $retries_stats ) {
+			$cutoff_ts = current_time( 'timestamp' ) - DAY_IN_SECONDS;
 			foreach ( $retries_stats as $key => $count ) {
-				if ( is_numeric( $key ) && strtotime( '-24 hours' ) < $key ) {
+				if ( is_numeric( $key ) && (int) $key > $cutoff_ts ) {
 					$retries_count += $count;
 				} elseif ( ! is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
 					$retries_count += $count;
@@ -312,11 +313,14 @@ class LimitLoginAttempts
 	 */
 	private function get_retries_chart_title_with_count( $retries_count ) {
 		$risk_texts = LLA_RISK_CONFIG['texts'];
+		$single     = isset( $risk_texts['count_attempt_single'] ) ? $risk_texts['count_attempt_single'] : '';
+		$plural     = isset( $risk_texts['count_attempt_plural'] ) ? $risk_texts['count_attempt_plural'] : '';
+		$suffix     = isset( $risk_texts['count_attempt_suffix'] ) ? $risk_texts['count_attempt_suffix'] : '';
 
 		return sprintf(
-			_n( $risk_texts['count_attempt_single'], $risk_texts['count_attempt_plural'], $retries_count, 'limit-login-attempts-reloaded' ),
+			_n( $single, $plural, $retries_count, 'limit-login-attempts-reloaded' ),
 			$retries_count
-		) . __( $risk_texts['count_attempt_suffix'], 'limit-login-attempts-reloaded' );
+		) . __( $suffix, 'limit-login-attempts-reloaded' );
 	}
 
 	/**
@@ -334,8 +338,10 @@ class LimitLoginAttempts
 			return $this->get_premium_recommendation_desc( $upgrade_premium_url );
 		}
 
+		$template = isset( $risk_texts['recommend_micro_cloud'] ) ? $risk_texts['recommend_micro_cloud'] : '';
+
 		return sprintf(
-			__( $risk_texts['recommend_micro_cloud'], 'limit-login-attempts-reloaded' ),
+			__( $template, 'limit-login-attempts-reloaded' ),
 			'button_micro_cloud'
 		);
 	}
@@ -349,10 +355,11 @@ class LimitLoginAttempts
 	 */
 	private function get_premium_recommendation_desc( $upgrade_premium_url ) {
 		$risk_texts = LLA_RISK_CONFIG['texts'];
+		$template   = isset( $risk_texts['recommend_premium'] ) ? $risk_texts['recommend_premium'] : '';
 
 		return sprintf(
-			__( $risk_texts['recommend_premium'], 'limit-login-attempts-reloaded' ),
-			$upgrade_premium_url
+			__( $template, 'limit-login-attempts-reloaded' ),
+			esc_url( $upgrade_premium_url )
 		);
 	}
 
@@ -365,6 +372,8 @@ class LimitLoginAttempts
 	 * @return array
 	 */
 	private function resolve_risk_level( $retries_count, $levels ) {
+		$default_level = null;
+
 		foreach ( $levels as $level ) {
 			if ( isset( $level['exact'] ) && (int) $level['exact'] === $retries_count ) {
 				return $level;
@@ -375,11 +384,11 @@ class LimitLoginAttempts
 			}
 
 			if ( ! empty( $level['default'] ) ) {
-				return $level;
+				$default_level = $level;
 			}
 		}
 
-		return array();
+		return null !== $default_level ? $default_level : array();
 	}
 
 	/**
@@ -408,16 +417,22 @@ class LimitLoginAttempts
 
 			switch ( $rule_key ) {
 				case 'title':
-					$retries_chart_title = __( $risk_texts[ $matched_level['title'] ], 'limit-login-attempts-reloaded' );
+					if ( isset( $matched_level['title'], $risk_texts[ $matched_level['title'] ] ) ) {
+						$retries_chart_title = __( $risk_texts[ $matched_level['title'] ], 'limit-login-attempts-reloaded' );
+					}
 					break;
 				case 'count_title':
 					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
 					break;
 				case 'warning_title':
-					$retries_chart_title = __( $risk_texts['warning_title_template'], 'limit-login-attempts-reloaded' );
+					if ( isset( $risk_texts['warning_title_template'] ) ) {
+						$retries_chart_title = __( $risk_texts['warning_title_template'], 'limit-login-attempts-reloaded' );
+					}
 					break;
 				case 'desc':
-					$retries_chart_desc = __( $risk_texts[ $matched_level['desc'] ], 'limit-login-attempts-reloaded' );
+					if ( isset( $matched_level['desc'], $risk_texts[ $matched_level['desc'] ] ) ) {
+						$retries_chart_desc = __( $risk_texts[ $matched_level['desc'] ], 'limit-login-attempts-reloaded' );
+					}
 					break;
 				case 'recommendation':
 					$recommendation_html = $this->get_recommendation_desc( $setup_code, $upgrade_premium_url );
@@ -476,8 +491,12 @@ class LimitLoginAttempts
 			$retries_chart_desc = $display_data['retries_chart_desc'];
 			$retries_chart_color = $display_data['retries_chart_color'];
 		} else {
-			if ( $api_stats && ! empty( $api_stats['attempts']['count'] ) ) {
-				$retries_count = (int) end( $api_stats['attempts']['count'] );
+			if ( $api_stats && ! empty( $api_stats['attempts']['count'] ) && is_array( $api_stats['attempts']['count'] ) ) {
+				$attempt_counts = $api_stats['attempts']['count'];
+				$n = count( $attempt_counts );
+				if ( $n > 0 ) {
+					$retries_count = (int) $attempt_counts[ $n - 1 ];
+				}
 			}
 
 			if ( $is_exhausted && 'Micro Cloud' === $block_sub_group ) {
