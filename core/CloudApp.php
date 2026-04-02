@@ -35,6 +35,11 @@ class CloudApp
 	public $last_response_code = null;
 
 	/**
+	 * @var string|null
+	 */
+	public $last_error_message = null;
+
+	/**
 	 * @var array
 	 */
 	private $stats_cache = array();
@@ -228,9 +233,34 @@ class CloudApp
         $info = $this->request( 'info' );
         if ( ! $info  && ! defined( 'LLAR_FAILED_INFO_NOTICE_SHOWN' )) {
             define( 'LLAR_FAILED_INFO_NOTICE_SHOWN', true );
-            echo '<div class="notice notice-error" style="display: block;"><p>' . __( 'Oops, it looks like the site is having a temporary network issue.', 'limit-login-attempts-reloaded' ) . '</p>';
+            $details = array();
+
+            if ( null !== $this->last_response_code ) {
+                $details[] = sprintf(
+                    /* translators: %d: HTTP response code. */
+                    __( 'Code: %d', 'limit-login-attempts-reloaded' ),
+                    intval( $this->last_response_code )
+                );
+            }
+
+            if ( ! empty( $this->last_error_message ) ) {
+                $details[] = sprintf(
+                    /* translators: %s: technical error reason. */
+                    __( 'Reason: %s', 'limit-login-attempts-reloaded' ),
+                    esc_html( $this->get_readable_error_reason( $this->last_error_message ) )
+                );
+            }
+
+            $message = __( 'Oops, it looks like the site is having a temporary network issue.', 'limit-login-attempts-reloaded' );
+
+            if ( ! empty( $details ) ) {
+                $message .= ' (' . implode( '; ', $details ) . ')';
+            }
+
+            echo '<div class="notice notice-error" style="display: block;"><p>' . $message . '</p>';
             echo '<p><a href="javascript:void(0);" onclick="window.location.reload();" class="button button-primary">' . __( 'Click here to refresh the page', 'limit-login-attempts-reloaded' ) . '</a></p></div>';
         }
+
         return $info;
     }
 
@@ -404,20 +434,44 @@ class CloudApp
 		$headers = array();
 		$headers[] = "{$this->config['header']}: {$this->config['key']}";
 
-		$response = Http::$type( $this->api.'/'.$method, array(
+		$response = Http::$type( $this->api . '/' . $method, array(
 			'data'      => $data,
 			'headers'   => $headers
 		) );
 
 		$this->last_response_code = !empty( $response['status'] ) ? $response['status'] : 0;
+		$this->last_error_message = ! empty( $response['error'] ) ? $response['error'] : null;
 
 		if ( 200 !== $response['status'] ) {
-			error_log( 'LLAR: CloudApp request failed: ' . $this->api.'/'.$method . ' ' . $this->last_response_code );
+			error_log( 'LLAR: CloudApp request failed: ' . $this->api . '/' . $method . ' ' . $this->last_response_code );
 			return false;
 		}
 
 		$decoded = json_decode( $response['data'], true );
 
 		return Helpers::sanitize_stripslashes_deep( $decoded );
+	}
+
+	/**
+	 * Tries to keep technical reason readable and avoid leaking full URL.
+	 *
+	 * @param string $error_message
+	 * @return string
+	 */
+	private function get_readable_error_reason( $error_message ) {
+		$reason = trim( (string) $error_message );
+
+		if ( false !== strpos( $reason, 'Failed to open stream:' ) ) {
+			$parts = explode( 'Failed to open stream:', $reason, 2 );
+			if ( ! empty( $parts[1] ) ) {
+				$reason = trim( $parts[1] );
+			}
+		}
+
+		if ( 220 < strlen( $reason ) ) {
+			$reason = substr( $reason, 0, 217 ) . '...';
+		}
+
+		return $reason;
 	}
 }
