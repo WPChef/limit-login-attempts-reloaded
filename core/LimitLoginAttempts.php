@@ -803,10 +803,6 @@ class LimitLoginAttempts
 			return false;
 		}
 
-		if ( ! $this->check_login_rate_limit( $this->get_address() ) ) {
-			return false;
-		}
-
 		if ( self::$cloud_app && $response = $this->get_auth_acl_response( $username ) ) {
 			if ( 'deny' === $response['result'] ) {
 				$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
@@ -943,37 +939,6 @@ class LimitLoginAttempts
 		}
 
 		return substr( $username, 0, 2 ) . str_repeat( '*', $length - 2 );
-	}
-
-	/**
-	 * Lightweight per-IP rate limiter for login attempts.
-	 *
-	 * @param string $ip
-	 * @return bool
-	 */
-	private function check_login_rate_limit( $ip ) {
-		$ip = (string) $ip;
-		if ( '' === $ip ) {
-			return true;
-		}
-
-		$window_seconds = (int) apply_filters( 'llar_auth_rate_limit_window', 60 );
-		$max_attempts = (int) apply_filters( 'llar_auth_rate_limit_max_attempts', 20 );
-		if ( $window_seconds <= 0 || $max_attempts <= 0 ) {
-			return true;
-		}
-
-		$transient_key = 'llar_auth_rate_' . md5( $ip );
-		$attempts = (int) get_transient( $transient_key );
-		$attempts++;
-		set_transient( $transient_key, $attempts, $window_seconds );
-
-		if ( $attempts > $max_attempts ) {
-			$this->log_security_event( 'rate_limit_exceeded', '', $ip, array( 'attempts' => $attempts, 'window' => $window_seconds ) );
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
