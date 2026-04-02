@@ -80,6 +80,20 @@ class LimitLoginAttempts
 	private $auth_acl_response_cache_max_size = 50;
 
 	/**
+	 * Request-scoped cache: hook callback -> reflection file path (avoids repeated Reflection API).
+	 *
+	 * @var array
+	 */
+	private static $hook_callback_source_file_cache = array();
+
+	/**
+	 * Request-scoped cache: normalized source file path -> plugin metadata (avoids repeated get_plugins scans).
+	 *
+	 * @var array
+	 */
+	private static $hook_source_file_plugin_cache = array();
+
+	/**
 	 * Pending flash message to display on options page (e.g. "Settings saved").
 	 * Rendered via AdminNoticesController when options-page is loaded.
 	 *
@@ -914,12 +928,41 @@ class LimitLoginAttempts
 				array(
 					'event'    => $event_type,
 					'username' => $this->mask_username_for_log( $username ),
-					'ip'       => $ip,
+					'ip'       => $this->mask_ip_for_log( $ip ),
 					'gateway'  => Helpers::detect_gateway(),
-					'details'  => $details,
+					'details'  => $this->sanitize_security_log_details( $details ),
 				)
 			)
 		);
+	}
+
+	/**
+	 * Allow only non-sensitive detail keys in security logs.
+	 *
+	 * @param array $details Raw details.
+	 * @return array
+	 */
+	private function sanitize_security_log_details( $details ) {
+		if ( empty( $details ) || ! is_array( $details ) ) {
+			return array();
+		}
+
+		$allowed = apply_filters(
+			'llar_security_log_detail_keys',
+			array( 'time_left', 'attempts', 'reason', 'window' )
+		);
+		if ( ! is_array( $allowed ) ) {
+			$allowed = array( 'time_left', 'attempts', 'reason', 'window' );
+		}
+
+		$safe = array();
+		foreach ( $details as $key => $value ) {
+			if ( in_array( (string) $key, $allowed, true ) ) {
+				$safe[ $key ] = $value;
+			}
+		}
+
+		return $safe;
 	}
 
 	/**
@@ -939,6 +982,41 @@ class LimitLoginAttempts
 		}
 
 		return substr( $username, 0, 2 ) . str_repeat( '*', $length - 2 );
+	}
+
+	/**
+	 * Reduce IP precision in debug logs (privacy).
+	 *
+	 * @param string $ip
+	 * @return string
+	 */
+	private function mask_ip_for_log( $ip ) {
+		$ip = (string) $ip;
+		if ( '' === $ip ) {
+			return '';
+		}
+
+		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return preg_replace( '/\.\d+$/', '.0', $ip );
+		}
+
+		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+			if ( function_exists( 'inet_pton' ) && function_exists( 'inet_ntop' ) ) {
+				$binary = inet_pton( $ip );
+				if ( false !== $binary && 16 === strlen( $binary ) ) {
+					$masked = substr( $binary, 0, 8 ) . str_repeat( "\0", 8 );
+					$masked_ip = inet_ntop( $masked );
+					if ( false !== $masked_ip ) {
+						return $masked_ip . '/64';
+					}
+				}
+			}
+			if ( function_exists( 'wp_hash' ) ) {
+				return wp_hash( $ip );
+			}
+		}
+
+		return '***';
 	}
 
 	/**
@@ -2785,9 +2863,14 @@ class LimitLoginAttempts
 	 * @return array
 	 */
 	private static function detect_plugin_for_hook_callback( $callback ) {
-		$source_file = self::get_hook_callback_source_file( $callback );
+		$source_file = self::get_hook_callback_source_file_cached( $callback );
 		if ( '' === $source_file ) {
 			return array();
+		}
+
+		$source_file = wp_normalize_path( $source_file );
+		if ( isset( self::$hook_source_file_plugin_cache[ $source_file ] ) ) {
+			return self::$hook_source_file_plugin_cache[ $source_file ];
 		}
 
 		if ( ! function_exists( 'get_plugins' ) ) {
@@ -2795,14 +2878,17 @@ class LimitLoginAttempts
 		}
 
 		$plugins = get_plugins();
-		$source_file = wp_normalize_path( $source_file );
 		$plugins_dir = trailingslashit( wp_normalize_path( WP_PLUGIN_DIR ) );
 
 		if ( 0 !== strpos( $source_file, $plugins_dir ) ) {
+			self::$hook_source_file_plugin_cache[ $source_file ] = array();
+
 			return array();
 		}
 
 		$relative_file = ltrim( substr( $source_file, strlen( $plugins_dir ) ), '/' );
+		$result = array();
+
 		foreach ( $plugins as $plugin_file => $plugin_data ) {
 			$plugin_file = wp_normalize_path( $plugin_file );
 			$plugin_dir = dirname( $plugin_file );
@@ -2816,15 +2902,63 @@ class LimitLoginAttempts
 			$slug = explode( '/', $plugin_file );
 			$slug = sanitize_key( $slug[0] );
 
-			return array(
+			$result = array(
 				'slug'    => $slug,
 				'name'    => isset( $plugin_data['Name'] ) ? $plugin_data['Name'] : '',
 				'version' => isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '',
 				'file'    => $plugin_file,
 			);
+			break;
 		}
 
-		return array();
+		self::$hook_source_file_plugin_cache[ $source_file ] = $result;
+
+		return $result;
+	}
+
+	/**
+	 * Stable cache key for a hook callback (reflection is expensive per callback).
+	 *
+	 * @param mixed $callback Callback from WP_Hook.
+	 * @return string
+	 */
+	private static function get_hook_callback_cache_key( $callback ) {
+		if ( is_string( $callback ) ) {
+			return 's:' . $callback;
+		}
+
+		if ( is_array( $callback ) && 2 === count( $callback ) ) {
+			if ( is_object( $callback[0] ) ) {
+				return 'o:' . spl_object_hash( $callback[0] ) . ':' . (string) $callback[1];
+			}
+			if ( is_string( $callback[0] ) ) {
+				return 'c:' . $callback[0] . '::' . (string) $callback[1];
+			}
+		}
+
+		if ( $callback instanceof \Closure ) {
+			return 'f:' . spl_object_hash( $callback );
+		}
+
+		return 'u:' . md5( serialize( $callback ) );
+	}
+
+	/**
+	 * Return source file for callback, with per-request cache.
+	 *
+	 * @param mixed $callback
+	 * @return string
+	 */
+	private static function get_hook_callback_source_file_cached( $callback ) {
+		$key = self::get_hook_callback_cache_key( $callback );
+		if ( isset( self::$hook_callback_source_file_cache[ $key ] ) ) {
+			return self::$hook_callback_source_file_cache[ $key ];
+		}
+
+		$file = self::get_hook_callback_source_file( $callback );
+		self::$hook_callback_source_file_cache[ $key ] = $file;
+
+		return $file;
 	}
 
 	/**

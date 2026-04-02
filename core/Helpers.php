@@ -366,7 +366,8 @@ class Helpers {
 	public static function detect_gateway() {
 
 		$gateway = 'wp_login';
-		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( rawurldecode( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) : '';
+		// Use raw path for matching; avoid sanitize_text_field() which can alter the URI and break gateway detection.
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? rawurldecode( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
 
 		// Some plugins hide wp-login.php and mask REQUEST_URI.

@@ -89,7 +89,7 @@ if ( ( $auto_update_choice || $auto_update_choice === null ) && ! Helpers::is_au
 if ( $active_tab === 'mfa' && ! is_ssl() ) {
 	$this->render_admin_notice( 'https-recommended-mfa', array() );
 }
-if ( 'debug' === $active_tab ) {
+if ( 'debug' === $active_tab && $this->has_capability ) {
 	$foreign_authenticate_hooks = LimitLoginAttempts::get_foreign_authenticate_hooks();
 	if ( ! empty( $foreign_authenticate_hooks ) ) {
 		$this->render_admin_notice(
