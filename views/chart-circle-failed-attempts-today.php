@@ -106,5 +106,5 @@ $retries_count       = isset( $chart_circle_data['retries_count'] ) ? (int) $cha
     } )();
 </script>
 <div class="title<?php echo $active_app !== 'local' ? ' title-big' : ''?>"><?php echo esc_html( $retries_chart_title ); ?></div>
-<div class="desc"><?php echo $retries_chart_desc; ?></div>
+<div class="desc"><?php echo wp_kses_post( $retries_chart_desc ); ?></div>
 
