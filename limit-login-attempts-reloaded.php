@@ -10,7 +10,9 @@ Version: 3.0.2
 Copyright 2008-2012 Johan Eenfeldt, 2016–present Limit Login Attempts Reloaded
 */
 
-if( !defined( 'ABSPATH' ) ) exit;
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /***************************************************************************************
  * Constants
@@ -21,18 +23,12 @@ define( 'LLA_PLUGIN_FILE', __FILE__ );
 define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
- * Risk widget config (colors, level rules). Not a global define — avoids pre-init overrides.
+ * Default risk widget config (bounds, colors, level rules).
  *
  * @return array
  */
-function llar_get_risk_config() {
-	static $cached = null;
-
-	if ( null !== $cached ) {
-		return $cached;
-	}
-
-	$cached = array(
+function llar_get_risk_config_defaults() {
+	return array(
 		'bounds' => array(
 			'low_upper'    => 100,
 			'medium_upper' => 300,
@@ -44,19 +40,99 @@ function llar_get_risk_config() {
 			'red'    => '#FF6633',
 		),
 		'levels' => array(
-			'local' => array(
-				array( 'exact' => 0, 'title' => 'zero_title', 'color' => 'green' ),
-				array( 'max_exclusive' => 100, 'count_title' => true, 'desc' => 'desc_low', 'color' => 'yellow' ),
-				array( 'max_exclusive' => 300, 'count_title' => true, 'desc' => 'desc_medium', 'recommendation' => true, 'color' => 'orange' ),
-				array( 'default' => true, 'warning_title' => true, 'recommendation' => true, 'color' => 'red' ),
+			'local'                 => array(
+				array(
+					'exact' => 0,
+					'title' => 'zero_title',
+					'color' => 'green',
+				),
+				array(
+					'max_exclusive' => 100,
+					'count_title'   => true,
+					'desc'          => 'desc_low',
+					'color'         => 'yellow',
+				),
+				array(
+					'max_exclusive'  => 300,
+					'count_title'    => true,
+					'desc'           => 'desc_medium',
+					'recommendation' => true,
+					'color'          => 'orange',
+				),
+				array(
+					'default'        => true,
+					'warning_title'  => true,
+					'recommendation' => true,
+					'color'          => 'red',
+				),
 			),
 			'cloud_exhausted_micro' => array(
-				array( 'exact' => 0, 'title' => 'zero_title', 'color' => 'green' ),
-				array( 'max_exclusive' => 100, 'count_title' => true, 'desc' => 'desc_low', 'color' => 'orange' ),
-				array( 'default' => true, 'premium_recommendation' => true, 'color' => 'red' ),
+				array(
+					'exact' => 0,
+					'title' => 'zero_title',
+					'color' => 'green',
+				),
+				array(
+					'max_exclusive' => 100,
+					'count_title'   => true,
+					'desc'          => 'desc_low',
+					'color'         => 'orange',
+				),
+				array(
+					'default'                => true,
+					'premium_recommendation' => true,
+					'color'                  => 'red',
+				),
 			),
 		),
 	);
+}
+
+/**
+ * Merge filtered config with defaults so colors/levels/bounds always exist.
+ *
+ * @param array $defaults Default config.
+ * @param mixed $cfg      Filtered value.
+ *
+ * @return array
+ */
+function llar_normalize_risk_config( $defaults, $cfg ) {
+	if ( ! is_array( $cfg ) ) {
+		return $defaults;
+	}
+
+	$out = $cfg;
+	foreach ( array( 'bounds', 'colors', 'levels' ) as $key ) {
+		if ( ! isset( $out[ $key ] ) || ! is_array( $out[ $key ] ) ) {
+			$out[ $key ] = $defaults[ $key ];
+		}
+	}
+
+	if ( ! isset( $out['levels']['local'] ) || ! is_array( $out['levels']['local'] ) ) {
+		$out['levels']['local'] = $defaults['levels']['local'];
+	}
+	if ( ! isset( $out['levels']['cloud_exhausted_micro'] ) || ! is_array( $out['levels']['cloud_exhausted_micro'] ) ) {
+		$out['levels']['cloud_exhausted_micro'] = $defaults['levels']['cloud_exhausted_micro'];
+	}
+
+	return $out;
+}
+
+/**
+ * Risk widget config (colors, level rules). Cached per request; overridable via llar_risk_config filter.
+ *
+ * @return array
+ */
+function llar_get_risk_config() {
+	static $cached = null;
+
+	if ( null !== $cached ) {
+		return $cached;
+	}
+
+	$defaults = llar_get_risk_config_defaults();
+	$merged   = apply_filters( 'llar_risk_config', $defaults );
+	$cached   = llar_normalize_risk_config( $defaults, $merged );
 
 	return $cached;
 }
@@ -128,18 +204,22 @@ defined( 'LLA_MFA_API_PATH' ) || define( 'LLA_MFA_API_PATH', '/mfa' );
 defined( 'LLA_MFA_SESSION_TTL' ) || define( 'LLA_MFA_SESSION_TTL', 600 ); /* seconds, 10 minutes */
 defined( 'LLA_MFA_PROVIDER' ) || define( 'LLA_MFA_PROVIDER', 'llar' );
 
-$um_limit_login_failed = false;
-$limit_login_my_error_shown = false; /* have we shown our stuff? */
-$limit_login_just_lockedout = false; /* started this pageload??? */
+$um_limit_login_failed            = false;
+$limit_login_my_error_shown       = false; /* have we shown our stuff? */
+$limit_login_just_lockedout       = false; /* started this pageload??? */
 $limit_login_nonempty_credentials = false; /* user and pwd nonempty */
 
-if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
+if ( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 
-	require_once( LLA_PLUGIN_DIR . 'autoload.php' );
+	require_once LLA_PLUGIN_DIR . 'autoload.php';
 
-	add_action( 'plugins_loaded', function() {
-		(new LLAR\Core\LimitLoginAttempts());
-	}, 9999 );
+	add_action(
+		'plugins_loaded',
+		function () {
+			( new LLAR\Core\LimitLoginAttempts() );
+		},
+		9999
+	);
 
 	/**
 	 * Activation hook: Cleanup old cron events and transients
@@ -203,7 +283,7 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 			return array();
 		}
 		$prefix_len = strlen( '_transient_timeout_' );
-		$keys      = array();
+		$keys       = array();
 		foreach ( $names as $name ) {
 			$keys[] = substr( $name, $prefix_len );
 		}
@@ -240,7 +320,7 @@ if( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 			return array();
 		}
 		$prefix_len = strlen( '_transient_timeout_' );
-		$keys      = array();
+		$keys       = array();
 		foreach ( $names as $name ) {
 			$keys[] = substr( $name, $prefix_len );
 		}
