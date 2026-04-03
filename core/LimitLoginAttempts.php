@@ -360,12 +360,6 @@ class LimitLoginAttempts
 	 * @return int
 	 */
 	public function get_local_retries_count_for_last_day() {
-		$cache_key = 'llar_local_retries_24h_v1';
-		$cached    = wp_cache_get( $cache_key, 'limit-login-attempts-reloaded' );
-		if ( false !== $cached ) {
-			return (int) $cached;
-		}
-
 		$retries_count = 0;
 		$retries_stats = Config::get( 'retries_stats' );
 
@@ -380,19 +374,7 @@ class LimitLoginAttempts
 			}
 		}
 
-		$retries_count = (int) $retries_count;
-		wp_cache_set( $cache_key, $retries_count, 'limit-login-attempts-reloaded', 60 );
-
-		return $retries_count;
-	}
-
-	/**
-	 * Invalidate cached 24h retries total (call when retries_stats changes).
-	 *
-	 * @return void
-	 */
-	private function bust_local_retries_count_cache() {
-		wp_cache_delete( 'llar_local_retries_24h_v1', 'limit-login-attempts-reloaded' );
+		return (int) $retries_count;
 	}
 
 	/**
@@ -1919,7 +1901,6 @@ class LimitLoginAttempts
 			}
 			$retries_stats = $this->prune_retries_stats_old_buckets( $retries_stats );
 			Config::update( 'retries_stats', $retries_stats );
-			$this->bust_local_retries_count_cache();
 
 			/* Check validity and add one to retries */
 			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ] ) {
@@ -2650,7 +2631,6 @@ class LimitLoginAttempts
 			}
 
 			Config::update( 'retries_stats', $retries_stats );
-			$this->bust_local_retries_count_cache();
 		}
 
 		Config::update( 'retries', $retries );
