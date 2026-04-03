@@ -312,9 +312,9 @@ class LimitLoginAttempts
 			case 'zero_title':
 				return __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
 			case 'desc_low':
-				return __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
+				return __( 'Your site is currently at a low risk for brute force activity.', 'limit-login-attempts-reloaded' );
 			case 'desc_medium':
-				return __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' );
+				return __( 'Your site is currently at a medium risk for brute force activity.', 'limit-login-attempts-reloaded' );
 			case 'failed_today_title':
 				return __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
 			default:
@@ -518,9 +518,9 @@ class LimitLoginAttempts
 					if ( isset( $risk_config['bounds']['medium_upper'] ) ) {
 						$medium_upper = (int) $risk_config['bounds']['medium_upper'];
 					}
-					/* translators: %d: threshold count (e.g. 300) for "N+ failed login attempts". */
+					/* translators: %d: threshold count (e.g. 300) for "N+ failed login attempts" (high risk, local mode). */
 					$retries_chart_title = sprintf(
-						__( 'Warning: Your site has experienced %d+ failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' ),
+						__( 'Your site has experienced %d+ failed login attempts in the past 24 hours.', 'limit-login-attempts-reloaded' ),
 						$medium_upper
 					);
 					break;
@@ -558,9 +558,12 @@ class LimitLoginAttempts
 	/**
 	 * Build data for failed attempts circle widget.
 	 *
+	 * Local mode: risk color bands by retries (0 / 1–99 / 100–299 / 300+). Custom Cloud: always green
+	 * indicator; retries count only (no risk band styling).
+	 *
 	 * @param bool        $is_active_app_custom Cloud mode flag.
-	 * @param bool|string $is_exhausted         Cloud exhausted flag.
-	 * @param string      $block_sub_group      Cloud plan name.
+	 * @param bool|string $is_exhausted         Cloud exhausted flag (unused for donut styling; kept for callers).
+	 * @param string      $block_sub_group      Cloud plan name (unused for donut styling; kept for callers).
 	 * @param string      $setup_code           App setup code.
 	 * @param string      $upgrade_premium_url  Premium upgrade URL.
 	 * @param bool|array  $api_stats            Cloud API stats.
@@ -586,6 +589,7 @@ class LimitLoginAttempts
 			$retries_chart_desc = $display_data['retries_chart_desc'];
 			$retries_chart_color = $display_data['retries_chart_color'];
 		} else {
+			// Custom Cloud: always green "no risk" indicator; show retries count only (product spec).
 			if ( $api_stats && ! empty( $api_stats['attempts']['count'] ) && is_array( $api_stats['attempts']['count'] ) ) {
 				$attempt_counts = array();
 				foreach ( $api_stats['attempts']['count'] as $v ) {
@@ -598,17 +602,9 @@ class LimitLoginAttempts
 				}
 			}
 
-			if ( $is_exhausted && 'Micro Cloud' === $block_sub_group ) {
-				$cloud_levels  = isset( $risk_levels['cloud_exhausted_micro'] ) && is_array( $risk_levels['cloud_exhausted_micro'] ) ? $risk_levels['cloud_exhausted_micro'] : array();
-				$matched_level = $this->resolve_risk_level( $retries_count, $cloud_levels );
-				$display_data = $this->build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url );
-				$retries_chart_title = $display_data['retries_chart_title'];
-				$retries_chart_desc = $display_data['retries_chart_desc'];
-				$retries_chart_color = $display_data['retries_chart_color'];
-			} else {
-				$retries_chart_title = $this->get_risk_circle_string( 'failed_today_title' );
-				$retries_chart_color = isset( $risk_colors['green'] ) ? $risk_colors['green'] : '#97F6C8';
-			}
+			$retries_chart_title = $this->get_risk_circle_string( 'failed_today_title' );
+			$retries_chart_desc  = '';
+			$retries_chart_color = isset( $risk_colors['green'] ) ? $risk_colors['green'] : '#97F6C8';
 		}
 
 		return array(
