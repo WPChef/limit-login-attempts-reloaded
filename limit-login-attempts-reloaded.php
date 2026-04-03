@@ -56,6 +56,7 @@ function llar_get_risk_config_defaults() {
 					'max_exclusive'  => 300,
 					'count_title'    => true,
 					'desc'           => 'desc_medium',
+					/* Same recommendation block as high (red); threshold moved to 300+. */
 					'recommendation' => true,
 					'color'          => 'orange',
 				),

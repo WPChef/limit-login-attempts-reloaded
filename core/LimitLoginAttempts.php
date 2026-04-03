@@ -499,8 +499,16 @@ class LimitLoginAttempts
 		$retries_chart_desc = '';
 		$retries_chart_color = $default_color;
 
+		$rule_flag_keys = array( 'count_title', 'warning_title', 'recommendation', 'premium_recommendation' );
 		foreach ( array( 'title', 'count_title', 'warning_title', 'desc', 'recommendation', 'premium_recommendation', 'color' ) as $rule_key ) {
-			if ( empty( $matched_level[ $rule_key ] ) ) {
+			if ( ! isset( $matched_level[ $rule_key ] ) ) {
+				continue;
+			}
+			if ( in_array( $rule_key, $rule_flag_keys, true ) ) {
+				if ( true !== $matched_level[ $rule_key ] && ! $matched_level[ $rule_key ] ) {
+					continue;
+				}
+			} elseif ( empty( $matched_level[ $rule_key ] ) ) {
 				continue;
 			}
 
