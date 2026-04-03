@@ -21,12 +21,18 @@ define( 'LLA_PLUGIN_FILE', __FILE__ );
 define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
- * Define risk widget config after i18n is ready.
+ * Risk widget config (colors, level rules). Not a global define — avoids pre-init overrides.
  *
- * @return void
+ * @return array
  */
-function llar_define_risk_config() {
-	$config = array(
+function llar_get_risk_config() {
+	static $cached = null;
+
+	if ( null !== $cached ) {
+		return $cached;
+	}
+
+	$cached = array(
 		'bounds' => array(
 			'low_upper'    => 100,
 			'medium_upper' => 300,
@@ -52,7 +58,16 @@ function llar_define_risk_config() {
 		),
 	);
 
-	define( 'LLA_RISK_CONFIG', $config );
+	return $cached;
+}
+
+/**
+ * Warm risk config on init (after translations load).
+ *
+ * @return void
+ */
+function llar_define_risk_config() {
+	llar_get_risk_config();
 }
 
 add_action( 'init', 'llar_define_risk_config', 1 );
