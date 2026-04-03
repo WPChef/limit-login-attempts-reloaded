@@ -282,20 +282,20 @@ class LimitLoginAttempts
 	}
 
 	/**
-	 * Ensure LLA_RISK_CONFIG exists if something runs before init.
+	 * Ensure risk config is loaded (llar_get_risk_config builds once per request).
 	 *
 	 * @return void
 	 */
 	private function ensure_llar_risk_config_defined() {
-		if ( ! defined( 'LLA_RISK_CONFIG' ) && function_exists( 'llar_define_risk_config' ) ) {
-			llar_define_risk_config();
+		if ( function_exists( 'llar_get_risk_config' ) ) {
+			llar_get_risk_config();
 		}
 	}
 
 	/**
-	 * Translated string for failed-attempts circle (whitelist keys; static msgids only).
+	 * Plain-text strings for failed-attempts circle (no HTML; whitelist keys only).
 	 *
-	 * @param string $key Level text key, e.g. zero_title, desc_low, recommend_premium.
+	 * @param string $key Level text key, e.g. zero_title, desc_low.
 	 *
 	 * @return string
 	 */
@@ -309,15 +309,43 @@ class LimitLoginAttempts
 				return __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' );
 			case 'warning_title_template':
 				return __( 'Warning: Your site has experienced 300+ failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
-			case 'recommend_premium':
-				return __( 'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' );
-			case 'recommend_micro_cloud':
-				return __( 'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' );
 			case 'failed_today_title':
 				return __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
 			default:
 				return '';
 		}
+	}
+
+	/**
+	 * Recommendation HTML: Micro Cloud path (link text translated; markup built in code).
+	 *
+	 * @return string
+	 */
+	private function get_micro_cloud_recommendation_html() {
+		$before    = esc_html__( 'Based on your level of brute force activity, we recommend ', 'limit-login-attempts-reloaded' );
+		$link_text = esc_html__( 'free Micro Cloud upgrade', 'limit-login-attempts-reloaded' );
+		$after     = esc_html__( ' to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' );
+		$class     = esc_attr( 'button_micro_cloud' );
+		$link      = '<a class="llar_orange ' . $class . '">' . $link_text . '</a>';
+
+		return $before . $link . $after;
+	}
+
+	/**
+	 * Recommendation HTML: premium upgrade URL (href escaped; rel on external target).
+	 *
+	 * @param string $upgrade_premium_url Premium URL.
+	 *
+	 * @return string
+	 */
+	private function get_premium_recommendation_desc( $upgrade_premium_url ) {
+		$url       = esc_url( $upgrade_premium_url );
+		$before    = esc_html__( 'Based on your level of brute force activity, we recommend ', 'limit-login-attempts-reloaded' );
+		$link_text = esc_html__( 'upgrading to premium', 'limit-login-attempts-reloaded' );
+		$after     = esc_html__( ' to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' );
+		$link      = '<a href="' . $url . '" class="llar_orange" target="_blank" rel="noopener noreferrer">' . $link_text . '</a>';
+
+		return $before . $link . $after;
 	}
 
 	/**
@@ -362,6 +390,31 @@ class LimitLoginAttempts
 	}
 
 	/**
+	 * Remove retries_stats buckets older than 8 days (keeps autoload option bounded).
+	 *
+	 * @param array $retries_stats Stats keyed by time bucket.
+	 *
+	 * @return array
+	 */
+	private function prune_retries_stats_old_buckets( $retries_stats ) {
+		if ( ! is_array( $retries_stats ) || empty( $retries_stats ) ) {
+			return $retries_stats;
+		}
+
+		$cutoff = strtotime( '-8 day' );
+		foreach ( $retries_stats as $key => $count ) {
+			if (
+				( is_numeric( $key ) && (int) $key < $cutoff )
+				|| ( ! is_numeric( $key ) && strtotime( $key ) < $cutoff )
+			) {
+				unset( $retries_stats[ $key ] );
+			}
+		}
+
+		return $retries_stats;
+	}
+
+	/**
 	 * Build localized retries chart title with attempts count.
 	 *
 	 * @param int $retries_count Number of retries.
@@ -371,8 +424,8 @@ class LimitLoginAttempts
 	private function get_retries_chart_title_with_count( $retries_count ) {
 		return sprintf(
 			_n(
-				__( '%d failed login attempt ', 'limit-login-attempts-reloaded' ),
-				__( '%d failed login attempts ', 'limit-login-attempts-reloaded' ),
+				'%d failed login attempt ',
+				'%d failed login attempts ',
 				$retries_count,
 				'limit-login-attempts-reloaded'
 			),
@@ -393,24 +446,7 @@ class LimitLoginAttempts
 			return $this->get_premium_recommendation_desc( $upgrade_premium_url );
 		}
 
-		return sprintf(
-			$this->get_risk_circle_string( 'recommend_micro_cloud' ),
-			esc_attr( 'button_micro_cloud' )
-		);
-	}
-
-	/**
-	 * Build recommendation description with premium upgrade link.
-	 *
-	 * @param string $upgrade_premium_url Premium upgrade URL.
-	 *
-	 * @return string
-	 */
-	private function get_premium_recommendation_desc( $upgrade_premium_url ) {
-		return sprintf(
-			$this->get_risk_circle_string( 'recommend_premium' ),
-			esc_url( $upgrade_premium_url )
-		);
+		return $this->get_micro_cloud_recommendation_html();
 	}
 
 	/**
@@ -522,7 +558,7 @@ class LimitLoginAttempts
 	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
 		$this->ensure_llar_risk_config_defined();
 
-		$risk_config         = LLA_RISK_CONFIG;
+		$risk_config         = llar_get_risk_config();
 		$risk_levels         = $risk_config['levels'];
 		$risk_colors         = $risk_config['colors'];
 		$retries_chart_title = '';
@@ -540,7 +576,7 @@ class LimitLoginAttempts
 			$retries_chart_color = $display_data['retries_chart_color'];
 		} else {
 			if ( $api_stats && ! empty( $api_stats['attempts']['count'] ) && is_array( $api_stats['attempts']['count'] ) ) {
-				$attempt_counts = $api_stats['attempts']['count'];
+				$attempt_counts = array_values( $api_stats['attempts']['count'] );
 				$n = count( $attempt_counts );
 				if ( $n > 0 ) {
 					$retries_count = (int) $attempt_counts[ $n - 1 ];
@@ -1861,6 +1897,7 @@ class LimitLoginAttempts
 
 				$retries_stats[ $date_key ] = 1;
 			}
+			$retries_stats = $this->prune_retries_stats_old_buckets( $retries_stats );
 			Config::update( 'retries_stats', $retries_stats );
 			$this->bust_local_retries_count_cache();
 
