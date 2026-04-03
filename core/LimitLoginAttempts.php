@@ -282,14 +282,22 @@ class LimitLoginAttempts
 	}
 
 	/**
-	 * Ensure risk config is loaded (llar_get_risk_config builds once per request).
+	 * Whether a retries_stats bucket key is older than cutoff (safe strtotime for string keys).
 	 *
-	 * @return void
+	 * @param mixed $key    Bucket key (unix ts or date string).
+	 * @param int   $cutoff Cutoff unix timestamp.
+	 *
+	 * @return bool
 	 */
-	private function ensure_llar_risk_config_defined() {
-		if ( function_exists( 'llar_get_risk_config' ) ) {
-			llar_get_risk_config();
+	private function is_retries_stats_bucket_expired( $key, $cutoff ) {
+		if ( is_numeric( $key ) ) {
+			return (int) $key < $cutoff;
 		}
+		$ts = strtotime( (string) $key );
+		if ( false === $ts ) {
+			return false;
+		}
+		return $ts < $cutoff;
 	}
 
 	/**
@@ -307,8 +315,6 @@ class LimitLoginAttempts
 				return __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
 			case 'desc_medium':
 				return __( 'Your site is currently at a medium risk for brute force activity', 'limit-login-attempts-reloaded' );
-			case 'warning_title_template':
-				return __( 'Warning: Your site has experienced 300+ failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
 			case 'failed_today_title':
 				return __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
 			default:
@@ -403,10 +409,7 @@ class LimitLoginAttempts
 
 		$cutoff = strtotime( '-8 day' );
 		foreach ( $retries_stats as $key => $count ) {
-			if (
-				( is_numeric( $key ) && (int) $key < $cutoff )
-				|| ( ! is_numeric( $key ) && strtotime( $key ) < $cutoff )
-			) {
+			if ( $this->is_retries_stats_bucket_expired( $key, $cutoff ) ) {
 				unset( $retries_stats[ $key ] );
 			}
 		}
@@ -489,11 +492,12 @@ class LimitLoginAttempts
 	 * @return array
 	 */
 	private function build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url ) {
-		$risk_colors = $risk_config['colors'];
+		$risk_colors = ( isset( $risk_config['colors'] ) && is_array( $risk_config['colors'] ) ) ? $risk_config['colors'] : array();
+		$default_color = isset( $risk_colors['green'] ) ? $risk_colors['green'] : '#97F6C8';
 
 		$retries_chart_title = '';
 		$retries_chart_desc = '';
-		$retries_chart_color = $risk_colors['green'];
+		$retries_chart_color = $default_color;
 
 		foreach ( array( 'title', 'count_title', 'warning_title', 'desc', 'recommendation', 'premium_recommendation', 'color' ) as $rule_key ) {
 			if ( empty( $matched_level[ $rule_key ] ) ) {
@@ -510,7 +514,15 @@ class LimitLoginAttempts
 					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
 					break;
 				case 'warning_title':
-					$retries_chart_title = $this->get_risk_circle_string( 'warning_title_template' );
+					$medium_upper = 300;
+					if ( isset( $risk_config['bounds']['medium_upper'] ) ) {
+						$medium_upper = (int) $risk_config['bounds']['medium_upper'];
+					}
+					/* translators: %d: threshold count (e.g. 300) for "N+ failed login attempts". */
+					$retries_chart_title = sprintf(
+						__( 'Warning: Your site has experienced %d+ failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' ),
+						$medium_upper
+					);
 					break;
 				case 'desc':
 					if ( ! empty( $matched_level['desc'] ) ) {
@@ -556,11 +568,9 @@ class LimitLoginAttempts
 	 * @return array
 	 */
 	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
-		$this->ensure_llar_risk_config_defined();
-
-		$risk_config         = llar_get_risk_config();
-		$risk_levels         = $risk_config['levels'];
-		$risk_colors         = $risk_config['colors'];
+		$risk_config         = function_exists( 'llar_get_risk_config' ) ? llar_get_risk_config() : array();
+		$risk_levels         = ( isset( $risk_config['levels'] ) && is_array( $risk_config['levels'] ) ) ? $risk_config['levels'] : array();
+		$risk_colors         = ( isset( $risk_config['colors'] ) && is_array( $risk_config['colors'] ) ) ? $risk_config['colors'] : array();
 		$retries_chart_title = '';
 		$retries_chart_desc  = '';
 		$retries_chart_color = '';
@@ -569,29 +579,35 @@ class LimitLoginAttempts
 		if ( ! $is_active_app_custom ) {
 			$retries_count = $this->get_local_retries_count_for_last_day();
 
-			$matched_level = $this->resolve_risk_level( $retries_count, $risk_levels['local'] );
+			$local_levels  = isset( $risk_levels['local'] ) && is_array( $risk_levels['local'] ) ? $risk_levels['local'] : array();
+			$matched_level = $this->resolve_risk_level( $retries_count, $local_levels );
 			$display_data = $this->build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url );
 			$retries_chart_title = $display_data['retries_chart_title'];
 			$retries_chart_desc = $display_data['retries_chart_desc'];
 			$retries_chart_color = $display_data['retries_chart_color'];
 		} else {
 			if ( $api_stats && ! empty( $api_stats['attempts']['count'] ) && is_array( $api_stats['attempts']['count'] ) ) {
-				$attempt_counts = array_values( $api_stats['attempts']['count'] );
-				$n = count( $attempt_counts );
-				if ( $n > 0 ) {
-					$retries_count = (int) $attempt_counts[ $n - 1 ];
+				$attempt_counts = array();
+				foreach ( $api_stats['attempts']['count'] as $v ) {
+					if ( is_numeric( $v ) ) {
+						$attempt_counts[] = (int) $v;
+					}
+				}
+				if ( ! empty( $attempt_counts ) ) {
+					$retries_count = (int) end( $attempt_counts );
 				}
 			}
 
 			if ( $is_exhausted && 'Micro Cloud' === $block_sub_group ) {
-				$matched_level = $this->resolve_risk_level( $retries_count, $risk_levels['cloud_exhausted_micro'] );
+				$cloud_levels  = isset( $risk_levels['cloud_exhausted_micro'] ) && is_array( $risk_levels['cloud_exhausted_micro'] ) ? $risk_levels['cloud_exhausted_micro'] : array();
+				$matched_level = $this->resolve_risk_level( $retries_count, $cloud_levels );
 				$display_data = $this->build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url );
 				$retries_chart_title = $display_data['retries_chart_title'];
 				$retries_chart_desc = $display_data['retries_chart_desc'];
 				$retries_chart_color = $display_data['retries_chart_color'];
 			} else {
 				$retries_chart_title = $this->get_risk_circle_string( 'failed_today_title' );
-				$retries_chart_color = $risk_colors['green'];
+				$retries_chart_color = isset( $risk_colors['green'] ) ? $risk_colors['green'] : '#97F6C8';
 			}
 		}
 
@@ -2619,15 +2635,13 @@ class LimitLoginAttempts
 
 		$retries_stats = Config::get( 'retries_stats' );
 
-		if($retries_stats) {
+		if ( $retries_stats ) {
 
-			foreach( $retries_stats as $key => $count ) {
+			$stats_cutoff = strtotime( '-8 day' );
+			foreach ( $retries_stats as $key => $count ) {
 
-				if (
-					( is_numeric( $key ) && $key < strtotime( '-8 day' ) )
-					|| ( ! is_numeric( $key ) && strtotime( $key ) < strtotime( '-8 day' ) )
-				) {
-					unset($retries_stats[$key]);
+				if ( $this->is_retries_stats_bucket_expired( $key, $stats_cutoff ) ) {
+					unset( $retries_stats[ $key ] );
 				}
 			}
 
