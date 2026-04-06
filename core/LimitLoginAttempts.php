@@ -328,30 +328,42 @@ class LimitLoginAttempts
 	 * @return string
 	 */
 	private function get_micro_cloud_recommendation_html() {
-		$before    = esc_html__( 'Based on your level of brute force activity, we recommend ', 'limit-login-attempts-reloaded' );
-		$link_text = esc_html__( 'free Micro Cloud upgrade', 'limit-login-attempts-reloaded' );
-		$after     = esc_html__( ' to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' );
-		$class     = esc_attr( 'button_micro_cloud' );
-		$link      = '<a class="llar_orange ' . $class . '">' . $link_text . '</a>';
-
-		return $before . $link . $after;
+		return sprintf(
+			__(
+				'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.',
+				'limit-login-attempts-reloaded'
+			),
+			'button_micro_cloud'
+		);
 	}
 
 	/**
 	 * Recommendation HTML: premium upgrade URL (href escaped; rel on external target).
 	 *
 	 * @param string $upgrade_premium_url Premium URL.
+	 * @param bool   $open_new_window     Open link in a new window.
 	 *
 	 * @return string
 	 */
-	private function get_premium_recommendation_desc( $upgrade_premium_url ) {
+	private function get_premium_recommendation_desc( $upgrade_premium_url, $open_new_window = true ) {
 		$url       = esc_url( $upgrade_premium_url );
-		$before    = esc_html__( 'Based on your level of brute force activity, we recommend ', 'limit-login-attempts-reloaded' );
-		$link_text = esc_html__( 'upgrading to premium', 'limit-login-attempts-reloaded' );
-		$after     = esc_html__( ' to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' );
-		$link      = '<a href="' . $url . '" class="llar_orange" target="_blank" rel="noopener noreferrer">' . $link_text . '</a>';
+		if ( $open_new_window ) {
+			return sprintf(
+				__(
+					'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.',
+					'limit-login-attempts-reloaded'
+				),
+				$url
+			);
+		}
 
-		return $before . $link . $after;
+		return sprintf(
+			__(
+				'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange">upgrading to premium</a> to access features to reduce failed logins and improve site performance.',
+				'limit-login-attempts-reloaded'
+			),
+			$url
+		);
 	}
 
 	/**
@@ -428,7 +440,8 @@ class LimitLoginAttempts
 	 */
 	private function get_recommendation_desc( $setup_code, $upgrade_premium_url ) {
 		if ( ! empty( $setup_code ) ) {
-			return $this->get_premium_recommendation_desc( $upgrade_premium_url );
+			$premium_tab_url = admin_url( 'admin.php?page=' . $this->_options_page_slug . '&tab=premium' );
+			return $this->get_premium_recommendation_desc( $premium_tab_url, false );
 		}
 
 		return $this->get_micro_cloud_recommendation_html();
