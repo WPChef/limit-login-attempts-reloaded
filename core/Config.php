@@ -58,6 +58,10 @@ class Config {
 		'show_warning_badge'            => true,
 		'onboarding_popup_shown'        => false,
 		'custom_error_message'          => '',
+		'digest_realtime'               => 0,
+		'digest_daily'                  => 0,
+		'digest_weekly'                 => 0,
+		'digest_monthly'                => 0,
 
 		'logged'                        => array(),
 		'retries_valid'                 => array(),
