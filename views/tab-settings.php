@@ -22,9 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 $gdpr                       = Config::get( 'gdpr' );
 $gdpr_message               = Config::get( 'gdpr_message' );
 
-$v                          = explode( ',', Config::get( 'lockout_notify' ) );
-$email_checked              = in_array( 'email', $v );
-
 $show_top_level_menu_item   = Config::get( 'show_top_level_menu_item' );
 $show_top_bar_menu_item     = Config::get( 'show_top_bar_menu_item' );
 $hide_dashboard_widget      = Config::get( 'hide_dashboard_widget' );
@@ -175,6 +172,22 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
 									    __( 'It\'s not uncommon for web hosts to turn off emails for plugins as a security measure.<br>We\'ve <a class="llar_bold link__style_color_inherit" href="%s" target="_blank">created an article</a> to troubleshoot common email deliverability issues.', 'limit-login-attempts-reloaded' ),
 									    'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
 								    ); ?>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row" valign="top"><?php _e( 'Email Digests', 'limit-login-attempts-reloaded' ); ?></th>
+                            <td>
+                                <div class="llar-digest-checkboxes">
+	                            <?php foreach ( $digest_notification_checkboxes as $digest_checkbox ) : ?>
+                                    <label class="llar-digest-checkbox-item">
+                                        <input type="checkbox"
+                                               name="<?php echo esc_attr( $digest_checkbox['name'] ); ?>"
+                                               value="1"
+								            <?php checked( ! empty( $digest_checkbox['checked'] ) ); ?> />
+								            <?php echo esc_html( $digest_checkbox['label'] ); ?>
+                                    </label>
+	                            <?php endforeach; ?>
                                 </div>
                             </td>
                         </tr>
@@ -809,6 +822,25 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
 
             })(jQuery);
         </script>
+        <style>
+            .llar-digest-checkboxes {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px 18px;
+                align-items: center;
+            }
+            .llar-digest-checkbox-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                line-height: 1.4;
+                cursor: pointer;
+                margin: 0;
+            }
+            .llar-digest-checkbox-item input[type="checkbox"] {
+                margin: 0;
+            }
+        </style>
 
         <p class="submit">
             <input class="button menu__item col button__orange" name="llar_update_settings"
