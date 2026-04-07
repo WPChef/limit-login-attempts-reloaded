@@ -366,17 +366,44 @@ class Helpers {
 	public static function detect_gateway() {
 
 		$gateway = 'wp_login';
+		// Use raw path for matching; avoid sanitize_text_field() which can alter the URI and break gateway detection.
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? rawurldecode( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
 
-		if ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false && ( !isset( $_GET['action'] ) || $_GET['action'] === 'login' ) ) {
-			$gateway = 'wp_login';
-		} elseif ( isset( $_GET['action'] ) && $_GET['action'] === 'lostpassword' && strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false ) {
-			$gateway = 'wp_lostpassword';
-		} elseif ( isset($_GET['action']) && $_GET['action'] === 'register' && strpos($_SERVER['REQUEST_URI'], 'wp-login.php') !== false ) {
-			$gateway = 'wp_register';
-		} elseif ( isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ) ) {
-			$gateway = 'wp_xmlrpc';
-		} elseif ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) === false ) {
-			$gateway = trim( $_SERVER['REQUEST_URI'], '/' );
+		// Some plugins hide wp-login.php and mask REQUEST_URI.
+		// Prefer core routing marker when available.
+		if ( isset( $GLOBALS['pagenow'] ) && 'wp-login.php' === $GLOBALS['pagenow'] ) {
+			switch ( $action ) {
+				case 'lostpassword':
+					return 'wp_lostpassword';
+				case 'register':
+					return 'wp_register';
+				default:
+					return 'wp_login';
+			}
+		}
+
+		switch ( true ) {
+			case false !== strpos( $request_uri, 'wp-login.php' ) && ( ! $action || 'login' === $action ):
+				$gateway = 'wp_login';
+				break;
+			case 'lostpassword' === $action && false !== strpos( $request_uri, 'wp-login.php' ):
+				$gateway = 'wp_lostpassword';
+				break;
+			case 'register' === $action && false !== strpos( $request_uri, 'wp-login.php' ):
+				$gateway = 'wp_register';
+				break;
+			case isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ):
+				$gateway = 'wp_xmlrpc';
+				break;
+			case false === strpos( $request_uri, 'wp-login.php' ):
+				$gateway = trim( $request_uri, '/' );
+				$gateway = str_replace( '/', '_', $gateway );
+				$gateway = substr( sanitize_key( $gateway ), 0, 100 );
+				if ( empty( $gateway ) ) {
+					$gateway = 'custom_login';
+				}
+				break;
 		}
 
 		return $gateway;
