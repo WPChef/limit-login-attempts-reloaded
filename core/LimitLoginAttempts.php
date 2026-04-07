@@ -350,7 +350,7 @@ class LimitLoginAttempts
 		if ( $open_new_window ) {
 			return sprintf(
 				__(
-					'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.',
+					'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank" rel="noopener noreferrer">upgrading to premium</a> to access features to reduce failed logins and improve site performance.',
 					'limit-login-attempts-reloaded'
 				),
 				$url
@@ -440,7 +440,7 @@ class LimitLoginAttempts
 	 */
 	private function get_recommendation_desc( $setup_code, $upgrade_premium_url ) {
 		if ( ! empty( $setup_code ) ) {
-			$premium_tab_url = admin_url( 'admin.php?page=' . $this->_options_page_slug . '&tab=premium' );
+			$premium_tab_url = $this->get_options_page_uri( 'premium' );
 			return $this->get_premium_recommendation_desc( $premium_tab_url, false );
 		}
 
