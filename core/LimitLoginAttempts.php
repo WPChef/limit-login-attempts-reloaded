@@ -433,12 +433,11 @@ class LimitLoginAttempts
 	/**
 	 * Build recommendation description for elevated brute force activity.
 	 *
-	 * @param string $setup_code          App setup code.
-	 * @param string $upgrade_premium_url Premium upgrade URL.
+	 * @param string $setup_code App setup code.
 	 *
 	 * @return string
 	 */
-	private function get_recommendation_desc( $setup_code, $upgrade_premium_url ) {
+	private function get_recommendation_desc( $setup_code ) {
 		if ( ! empty( $setup_code ) ) {
 			$premium_tab_url = $this->get_options_page_uri( 'premium' );
 			return $this->get_premium_recommendation_desc( $premium_tab_url, false );
@@ -517,9 +516,12 @@ class LimitLoginAttempts
 					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
 					break;
 				case 'warning_title':
-					$medium_upper = 300;
-					if ( isset( $risk_config['bounds']['medium_upper'] ) ) {
-						$medium_upper = (int) $risk_config['bounds']['medium_upper'];
+					$medium_upper = isset( $risk_config['bounds']['medium_upper'] ) ? (int) $risk_config['bounds']['medium_upper'] : 0;
+					if ( $medium_upper <= 0 && isset( $matched_level['min_inclusive'] ) ) {
+						$medium_upper = (int) $matched_level['min_inclusive'];
+					}
+					if ( $medium_upper <= 0 ) {
+						$medium_upper = 300;
 					}
 					/* translators: %d: threshold count (e.g. 300) for "N+ failed login attempts" (high risk, local mode). */
 					$retries_chart_title = sprintf(
@@ -533,7 +535,7 @@ class LimitLoginAttempts
 					}
 					break;
 				case 'recommendation':
-					$recommendation_html = $this->get_recommendation_desc( $setup_code, $upgrade_premium_url );
+					$recommendation_html = $this->get_recommendation_desc( $setup_code );
 					if ( ! empty( $retries_chart_desc ) ) {
 						$retries_chart_desc .= '<br><br>' . $recommendation_html;
 					} else {
@@ -574,7 +576,7 @@ class LimitLoginAttempts
 	 * @return array
 	 */
 	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
-		$risk_config         = function_exists( 'llar_get_risk_config' ) ? llar_get_risk_config() : array();
+		$risk_config         = llar_get_risk_config();
 		$risk_levels         = ( isset( $risk_config['levels'] ) && is_array( $risk_config['levels'] ) ) ? $risk_config['levels'] : array();
 		$risk_colors         = ( isset( $risk_config['colors'] ) && is_array( $risk_config['colors'] ) ) ? $risk_config['colors'] : array();
 		$retries_chart_title = '';

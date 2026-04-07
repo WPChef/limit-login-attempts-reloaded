@@ -61,28 +61,11 @@ function llar_get_risk_config_defaults() {
 					'color'          => 'orange',
 				),
 				array(
+					'min_inclusive'  => 300,
 					'default'        => true,
 					'warning_title'  => true,
 					'recommendation' => true,
 					'color'          => 'red',
-				),
-			),
-			'cloud_exhausted_micro' => array(
-				array(
-					'exact' => 0,
-					'title' => 'zero_title',
-					'color' => 'green',
-				),
-				array(
-					'max_exclusive' => 100,
-					'count_title'   => true,
-					'desc'          => 'desc_low',
-					'color'         => 'orange',
-				),
-				array(
-					'default'                => true,
-					'premium_recommendation' => true,
-					'color'                  => 'red',
 				),
 			),
 		),
@@ -111,9 +94,6 @@ function llar_normalize_risk_config( $defaults, $cfg ) {
 
 	if ( ! isset( $out['levels']['local'] ) || ! is_array( $out['levels']['local'] ) ) {
 		$out['levels']['local'] = $defaults['levels']['local'];
-	}
-	if ( ! isset( $out['levels']['cloud_exhausted_micro'] ) || ! is_array( $out['levels']['cloud_exhausted_micro'] ) ) {
-		$out['levels']['cloud_exhausted_micro'] = $defaults['levels']['cloud_exhausted_micro'];
 	}
 
 	return $out;
