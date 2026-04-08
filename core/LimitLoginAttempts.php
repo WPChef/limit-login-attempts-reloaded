@@ -359,6 +359,7 @@ class LimitLoginAttempts
 
 		// Check if installed old plugin
 		$this->check_original_installed();
+		DigestUiController::bootstrap_defaults();
 
 		// Setup default plugin options
 		//$this->sanitize_options();
