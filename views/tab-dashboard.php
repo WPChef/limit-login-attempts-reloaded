@@ -18,6 +18,14 @@ if ( ! defined( 'ABSPATH' ) ) exit();
 $api_stats = $is_active_app_custom ? LimitLoginAttempts::$cloud_app->stats() : false;
 
 $setup_code = Config::get( 'app_setup_code' );
+$chart_circle_data = $this->get_failed_attempts_circle_data(
+	$is_active_app_custom,
+	$is_exhausted,
+	$block_sub_group,
+	$setup_code,
+	$upgrade_premium_url,
+	$api_stats
+);
 
 $wp_locale = str_replace( '_', '-', get_locale() );
 $is_tab_dashboard = true;

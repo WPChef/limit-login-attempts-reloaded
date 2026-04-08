@@ -298,6 +298,345 @@ class LimitLoginAttempts
 	}
 
 	/**
+	 * Whether a retries_stats bucket key is older than cutoff (safe strtotime for string keys).
+	 *
+	 * @param mixed $key    Bucket key (unix ts or date string).
+	 * @param int   $cutoff Cutoff unix timestamp.
+	 *
+	 * @return bool
+	 */
+	private function is_retries_stats_bucket_expired( $key, $cutoff ) {
+		if ( is_numeric( $key ) ) {
+			return (int) $key < $cutoff;
+		}
+		$ts = strtotime( (string) $key );
+		if ( false === $ts ) {
+			return false;
+		}
+		return $ts < $cutoff;
+	}
+
+	/**
+	 * Plain-text strings for failed-attempts circle (no HTML; whitelist keys only).
+	 *
+	 * @param string $key Level text key, e.g. zero_title, desc_low.
+	 *
+	 * @return string
+	 */
+	private function get_risk_circle_string( $key ) {
+		switch ( $key ) {
+			case 'zero_title':
+				return __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
+			case 'desc_low':
+				return __( 'Your site is currently at a low risk for brute force activity.', 'limit-login-attempts-reloaded' );
+			case 'desc_medium':
+				return __( 'Your site is currently at a medium risk for brute force activity.', 'limit-login-attempts-reloaded' );
+			case 'failed_today_title':
+				return __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
+			default:
+				return '';
+		}
+	}
+
+	/**
+	 * Recommendation HTML: Micro Cloud path (link text translated; markup built in code).
+	 *
+	 * @return string
+	 */
+	private function get_micro_cloud_recommendation_html() {
+		return sprintf(
+			__(
+				'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.',
+				'limit-login-attempts-reloaded'
+			),
+			'button_micro_cloud'
+		);
+	}
+
+	/**
+	 * Recommendation HTML: premium upgrade URL (href escaped; rel on external target).
+	 *
+	 * @param string $upgrade_premium_url Premium URL.
+	 * @param bool   $open_new_window     Open link in a new window.
+	 *
+	 * @return string
+	 */
+	private function get_premium_recommendation_desc( $upgrade_premium_url, $open_new_window = true ) {
+		$url       = esc_url( $upgrade_premium_url );
+		if ( $open_new_window ) {
+			return sprintf(
+				__(
+					'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank" rel="noopener noreferrer">upgrading to premium</a> to access features to reduce failed logins and improve site performance.',
+					'limit-login-attempts-reloaded'
+				),
+				$url
+			);
+		}
+
+		return sprintf(
+			__(
+				'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange">upgrading to premium</a> to access features to reduce failed logins and improve site performance.',
+				'limit-login-attempts-reloaded'
+			),
+			$url
+		);
+	}
+
+	/**
+	 * Get failed login attempts count for the last 24 hours in local mode.
+	 *
+	 * @return int
+	 */
+	public function get_local_retries_count_for_last_day() {
+		$retries_count = 0;
+		$retries_stats = Config::get( 'retries_stats' );
+
+		if ( $retries_stats ) {
+			$cutoff_ts = time() - DAY_IN_SECONDS;
+			foreach ( $retries_stats as $key => $count ) {
+				if ( is_numeric( $key ) && (int) $key > $cutoff_ts ) {
+					$retries_count += $count;
+				} elseif ( ! is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
+					$retries_count += $count;
+				}
+			}
+		}
+
+		return (int) $retries_count;
+	}
+
+	/**
+	 * Remove retries_stats buckets older than 8 days (keeps autoload option bounded).
+	 *
+	 * @param array $retries_stats Stats keyed by time bucket.
+	 *
+	 * @return array
+	 */
+	private function prune_retries_stats_old_buckets( $retries_stats ) {
+		if ( ! is_array( $retries_stats ) || empty( $retries_stats ) ) {
+			return $retries_stats;
+		}
+
+		$cutoff = strtotime( '-8 day' );
+		foreach ( $retries_stats as $key => $count ) {
+			if ( $this->is_retries_stats_bucket_expired( $key, $cutoff ) ) {
+				unset( $retries_stats[ $key ] );
+			}
+		}
+
+		return $retries_stats;
+	}
+
+	/**
+	 * Build localized retries chart title with attempts count.
+	 *
+	 * @param int $retries_count Number of retries.
+	 *
+	 * @return string
+	 */
+	private function get_retries_chart_title_with_count( $retries_count ) {
+		return sprintf(
+			_n(
+				'%d failed login attempt ',
+				'%d failed login attempts ',
+				$retries_count,
+				'limit-login-attempts-reloaded'
+			),
+			$retries_count
+		) . __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
+	}
+
+	/**
+	 * Build recommendation description for elevated brute force activity.
+	 *
+	 * @param string $setup_code App setup code.
+	 *
+	 * @return string
+	 */
+	private function get_recommendation_desc( $setup_code ) {
+		if ( ! empty( $setup_code ) ) {
+			$premium_tab_url = $this->get_options_page_uri( 'premium' );
+			return $this->get_premium_recommendation_desc( $premium_tab_url, false );
+		}
+
+		return $this->get_micro_cloud_recommendation_html();
+	}
+
+	/**
+	 * Resolve risk level by retries count using configured ranges.
+	 *
+	 * @param int   $retries_count Retries count.
+	 * @param array $levels        Risk levels config.
+	 *
+	 * @return array
+	 */
+	private function resolve_risk_level( $retries_count, $levels ) {
+		$default_level = null;
+
+		foreach ( $levels as $level ) {
+			if ( isset( $level['exact'] ) && (int) $level['exact'] === $retries_count ) {
+				return $level;
+			}
+
+			if ( isset( $level['max_exclusive'] ) && (int) $level['max_exclusive'] > $retries_count ) {
+				return $level;
+			}
+
+			if ( ! empty( $level['default'] ) ) {
+				$default_level = $level;
+			}
+		}
+
+		return null !== $default_level ? $default_level : array();
+	}
+
+	/**
+	 * Build chart title/description/color from matched risk level.
+	 *
+	 * @param array  $matched_level        Matched level config.
+	 * @param int    $retries_count        Retries count.
+	 * @param array  $risk_config          Risk config.
+	 * @param string $setup_code           App setup code.
+	 * @param string $upgrade_premium_url  Premium upgrade URL.
+	 *
+	 * @return array
+	 */
+	private function build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url ) {
+		$risk_colors = ( isset( $risk_config['colors'] ) && is_array( $risk_config['colors'] ) ) ? $risk_config['colors'] : array();
+		$default_color = isset( $risk_colors['green'] ) ? $risk_colors['green'] : '#97F6C8';
+
+		$retries_chart_title = '';
+		$retries_chart_desc = '';
+		$retries_chart_color = $default_color;
+
+		$rule_flag_keys = array( 'count_title', 'warning_title', 'recommendation', 'premium_recommendation' );
+		foreach ( array( 'title', 'count_title', 'warning_title', 'desc', 'recommendation', 'premium_recommendation', 'color' ) as $rule_key ) {
+			if ( ! isset( $matched_level[ $rule_key ] ) ) {
+				continue;
+			}
+			if ( in_array( $rule_key, $rule_flag_keys, true ) ) {
+				if ( true !== $matched_level[ $rule_key ] && ! $matched_level[ $rule_key ] ) {
+					continue;
+				}
+			} elseif ( empty( $matched_level[ $rule_key ] ) ) {
+				continue;
+			}
+
+			switch ( $rule_key ) {
+				case 'title':
+					if ( ! empty( $matched_level['title'] ) ) {
+						$retries_chart_title = $this->get_risk_circle_string( $matched_level['title'] );
+					}
+					break;
+				case 'count_title':
+					$retries_chart_title = $this->get_retries_chart_title_with_count( $retries_count );
+					break;
+				case 'warning_title':
+					$medium_upper = isset( $risk_config['bounds']['medium_upper'] ) ? (int) $risk_config['bounds']['medium_upper'] : 0;
+					if ( $medium_upper <= 0 && isset( $matched_level['min_inclusive'] ) ) {
+						$medium_upper = (int) $matched_level['min_inclusive'];
+					}
+					if ( $medium_upper <= 0 ) {
+						$medium_upper = 300;
+					}
+					/* translators: %d: threshold count (e.g. 300) for "N+ failed login attempts" (high risk, local mode). */
+					$retries_chart_title = sprintf(
+						__( 'Your site has experienced %d+ failed login attempts in the past 24 hours.', 'limit-login-attempts-reloaded' ),
+						$medium_upper
+					);
+					break;
+				case 'desc':
+					if ( ! empty( $matched_level['desc'] ) ) {
+						$retries_chart_desc = $this->get_risk_circle_string( $matched_level['desc'] );
+					}
+					break;
+				case 'recommendation':
+					$recommendation_html = $this->get_recommendation_desc( $setup_code );
+					if ( ! empty( $retries_chart_desc ) ) {
+						$retries_chart_desc .= '<br><br>' . $recommendation_html;
+					} else {
+						$retries_chart_desc = $recommendation_html;
+					}
+					break;
+				case 'premium_recommendation':
+					$retries_chart_desc = $this->get_premium_recommendation_desc( $upgrade_premium_url );
+					break;
+				case 'color':
+					if ( isset( $risk_colors[ $matched_level['color'] ] ) ) {
+						$retries_chart_color = $risk_colors[ $matched_level['color'] ];
+					}
+					break;
+			}
+		}
+
+		return array(
+			'retries_chart_title' => $retries_chart_title,
+			'retries_chart_desc'  => $retries_chart_desc,
+			'retries_chart_color' => $retries_chart_color,
+		);
+	}
+
+	/**
+	 * Build data for failed attempts circle widget.
+	 *
+	 * Local mode: risk color bands by retries (0 / 1–99 / 100–299 / 300+). Custom Cloud: always green
+	 * indicator; retries count only (no risk band styling).
+	 *
+	 * @param bool        $is_active_app_custom Cloud mode flag.
+	 * @param bool|string $is_exhausted         Cloud exhausted flag (unused for donut styling; kept for callers).
+	 * @param string      $block_sub_group      Cloud plan name (unused for donut styling; kept for callers).
+	 * @param string      $setup_code           App setup code.
+	 * @param string      $upgrade_premium_url  Premium upgrade URL.
+	 * @param bool|array  $api_stats            Cloud API stats.
+	 *
+	 * @return array
+	 */
+	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
+		$risk_config         = llar_get_risk_config();
+		$risk_levels         = ( isset( $risk_config['levels'] ) && is_array( $risk_config['levels'] ) ) ? $risk_config['levels'] : array();
+		$risk_colors         = ( isset( $risk_config['colors'] ) && is_array( $risk_config['colors'] ) ) ? $risk_config['colors'] : array();
+		$retries_chart_title = '';
+		$retries_chart_desc  = '';
+		$retries_chart_color = '';
+		$retries_count       = 0;
+
+		if ( ! $is_active_app_custom ) {
+			$retries_count = $this->get_local_retries_count_for_last_day();
+
+			$local_levels  = isset( $risk_levels['local'] ) && is_array( $risk_levels['local'] ) ? $risk_levels['local'] : array();
+			$matched_level = $this->resolve_risk_level( $retries_count, $local_levels );
+			$display_data = $this->build_chart_display_data( $matched_level, $retries_count, $risk_config, $setup_code, $upgrade_premium_url );
+			$retries_chart_title = $display_data['retries_chart_title'];
+			$retries_chart_desc = $display_data['retries_chart_desc'];
+			$retries_chart_color = $display_data['retries_chart_color'];
+		} else {
+			// Custom Cloud: always green "no risk" indicator; show retries count only (product spec).
+			if ( $api_stats && ! empty( $api_stats['attempts']['count'] ) && is_array( $api_stats['attempts']['count'] ) ) {
+				$attempt_counts = array();
+				foreach ( $api_stats['attempts']['count'] as $v ) {
+					if ( is_numeric( $v ) ) {
+						$attempt_counts[] = (int) $v;
+					}
+				}
+				if ( ! empty( $attempt_counts ) ) {
+					$retries_count = (int) end( $attempt_counts );
+				}
+			}
+
+			$retries_chart_title = $this->get_risk_circle_string( 'failed_today_title' );
+			$retries_chart_desc  = '';
+			$retries_chart_color = isset( $risk_colors['green'] ) ? $risk_colors['green'] : '#97F6C8';
+		}
+
+		return array(
+			'retries_chart_title' => $retries_chart_title,
+			'retries_chart_desc'  => $retries_chart_desc,
+			'retries_chart_color' => $retries_chart_color,
+			'retries_count'       => (int) $retries_count,
+		);
+	}
+
+	/**
 	 * Redirect to dashboard page after installed
 	 */
 	public function dashboard_page_redirect()
@@ -1775,6 +2114,7 @@ class LimitLoginAttempts
 
 				$retries_stats[ $date_key ] = 1;
 			}
+			$retries_stats = $this->prune_retries_stats_old_buckets( $retries_stats );
 			Config::update( 'retries_stats', $retries_stats );
 
 			/* Check validity and add one to retries */
@@ -2495,15 +2835,13 @@ class LimitLoginAttempts
 
 		$retries_stats = Config::get( 'retries_stats' );
 
-		if($retries_stats) {
+		if ( $retries_stats ) {
 
-			foreach( $retries_stats as $key => $count ) {
+			$stats_cutoff = strtotime( '-8 day' );
+			foreach ( $retries_stats as $key => $count ) {
 
-				if (
-					( is_numeric( $key ) && $key < strtotime( '-8 day' ) )
-					|| ( ! is_numeric( $key ) && strtotime( $key ) < strtotime( '-8 day' ) )
-				) {
-					unset($retries_stats[$key]);
+				if ( $this->is_retries_stats_bucket_expired( $key, $stats_cutoff ) ) {
+					unset( $retries_stats[ $key ] );
 				}
 			}
 
