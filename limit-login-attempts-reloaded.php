@@ -36,7 +36,7 @@ function llar_get_risk_config_defaults() {
 		'colors' => array(
 			'green'  => '#97F6C8',
 			'yellow' => '#FFE066',
-			'orange' => '#FFCC66',
+			'orange' => '#FFA34C',
 			'red'    => '#FF6633',
 		),
 		'levels' => array(
