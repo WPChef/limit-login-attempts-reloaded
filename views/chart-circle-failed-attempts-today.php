@@ -12,88 +12,16 @@
  *
  */
 
-use LLAR\Core\Config;
 use LLAR\Core\Helpers;
 
-$retries_chart_title = '';
-$retries_chart_desc  = '';
-$retries_chart_color = '';
-$retries_count       = 0;
-
-if ( ! $is_active_app_custom ) {
-
-	$retries_stats = Config::get( 'retries_stats' );
-
-	if ( $retries_stats ) {
-		foreach ( $retries_stats as $key => $count ) {
-			if ( is_numeric( $key ) && $key > strtotime( '-24 hours' ) ) {
-				$retries_count += $count;
-			}
-            elseif( !is_numeric( $key ) && date_i18n( 'Y-m-d' ) === $key ) {
-				$retries_count += $count;
-			}
-		}
-	}
-
-	if ( $retries_count === 0 ) {
-
-		$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
-		$retries_chart_color = '#97F6C8';
-	}
-	else if ( $retries_count < 100 ) {
-
-		$retries_chart_title = sprintf( _n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
-		$retries_chart_title .= __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
-		$retries_chart_desc = __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
-		$retries_chart_color = '#FFCC66';
-	} else {
-
-		$retries_chart_title = __( 'Warning: Your site has experienced over 100 failed login attempts in the past 24 hours', 'limit-login-attempts-reloaded' );
-
-		if ( ! empty( $setup_code ) ) {
-			$retries_chart_desc = sprintf(
-				__( 'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
-				$upgrade_premium_url );
-		} else {
-			$retries_chart_desc = sprintf(
-				__( 'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
-				'button_micro_cloud' );
-        }
-
-		$retries_chart_color = '#FF6633';
-	}
-
-} else {
-
-	if ( $api_stats && ! empty( $api_stats['attempts']['count'] ) ) {
-		$retries_count = (int) end( $api_stats['attempts']['count'] );
-	}
-
-	if ( $is_exhausted && $block_sub_group === 'Micro Cloud' ) {
-
-		if ( $retries_count === 0 ) {
-			$retries_chart_title = __( 'Hooray! Zero failed login attempts (past 24 hrs)', 'limit-login-attempts-reloaded' );
-			$retries_chart_color = '#97F6C8';
-
-        } elseif ( $retries_count < 100 ) {
-			$retries_chart_title = sprintf( _n( '%d failed login attempt ', '%d failed login attempts ', $retries_count, 'limit-login-attempts-reloaded' ), $retries_count );
-			$retries_chart_title .= __( '(past 24 hrs)', 'limit-login-attempts-reloaded' );
-			$retries_chart_desc = __( 'Your site is currently at a low risk for brute force activity', 'limit-login-attempts-reloaded' );
-			$retries_chart_color = '#FFCC66';
-
-        } else {
-			$upgrade_premium_url = ! empty ( $upgrade_premium_url ) ? $upgrade_premium_url : '';
-			$retries_chart_desc = sprintf(
-				__( 'Based on your level of brute force activity, we recommend <a href="%s" class="llar_orange" target="_blank">upgrading to premium</a> to access features to reduce failed logins and improve site performance.', 'limit-login-attempts-reloaded' ),
-				$upgrade_premium_url );
-			$retries_chart_color = '#FF6633';
-        }
-
-    } else {
-		$retries_chart_title = __( 'Failed Login Attempts Today', 'limit-login-attempts-reloaded' );
-		$retries_chart_color = '#97F6C8';
-    }
+if ( empty( $chart_circle_data ) || ! is_array( $chart_circle_data ) ) {
+	return;
 }
+
+$retries_chart_title = isset( $chart_circle_data['retries_chart_title'] ) ? $chart_circle_data['retries_chart_title'] : '';
+$retries_chart_desc  = isset( $chart_circle_data['retries_chart_desc'] ) ? $chart_circle_data['retries_chart_desc'] : '';
+$retries_chart_color = isset( $chart_circle_data['retries_chart_color'] ) ? $chart_circle_data['retries_chart_color'] : '#97F6C8';
+$retries_count       = isset( $chart_circle_data['retries_count'] ) ? (int) $chart_circle_data['retries_count'] : 0;
 ?>
 
 <div class="section-title__new">
@@ -178,5 +106,5 @@ if ( ! $is_active_app_custom ) {
     } )();
 </script>
 <div class="title<?php echo $active_app !== 'local' ? ' title-big' : ''?>"><?php echo esc_html( $retries_chart_title ); ?></div>
-<div class="desc"><?php echo $retries_chart_desc; ?></div>
+<div class="desc"><?php echo wp_kses_post( $retries_chart_desc ); ?></div>
 
