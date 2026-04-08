@@ -4,6 +4,7 @@ namespace LLAR\Core;
 
 use Exception;
 use IXR_Error;
+use LLAR\Core\Digest\DigestRetriesController;
 use LLAR\Core\Digest\DigestStorage;
 use LLAR\Core\Digest\DigestUiController;
 use LLAR\Core\Http\Http;
@@ -1581,6 +1582,8 @@ class LimitLoginAttempts
 				$retries_stats[ $date_key ] = 1;
 			}
 			Config::update( 'retries_stats', $retries_stats );
+			$login_url = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+			DigestRetriesController::save_failed_attempt( $ip, $username, $login_url );
 
 			/* Check validity and add one to retries */
 			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ] ) {
@@ -1637,6 +1640,8 @@ class LimitLoginAttempts
 					/* normal lockout */
 					$lockouts[ $ip ] = time() + Config::get( 'lockout_duration' );
 				}
+
+				DigestRetriesController::save_lockout( $ip, $login_url );
 			}
 
 			/* do housecleaning and save values */
