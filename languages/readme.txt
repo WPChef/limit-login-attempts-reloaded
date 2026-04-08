@@ -1,0 +1,1 @@
+The limit-login-attempts-reloaded.pot file is generated during deployment.
