@@ -59,9 +59,9 @@ class Config {
 		'onboarding_popup_shown'        => false,
 		'custom_error_message'          => '',
 		'digest_realtime'               => 0,
-		'digest_daily'                  => 0,
-		'digest_weekly'                 => 0,
-		'digest_monthly'                => 0,
+		'digest_daily'                  => 1,
+		'digest_weekly'                 => 1,
+		'digest_monthly'                => 1,
 
 		'logged'                        => array(),
 		'retries_valid'                 => array(),
@@ -139,6 +139,19 @@ class Config {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Check if option is explicitly stored in DB.
+	 *
+	 * @param string $option_name Option name without prefix.
+	 * @return bool
+	 */
+	public static function exists( $option_name ) {
+		$func  = self::$use_local_options ? 'get_option' : 'get_site_option';
+		$value = $func( self::format_option_name( $option_name ), null );
+
+		return ! is_null( $value );
 	}
 
 	/**

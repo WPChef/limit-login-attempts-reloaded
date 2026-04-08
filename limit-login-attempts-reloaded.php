@@ -29,6 +29,32 @@ define( 'LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR' );
 /* Notify value checked against these in limit_login_sanitize_variables() */
 define( 'LLA_LOCKOUT_NOTIFY_ALLOWED', 'log,email' );
 
+/**
+ * Digest definitions (single source of truth for name + interval in seconds).
+ * Format: {key: {name: string, interval_seconds: int}}
+ */
+defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
+	'LLA_DIGEST_DEFINITIONS',
+	array(
+		'realtime' => array(
+			'name' => 'Real-time',
+			'interval_seconds' => 0,
+		),
+		'daily' => array(
+			'name' => 'Daily',
+			'interval_seconds' => DAY_IN_SECONDS,
+		),
+		'weekly' => array(
+			'name' => 'Weekly',
+			'interval_seconds' => WEEK_IN_SECONDS,
+		),
+		'monthly' => array(
+			'name' => 'Monthly',
+			'interval_seconds' => MONTH_IN_SECONDS,
+		),
+	)
+);
+
 /** Regex: valid email for obfuscation (1=first, 2=middle, 3=last, 4=domain). */
 define( 'LLA_EMAIL_OBFUSCATE_REGEX', '/^(.)([^@]*)(.?)@(.*)$/' );
 /** Regex: one char in local part to mask (not first, not last). (?<=.) = at least one char before; [^@*] avoids re-matching asterisks. */
