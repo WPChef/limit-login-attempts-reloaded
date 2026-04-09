@@ -1582,7 +1582,7 @@ class LimitLoginAttempts
 				$retries_stats[ $date_key ] = 1;
 			}
 			Config::update( 'retries_stats', $retries_stats );
-			$login_url = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+			$login_url = Helpers::get_request_uri();
 			DigestRetriesController::save_failed_attempt( $ip, $username, $login_url );
 
 			/* Check validity and add one to retries */
@@ -1780,8 +1780,8 @@ class LimitLoginAttempts
 		$email_body = ob_get_clean();
 
 		// get current url with the current page and the current query string
-		$current_url_label = preg_replace( '/^\/|\/$/', '', $_SERVER['REQUEST_URI'] );
-		$current_url = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : get_site_url() . $_SERVER['REQUEST_URI'];
+		$current_url_label = Helpers::get_current_url_label();
+		$current_url = Helpers::get_current_url();
 
 		$placeholders = array(
 			'{name}'                => $admin_name,
