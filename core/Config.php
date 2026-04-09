@@ -59,9 +59,9 @@ class Config {
 		'onboarding_popup_shown'        => false,
 		'custom_error_message'          => '',
 		'digest_realtime'               => 0,
-		'digest_daily'                  => 1,
-		'digest_weekly'                 => 1,
-		'digest_monthly'                => 1,
+		'digest_daily'                  => 0,
+		'digest_weekly'                 => 0,
+		'digest_monthly'                => 0,
 
 		'logged'                        => array(),
 		'retries_valid'                 => array(),
@@ -104,10 +104,12 @@ class Config {
 
 	public static function init() {
 		self::$use_local_options = Helpers::use_local_options();
+		self::apply_digest_defaults_from_definitions();
 	}
 
 	public static function init_defaults() {
 		self::$default_options['gdpr_message'] = __( 'By proceeding you understand and give your consent that your IP address and browser information might be processed by the security plugins installed on this site.', 'limit-login-attempts-reloaded' );
+		self::apply_digest_defaults_from_definitions();
 	}
 
 	/**
@@ -233,5 +235,34 @@ class Config {
 	 */
 	private static function is_autoload( $option_name ) {
 		return in_array( trim( $option_name ), self::$disable_autoload_options ) ? 'no' : 'yes';
+	}
+
+	/**
+	 * Apply digest defaults from shared digest definitions constant.
+	 *
+	 * @return void
+	 */
+	private static function apply_digest_defaults_from_definitions() {
+		$digest_definitions = self::get_digest_definitions();
+
+		foreach ( $digest_definitions as $digest_key => $digest_definition ) {
+			$option_key = 'digest_' . $digest_key;
+			self::$default_options[ $option_key ] = ! empty( $digest_definition['is_default'] ) ? 1 : 0;
+		}
+	}
+
+	/**
+	 * Read digest definitions from shared constant with filter support.
+	 *
+	 * @return array
+	 */
+	private static function get_digest_definitions() {
+		if ( ! is_array( LLA_DIGEST_DEFINITIONS ) ) {
+			return array();
+		}
+
+		$definitions = apply_filters( 'llar_digest_definitions', LLA_DIGEST_DEFINITIONS );
+
+		return is_array( $definitions ) ? $definitions : array();
 	}
 }
