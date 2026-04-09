@@ -390,6 +390,37 @@ class Helpers {
 		return round($num, 1) . $units[$i];
 	}
 
+	/**
+	 * Get current request URI from server globals.
+	 *
+	 * @return string
+	 */
+	public static function get_request_uri() {
+		return isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+	}
+
+	/**
+	 * Get current URL label from request URI.
+	 *
+	 * @return string
+	 */
+	public static function get_current_url_label() {
+		return preg_replace( '/^\/|\/$/', '', self::get_request_uri() );
+	}
+
+	/**
+	 * Get current URL with referer fallback.
+	 *
+	 * @return string
+	 */
+	public static function get_current_url() {
+		if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+			return wp_unslash( $_SERVER['HTTP_REFERER'] );
+		}
+
+		return get_site_url() . self::get_request_uri();
+	}
+
 	public static function send_mail_with_logo( $to, $subject, $body ) {
 
 		add_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
