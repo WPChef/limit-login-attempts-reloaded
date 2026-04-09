@@ -39,18 +39,22 @@ defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 		'realtime' => array(
 			'name' => 'Real-time',
 			'interval_seconds' => 0,
+			'is_default' => false,
 		),
 		'daily' => array(
 			'name' => 'Daily',
 			'interval_seconds' => DAY_IN_SECONDS,
+			'is_default' => true,
 		),
 		'weekly' => array(
 			'name' => 'Weekly',
 			'interval_seconds' => WEEK_IN_SECONDS,
+			'is_default' => true,
 		),
 		'monthly' => array(
 			'name' => 'Monthly',
 			'interval_seconds' => MONTH_IN_SECONDS,
+			'is_default' => true,
 		),
 	)
 );
