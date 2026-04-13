@@ -1134,10 +1134,22 @@ class Ajax
             ) );
 		}
 
+		$subject        = __( 'LLAR Security Notifications [TEST]', 'limit-login-attempts-reloaded' );
+
+		ob_start();
+		include LLA_PLUGIN_DIR . 'views/emails/test-notification-content.php';
+		$content = (string) ob_get_clean();
+
 		if( Mailer::send(
             $to,
-            __( 'LLAR Security Notifications [TEST]', 'limit-login-attempts-reloaded' ),
-            __( 'Your email notifications for Limit Login Attempts Reloaded are working correctly. If this email is going to spam, please be sure to add this address to your safelist.', 'limit-login-attempts-reloaded' )
+            $subject,
+            $content,
+			array( 'content-type: text/html' ),
+			array(),
+			false,
+			array(
+				'title' => $subject,
+			)
         ) ) {
 
 			wp_send_json_success();
