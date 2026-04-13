@@ -5,6 +5,7 @@ namespace LLAR\Core\MfaFlow\Providers\Email;
 use LLAR\Core\MfaFlow\MfaApiClient;
 use LLAR\Core\MfaFlow\Providers\MfaProviderInterface;
 use LLAR\Core\MfaFlow\MfaRestApi;
+use LLAR\Core\Mail\Mailer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -165,7 +166,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 
 		$sent = false;
 		try {
-			$sent = wp_mail( $to_email, $subject, $body, $headers );
+			$sent = Mailer::send( $to_email, $subject, $body, $headers );
 		} finally {
 			if ( $llar_mfa_otp_logo_cid !== '' ) {
 				remove_action( 'phpmailer_init', array( __CLASS__, 'phpmailer_embed_otp_logo' ), 10 );

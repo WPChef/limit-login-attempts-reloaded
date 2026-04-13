@@ -3,6 +3,7 @@
 namespace LLAR\Core;
 
 use LLAR\Core\Http\Http;
+use LLAR\Core\Mail\Mailer;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -1133,7 +1134,7 @@ class Ajax
             ) );
 		}
 
-		if( wp_mail(
+		if( Mailer::send(
             $to,
             __( 'LLAR Security Notifications [TEST]', 'limit-login-attempts-reloaded' ),
             __( 'Your email notifications for Limit Login Attempts Reloaded are working correctly. If this email is going to spam, please be sure to add this address to your safelist.', 'limit-login-attempts-reloaded' )
