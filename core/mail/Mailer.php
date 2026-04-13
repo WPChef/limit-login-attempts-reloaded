@@ -12,6 +12,7 @@ class Mailer {
 	 * @var MailTransportInterface|null
 	 */
 	private static $transport = null;
+	private static $email_css_text = null;
 
 	/**
 	 * @param MailTransportInterface $transport
@@ -69,6 +70,7 @@ class Mailer {
 		$email_logo_cid = isset( $layout['logo_cid'] ) && is_string( $layout['logo_cid'] )
 			? $layout['logo_cid']
 			: '';
+		$email_css_text = self::get_email_css_text();
 
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/header.php';
@@ -76,5 +78,23 @@ class Mailer {
 		include LLA_PLUGIN_DIR . 'views/emails/footer.php';
 
 		return (string) ob_get_clean();
+	}
+
+	/**
+	 * @return string
+	 */
+	private static function get_email_css_text() {
+		if ( null !== self::$email_css_text ) {
+			return self::$email_css_text;
+		}
+
+		$css_path = LLA_PLUGIN_DIR . 'views/emails/email-layout.css';
+		if ( file_exists( $css_path ) && is_readable( $css_path ) ) {
+			self::$email_css_text = (string) file_get_contents( $css_path );
+		} else {
+			self::$email_css_text = '';
+		}
+
+		return self::$email_css_text;
 	}
 }
