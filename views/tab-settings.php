@@ -842,6 +842,10 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
             })(jQuery);
         </script>
         <style>
+            .llar-test-email-notification-loader .msg.error {
+                color: #EC4652 !important;
+            }
+
             .llar-digest-checkboxes {
                 display: flex;
                 flex-wrap: wrap;
