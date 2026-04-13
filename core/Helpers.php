@@ -3,6 +3,7 @@
 namespace LLAR\Core;
 
 use LLAR\Lib\CidrCheck;
+use LLAR\Core\Mail\Mailer;
 
 if ( !defined( 'ABSPATH' ) ) exit;
 
@@ -452,7 +453,7 @@ class Helpers {
 
 		add_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
 
-		@wp_mail( $to, $subject, $body, array( 'content-type: text/html' ) );
+		Mailer::send( $to, $subject, $body, array( 'content-type: text/html' ), array(), true );
 
 		remove_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
 	}
