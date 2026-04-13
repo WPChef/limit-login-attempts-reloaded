@@ -3001,7 +3001,12 @@ class LimitLoginAttempts
 				Config::update('notify_email_after',        (int)$_POST['email_after'] );
 				Config::update('gdpr_message',              sanitize_textarea_field( Helpers::deslash( $_POST['gdpr_message'] ) ) );
 				Config::update('custom_error_message',      sanitize_textarea_field( Helpers::deslash( $_POST['custom_error_message'] ) ) );
-				Config::update('admin_notify_email',        sanitize_email( $_POST['admin_notify_email'] ) );
+				$admin_notify_email = isset( $_POST['admin_notify_email'] ) ? sanitize_email( wp_unslash( $_POST['admin_notify_email'] ) ) : '';
+				if ( empty( $admin_notify_email ) ) {
+					$this->show_message( __( 'Please enter a valid admin notification email.', 'limit-login-attempts-reloaded' ), true );
+					$admin_notify_email = Config::get( 'admin_notify_email' );
+				}
+				Config::update('admin_notify_email',        $admin_notify_email );
 				DigestUiController::save_settings_from_request();
 
 				Config::update('active_app', sanitize_text_field( $_POST['active_app'] ) );
