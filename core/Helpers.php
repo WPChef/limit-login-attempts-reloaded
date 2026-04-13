@@ -449,6 +449,15 @@ class Helpers {
 		return get_site_url() . self::get_request_uri();
 	}
 
+	/**
+	 * Send HTML email with embedded LLAR logo using shared Mailer layout.
+	 *
+	 * @param string $to
+	 * @param string $subject
+	 * @param string $body Content-only HTML.
+	 *
+	 * @return void
+	 */
 	public static function send_mail_with_logo( $to, $subject, $body ) {
 
 		add_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );

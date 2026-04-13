@@ -98,6 +98,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 
 	/**
 	 * Send verification code to the user by email.
+	 * Renders content-only view and delegates header/footer layout to Mailer.
 	 *
 	 * @param \WP_User $user    User to send code to.
 	 * @param string   $code    Verification code.

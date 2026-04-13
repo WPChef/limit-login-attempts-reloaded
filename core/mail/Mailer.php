@@ -12,6 +12,12 @@ class Mailer {
 	 * @var MailTransportInterface|null
 	 */
 	private static $transport = null;
+
+	/**
+	 * Cached CSS text for email layout `<style>` block.
+	 *
+	 * @var string|null
+	 */
 	private static $email_css_text = null;
 
 	/**
@@ -37,11 +43,11 @@ class Mailer {
 	/**
 	 * @param string       $to
 	 * @param string       $subject
-	 * @param string       $message
+	 * @param string       $message Content-only HTML (without header/footer wrapper).
 	 * @param array|string $headers
 	 * @param array        $attachments
 	 * @param bool         $suppress_errors
-	 * @param array        $layout
+	 * @param array        $layout Optional layout settings: title, logo_cid, use_layout.
 	 *
 	 * @return bool
 	 */
@@ -56,8 +62,10 @@ class Mailer {
 	}
 
 	/**
+	 * Build final HTML email body from content and shared layout templates.
+	 *
 	 * @param string $subject
-	 * @param string $content_html
+	 * @param string $content_html Content-only HTML.
 	 * @param array  $layout
 	 *
 	 * @return string
@@ -81,6 +89,8 @@ class Mailer {
 	}
 
 	/**
+	 * Load and cache CSS for email layout injected into the `<style>` block.
+	 *
 	 * @return string
 	 */
 	private static function get_email_css_text() {
