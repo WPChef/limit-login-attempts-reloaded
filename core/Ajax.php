@@ -1119,6 +1119,11 @@ class Ajax
 		wp_send_json_success();
 	}
 
+	/**
+	 * Send a test notification email using shared Mailer layout rendering.
+	 *
+	 * @return void
+	 */
 	public function test_email_notifications_callback() {
 
 		$this->check_user_capabilities();
