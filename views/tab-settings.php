@@ -28,6 +28,8 @@ $hide_dashboard_widget      = Config::get( 'hide_dashboard_widget' );
 $show_warning_badge         = Config::get( 'show_warning_badge' );
 
 $admin_notify_email         = Config::get( 'admin_notify_email' );
+$default_admin_email        = is_multisite() ? get_site_option( 'admin_email' ) : get_option( 'admin_email' );
+$admin_notify_email         = ! empty( $admin_notify_email ) ? $admin_notify_email : $default_admin_email;
 
 $trusted_ip_origins         = Config::get( 'trusted_ip_origins' );
 $trusted_ip_origins         = ( is_array( $trusted_ip_origins ) && ! empty( $trusted_ip_origins ) ) ? implode( ", ", $trusted_ip_origins ) : 'REMOTE_ADDR';
@@ -156,8 +158,9 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                                 <input type="checkbox" name="lockout_notify_email" <?php checked ( $email_checked ); ?>
                                        value="email"/> <?php _e( 'Email to', 'limit-login-attempts-reloaded' ); ?>
                                 <input class="input_border" type="email" name="admin_notify_email"
+                                       required
                                        value="<?php esc_attr_e( $admin_notify_email ) ?>"
-                                       placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"/> <?php _e( 'after', 'limit-login-attempts-reloaded' ); ?>
+                                       placeholder="<?php echo esc_attr( $default_admin_email ); ?>"/> <?php _e( 'after', 'limit-login-attempts-reloaded' ); ?>
                                 <input class="input_border" type="text" size="3" maxlength="4"
                                        value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
                                        name="email_after"/> <?php _e( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
@@ -801,21 +804,37 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                         const $email_input = $( 'input[name="admin_notify_email"]' );
                         const $test_email_loader = $( '.llar-test-email-notification-loader' );
                         const $test_email_loader_msg = $test_email_loader.find( '.msg' );
+                        const email = ( $email_input.val() || '' ).trim();
 
-                        $test_email_loader_msg.text( '' );
+                        $test_email_loader_msg.removeClass( 'success error' ).text( '' );
 
-                        $test_email_loader.toggleClass( 'loading' );
+                        if ( ! email ) {
+                            $test_email_loader_msg
+                                .addClass( 'error' )
+                                .text( '<?php echo esc_js( __( 'Email is required.', 'limit-login-attempts-reloaded' ) ); ?>' );
+                            return;
+                        }
+
+                        $test_email_loader.addClass( 'loading' );
 
                         $.post( ajaxurl, {
                             action: 'test_email_notifications',
-                            email: $email_input.val() || $email_input.attr( 'placeholder' ),
+                            email: email,
                             sec: '<?php echo esc_js( wp_create_nonce( "llar-test-email-notifications" ) ); ?>',
                         }, function ( res ) {
                             if ( res?.success ) {
-                                $test_email_loader_msg.addClass( 'success' ).text( '<?php echo esc_js( __( 'Test email has been sent!', 'limit-login-attempts-reloaded' ) ) ?>' )
+                                $test_email_loader_msg
+                                    .removeClass( 'error' )
+                                    .addClass( 'success' )
+                                    .text( '<?php echo esc_js( __( 'Test email has been sent!', 'limit-login-attempts-reloaded' ) ); ?>' );
+                            } else {
+                                $test_email_loader_msg
+                                    .removeClass( 'success' )
+                                    .addClass( 'error' )
+                                    .text( res?.data?.msg || '<?php echo esc_js( __( 'Failed to send test email.', 'limit-login-attempts-reloaded' ) ); ?>' );
                             }
 
-                            $test_email_loader.toggleClass( 'loading' );
+                            $test_email_loader.removeClass( 'loading' );
                         } );
                     } )
                 } );
