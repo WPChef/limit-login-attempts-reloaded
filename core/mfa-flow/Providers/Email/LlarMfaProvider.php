@@ -152,8 +152,8 @@ class LlarMfaProvider implements MfaProviderInterface {
 		}
 
 		ob_start();
-		include LLA_PLUGIN_DIR . 'views/emails/mfa-verification.php';
-		$body = (string) ob_get_clean();
+		include LLA_PLUGIN_DIR . 'views/emails/mfa-verification-content.php';
+		$content = (string) ob_get_clean();
 
 		$headers  = array( 'Content-Type: text/html; charset=UTF-8' );
 		$to_email = $user->user_email;
@@ -166,7 +166,18 @@ class LlarMfaProvider implements MfaProviderInterface {
 
 		$sent = false;
 		try {
-			$sent = Mailer::send( $to_email, $subject, $body, $headers );
+			$sent = Mailer::send(
+				$to_email,
+				$subject,
+				$content,
+				$headers,
+				array(),
+				false,
+				array(
+					'title'    => $subject,
+					'logo_cid' => $llar_mfa_otp_logo_cid,
+				)
+			);
 		} finally {
 			if ( $llar_mfa_otp_logo_cid !== '' ) {
 				remove_action( 'phpmailer_init', array( __CLASS__, 'phpmailer_embed_otp_logo' ), 10 );

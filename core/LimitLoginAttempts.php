@@ -2316,7 +2316,7 @@ class LimitLoginAttempts
 		);
 
 		ob_start();
-		include LLA_PLUGIN_DIR . 'views/emails/failed-login.php';
+		include LLA_PLUGIN_DIR . 'views/emails/failed-login-content.php';
 		$email_body = ob_get_clean();
 
 		// get current url with the current page and the current query string

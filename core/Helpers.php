@@ -453,7 +453,18 @@ class Helpers {
 
 		add_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
 
-		Mailer::send( $to, $subject, $body, array( 'content-type: text/html' ), array(), true );
+		Mailer::send(
+			$to,
+			$subject,
+			$body,
+			array( 'content-type: text/html' ),
+			array(),
+			true,
+			array(
+				'title'    => $subject,
+				'logo_cid' => 'logo',
+			)
+		);
 
 		remove_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
 	}
