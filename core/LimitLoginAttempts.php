@@ -5,6 +5,7 @@ namespace LLAR\Core;
 use Exception;
 use IXR_Error;
 use LLAR\Core\Digest\DigestRetriesController;
+use LLAR\Core\Digest\DigestScheduler;
 use LLAR\Core\Digest\DigestStorage;
 use LLAR\Core\Digest\DigestUiController;
 use LLAR\Core\Http\Http;
@@ -712,6 +713,7 @@ class LimitLoginAttempts
 	    add_action('init', array( $this, 'load_plugin_textdomain_in_time' ) );
 
 		$this->register_mfa_providers();
+		DigestScheduler::bootstrap();
 
 		// Check if installed old plugin
 		$this->check_original_installed();
