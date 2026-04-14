@@ -4,6 +4,7 @@ namespace LLAR\Core;
 
 use Exception;
 use IXR_Error;
+use LLAR\Core\Digest\DigestDispatcher;
 use LLAR\Core\Digest\DigestRetriesController;
 use LLAR\Core\Digest\DigestScheduler;
 use LLAR\Core\Digest\DigestStorage;
@@ -714,6 +715,7 @@ class LimitLoginAttempts
 
 		$this->register_mfa_providers();
 		DigestScheduler::bootstrap();
+		DigestDispatcher::bootstrap();
 
 		// Check if installed old plugin
 		$this->check_original_installed();

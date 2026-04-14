@@ -80,7 +80,7 @@ class DigestScheduler {
 
 			if ( false === $next_run ) {
 				wp_schedule_event(
-					self::get_first_run_timestamp( $interval_seconds ),
+					self::get_first_run_timestamp( $digest_key, $interval_seconds ),
 					self::get_schedule_name( $digest_key ),
 					$event_hook,
 					array( $digest_key )
@@ -113,11 +113,19 @@ class DigestScheduler {
 	/**
 	 * Compute first run timestamp.
 	 *
-	 * @param int $interval_seconds Interval in seconds.
+	 * @param int    $interval_seconds Interval in seconds.
 	 * @return int
 	 */
-	private static function get_first_run_timestamp( $interval_seconds ) {
-		return current_time( 'timestamp' ) + max( 60, (int) $interval_seconds );
+	private static function get_first_run_timestamp( $digest_key, $interval_seconds ) {
+		$interval_seconds = max( 60, (int) $interval_seconds );
+		$now = current_time( 'timestamp' );
+		$remainder = $now % $interval_seconds;
+
+		if ( 0 === $remainder ) {
+			return $now + $interval_seconds;
+		}
+
+		return $now + ( $interval_seconds - $remainder );
 	}
 
 	/**
