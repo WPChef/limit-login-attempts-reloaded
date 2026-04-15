@@ -456,13 +456,13 @@ class Helpers {
 	 * @param string $subject
 	 * @param string $body Content-only HTML.
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	public static function send_mail_with_logo( $to, $subject, $body ) {
 
 		add_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
 
-		Mailer::send(
+		$sent = Mailer::send(
 			$to,
 			$subject,
 			$body,
@@ -476,14 +476,47 @@ class Helpers {
 		);
 
 		remove_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
+
+		return (bool) $sent;
 	}
 
 	public static function add_attachments_to_php_mailer( &$phpmailer ) {
+		if ( ! self::is_llar_phpmailer_message( $phpmailer ) ) {
+			return;
+		}
+
 		$logo_path = LLA_PLUGIN_DIR . 'assets/img/llar-logo-email.png';
 
 		if( file_exists( $logo_path ) ) {
 			$phpmailer->AddEmbeddedImage( $logo_path, 'logo' );
 		}
+	}
+
+	/**
+	 * Determine if PHPMailer instance belongs to LLAR mail.
+	 *
+	 * @param \PHPMailer\PHPMailer\PHPMailer|object $phpmailer PHPMailer instance.
+	 * @return bool
+	 */
+	private static function is_llar_phpmailer_message( $phpmailer ) {
+		if ( is_object( $phpmailer ) && method_exists( $phpmailer, 'getCustomHeaders' ) ) {
+			$headers = $phpmailer->getCustomHeaders();
+			if ( is_array( $headers ) ) {
+				foreach ( $headers as $header ) {
+					if ( ! is_array( $header ) || count( $header ) < 2 ) {
+						continue;
+					}
+					$name  = strtolower( (string) $header[0] );
+					$value = strtolower( trim( (string) $header[1] ) );
+					if ( 'x-llar-email' === $name && 'true' === $value ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		// Fallback for SMTP plugins that drop custom headers.
+		return Mailer::is_runtime_send_active();
 	}
 
 	public static function wp_locale() {
