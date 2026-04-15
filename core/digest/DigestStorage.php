@@ -54,11 +54,21 @@ class DigestStorage {
 	 * @return int Post ID or 0 on failure.
 	 */
 	public static function get_or_create_day_post( $day_ts ) {
-		$slug = gmdate( 'Y-m-d', $day_ts );
+		$day_ts = (int) $day_ts;
+		$slug   = gmdate( 'Y-m-d', $day_ts );
 		$post = get_page_by_path( $slug, OBJECT, self::POST_TYPE );
 
 		if ( $post && ! empty( $post->ID ) ) {
-			return (int) $post->ID;
+			$post_id        = (int) $post->ID;
+			$stored_day_ts = (int) get_post_meta( $post_id, self::META_DAY_TS, true );
+			if ( $stored_day_ts === $day_ts ) {
+				return $post_id;
+			}
+		}
+
+		$post_id = self::find_day_post_id_by_meta( $day_ts );
+		if ( $post_id > 0 ) {
+			return $post_id;
 		}
 
 		$post_id = wp_insert_post(
@@ -101,8 +111,7 @@ class DigestStorage {
 			return;
 		}
 
-		$current_value = (int) get_post_meta( $post_id, self::META_FAILED_ATTEMPTS_COUNT, true );
-		update_post_meta( $post_id, self::META_FAILED_ATTEMPTS_COUNT, $current_value + (int) $delta );
+		self::increment_counter_meta( $post_id, self::META_FAILED_ATTEMPTS_COUNT, $delta );
 	}
 
 	/**
@@ -119,8 +128,7 @@ class DigestStorage {
 			return;
 		}
 
-		$current_value = (int) get_post_meta( $post_id, self::META_LOCKOUTS_COUNT, true );
-		update_post_meta( $post_id, self::META_LOCKOUTS_COUNT, $current_value + (int) $delta );
+		self::increment_counter_meta( $post_id, self::META_LOCKOUTS_COUNT, $delta );
 	}
 
 	/**
@@ -142,7 +150,7 @@ class DigestStorage {
 		$now_ts = current_time( 'timestamp' );
 		$ip = sanitize_text_field( (string) $ip );
 		$username = sanitize_user( (string) $username, true );
-		$login_url = esc_url_raw( (string) $login_url );
+		$login_url = self::normalize_tracked_url( $login_url );
 
 		if ( '' !== $ip ) {
 			$unique_ips = get_post_meta( $post_id, self::META_UNIQUE_ATTACKER_IPS, true );
@@ -200,7 +208,7 @@ class DigestStorage {
 		}
 
 		$ip = sanitize_text_field( (string) $ip );
-		$login_url = esc_url_raw( (string) $login_url );
+		$login_url = self::normalize_tracked_url( $login_url );
 		if ( '' === $ip ) {
 			return;
 		}
@@ -242,5 +250,96 @@ class DigestStorage {
 		}
 
 		return $winner_ip;
+	}
+
+	/**
+	 * Find daily digest post ID by day timestamp meta.
+	 *
+	 * @param int $day_ts Start-of-day timestamp.
+	 * @return int
+	 */
+	private static function find_day_post_id_by_meta( $day_ts ) {
+		$query = new \WP_Query(
+			array(
+				'post_type'      => self::POST_TYPE,
+				'post_status'    => 'private',
+				'fields'         => 'ids',
+				'posts_per_page' => 1,
+				'no_found_rows'  => true,
+				'meta_key'       => self::META_DAY_TS,
+				'meta_value'     => (int) $day_ts,
+				'meta_compare'   => '=',
+				'orderby'        => 'ID',
+				'order'          => 'ASC',
+			)
+		);
+
+		if ( ! empty( $query->posts[0] ) ) {
+			return (int) $query->posts[0];
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Atomically increment integer counter meta.
+	 *
+	 * @param int    $post_id  Post ID.
+	 * @param string $meta_key Target meta key.
+	 * @param int    $delta    Increment value.
+	 * @return void
+	 */
+	private static function increment_counter_meta( $post_id, $meta_key, $delta ) {
+		global $wpdb;
+
+		$delta = (int) $delta;
+		if ( 0 === $delta ) {
+			return;
+		}
+
+		$updated = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$wpdb->postmeta}
+				SET meta_value = meta_value + %d
+				WHERE post_id = %d AND meta_key = %s",
+				$delta,
+				(int) $post_id,
+				(string) $meta_key
+			)
+		);
+
+		if ( 0 !== (int) $updated ) {
+			return;
+		}
+
+		$added = add_post_meta( (int) $post_id, (string) $meta_key, $delta, true );
+		if ( $added ) {
+			return;
+		}
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$wpdb->postmeta}
+				SET meta_value = meta_value + %d
+				WHERE post_id = %d AND meta_key = %s",
+				$delta,
+				(int) $post_id,
+				(string) $meta_key
+			)
+		);
+	}
+
+	/**
+	 * Normalize tracked URL for digest payload.
+	 *
+	 * @param string $login_url Raw request URL.
+	 * @return string
+	 */
+	private static function normalize_tracked_url( $login_url ) {
+		$login_url = esc_url_raw( (string) $login_url );
+		if ( strlen( $login_url ) > 512 ) {
+			$login_url = substr( $login_url, 0, 512 );
+		}
+		return $login_url;
 	}
 }

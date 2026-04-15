@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class DigestDispatcher {
+	const MAX_PERIOD_POSTS = 400;
+
 	/**
 	 * Register digest dispatch hooks.
 	 *
@@ -43,11 +45,28 @@ class DigestDispatcher {
 		if ( '' === $admin_email ) {
 			return;
 		}
+		if ( ! is_email( $admin_email ) ) {
+			return;
+		}
+
+		$period_key = self::build_period_lock_key( $digest_key, $period['start_ts'], $period['end_ts'] );
+		$sent_key   = 'llar_digest_sent_' . $period_key;
+		$lock_key   = 'llar_digest_in_progress_' . $period_key;
+
+		if ( get_transient( $sent_key ) || get_transient( $lock_key ) ) {
+			return;
+		}
+
+		set_transient( $lock_key, 1, HOUR_IN_SECONDS );
 
 		$subject = self::build_subject( $digest_key, $stats['lockouts_total'] );
 		$body = self::build_body( $digest_key, $period, $stats );
+		$sent = Helpers::send_mail_with_logo( $admin_email, $subject, $body );
 
-		Helpers::send_mail_with_logo( $admin_email, $subject, $body );
+		delete_transient( $lock_key );
+		if ( $sent ) {
+			set_transient( $sent_key, 1, HOUR_IN_SECONDS );
+		}
 	}
 
 	/**
@@ -99,7 +118,7 @@ class DigestDispatcher {
 				'post_type'      => DigestStorage::POST_TYPE,
 				'post_status'    => 'private',
 				'fields'         => 'ids',
-				'posts_per_page' => -1,
+				'posts_per_page' => self::MAX_PERIOD_POSTS,
 				'no_found_rows'  => true,
 				'orderby'        => 'meta_value_num',
 				'order'          => 'ASC',
@@ -114,6 +133,12 @@ class DigestDispatcher {
 				),
 			)
 		);
+		if ( count( $post_ids ) >= self::MAX_PERIOD_POSTS ) {
+			error_log( 'LLAR Digest: period stats truncated' );
+		}
+		if ( ! empty( $post_ids ) ) {
+			update_meta_cache( 'post', $post_ids );
+		}
 
 		$lockouts_total = 0;
 		$attempts_total = 0;
@@ -398,5 +423,17 @@ class DigestDispatcher {
 		$email = sanitize_email( $email );
 
 		return is_email( $email ) ? $email : '';
+	}
+
+	/**
+	 * Build period-specific lock key segment for digest transient names.
+	 *
+	 * @param string $digest_key Digest key.
+	 * @param int    $start_ts   Period start timestamp.
+	 * @param int    $end_ts     Period end timestamp.
+	 * @return string
+	 */
+	private static function build_period_lock_key( $digest_key, $start_ts, $end_ts ) {
+		return md5( (string) $digest_key . '|' . (int) $start_ts . '|' . (int) $end_ts );
 	}
 }
