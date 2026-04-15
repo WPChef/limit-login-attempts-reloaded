@@ -119,6 +119,8 @@ class DigestDispatcher {
 		$attempts_total = 0;
 		$unique_ips_map = array();
 		$unique_usernames_map = array();
+		$top_ips_map = array();
+		$top_usernames_map = array();
 
 		foreach ( $post_ids as $post_id ) {
 			$lockouts_total += (int) get_post_meta( $post_id, DigestStorage::META_LOCKOUTS_COUNT, true );
@@ -135,6 +137,66 @@ class DigestDispatcher {
 			foreach ( $unique_usernames as $username => $marker ) {
 				$unique_usernames_map[ (string) $username ] = true;
 			}
+
+			$top_ips = get_post_meta( $post_id, DigestStorage::META_TOP_IPS, true );
+			$top_ips = is_array( $top_ips ) ? $top_ips : array();
+			foreach ( $top_ips as $ip => $row ) {
+				$ip = (string) $ip;
+				if ( '' === $ip ) {
+					continue;
+				}
+
+				if ( empty( $top_ips_map[ $ip ] ) || ! is_array( $top_ips_map[ $ip ] ) ) {
+					$top_ips_map[ $ip ] = array(
+						'attempts'  => 0,
+						'lockouts'  => 0,
+						'last_seen' => 0,
+						'top_url'   => '',
+					);
+				}
+
+				$top_ips_map[ $ip ]['attempts'] += isset( $row['attempts'] ) ? (int) $row['attempts'] : 0;
+				$top_ips_map[ $ip ]['lockouts'] += isset( $row['lockouts'] ) ? (int) $row['lockouts'] : 0;
+				$last_seen = isset( $row['last_seen'] ) ? (int) $row['last_seen'] : 0;
+				if ( $last_seen > $top_ips_map[ $ip ]['last_seen'] ) {
+					$top_ips_map[ $ip ]['last_seen'] = $last_seen;
+				}
+				if ( ! empty( $row['top_url'] ) ) {
+					$top_ips_map[ $ip ]['top_url'] = (string) $row['top_url'];
+				}
+			}
+
+			$top_usernames = get_post_meta( $post_id, DigestStorage::META_TOP_USERNAMES, true );
+			$top_usernames = is_array( $top_usernames ) ? $top_usernames : array();
+			foreach ( $top_usernames as $username => $count ) {
+				$username = (string) $username;
+				if ( '' === $username ) {
+					continue;
+				}
+				$top_usernames_map[ $username ] = ( isset( $top_usernames_map[ $username ] ) ? (int) $top_usernames_map[ $username ] : 0 ) + (int) $count;
+			}
+		}
+
+		uasort(
+			$top_ips_map,
+			function ( $a, $b ) {
+				$a_attempts = isset( $a['attempts'] ) ? (int) $a['attempts'] : 0;
+				$b_attempts = isset( $b['attempts'] ) ? (int) $b['attempts'] : 0;
+				if ( $a_attempts === $b_attempts ) {
+					return 0;
+				}
+				return ( $a_attempts > $b_attempts ) ? -1 : 1;
+			}
+		);
+
+		arsort( $top_usernames_map );
+
+		$most_attempted_ip = '';
+		$most_attempted_ip_attempts = 0;
+		foreach ( $top_ips_map as $ip => $row ) {
+			$most_attempted_ip = (string) $ip;
+			$most_attempted_ip_attempts = isset( $row['attempts'] ) ? (int) $row['attempts'] : 0;
+			break;
 		}
 
 		return array(
@@ -142,7 +204,34 @@ class DigestDispatcher {
 			'attempts_total'         => (int) $attempts_total,
 			'unique_ips_total'       => (int) count( $unique_ips_map ),
 			'unique_usernames_total' => (int) count( $unique_usernames_map ),
+			'top_ips'                => array_slice( $top_ips_map, 0, 10, true ),
+			'top_usernames'          => array_slice( $top_usernames_map, 0, 3, true ),
+			'most_attempted_ip'      => $most_attempted_ip,
+			'most_attempted_attempts'=> (int) $most_attempted_ip_attempts,
+			'attack_threat_level'    => self::resolve_attack_threat_level( $attempts_total, $lockouts_total ),
 		);
+	}
+
+	/**
+	 * Resolve simple threat level for digest summary.
+	 *
+	 * @param int $attempts_total Attempts in period.
+	 * @param int $lockouts_total Lockouts in period.
+	 * @return string
+	 */
+	private static function resolve_attack_threat_level( $attempts_total, $lockouts_total ) {
+		$attempts_total = (int) $attempts_total;
+		$lockouts_total = (int) $lockouts_total;
+
+		if ( $attempts_total >= 500 || $lockouts_total >= 50 ) {
+			return 'High';
+		}
+
+		if ( $attempts_total >= 100 || $lockouts_total >= 10 ) {
+			return 'Medium';
+		}
+
+		return 'Low';
 	}
 
 	/**
@@ -154,7 +243,10 @@ class DigestDispatcher {
 	 */
 	private static function build_subject( $digest_key, $lockouts_total ) {
 		$site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
-		$label = ucfirst( $digest_key );
+		$definitions = self::get_definitions();
+		$label = ! empty( $definitions[ $digest_key ]['name'] )
+			? (string) $definitions[ $digest_key ]['name']
+			: ucfirst( $digest_key );
 
 		return sprintf(
 			'%1$s Security Summary for %2$s: %3$d lockouts',
@@ -173,31 +265,123 @@ class DigestDispatcher {
 	 * @return string
 	 */
 	private static function build_body( $digest_key, $period, $stats ) {
+		$definitions = self::get_definitions();
+		$definition = ! empty( $definitions[ $digest_key ] ) && is_array( $definitions[ $digest_key ] )
+			? $definitions[ $digest_key ]
+			: array();
+
 		$site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
-		$title = ucfirst( $digest_key ) . ' Login Security Summary';
 		$start_label = date_i18n( 'Y-m-d H:i', (int) $period['start_ts'] );
 		$end_label = date_i18n( 'Y-m-d H:i', (int) $period['end_ts'] );
 		$dashboard_url = admin_url( 'options-general.php?page=limit-login-attempts' );
 		$unsubscribe_url = admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' );
 
-		$rows = array(
-			'Lockouts'                  => (int) $stats['lockouts_total'],
-			'Failed login attempts'     => (int) $stats['attempts_total'],
-			'Unique attacker IPs'       => (int) $stats['unique_ips_total'],
-			'Unique targeted usernames' => (int) $stats['unique_usernames_total'],
-		);
+		$template_file = ! empty( $definition['email_template'] ) ? (string) $definition['email_template'] : 'digest-daily-content.php';
+		$title_mode = ! empty( $definition['title_mode'] ) ? (string) $definition['title_mode'] : 'date';
+		$intro_text = ! empty( $definition['intro_text'] ) ? (string) $definition['intro_text'] : 'This is your security summary from Limit Login Attempts Reloaded for';
+		$show_threat_level = ! empty( $definition['show_threat_level'] );
 
-		$summary_html = '';
-		foreach ( $rows as $label => $value ) {
-			$summary_html .= '<li><strong>' . esc_html( $label ) . ':</strong> ' . esc_html( (string) $value ) . '</li>';
+		$email_title = self::build_email_title( $title_mode, $period, $start_label, $end_label );
+		$summary_items = self::build_summary_items( $stats, $show_threat_level );
+		$top_ips_rows = self::build_top_ips_rows( $stats['top_ips'] );
+		$top_usernames_rows = self::build_top_usernames_rows( $stats['top_usernames'] );
+		$most_attempted_ip_text = ! empty( $stats['most_attempted_ip'] )
+			? (string) $stats['most_attempted_ip'] . ' (' . (int) $stats['most_attempted_attempts'] . ')'
+			: 'n/a';
+		$reporting_period = $start_label . ' to ' . $end_label;
+		$template_path = LLA_PLUGIN_DIR . 'views/emails/' . $template_file;
+
+		if ( ! file_exists( $template_path ) ) {
+			$template_path = LLA_PLUGIN_DIR . 'views/emails/digest-daily-content.php';
 		}
 
-		return '<h2>' . esc_html( $title ) . '</h2>'
-			. '<p>Hello,<br>This is your ' . esc_html( $digest_key ) . ' security summary for <strong>' . esc_html( $site_domain ) . '</strong>.</p>'
-			. '<p><strong>Reporting period:</strong> ' . esc_html( $start_label ) . ' to ' . esc_html( $end_label ) . '</p>'
-			. '<ul>' . $summary_html . '</ul>'
-			. '<p><a href="' . esc_url( $dashboard_url ) . '">Go to Dashboard</a></p>'
-			. '<p style="font-size:12px;color:#666;">Don\'t want these notifications? <a href="' . esc_url( $unsubscribe_url ) . '">Unsubscribe</a>.</p>';
+		ob_start();
+		include $template_path;
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Build digest email title based on configured mode.
+	 *
+	 * @param string $title_mode  Mode from definition.
+	 * @param array  $period      Period bounds.
+	 * @param string $start_label Formatted start datetime.
+	 * @param string $end_label   Formatted end datetime.
+	 * @return string
+	 */
+	private static function build_email_title( $title_mode, $period, $start_label, $end_label ) {
+		if ( 'range' === $title_mode ) {
+			return 'Weekly Login Security Summary - ' . $start_label . ' to ' . $end_label;
+		}
+
+		if ( 'month' === $title_mode ) {
+			return 'Monthly Login Security Summary - ' . date_i18n( 'F Y', (int) $period['start_ts'] );
+		}
+
+		return 'Login Security Summary - ' . date_i18n( 'Y-m-d', (int) $period['end_ts'] );
+	}
+
+	/**
+	 * Build summary list items for template.
+	 *
+	 * @param array $stats              Aggregated stats.
+	 * @param bool  $show_threat_level  Whether to include threat row.
+	 * @return array
+	 */
+	private static function build_summary_items( $stats, $show_threat_level ) {
+		$items = array(
+			'Lockouts'              => (int) $stats['lockouts_total'],
+			'Failed login attempts' => (int) $stats['attempts_total'],
+			'Unique IPs'            => (int) $stats['unique_ips_total'],
+			'Most attempted IP'     => ! empty( $stats['most_attempted_ip'] )
+				? (string) $stats['most_attempted_ip'] . ' (' . (int) $stats['most_attempted_attempts'] . ')'
+				: 'n/a',
+		);
+
+		if ( $show_threat_level ) {
+			$items['Attack Threat Level'] = (string) $stats['attack_threat_level'];
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Build top IP rows for template rendering.
+	 *
+	 * @param array $top_ips Aggregated top ip map.
+	 * @return array
+	 */
+	private static function build_top_ips_rows( $top_ips ) {
+		$rows = array();
+		foreach ( $top_ips as $ip => $row ) {
+			$rows[] = array(
+				'ip'       => (string) $ip,
+				'lockouts' => isset( $row['lockouts'] ) ? (int) $row['lockouts'] : 0,
+				'attempts' => isset( $row['attempts'] ) ? (int) $row['attempts'] : 0,
+				'last_seen'=> ! empty( $row['last_seen'] ) ? date_i18n( 'Y-m-d H:i', (int) $row['last_seen'] ) : '-',
+				'top_url'  => ! empty( $row['top_url'] ) ? (string) $row['top_url'] : '-',
+			);
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Build top username rows for template rendering.
+	 *
+	 * @param array $top_usernames Aggregated top usernames map.
+	 * @return array
+	 */
+	private static function build_top_usernames_rows( $top_usernames ) {
+		$rows = array();
+		foreach ( $top_usernames as $username => $count ) {
+			$rows[] = array(
+				'username' => (string) $username,
+				'attempts' => (int) $count,
+			);
+		}
+
+		return $rows;
 	}
 
 	/**
