@@ -1,38 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-?>
-<div class="title"><?php esc_html_e( 'Verify your login', 'limit-login-attempts-reloaded' ); ?></div>
-<div class="description">
-	<?php esc_html_e( 'We received a login attempt to your WordPress site and need to confirm it is you.', 'limit-login-attempts-reloaded' ); ?>
-	<?php esc_html_e( 'Enter the verification code below to complete your login.', 'limit-login-attempts-reloaded' ); ?>
-</div>
-<div style="margin:0 0 20px;border-radius:14px;background-color:#f9fafb;border:1px solid #e5e7eb;text-align:center;">
-	<div style="font-size:32px;letter-spacing:6px;font-weight:700;color:#111827;margin:13px 0 8px;"><?php echo esc_html( $code_safe ); ?></div>
-	<div style="font-size:12px;color:#6b7280;text-align:center;width:80%;margin:0 auto 20px;">
-		<?php
-		echo esc_html(
-			sprintf(
-				__( 'This code will expire in %1$d minutes. Your verification session expires %2$d minutes after the login attempt.', 'limit-login-attempts-reloaded' ),
-				$code_ttl_minutes,
-				30
-			)
-		);
-		?>
-	</div>
-</div>
-<div style="margin-bottom:20px;">
-	<div style="font-size:13px;font-weight:600;color:#111827;margin:0 0 8px;"><?php esc_html_e( 'Login attempt from:', 'limit-login-attempts-reloaded' ); ?></div>
-	<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;font-size:13px;color:#4b5563;line-height:1.45;">
-		<tr><td style="font-weight:500;color:#111827;padding:6px 16px 6px 0;white-space:nowrap;"><?php esc_html_e( 'Site:', 'limit-login-attempts-reloaded' ); ?></td><td style="text-align:right;padding:6px 0;"><?php echo esc_html( $site_domain_safe ); ?></td></tr>
-		<tr><td style="font-weight:500;color:#111827;padding:6px 16px 6px 0;white-space:nowrap;"><?php esc_html_e( 'IP Address:', 'limit-login-attempts-reloaded' ); ?></td><td style="text-align:right;padding:6px 0;"><?php echo esc_html( $ip_safe ); ?></td></tr>
-		<tr><td style="font-weight:500;color:#111827;padding:6px 16px 6px 0;white-space:nowrap;"><?php esc_html_e( 'Location:', 'limit-login-attempts-reloaded' ); ?></td><td style="text-align:right;padding:6px 0;"><?php echo esc_html( $location_safe ); ?></td></tr>
-		<tr><td style="font-weight:500;color:#111827;padding:6px 16px 6px 0;white-space:nowrap;"><?php esc_html_e( 'Browser:', 'limit-login-attempts-reloaded' ); ?></td><td style="text-align:right;padding:6px 0;"><?php echo esc_html( $browser_safe ); ?></td></tr>
-		<tr><td style="font-weight:500;color:#111827;padding:6px 16px 6px 0;white-space:nowrap;"><?php esc_html_e( 'Time:', 'limit-login-attempts-reloaded' ); ?></td><td style="text-align:right;padding:6px 0;"><?php echo esc_html( $time_safe ); ?></td></tr>
-	</table>
-</div>
-<?php
 /**
  * MFA verification email content block.
  */
