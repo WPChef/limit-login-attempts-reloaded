@@ -1145,17 +1145,24 @@ class Ajax
 		include LLA_PLUGIN_DIR . 'views/emails/test-notification-content.php';
 		$content = (string) ob_get_clean();
 
-		if( Mailer::send(
-            $to,
-            $subject,
-            $content,
+		add_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
+
+		$sent = Mailer::send(
+			$to,
+			$subject,
+			$content,
 			array( 'content-type: text/html' ),
 			array(),
 			false,
 			array(
-				'title' => $subject,
+				'title'    => $subject,
+				'logo_cid' => 'logo',
 			)
-        ) ) {
+		);
+
+		remove_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
+
+		if ( $sent ) {
 
 			wp_send_json_success();
 		} else {
