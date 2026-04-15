@@ -154,16 +154,28 @@ defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 			'name' => 'Daily',
 			'interval_seconds' => DAY_IN_SECONDS,
 			'is_default' => true,
+			'email_template' => 'digest-daily-content.php',
+			'show_threat_level' => false,
+			'intro_text' => 'This is your daily lockout summary from Limit Login Attempts Reloaded for',
+			'title_mode' => 'date',
 		),
 		'weekly' => array(
 			'name' => 'Weekly',
 			'interval_seconds' => WEEK_IN_SECONDS,
 			'is_default' => true,
+			'email_template' => 'digest-weekly-content.php',
+			'show_threat_level' => true,
+			'intro_text' => 'This is your weekly lockout summary from Limit Login Attempts Reloaded for',
+			'title_mode' => 'range',
 		),
 		'monthly' => array(
 			'name' => 'Monthly',
 			'interval_seconds' => MONTH_IN_SECONDS,
 			'is_default' => true,
+			'email_template' => 'digest-monthly-content.php',
+			'show_threat_level' => true,
+			'intro_text' => 'This is your monthly lockout summary from Limit Login Attempts Reloaded for',
+			'title_mode' => 'month',
 		),
 	)
 );
