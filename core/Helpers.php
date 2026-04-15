@@ -479,7 +479,7 @@ class Helpers {
 	}
 
 	public static function add_attachments_to_php_mailer( &$phpmailer ) {
-		$logo_path = LLA_PLUGIN_DIR . 'assets/img/logo.png';
+		$logo_path = LLA_PLUGIN_DIR . 'assets/img/llar-logo-email.png';
 
 		if( file_exists( $logo_path ) ) {
 			$phpmailer->AddEmbeddedImage( $logo_path, 'logo' );
