@@ -94,8 +94,16 @@ class DigestDispatcher {
 		$definitions = self::get_definitions();
 		$interval_seconds = ! empty( $definitions[ $digest_key ]['interval_seconds'] )
 			? max( 1, (int) $definitions[ $digest_key ]['interval_seconds'] )
-			: DAY_IN_SECONDS;
-		$today_start = strtotime( current_time( 'Y-m-d 00:00:00' ) );
+			: 86400;
+		$now_utc     = (int) current_time( 'timestamp', true );
+		$today_start = gmmktime(
+			0,
+			0,
+			0,
+			(int) gmdate( 'n', $now_utc ),
+			(int) gmdate( 'j', $now_utc ),
+			(int) gmdate( 'Y', $now_utc )
+		);
 		$end_ts = $today_start - 1;
 		$start_ts = $end_ts - $interval_seconds + 1;
 

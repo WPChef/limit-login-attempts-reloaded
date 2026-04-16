@@ -34,11 +34,20 @@ class DigestRetriesController {
 	}
 
 	/**
-	 * Get start-of-day timestamp in site timezone.
+	 * Get start-of-day timestamp in UTC.
 	 *
 	 * @return int
 	 */
 	private static function get_day_start_ts() {
-		return strtotime( current_time( 'Y-m-d 00:00:00' ) );
+		$now_utc = (int) current_time( 'timestamp', true );
+
+		return gmmktime(
+			0,
+			0,
+			0,
+			(int) gmdate( 'n', $now_utc ),
+			(int) gmdate( 'j', $now_utc ),
+			(int) gmdate( 'Y', $now_utc )
+		);
 	}
 }
