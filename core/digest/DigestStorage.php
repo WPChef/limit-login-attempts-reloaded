@@ -50,7 +50,7 @@ class DigestStorage {
 	/**
 	 * Get or create daily digest post.
 	 *
-	 * @param int $day_ts Start-of-day timestamp in site timezone.
+	 * @param int $day_ts Start-of-day timestamp in UTC.
 	 * @return int Post ID or 0 on failure.
 	 */
 	public static function get_or_create_day_post( $day_ts ) {
@@ -100,7 +100,7 @@ class DigestStorage {
 	/**
 	 * Increment failed attempts counter for a day.
 	 *
-	 * @param int $day_ts Start-of-day timestamp in site timezone.
+	 * @param int $day_ts Start-of-day timestamp in UTC.
 	 * @param int $delta Increment value.
 	 * @return void
 	 */
@@ -117,7 +117,7 @@ class DigestStorage {
 	/**
 	 * Increment lockouts counter for a day.
 	 *
-	 * @param int $day_ts Start-of-day timestamp in site timezone.
+	 * @param int $day_ts Start-of-day timestamp in UTC.
 	 * @param int $delta Increment value.
 	 * @return void
 	 */
@@ -147,7 +147,7 @@ class DigestStorage {
 			return;
 		}
 
-		$now_ts = current_time( 'timestamp' );
+		$now_ts = current_time( 'timestamp', true );
 		$ip = sanitize_text_field( (string) $ip );
 		$username = sanitize_user( (string) $username, true );
 		$login_url = self::normalize_tracked_url( $login_url );
@@ -224,7 +224,7 @@ class DigestStorage {
 			);
 		}
 		$top_ips[ $ip ]['lockouts'] = (int) $top_ips[ $ip ]['lockouts'] + 1;
-		$top_ips[ $ip ]['last_seen'] = current_time( 'timestamp' );
+		$top_ips[ $ip ]['last_seen'] = current_time( 'timestamp', true );
 		if ( '' !== $login_url ) {
 			$top_ips[ $ip ]['top_url'] = $login_url;
 		}

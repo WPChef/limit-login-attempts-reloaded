@@ -118,7 +118,7 @@ class DigestScheduler {
 	 */
 	private static function get_first_run_timestamp( $digest_key, $interval_seconds ) {
 		$interval_seconds = max( 60, (int) $interval_seconds );
-		$now = current_time( 'timestamp' );
+		$now = current_time( 'timestamp', true );
 		$remainder = $now % $interval_seconds;
 
 		if ( 0 === $remainder ) {
