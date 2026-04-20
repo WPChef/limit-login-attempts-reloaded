@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class DigestStorage {
 	const POST_TYPE = 'llar_digest_day';
+	const CLEANUP_TRANSIENT_KEY = 'llar_digest_storage_cleanup_lock';
 	const META_DAY_TS = '_llar_digest_day_ts';
 	const META_LOCKOUTS_COUNT = '_llar_digest_lockouts_count';
 	const META_FAILED_ATTEMPTS_COUNT = '_llar_digest_failed_attempts_count';
@@ -122,6 +123,8 @@ class DigestStorage {
 	 * @return void
 	 */
 	public static function increment_lockouts( $day_ts, $delta ) {
+		self::cleanup_expired_history();
+
 		$post_id = self::get_or_create_day_post( $day_ts );
 
 		if ( ! $post_id ) {
@@ -129,6 +132,46 @@ class DigestStorage {
 		}
 
 		self::increment_counter_meta( $post_id, self::META_LOCKOUTS_COUNT, $delta );
+	}
+
+	/**
+	 * Delete digest day rows older than retention period.
+	 *
+	 * @return void
+	 */
+	private static function cleanup_expired_history() {
+		if ( get_transient( self::CLEANUP_TRANSIENT_KEY ) ) {
+			return;
+		}
+
+		set_transient( self::CLEANUP_TRANSIENT_KEY, 1, DAY_IN_SECONDS );
+
+		$retention_days = defined( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS' )
+			? max( 1, (int) LLA_LOCKOUT_HISTORY_RETENTION_DAYS )
+			: 60;
+		$cutoff_ts = (int) current_time( 'timestamp', true ) - ( $retention_days * DAY_IN_SECONDS );
+		$expired_ids = get_posts(
+			array(
+				'post_type'      => self::POST_TYPE,
+				'post_status'    => 'private',
+				'fields'         => 'ids',
+				'posts_per_page' => 200,
+				'no_found_rows'  => true,
+				'meta_key'       => self::META_DAY_TS,
+				'meta_query'     => array(
+					array(
+						'key'     => self::META_DAY_TS,
+						'value'   => (int) $cutoff_ts,
+						'compare' => '<',
+						'type'    => 'NUMERIC',
+					),
+				),
+			)
+		);
+
+		foreach ( $expired_ids as $expired_id ) {
+			wp_delete_post( (int) $expired_id, true );
+		}
 	}
 
 	/**
