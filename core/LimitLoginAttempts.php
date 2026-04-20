@@ -2249,6 +2249,11 @@ class LimitLoginAttempts
 	{
 		$ip = $this->get_address();
 		$retries = Config::get( 'retries' );
+		$notify_email_after = (int) Config::get( 'notify_email_after' );
+		if ( true === (bool) Config::get( 'digest_realtime' ) ) {
+			$notify_email_after = 1;
+		}
+		$notify_email_after = max( 1, $notify_email_after );
 
 		if ( ! is_array( $retries ) ) {
 			$retries = array();
@@ -2257,7 +2262,7 @@ class LimitLoginAttempts
 		/* check if we are at the right nr to do notification */
 		if (
 			isset( $retries[ $ip ] )
-			&& ( ( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % Config::get( 'notify_email_after' ) ) != 0
+			&& ( ( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % $notify_email_after ) != 0
 		) {
 			return;
 		}

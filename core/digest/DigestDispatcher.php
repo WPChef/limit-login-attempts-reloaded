@@ -444,4 +444,5 @@ class DigestDispatcher {
 	private static function build_period_lock_key( $digest_key, $start_ts, $end_ts ) {
 		return md5( (string) $digest_key . '|' . (int) $start_ts . '|' . (int) $end_ts );
 	}
+
 }
