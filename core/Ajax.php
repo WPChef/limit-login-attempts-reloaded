@@ -1020,6 +1020,8 @@ class Ajax
 
     public function close_premium_message() {
 
+	    $this->check_user_capabilities();
+
 	    check_ajax_referer( 'llar-close-premium-message', 'sec' );
 
 	    Config::update( 'notifications_message_shown', strtotime( '+1 day' ) );
