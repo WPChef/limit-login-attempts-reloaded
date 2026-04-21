@@ -231,7 +231,7 @@ class WooCommerceIntegration extends BaseIntegration {
 		if ( 'deny' === $response['result'] ) {
 			// Set the marker and the error
 			$this->llar_instance->user_blocking  = true;
-			$this->llar_instance->error_messages = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+			$this->llar_instance->error_messages = __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' );
 		}
 	}
 

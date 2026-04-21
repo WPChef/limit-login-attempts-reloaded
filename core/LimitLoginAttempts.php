@@ -1990,8 +1990,16 @@ class LimitLoginAttempts
 		}
 		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 		$cancel_url  = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		$login_url   = ( $redirect_to !== '' ) ? wp_login_url( $redirect_to ) : wp_login_url();
+		$current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$current_login_url   = '';
+		if ( is_string( $current_request_uri ) && '' !== $current_request_uri ) {
+			$current_login_url = home_url( $current_request_uri );
+		}
+		$login_url = ( '' !== $current_login_url ) ? $current_login_url : wp_login_url();
 		$login_url   = add_query_arg( 'llar_mfa', '1', $login_url );
+		if ( '' !== $redirect_to ) {
+			$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );
+		}
 		$payload     = array(
 			'user_ip'              => Helpers::get_all_ips(),
 			'login_url'            => $login_url,
@@ -3799,7 +3807,7 @@ class LimitLoginAttempts
 
 			// Set the marker and the error
 			$this->user_blocking = true;
-			$this->error_messages = __( '<strong>Error</strong>: Registration is currently disabled.', 'limit-login-attempts-reloaded' );
+			$this->error_messages = __( 'Registration is currently disabled.', 'limit-login-attempts-reloaded' );
 		}
 	}
 
