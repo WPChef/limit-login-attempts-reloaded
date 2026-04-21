@@ -1918,11 +1918,11 @@ class LimitLoginAttempts
 				$user = get_user_by( 'email', $username );
 			}
 		}
-
-		$mfa_roles        = Config::get( 'mfa_roles', array() );
-		$mfa_roles        = is_array( $mfa_roles ) ? $mfa_roles : array();
-		$user_excluded    = $user && ! empty( $mfa_roles ) && ! array_intersect( (array) $user->roles, $mfa_roles );
-		$should_trigger_mfa = $mfa_enabled && ! $user_excluded;
+		$mfa_roles         = Config::get( 'mfa_roles', array() );
+		$mfa_roles         = is_array( $mfa_roles ) ? $mfa_roles : array();
+		$has_mfa_groups    = ! empty( $mfa_roles );
+		$user_excluded     = $user && $has_mfa_groups && ! array_intersect( (array) $user->roles, $mfa_roles );
+		$should_trigger_mfa = $mfa_enabled && $has_mfa_groups && ! $user_excluded;
 
 		if ( ! $should_trigger_mfa ) {
 			return;
