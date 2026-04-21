@@ -73,7 +73,7 @@ class Config {
 		'mfa_enabled'                   => 0,
 		'mfa_provider'                  => 'llar',
 		'mfa_provider_config'           => array(),
-		'mfa_roles'                     => array(),
+		'mfa_roles'                     => array( 'administrator' ),
 	);
 
 	private static $disable_autoload_options = array(
