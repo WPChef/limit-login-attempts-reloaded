@@ -61,19 +61,24 @@ class MfaValidator {
 	}
 
 	/**
-	 * Validate and normalize rescue hash_id from URL. Length 64, hex only.
+	 * Validate rescue token from URL.
+	 * Supports new format (32 chars, base62) and legacy format (64 chars, hex).
 	 *
-	 * @param string $hash_id Raw hash_id from query.
-	 * @return string|false Sanitized hash_id or false if invalid.
+	 * @param string $hash_id Raw token from query.
+	 * @return string|false Sanitized token or false if invalid.
 	 */
 	public static function validate_rescue_hash_id( $hash_id ) {
 		$hash_id = is_string( $hash_id ) ? sanitize_text_field( $hash_id ) : '';
-		$len     = MfaConstants::CODE_LENGTH;
-		// hash('sha256') in MfaBackupCodes::get_rescue_url() is always lowercase; transient keys must match.
-		$hash_id = strtolower( $hash_id );
-		if ( $len !== strlen( $hash_id ) || ! preg_match( '/^[a-f0-9]{' . $len . '}$/', $hash_id ) ) {
-			return false;
+		$len     = strlen( $hash_id );
+
+		if ( MfaConstants::RESCUE_TOKEN_LENGTH === $len && preg_match( '/^[A-Za-z0-9]{' . MfaConstants::RESCUE_TOKEN_LENGTH . '}$/', $hash_id ) ) {
+			return $hash_id;
 		}
-		return $hash_id;
+
+		if ( 64 === $len && preg_match( '/^[a-f0-9]{64}$/i', $hash_id ) ) {
+			return strtolower( $hash_id );
+		}
+
+		return false;
 	}
 }

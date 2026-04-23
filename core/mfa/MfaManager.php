@@ -80,10 +80,10 @@ class MfaManager {
 	}
 
 	/**
-	 * Extract validated llar_rescue hash from a full rescue URL.
+	 * Extract validated llar_rescue token from a full rescue URL.
 	 *
 	 * @param string $url Rescue URL (query may include llar_rescue).
-	 * @return string 64-char lowercase hex or ''.
+	 * @return string Validated token or ''.
 	 */
 	private function get_rescue_hash_from_rescue_url( $url ) {
 		if ( ! is_string( $url ) || '' === $url ) {
@@ -97,11 +97,8 @@ class MfaManager {
 		if ( empty( $qp['llar_rescue'] ) || ! is_string( $qp['llar_rescue'] ) ) {
 			return '';
 		}
-		$h = strtolower( (string) $qp['llar_rescue'] );
-		if ( 64 !== strlen( $h ) || ! preg_match( '/^[a-f0-9]{64}$/', $h ) ) {
-			return '';
-		}
-		return $h;
+		$validated = MfaValidator::validate_rescue_hash_id( $qp['llar_rescue'] );
+		return false === $validated ? '' : $validated;
 	}
 
 	/**
