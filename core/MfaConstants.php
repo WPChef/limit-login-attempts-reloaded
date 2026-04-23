@@ -17,11 +17,21 @@ class MfaConstants {
 	/** @var int Number of rescue codes to generate */
 	const CODE_COUNT = LLA_MFA_CODE_COUNT;
 
-	/** @var int Maximum rescue link verification attempts per IP per hour */
-	const MAX_ATTEMPTS = LLA_MFA_MAX_ATTEMPTS;
-
-	/** @var int Rescue link TTL in seconds (5 minutes) */
+	/** @var int Rescue link transient TTL in seconds (default: LLA_MFA_RESCUE_LINK_TTL, typically 10 years). One-time use is enforced by consuming the payload, not by this TTL expiring first. */
 	const RESCUE_LINK_TTL = LLA_MFA_RESCUE_LINK_TTL;
+
+	/**
+	 * Show mfa-recovery-links-expired notice when max rescue transient expiry is within this many seconds
+	 * (e.g. 5 days). If LLA_MFA_RESCUE_LINK_TTL is very long, the "missing payload" branch is the main
+	 * practical case for regeneration; the near-expiry branch matters late in the TTL window.
+	 */
+	const RESCUE_NOTICE_THRESHOLD = LLA_MFA_RESCUE_NOTICE_THRESHOLD;
+
+	/** @var string Transient key for cached MAX(transient_timeout) query used by the admin notice (avoid repeated LIKE scans on wp_options). */
+	const RESCUE_MAX_EXPIRY_CACHE_KEY = 'llar_mfa_rescue_max_expiry_v1';
+
+	/** @var int Cache TTL in seconds for RESCUE_MAX_EXPIRY_CACHE_KEY. */
+	const RESCUE_MAX_EXPIRY_CACHE_TTL = 120;
 
 	/** @var int MFA temporary disable duration in seconds (1 hour) */
 	const MFA_DISABLE_DURATION = LLA_MFA_DISABLE_DURATION;
@@ -29,16 +39,18 @@ class MfaConstants {
 	/** @var int Rate limiting period for rescue attempts (1 hour). @deprecated Use RESCUE_USE_COOLDOWN for rescue endpoint. */
 	const RATE_LIMIT_PERIOD = LLA_MFA_RATE_LIMIT_PERIOD;
 
-	/** @var int Minimum seconds between two rescue endpoint uses (cooldown). Default 60 = one use per minute. */
+	/**
+	 * @var int Kept for wp-config / backward compatibility. Global post-success rescue cooldown was removed;
+	 *      protection is one-time transients and per-code used flags.
+	 */
 	const RESCUE_USE_COOLDOWN = LLA_MFA_RESCUE_USE_COOLDOWN;
 
 	/** @var string Transient key prefix for rescue codes */
 	const TRANSIENT_RESCUE_PREFIX = LLA_MFA_TRANSIENT_RESCUE_PREFIX;
 
-	/** @var string Transient key prefix for rescue attempts rate limiting. @deprecated Rescue limit is now global via TRANSIENT_RESCUE_LAST_USE. */
-	const TRANSIENT_ATTEMPTS_PREFIX = LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX;
-
-	/** @var string Transient key for last rescue endpoint use (global cooldown, one use per RESCUE_USE_COOLDOWN seconds). */
+	/**
+	 * @var string Transient name reserved in wp-config; no longer set by the plugin (legacy global cooldown removed).
+	 */
 	const TRANSIENT_RESCUE_LAST_USE = LLA_MFA_TRANSIENT_RESCUE_LAST_USE;
 
 	/** @var string Transient key for MFA temporary disable */

@@ -10,13 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * MFA rescue endpoint: rate limiting, decrypt, verify, disable MFA.
+ * MFA rescue endpoint: decrypt, verify, disable MFA. One-time
+ * transient per link plus per-code "used" in config. Prefetch/preview
+ * requests are ignored so they do not consume the one-time link.
  * Uses MfaValidator for hash_id validation; MfaBackupCodes for decrypt/verify.
  */
 class MfaEndpoint implements MfaEndpointInterface {
-
-	/** Non-informative message for 429 (do not reveal retry timing). */
-	const MSG_TOO_MANY_REQUESTS = 'Too many requests.';
 
 	/** Non-informative message for 403/500 (do not reveal internal details). */
 	const MSG_ERROR = 'An error occurred.';
@@ -38,35 +37,41 @@ class MfaEndpoint implements MfaEndpointInterface {
 	}
 
 	/**
-	 * Handle rescue endpoint request. Global cooldown: one use per RESCUE_USE_COOLDOWN seconds (default 1 min).
-	 * Then validates hash_id, decrypts, verifies code, disables MFA and redirects, or wp_die.
+	 * Handle rescue endpoint request. Validates format, then decrypts, verifies code,
+	 * temporarily disables MFA, or wp_die.
 	 *
 	 * @param string $hash_id Hash ID from URL (llar_rescue query var).
 	 * @return void
 	 */
 	public function handle( $hash_id ) {
-		if ( $this->is_rescue_cooldown() ) {
-			wp_die( self::MSG_TOO_MANY_REQUESTS, 'LLAR MFA Rescue', array( 'response' => 429 ) );
-		}
-
 		$hash_id = MfaValidator::validate_rescue_hash_id( $hash_id );
 		if ( false === $hash_id ) {
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
-		// Atomically consume encrypted payload for this hash_id (prevents double-spend).
-		$encrypted_data = $this->consume_encrypted_payload( $hash_id );
+		// Prefetch/prerender/link-preview/bot: must not consume the one-time payload.
+		if ( $this->is_rescue_request_prefetch() ) {
+			if ( ! headers_sent() ) {
+				status_header( 204 );
+			}
+			exit;
+		}
+
+		// Read payload (delete only after successful verification so failed attempts are not "burned").
+		$encrypted_data = $this->read_rescue_encrypted_payload( $hash_id );
 		if ( false === $encrypted_data ) {
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
 		$plain_code = $this->backup_codes->decrypt_code( $encrypted_data );
 		if ( false === $plain_code ) {
+			$this->remove_rescue_payload_from_options( $hash_id );
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
 		$codes = Config::get( 'mfa_rescue_codes', array() );
 		if ( ! is_array( $codes ) || empty( $codes ) ) {
+			$this->remove_rescue_payload_from_options( $hash_id );
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
@@ -84,36 +89,50 @@ class MfaEndpoint implements MfaEndpointInterface {
 		}
 
 		if ( $code_verified && null !== $verified_index ) {
+			$deleted = $this->remove_rescue_payload_from_options( $hash_id );
+			if ( 1 !== (int) $deleted ) {
+				wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+			}
 			$rescue_code = RescueCode::from_array( $codes[ $verified_index ] );
 			$rescue_code->mark_as_used();
 			$codes[ $verified_index ] = $rescue_code->to_array();
 			Config::update( 'mfa_rescue_codes', $codes );
 			$this->disable_mfa_temporarily();
-			// Set cooldown only on success so failed attempts (invalid link, already used) don't block retries.
-			$this->set_rescue_cooldown();
 			$login_url = add_query_arg( 'llar_mfa_disabled', '1', wp_login_url() );
 			wp_safe_redirect( $login_url );
 			exit;
 		}
 
+		$this->remove_rescue_payload_from_options( $hash_id );
 		wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 	}
 
 	/**
-	 * Atomically consume encrypted payload for a given hash_id.
-	 * Uses dedicated transient per hash and low-level DELETE to prevent double-spend.
+	 * Read and validate stored encrypted payload (does not remove it). Falls back to direct
+	 * wp_options read when object cache misses (some hosts/stacks show the row in DB but not in cache).
 	 *
 	 * @param string $hash_id Validated hash_id from URL.
-	 * @return string|false Encrypted payload or false if not found/invalid.
+	 * @return string|false Encrypted payload or false.
 	 */
-	private function consume_encrypted_payload( $hash_id ) {
+	private function read_rescue_encrypted_payload( $hash_id ) {
 		$transient_key  = MfaConstants::TRANSIENT_RESCUE_PREFIX . $hash_id;
 		$encrypted_data = get_transient( $transient_key );
 		if ( false === $encrypted_data ) {
+			global $wpdb;
+			$option_name = '_transient_' . $transient_key;
+			$raw         = $wpdb->get_var(
+				$wpdb->prepare(
+					'SELECT option_value FROM ' . $wpdb->options . ' WHERE option_name = %s LIMIT 1',
+					$option_name
+				)
+			);
+			if ( null !== $raw && '' !== $raw ) {
+				$encrypted_data = maybe_unserialize( $raw );
+			}
+		}
+		if ( false === $encrypted_data ) {
 			return false;
 		}
-
-		// Basic sanity checks before touching the database.
 		if ( ! is_string( $encrypted_data ) || '' === $encrypted_data ) {
 			return false;
 		}
@@ -121,7 +140,6 @@ class MfaEndpoint implements MfaEndpointInterface {
 		if ( strlen( $encrypted_data ) > $max_len ) {
 			return false;
 		}
-		// v2 authenticated payloads use prefix "v2:" + base64; legacy is base64 only.
 		$v2_prefix = 'v2:';
 		if ( 0 === strpos( $encrypted_data, $v2_prefix ) ) {
 			$payload = substr( $encrypted_data, strlen( $v2_prefix ) );
@@ -131,53 +149,74 @@ class MfaEndpoint implements MfaEndpointInterface {
 		} elseif ( ! preg_match( '/^[A-Za-z0-9+\/=]+$/', $encrypted_data ) ) {
 			return false;
 		}
+		return $encrypted_data;
+	}
 
-		// Atomic delete of the transient row; only the first request will succeed.
+	/**
+	 * Remove the one-time payload row from the database (and timeout row). Returns rows deleted (0 or 1 for value row).
+	 *
+	 * @param string $hash_id Validated hash_id.
+	 * @return int Deleted rows for _transient_* value row.
+	 */
+	private function remove_rescue_payload_from_options( $hash_id ) {
+		$transient_key = MfaConstants::TRANSIENT_RESCUE_PREFIX . $hash_id;
 		global $wpdb;
 		$option_name = '_transient_' . $transient_key;
-
-		$deleted = $wpdb->query(
+		$deleted     = $wpdb->query(
 			$wpdb->prepare(
 				'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
 				$option_name
 			)
 		);
-
-		if ( 1 !== (int) $deleted ) {
-			// Another request has already consumed this payload.
-			return false;
+		if ( 1 === (int) $deleted ) {
+			$timeout_name = '_transient_timeout_' . $transient_key;
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
+					$timeout_name
+				)
+			);
+			delete_transient( MfaConstants::RESCUE_MAX_EXPIRY_CACHE_KEY );
 		}
-
-		// Best-effort cleanup of the timeout row; result is not critical.
-		$timeout_name = '_transient_timeout_' . $transient_key;
-		$wpdb->query(
-			$wpdb->prepare(
-				'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
-				$timeout_name
-			)
-		);
-
-		return $encrypted_data;
+		return (int) $deleted;
 	}
 
 	/**
-	 * Whether rescue endpoint is in cooldown (one use per RESCUE_USE_COOLDOWN seconds, globally).
+	 * Whether the request is a speculative/automated load that must not consume the one-time rescue
+	 * transient. A request is treated as prefetch/preview when ANY of the following holds:
+	 *   - Sec-Purpose or Purpose header contains "prefetch" or "prerender" (Chrome/Edge speculation);
+	 *   - X-Moz: prefetch (Firefox);
+	 *   - No Sec-Fetch-* headers at all (link-preview / bot / scanner);
+	 *   - Sec-Fetch-* present but not a real user-activated top-level navigation
+	 *     (Sec-Fetch-Dest: document + Sec-Fetch-Mode: navigate + Sec-Fetch-User: ?1).
 	 *
-	 * @return bool True if last use was within cooldown.
+	 * @return bool
 	 */
-	private function is_rescue_cooldown() {
-		return false !== get_transient( MfaConstants::TRANSIENT_RESCUE_LAST_USE );
-	}
+	private function is_rescue_request_prefetch() {
+		$sec_purpose = isset( $_SERVER['HTTP_SEC_PURPOSE'] ) && is_string( $_SERVER['HTTP_SEC_PURPOSE'] ) ? $_SERVER['HTTP_SEC_PURPOSE'] : '';
+		$purpose     = isset( $_SERVER['HTTP_PURPOSE'] ) && is_string( $_SERVER['HTTP_PURPOSE'] ) ? $_SERVER['HTTP_PURPOSE'] : '';
+		$x_moz       = isset( $_SERVER['HTTP_X_MOZ'] ) && is_string( $_SERVER['HTTP_X_MOZ'] ) ? $_SERVER['HTTP_X_MOZ'] : '';
+		$sec_f_dest  = isset( $_SERVER['HTTP_SEC_FETCH_DEST'] ) && is_string( $_SERVER['HTTP_SEC_FETCH_DEST'] ) ? $_SERVER['HTTP_SEC_FETCH_DEST'] : '';
+		$sec_f_mode  = isset( $_SERVER['HTTP_SEC_FETCH_MODE'] ) && is_string( $_SERVER['HTTP_SEC_FETCH_MODE'] ) ? $_SERVER['HTTP_SEC_FETCH_MODE'] : '';
+		$sec_f_user  = isset( $_SERVER['HTTP_SEC_FETCH_USER'] ) && is_string( $_SERVER['HTTP_SEC_FETCH_USER'] ) ? $_SERVER['HTTP_SEC_FETCH_USER'] : '';
+		$sec_f_site  = isset( $_SERVER['HTTP_SEC_FETCH_SITE'] ) && is_string( $_SERVER['HTTP_SEC_FETCH_SITE'] ) ? $_SERVER['HTTP_SEC_FETCH_SITE'] : '';
 
-	/**
-	 * Set rescue endpoint cooldown (transient expires after TTL seconds).
-	 *
-	 * @param int|null $ttl TTL in seconds; default MfaConstants::RESCUE_USE_COOLDOWN.
-	 * @return void
-	 */
-	private function set_rescue_cooldown( $ttl = null ) {
-		$ttl = ( null !== $ttl ) ? (int) $ttl : (int) MfaConstants::RESCUE_USE_COOLDOWN;
-		set_transient( MfaConstants::TRANSIENT_RESCUE_LAST_USE, 1, $ttl );
+		foreach ( array( $sec_purpose, $purpose ) as $p ) {
+			if ( '' !== $p && ( false !== stripos( $p, 'prefetch' ) || false !== stripos( $p, 'prerender' ) ) ) {
+				return true;
+			}
+		}
+		if ( 'prefetch' === strtolower( $x_moz ) ) {
+			return true;
+		}
+		$has_any_sec_fetch = ( '' !== $sec_f_dest || '' !== $sec_f_mode || '' !== $sec_f_user || '' !== $sec_f_site );
+		if ( ! $has_any_sec_fetch ) {
+			return true;
+		}
+		$looks_like_user_nav = ( 'document' === strtolower( $sec_f_dest ) )
+			&& ( 'navigate' === strtolower( $sec_f_mode ) )
+			&& ( '?1' === $sec_f_user );
+		return ! $looks_like_user_nav;
 	}
 
 	private function disable_mfa_temporarily() {

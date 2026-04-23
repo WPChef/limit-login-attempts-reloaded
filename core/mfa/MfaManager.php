@@ -79,6 +79,51 @@ class MfaManager {
 		delete_transient( $this->get_pending_rescue_codes_key( $user_id ) );
 	}
 
+	/**
+	 * Extract validated llar_rescue hash from a full rescue URL.
+	 *
+	 * @param string $url Rescue URL (query may include llar_rescue).
+	 * @return string 64-char lowercase hex or ''.
+	 */
+	private function get_rescue_hash_from_rescue_url( $url ) {
+		if ( ! is_string( $url ) || '' === $url ) {
+			return '';
+		}
+		$q = wp_parse_url( $url, PHP_URL_QUERY );
+		if ( ! is_string( $q ) || '' === $q ) {
+			return '';
+		}
+		parse_str( $q, $qp );
+		if ( empty( $qp['llar_rescue'] ) || ! is_string( $qp['llar_rescue'] ) ) {
+			return '';
+		}
+		$h = strtolower( (string) $qp['llar_rescue'] );
+		if ( 64 !== strlen( $h ) || ! preg_match( '/^[a-f0-9]{64}$/', $h ) ) {
+			return '';
+		}
+		return $h;
+	}
+
+	/**
+	 * Whether the _transient_* row for this rescue payload exists in wp_options.
+	 *
+	 * @param string $transient_key Full transient name (prefix + hash), no _transient_ part.
+	 * @return bool
+	 */
+	private function rescue_transient_row_exists( $transient_key ) {
+		global $wpdb;
+		if ( '' === $transient_key || ! is_string( $transient_key ) ) {
+			return false;
+		}
+		$option_name = '_transient_' . $transient_key;
+		$one         = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT 1 FROM ' . $wpdb->options . ' WHERE option_name = %s LIMIT 1',
+				$option_name
+			)
+		);
+		return null !== $one;
+	}
 
 	/**
 	 * Constructor. Dependencies are injected for testability and single responsibility.
@@ -197,6 +242,7 @@ class MfaManager {
 		foreach ( (array) $plain_codes as $code ) {
 			$rescue_urls[] = $this->backup_codes->get_rescue_url( $code );
 		}
+		delete_transient( MfaConstants::RESCUE_MAX_EXPIRY_CACHE_KEY );
 		return $this->backup_codes->generate_pdf_html( $rescue_urls );
 	}
 
@@ -360,6 +406,9 @@ class MfaManager {
 			$pending_codes[] = $rescue_code->to_array();
 		}
 		$this->set_pending_rescue_codes( $pending_codes );
+		// Must persist before the transient loop: otherwise a fast open of link #1 can hit
+		// payload present + stale/empty mfa_rescue_codes, verify fails, and payload is removed (next visit: no_payload).
+		Config::update( 'mfa_rescue_codes', $pending_codes );
 
 		$rescue_urls = array();
 		foreach ( $plain_codes as $code ) {
@@ -368,6 +417,28 @@ class MfaManager {
 			} catch ( \Exception $e ) {
 				wp_send_json_error( array( 'message' => __( 'Encryption unavailable. OpenSSL is required for rescue links.', 'limit-login-attempts-reloaded' ) ) );
 			}
+		}
+
+		// Max-expiry admin notice uses one key; do not call delete_transient 10x inside get_rescue_url
+		// (hosting-specific races with back-to-back set/delete on the first slot).
+		delete_transient( MfaConstants::RESCUE_MAX_EXPIRY_CACHE_KEY );
+
+		// Re-create any link whose payload is not visible to get_transient or wp_options in this
+		// same request (some object-cache setups don't expose just-set transients to the same process,
+		// and the first slot occasionally misses — regenerate so every URL has a live payload).
+		foreach ( $rescue_urls as $i => $u ) {
+			$h  = $this->get_rescue_hash_from_rescue_url( $u );
+			$tk = ( '' === $h ) ? '' : ( MfaConstants::TRANSIENT_RESCUE_PREFIX . $h );
+			if ( '' === $tk ) {
+				continue;
+			}
+			if ( false !== get_transient( $tk ) || $this->rescue_transient_row_exists( $tk ) ) {
+				continue;
+			}
+			if ( ! isset( $plain_codes[ $i ] ) || ! is_string( $plain_codes[ $i ] ) ) {
+				continue;
+			}
+			$rescue_urls[ (int) $i ] = $this->backup_codes->get_rescue_url( $plain_codes[ (int) $i ] );
 		}
 
 		try {

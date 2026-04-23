@@ -151,13 +151,13 @@ define( 'LLA_EMAIL_OBFUSCATE_DOMAIN', '/(?<=^[^@]*@.*)[^.]/' );
  **************************************************************************************/
 defined( 'LLA_MFA_CODE_LENGTH' ) || define( 'LLA_MFA_CODE_LENGTH', 64 );
 defined( 'LLA_MFA_CODE_COUNT' ) || define( 'LLA_MFA_CODE_COUNT', 10 );
-defined( 'LLA_MFA_MAX_ATTEMPTS' ) || define( 'LLA_MFA_MAX_ATTEMPTS', 5 );
-defined( 'LLA_MFA_RESCUE_LINK_TTL' ) || define( 'LLA_MFA_RESCUE_LINK_TTL', 300 );
+/* Rescue link payload storage TTL (WordPress transients). Default 10 years; links are one-time (payload deleted on use). RESCUE_NOTICE_THRESHOLD is for admin warning; with a long TTL, "near expiry" is rare and missing/invalid payloads is the main trigger. */
+defined( 'LLA_MFA_RESCUE_LINK_TTL' ) || define( 'LLA_MFA_RESCUE_LINK_TTL', 10 * YEAR_IN_SECONDS );
+defined( 'LLA_MFA_RESCUE_NOTICE_THRESHOLD' ) || define( 'LLA_MFA_RESCUE_NOTICE_THRESHOLD', 5 * DAY_IN_SECONDS );
 defined( 'LLA_MFA_DISABLE_DURATION' ) || define( 'LLA_MFA_DISABLE_DURATION', 3600 );
 defined( 'LLA_MFA_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_RATE_LIMIT_PERIOD', 3600 );
 defined( 'LLA_MFA_RESCUE_USE_COOLDOWN' ) || define( 'LLA_MFA_RESCUE_USE_COOLDOWN', 60 );
 defined( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX' ) || define( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX', 'llar_mfa_rescue_' );
-defined( 'LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX' ) || define( 'LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX', 'llar_rescue_attempts_' );
 defined( 'LLA_MFA_TRANSIENT_RESCUE_LAST_USE' ) || define( 'LLA_MFA_TRANSIENT_RESCUE_LAST_USE', 'llar_rescue_last_use' );
 defined( 'LLA_MFA_TRANSIENT_MFA_DISABLED' ) || define( 'LLA_MFA_TRANSIENT_MFA_DISABLED', 'llar_mfa_temporarily_disabled' );
 defined( 'LLA_MFA_TRANSIENT_CHECKBOX_STATE' ) || define( 'LLA_MFA_TRANSIENT_CHECKBOX_STATE', 'llar_mfa_checkbox_state' );
