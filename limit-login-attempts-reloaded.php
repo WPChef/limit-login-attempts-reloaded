@@ -150,6 +150,7 @@ define( 'LLA_EMAIL_OBFUSCATE_DOMAIN', '/(?<=^[^@]*@.*)[^.]/' );
  * Overridable: define in wp-config.php before plugin load to override defaults.
  **************************************************************************************/
 defined( 'LLA_MFA_CODE_LENGTH' ) || define( 'LLA_MFA_CODE_LENGTH', 64 );
+defined( 'LLA_MFA_RESCUE_TOKEN_LENGTH' ) || define( 'LLA_MFA_RESCUE_TOKEN_LENGTH', 32 );
 defined( 'LLA_MFA_CODE_COUNT' ) || define( 'LLA_MFA_CODE_COUNT', 10 );
 /* Rescue link payload storage TTL (WordPress transients). Default 10 years; links are one-time (payload deleted on use). RESCUE_NOTICE_THRESHOLD is for admin warning; with a long TTL, "near expiry" is rare and missing/invalid payloads is the main trigger. */
 defined( 'LLA_MFA_RESCUE_LINK_TTL' ) || define( 'LLA_MFA_RESCUE_LINK_TTL', 10 * YEAR_IN_SECONDS );

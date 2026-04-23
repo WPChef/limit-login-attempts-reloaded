@@ -17,6 +17,9 @@ class MfaConstants {
 	/** @var int Number of rescue codes to generate */
 	const CODE_COUNT = LLA_MFA_CODE_COUNT;
 
+	/** @var int Length of new rescue link token (base62). */
+	const RESCUE_TOKEN_LENGTH = LLA_MFA_RESCUE_TOKEN_LENGTH;
+
 	/** @var int Rescue link transient TTL in seconds (default: LLA_MFA_RESCUE_LINK_TTL, typically 10 years). One-time use is enforced by consuming the payload, not by this TTL expiring first. */
 	const RESCUE_LINK_TTL = LLA_MFA_RESCUE_LINK_TTL;
 
