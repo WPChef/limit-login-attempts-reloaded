@@ -69,7 +69,9 @@ class MfaValidator {
 	public static function validate_rescue_hash_id( $hash_id ) {
 		$hash_id = is_string( $hash_id ) ? sanitize_text_field( $hash_id ) : '';
 		$len     = MfaConstants::CODE_LENGTH;
-		if ( $len !== strlen( $hash_id ) || ! preg_match( '/^[a-f0-9]{' . $len . '}$/i', $hash_id ) ) {
+		// hash('sha256') in MfaBackupCodes::get_rescue_url() is always lowercase; transient keys must match.
+		$hash_id = strtolower( $hash_id );
+		if ( $len !== strlen( $hash_id ) || ! preg_match( '/^[a-f0-9]{' . $len . '}$/', $hash_id ) ) {
 			return false;
 		}
 		return $hash_id;

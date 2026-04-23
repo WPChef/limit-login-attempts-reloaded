@@ -17,7 +17,7 @@ class AdminNoticesController {
 	 *
 	 * @var array
 	 */
-	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash' );
+	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired' );
 
 	/**
 	 * Get type, CSS class and HTML content for a notice key.
@@ -121,6 +121,19 @@ class AdminNoticesController {
 					'type'    => $is_error ? 'notice-error' : 'notice-success',
 					'class'   => 'llar-options-notice llar-flash-notice',
 					'content' => $msg,
+				);
+			case 'mfa-recovery-links-expired':
+				$mfa_url = isset( $args['mfa_url'] ) ? (string) $args['mfa_url'] : '';
+				if ( '' === $mfa_url ) {
+					return null;
+				}
+				return array(
+					'type'    => 'notice-error',
+					'class'   => 'llar-options-notice llar-mfa-recovery-links-expired',
+					'content' => sprintf(
+						__( '⚠️ Action required: Your existing 2FA recovery links are no longer valid. On the <a href="%s">2FA settings page</a>, turn 2FA off and then back on, then follow the prompts to download the new recovery links.', 'limit-login-attempts-reloaded' ),
+						\esc_url( $mfa_url )
+					),
 				);
 			default:
 				return null;
