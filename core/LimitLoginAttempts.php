@@ -296,7 +296,20 @@ class LimitLoginAttempts
 		if ( ! in_array( LLA_PLUGIN_BASENAME, $options['plugins'], true ) ) {
 			return;
 		}
+
+		$old_version = (string) Config::get( 'plugin_version' );
 		Helpers::persist_stored_plugin_version();
+		$new_version = (string) Config::get( 'plugin_version' );
+
+		if ( $old_version !== $new_version ) {
+			/**
+			 * Fires after LLAR plugin version is persisted post-update.
+			 *
+			 * @param string $old_version Previously stored version (may be empty).
+			 * @param string $new_version Newly stored version.
+			 */
+			do_action( 'llar_plugin_version_updated', $old_version, $new_version );
+		}
 	}
 
 	public function setup_cookie()
