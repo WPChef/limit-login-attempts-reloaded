@@ -156,7 +156,7 @@ By default, you will need to copy and paste the lists to each site manually. For
 * MFA: shortened rescue tokens while preserving legacy compatibility for existing data.
 * Stored current plugin version in options (`limit_login_plugin_version`) on activation and plugin update.
 * Added action `llar_plugin_version_updated` with old and new version values after update.
-* MFA rescue: suspected prefetch/link-preview shows a confirmation page; user confirms by POST (nonce) without burning the one-time link. Field name defaults to `llar_rescue_confirm` (override with `LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG`).
+* MFA rescue: suspected prefetch/link-preview shows a confirmation page; user confirms by POST without burning the one-time link. Field name defaults to `llar_rescue_confirm` (override with `LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG`).
 
 = 3.1.0 =
 * Added technical details to the network issue notice.

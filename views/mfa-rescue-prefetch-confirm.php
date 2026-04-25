@@ -6,7 +6,6 @@
  *
  * @var string $rescue_prefetch_intro          Intro text (translated).
  * @var string $rescue_prefetch_form_action    Absolute URL for form action.
- * @var string $rescue_prefetch_nonce_html     Markup from wp_nonce_field (echo unescaped).
  * @var string $rescue_prefetch_field_name     POST field name for confirmation (e.g. llar_rescue_confirm).
  * @var string $rescue_prefetch_field_value    Hidden field value.
  * @var string $rescue_prefetch_button_label   Submit button label (translated).
@@ -19,10 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <p><?php echo esc_html( $rescue_prefetch_intro ); ?></p>
 <form method="post" action="<?php echo esc_url( $rescue_prefetch_form_action ); ?>">
-	<?php
-	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- output of wp_nonce_field() in controller.
-	echo $rescue_prefetch_nonce_html;
-	?>
 	<input type="hidden" name="<?php echo esc_attr( $rescue_prefetch_field_name ); ?>" value="<?php echo esc_attr( $rescue_prefetch_field_value ); ?>" />
 	<p><button type="submit" class="button button-primary"><?php echo esc_html( $rescue_prefetch_button_label ); ?></button></p>
 </form>

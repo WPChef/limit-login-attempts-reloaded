@@ -49,8 +49,12 @@ class MfaEndpoint implements MfaEndpointInterface {
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
-		// Prefetch/prerender/link-preview/bot: must not consume the one-time payload.
-		if ( $this->is_rescue_request_prefetch( $hash_id ) ) {
+		if (
+			defined( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG' )
+			&& isset( $_POST[ LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG ] )
+			&& '1' === (string) wp_unslash( $_POST[ LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG ] )
+		) {
+		} elseif ( $this->is_rescue_request_prefetch() ) {
 			$this->render_rescue_confirmation_page( $hash_id );
 			exit;
 		}
@@ -188,22 +192,9 @@ class MfaEndpoint implements MfaEndpointInterface {
 	 *   - Sec-Fetch-* present but not a real user-activated top-level navigation
 	 *     (Sec-Fetch-Dest: document + Sec-Fetch-Mode: navigate + Sec-Fetch-User: ?1).
 	 *
-	 * @param string $hash_id Validated rescue hash (for POST nonce verification).
 	 * @return bool
 	 */
-	private function is_rescue_request_prefetch( $hash_id ) {
-		if (
-			defined( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG' )
-			&& isset( $_POST[ LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG ] )
-			&& '1' === (string) wp_unslash( $_POST[ LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG ] )
-		) {
-			$nonce = isset( $_POST['_wpnonce'] ) ? wp_unslash( $_POST['_wpnonce'] ) : '';
-			if ( ! wp_verify_nonce( $nonce, 'llar_rescue_confirm_' . $hash_id ) ) {
-				wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
-			}
-			return false;
-		}
-
+	private function is_rescue_request_prefetch() {
 		$sec_purpose = isset( $_SERVER['HTTP_SEC_PURPOSE'] ) && is_string( $_SERVER['HTTP_SEC_PURPOSE'] ) ? $_SERVER['HTTP_SEC_PURPOSE'] : '';
 		$purpose     = isset( $_SERVER['HTTP_PURPOSE'] ) && is_string( $_SERVER['HTTP_PURPOSE'] ) ? $_SERVER['HTTP_PURPOSE'] : '';
 		$x_moz       = isset( $_SERVER['HTTP_X_MOZ'] ) && is_string( $_SERVER['HTTP_X_MOZ'] ) ? $_SERVER['HTTP_X_MOZ'] : '';
@@ -227,13 +218,14 @@ class MfaEndpoint implements MfaEndpointInterface {
 		$looks_like_user_nav = ( 'document' === strtolower( $sec_f_dest ) )
 			&& ( 'navigate' === strtolower( $sec_f_mode ) )
 			&& ( '?1' === $sec_f_user );
-		return ! $looks_like_user_nav;
+		$is_prefetch = ! $looks_like_user_nav;
+		return $is_prefetch;
 	}
 
 	/**
 	 * Render confirmation page when a request looks like a prefetch.
 	 *
-	 * @param string $hash_id Validated rescue hash (binds the confirmation nonce).
+	 * @param string $hash_id Validated rescue hash.
 	 * @return void
 	 */
 	private function render_rescue_confirmation_page( $hash_id ) {
@@ -242,13 +234,8 @@ class MfaEndpoint implements MfaEndpointInterface {
 			: '/';
 		$absolute_request_url = get_site_url( null, $request_uri );
 
-		ob_start();
-		wp_nonce_field( 'llar_rescue_confirm_' . $hash_id, '_wpnonce', true, false );
-		$nonce_field = ob_get_clean();
-
 		$rescue_prefetch_intro        = __( 'This will disable 2FA on your website for one hour.', 'limit-login-attempts-reloaded' );
 		$rescue_prefetch_form_action  = $absolute_request_url;
-		$rescue_prefetch_nonce_html   = $nonce_field;
 		$rescue_prefetch_field_name   = LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG;
 		$rescue_prefetch_field_value  = '1';
 		$rescue_prefetch_button_label = __( 'Click to continue', 'limit-login-attempts-reloaded' );
