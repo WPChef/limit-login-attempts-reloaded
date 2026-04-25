@@ -152,6 +152,10 @@ By default, you will need to copy and paste the lists to each site manually. For
 = 3.2.0 =
 * Improved WooCommerce registration protection in cloud mode.
 * Refactored third-party integrations into a unified architecture (WooCommerce, MemberPress).
+* MFA: hardened recovery flow and admin signaling around rescue-code scenarios.
+* MFA: shortened rescue tokens while preserving legacy compatibility for existing data.
+* Stored current plugin version in options (`limit_login_plugin_version`) on activation and plugin update.
+* Added action `llar_plugin_version_updated` with old and new version values after update.
 
 = 3.1.0 =
 * Added technical details to the network issue notice.
