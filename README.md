@@ -8,3 +8,4 @@
 - The plugin now stores the current plugin version in options as `limit_login_plugin_version`.
 - On plugin update (when version changes), LLAR fires:
   - `do_action( 'llar_plugin_version_updated', $old_version, $new_version )`
+- MFA one-time **rescue** links: if the request looks like a prefetch or link preview, the response is a confirmation page (not 204) so the link is not consumed. The user can follow **Click to continue**, which appends a bypass query arg to the current URL. Override the arg name with `define( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG', 'my_key' );` before the plugin loads; default is `llar_rescue_confirm=1`.
