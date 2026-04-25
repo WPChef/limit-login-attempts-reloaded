@@ -230,9 +230,14 @@ class MfaEndpoint implements MfaEndpointInterface {
 	 * @return void
 	 */
 	private function render_rescue_confirmation_page() {
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) && is_string( $_SERVER['REQUEST_URI'] )
+			? $_SERVER['REQUEST_URI']
+			: '/';
+		$absolute_request_url = get_site_url( null, $request_uri );
 		$continue_url = add_query_arg(
 			LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG,
-			'1'
+			'1',
+			$absolute_request_url
 		);
 
 		$message = 'This will disable 2FA on your website for one hour. ';
