@@ -51,9 +51,7 @@ class MfaEndpoint implements MfaEndpointInterface {
 
 		// Prefetch/prerender/link-preview/bot: must not consume the one-time payload.
 		if ( $this->is_rescue_request_prefetch() ) {
-			if ( ! headers_sent() ) {
-				status_header( 204 );
-			}
+			$this->render_rescue_confirmation_page();
 			exit;
 		}
 
@@ -193,6 +191,13 @@ class MfaEndpoint implements MfaEndpointInterface {
 	 * @return bool
 	 */
 	private function is_rescue_request_prefetch() {
+		if (
+			defined( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG' )
+			&& isset( $_GET[ LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG ] )
+		) {
+			return false;
+		}
+
 		$sec_purpose = isset( $_SERVER['HTTP_SEC_PURPOSE'] ) && is_string( $_SERVER['HTTP_SEC_PURPOSE'] ) ? $_SERVER['HTTP_SEC_PURPOSE'] : '';
 		$purpose     = isset( $_SERVER['HTTP_PURPOSE'] ) && is_string( $_SERVER['HTTP_PURPOSE'] ) ? $_SERVER['HTTP_PURPOSE'] : '';
 		$x_moz       = isset( $_SERVER['HTTP_X_MOZ'] ) && is_string( $_SERVER['HTTP_X_MOZ'] ) ? $_SERVER['HTTP_X_MOZ'] : '';
@@ -217,6 +222,27 @@ class MfaEndpoint implements MfaEndpointInterface {
 			&& ( 'navigate' === strtolower( $sec_f_mode ) )
 			&& ( '?1' === $sec_f_user );
 		return ! $looks_like_user_nav;
+	}
+
+	/**
+	 * Render confirmation page when a request looks like a prefetch.
+	 *
+	 * @return void
+	 */
+	private function render_rescue_confirmation_page() {
+		$continue_url = add_query_arg(
+			LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG,
+			'1'
+		);
+
+		$message = 'This will disable 2FA on your website for one hour. ';
+		$message .= '<a href="' . esc_url( $continue_url ) . '">Click to continue</a>';
+
+		wp_die(
+			wp_kses_post( $message ),
+			'LLAR MFA Rescue',
+			array( 'response' => 200 )
+		);
 	}
 
 	private function disable_mfa_temporarily() {
