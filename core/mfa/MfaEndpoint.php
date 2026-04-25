@@ -49,12 +49,13 @@ class MfaEndpoint implements MfaEndpointInterface {
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
-		if (
+		$is_confirmed_rescue_post = (
 			defined( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG' )
 			&& isset( $_POST[ LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG ] )
 			&& '1' === (string) wp_unslash( $_POST[ LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG ] )
-		) {
-		} elseif ( $this->is_rescue_request_prefetch() ) {
+		);
+
+		if ( ! $is_confirmed_rescue_post && $this->is_rescue_request_prefetch() ) {
 			$this->render_rescue_confirmation_page( $hash_id );
 			exit;
 		}
