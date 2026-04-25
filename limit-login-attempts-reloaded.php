@@ -216,6 +216,10 @@ if ( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 		if ( ! wp_next_scheduled( 'llar_mfa_daily_cleanup' ) ) {
 			wp_schedule_event( time(), 'daily', 'llar_mfa_daily_cleanup' );
 		}
+
+		if ( class_exists( 'LLAR\\Core\\Helpers' ) ) {
+			\LLAR\Core\Helpers::persist_stored_plugin_version();
+		}
 	}
 
 	/**

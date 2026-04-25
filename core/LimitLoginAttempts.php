@@ -262,6 +262,8 @@ class LimitLoginAttempts
 		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
+
+		add_action( 'upgrader_process_complete', array( $this, 'after_plugin_update' ), 10, 2 );
 	}
 
 	/**
@@ -269,10 +271,32 @@ class LimitLoginAttempts
 	 */
 	public function activation()
 	{
+		Helpers::persist_stored_plugin_version();
+
 		if ( ! Config::get( 'activation_timestamp' ) ) {
 
 			set_transient( 'llar_dashboard_redirect', true, 30 );
 		}
+	}
+
+	/**
+	 * After this plugin is updated from wp-admin, persist the new file version.
+	 *
+	 * @param \WP_Upgrader $upgrader Upgrader instance (unused).
+	 * @param array        $options  Context: action, type, plugins, etc.
+	 * @return void
+	 */
+	public function after_plugin_update( $upgrader, $options ) {
+		if ( ! isset( $options['type'], $options['action'] ) || 'update' !== $options['action'] || 'plugin' !== $options['type'] ) {
+			return;
+		}
+		if ( empty( $options['plugins'] ) || ! is_array( $options['plugins'] ) ) {
+			return;
+		}
+		if ( ! in_array( LLA_PLUGIN_BASENAME, $options['plugins'], true ) ) {
+			return;
+		}
+		Helpers::persist_stored_plugin_version();
 	}
 
 	public function setup_cookie()
