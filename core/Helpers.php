@@ -566,6 +566,19 @@ class Helpers {
 
 		return $debug_info;
 	}
-		
-	
+
+	/**
+	 * Write the plugin's header Version to options (for migrations / diagnostics after activate or in-dashboard update).
+	 *
+	 * @return void
+	 */
+	public static function persist_stored_plugin_version() {
+		Config::init();
+		$plugin_data = get_plugin_data( LLA_PLUGIN_FILE, false, false );
+		$version     = is_array( $plugin_data ) && ! empty( $plugin_data['Version'] )
+			? sanitize_text_field( $plugin_data['Version'] )
+			: '';
+		Config::update( 'plugin_version', $version );
+	}
+
 }
