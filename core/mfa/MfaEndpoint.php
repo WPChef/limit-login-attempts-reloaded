@@ -50,8 +50,8 @@ class MfaEndpoint implements MfaEndpointInterface {
 		}
 
 		// Prefetch/prerender/link-preview/bot: must not consume the one-time payload.
-		if ( $this->is_rescue_request_prefetch() ) {
-			$this->render_rescue_confirmation_page();
+		if ( $this->is_rescue_request_prefetch( $hash_id ) ) {
+			$this->render_rescue_confirmation_page( $hash_id );
 			exit;
 		}
 
@@ -188,13 +188,19 @@ class MfaEndpoint implements MfaEndpointInterface {
 	 *   - Sec-Fetch-* present but not a real user-activated top-level navigation
 	 *     (Sec-Fetch-Dest: document + Sec-Fetch-Mode: navigate + Sec-Fetch-User: ?1).
 	 *
+	 * @param string $hash_id Validated rescue hash (for POST nonce verification).
 	 * @return bool
 	 */
-	private function is_rescue_request_prefetch() {
+	private function is_rescue_request_prefetch( $hash_id ) {
 		if (
 			defined( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG' )
-			&& isset( $_GET[ LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG ] )
+			&& isset( $_POST[ LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG ] )
+			&& '1' === (string) wp_unslash( $_POST[ LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG ] )
 		) {
+			$nonce = isset( $_POST['_wpnonce'] ) ? wp_unslash( $_POST['_wpnonce'] ) : '';
+			if ( ! wp_verify_nonce( $nonce, 'llar_rescue_confirm_' . $hash_id ) ) {
+				wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
+			}
 			return false;
 		}
 
@@ -227,24 +233,32 @@ class MfaEndpoint implements MfaEndpointInterface {
 	/**
 	 * Render confirmation page when a request looks like a prefetch.
 	 *
+	 * @param string $hash_id Validated rescue hash (binds the confirmation nonce).
 	 * @return void
 	 */
-	private function render_rescue_confirmation_page() {
+	private function render_rescue_confirmation_page( $hash_id ) {
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) && is_string( $_SERVER['REQUEST_URI'] )
 			? $_SERVER['REQUEST_URI']
 			: '/';
 		$absolute_request_url = get_site_url( null, $request_uri );
-		$continue_url = add_query_arg(
-			LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG,
-			'1',
-			$absolute_request_url
-		);
 
-		$message = 'This will disable 2FA on your website for one hour. ';
-		$message .= '<a href="' . esc_url( $continue_url ) . '">Click to continue</a>';
+		ob_start();
+		wp_nonce_field( 'llar_rescue_confirm_' . $hash_id, '_wpnonce', true, false );
+		$nonce_field = ob_get_clean();
+
+		$rescue_prefetch_intro        = __( 'This will disable 2FA on your website for one hour.', 'limit-login-attempts-reloaded' );
+		$rescue_prefetch_form_action  = $absolute_request_url;
+		$rescue_prefetch_nonce_html   = $nonce_field;
+		$rescue_prefetch_field_name   = LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG;
+		$rescue_prefetch_field_value  = '1';
+		$rescue_prefetch_button_label = __( 'Click to continue', 'limit-login-attempts-reloaded' );
+
+		ob_start();
+		include LLA_PLUGIN_DIR . 'views/mfa-rescue-prefetch-confirm.php';
+		$html = ob_get_clean();
 
 		wp_die(
-			wp_kses_post( $message ),
+			$html,
 			'LLAR MFA Rescue',
 			array( 'response' => 200 )
 		);
