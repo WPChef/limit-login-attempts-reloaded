@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class MfaBackupCodes implements MfaBackupCodesInterface {
 	const CIPHER_METHOD = 'AES-256-CBC';
 	const PAYLOAD_VERSION = 'v2:';
+	const BASE62_ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 	/**
 	 * Encrypt plain code for storage. OpenSSL only; returns false if unavailable.
@@ -179,6 +180,41 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 	}
 
 	/**
+	 * Generate cryptographically strong base62 token.
+	 *
+	 * @param int $length Token length.
+	 * @return string
+	 */
+	private function generate_base62_token( $length ) {
+		$length   = (int) $length;
+		$token    = '';
+		$alphabet = self::BASE62_ALPHABET;
+
+		// Rejection sampling avoids modulo bias (62 * 4 = 248).
+		while ( strlen( $token ) < $length && function_exists( 'openssl_random_pseudo_bytes' ) ) {
+			$bytes = openssl_random_pseudo_bytes( max( 16, $length * 2 ) );
+			if ( false === $bytes || '' === $bytes ) {
+				break;
+			}
+			$bytes_len = strlen( $bytes );
+			for ( $i = 0; $i < $bytes_len && strlen( $token ) < $length; $i++ ) {
+				$val = ord( $bytes[ $i ] );
+				if ( 248 <= $val ) {
+					continue;
+				}
+				$token .= $alphabet[ $val % 62 ];
+			}
+		}
+
+		if ( strlen( $token ) < $length ) {
+			$fallback = wp_generate_password( $length, false, false );
+			$token   .= preg_replace( '/[^A-Za-z0-9]/', '', (string) $fallback );
+		}
+
+		return substr( $token, 0, $length );
+	}
+
+	/**
 	 * Build rescue URL for a plain code and store encrypted payload. OpenSSL required.
 	 *
 	 * @param string $plain_code Plain rescue code
@@ -190,7 +226,7 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 		if ( '' === $salt ) {
 			$salt = wp_generate_password( 64, true );
 		}
-		$hash_id   = hash( 'sha256', $plain_code . $salt . wp_generate_password( 32, false ) );
+		$hash_id   = $this->generate_base62_token( MfaConstants::RESCUE_TOKEN_LENGTH );
 		$encrypted = $this->encrypt_code( $plain_code, $salt );
 		if ( false === $encrypted ) {
 			throw new \Exception( __( 'Encryption unavailable. OpenSSL is required for rescue links.', 'limit-login-attempts-reloaded' ) );
