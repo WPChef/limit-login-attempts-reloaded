@@ -262,6 +262,8 @@ class LimitLoginAttempts
 		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
 
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
+
+		add_action( 'upgrader_process_complete', array( $this, 'after_plugin_update' ), 10, 2 );
 	}
 
 	/**
@@ -269,9 +271,44 @@ class LimitLoginAttempts
 	 */
 	public function activation()
 	{
+		Helpers::persist_stored_plugin_version();
+
 		if ( ! Config::get( 'activation_timestamp' ) ) {
 
 			set_transient( 'llar_dashboard_redirect', true, 30 );
+		}
+	}
+
+	/**
+	 * After this plugin is updated from wp-admin, persist the new file version.
+	 *
+	 * @param \WP_Upgrader $upgrader Upgrader instance (unused).
+	 * @param array        $options  Context: action, type, plugins, etc.
+	 * @return void
+	 */
+	public function after_plugin_update( $upgrader, $options ) {
+		if ( ! isset( $options['type'], $options['action'] ) || 'update' !== $options['action'] || 'plugin' !== $options['type'] ) {
+			return;
+		}
+		if ( empty( $options['plugins'] ) || ! is_array( $options['plugins'] ) ) {
+			return;
+		}
+		if ( ! in_array( LLA_PLUGIN_BASENAME, $options['plugins'], true ) ) {
+			return;
+		}
+
+		$old_version = (string) Config::get( 'plugin_version' );
+		Helpers::persist_stored_plugin_version();
+		$new_version = (string) Config::get( 'plugin_version' );
+
+		if ( $old_version !== $new_version ) {
+			/**
+			 * Fires after LLAR plugin version is persisted post-update.
+			 *
+			 * @param string $old_version Previously stored version (may be empty).
+			 * @param string $new_version Newly stored version.
+			 */
+			do_action( 'llar_plugin_version_updated', $old_version, $new_version );
 		}
 	}
 
@@ -3120,6 +3157,67 @@ class LimitLoginAttempts
 			$this->admin_notices_controller = new AdminNoticesController();
 		}
 		$this->admin_notices_controller->render( $notice_key, $args );
+	}
+
+	/**
+	 * Show warning when MFA is enabled and rescue links need attention: no rescue payload transients,
+	 * or latest payload expiry is within RESCUE_NOTICE_THRESHOLD. Uses a short-lived cache for the
+	 * max-expiry query to avoid scanning wp_options on every admin page load.
+	 *
+	 * @return bool
+	 */
+	public function should_show_mfa_recovery_links_expired_notice() {
+		if ( ! (bool) Config::get( 'mfa_enabled' ) ) {
+			return false;
+		}
+
+		$seconds_left = $this->get_mfa_rescue_links_seconds_left();
+		if ( null === $seconds_left ) {
+			return true;
+		}
+
+		return $seconds_left <= MfaConstants::RESCUE_NOTICE_THRESHOLD;
+	}
+
+	/**
+	 * Return seconds left until the latest rescue-link transient expiration.
+	 * Result is cached (see MfaConstants::RESCUE_MAX_EXPIRY_CACHE_*) to limit repeated LIKE queries on wp_options.
+	 *
+	 * @return int|null Null when rescue transients are absent.
+	 */
+	private function get_mfa_rescue_links_seconds_left() {
+		$cache_key = MfaConstants::RESCUE_MAX_EXPIRY_CACHE_KEY;
+		$cached    = get_transient( $cache_key );
+
+		if ( false !== $cached && is_numeric( $cached ) ) {
+			$max_timeout = (int) $cached;
+			if ( -1 === $max_timeout ) {
+				return null;
+			}
+			if ( 0 < $max_timeout ) {
+				return $max_timeout - time();
+			}
+		}
+
+		global $wpdb;
+
+		$timeout_like = $wpdb->esc_like( '_transient_timeout_' . MfaConstants::TRANSIENT_RESCUE_PREFIX ) . '%';
+
+		$max_timeout = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT MAX(CAST(option_value AS UNSIGNED)) FROM ' . $wpdb->options . ' WHERE option_name LIKE %s',
+				$timeout_like
+			)
+		);
+
+		$cache_value = 0 === $max_timeout ? -1 : $max_timeout;
+		set_transient( $cache_key, $cache_value, MfaConstants::RESCUE_MAX_EXPIRY_CACHE_TTL );
+
+		if ( 0 === $max_timeout ) {
+			return null;
+		}
+
+		return $max_timeout - time();
 	}
 
 	/**
