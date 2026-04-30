@@ -5,7 +5,7 @@ Tags: brute force, security, firewall, 2FA, WooCommerce
 License: GPLv2 or later
 Requires at least: 3.0
 Tested up to: 6.9
-Stable tag: 3.2.0
+Stable tag: 3.2.1
 
 Stop password guessing attacks, secure WooCommerce, block bad IPs, block by countries (Pro), and add email 2FA. Lightweight with better performance.
 
@@ -148,6 +148,10 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 3.2.1 =
+* Fixed rescue link behavior and updated the format.
+* 2FA is pre-selected for administrators; when no user groups are selected, 2FA stays disabled.
 
 = 3.2.0 =
 * Improved WooCommerce registration protection in cloud mode.

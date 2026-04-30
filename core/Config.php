@@ -57,6 +57,8 @@ class Config {
 		'hide_dashboard_widget'         => false,
 		'show_warning_badge'            => true,
 		'onboarding_popup_shown'        => false,
+		/* Last known plugin header Version (from file), persisted on activate/update. */
+		'plugin_version'                => '',
 		'custom_error_message'          => '',
 
 		'logged'                        => array(),
@@ -73,7 +75,7 @@ class Config {
 		'mfa_enabled'                   => 0,
 		'mfa_provider'                  => 'llar',
 		'mfa_provider_config'           => array(),
-		'mfa_roles'                     => array(),
+		'mfa_roles'                     => array( 'administrator' ),
 	);
 
 	private static $disable_autoload_options = array(

@@ -5,7 +5,7 @@ Description: Block excessive login attempts and protect your site against brute 
 Author: Limit Login Attempts Reloaded
 Author URI: https://www.limitloginattempts.com/
 Text Domain: limit-login-attempts-reloaded
-Version: 3.2.0
+Version: 3.2.1
 
 Copyright 2008-2012 Johan Eenfeldt, 2016–present Limit Login Attempts Reloaded
 */
@@ -150,14 +150,15 @@ define( 'LLA_EMAIL_OBFUSCATE_DOMAIN', '/(?<=^[^@]*@.*)[^.]/' );
  * Overridable: define in wp-config.php before plugin load to override defaults.
  **************************************************************************************/
 defined( 'LLA_MFA_CODE_LENGTH' ) || define( 'LLA_MFA_CODE_LENGTH', 64 );
+defined( 'LLA_MFA_RESCUE_TOKEN_LENGTH' ) || define( 'LLA_MFA_RESCUE_TOKEN_LENGTH', 32 );
 defined( 'LLA_MFA_CODE_COUNT' ) || define( 'LLA_MFA_CODE_COUNT', 10 );
-defined( 'LLA_MFA_MAX_ATTEMPTS' ) || define( 'LLA_MFA_MAX_ATTEMPTS', 5 );
-defined( 'LLA_MFA_RESCUE_LINK_TTL' ) || define( 'LLA_MFA_RESCUE_LINK_TTL', 300 );
+/* Rescue link payload storage TTL (WordPress transients). Default 10 years; links are one-time (payload deleted on use). RESCUE_NOTICE_THRESHOLD is for admin warning; with a long TTL, "near expiry" is rare and missing/invalid payloads is the main trigger. */
+defined( 'LLA_MFA_RESCUE_LINK_TTL' ) || define( 'LLA_MFA_RESCUE_LINK_TTL', 10 * YEAR_IN_SECONDS );
+defined( 'LLA_MFA_RESCUE_NOTICE_THRESHOLD' ) || define( 'LLA_MFA_RESCUE_NOTICE_THRESHOLD', 5 * DAY_IN_SECONDS );
 defined( 'LLA_MFA_DISABLE_DURATION' ) || define( 'LLA_MFA_DISABLE_DURATION', 3600 );
 defined( 'LLA_MFA_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_RATE_LIMIT_PERIOD', 3600 );
 defined( 'LLA_MFA_RESCUE_USE_COOLDOWN' ) || define( 'LLA_MFA_RESCUE_USE_COOLDOWN', 60 );
 defined( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX' ) || define( 'LLA_MFA_TRANSIENT_RESCUE_PREFIX', 'llar_mfa_rescue_' );
-defined( 'LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX' ) || define( 'LLA_MFA_TRANSIENT_ATTEMPTS_PREFIX', 'llar_rescue_attempts_' );
 defined( 'LLA_MFA_TRANSIENT_RESCUE_LAST_USE' ) || define( 'LLA_MFA_TRANSIENT_RESCUE_LAST_USE', 'llar_rescue_last_use' );
 defined( 'LLA_MFA_TRANSIENT_MFA_DISABLED' ) || define( 'LLA_MFA_TRANSIENT_MFA_DISABLED', 'llar_mfa_temporarily_disabled' );
 defined( 'LLA_MFA_TRANSIENT_CHECKBOX_STATE' ) || define( 'LLA_MFA_TRANSIENT_CHECKBOX_STATE', 'llar_mfa_checkbox_state' );
@@ -178,6 +179,8 @@ defined( 'LLA_MFA_FLOW_OTP_TTL' ) || define( 'LLA_MFA_FLOW_OTP_TTL', 180 );
 defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD', 60 );
 defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX', 5 );
 defined( 'LLA_MFA_FLOW_LOG_PREFIX' ) || define( 'LLA_MFA_FLOW_LOG_PREFIX', 'LLAR MFA Flow: ' );
+/* POST field name for confirming a suspected-prefetch rescue request (value 1 + WP nonce). */
+defined( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG' ) || define( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG', 'llar_rescue_confirm' );
 
 /** MFA Flow: API and session (values from constants, no UI settings). */
 defined( 'LLA_MFA_API_BASE_URL' ) || define( 'LLA_MFA_API_BASE_URL', 'https://api.limitloginattempts.com' );
@@ -214,6 +217,10 @@ if ( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 		// Schedule daily cleanup if not already scheduled
 		if ( ! wp_next_scheduled( 'llar_mfa_daily_cleanup' ) ) {
 			wp_schedule_event( time(), 'daily', 'llar_mfa_daily_cleanup' );
+		}
+
+		if ( class_exists( 'LLAR\\Core\\Helpers' ) ) {
+			\LLAR\Core\Helpers::persist_stored_plugin_version();
 		}
 	}
 
