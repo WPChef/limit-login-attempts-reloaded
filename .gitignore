@@ -1,0 +1,11 @@
+# Local / debug — never commit
+*.log
+*.ndjson
+*.jsonl
+xdebug.log
+debug-*.log
+test.html
+*.html
+*.htm
+.DS_Store
+.git-rewrite/

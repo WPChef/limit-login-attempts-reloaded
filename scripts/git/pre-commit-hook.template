@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#
+# Copy to .git/hooks/pre-commit and chmod +x:
+#   cp scripts/git/pre-commit-hook.template .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+#
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+if [[ -f "${REPO_ROOT}/scripts/git/pre-commit-check-junk.sh" ]]; then
+	bash "${REPO_ROOT}/scripts/git/pre-commit-check-junk.sh" || exit 1
+fi
+
+if ! command -v rg >/dev/null 2>&1; then
+	echo "Error: ripgrep (rg) is required for Cyrillic check."
+	exit 1
+fi
+
+failed=0
+
+while IFS= read -r file_path; do
+	[[ -z "$file_path" ]] && continue
+
+	if ! git rev-parse --verify --quiet ":${file_path}" >/dev/null; then
+		continue
+	fi
+
+	if git show ":${file_path}" | rg --line-number --pcre2 "[\\p{Cyrillic}]" >/dev/null 2>&1; then
+		echo "Cyrillic text detected in staged file: ${file_path}"
+		echo "Commit blocked. Please replace Cyrillic text with English."
+		failed=1
+	fi
+done < <(git diff --cached --name-only --diff-filter=ACMR)
+
+if [[ "$failed" -ne 0 ]]; then
+	exit 1
+fi
+
+exit 0
