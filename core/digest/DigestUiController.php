@@ -10,24 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class DigestUiController {
 	/**
-	 * Bootstrap digest defaults and one-time compatibility migration.
-	 *
-	 * Preserve existing Real-time state only for installs that already had
-	 * an explicit lockout notify value in DB before digest options existed.
-	 *
-	 * @return void
-	 */
-	public static function bootstrap_defaults() {
-		if ( Config::exists( 'digest_realtime' ) || ! Config::exists( 'lockout_notify' ) ) {
-			return;
-		}
-
-		$notify_methods = explode( ',', (string) Config::get( 'lockout_notify' ) );
-		$is_realtime_enabled = in_array( 'email', $notify_methods, true ) ? 1 : 0;
-		Config::update( 'digest_realtime', $is_realtime_enabled );
-	}
-
-	/**
 	 * Save digest checkbox values from settings request.
 	 *
 	 * @return void
@@ -82,7 +64,7 @@ class DigestUiController {
 	/**
 	 * Build option key from digest key.
 	 *
-	 * @param string $digest_key Digest definition key (realtime/daily/weekly/monthly).
+	 * @param string $digest_key Digest definition key (daily/weekly/monthly).
 	 * @return string
 	 */
 	private static function get_option_key( $digest_key ) {

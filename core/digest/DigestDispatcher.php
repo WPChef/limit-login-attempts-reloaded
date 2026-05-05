@@ -91,21 +91,43 @@ class DigestDispatcher {
 	 * @return array
 	 */
 	private static function get_period_bounds( $digest_key ) {
-		$definitions = self::get_definitions();
-		$interval_seconds = ! empty( $definitions[ $digest_key ]['interval_seconds'] )
-			? max( 1, (int) $definitions[ $digest_key ]['interval_seconds'] )
-			: 86400;
-		$now_utc     = (int) current_time( 'timestamp', true );
+		$now_local = (int) current_time( 'timestamp' );
 		$today_start = gmmktime(
 			0,
 			0,
 			0,
-			(int) gmdate( 'n', $now_utc ),
-			(int) gmdate( 'j', $now_utc ),
-			(int) gmdate( 'Y', $now_utc )
+			(int) gmdate( 'n', $now_local ),
+			(int) gmdate( 'j', $now_local ),
+			(int) gmdate( 'Y', $now_local )
 		);
-		$end_ts = $today_start - 1;
-		$start_ts = $end_ts - $interval_seconds + 1;
+
+		if ( 'weekly' === $digest_key ) {
+			$monday_this_week = $today_start - ( ( (int) gmdate( 'N', $today_start ) - 1 ) * DAY_IN_SECONDS );
+			$start_ts = $monday_this_week - WEEK_IN_SECONDS;
+			$end_ts = $monday_this_week - 1;
+		} elseif ( 'monthly' === $digest_key ) {
+			$first_day_this_month = gmmktime(
+				0,
+				0,
+				0,
+				(int) gmdate( 'n', $today_start ),
+				1,
+				(int) gmdate( 'Y', $today_start )
+			);
+			$start_ts = gmmktime(
+				0,
+				0,
+				0,
+				(int) gmdate( 'n', $first_day_this_month ) - 1,
+				1,
+				(int) gmdate( 'Y', $first_day_this_month )
+			);
+			$end_ts = $first_day_this_month - 1;
+		} else {
+			// Daily (temporary): current calendar day up to now.
+			$start_ts = $today_start;
+			$end_ts = $now_local;
+		}
 
 		return array(
 			'start_ts' => (int) $start_ts,
@@ -150,8 +172,6 @@ class DigestDispatcher {
 
 		$lockouts_total = 0;
 		$attempts_total = 0;
-		$unique_ips_map = array();
-		$unique_usernames_map = array();
 		$top_ips_map = array();
 		$top_usernames_map = array();
 
@@ -159,21 +179,9 @@ class DigestDispatcher {
 			$lockouts_total += (int) get_post_meta( $post_id, DigestStorage::META_LOCKOUTS_COUNT, true );
 			$attempts_total += (int) get_post_meta( $post_id, DigestStorage::META_FAILED_ATTEMPTS_COUNT, true );
 
-			$unique_ips = get_post_meta( $post_id, DigestStorage::META_UNIQUE_ATTACKER_IPS, true );
-			$unique_ips = is_array( $unique_ips ) ? $unique_ips : array();
-			foreach ( $unique_ips as $ip => $marker ) {
-				$unique_ips_map[ (string) $ip ] = true;
-			}
-
-			$unique_usernames = get_post_meta( $post_id, DigestStorage::META_UNIQUE_USERNAMES, true );
-			$unique_usernames = is_array( $unique_usernames ) ? $unique_usernames : array();
-			foreach ( $unique_usernames as $username => $marker ) {
-				$unique_usernames_map[ (string) $username ] = true;
-			}
-
-			$top_ips = get_post_meta( $post_id, DigestStorage::META_TOP_IPS, true );
-			$top_ips = is_array( $top_ips ) ? $top_ips : array();
-			foreach ( $top_ips as $ip => $row ) {
+			$ip_stats = get_post_meta( $post_id, DigestStorage::META_IP_STATS, true );
+			$ip_stats = is_array( $ip_stats ) ? $ip_stats : array();
+			foreach ( $ip_stats as $ip => $row ) {
 				$ip = (string) $ip;
 				if ( '' === $ip ) {
 					continue;
@@ -183,25 +191,20 @@ class DigestDispatcher {
 					$top_ips_map[ $ip ] = array(
 						'attempts'  => 0,
 						'lockouts'  => 0,
-						'last_seen' => 0,
-						'top_url'   => '',
+						'gateway'   => '',
 					);
 				}
 
 				$top_ips_map[ $ip ]['attempts'] += isset( $row['attempts'] ) ? (int) $row['attempts'] : 0;
 				$top_ips_map[ $ip ]['lockouts'] += isset( $row['lockouts'] ) ? (int) $row['lockouts'] : 0;
-				$last_seen = isset( $row['last_seen'] ) ? (int) $row['last_seen'] : 0;
-				if ( $last_seen > $top_ips_map[ $ip ]['last_seen'] ) {
-					$top_ips_map[ $ip ]['last_seen'] = $last_seen;
-				}
-				if ( ! empty( $row['top_url'] ) ) {
-					$top_ips_map[ $ip ]['top_url'] = (string) $row['top_url'];
+				if ( ! empty( $row['gateway'] ) ) {
+					$top_ips_map[ $ip ]['gateway'] = sanitize_key( (string) $row['gateway'] );
 				}
 			}
 
-			$top_usernames = get_post_meta( $post_id, DigestStorage::META_TOP_USERNAMES, true );
-			$top_usernames = is_array( $top_usernames ) ? $top_usernames : array();
-			foreach ( $top_usernames as $username => $count ) {
+			$username_stats = get_post_meta( $post_id, DigestStorage::META_USERNAME_STATS, true );
+			$username_stats = is_array( $username_stats ) ? $username_stats : array();
+			foreach ( $username_stats as $username => $count ) {
 				$username = (string) $username;
 				if ( '' === $username ) {
 					continue;
@@ -235,8 +238,8 @@ class DigestDispatcher {
 		return array(
 			'lockouts_total'         => (int) $lockouts_total,
 			'attempts_total'         => (int) $attempts_total,
-			'unique_ips_total'       => (int) count( $unique_ips_map ),
-			'unique_usernames_total' => (int) count( $unique_usernames_map ),
+			'unique_ips_total'       => (int) count( $top_ips_map ),
+			'unique_usernames_total' => (int) count( $top_usernames_map ),
 			'top_ips'                => array_slice( $top_ips_map, 0, 10, true ),
 			'top_usernames'          => array_slice( $top_usernames_map, 0, 3, true ),
 			'most_attempted_ip'      => $most_attempted_ip,
@@ -392,7 +395,7 @@ class DigestDispatcher {
 				'lockouts' => isset( $row['lockouts'] ) ? (int) $row['lockouts'] : 0,
 				'attempts' => isset( $row['attempts'] ) ? (int) $row['attempts'] : 0,
 				'last_seen'=> ! empty( $row['last_seen'] ) ? date_i18n( 'Y-m-d H:i', (int) $row['last_seen'] ) : '-',
-				'top_url'  => ! empty( $row['top_url'] ) ? (string) $row['top_url'] : '-',
+				'top_url'  => ! empty( $row['gateway'] ) ? (string) $row['gateway'] : '-',
 			);
 		}
 
