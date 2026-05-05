@@ -4,8 +4,10 @@ namespace LLAR\Core\Mfa;
 
 use LLAR\Core\Config;
 use LLAR\Core\MfaConstants;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadOptionsStorage;
 use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageInterface;
 use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadTransientStorage;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -127,6 +129,24 @@ class MfaManager {
 	 */
 	public function get_rescue_links_seconds_left() {
 		$max_expiry = $this->payload_storage->get_max_expiry();
+		if ( null === $max_expiry ) {
+			// Notice must work even when links were generated with another provider
+			// during a different request profile (e.g. AJAX generation path).
+			switch ( true ) {
+				case $this->payload_storage instanceof RescuePayloadTransientStorage:
+					$fallback_expiry = ( new RescuePayloadOptionsStorage() )->get_max_expiry();
+					if ( null !== $fallback_expiry ) {
+						$max_expiry = (int) $fallback_expiry;
+					}
+					break;
+				case $this->payload_storage instanceof RescuePayloadOptionsStorage:
+					$fallback_expiry = ( new RescuePayloadTransientStorage() )->get_max_expiry();
+					if ( null !== $fallback_expiry ) {
+						$max_expiry = (int) $fallback_expiry;
+					}
+					break;
+			}
+		}
 		if ( null === $max_expiry ) {
 			return null;
 		}
