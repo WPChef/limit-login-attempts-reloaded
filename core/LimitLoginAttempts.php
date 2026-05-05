@@ -719,7 +719,6 @@ class LimitLoginAttempts
 
 		// Check if installed old plugin
 		$this->check_original_installed();
-		DigestUiController::bootstrap_defaults();
 
 		// Setup default plugin options
 		//$this->sanitize_options();
@@ -2126,8 +2125,7 @@ class LimitLoginAttempts
 			}
 			$retries_stats = $this->prune_retries_stats_old_buckets( $retries_stats );
 			Config::update( 'retries_stats', $retries_stats );
-			$login_url = Helpers::get_request_uri();
-			DigestRetriesController::save_failed_attempt( $ip, $username, $login_url );
+			DigestRetriesController::save_failed_attempt( $ip, $username );
 
 			/* Check validity and add one to retries */
 			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ] ) {
@@ -2185,7 +2183,7 @@ class LimitLoginAttempts
 					$lockouts[ $ip ] = time() + Config::get( 'lockout_duration' );
 				}
 
-				DigestRetriesController::save_lockout( $ip, $login_url );
+				DigestRetriesController::save_lockout( $ip );
 			}
 
 			/* do housecleaning and save values */
@@ -2250,9 +2248,6 @@ class LimitLoginAttempts
 		$ip = $this->get_address();
 		$retries = Config::get( 'retries' );
 		$notify_email_after = (int) Config::get( 'notify_email_after' );
-		if ( true === (bool) Config::get( 'digest_realtime' ) ) {
-			$notify_email_after = 1;
-		}
 		$notify_email_after = max( 1, $notify_email_after );
 
 		if ( ! is_array( $retries ) ) {
@@ -2333,20 +2328,20 @@ class LimitLoginAttempts
 		$current_url = Helpers::get_current_url();
 
 		$placeholders = array(
-			'{name}'                => $admin_name,
-			'{domain}'              => $site_domain,
-			'{attempts_count}'      => $count,
-			'{lockouts_count}'      => $lockouts,
+			'{name}'                => esc_html( (string) $admin_name ),
+			'{domain}'              => esc_html( (string) $site_domain ),
+			'{attempts_count}'      => (int) $count,
+			'{lockouts_count}'      => (int) $lockouts,
 			'{ip_address}'          => esc_html( $ip ),
 			'{ip_address_link}'     => esc_url( 'https://www.limitloginattempts.com/location/?ip=' . $ip ),
-			'{username}'            => $user,
-			'{blocked_duration}'    => $when,
+			'{username}'            => esc_html( (string) $user ),
+			'{blocked_duration}'    => esc_html( (string) $when ),
 			'{dashboard_url}'       => admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
 			'{premium_url}'         => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
 			'{llar_url}'            => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
 			'{unsubscribe_url}'     => admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' ),
-			'{current_url}'         => $current_url,
-			'{current_url_label}'   => $current_url_label,
+			'{current_url}'         => esc_url( $current_url ),
+			'{current_url_label}'   => esc_html( (string) $current_url_label ),
 		);
 
 		$email_body = str_replace(

@@ -38,7 +38,7 @@ class DigestScheduler {
 	 */
 	public static function register_cron_schedules( $schedules ) {
 		foreach ( self::get_definitions() as $digest_key => $digest_definition ) {
-			$interval_seconds = isset( $digest_definition['interval_seconds'] ) ? (int) $digest_definition['interval_seconds'] : 0;
+			$interval_seconds = self::get_schedule_interval_seconds( $digest_key, $digest_definition );
 
 			if ( $interval_seconds <= 0 ) {
 				continue;
@@ -61,7 +61,7 @@ class DigestScheduler {
 	 */
 	public static function sync_scheduled_events() {
 		foreach ( self::get_definitions() as $digest_key => $digest_definition ) {
-			$interval_seconds = isset( $digest_definition['interval_seconds'] ) ? (int) $digest_definition['interval_seconds'] : 0;
+			$interval_seconds = self::get_schedule_interval_seconds( $digest_key, $digest_definition );
 
 			if ( $interval_seconds <= 0 ) {
 				continue;
@@ -105,6 +105,9 @@ class DigestScheduler {
 		if ( ! (bool) Config::get( self::get_option_key( $digest_key ) ) ) {
 			return;
 		}
+		if ( ! self::should_dispatch_today( $digest_key ) ) {
+			return;
+		}
 
 		do_action( 'llar_digest_dispatch', $digest_key );
 		do_action( 'llar_digest_dispatch_' . $digest_key, $digest_key );
@@ -117,15 +120,91 @@ class DigestScheduler {
 	 * @return int
 	 */
 	private static function get_first_run_timestamp( $digest_key, $interval_seconds ) {
-		$interval_seconds = max( 60, (int) $interval_seconds );
-		$now = current_time( 'timestamp', true );
-		$remainder = $now % $interval_seconds;
+		$now_local = (int) current_time( 'timestamp' );
+		$today_dispatch_ts = gmmktime(
+			LLA_DIGEST_DISPATCH_HOUR_LOCAL,
+			0,
+			0,
+			(int) gmdate( 'n', $now_local ),
+			(int) gmdate( 'j', $now_local ),
+			(int) gmdate( 'Y', $now_local )
+		);
 
-		if ( 0 === $remainder ) {
-			return $now + $interval_seconds;
+		if ( 'weekly' === $digest_key ) {
+			$weekday = (int) gmdate( 'N', $now_local ); // 1=Mon..7=Sun
+			$days_until_monday = ( 8 - $weekday ) % 7;
+
+			if ( 0 === $days_until_monday && $now_local < $today_dispatch_ts ) {
+				return $today_dispatch_ts;
+			}
+
+			if ( 0 === $days_until_monday ) {
+				$days_until_monday = 7;
+			}
+
+			return $today_dispatch_ts + ( $days_until_monday * DAY_IN_SECONDS );
 		}
 
-		return $now + ( $interval_seconds - $remainder );
+		if ( 'monthly' === $digest_key ) {
+			$day_of_month = (int) gmdate( 'j', $now_local );
+
+			if ( 1 === $day_of_month && $now_local < $today_dispatch_ts ) {
+				return $today_dispatch_ts;
+			}
+
+			return gmmktime(
+				LLA_DIGEST_DISPATCH_HOUR_LOCAL,
+				0,
+				0,
+				(int) gmdate( 'n', $now_local ) + 1,
+				1,
+				(int) gmdate( 'Y', $now_local )
+			);
+		}
+
+		// Daily.
+		if ( $now_local < $today_dispatch_ts ) {
+			return $today_dispatch_ts;
+		}
+
+		return $today_dispatch_ts + DAY_IN_SECONDS;
+	}
+
+	/**
+	 * Use daily cron checks for all digest types.
+	 * Weekly/monthly are calendar-gated in handle_scheduled_digest().
+	 *
+	 * @param string $digest_key Digest key.
+	 * @param array  $digest_definition Digest definition.
+	 * @return int
+	 */
+	private static function get_schedule_interval_seconds( $digest_key, $digest_definition ) {
+		$interval_seconds = isset( $digest_definition['interval_seconds'] ) ? (int) $digest_definition['interval_seconds'] : 0;
+		if ( $interval_seconds <= 0 ) {
+			return 0;
+		}
+
+		return DAY_IN_SECONDS;
+	}
+
+	/**
+	 * Check if digest should be dispatched on current local date.
+	 *
+	 * @param string $digest_key Digest key.
+	 * @return bool
+	 */
+	private static function should_dispatch_today( $digest_key ) {
+		$now_local = (int) current_time( 'timestamp' );
+
+		if ( 'weekly' === $digest_key ) {
+			return 1 === (int) gmdate( 'N', $now_local ); // Monday
+		}
+
+		if ( 'monthly' === $digest_key ) {
+			return 1 === (int) gmdate( 'j', $now_local ); // First day of month
+		}
+
+		return true;
 	}
 
 	/**

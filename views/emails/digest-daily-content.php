@@ -20,7 +20,7 @@
 				Lockouts: <?php echo esc_html( (string) $row['lockouts'] ); ?>
 				&#8226; Attempts: <?php echo esc_html( (string) $row['attempts'] ); ?>
 				&#8226; Last seen: <?php echo esc_html( $row['last_seen'] ); ?>
-				&#8226; Login URL: <?php echo esc_html( $row['top_url'] ); ?>
+				&#8226; Gateway: <?php echo esc_html( $row['top_url'] ); ?>
 			</li>
 		<?php endforeach; ?>
 	<?php else : ?>
