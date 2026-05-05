@@ -2,8 +2,6 @@
 
 namespace LLAR\Core\Mfa\RescuePayloadStorage;
 
-use LLAR\Core\MfaConstants;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -30,28 +28,37 @@ class RescuePayloadStorageSelector {
 		$transient_storage = new RescuePayloadTransientStorage();
 		$options_storage   = new RescuePayloadOptionsStorage();
 
-		$selected = $transient_storage;
-		if (
-			(
-				function_exists( 'wp_using_ext_object_cache' )
-				&& wp_using_ext_object_cache()
-				&& ! self::transient_is_consistent( $transient_storage )
-			)
-			|| self::transient_links_are_expiring_or_expired( $transient_storage )
-		) {
-			$selected = $options_storage;
+		switch ( true ) {
+			case defined( 'LLA_MFA_FORCE_TRANSIENT_PROVIDER' ) && LLA_MFA_FORCE_TRANSIENT_PROVIDER:
+			case self::is_rescue_link_open_request():
+				// Payload may exist only in transients (e.g. links generated with transient storage); prefer transient on consume even when external object cache would switch writes to options elsewhere.
+				$selected = $transient_storage;
+				break;
+			case ( function_exists( 'wp_using_ext_object_cache' ) && wp_using_ext_object_cache() )
+				|| self::is_rescue_generation_request():
+				$selected = $options_storage;
+				break;
+			default:
+				$selected = $transient_storage;
+				break;
 		}
 
 		$filtered = apply_filters( 'llar_mfa_rescue_payload_storage', $selected, $transient_storage, $options_storage );
-		if ( $filtered instanceof RescuePayloadStorageInterface ) {
-			$selected = $filtered;
-		} elseif ( is_string( $filtered ) ) {
-			$choice = strtolower( trim( $filtered ) );
-			if ( 'options' === $choice ) {
-				$selected = $options_storage;
-			} elseif ( 'transient' === $choice ) {
-				$selected = $transient_storage;
-			}
+		switch ( true ) {
+			case $filtered instanceof RescuePayloadStorageInterface:
+				$selected = $filtered;
+				break;
+			case is_string( $filtered ):
+				$choice = strtolower( trim( $filtered ) );
+				switch ( true ) {
+					case 'options' === $choice:
+						$selected = $options_storage;
+						break;
+					case 'transient' === $choice:
+						$selected = $transient_storage;
+						break;
+				}
+				break;
 		}
 
 		self::$selected = $selected;
@@ -59,35 +66,30 @@ class RescuePayloadStorageSelector {
 	}
 
 	/**
-	 * Check transient read-after-write consistency.
+	 * Whether current request is rescue-links generation.
 	 *
-	 * @param RescuePayloadTransientStorage $storage Transient storage.
 	 * @return bool
 	 */
-	private static function transient_is_consistent( RescuePayloadTransientStorage $storage ) {
-		$probe_hash = 'probe_' . wp_generate_password( 16, false, false );
-		$probe_data = 'ok_' . wp_generate_password( 16, false, false );
-		$saved      = $storage->save( $probe_hash, $probe_data, 30 );
-		$read       = $storage->read( $probe_hash );
-		$exists     = $storage->exists( $probe_hash );
-		$storage->delete( $probe_hash );
-
-		return $saved && $probe_data === $read && $exists;
+	private static function is_rescue_generation_request() {
+		if ( ! function_exists( 'wp_doing_ajax' ) || ! wp_doing_ajax() ) {
+			return false;
+		}
+		$action = isset( $_REQUEST['action'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : '';
+		return 'llar_mfa_generate_rescue_codes' === $action;
 	}
 
 	/**
-	 * Check if transient rescue links are expiring soon or already expired.
+	 * Whether this HTTP request is opening a rescue link (consumption), not admin AJAX generation.
 	 *
-	 * @param RescuePayloadTransientStorage $storage Transient storage.
 	 * @return bool
 	 */
-	private static function transient_links_are_expiring_or_expired( RescuePayloadTransientStorage $storage ) {
-		$max_expiry = $storage->get_max_expiry();
-		if ( null === $max_expiry ) {
+	private static function is_rescue_link_open_request() {
+		if ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) {
 			return false;
 		}
-
-		$threshold = time() + (int) MfaConstants::RESCUE_NOTICE_THRESHOLD;
-		return (int) $max_expiry <= $threshold;
+		if ( isset( $_GET['llar_rescue'] ) && is_string( $_GET['llar_rescue'] ) && '' !== $_GET['llar_rescue'] ) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -3,8 +3,11 @@
 namespace LLAR\Core\Mfa;
 
 use LLAR\Core\Config;
+use LLAR\Core\MfaConstants;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadOptionsStorage;
 use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageInterface;
 use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadTransientStorage;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -33,6 +36,11 @@ class MfaEndpoint implements MfaEndpointInterface {
 	private $payload_storage;
 
 	/**
+	 * @var RescuePayloadStorageInterface[]
+	 */
+	private $fallback_storages = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @param MfaBackupCodesInterface                 $backup_codes    Backup codes service (decrypt, verify).
@@ -41,6 +49,14 @@ class MfaEndpoint implements MfaEndpointInterface {
 	public function __construct( MfaBackupCodesInterface $backup_codes, RescuePayloadStorageInterface $payload_storage = null ) {
 		$this->backup_codes    = $backup_codes;
 		$this->payload_storage = $payload_storage ? $payload_storage : RescuePayloadStorageSelector::get_storage();
+		switch ( true ) {
+			case $this->payload_storage instanceof RescuePayloadTransientStorage:
+				$this->fallback_storages[] = new RescuePayloadOptionsStorage();
+				break;
+			case $this->payload_storage instanceof RescuePayloadOptionsStorage:
+				$this->fallback_storages[] = new RescuePayloadTransientStorage();
+				break;
+		}
 	}
 
 	/**
@@ -75,13 +91,13 @@ class MfaEndpoint implements MfaEndpointInterface {
 
 		$plain_code = $this->backup_codes->decrypt_code( $encrypted_data );
 		if ( false === $plain_code ) {
-			$this->payload_storage->delete( $hash_id );
+			$this->delete_rescue_payload( $hash_id );
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
 		$codes = Config::get( 'mfa_rescue_codes', array() );
 		if ( ! is_array( $codes ) || empty( $codes ) ) {
-			$this->payload_storage->delete( $hash_id );
+			$this->delete_rescue_payload( $hash_id );
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
@@ -99,7 +115,7 @@ class MfaEndpoint implements MfaEndpointInterface {
 		}
 
 		if ( $code_verified && null !== $verified_index ) {
-			$deleted = $this->payload_storage->delete( $hash_id );
+			$deleted = $this->delete_rescue_payload( $hash_id );
 			if ( ! $deleted ) {
 				wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 			}
@@ -113,7 +129,7 @@ class MfaEndpoint implements MfaEndpointInterface {
 			exit;
 		}
 
-		$this->payload_storage->delete( $hash_id );
+		$this->delete_rescue_payload( $hash_id );
 		wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 	}
 
@@ -126,6 +142,14 @@ class MfaEndpoint implements MfaEndpointInterface {
 	 */
 	private function read_rescue_encrypted_payload( $hash_id ) {
 		$encrypted_data = $this->payload_storage->read( $hash_id );
+		if ( false === $encrypted_data ) {
+			foreach ( $this->fallback_storages as $fallback_storage ) {
+				$encrypted_data = $fallback_storage->read( $hash_id );
+				if ( false !== $encrypted_data ) {
+					break;
+				}
+			}
+		}
 		if ( false === $encrypted_data ) {
 			return false;
 		}
@@ -146,6 +170,20 @@ class MfaEndpoint implements MfaEndpointInterface {
 			return false;
 		}
 		return $encrypted_data;
+	}
+
+	/**
+	 * Delete payload from primary provider and fallbacks.
+	 *
+	 * @param string $hash_id Rescue hash id.
+	 * @return bool
+	 */
+	private function delete_rescue_payload( $hash_id ) {
+		$deleted = (bool) $this->payload_storage->delete( $hash_id );
+		foreach ( $this->fallback_storages as $fallback_storage ) {
+			$deleted = (bool) ( $fallback_storage->delete( $hash_id ) || $deleted );
+		}
+		return $deleted;
 	}
 
 	/**
