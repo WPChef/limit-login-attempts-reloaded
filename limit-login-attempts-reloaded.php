@@ -138,6 +138,7 @@ define( 'LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR' );
 /* Notify value checked against these in limit_login_sanitize_variables() */
 define( 'LLA_LOCKOUT_NOTIFY_ALLOWED', 'log,email' );
 defined( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS' ) || define( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS', 60 );
+defined( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL' ) || define( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL', 10 );
 
 /**
  * Digest definitions (single source of truth for name + interval in seconds).
@@ -146,11 +147,6 @@ defined( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS' ) || define( 'LLA_LOCKOUT_HISTORY_
 defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 	'LLA_DIGEST_DEFINITIONS',
 	array(
-		'realtime' => array(
-			'name' => 'Real-time',
-			'interval_seconds' => 0,
-			'is_default' => false,
-		),
 		'daily' => array(
 			'name' => 'Daily',
 			'interval_seconds' => DAY_IN_SECONDS,

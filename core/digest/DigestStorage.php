@@ -12,11 +12,8 @@ class DigestStorage {
 	const META_DAY_TS = '_llar_digest_day_ts';
 	const META_LOCKOUTS_COUNT = '_llar_digest_lockouts_count';
 	const META_FAILED_ATTEMPTS_COUNT = '_llar_digest_failed_attempts_count';
-	const META_UNIQUE_ATTACKER_IPS = '_llar_digest_unique_attacker_ips';
-	const META_UNIQUE_USERNAMES = '_llar_digest_unique_usernames';
-	const META_MOST_ATTEMPTED_IP = '_llar_digest_most_attempted_ip';
-	const META_TOP_IPS = '_llar_digest_top_ips';
-	const META_TOP_USERNAMES = '_llar_digest_top_usernames';
+	const META_IP_STATS = '_llar_digest_ip_stats';
+	const META_USERNAME_STATS = '_llar_digest_username_stats';
 
 	/**
 	 * Register internal CPT for daily digest stats.
@@ -89,11 +86,8 @@ class DigestStorage {
 		update_post_meta( $post_id, self::META_DAY_TS, (int) $day_ts );
 		update_post_meta( $post_id, self::META_LOCKOUTS_COUNT, 0 );
 		update_post_meta( $post_id, self::META_FAILED_ATTEMPTS_COUNT, 0 );
-		update_post_meta( $post_id, self::META_UNIQUE_ATTACKER_IPS, array() );
-		update_post_meta( $post_id, self::META_UNIQUE_USERNAMES, array() );
-		update_post_meta( $post_id, self::META_TOP_IPS, array() );
-		update_post_meta( $post_id, self::META_TOP_USERNAMES, array() );
-		update_post_meta( $post_id, self::META_MOST_ATTEMPTED_IP, '' );
+		update_post_meta( $post_id, self::META_IP_STATS, array() );
+		update_post_meta( $post_id, self::META_USERNAME_STATS, array() );
 
 		return (int) $post_id;
 	}
@@ -149,7 +143,7 @@ class DigestStorage {
 		$retention_days = defined( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS' )
 			? max( 1, (int) LLA_LOCKOUT_HISTORY_RETENTION_DAYS )
 			: 60;
-		$cutoff_ts = (int) current_time( 'timestamp', true ) - ( $retention_days * DAY_IN_SECONDS );
+		$cutoff_ts = (int) current_time( 'timestamp' ) - ( $retention_days * DAY_IN_SECONDS );
 		$expired_ids = get_posts(
 			array(
 				'post_type'      => self::POST_TYPE,
@@ -180,58 +174,41 @@ class DigestStorage {
 	 * @param int    $day_ts Start-of-day timestamp.
 	 * @param string $ip Attacker IP.
 	 * @param string $username Target username.
-	 * @param string $login_url Request URL.
+	 * @param string $gateway  Gateway alias.
 	 * @return void
 	 */
-	public static function track_failed_attempt( $day_ts, $ip, $username, $login_url ) {
+	public static function track_failed_attempt( $day_ts, $ip, $username, $gateway ) {
 		$post_id = self::get_or_create_day_post( $day_ts );
 
 		if ( ! $post_id ) {
 			return;
 		}
 
-		$now_ts = current_time( 'timestamp', true );
 		$ip = sanitize_text_field( (string) $ip );
 		$username = sanitize_user( (string) $username, true );
-		$login_url = self::normalize_tracked_url( $login_url );
+		$gateway = sanitize_key( (string) $gateway );
 
 		if ( '' !== $ip ) {
-			$unique_ips = get_post_meta( $post_id, self::META_UNIQUE_ATTACKER_IPS, true );
-			$unique_ips = is_array( $unique_ips ) ? $unique_ips : array();
-			$unique_ips[ $ip ] = true;
-			update_post_meta( $post_id, self::META_UNIQUE_ATTACKER_IPS, $unique_ips );
-
-			$top_ips = get_post_meta( $post_id, self::META_TOP_IPS, true );
-			$top_ips = is_array( $top_ips ) ? $top_ips : array();
-			if ( empty( $top_ips[ $ip ] ) || ! is_array( $top_ips[ $ip ] ) ) {
-				$top_ips[ $ip ] = array(
+			$ip_stats = get_post_meta( $post_id, self::META_IP_STATS, true );
+			$ip_stats = is_array( $ip_stats ) ? $ip_stats : array();
+			if ( empty( $ip_stats[ $ip ] ) || ! is_array( $ip_stats[ $ip ] ) ) {
+				$ip_stats[ $ip ] = array(
 					'attempts' => 0,
 					'lockouts' => 0,
-					'last_seen' => 0,
-					'top_url' => '',
 				);
 			}
-			$top_ips[ $ip ]['attempts'] = (int) $top_ips[ $ip ]['attempts'] + 1;
-			$top_ips[ $ip ]['last_seen'] = $now_ts;
-			if ( '' !== $login_url ) {
-				$top_ips[ $ip ]['top_url'] = $login_url;
+			$ip_stats[ $ip ]['attempts'] = (int) $ip_stats[ $ip ]['attempts'] + 1;
+			if ( '' !== $gateway ) {
+				$ip_stats[ $ip ]['gateway'] = $gateway;
 			}
-			update_post_meta( $post_id, self::META_TOP_IPS, $top_ips );
-
-			$most_attempted_ip = self::detect_most_attempted_ip( $top_ips );
-			update_post_meta( $post_id, self::META_MOST_ATTEMPTED_IP, $most_attempted_ip );
+			update_post_meta( $post_id, self::META_IP_STATS, $ip_stats );
 		}
 
 		if ( '' !== $username ) {
-			$unique_usernames = get_post_meta( $post_id, self::META_UNIQUE_USERNAMES, true );
-			$unique_usernames = is_array( $unique_usernames ) ? $unique_usernames : array();
-			$unique_usernames[ $username ] = true;
-			update_post_meta( $post_id, self::META_UNIQUE_USERNAMES, $unique_usernames );
-
-			$top_usernames = get_post_meta( $post_id, self::META_TOP_USERNAMES, true );
-			$top_usernames = is_array( $top_usernames ) ? $top_usernames : array();
-			$top_usernames[ $username ] = isset( $top_usernames[ $username ] ) ? (int) $top_usernames[ $username ] + 1 : 1;
-			update_post_meta( $post_id, self::META_TOP_USERNAMES, $top_usernames );
+			$username_stats = get_post_meta( $post_id, self::META_USERNAME_STATS, true );
+			$username_stats = is_array( $username_stats ) ? $username_stats : array();
+			$username_stats[ $username ] = isset( $username_stats[ $username ] ) ? (int) $username_stats[ $username ] + 1 : 1;
+			update_post_meta( $post_id, self::META_USERNAME_STATS, $username_stats );
 		}
 	}
 
@@ -240,10 +217,10 @@ class DigestStorage {
 	 *
 	 * @param int    $day_ts Start-of-day timestamp.
 	 * @param string $ip Attacker IP.
-	 * @param string $login_url Request URL.
+	 * @param string $gateway Gateway alias.
 	 * @return void
 	 */
-	public static function track_lockout( $day_ts, $ip, $login_url ) {
+	public static function track_lockout( $day_ts, $ip, $gateway ) {
 		$post_id = self::get_or_create_day_post( $day_ts );
 
 		if ( ! $post_id ) {
@@ -251,48 +228,24 @@ class DigestStorage {
 		}
 
 		$ip = sanitize_text_field( (string) $ip );
-		$login_url = self::normalize_tracked_url( $login_url );
+		$gateway = sanitize_key( (string) $gateway );
 		if ( '' === $ip ) {
 			return;
 		}
 
-		$top_ips = get_post_meta( $post_id, self::META_TOP_IPS, true );
-		$top_ips = is_array( $top_ips ) ? $top_ips : array();
-		if ( empty( $top_ips[ $ip ] ) || ! is_array( $top_ips[ $ip ] ) ) {
-			$top_ips[ $ip ] = array(
+		$ip_stats = get_post_meta( $post_id, self::META_IP_STATS, true );
+		$ip_stats = is_array( $ip_stats ) ? $ip_stats : array();
+		if ( empty( $ip_stats[ $ip ] ) || ! is_array( $ip_stats[ $ip ] ) ) {
+			$ip_stats[ $ip ] = array(
 				'attempts' => 0,
 				'lockouts' => 0,
-				'last_seen' => 0,
-				'top_url' => '',
 			);
 		}
-		$top_ips[ $ip ]['lockouts'] = (int) $top_ips[ $ip ]['lockouts'] + 1;
-		$top_ips[ $ip ]['last_seen'] = current_time( 'timestamp', true );
-		if ( '' !== $login_url ) {
-			$top_ips[ $ip ]['top_url'] = $login_url;
+		$ip_stats[ $ip ]['lockouts'] = (int) $ip_stats[ $ip ]['lockouts'] + 1;
+		if ( '' !== $gateway ) {
+			$ip_stats[ $ip ]['gateway'] = $gateway;
 		}
-		update_post_meta( $post_id, self::META_TOP_IPS, $top_ips );
-	}
-
-	/**
-	 * Detect most attempted IP in day aggregate.
-	 *
-	 * @param array $top_ips Aggregated ip data map.
-	 * @return string
-	 */
-	private static function detect_most_attempted_ip( $top_ips ) {
-		$winner_ip = '';
-		$winner_attempts = -1;
-
-		foreach ( $top_ips as $ip => $row ) {
-			$attempts = isset( $row['attempts'] ) ? (int) $row['attempts'] : 0;
-			if ( $attempts > $winner_attempts ) {
-				$winner_attempts = $attempts;
-				$winner_ip = (string) $ip;
-			}
-		}
-
-		return $winner_ip;
+		update_post_meta( $post_id, self::META_IP_STATS, $ip_stats );
 	}
 
 	/**
@@ -372,17 +325,4 @@ class DigestStorage {
 		);
 	}
 
-	/**
-	 * Normalize tracked URL for digest payload.
-	 *
-	 * @param string $login_url Raw request URL.
-	 * @return string
-	 */
-	private static function normalize_tracked_url( $login_url ) {
-		$login_url = esc_url_raw( (string) $login_url );
-		if ( strlen( $login_url ) > 512 ) {
-			$login_url = substr( $login_url, 0, 512 );
-		}
-		return $login_url;
-	}
 }

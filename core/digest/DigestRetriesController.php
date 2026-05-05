@@ -2,6 +2,8 @@
 
 namespace LLAR\Core\Digest;
 
+use LLAR\Core\Helpers;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -9,45 +11,47 @@ if ( ! defined( 'ABSPATH' ) ) {
 class DigestRetriesController {
 	/**
 	 * Save one failed attempt into daily digest storage.
+	 * Raw per-IP and per-username counters are stored for later aggregation.
 	 *
 	 * @return void
 	 */
-	public static function save_failed_attempt( $ip, $username, $login_url ) {
+	public static function save_failed_attempt( $ip, $username ) {
 		$day_start_ts = self::get_day_start_ts();
+		$gateway = Helpers::detect_gateway();
 
 		DigestStorage::increment_failed_attempts( $day_start_ts, 1 );
-		DigestStorage::track_failed_attempt( $day_start_ts, $ip, $username, $login_url );
+		DigestStorage::track_failed_attempt( $day_start_ts, $ip, $username, $gateway );
 	}
 
 	/**
 	 * Save one lockout event into daily digest storage.
 	 *
 	 * @param string $ip Attacker IP.
-	 * @param string $login_url Request URL.
 	 * @return void
 	 */
-	public static function save_lockout( $ip, $login_url ) {
+	public static function save_lockout( $ip ) {
 		$day_start_ts = self::get_day_start_ts();
+		$gateway = Helpers::detect_gateway();
 
 		DigestStorage::increment_lockouts( $day_start_ts, 1 );
-		DigestStorage::track_lockout( $day_start_ts, $ip, $login_url );
+		DigestStorage::track_lockout( $day_start_ts, $ip, $gateway );
 	}
 
 	/**
-	 * Get start-of-day timestamp in UTC.
+	 * Get start-of-day timestamp in site local timezone.
 	 *
 	 * @return int
 	 */
 	private static function get_day_start_ts() {
-		$now_utc = (int) current_time( 'timestamp', true );
+		$now_local = (int) current_time( 'timestamp' );
 
 		return gmmktime(
 			0,
 			0,
 			0,
-			(int) gmdate( 'n', $now_utc ),
-			(int) gmdate( 'j', $now_utc ),
-			(int) gmdate( 'Y', $now_utc )
+			(int) gmdate( 'n', $now_local ),
+			(int) gmdate( 'j', $now_local ),
+			(int) gmdate( 'Y', $now_local )
 		);
 	}
 }
