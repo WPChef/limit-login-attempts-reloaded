@@ -43,10 +43,13 @@ class MfaEndpoint implements MfaEndpointInterface {
 	/**
 	 * Constructor.
 	 *
-	 * @param MfaBackupCodesInterface                 $backup_codes    Backup codes service (decrypt, verify).
-	 * @param RescuePayloadStorageInterface|null $payload_storage Rescue payload storage.
+	 * @param MfaBackupCodesInterface            $backup_codes     Backup codes service (decrypt, verify).
+	 * @param RescuePayloadStorageInterface|null $payload_storage Rescue payload storage (no type hint on param: PHP 8.4 implicit-null deprecation; validated below).
 	 */
-	public function __construct( MfaBackupCodesInterface $backup_codes, RescuePayloadStorageInterface $payload_storage = null ) {
+	public function __construct( MfaBackupCodesInterface $backup_codes, $payload_storage = null ) {
+		if ( null !== $payload_storage && ! $payload_storage instanceof RescuePayloadStorageInterface ) {
+			throw new \InvalidArgumentException( 'Expected RescuePayloadStorageInterface or null.' );
+		}
 		$this->backup_codes    = $backup_codes;
 		$this->payload_storage = $payload_storage ? $payload_storage : RescuePayloadStorageSelector::get_storage();
 		switch ( true ) {
