@@ -113,9 +113,12 @@ class MfaManager {
 	 * @param MfaBackupCodesInterface              $backup_codes    Backup/rescue codes service.
 	 * @param MfaEndpointInterface                 $endpoint        Rescue endpoint handler.
 	 * @param MfaSettingsInterface                 $settings        MFA settings service.
-	 * @param RescuePayloadStorageInterface|null $payload_storage Rescue payload storage.
+	 * @param RescuePayloadStorageInterface|null $payload_storage Rescue payload storage (no type hint on param: PHP 8.4 implicit-null deprecation; validated below).
 	 */
-	public function __construct( MfaBackupCodesInterface $backup_codes, MfaEndpointInterface $endpoint, MfaSettingsInterface $settings, RescuePayloadStorageInterface $payload_storage = null ) {
+	public function __construct( MfaBackupCodesInterface $backup_codes, MfaEndpointInterface $endpoint, MfaSettingsInterface $settings, $payload_storage = null ) {
+		if ( null !== $payload_storage && ! $payload_storage instanceof RescuePayloadStorageInterface ) {
+			throw new \InvalidArgumentException( 'Expected RescuePayloadStorageInterface or null.' );
+		}
 		$this->backup_codes    = $backup_codes;
 		$this->endpoint        = $endpoint;
 		$this->settings        = $settings;
