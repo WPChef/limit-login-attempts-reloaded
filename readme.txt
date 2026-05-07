@@ -1,13 +1,13 @@
 === Limit Login Attempts Reloaded – Login Security, 2FA, Brute Force Protection & Firewall ===
 Contributors: wpchefgadget, nikitaglobal
 Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
-Tags: brute force, security, firewall, 2FA, WooCommerce
+Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 3.0
 Tested up to: 6.9
 Stable tag: 3.2.1
 
-Stop password guessing attacks, secure WooCommerce, block bad IPs, block by countries (Pro), and add email 2FA. Lightweight with better performance.
+Block excessive login attempts and protect your site against brute force attacks. Simple, yet powerful tools to improve site performance.
 
 == Description ==
 
