@@ -1,4 +1,4 @@
-=== Limit Login Attempts Reloaded – Login Security, 2FA, Brute Force Protection & Firewall ===
+=== Limit Login Attempts Reloaded - Login Security, Brute Force Protection, Firewall ===
 Contributors: wpchefgadget, nikitaglobal
 Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login security, security, firewall, 2FA
