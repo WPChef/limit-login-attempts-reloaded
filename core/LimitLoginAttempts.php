@@ -212,10 +212,11 @@ class LimitLoginAttempts
 		$this->cloud_app_init();
 
 		// Initialize MFA (dependency injection: MfaBackupCodes, MfaEndpoint, MfaSettings)
-		$mfa_backup_codes = new \LLAR\Core\Mfa\MfaBackupCodes();
-		$mfa_endpoint     = new \LLAR\Core\Mfa\MfaEndpoint( $mfa_backup_codes );
+		$payload_storage = \LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector::get_storage();
+		$mfa_backup_codes = new \LLAR\Core\Mfa\MfaBackupCodes( $payload_storage );
+		$mfa_endpoint     = new \LLAR\Core\Mfa\MfaEndpoint( $mfa_backup_codes, $payload_storage );
 		$mfa_settings    = new \LLAR\Core\Mfa\MfaSettings();
-		$this->mfa_controller = new \LLAR\Core\Mfa\MfaManager( $mfa_backup_codes, $mfa_endpoint, $mfa_settings );
+		$this->mfa_controller = new \LLAR\Core\Mfa\MfaManager( $mfa_backup_codes, $mfa_endpoint, $mfa_settings, $payload_storage );
 		$this->mfa_controller->register();
 
 		( new Shortcodes() )->register();
@@ -3171,53 +3172,12 @@ class LimitLoginAttempts
 			return false;
 		}
 
-		$seconds_left = $this->get_mfa_rescue_links_seconds_left();
+		$seconds_left = $this->mfa_controller->get_rescue_links_seconds_left();
 		if ( null === $seconds_left ) {
 			return true;
 		}
 
 		return $seconds_left <= MfaConstants::RESCUE_NOTICE_THRESHOLD;
-	}
-
-	/**
-	 * Return seconds left until the latest rescue-link transient expiration.
-	 * Result is cached (see MfaConstants::RESCUE_MAX_EXPIRY_CACHE_*) to limit repeated LIKE queries on wp_options.
-	 *
-	 * @return int|null Null when rescue transients are absent.
-	 */
-	private function get_mfa_rescue_links_seconds_left() {
-		$cache_key = MfaConstants::RESCUE_MAX_EXPIRY_CACHE_KEY;
-		$cached    = get_transient( $cache_key );
-
-		if ( false !== $cached && is_numeric( $cached ) ) {
-			$max_timeout = (int) $cached;
-			if ( -1 === $max_timeout ) {
-				return null;
-			}
-			if ( 0 < $max_timeout ) {
-				return $max_timeout - time();
-			}
-		}
-
-		global $wpdb;
-
-		$timeout_like = $wpdb->esc_like( '_transient_timeout_' . MfaConstants::TRANSIENT_RESCUE_PREFIX ) . '%';
-
-		$max_timeout = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT MAX(CAST(option_value AS UNSIGNED)) FROM ' . $wpdb->options . ' WHERE option_name LIKE %s',
-				$timeout_like
-			)
-		);
-
-		$cache_value = 0 === $max_timeout ? -1 : $max_timeout;
-		set_transient( $cache_key, $cache_value, MfaConstants::RESCUE_MAX_EXPIRY_CACHE_TTL );
-
-		if ( 0 === $max_timeout ) {
-			return null;
-		}
-
-		return $max_timeout - time();
 	}
 
 	/**
