@@ -126,7 +126,7 @@ class CallbackHandler {
 			return;
 		}
 		$verify = $store->consume_callback_state( $cookie, $token );
-		setcookie( 'llar_mfa_state', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
+		SessionStore::set_state_cookie( '' );
 		if ( ! $verify ) {
 			$store->delete_session( $token );
 			self::redirect_login( 'llar_mfa_session_expired' );
@@ -177,7 +177,7 @@ class CallbackHandler {
 			return;
 		}
 		$verify = $store->consume_callback_state( $cookie, $token );
-		setcookie( 'llar_mfa_state', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
+		SessionStore::set_state_cookie( '' );
 		if ( ! $verify ) {
 			$store->delete_session( $token );
 			self::redirect_login( 'llar_mfa_session_expired' );
