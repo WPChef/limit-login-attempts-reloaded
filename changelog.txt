@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.2.2 =
+* Improved MFA rescue link compatibility on hosts with external object cache enabled.
+
 = 3.2.1 =
 * Fixed rescue link behavior and updated the format.
 * 2FA is pre-selected for administrators; when no user groups are selected, 2FA stays disabled.
