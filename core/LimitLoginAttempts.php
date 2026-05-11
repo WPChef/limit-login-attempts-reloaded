@@ -2078,7 +2078,7 @@ class LimitLoginAttempts
 				$remember_me
 			);
 			$store->save_callback_state( $state, $result['data']['token'] );
-			setcookie( 'llar_mfa_state', $state, time() + 600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
+			\LLAR\Core\MfaFlow\SessionStore::set_state_cookie( $state );
 			$mfa_redirect_url = esc_url_raw( $redirect_url_value );
 			if ( $mfa_redirect_url ) {
 				self::mfa_redirect_to_url( $mfa_redirect_url );
