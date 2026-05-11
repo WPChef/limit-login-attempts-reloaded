@@ -54,16 +54,16 @@ class Ajax
 		check_ajax_referer( 'llar-unlock', 'sec' );
 		$ip = (string) @$_POST['ip'];
 
-		$lockouts = (array) Config::get( 'lockouts' );
+		$lockouts = (array) Config::get( Config::OPTION_LOCKOUTS );
 
 		if ( isset( $lockouts[ $ip ] ) ) {
 			unset( $lockouts[ $ip ] );
-			Config::update( 'lockouts', $lockouts );
+			Config::update( Config::OPTION_LOCKOUTS, $lockouts );
 		}
 
 		//save to log
 		$user_login = @(string) $_POST['username'];
-		$log        = Config::get( 'logged' );
+		$log        = Config::get( Config::OPTION_LOGGED );
 
 		if ( @$log[ $ip ][ $user_login ] ) {
 			if ( ! is_array( $log[ $ip ][ $user_login ] ) ) {
@@ -73,7 +73,7 @@ class Ajax
 			}
 			$log[ $ip ][ $user_login ]['unlocked'] = true;
 
-			Config::update( 'logged', $log );
+			Config::update( Config::OPTION_LOGGED, $log );
 		}
 
 		header( 'Content-Type: application/json' );
@@ -1007,7 +1007,7 @@ class Ajax
 
         check_ajax_referer( 'llar-action-onboarding-reset', 'sec' );
 
-        if ( Config::get( 'active_app' ) !== 'local' || ! empty( Config::get( 'app_setup_code' ) ) ) {
+        if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'local' || ! empty( Config::get( 'app_setup_code' ) ) ) {
 
             wp_send_json_error( array() );
         }
