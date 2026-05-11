@@ -164,7 +164,8 @@ class LimitLoginAttempts
 	 */
 	private static function is_wp_at_least( $version ) {
 		if ( ! isset( self::$wp_version_cache[ $version ] ) ) {
-			self::$wp_version_cache[ $version ] = version_compare( Helpers::get_wordpress_version(), $version, '>=' );
+			$current = preg_replace( '/[^0-9.].*/', '', Helpers::get_wordpress_version() );
+			self::$wp_version_cache[ $version ] = version_compare( $current, $version, '>=' );
 		}
 		return self::$wp_version_cache[ $version ];
 	}
