@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-$active_app = Config::get( 'active_app' );
+$active_app = Config::get( Config::OPTION_ACTIVE_APP );
 $active_app = ( $active_app === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $setup_code = Config::get( 'app_setup_code' );
 
