@@ -750,11 +750,8 @@ class LimitLoginAttempts
 			Config::update( 'auto_update_choice', 0 );
 		}
 
-		// Load languages files via a later hook
-		// TODO: load_plugin_textdomain() is deprecated in WordPress 6.9+. WordPress now uses automatic JIT (Just-In-Time) translation loading.
-		// This function still works for backward compatibility, but should be removed in future versions.
-		// JIT translation loading automatically loads translation files when needed, so explicit load_plugin_textdomain() calls are no longer necessary.
-	    add_action('init', array( $this, 'load_plugin_textdomain_in_time' ) );
+		// Load translations and defaults in a WP-version-safe way.
+		add_action( 'init', array( $this, 'load_plugin_textdomain_in_time' ) );
 
 		$this->register_mfa_providers();
 
@@ -829,18 +826,19 @@ class LimitLoginAttempts
 
 
 	/**
-	 * Later loading of translations load_plugin_textdomain
-	 * 
-	 * TODO: This method uses deprecated load_plugin_textdomain() function.
-	 * WordPress 6.9+ uses automatic JIT (Just-In-Time) translation loading, which means
-	 * translation files are loaded automatically when needed. This explicit call can be
-	 * removed in future versions. Ensure translation files are properly named and placed
-	 * in the languages directory for JIT loading to work correctly.
+	 * Initialize i18n and plugin defaults.
+	 *
+	 * WordPress 6.9+ (including 7.x) uses JIT translation loading and no longer needs
+	 * explicit `load_plugin_textdomain()` calls. Older WordPress versions still rely on it.
+	 *
+	 * @return void
 	 */
 	public function load_plugin_textdomain_in_time()
 	{
-		// TODO: Remove load_plugin_textdomain() call - WordPress 6.9+ handles translations automatically via JIT loading
-		load_plugin_textdomain( 'limit-login-attempts-reloaded', false, plugin_basename( __DIR__ ) . '/../languages' );
+		if ( version_compare( Helpers::get_wordpress_version(), '6.9', '<' ) && function_exists( 'load_plugin_textdomain' ) ) {
+			load_plugin_textdomain( 'limit-login-attempts-reloaded', false, plugin_basename( __DIR__ ) . '/../languages' );
+		}
+
 		Config::init_defaults();
 	}
 
