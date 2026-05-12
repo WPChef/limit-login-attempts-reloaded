@@ -16,7 +16,7 @@ if ( $active_tab === 'logs-custom' && ! LimitLoginAttempts::$cloud_app ) {
 	$active_tab = 'logs-local';
 }
 
-$active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
+$active_app = ( Config::get( Config::OPTION_ACTIVE_APP ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $is_active_app_custom = $active_app === 'custom';
 
 $auto_update_choice = Config::get( 'auto_update_choice' );
