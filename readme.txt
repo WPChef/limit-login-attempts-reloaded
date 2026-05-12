@@ -14,14 +14,14 @@ Block excessive login attempts and protect your site against brute force attacks
 Limits the number of login attempts to prevent brute force attacks. Protects wp-login.php, XMLRPC, WooCommerce login pages, and custom login forms. Trusted by 2.5M+ sites.
 <a href="https://www.limitloginattempts.com">Limit Login Attempts Reloaded</a> works as a strong deterrent against <a href="https://www.limitloginattempts.com/cracking-the-code-unveiling-the-mechanics-behind-brute-force-attacks/">brute force attacks</a> by **restricting the number of login attempts allowed**, strengthening your site's security without slowing it down.
 
+https://www.youtube.com/watch?v=dX7Qu5MN2ok
+
 The plugin functions by automatically preventing further attempts from a particular Internet Protocol (IP) address and/or username once a predetermined limit of retries has been surpassed. This significantly weakens the effectiveness of brute force attacks on your website.
 
 By default, WordPress permits an unlimited number of login attempts, posing a vulnerability where passwords can be easily deciphered through brute force methods.
 
 **Limit Login Attempts Reloaded Premium (Try Free with <a href="https://www.limitloginattempts.com/premium-security-zero-cost-discover-the-benefits-of-micro-cloud/">Micro Cloud</a>)**
 Upgrade to <a href="https://www.limitloginattempts.com/plans/">Limit Login Attempts Reloaded Premium</a> to extend cloud-based protection to the Limit Login Attempts Reloaded plugin, thereby enhancing your login security. The premium version includes a range of highly beneficial features, including <a href="https://www.limitloginattempts.com/features/ip-intelligence/">IP intelligence</a> to **detect, counter and deny malicious login attempts**. Your <a href="https://www.limitloginattempts.com/failed-login-attempts-in-wordpress/">failed login attempts</a> will be safely neutralized in the cloud so your website can function at its optimal performance during an attack.
-
-https://www.youtube.com/watch?v=JfkvIiQft14
 
 = Features (Free Version): =
 * **2FA** - Enable two-factor authentication for extra login security.
