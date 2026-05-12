@@ -4,6 +4,10 @@ namespace LLAR\Core\Mfa;
 
 use LLAR\Core\Config;
 use LLAR\Core\MfaConstants;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadOptionsStorage;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageInterface;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadTransientStorage;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,14 +30,36 @@ class MfaEndpoint implements MfaEndpointInterface {
 	 * @var MfaBackupCodesInterface
 	 */
 	private $backup_codes;
+	/**
+	 * @var RescuePayloadStorageInterface
+	 */
+	private $payload_storage;
+
+	/**
+	 * @var RescuePayloadStorageInterface[]
+	 */
+	private $fallback_storages = array();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param MfaBackupCodesInterface $backup_codes Backup codes service (decrypt, verify).
+	 * @param MfaBackupCodesInterface            $backup_codes     Backup codes service (decrypt, verify).
+	 * @param RescuePayloadStorageInterface|null $payload_storage Rescue payload storage (no type hint on param: PHP 8.4 implicit-null deprecation; validated below).
 	 */
-	public function __construct( MfaBackupCodesInterface $backup_codes ) {
-		$this->backup_codes = $backup_codes;
+	public function __construct( MfaBackupCodesInterface $backup_codes, $payload_storage = null ) {
+		if ( null !== $payload_storage && ! $payload_storage instanceof RescuePayloadStorageInterface ) {
+			throw new \InvalidArgumentException( 'Expected RescuePayloadStorageInterface or null.' );
+		}
+		$this->backup_codes    = $backup_codes;
+		$this->payload_storage = $payload_storage ? $payload_storage : RescuePayloadStorageSelector::get_storage();
+		switch ( true ) {
+			case $this->payload_storage instanceof RescuePayloadTransientStorage:
+				$this->fallback_storages[] = new RescuePayloadOptionsStorage();
+				break;
+			case $this->payload_storage instanceof RescuePayloadOptionsStorage:
+				$this->fallback_storages[] = new RescuePayloadTransientStorage();
+				break;
+		}
 	}
 
 	/**
@@ -68,13 +94,13 @@ class MfaEndpoint implements MfaEndpointInterface {
 
 		$plain_code = $this->backup_codes->decrypt_code( $encrypted_data );
 		if ( false === $plain_code ) {
-			$this->remove_rescue_payload_from_options( $hash_id );
+			$this->delete_rescue_payload( $hash_id );
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
 		$codes = Config::get( 'mfa_rescue_codes', array() );
 		if ( ! is_array( $codes ) || empty( $codes ) ) {
-			$this->remove_rescue_payload_from_options( $hash_id );
+			$this->delete_rescue_payload( $hash_id );
 			wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 		}
 
@@ -92,8 +118,8 @@ class MfaEndpoint implements MfaEndpointInterface {
 		}
 
 		if ( $code_verified && null !== $verified_index ) {
-			$deleted = $this->remove_rescue_payload_from_options( $hash_id );
-			if ( 1 !== (int) $deleted ) {
+			$deleted = $this->delete_rescue_payload( $hash_id );
+			if ( ! $deleted ) {
 				wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 			}
 			$rescue_code = RescueCode::from_array( $codes[ $verified_index ] );
@@ -106,7 +132,7 @@ class MfaEndpoint implements MfaEndpointInterface {
 			exit;
 		}
 
-		$this->remove_rescue_payload_from_options( $hash_id );
+		$this->delete_rescue_payload( $hash_id );
 		wp_die( self::MSG_ERROR, 'LLAR MFA Rescue', array( 'response' => 403 ) );
 	}
 
@@ -118,19 +144,13 @@ class MfaEndpoint implements MfaEndpointInterface {
 	 * @return string|false Encrypted payload or false.
 	 */
 	private function read_rescue_encrypted_payload( $hash_id ) {
-		$transient_key  = MfaConstants::TRANSIENT_RESCUE_PREFIX . $hash_id;
-		$encrypted_data = get_transient( $transient_key );
+		$encrypted_data = $this->payload_storage->read( $hash_id );
 		if ( false === $encrypted_data ) {
-			global $wpdb;
-			$option_name = '_transient_' . $transient_key;
-			$raw         = $wpdb->get_var(
-				$wpdb->prepare(
-					'SELECT option_value FROM ' . $wpdb->options . ' WHERE option_name = %s LIMIT 1',
-					$option_name
-				)
-			);
-			if ( null !== $raw && '' !== $raw ) {
-				$encrypted_data = maybe_unserialize( $raw );
+			foreach ( $this->fallback_storages as $fallback_storage ) {
+				$encrypted_data = $fallback_storage->read( $hash_id );
+				if ( false !== $encrypted_data ) {
+					break;
+				}
 			}
 		}
 		if ( false === $encrypted_data ) {
@@ -156,32 +176,17 @@ class MfaEndpoint implements MfaEndpointInterface {
 	}
 
 	/**
-	 * Remove the one-time payload row from the database (and timeout row). Returns rows deleted (0 or 1 for value row).
+	 * Delete payload from primary provider and fallbacks.
 	 *
-	 * @param string $hash_id Validated hash_id.
-	 * @return int Deleted rows for _transient_* value row.
+	 * @param string $hash_id Rescue hash id.
+	 * @return bool
 	 */
-	private function remove_rescue_payload_from_options( $hash_id ) {
-		$transient_key = MfaConstants::TRANSIENT_RESCUE_PREFIX . $hash_id;
-		global $wpdb;
-		$option_name = '_transient_' . $transient_key;
-		$deleted     = $wpdb->query(
-			$wpdb->prepare(
-				'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
-				$option_name
-			)
-		);
-		if ( 1 === (int) $deleted ) {
-			$timeout_name = '_transient_timeout_' . $transient_key;
-			$wpdb->query(
-				$wpdb->prepare(
-					'DELETE FROM ' . $wpdb->options . ' WHERE option_name = %s',
-					$timeout_name
-				)
-			);
-			delete_transient( MfaConstants::RESCUE_MAX_EXPIRY_CACHE_KEY );
+	private function delete_rescue_payload( $hash_id ) {
+		$deleted = (bool) $this->payload_storage->delete( $hash_id );
+		foreach ( $this->fallback_storages as $fallback_storage ) {
+			$deleted = (bool) ( $fallback_storage->delete( $hash_id ) || $deleted );
 		}
-		return (int) $deleted;
+		return $deleted;
 	}
 
 	/**

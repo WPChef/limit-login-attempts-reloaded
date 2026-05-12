@@ -3,6 +3,8 @@
 namespace LLAR\Core\Mfa;
 
 use LLAR\Core\MfaConstants;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageInterface;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,6 +18,21 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 	const CIPHER_METHOD = 'AES-256-CBC';
 	const PAYLOAD_VERSION = 'v2:';
 	const BASE62_ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+	/**
+	 * @var RescuePayloadStorageInterface
+	 */
+	private $payload_storage;
+
+	/**
+	 * @param RescuePayloadStorageInterface|null $payload_storage Rescue payload storage (no type hint on param: PHP 8.4 implicit-null deprecation; validated below).
+	 */
+	public function __construct( $payload_storage = null ) {
+		if ( null !== $payload_storage && ! $payload_storage instanceof RescuePayloadStorageInterface ) {
+			throw new \InvalidArgumentException( 'Expected RescuePayloadStorageInterface or null.' );
+		}
+		$this->payload_storage = $payload_storage ? $payload_storage : RescuePayloadStorageSelector::get_storage();
+	}
 
 	/**
 	 * Encrypt plain code for storage. OpenSSL only; returns false if unavailable.
@@ -233,8 +250,7 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 		}
 		// Store encrypted payload in a dedicated transient per hash_id.
 		// This allows atomic, single-use consumption on the endpoint side.
-		$transient_key = MfaConstants::TRANSIENT_RESCUE_PREFIX . $hash_id;
-		set_transient( $transient_key, $encrypted, MfaConstants::RESCUE_LINK_TTL );
+		$this->payload_storage->save( $hash_id, $encrypted, MfaConstants::RESCUE_LINK_TTL );
 		return add_query_arg( 'llar_rescue', $hash_id, home_url() );
 	}
 
