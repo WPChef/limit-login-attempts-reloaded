@@ -8,6 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Config {
 
+	const OPTION_LOCKOUTS   = 'lockouts';
+	const OPTION_LOGGED     = 'logged';
+	const OPTION_ACTIVE_APP = 'active_app';
+
 	private static $default_options = array(
 		'gdpr'                          => 0,
 		'gdpr_message'                  => '',

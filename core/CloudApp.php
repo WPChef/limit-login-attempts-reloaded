@@ -155,7 +155,7 @@ class CloudApp
 
 				Helpers::cloud_app_update_config( $setup_result['app_config'], true );
 
-				Config::update( 'active_app', 'custom' );
+				Config::update( Config::OPTION_ACTIVE_APP, 'custom' );
 				Config::update( 'app_setup_code', $setup_code );
 
 				$setup_result['app_config']['messages']['setup_success'] =

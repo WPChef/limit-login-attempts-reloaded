@@ -259,10 +259,11 @@ class LimitLoginAttempts
 		$this->cloud_app_init();
 
 		// Initialize MFA (dependency injection: MfaBackupCodes, MfaEndpoint, MfaSettings)
-		$mfa_backup_codes = new \LLAR\Core\Mfa\MfaBackupCodes();
-		$mfa_endpoint     = new \LLAR\Core\Mfa\MfaEndpoint( $mfa_backup_codes );
+		$payload_storage = \LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector::get_storage();
+		$mfa_backup_codes = new \LLAR\Core\Mfa\MfaBackupCodes( $payload_storage );
+		$mfa_endpoint     = new \LLAR\Core\Mfa\MfaEndpoint( $mfa_backup_codes, $payload_storage );
 		$mfa_settings    = new \LLAR\Core\Mfa\MfaSettings();
-		$this->mfa_controller = new \LLAR\Core\Mfa\MfaManager( $mfa_backup_codes, $mfa_endpoint, $mfa_settings );
+		$this->mfa_controller = new \LLAR\Core\Mfa\MfaManager( $mfa_backup_codes, $mfa_endpoint, $mfa_settings, $payload_storage );
 		$this->mfa_controller->register();
 
 		( new Shortcodes() )->register();
@@ -766,7 +767,7 @@ class LimitLoginAttempts
 		if ( Config::get( 'onboarding_popup_shown' ) ) {
 			return;
 		}
-		if ( 'custom' === Config::get( 'active_app' ) && self::$cloud_app ) {
+		if ( 'custom' === Config::get( Config::OPTION_ACTIVE_APP ) && self::$cloud_app ) {
 			return;
 		}
 		if ( ! empty( Config::get( 'app_setup_code' ) ) ) {
@@ -925,7 +926,7 @@ class LimitLoginAttempts
 		// Same error output as failed login for any MFA redirect (session_expired, code_invalid, etc.).
 		$show_mfa_return_error = ( $llar_mfa_error !== '' );
 
-		if ( Config::get( 'active_app' ) === 'local' && ! $limit_login_nonempty_credentials && ! $show_mfa_return_error ) {
+		if ( Config::get( Config::OPTION_ACTIVE_APP ) === 'local' && ! $limit_login_nonempty_credentials && ! $show_mfa_return_error ) {
 			return;
 		}
 
@@ -1034,7 +1035,7 @@ class LimitLoginAttempts
 			'<a href="' . $this->get_options_page_uri( 'settings' ) . '">' . __( 'Settings', 'limit-login-attempts-reloaded' ) . '</a>',
 		), $actions );
 
-		if ( Config::get( 'active_app' ) === 'local' ) {
+		if ( Config::get( Config::OPTION_ACTIVE_APP ) === 'local' ) {
 
 			if ( empty( Config::get( 'app_setup_code' ) ) ) {
 
@@ -1076,7 +1077,7 @@ class LimitLoginAttempts
 
 	public function cloud_app_init()
 	{
-		if ( Config::get( 'active_app' ) === 'custom' && $config = Config::get( 'app_config' ) ) {
+		if ( Config::get( Config::OPTION_ACTIVE_APP ) === 'custom' && $config = Config::get( 'app_config' ) ) {
 
 			self::$cloud_app = new CloudApp( $config );
 		}
@@ -1733,7 +1734,7 @@ class LimitLoginAttempts
 
 	private function get_submenu_items()
 	{
-		$active_app        = Config::get( 'active_app' );
+		$active_app        = Config::get( Config::OPTION_ACTIVE_APP );
 		$app_setup_code    = Config::get( 'app_setup_code' );
 		$is_cloud_app_enabled = $active_app === 'custom';
 		$is_local_empty_setup_code = ( $active_app === 'local' && empty( $app_setup_code ) );
@@ -1811,7 +1812,7 @@ class LimitLoginAttempts
 				74
 			);
 
-			$is_cloud_app_enabled = Config::get( 'active_app' ) === 'custom';
+			$is_cloud_app_enabled = Config::get( Config::OPTION_ACTIVE_APP ) === 'custom';
 			$submenu_items = $this->get_submenu_items();
 
 			$index = 1;
@@ -1893,7 +1894,7 @@ class LimitLoginAttempts
 
 		if (
 			! empty( $_COOKIE['llar_menu_alert_icon_shown'] )
-			|| Config::get( 'active_app' ) !== 'local'
+			|| Config::get( Config::OPTION_ACTIVE_APP ) !== 'local'
 			|| ! Config::get( 'show_warning_badge' )
 		) {
 			return '';
@@ -2020,7 +2021,7 @@ class LimitLoginAttempts
 		}
 
 		/* lockout active? */
-		$lockouts = Config::get( 'lockouts' );
+		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 
 		return ( ! is_array( $lockouts ) || ! isset( $lockouts[ $ip ] ) || time() >= $lockouts[ $ip ] );
 	}
@@ -2208,7 +2209,7 @@ class LimitLoginAttempts
 				$remember_me
 			);
 			$store->save_callback_state( $state, $result['data']['token'] );
-			setcookie( 'llar_mfa_state', $state, time() + 600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
+			\LLAR\Core\MfaFlow\SessionStore::set_state_cookie( $state );
 			$mfa_redirect_url = esc_url_raw( $redirect_url_value );
 			if ( $mfa_redirect_url ) {
 				self::mfa_redirect_to_url( $mfa_redirect_url );
@@ -2284,7 +2285,7 @@ class LimitLoginAttempts
 			$ip = $this->get_address();
 
 			/* if currently locked-out, do not add to retries */
-			$lockouts = Config::get( 'lockouts' );
+			$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 
 			if ( ! is_array( $lockouts ) ) {
 				$lockouts = array();
@@ -2569,7 +2570,7 @@ class LimitLoginAttempts
 			return;
 		}
 
-		$log = $option = Config::get( 'logged' );
+		$log = $option = Config::get( Config::OPTION_LOGGED );
 
 		if ( ! is_array( $log ) ) {
 			$log = array();
@@ -2599,7 +2600,7 @@ class LimitLoginAttempts
 			Config::add( 'logged', $log );
 		} else {
 
-			Config::update( 'logged', $log );
+			Config::update( Config::OPTION_LOGGED, $log );
 		}
 	}
 
@@ -2796,7 +2797,7 @@ class LimitLoginAttempts
 	public function error_msg()
 	{
 		$ip       = $this->get_address();
-		$lockouts = Config::get( 'lockouts' );
+		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 		$a        = $this->checkKey($lockouts, $ip);
 		$b        = $this->checkKey($lockouts, $this->getHash($ip));
 
@@ -3007,9 +3008,9 @@ class LimitLoginAttempts
 	public function cleanup( $retries = null, $lockouts = null, $valid = null )
 	{
 		$now      = time();
-		$lockouts = ! is_null( $lockouts ) ? $lockouts : Config::get( 'lockouts' );
+		$lockouts = ! is_null( $lockouts ) ? $lockouts : Config::get( Config::OPTION_LOCKOUTS );
 
-		$log = Config::get( 'logged' );
+		$log = Config::get( Config::OPTION_LOGGED );
 
 		/* remove old lockouts */
 		if ( is_array( $lockouts ) ) {
@@ -3028,10 +3029,10 @@ class LimitLoginAttempts
 					}
 				}
 			}
-			Config::update( 'lockouts', $lockouts );
+			Config::update( Config::OPTION_LOCKOUTS, $lockouts );
 		}
 
-		Config::update( 'logged', $log );
+		Config::update( Config::OPTION_LOGGED, $log );
 
 		/* remove retries that are no longer valid */
 		$valid   = ! is_null( $valid ) ? $valid : Config::get( 'retries_valid' );
@@ -3103,7 +3104,7 @@ class LimitLoginAttempts
 			/* Should we clear log? */
 			if ( isset( $_POST[ 'clear_log' ] ) ) {
 
-				Config::update( 'logged', array() );
+				Config::update( Config::OPTION_LOGGED, array() );
 				$this->show_message( __( 'Cleared IP log', 'limit-login-attempts-reloaded' ) );
 			}
 
@@ -3117,7 +3118,7 @@ class LimitLoginAttempts
 			/* Should we restore current lockouts? */
 			if ( isset( $_POST[ 'reset_current' ] ) ) {
 
-				Config::update( 'lockouts', array() );
+				Config::update( Config::OPTION_LOCKOUTS, array() );
 				$this->show_message( __( 'Cleared current lockouts', 'limit-login-attempts-reloaded' ) );
 			}
 
@@ -3218,7 +3219,7 @@ class LimitLoginAttempts
 				Config::update('custom_error_message',      sanitize_textarea_field( Helpers::deslash( $_POST['custom_error_message'] ) ) );
 				Config::update('admin_notify_email',        sanitize_email( $_POST['admin_notify_email'] ) );
 
-				Config::update('active_app', sanitize_text_field( $_POST['active_app'] ) );
+				Config::update( Config::OPTION_ACTIVE_APP, sanitize_text_field( $_POST['active_app'] ) );
 
 				$trusted_ip_origins = ( ! empty( $_POST['lla_trusted_ip_origins'] ) )
 					? array_map( 'trim', explode( ',', sanitize_text_field( $_POST['lla_trusted_ip_origins'] ) ) )
@@ -3317,53 +3318,12 @@ class LimitLoginAttempts
 			return false;
 		}
 
-		$seconds_left = $this->get_mfa_rescue_links_seconds_left();
+		$seconds_left = $this->mfa_controller->get_rescue_links_seconds_left();
 		if ( null === $seconds_left ) {
 			return true;
 		}
 
 		return $seconds_left <= MfaConstants::RESCUE_NOTICE_THRESHOLD;
-	}
-
-	/**
-	 * Return seconds left until the latest rescue-link transient expiration.
-	 * Result is cached (see MfaConstants::RESCUE_MAX_EXPIRY_CACHE_*) to limit repeated LIKE queries on wp_options.
-	 *
-	 * @return int|null Null when rescue transients are absent.
-	 */
-	private function get_mfa_rescue_links_seconds_left() {
-		$cache_key = MfaConstants::RESCUE_MAX_EXPIRY_CACHE_KEY;
-		$cached    = get_transient( $cache_key );
-
-		if ( false !== $cached && is_numeric( $cached ) ) {
-			$max_timeout = (int) $cached;
-			if ( -1 === $max_timeout ) {
-				return null;
-			}
-			if ( 0 < $max_timeout ) {
-				return $max_timeout - time();
-			}
-		}
-
-		global $wpdb;
-
-		$timeout_like = $wpdb->esc_like( '_transient_timeout_' . MfaConstants::TRANSIENT_RESCUE_PREFIX ) . '%';
-
-		$max_timeout = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT MAX(CAST(option_value AS UNSIGNED)) FROM ' . $wpdb->options . ' WHERE option_name LIKE %s',
-				$timeout_like
-			)
-		);
-
-		$cache_value = 0 === $max_timeout ? -1 : $max_timeout;
-		set_transient( $cache_key, $cache_value, MfaConstants::RESCUE_MAX_EXPIRY_CACHE_TTL );
-
-		if ( 0 === $max_timeout ) {
-			return null;
-		}
-
-		return $max_timeout - time();
 	}
 
 	/**
@@ -3833,7 +3793,7 @@ class LimitLoginAttempts
 			@setcookie( 'llar_enable_notify_notice_shown', '', time() - 3600, '/' );
 		}
 
-		$active_app = Config::get( 'active_app' );
+		$active_app = Config::get( Config::OPTION_ACTIVE_APP );
 		$notify_methods = explode( ',', Config::get( 'lockout_notify' ) );
 
 		if (
