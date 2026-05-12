@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.2.3 =
+* Broadened MFA state cookie scope to the site root for wider path coverage.
+* Fixed Active Lockouts counter not showing on the local Logs page.
+
 = 3.2.2 =
 * Improved MFA rescue link compatibility on hosts with external object cache enabled.
 
