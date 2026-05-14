@@ -235,9 +235,9 @@ class MemberPressIntegration extends BaseIntegration {
 	 * to track credentials and check lockouts before MemberPress validates the password
 	 * This enables the plugin to display remaining attempts messages
 	 *
-	 * @param array $errors Array of existing errors
+	 * @param array $errors Array of existing errors (from MemberPress validate_login, applied before this filter).
 	 * @param array $params Login parameters (log, pwd)
-	 * @return array Unchanged errors array (we don't block, only track)
+	 * @return array Errors for MemberPress; when LLAR blocks login, returns that message so MP shows it (MP uses only $errors[0]).
 	 */
 	public function mepr_validate_login_handler( $errors, $params = array() ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- MemberPress handles nonce verification
@@ -250,13 +250,30 @@ class MemberPressIntegration extends BaseIntegration {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- MemberPress handles nonce verification
 		$pwd = isset( $_POST['pwd'] ) ? wp_unslash( $_POST['pwd'] ) : ''; // Password should not be sanitized, but needs wp_unslash() to remove magic quotes
 
-		// Trigger authenticate filter to track credentials and check lockouts
-		// This sets $limit_login_nonempty_credentials and $_SESSION['login_attempts_left']
-		// We don't block here - MemberPress will handle blocking if needed
-		// Note: Result is intentionally ignored - we only need side effects (setting global variables)
-		apply_filters( 'authenticate', null, $log, $pwd );
+		// Trigger authenticate filter to track credentials and check lockouts.
+		// MemberPress runs validate_login before this filter, so $errors may already contain a generic
+		// "incorrect password" message; MeprLoginCtrl only displays $errors[0]. If authenticate returns
+		// lockout/blacklist, we must replace $errors so the user sees LLAR messaging.
+		$auth_result = apply_filters( 'authenticate', null, $log, $pwd );
 
-		// Return errors unchanged - we're only tracking, not blocking
+		if ( is_wp_error( $auth_result ) ) {
+			$codes = $auth_result->get_error_codes();
+			if ( in_array( 'too_many_retries', $codes, true ) ) {
+				return array( $auth_result->get_error_message( 'too_many_retries' ) );
+			}
+			if ( in_array( 'username_blacklisted', $codes, true ) ) {
+				return array( $auth_result->get_error_message( 'username_blacklisted' ) );
+			}
+		}
+
+		// Wrong-password path usually leaves authenticate() as incorrect_password only: core does not
+		// call wp_authenticate_user (where too_many_retries is added after a valid password check), and
+		// authenticate_late_lockout_check runs only on WP 7.0+. Lockout is still stored in lockouts[];
+		// is_login_allowed() mirrors that — surface the message whenever the IP is locked.
+		if ( ! $this->is_login_allowed() ) {
+			return array( $this->get_error_message() );
+		}
+
 		return $errors;
 	}
 }
