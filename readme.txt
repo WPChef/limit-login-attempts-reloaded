@@ -19,168 +19,154 @@ Trusted by 2 million WordPress websites, Limit Login Attempts Security is design
 
 https://www.youtube.com/watch?v=dX7Qu5MN2ok
 
----
+= Why Use Limit Login Attempts Security? =
 
-# Why Use Limit Login Attempts Security?
-
-By default, WordPress allows unlimited login attempts. This creates a major security vulnerability where bots and attackers can repeatedly guess usernames and passwords until they gain access. This is especially important in the age of AI, where attackers now have access to faster and more sophisticated tools than ever before. 
+By default, WordPress allows unlimited login attempts. This creates a major security vulnerability where bots and attackers can repeatedly guess usernames and passwords until they gain access. This is especially important in the age of AI, where attackers now have access to faster and more sophisticated tools than ever before.
 
 Limit Login Attempts Security helps stop:
 
-- Brute force attacks
-- Bot login attacks
-- Credential stuffing attacks
-- XML-RPC attacks
-- Unauthorized login attempts
-- WooCommerce login abuse
-- Malicious IP access attempts
+* Brute force attacks
+* Bot login attacks
+* Credential stuffing attacks
+* XML-RPC attacks
+* Unauthorized login attempts
+* WooCommerce login abuse
+* Malicious IP access attempts
 
 The plugin automatically blocks excessive login attempts and locks out suspicious IP addresses and usernames before attackers can gain access.
 
----
+= Features Included in the Free Version =
 
-# Features Included in the Free Version
+**Login Security & Brute Force Protection**
 
-## Login Security & Brute Force Protection
+* Limit login attempts by IP address and username
+* Automatically lock out suspicious login activity
+* Adjustable lockout duration and retry limits
+* Protect wp-login.php from automated attacks
+* Prevent brute force login attacks
 
-- Limit login attempts by IP address and username
-- Automatically lock out suspicious login activity
-- Adjustable lockout duration and retry limits
-- Protect `wp-login.php` from automated attacks
-- Prevent brute force login attacks
+**2FA / Multi-Factor Authentication (MFA)**
 
-## 2FA / Multi-Factor Authentication (MFA)
+* Built-in two-factor authentication (2FA)
+* Add an additional layer of login protection
+* Improve WordPress account security
+* Secure administrator and user logins
 
-- Built-in two-factor authentication (2FA)
-- Add an additional layer of login protection
-- Improve WordPress account security
-- Secure administrator and user logins
+**Firewall & Bot Protection**
 
-## Firewall & Bot Protection
+* Block malicious login requests
+* Detect suspicious login behavior
+* Reduce bot-based login attacks
+* Lightweight firewall-focused login protection
 
-- Block malicious login requests
-- Detect suspicious login behavior
-- Reduce bot-based login attacks
-- Lightweight firewall-focused login protection
+**WooCommerce & Plugin Compatibility**
 
-## WooCommerce & Plugin Compatibility
+Protects:
 
-### Protects
+* WooCommerce login pages
+* XML-RPC login requests
+* Custom login pages
+* WordPress multisite installations
 
-- WooCommerce login pages
-- XML-RPC login requests
-- Custom login pages
-- WordPress multisite installations
+Compatible With:
 
-### Compatible With
+* Wordfence
+* Sucuri
+* Ultimate Member
+* MemberPress
+* WPS Hide Login
+* Cloudflare and reverse proxy setups
 
-- Wordfence
-- Sucuri
-- Ultimate Member
-- MemberPress
-- WPS Hide Login
-- Cloudflare and reverse proxy setups
+**Login Monitoring & Notifications**
 
-## Login Monitoring & Notifications
+* Failed login attempt logs
+* Lockout email notifications
+* Denied attempt tracking
+* Login retry visibility for users
 
-- Failed login attempt logs
-- Lockout email notifications
-- Denied attempt tracking
-- Login retry visibility for users
+**Access Controls**
 
-## Access Controls
+* IP safelist and denylist support
+* Username safelist and denylist support
+* IPv6 range support
+* Custom IP origin configuration
 
-- IP safelist and denylist support
-- Username safelist and denylist support
-- IPv6 range support
-- Custom IP origin configuration
+= Premium Features (Start Your Free 14 Day Trial) =
 
----
+<a href="https://www.limitloginattempts.com/plans/">Upgrade to Limit Login Attempts Security Premium</a> to extend protection with cloud-based login security and advanced attack prevention.
 
-# Premium Features (Start Your Free 14 Day Trial)
+**Advanced Cloud Protection**
 
-<a href="https://www.limitloginattempts.com/plans/>Upgrade to Limit Login Attempts Security Premium</a> to extend protection with cloud-based login security and advanced attack prevention.
+* Real-time malicious IP intelligence
+* Global denylist protection
+* Synchronized lockouts across websites
+* Auto IP denylist generation
+* Cloud-based login attack mitigation
 
-## Advanced Cloud Protection
+**Enhanced Performance Protection**
 
-- Real-time malicious IP intelligence
-- Global denylist protection
-- Synchronized lockouts across websites
-- Auto IP denylist generation
-- Cloud-based login attack mitigation
+* Offload excessive failed login requests from your server
+* Reduce server strain during attacks
+* Improve stability under heavy attack conditions
 
-## Enhanced Performance Protection
+**Advanced Security Features**
 
-- Offload excessive failed login requests from your server
-- Reduce server strain during attacks
-- Improve stability under heavy attack conditions
+* Country-based login blocking
+* Enhanced throttling and lockout escalation
+* Registration page protection
+* Successful login tracking
+* Enhanced lockout analytics and geolocation data
 
-## Advanced Security Features
+**Multi-Site & Team Features**
 
-- Country-based login blocking
-- Enhanced throttling and lockout escalation
-- Registration page protection
-- Successful login tracking
-- Enhanced lockout analytics and geolocation data
+* Shared safelist and denylist syncing
+* Shared lockout protection between domains
+* Cloud backups of IP security data
+* CSV exports of login and IP activity
 
-## Multi-Site & Team Features
+**Premium Support**
 
-- Shared safelist and denylist syncing
-- Shared lockout protection between domains
-- Cloud backups of IP security data
-- CSV exports of login and IP activity
+* Access to security-focused support specialists
+* Faster troubleshooting and assistance
 
-## Premium Support
-
-- Access to security-focused support specialists
-- Faster troubleshooting and assistance
-
----
-
-# Lightweight Security Built for WordPress
+= Lightweight Security Built for WordPress =
 
 Unlike many large security suites, Limit Login Attempts Security focuses specifically on login security and brute force protection.
 
 This means:
 
-- Faster performance
-- Less server overhead
-- Easier configuration
-- Strong protection without unnecessary bloat
+* Faster performance
+* Less server overhead
+* Easier configuration
+* Strong protection without unnecessary bloat
 
----
-
-# Protect More Than Just wp-login.php
+= Protect More Than Just wp-login.php =
 
 Limit Login Attempts Security secures:
 
-- `wp-login.php`
-- XML-RPC
-- WooCommerce logins
-- Custom login forms
-- Registration pages
-- Multisite logins
+* wp-login.php
+* XML-RPC
+* WooCommerce logins
+* Custom login forms
+* Registration pages
+* Multisite logins
 
----
-
-# Trusted by Millions of WordPress Websites
+= Trusted by Millions of WordPress Websites =
 
 Limit Login Attempts Security is one of the most widely used WordPress login security plugins and has helped protect millions of websites from brute force attacks and malicious login activity.
 
 Whether you run:
 
-- A personal blog
-- WooCommerce store
-- Membership website
-- Agency
-- Business website
-- Enterprise WordPress network
+* A personal blog
+* WooCommerce store
+* Membership website
+* Agency
+* Business website
+* Enterprise WordPress network
 
 Limit Login Attempts Security helps secure your login experience with modern WordPress login protection.
 
----
-
-# Upgrading from the Original Limit Login Attempts Plugin?
+= Upgrading from the Original Limit Login Attempts Plugin? =
 
 Switching is easy:
 
@@ -188,37 +174,33 @@ Switching is easy:
 2. Install Limit Login Attempts Security
 3. Your settings will remain intact
 
----
-
-# Translation Support
+= Translation Support =
 
 Currently translated into multiple languages including:
 
-- Spanish
-- French
-- German
-- Dutch
-- Turkish
-- Swedish
-- Russian
-- Romanian
-- Chinese (Traditional)
-- Brazilian Portuguese
-- And more
+* Spanish
+* French
+* German
+* Dutch
+* Turkish
+* Swedish
+* Russian
+* Romanian
+* Chinese (Traditional)
+* Brazilian Portuguese
+* And more
 
----
-
-# Secure Your WordPress Login Today
+= Secure Your WordPress Login Today =
 
 Install Limit Login Attempts Security and protect your WordPress website with:
 
-- Login security
-- Two-Factor Authentication (2FA)
-- Brute force protection
-- Firewall security
-- Bot protection
-- XML-RPC protection
-- WooCommerce login protection
+* Login security
+* Two-Factor Authentication (2FA)
+* Brute force protection
+* Firewall security
+* Bot protection
+* XML-RPC protection
+* WooCommerce login protection
 
 Without slowing down your website.
 
@@ -256,7 +238,7 @@ Our main focus is protecting your site from brute force attacks. This allows our
 
 = What to do when an admin gets blocked? =
 
-Open the site from another IP. You can do this from your cell phone, or using Opera browser and enabling free VPN there. You can also try turning off your router for a few minutes and then see if you get a different IP address. These will work if your hosting server is configured correctly. If that doesn’t work, connect to the site using FTP or  your hosting control panel file manager. Navigate to wp-content/plugins/ and rename the limit-login-attempts-Security folder. Log in to the site then rename that folder back and whitelist your IP. By upgrading to our premium app, you will have the unlocking functionality right from the cloud so you’ll never have to deal with this issue.
+Open the site from another IP. You can do this from your cell phone, or using Opera browser and enabling free VPN there. You can also try turning off your router for a few minutes and then see if you get a different IP address. These will work if your hosting server is configured correctly. If that doesn’t work, connect to the site using FTP or  your hosting control panel file manager. Navigate to wp-content/plugins/ and rename the limit-login-attempts-reloaded folder. Log in to the site then rename that folder back and whitelist your IP. By upgrading to our premium app, you will have the unlocking functionality right from the cloud so you’ll never have to deal with this issue.
 
 = What settings should I use In the plugin? =
 
@@ -301,4 +283,4 @@ By default, you will need to copy and paste the lists to each site manually. For
 * Refactored the codebase.
 
 = Earlier versions =
-For the changelog of earlier versions, please refer to the <a href="https://plugins.svn.wordpress.org/limit-login-attempts-Security/trunk/changelog.txt">changelog.txt</a> file.
+For the changelog of earlier versions, please refer to the <a href="https://plugins.svn.wordpress.org/limit-login-attempts-reloaded/trunk/changelog.txt">changelog.txt</a> file.
