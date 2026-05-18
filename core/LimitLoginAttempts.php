@@ -2035,10 +2035,14 @@ class LimitLoginAttempts
 	}
 
 	/**
-	 * Cloud ACL lockout state for the current request (null when not in cloud mode).
+	 * Cloud ACL lockout state for the current request.
+	 *
+	 * Returns null when cloud mode is off, the username cannot be resolved, or
+	 * the Cloud API is unreachable — in those cases the caller must fall back
+	 * to the local lockouts check so failover keeps blocking attackers.
 	 *
 	 * @param string $username Optional username from the auth hook.
-	 * @return bool|null True when login is allowed, false when denied, null when local mode applies.
+	 * @return bool|null True when login is allowed, false when denied, null when local check applies.
 	 * @throws Exception
 	 */
 	private function is_cloud_login_allowed( $username = '' ) {
@@ -2048,12 +2052,12 @@ class LimitLoginAttempts
 
 		$username = $this->resolve_login_username( $username );
 		if ( '' === $username ) {
-			return true;
+			return null;
 		}
 
 		$response = $this->get_auth_acl_response( $username );
 		if ( ! $response ) {
-			return true;
+			return null;
 		}
 
 		return ( 'deny' !== $response['result'] );
@@ -2870,9 +2874,9 @@ class LimitLoginAttempts
 				return $msg;
 			}
 
-			$username = $this->resolve_login_username( $username );
-			if ( '' !== $username ) {
-				$response = $this->get_auth_acl_response( $username );
+			$resolved_username = $this->resolve_login_username( $username );
+			if ( '' !== $resolved_username ) {
+				$response = $this->get_auth_acl_response( $resolved_username );
 				if ( $response && 'deny' === $response['result'] ) {
 					$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
 					$msg       = wp_strip_all_tags( $this->build_lockout_error_message( $time_left ) );
@@ -2882,13 +2886,9 @@ class LimitLoginAttempts
 					return $msg;
 				}
 			}
-
-			$msg = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' ) . ' ' . __( 'Please try again later.', 'limit-login-attempts-reloaded' );
-			$this->all_errors_array['late_hook_errors'] = $msg;
-			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
-
-			return $msg;
 		}
+
+		// Cloud is off or unreachable — fall back to the local lockouts timer so failover messages match the lockout state.
 
 		$ip       = $this->get_address();
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
