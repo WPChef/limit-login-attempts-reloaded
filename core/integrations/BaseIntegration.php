@@ -81,7 +81,7 @@ abstract class BaseIntegration implements IntegrationInterface {
 	 * @return string
 	 */
 	protected function get_error_message() {
-		return $this->llar_instance->error_msg();
+		return $this->llar_instance->error_msg( $this->get_login_identifier() );
 	}
 
 	/**
@@ -90,7 +90,7 @@ abstract class BaseIntegration implements IntegrationInterface {
 	 * @return bool
 	 */
 	protected function is_login_allowed() {
-		return $this->llar_instance->is_limit_login_ok();
+		return $this->llar_instance->is_limit_login_ok( $this->get_login_identifier() );
 	}
 
 	/**
