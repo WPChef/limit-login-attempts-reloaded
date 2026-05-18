@@ -268,8 +268,8 @@ class MemberPressIntegration extends BaseIntegration {
 
 		// Wrong-password path usually leaves authenticate() as incorrect_password only: core does not
 		// call wp_authenticate_user (where too_many_retries is added after a valid password check), and
-		// authenticate_late_lockout_check runs only on WP 7.0+. Lockout is still stored in lockouts[];
-		// is_login_allowed() mirrors that — surface the message whenever the IP is locked.
+		// authenticate_late_lockout_check runs only on WP 7.0+. is_login_allowed() uses cloud ACL
+		// (or local lockouts when cloud is off) to surface the lockout message on this path.
 		if ( ! $this->is_login_allowed() ) {
 			return array( $this->get_error_message() );
 		}

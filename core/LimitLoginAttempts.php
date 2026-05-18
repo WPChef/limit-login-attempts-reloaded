@@ -1608,13 +1608,13 @@ class LimitLoginAttempts
 		if (
 			! $this->is_ip_whitelisted( $ip )
 			&& ! $this->is_username_whitelisted( $username )
-			&& ! $this->is_limit_login_ok()
+			&& ! $this->is_limit_login_ok( $username )
 		) {
 			global $limit_login_my_error_shown;
 			$limit_login_my_error_shown = true;
 
 			$error = new WP_Error();
-			$error->add( 'too_many_retries', $this->error_msg() );
+			$error->add( 'too_many_retries', $this->error_msg( $username ) );
 			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
 			return $error;
@@ -2013,11 +2013,60 @@ class LimitLoginAttempts
 
 
 	/**
+	 * Resolve login identifier for cloud ACL checks.
+	 *
+	 * @param string $username Optional username from the auth hook.
+	 * @return string
+	 */
+	private function resolve_login_username( $username = '' ) {
+		if ( '' !== $username ) {
+			return $username;
+		}
+
+		if ( isset( $_REQUEST['log'] ) ) {
+			return sanitize_text_field( wp_unslash( $_REQUEST['log'] ) );
+		}
+
+		if ( $this->integration_manager ) {
+			return $this->integration_manager->get_login_identifier();
+		}
+
+		return '';
+	}
+
+	/**
+	 * Cloud ACL lockout state for the current request (null when not in cloud mode).
+	 *
+	 * @param string $username Optional username from the auth hook.
+	 * @return bool|null True when login is allowed, false when denied, null when local mode applies.
+	 * @throws Exception
+	 */
+	private function is_cloud_login_allowed( $username = '' ) {
+		if ( ! self::$cloud_app ) {
+			return null;
+		}
+
+		$username = $this->resolve_login_username( $username );
+		if ( '' === $username ) {
+			return true;
+		}
+
+		$response = $this->get_auth_acl_response( $username );
+		if ( ! $response ) {
+			return true;
+		}
+
+		return ( 'deny' !== $response['result'] );
+	}
+
+	/**
 	 * Check if it is ok to login
 	 *
+	 * @param string $username Optional username from the auth hook.
 	 * @return bool
+	 * @throws Exception
 	 */
-	public function is_limit_login_ok()
+	public function is_limit_login_ok( $username = '' )
 	{
 		$ip = $this->get_address();
 
@@ -2026,7 +2075,12 @@ class LimitLoginAttempts
 			return true;
 		}
 
-		/* lockout active? */
+		$cloud_allowed = $this->is_cloud_login_allowed( $username );
+		if ( null !== $cloud_allowed ) {
+			return $cloud_allowed;
+		}
+
+		/* lockout active? (local mode only) */
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 
 		return ( ! is_array( $lockouts ) || ! isset( $lockouts[ $ip ] ) || time() >= $lockouts[ $ip ] );
@@ -2095,8 +2149,8 @@ class LimitLoginAttempts
 			}
 		}
 
-		if ( ! $this->is_limit_login_ok() ) {
-			return array( $this->error_msg() );
+		if ( ! $this->is_limit_login_ok( $log ) ) {
+			return array( $this->error_msg( $log ) );
 		}
 
 		return $errors;
@@ -2256,8 +2310,6 @@ class LimitLoginAttempts
 		LoginFlowTransientStore::ensure_token();
 		LoginFlowTransientStore::merge( array( 'login_attempts_left' => 0 ) );
 
-		$ip = $this->get_address();
-
 		if ( self::$cloud_app && $response = self::$cloud_app->lockout_check( array(
 				'ip'        => Helpers::get_all_ips(),
 				'login'     => $username,
@@ -2276,16 +2328,6 @@ class LimitLoginAttempts
 				$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
 
 				$time_left = ( ! empty( $response['time_left'] ) ) ? $response['time_left'] : 0;
-
-				// @temporary WP 7.0 compat — mirror cloud deny in local lockouts so is_limit_login_ok() blocks consistently.
-				// TODO: Remove after WP 7.1 release or when auth flow is stable.
-				if ( $time_left > 0 ) {
-					$lockouts        = Config::get( 'lockouts' );
-					$lockouts        = is_array( $lockouts ) ? $lockouts : array();
-					$cloud_until     = time() + ( (int) $time_left * MINUTE_IN_SECONDS );
-					$lockouts[ $ip ] = max( isset( $lockouts[ $ip ] ) ? $lockouts[ $ip ] : 0, $cloud_until );
-					Config::update( 'lockouts', $lockouts );
-				}
 
 				if ( $time_left > 60 ) {
 
@@ -2709,7 +2751,7 @@ class LimitLoginAttempts
 		}
 		$ip       = $this->get_address();
 		$user_login = is_a( $user, 'WP_User' ) ? $user->user_login : ( ( ! empty( $user ) && ! is_wp_error( $user ) ) ? $user : '' );
-		$not_locked_out = $this->check_whitelist_ips( false, $ip ) || $this->check_whitelist_usernames( false, $user_login ) || $this->is_limit_login_ok();
+		$not_locked_out = $this->check_whitelist_ips( false, $ip ) || $this->check_whitelist_usernames( false, $user_login ) || $this->is_limit_login_ok( $username );
 
 		if ( is_wp_error( $user ) ) {
 			return $user;
@@ -2726,7 +2768,7 @@ class LimitLoginAttempts
 			$error = new WP_Error();
 			global $limit_login_my_error_shown;
 			$limit_login_my_error_shown = true;
-			$error->add( 'too_many_retries', $this->error_msg() );
+			$error->add( 'too_many_retries', $this->error_msg( $username ) );
 			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 			return $error;
 		}
@@ -2750,7 +2792,7 @@ class LimitLoginAttempts
 		if (
 			$this->check_whitelist_ips( false, $ip )
 			|| $this->check_whitelist_usernames( false, $user_login )
-			|| $this->is_limit_login_ok()
+			|| $this->is_limit_login_ok( $username )
 		) {
 			return $user;
 		}
@@ -2770,7 +2812,7 @@ class LimitLoginAttempts
 		} else {
 
 			// This error should be the same as in "shake it" filter below
-			$error->add( 'too_many_retries', $this->error_msg() );
+			$error->add( 'too_many_retries', $this->error_msg( $username ) );
 		}
 
 		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
@@ -2812,10 +2854,42 @@ class LimitLoginAttempts
 	/**
 	 * Construct informative error message
 	 *
+	 * @param string $username Optional username from the auth hook.
 	 * @return string
+	 * @throws Exception
 	 */
-	public function error_msg()
+	public function error_msg( $username = '' )
 	{
+		if ( self::$cloud_app ) {
+			$app_errors = self::$cloud_app->get_errors();
+			if ( ! empty( $app_errors ) ) {
+				$msg = is_array( $app_errors ) ? implode( ' ', $app_errors ) : (string) $app_errors;
+				$this->all_errors_array['late_hook_errors'] = $msg;
+				LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
+
+				return $msg;
+			}
+
+			$username = $this->resolve_login_username( $username );
+			if ( '' !== $username ) {
+				$response = $this->get_auth_acl_response( $username );
+				if ( $response && 'deny' === $response['result'] ) {
+					$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
+					$msg       = wp_strip_all_tags( $this->build_lockout_error_message( $time_left ) );
+					$this->all_errors_array['late_hook_errors'] = $msg;
+					LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
+
+					return $msg;
+				}
+			}
+
+			$msg = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' ) . ' ' . __( 'Please try again later.', 'limit-login-attempts-reloaded' );
+			$this->all_errors_array['late_hook_errors'] = $msg;
+			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
+
+			return $msg;
+		}
+
 		$ip       = $this->get_address();
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 		$a        = $this->checkKey($lockouts, $ip);
