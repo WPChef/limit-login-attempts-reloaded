@@ -4,6 +4,10 @@ namespace LLAR\Core\Mfa;
 
 use LLAR\Core\Config;
 use LLAR\Core\MfaConstants;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadOptionsStorage;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageInterface;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadTransientStorage;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,6 +31,8 @@ class MfaManager {
 	private $endpoint;
 	/** @var MfaSettingsInterface */
 	private $settings;
+	/** @var RescuePayloadStorageInterface */
+	private $payload_storage;
 
 	/**
 	 * Build per-user transient key for pending rescue hashes.
@@ -79,18 +85,75 @@ class MfaManager {
 		delete_transient( $this->get_pending_rescue_codes_key( $user_id ) );
 	}
 
+	/**
+	 * Extract validated llar_rescue token from a full rescue URL.
+	 *
+	 * @param string $url Rescue URL (query may include llar_rescue).
+	 * @return string Validated token or ''.
+	 */
+	private function get_rescue_hash_from_rescue_url( $url ) {
+		if ( ! is_string( $url ) || '' === $url ) {
+			return '';
+		}
+		$q = wp_parse_url( $url, PHP_URL_QUERY );
+		if ( ! is_string( $q ) || '' === $q ) {
+			return '';
+		}
+		parse_str( $q, $qp );
+		if ( empty( $qp['llar_rescue'] ) || ! is_string( $qp['llar_rescue'] ) ) {
+			return '';
+		}
+		$validated = MfaValidator::validate_rescue_hash_id( $qp['llar_rescue'] );
+		return false === $validated ? '' : $validated;
+	}
 
 	/**
 	 * Constructor. Dependencies are injected for testability and single responsibility.
 	 *
-	 * @param MfaBackupCodesInterface $backup_codes Backup/rescue codes service.
-	 * @param MfaEndpointInterface    $endpoint    Rescue endpoint handler.
-	 * @param MfaSettingsInterface   $settings    MFA settings service.
+	 * @param MfaBackupCodesInterface              $backup_codes    Backup/rescue codes service.
+	 * @param MfaEndpointInterface                 $endpoint        Rescue endpoint handler.
+	 * @param MfaSettingsInterface                 $settings        MFA settings service.
+	 * @param RescuePayloadStorageInterface|null $payload_storage Rescue payload storage (no type hint on param: PHP 8.4 implicit-null deprecation; validated below).
 	 */
-	public function __construct( MfaBackupCodesInterface $backup_codes, MfaEndpointInterface $endpoint, MfaSettingsInterface $settings ) {
-		$this->backup_codes = $backup_codes;
-		$this->endpoint     = $endpoint;
-		$this->settings     = $settings;
+	public function __construct( MfaBackupCodesInterface $backup_codes, MfaEndpointInterface $endpoint, MfaSettingsInterface $settings, $payload_storage = null ) {
+		if ( null !== $payload_storage && ! $payload_storage instanceof RescuePayloadStorageInterface ) {
+			throw new \InvalidArgumentException( 'Expected RescuePayloadStorageInterface or null.' );
+		}
+		$this->backup_codes    = $backup_codes;
+		$this->endpoint        = $endpoint;
+		$this->settings        = $settings;
+		$this->payload_storage = $payload_storage ? $payload_storage : RescuePayloadStorageSelector::get_storage();
+	}
+
+	/**
+	 * Return seconds left until latest rescue payload expiry.
+	 *
+	 * @return int|null
+	 */
+	public function get_rescue_links_seconds_left() {
+		$max_expiry = $this->payload_storage->get_max_expiry();
+		if ( null === $max_expiry ) {
+			// Notice must work even when links were generated with another provider
+			// during a different request profile (e.g. AJAX generation path).
+			switch ( true ) {
+				case $this->payload_storage instanceof RescuePayloadTransientStorage:
+					$fallback_expiry = ( new RescuePayloadOptionsStorage() )->get_max_expiry();
+					if ( null !== $fallback_expiry ) {
+						$max_expiry = (int) $fallback_expiry;
+					}
+					break;
+				case $this->payload_storage instanceof RescuePayloadOptionsStorage:
+					$fallback_expiry = ( new RescuePayloadTransientStorage() )->get_max_expiry();
+					if ( null !== $fallback_expiry ) {
+						$max_expiry = (int) $fallback_expiry;
+					}
+					break;
+			}
+		}
+		if ( null === $max_expiry ) {
+			return null;
+		}
+		return (int) $max_expiry - time();
 	}
 
 	/**
@@ -197,6 +260,7 @@ class MfaManager {
 		foreach ( (array) $plain_codes as $code ) {
 			$rescue_urls[] = $this->backup_codes->get_rescue_url( $code );
 		}
+		delete_transient( MfaConstants::RESCUE_MAX_EXPIRY_CACHE_KEY );
 		return $this->backup_codes->generate_pdf_html( $rescue_urls );
 	}
 
@@ -360,6 +424,9 @@ class MfaManager {
 			$pending_codes[] = $rescue_code->to_array();
 		}
 		$this->set_pending_rescue_codes( $pending_codes );
+		// Must persist before the transient loop: otherwise a fast open of link #1 can hit
+		// payload present + stale/empty mfa_rescue_codes, verify fails, and payload is removed (next visit: no_payload).
+		Config::update( 'mfa_rescue_codes', $pending_codes );
 
 		$rescue_urls = array();
 		foreach ( $plain_codes as $code ) {
@@ -368,6 +435,27 @@ class MfaManager {
 			} catch ( \Exception $e ) {
 				wp_send_json_error( array( 'message' => __( 'Encryption unavailable. OpenSSL is required for rescue links.', 'limit-login-attempts-reloaded' ) ) );
 			}
+		}
+
+		// Max-expiry admin notice uses one key; do not call delete_transient 10x inside get_rescue_url
+		// (hosting-specific races with back-to-back set/delete on the first slot).
+		delete_transient( MfaConstants::RESCUE_MAX_EXPIRY_CACHE_KEY );
+
+		// Re-create any link whose payload is not visible to get_transient or wp_options in this
+		// same request (some object-cache setups don't expose just-set transients to the same process,
+		// and the first slot occasionally misses — regenerate so every URL has a live payload).
+		foreach ( $rescue_urls as $i => $u ) {
+			$h = $this->get_rescue_hash_from_rescue_url( $u );
+			if ( '' === $h ) {
+				continue;
+			}
+			if ( $this->payload_storage->exists( $h ) ) {
+				continue;
+			}
+			if ( ! isset( $plain_codes[ $i ] ) || ! is_string( $plain_codes[ $i ] ) ) {
+				continue;
+			}
+			$rescue_urls[ (int) $i ] = $this->backup_codes->get_rescue_url( $plain_codes[ (int) $i ] );
 		}
 
 		try {
