@@ -159,7 +159,13 @@ class Helpers {
             return true;
         }
 
-        return apply_filters( 'automatic_updater_disabled', false ) || ! apply_filters( 'auto_update_plugin', true, 10, 2 );
+		$item = (object) array(
+			'id'     => 'w.org/plugins/' . dirname( LLA_PLUGIN_BASENAME ),
+			'slug'   => dirname( LLA_PLUGIN_BASENAME ),
+			'plugin' => LLA_PLUGIN_BASENAME,
+		);
+
+        return apply_filters( 'automatic_updater_disabled', false ) || ! apply_filters( 'auto_update_plugin', true, $item );
 	}
 
 	public static function get_wordpress_version() {
