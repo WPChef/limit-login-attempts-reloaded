@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.2.4 =
+* Added compatibility with WordPress 7.
+
 = 3.2.3 =
 * Broadened MFA state cookie scope to the site root for wider path coverage.
 * Fixed Active Lockouts counter not showing on the local Logs page.
