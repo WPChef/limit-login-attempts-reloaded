@@ -14,6 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SessionStore {
 
 	/**
+	 * Set or clear the MFA state cookie.
+	 *
+	 * @param string $value State value; empty string clears the cookie.
+	 */
+	public static function set_state_cookie( $value ) {
+		$expire = ( '' === $value ) ? time() - 3600 : time() + 600;
+		setcookie( 'llar_mfa_state', $value, $expire, '/', '', is_ssl(), true );
+	}
+
+	/**
 	 * Save session after handshake.
 	 *
 	 * @param string $token       From API.

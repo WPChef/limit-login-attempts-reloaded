@@ -3,6 +3,8 @@
 namespace LLAR\Core\Mfa;
 
 use LLAR\Core\MfaConstants;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageInterface;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,6 +17,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 class MfaBackupCodes implements MfaBackupCodesInterface {
 	const CIPHER_METHOD = 'AES-256-CBC';
 	const PAYLOAD_VERSION = 'v2:';
+	const BASE62_ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+	/**
+	 * @var RescuePayloadStorageInterface
+	 */
+	private $payload_storage;
+
+	/**
+	 * @param RescuePayloadStorageInterface|null $payload_storage Rescue payload storage (no type hint on param: PHP 8.4 implicit-null deprecation; validated below).
+	 */
+	public function __construct( $payload_storage = null ) {
+		if ( null !== $payload_storage && ! $payload_storage instanceof RescuePayloadStorageInterface ) {
+			throw new \InvalidArgumentException( 'Expected RescuePayloadStorageInterface or null.' );
+		}
+		$this->payload_storage = $payload_storage ? $payload_storage : RescuePayloadStorageSelector::get_storage();
+	}
 
 	/**
 	 * Encrypt plain code for storage. OpenSSL only; returns false if unavailable.
@@ -179,6 +197,41 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 	}
 
 	/**
+	 * Generate cryptographically strong base62 token.
+	 *
+	 * @param int $length Token length.
+	 * @return string
+	 */
+	private function generate_base62_token( $length ) {
+		$length   = (int) $length;
+		$token    = '';
+		$alphabet = self::BASE62_ALPHABET;
+
+		// Rejection sampling avoids modulo bias (62 * 4 = 248).
+		while ( strlen( $token ) < $length && function_exists( 'openssl_random_pseudo_bytes' ) ) {
+			$bytes = openssl_random_pseudo_bytes( max( 16, $length * 2 ) );
+			if ( false === $bytes || '' === $bytes ) {
+				break;
+			}
+			$bytes_len = strlen( $bytes );
+			for ( $i = 0; $i < $bytes_len && strlen( $token ) < $length; $i++ ) {
+				$val = ord( $bytes[ $i ] );
+				if ( 248 <= $val ) {
+					continue;
+				}
+				$token .= $alphabet[ $val % 62 ];
+			}
+		}
+
+		if ( strlen( $token ) < $length ) {
+			$fallback = wp_generate_password( $length, false, false );
+			$token   .= preg_replace( '/[^A-Za-z0-9]/', '', (string) $fallback );
+		}
+
+		return substr( $token, 0, $length );
+	}
+
+	/**
 	 * Build rescue URL for a plain code and store encrypted payload. OpenSSL required.
 	 *
 	 * @param string $plain_code Plain rescue code
@@ -190,15 +243,14 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 		if ( '' === $salt ) {
 			$salt = wp_generate_password( 64, true );
 		}
-		$hash_id   = hash( 'sha256', $plain_code . $salt . wp_generate_password( 32, false ) );
+		$hash_id   = $this->generate_base62_token( MfaConstants::RESCUE_TOKEN_LENGTH );
 		$encrypted = $this->encrypt_code( $plain_code, $salt );
 		if ( false === $encrypted ) {
 			throw new \Exception( __( 'Encryption unavailable. OpenSSL is required for rescue links.', 'limit-login-attempts-reloaded' ) );
 		}
 		// Store encrypted payload in a dedicated transient per hash_id.
 		// This allows atomic, single-use consumption on the endpoint side.
-		$transient_key = MfaConstants::TRANSIENT_RESCUE_PREFIX . $hash_id;
-		set_transient( $transient_key, $encrypted, MfaConstants::RESCUE_LINK_TTL );
+		$this->payload_storage->save( $hash_id, $encrypted, MfaConstants::RESCUE_LINK_TTL );
 		return add_query_arg( 'llar_rescue', $hash_id, home_url() );
 	}
 
