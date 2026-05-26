@@ -198,6 +198,7 @@ class DigestStorage {
 				);
 			}
 			$ip_stats[ $ip ]['attempts'] = (int) $ip_stats[ $ip ]['attempts'] + 1;
+			$ip_stats[ $ip ]['last_seen'] = time();
 			if ( '' !== $gateway ) {
 				$ip_stats[ $ip ]['gateway'] = $gateway;
 			}
@@ -242,6 +243,7 @@ class DigestStorage {
 			);
 		}
 		$ip_stats[ $ip ]['lockouts'] = (int) $ip_stats[ $ip ]['lockouts'] + 1;
+		$ip_stats[ $ip ]['last_seen'] = time();
 		if ( '' !== $gateway ) {
 			$ip_stats[ $ip ]['gateway'] = $gateway;
 		}
