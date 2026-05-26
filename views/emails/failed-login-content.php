@@ -40,23 +40,7 @@ $admin_name = isset( $admin_name ) && is_string( $admin_name ) ? $admin_name : '
 	<?php esc_html_e( 'Experiencing frequent attacks or degraded performance?', 'limit-login-attempts-reloaded' ); ?>
 	<a href="{premium_url}" target="_blank" rel="noopener"><?php esc_html_e( 'Try Micro Cloud.', 'limit-login-attempts-reloaded' ); ?></a>
 </p>
-<h3 style="margin:0 0 8px;font-size:16px;line-height:1.5;color:#333333;">
-	<?php esc_html_e( 'Frequently Asked Questions', 'limit-login-attempts-reloaded' ); ?>
-</h3>
-<p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#333333;">
-	<strong><?php esc_html_e( 'What is a failed login attempt?', 'limit-login-attempts-reloaded' ); ?></strong><br>
-	<?php esc_html_e( 'A failed login attempt is when an IP address uses incorrect credentials to log into your website. The IP address could be a human operator, or a program designed to guess your password.', 'limit-login-attempts-reloaded' ); ?>
-</p>
-<p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#333333;">
-	<strong><?php esc_html_e( 'Why am I getting these emails?', 'limit-login-attempts-reloaded' ); ?></strong><br>
-	<?php echo wp_kses( __( 'You are receiving this email because there was a failed login attempt on your website {domain}. If you\'d like to opt out of these notifications, please click the "Unsubscribe" link below.', 'limit-login-attempts-reloaded' ), array() ); ?>
-</p>
-<p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#333333;">
-	<strong><?php esc_html_e( 'How dangerous is this failed login attempt?', 'limit-login-attempts-reloaded' ); ?></strong><br>
-	<?php esc_html_e( 'Unfortunately, we cannot determine the severity of the IP address with the free version of the plugin. If the IP continues to make attempts and is not recognized by your organization, then it\'s likely to have malicious intent. Depending on how frequent the attacks are, you may experience performance issues. In the plugin dashboard, you can investigate the frequency of the failed login attempts in the logs and take additional steps to protect your website (i.e. adding them to the block list). You can visit the ', 'limit-login-attempts-reloaded' ); ?>
-	<a href="{llar_url}" target="_blank" rel="noopener" style="color:#fda33b;text-decoration:underline;"><?php esc_html_e( 'Limit Login Attempts Reloaded website', 'limit-login-attempts-reloaded' ); ?></a>
-	<?php esc_html_e( ' for more information on our premium services, which can automatically block and detect malicious IP addresses.', 'limit-login-attempts-reloaded' ); ?>
-</p>
+<?php include LLA_PLUGIN_DIR . 'views/emails/failed-login-faq.php'; ?>
 <?php if ( Helpers::is_mu() ) : ?>
 <p style="margin:0 0 12px;font-size:13px;line-height:1.5;color:#4b5563;">
 	<em><?php esc_html_e( 'This alert was sent by your website where Limit Login Attempts Reloaded free version is installed and you are listed as the admin.', 'limit-login-attempts-reloaded' ); ?></em>
