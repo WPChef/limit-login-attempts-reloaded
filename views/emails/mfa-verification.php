@@ -12,4 +12,6 @@ $email_logo_cid = $llar_mfa_otp_logo_cid;
 
 include LLA_PLUGIN_DIR . 'views/emails/header.php';
 include LLA_PLUGIN_DIR . 'views/emails/mfa-verification-content.php';
-include LLA_PLUGIN_DIR . 'views/emails/footer-mfa.php';
+include LLA_PLUGIN_DIR . 'views/emails/footer-verification-text.php';
+include LLA_PLUGIN_DIR . 'views/emails/footer.php';
+?>
