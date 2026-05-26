@@ -1011,7 +1011,7 @@ class LimitLoginAttempts
 	 */
 	public function enqueue()
 	{
-		return $this->admin_ui->login_page_enqueue();
+		return $this->admin_ui->enqueue();
 	}
 
 	/**
@@ -1025,9 +1025,27 @@ class LimitLoginAttempts
 	/**
 	 * Add admin options page
 	 */
+	public function admin_menu()
+	{
+		return $this->admin_ui->admin_menu();
+	}
+
+	/**
+	 * Add admin bar menu item
+	 *
+	 * @param WP_Admin_Bar $bar WordPress admin bar object.
+	 */
+	public function admin_bar_menu( $bar )
+	{
+		return $this->admin_ui->admin_bar_menu( $bar );
+	}
+
+	/**
+	 * Add network admin options page
+	 */
 	public function network_admin_menu()
 	{
-		
+		return $this->admin_ui->network_admin_menu();
 	}
 	public function setting_menu_alert_icon()
 	{

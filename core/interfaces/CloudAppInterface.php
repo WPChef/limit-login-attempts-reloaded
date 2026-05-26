@@ -1,4 +1,10 @@
 <?php
+/**
+ * Cloud App Interface
+ *
+ * @package LimitLoginAttempts
+ * @since 3.3.0
+ */
 
 namespace LLAR\Core\Interfaces;
 

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Options Page URI Provider Interface
+ *
+ * @package LimitLoginAttempts
+ * @since 3.3.0
+ */
 
 namespace LLAR\Core\Interfaces;
 

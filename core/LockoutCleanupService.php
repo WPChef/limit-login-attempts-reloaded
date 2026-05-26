@@ -1,4 +1,10 @@
 <?php
+/**
+ * Lockout Cleanup Service
+ *
+ * @package LimitLoginAttempts
+ * @since 3.3.0
+ */
 
 namespace LLAR\Core;
 
