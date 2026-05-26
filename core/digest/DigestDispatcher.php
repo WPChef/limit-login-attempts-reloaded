@@ -124,9 +124,9 @@ class DigestDispatcher {
 			);
 			$end_ts = $first_day_this_month - 1;
 		} else {
-			// Daily (temporary): current calendar day up to now.
-			$start_ts = $today_start;
-			$end_ts = $now_local;
+			// Daily: previous calendar day (00:00 to 23:59).
+			$start_ts = $today_start - DAY_IN_SECONDS;
+			$end_ts   = $today_start - 1;
 		}
 
 		return array(
@@ -314,7 +314,11 @@ class DigestDispatcher {
 
 		$template_file = ! empty( $definition['email_template'] ) ? (string) $definition['email_template'] : 'digest-daily-content.php';
 		$title_mode = ! empty( $definition['title_mode'] ) ? (string) $definition['title_mode'] : 'date';
-		$intro_text = ! empty( $definition['intro_text'] ) ? (string) $definition['intro_text'] : 'This is your security summary from Limit Login Attempts Reloaded for';
+		$intro_text = ! empty( $definition['intro_text'] ) ? (string)		} else {
+			// Daily: previous calendar day (00:00 to 23:59).
+			$start_ts = $today_start - DAY_IN_SECONDS;
+			$end_ts   = $today_start - 1;
+		} $definition['intro_text'] : 'This is your security summary from Limit Login Attempts Reloaded for';
 		$show_threat_level = ! empty( $definition['show_threat_level'] );
 
 		$email_title = self::build_email_title( $title_mode, $period, $start_label, $end_label );
