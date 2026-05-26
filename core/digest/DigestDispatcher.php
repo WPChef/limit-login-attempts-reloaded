@@ -192,6 +192,7 @@ class DigestDispatcher {
 						'attempts'  => 0,
 						'lockouts'  => 0,
 						'gateway'   => '',
+						'last_seen' => 0,
 					);
 				}
 
@@ -199,6 +200,13 @@ class DigestDispatcher {
 				$top_ips_map[ $ip ]['lockouts'] += isset( $row['lockouts'] ) ? (int) $row['lockouts'] : 0;
 				if ( ! empty( $row['gateway'] ) ) {
 					$top_ips_map[ $ip ]['gateway'] = sanitize_key( (string) $row['gateway'] );
+				}
+				if ( ! empty( $row['last_seen'] ) ) {
+					$current_last = isset( $top_ips_map[ $ip ]['last_seen'] ) ? (int) $top_ips_map[ $ip ]['last_seen'] : 0;
+					$candidate    = (int) $row['last_seen'];
+					if ( $candidate > $current_last ) {
+						$top_ips_map[ $ip ]['last_seen'] = $candidate;
+					}
 				}
 			}
 
