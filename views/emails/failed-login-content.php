@@ -7,11 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $admin_name = isset( $admin_name ) && is_string( $admin_name ) ? $admin_name : '';
 ?>
-<div class="title"><?php esc_html_e( 'Failed login attempt detected', 'limit-login-attempts-reloaded' ); ?></div>
-<div class="description">
-	<?php _e( 'This notification was sent automatically via Limit Login Attempts Reloaded Plugin.', 'limit-login-attempts-reloaded' ); ?><br>
-	<?php _e( 'This is installed on your <b>{domain}</b> WordPress site.', 'limit-login-attempts-reloaded' ); ?>
-</div>
 <p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#333333;">
 	<?php ( ! empty( $admin_name ) ) ? esc_html_e( 'Hello {name},', 'limit-login-attempts-reloaded' ) : esc_html_e( 'Hello,', 'limit-login-attempts-reloaded' ); ?>
 </p>
