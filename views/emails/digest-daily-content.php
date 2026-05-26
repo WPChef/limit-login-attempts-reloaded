@@ -11,7 +11,7 @@
 	<?php endforeach; ?>
 </ul>
 
-<p><a href="<?php echo esc_url( $dashboard_url ); ?>">Go to Dashboard</a></p>
+<?php include LLA_PLUGIN_DIR . 'views/emails/digest-dashboard-button.php'; ?>
 
 <h3>Top IPs blocked</h3>
 <ul>
@@ -42,8 +42,5 @@
 </ul>
 
 <?php include LLA_PLUGIN_DIR . 'views/emails/digest-next-steps.php'; ?>
-<p>If you recognize an IP address or see repeated attempts against a specific username, open your dashboard to review the IP details and adjust allowlist or denylist rules if needed.</p>
-<p><strong>Noticing consistent attack patterns?</strong><br>
-	<a href="https://www.limitloginattempts.com">Premium</a> gives you deeper visibility and stronger protection with advanced IP intelligence, block by country, detailed login logs and monitoring, and automatic malicious IP detection.
-</p>
+
 
