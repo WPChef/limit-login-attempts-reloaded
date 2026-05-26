@@ -444,7 +444,7 @@ class LoginAuthenticationHandler {
 		}
 		$ip       = $this->ip_resolver->get_address();
 		$user_login = is_a( $user, 'WP_User' ) ? $user->user_login : ( ( ! empty( $user ) && ! is_wp_error( $user ) ) ? $user : '' );
-		$not_locked_out = $this->check_whitelist_ips( false, $ip ) || $this->check_whitelist_usernames( false, $user_login ) || $this->local_lockout->is_limit_login_ok( $username );
+		$not_locked_out = $this->local_lockout->check_whitelist_ips( false, $ip ) || $this->local_lockout->check_whitelist_usernames( false, $user_login ) || $this->local_lockout->is_limit_login_ok( $username );
 
 		if ( is_wp_error( $user ) ) {
 			return $user;
@@ -483,8 +483,8 @@ class LoginAuthenticationHandler {
 		}
 
 		if (
-			$this->check_whitelist_ips( false, $ip )
-			|| $this->check_whitelist_usernames( false, $user_login )
+			$this->local_lockout->check_whitelist_ips( false, $ip )
+			|| $this->local_lockout->check_whitelist_usernames( false, $user_login )
 			|| $this->local_lockout->is_limit_login_ok( $username )
 		) {
 			return $user;
