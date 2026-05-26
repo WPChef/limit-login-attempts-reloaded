@@ -46,7 +46,4 @@ $admin_name = isset( $admin_name ) && is_string( $admin_name ) ? $admin_name : '
 	<em><?php esc_html_e( 'This alert was sent by your website where Limit Login Attempts Reloaded free version is installed and you are listed as the admin.', 'limit-login-attempts-reloaded' ); ?></em>
 </p>
 <?php endif; ?>
-<p style="margin:0;font-size:14px;line-height:1.5;color:#333333;">
-	<a href="{unsubscribe_url}" target="_blank" rel="noopener"><?php esc_html_e( 'Unsubscribe', 'limit-login-attempts-reloaded' ); ?></a>
-	<?php esc_html_e( 'from these notifications.', 'limit-login-attempts-reloaded' ); ?>
-</p>
+<?php include LLA_PLUGIN_DIR . 'views/emails/footer-unsubscribe-text.php'; ?>

@@ -46,5 +46,6 @@
 <p><strong>Noticing consistent attack patterns?</strong><br>
 	<a href="https://www.limitloginattempts.com">Premium</a> gives you deeper visibility and stronger protection with advanced IP intelligence, block by country, detailed login logs and monitoring, and automatic malicious IP detection.
 </p>
-<p style="font-size:12px;color:#666;">Don't want these notifications? <a href="<?php echo esc_url( $unsubscribe_url ); ?>">Unsubscribe</a>.</p>
+
+<?php include LLA_PLUGIN_DIR . 'views/emails/footer-unsubscribe-text.php'; ?>
 
