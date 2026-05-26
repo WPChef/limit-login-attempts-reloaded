@@ -350,15 +350,15 @@ class DigestDispatcher {
 	 * @return string
 	 */
 	private static function build_email_title( $title_mode, $period, $start_label, $end_label ) {
-		if ( 'range' === $title_mode ) {
-			return 'Weekly Login Security Summary - ' . $start_label . ' to ' . $end_label;
+		switch ( true ) {
+			case 'range' === $title_mode:
+				return 'Weekly Login Security Summary - ' . $start_label . ' to ' . $end_label;
+			case 'month' === $title_mode:
+				return 'Monthly Login Security Summary - ' . date_i18n( 'F Y', (int) $period['start_ts'] );
+			case 'date' === $title_mode:
+			default:
+				return 'Login Security Summary - ' . date_i18n( 'Y-m-d', (int) $period['end_ts'] );
 		}
-
-		if ( 'month' === $title_mode ) {
-			return 'Monthly Login Security Summary - ' . date_i18n( 'F Y', (int) $period['start_ts'] );
-		}
-
-		return 'Login Security Summary - ' . date_i18n( 'Y-m-d', (int) $period['end_ts'] );
 	}
 
 	/**
