@@ -1013,6 +1013,15 @@ class LimitLoginAttempts
 	{
 		return $this->admin_ui->login_page_enqueue();
 	}
+
+	/**
+	 * Enqueue scripts on login page
+	 */
+	public function login_page_enqueue()
+	{
+		return $this->admin_ui->login_page_enqueue();
+	}
+
 	/**
 	 * Add admin options page
 	 */
