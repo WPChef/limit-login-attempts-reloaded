@@ -1,5 +1,7 @@
 <h2><?php echo esc_html( $email_title ); ?></h2>
-<p>Hello,<br><?php echo esc_html( $intro_text ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong>.</p>
+
+<p>Hello,</p>
+<p><?php echo esc_html( $intro_text ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong>.</p>
 <p><strong>Reporting period:</strong> <?php echo esc_html( $reporting_period ); ?></p>
 
 <h3>Summary</h3>
