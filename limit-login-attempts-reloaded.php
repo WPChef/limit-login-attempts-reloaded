@@ -155,6 +155,7 @@ defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 			'email_template' => 'digest-daily-content.php',
 			'show_threat_level' => false,
 			'intro_text' => 'This is your daily lockout summary from Limit Login Attempts Reloaded for',
+			'unsubscribe_text' => 'Don\'t want these notifications? You can {unsubscribe} or switch to weekly or monthly only.',
 			'title_mode' => 'date',
 		),
 		'weekly' => array(
@@ -164,6 +165,7 @@ defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 			'email_template' => 'digest-weekly-content.php',
 			'show_threat_level' => true,
 			'intro_text' => 'This is your weekly lockout summary from Limit Login Attempts Reloaded for',
+			'unsubscribe_text' => 'Don\'t want these notifications? You can {unsubscribe} or switch to monthly only.',
 			'title_mode' => 'range',
 		),
 		'monthly' => array(
@@ -173,6 +175,7 @@ defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 			'email_template' => 'digest-monthly-content.php',
 			'show_threat_level' => true,
 			'intro_text' => 'This is your monthly lockout summary from Limit Login Attempts Reloaded for',
+			'unsubscribe_text' => 'Don\'t want these notifications? You can {unsubscribe} in your dashboard in the settings.',
 			'title_mode' => 'month',
 		),
 	)
