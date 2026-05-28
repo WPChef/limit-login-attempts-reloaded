@@ -323,6 +323,7 @@ class DigestDispatcher {
 		$template_file = ! empty( $definition['email_template'] ) ? (string) $definition['email_template'] : 'digest-daily-content.php';
 		$title_mode = ! empty( $definition['title_mode'] ) ? (string) $definition['title_mode'] : 'date';
 		$intro_text = ! empty( $definition['intro_text'] ) ? (string) $definition['intro_text'] : 'This is your security summary from Limit Login Attempts Reloaded for';
+		$unsubscribe_footer_text = self::build_unsubscribe_footer_text( $definition, $unsubscribe_url );
 		$show_threat_level = ! empty( $definition['show_threat_level'] );
 
 		$email_title = self::build_email_title( $title_mode, $period, $start_label, $end_label );
@@ -342,6 +343,28 @@ class DigestDispatcher {
 		ob_start();
 		include $template_path;
 		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Build footer line with Unsubscribe link from digest definition text.
+	 *
+	 * Placeholder {unsubscribe} is replaced with a link to plugin settings.
+	 *
+	 * @param array  $definition      Digest definition from LLA_DIGEST_DEFINITIONS.
+	 * @param string $unsubscribe_url Settings tab URL in wp-admin.
+	 * @return string Safe HTML for email footer.
+	 */
+	public static function build_unsubscribe_footer_text( $definition, $unsubscribe_url ) {
+		$template = 'Don\'t want these notifications? You can {unsubscribe} from these notifications.';
+
+		if ( ! empty( $definition['unsubscribe_text'] ) ) {
+			$template = (string) $definition['unsubscribe_text'];
+		}
+
+		$unsubscribe_link = '<a href="' . esc_url( $unsubscribe_url ) . '" target="_blank" rel="noopener" style="color:#6b7280;text-decoration:underline;">'
+			. esc_html__( 'Unsubscribe', 'limit-login-attempts-reloaded' ) . '</a>';
+
+		return str_replace( '{unsubscribe}', $unsubscribe_link, $template );
 	}
 
 	/**
