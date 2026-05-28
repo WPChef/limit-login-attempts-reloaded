@@ -141,8 +141,9 @@ defined( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS' ) || define( 'LLA_LOCKOUT_HISTORY_
 defined( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL' ) || define( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL', 10 );
 
 /**
- * Digest definitions (single source of truth for name + interval in seconds).
- * Format: {key: {name: string, interval_seconds: int}}
+ * Digest definitions (name, interval, templates). Default on/off profiles for new vs
+ * existing installs are defined in Config::get_digest_defaults_for_*_install().
+ * Format: {key: {name: string, interval_seconds: int, is_default: bool, ...}}
  */
 defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 	'LLA_DIGEST_DEFINITIONS',
@@ -260,6 +261,10 @@ if ( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 
 		if ( class_exists( 'LLAR\\Core\\Helpers' ) ) {
 			\LLAR\Core\Helpers::persist_stored_plugin_version();
+		}
+
+		if ( class_exists( 'LLAR\\Core\\Config' ) ) {
+			\LLAR\Core\Config::apply_digest_defaults_on_fresh_activation();
 		}
 	}
 

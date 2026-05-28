@@ -332,10 +332,11 @@ class LimitLoginAttempts
 	{
 		Helpers::persist_stored_plugin_version();
 
-		if ( ! Config::get( 'activation_timestamp' ) ) {
-
+		if ( ! Config::exists( 'activation_timestamp' ) ) {
 			set_transient( 'llar_dashboard_redirect', true, 30 );
 		}
+
+		Config::apply_digest_defaults_on_fresh_activation();
 	}
 
 	/**
@@ -361,6 +362,10 @@ class LimitLoginAttempts
 		$new_version = (string) Config::get( 'plugin_version' );
 
 		if ( $old_version !== $new_version ) {
+			if ( '' !== $old_version ) {
+				Config::ensure_digest_defaults_for_existing_site();
+			}
+
 			/**
 			 * Fires after LLAR plugin version is persisted post-update.
 			 *
