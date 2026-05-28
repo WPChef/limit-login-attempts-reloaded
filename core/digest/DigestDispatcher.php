@@ -341,7 +341,27 @@ class DigestDispatcher {
 		}
 
 		ob_start();
+		echo self::build_preview_text_html( $definition );
 		include $template_path;
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Build hidden preheader HTML for inbox preview snippet (Gmail, etc.).
+	 *
+	 * @param array $definition Digest definition from LLA_DIGEST_DEFINITIONS.
+	 * @return string
+	 */
+	public static function build_preview_text_html( $definition ) {
+		if ( empty( $definition['preview_text'] ) ) {
+			return '';
+		}
+
+		$preview_text = (string) $definition['preview_text'];
+
+		ob_start();
+		include LLA_PLUGIN_DIR . 'views/emails/email-preview-text.php';
+
 		return (string) ob_get_clean();
 	}
 
