@@ -259,13 +259,8 @@ if ( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 			wp_schedule_event( time(), 'daily', 'llar_mfa_daily_cleanup' );
 		}
 
-		if ( class_exists( 'LLAR\\Core\\Helpers' ) ) {
-			\LLAR\Core\Helpers::persist_stored_plugin_version();
-		}
-
-		if ( class_exists( 'LLAR\\Core\\Config' ) ) {
-			\LLAR\Core\Config::apply_digest_defaults_on_fresh_activation();
-		}
+		\LLAR\Core\Helpers::persist_stored_plugin_version();
+		\LLAR\Core\Config::apply_digest_defaults_on_fresh_activation();
 	}
 
 	/**
