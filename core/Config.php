@@ -110,6 +110,7 @@ class Config {
 	public static function init() {
 		self::$use_local_options = Helpers::use_local_options();
 		self::apply_digest_defaults_from_definitions();
+		self::ensure_digest_install_defaults();
 	}
 
 	public static function init_defaults() {
@@ -243,6 +244,141 @@ class Config {
 	}
 
 	/**
+	 * Digest toggles for fresh installs (register_activation_hook / no established data).
+	 *
+	 * @return array Map of digest_key => 0|1.
+	 */
+	private static function get_digest_defaults_for_new_install() {
+		return array(
+			'daily'   => 1,
+			'weekly'  => 1,
+			'monthly' => 1,
+		);
+	}
+
+	/**
+	 * Digest toggles for established sites that never saved digest_* options.
+	 *
+	 * @return array Map of digest_key => 0|1.
+	 */
+	private static function get_digest_defaults_for_existing_site() {
+		return array(
+			'daily'   => 0,
+			'weekly'  => 1,
+			'monthly' => 1,
+		);
+	}
+
+	/**
+	 * @param string $digest_key daily|weekly|monthly.
+	 * @param array  $defaults   Map of digest_key => 0|1.
+	 * @return int 0|1
+	 */
+	private static function get_digest_toggle_from_map( $digest_key, $defaults ) {
+		$digest_key = sanitize_key( (string) $digest_key );
+
+		return ! empty( $defaults[ $digest_key ] ) ? 1 : 0;
+	}
+
+	/**
+	 * Persist all digest toggles on for a fresh plugin activation (register_activation_hook).
+	 *
+	 * @return void
+	 */
+	public static function apply_digest_defaults_on_fresh_activation() {
+		// Do not call init() here: it runs ensure_digest_install_defaults() for established sites.
+		self::$use_local_options = Helpers::use_local_options();
+
+		if ( self::any_digest_option_stored() ) {
+			return;
+		}
+
+		if ( self::exists( 'activation_timestamp' ) ) {
+			return;
+		}
+
+		self::persist_digest_defaults( self::get_digest_defaults_for_new_install() );
+	}
+
+	/**
+	 * Persist digest defaults for existing installs when digest options were never saved.
+	 *
+	 * @return void
+	 */
+	public static function ensure_digest_defaults_for_existing_site() {
+		if ( self::any_digest_option_stored() ) {
+			return;
+		}
+
+		self::persist_digest_defaults( self::get_digest_defaults_for_existing_site() );
+	}
+
+	/**
+	 * Persist digest defaults for established sites that never saved digest options.
+	 *
+	 * @return void
+	 */
+	private static function ensure_digest_install_defaults() {
+		if ( self::any_digest_option_stored() ) {
+			return;
+		}
+
+		if ( ! self::has_established_plugin_data() ) {
+			return;
+		}
+
+		self::persist_digest_defaults( self::get_digest_defaults_for_existing_site() );
+	}
+
+	/**
+	 * @param array $defaults Map of digest key => 0|1.
+	 * @return void
+	 */
+	private static function persist_digest_defaults( $defaults ) {
+		foreach ( $defaults as $digest_key => $value ) {
+			self::update( 'digest_' . sanitize_key( (string) $digest_key ), (int) $value ? 1 : 0 );
+		}
+	}
+
+	/**
+	 * @return bool
+	 */
+	private static function any_digest_option_stored() {
+		foreach ( self::get_digest_definitions() as $digest_key => $digest_definition ) {
+			if ( self::exists( 'digest_' . $digest_key ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return bool
+	 */
+	private static function has_established_plugin_data() {
+		if ( self::exists( 'allowed_retries' ) || self::exists( 'activation_timestamp' ) ) {
+			return true;
+		}
+
+		return self::exists( 'plugin_version' ) && '' !== (string) self::get( 'plugin_version' );
+	}
+
+	/**
+	 * Fallback when digest options are not stored in the database yet.
+	 *
+	 * @param string $digest_key daily|weekly|monthly.
+	 * @return int 0|1
+	 */
+	private static function get_digest_fallback_value( $digest_key ) {
+		if ( ! self::any_digest_option_stored() && self::has_established_plugin_data() ) {
+			return self::get_digest_toggle_from_map( $digest_key, self::get_digest_defaults_for_existing_site() );
+		}
+
+		return self::get_digest_toggle_from_map( $digest_key, self::get_digest_defaults_for_new_install() );
+	}
+
+	/**
 	 * Apply digest defaults from shared digest definitions constant.
 	 *
 	 * @return void
@@ -252,7 +388,7 @@ class Config {
 
 		foreach ( $digest_definitions as $digest_key => $digest_definition ) {
 			$option_key = 'digest_' . $digest_key;
-			self::$default_options[ $option_key ] = ! empty( $digest_definition['is_default'] ) ? 1 : 0;
+			self::$default_options[ $option_key ] = self::get_digest_fallback_value( $digest_key );
 		}
 	}
 
