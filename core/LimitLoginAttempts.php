@@ -371,6 +371,7 @@ class LimitLoginAttempts
 		}
 	}
 
+
 	public function setup_cookie()
 	{
 		if ( empty( $_GET['page'] ) || $_GET['page'] !== $this->_options_page_slug ) {
