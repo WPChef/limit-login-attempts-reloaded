@@ -2608,6 +2608,9 @@ class LimitLoginAttempts
 			esc_html( $site_domain )
 		);
 
+		$unsubscribe_url = admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' );
+		$unsubscribe_footer_text = DigestDispatcher::build_unsubscribe_footer_text( array(), $unsubscribe_url );
+
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/failed-login-content.php';
 		$email_body = ob_get_clean();
@@ -2628,7 +2631,6 @@ class LimitLoginAttempts
 			'{dashboard_url}'       => admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
 			'{premium_url}'         => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
 			'{llar_url}'            => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
-			'{unsubscribe_url}'     => admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' ),
 			'{current_url}'         => esc_url( $current_url ),
 			'{current_url_label}'   => esc_html( (string) $current_url_label ),
 		);
