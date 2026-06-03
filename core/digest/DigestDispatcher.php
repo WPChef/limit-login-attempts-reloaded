@@ -375,10 +375,12 @@ class DigestDispatcher {
 	 * @return string Safe HTML for email footer.
 	 */
 	public static function build_unsubscribe_footer_text( $definition, $unsubscribe_url ) {
-		$template = 'Don\'t want these notifications? You can {unsubscribe} from these notifications.';
+		$template = (string) $definition['unsubscribe_text'];
 
-		if ( ! empty( $definition['unsubscribe_text'] ) ) {
-			$template = (string) $definition['unsubscribe_text'];
+		// If no {unsubscribe} placeholder, wrap the whole text in a link.
+		if ( false === strpos( $template, '{unsubscribe}' ) ) {
+			return '<a href="' . esc_url( $unsubscribe_url ) . '" target="_blank" rel="noopener" style="color:#6b7280;text-decoration:underline;">'
+				. esc_html( $template ) . '</a>';
 		}
 
 		$unsubscribe_link = '<a href="' . esc_url( $unsubscribe_url ) . '" target="_blank" rel="noopener" style="color:#6b7280;text-decoration:underline;">'
