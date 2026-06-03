@@ -1,17 +1,25 @@
 <h2><?php echo esc_html( $email_title ); ?></h2>
 
-<p>Hello,</p>
+<p><?php echo esc_html__( 'Hello', 'limit-login-attempts-reloaded' ); ?>,</p>
+<?php if ( ! empty( $intro_text ) ) : ?>
 <p><?php echo esc_html( $intro_text ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong>.</p>
-<p><strong>Reporting period:</strong> <?php echo esc_html( $reporting_period ); ?></p>
+<?php endif; ?>
+
+<p><strong><?php echo esc_html( $reporting_period ); ?></strong> <?php esc_html_e( 'from Limit Login Attempts Security for', 'limit-login-attempts-reloaded' ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong></p>
 
 <h3>Summary</h3>
 <ul>
 	<?php foreach ( $summary_items as $label => $value ) : ?>
-		<li><strong><?php echo esc_html( $label ); ?>:</strong> <?php echo esc_html( (string) $value ); ?></li>
+		<li>
+			<strong><?php echo esc_html( $label ); ?>:</strong>
+			<?php if ( 'Most attempted IP' === $label && ! empty( $stats['most_attempted_ip'] ) ) : ?>
+				<a href="<?php echo esc_url( $dashboard_url ); ?>"><?php echo esc_html( (string) $value ); ?></a>
+			<?php else : ?>
+				<?php echo esc_html( (string) $value ); ?>
+			<?php endif; ?>
+		</li>
 	<?php endforeach; ?>
 </ul>
-
-<?php include LLA_PLUGIN_DIR . 'views/emails/digest-dashboard-button.php'; ?>
 
 <h3>Top IPs blocked</h3>
 <ul>
@@ -44,4 +52,3 @@
 <?php include LLA_PLUGIN_DIR . 'views/emails/digest-next-steps.php'; ?>
 	<a href="https://www.limitloginattempts.com">Premium</a> gives you deeper visibility and stronger protection with advanced IP intelligence, block by country, detailed login logs and monitoring, and automatic malicious IP detection.
 </p>
-
