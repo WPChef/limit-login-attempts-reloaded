@@ -317,7 +317,7 @@ class DigestDispatcher {
 		$site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
 		$start_label = date_i18n( 'Y-m-d H:i', (int) $period['start_ts'] );
 		$end_label = date_i18n( 'Y-m-d H:i', (int) $period['end_ts'] );
-		$dashboard_url = admin_url( 'options-general.php?page=limit-login-attempts' );
+		$dashboard_url = admin_url( 'options-general.php?page=limit-login-attempts&tab=logs-local' );
 		$unsubscribe_url = admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' );
 
 		$template_file = ! empty( $definition['email_template'] ) ? (string) $definition['email_template'] : 'digest-daily-content.php';
