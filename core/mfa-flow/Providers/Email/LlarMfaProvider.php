@@ -5,7 +5,6 @@ namespace LLAR\Core\MfaFlow\Providers\Email;
 use LLAR\Core\MfaFlow\MfaApiClient;
 use LLAR\Core\MfaFlow\Providers\MfaProviderInterface;
 use LLAR\Core\MfaFlow\MfaRestApi;
-use LLAR\Core\Mail\Mailer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -152,9 +151,13 @@ class LlarMfaProvider implements MfaProviderInterface {
 			}
 		}
 
+		$email_title    = $subject;
+		$email_logo_cid = $llar_mfa_otp_logo_cid;
+		$email_css_text = self::get_mfa_email_css_text();
+
 		ob_start();
-		include LLA_PLUGIN_DIR . 'views/emails/mfa-verification-content.php';
-		$content = (string) ob_get_clean();
+		include LLA_PLUGIN_DIR . 'views/emails/mfa-verification.php';
+		$message = (string) ob_get_clean();
 
 		$headers  = array( 'Content-Type: text/html; charset=UTF-8' );
 		$to_email = $user->user_email;
@@ -167,18 +170,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 
 		$sent = false;
 		try {
-			$sent = Mailer::send(
-				$to_email,
-				$subject,
-				$content,
-				$headers,
-				array(),
-				false,
-				array(
-					'title'    => $subject,
-					'logo_cid' => $llar_mfa_otp_logo_cid,
-				)
-			);
+			$sent = wp_mail( $to_email, $subject, $message, $headers );
 		} finally {
 			if ( $llar_mfa_otp_logo_cid !== '' ) {
 				remove_action( 'phpmailer_init', array( __CLASS__, 'phpmailer_embed_otp_logo' ), 10 );
@@ -270,6 +262,28 @@ class LlarMfaProvider implements MfaProviderInterface {
 		}
 		$base_url = $path !== '' ? $base . $path : $base;
 		return array( 'base_url' => $base_url );
+	}
+
+	/**
+	 * Load and cache CSS for MFA email layout.
+	 *
+	 * @return string
+	 */
+	private static function get_mfa_email_css_text() {
+		static $css_text = null;
+
+		if ( null !== $css_text ) {
+			return $css_text;
+		}
+
+		$css_path = LLA_PLUGIN_DIR . 'views/emails/email-layout.css';
+		if ( file_exists( $css_path ) && is_readable( $css_path ) ) {
+			$css_text = (string) file_get_contents( $css_path );
+		} else {
+			$css_text = '';
+		}
+
+		return $css_text;
 	}
 
 	/**
