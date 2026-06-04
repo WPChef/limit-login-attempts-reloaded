@@ -5,14 +5,14 @@
 <p><?php echo esc_html( $intro_text ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong>.</p>
 <?php endif; ?>
 
-<p><strong><?php echo esc_html( $reporting_period ); ?></strong> <?php esc_html_e( 'from Limit Login Attempts Security for', 'limit-login-attempts-reloaded' ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong></p>
+<p><strong><?php esc_html_e( 'Date range', 'limit-login-attempts-reloaded' ); ?>: <?php echo esc_html( $reporting_period ); ?></strong> <?php esc_html_e( 'from Limit Login Attempts Security for', 'limit-login-attempts-reloaded' ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong></p>
 
 <h3>Summary</h3>
 <ul>
 	<?php foreach ( $summary_items as $label => $value ) : ?>
 		<li>
 			<strong><?php echo esc_html( $label ); ?>:</strong>
-			<?php if ( 'Most attempted IP' === $label && ! empty( $stats['most_attempted_ip'] ) ) : ?>
+			<?php if ( 'Most attempted IP' === $label ) : ?>
 				<a href="<?php echo esc_url( $dashboard_url ); ?>"><?php echo esc_html( (string) $value ); ?></a>
 			<?php else : ?>
 				<?php echo esc_html( (string) $value ); ?>
