@@ -524,6 +524,28 @@ class Helpers {
 	}
 
 	/**
+	 * Load and cache CSS for email layout injected into the <style> block.
+	 *
+	 * @return string
+	 */
+	public static function get_email_css_text() {
+		static $css_text = null;
+
+		if ( null !== $css_text ) {
+			return $css_text;
+		}
+
+		$css_path = LLA_PLUGIN_DIR . 'views/emails/email-layout.css';
+		if ( file_exists( $css_path ) && is_readable( $css_path ) ) {
+			$css_text = (string) file_get_contents( $css_path );
+		} else {
+			$css_text = '';
+		}
+
+		return $css_text;
+	}
+
+	/**
 	 * Obfuscate email for handshake API: first+asterisks+last per part, preserving length (e.g. t**t@*******.***).
 	 *
 	 * @param string $email Raw email address.
@@ -546,7 +568,7 @@ class Helpers {
 		return $after_domain;
 	}
 
-	
+
 	/**
 	 * Retrieves debug information for the Debug tab.
 	 *
@@ -611,7 +633,7 @@ class Helpers {
 					if ( '.' === $slug || '' === $slug ) {
 						$slug = basename( $plugin_file, '.php' );
 					}
-					
+
 
 					// If PluginURI points to WordPress.org, prefer slug from the URI.
 					if ( ! empty( $uri ) && preg_match( '#WordPress\.org/plugins/([^/]+)/?#i', $uri, $m ) ) {
