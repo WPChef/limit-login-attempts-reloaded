@@ -61,5 +61,4 @@ class MailTransportWp implements MailTransportInterface {
 
 		return (string) ob_get_clean();
 	}
-
-	/**
+}
