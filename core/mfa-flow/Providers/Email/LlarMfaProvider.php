@@ -153,7 +153,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 
 		$email_title    = $subject;
 		$email_logo_cid = $llar_mfa_otp_logo_cid;
-		$email_css_text = self::get_mfa_email_css_text();
+		$email_css_text = \LLAR\Core\Helpers::get_email_css_text();
 
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/mfa-verification.php';
@@ -262,28 +262,6 @@ class LlarMfaProvider implements MfaProviderInterface {
 		}
 		$base_url = $path !== '' ? $base . $path : $base;
 		return array( 'base_url' => $base_url );
-	}
-
-	/**
-	 * Load and cache CSS for MFA email layout.
-	 *
-	 * @return string
-	 */
-	private static function get_mfa_email_css_text() {
-		static $css_text = null;
-
-		if ( null !== $css_text ) {
-			return $css_text;
-		}
-
-		$css_path = LLA_PLUGIN_DIR . 'views/emails/email-layout.css';
-		if ( file_exists( $css_path ) && is_readable( $css_path ) ) {
-			$css_text = (string) file_get_contents( $css_path );
-		} else {
-			$css_text = '';
-		}
-
-		return $css_text;
 	}
 
 	/**

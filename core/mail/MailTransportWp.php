@@ -2,17 +2,13 @@
 
 namespace LLAR\Core\Mail;
 
+use LLAR\Core\Helpers;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class MailTransportWp implements MailTransportInterface {
-	/**
-	 * Cached CSS text for email layout `<style>` block.
-	 *
-	 * @var string|null
-	 */
-	private static $email_css_text = null;
 
 	/**
 	 * @param string       $to
@@ -56,7 +52,7 @@ class MailTransportWp implements MailTransportInterface {
 		$email_logo_cid = isset( $layout['logo_cid'] ) && is_string( $layout['logo_cid'] )
 			? $layout['logo_cid']
 			: '';
-		$email_css_text = $this->get_email_css_text();
+		$email_css_text = Helpers::get_email_css_text();
 
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/header.php';
@@ -67,22 +63,3 @@ class MailTransportWp implements MailTransportInterface {
 	}
 
 	/**
-	 * Load and cache CSS for email layout injected into the `<style>` block.
-	 *
-	 * @return string
-	 */
-	private function get_email_css_text() {
-		if ( null !== self::$email_css_text ) {
-			return self::$email_css_text;
-		}
-
-		$css_path = LLA_PLUGIN_DIR . 'views/emails/email-layout.css';
-		if ( file_exists( $css_path ) && is_readable( $css_path ) ) {
-			self::$email_css_text = (string) file_get_contents( $css_path );
-		} else {
-			self::$email_css_text = '';
-		}
-
-		return self::$email_css_text;
-	}
-}
