@@ -50,5 +50,3 @@
 </ul>
 
 <?php include LLA_PLUGIN_DIR . 'views/emails/digest-next-steps.php'; ?>
-	<a href="https://www.limitloginattempts.com">Premium</a> gives you deeper visibility and stronger protection with advanced IP intelligence, block by country, detailed login logs and monitoring, and automatic malicious IP detection.
-</p>
