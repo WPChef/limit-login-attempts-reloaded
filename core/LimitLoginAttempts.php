@@ -2609,7 +2609,10 @@ class LimitLoginAttempts
 		);
 
 		$unsubscribe_url = admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' );
-		$unsubscribe_footer_text = DigestDispatcher::build_unsubscribe_footer_text( array(), $unsubscribe_url );
+		$unsubscribe_footer_text = DigestDispatcher::build_unsubscribe_footer_text(
+			array( 'unsubscribe_text' => LLA_DIGEST_DEFINITIONS['daily']['unsubscribe_text'] ),
+			$unsubscribe_url
+		);
 
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/failed-login-content.php';
