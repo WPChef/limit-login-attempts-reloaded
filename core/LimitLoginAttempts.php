@@ -10,12 +10,13 @@ use LLAR\Core\Integrations\BaseIntegration;
 use LLAR\Core\Integrations\IntegrationManager;
 use LLAR\Core\MfaFlow\MfaFlowLoginHandler;
 use LLAR\Core\MfaFlow\MfaRestApi;
+use LLAR\Core\Interfaces\OptionsPageUriProvider;
 use WP_Error;
 use WP_User;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class LimitLoginAttempts
+class LimitLoginAttempts implements OptionsPageUriProvider
 {
 	/**
 	 * Admin options page slug
@@ -262,7 +263,17 @@ class LimitLoginAttempts
 		$this->admin_notices_controller = new AdminNoticesController();
 		$this->ip_resolver              = new IpAddressResolver();
 		$this->cloud_acl                = new CloudAclService();
-		$this->local_lockout            = new LocalLockoutManager( $this->ip_resolver, $this->cloud_acl, $this );
+		$whitelist_checker             = new WhitelistBlacklistChecker( $this->ip_resolver );
+		$notification_service          = new LockoutNotificationService( $this->ip_resolver, $this );
+		$cleanup_service               = new LockoutCleanupService();
+		$this->local_lockout            = new LocalLockoutManager(
+			$this->ip_resolver,
+			$this->cloud_acl,
+			$this,
+			$whitelist_checker,
+			$notification_service,
+			$cleanup_service
+		);
 		$this->error_presenter          = new LoginErrorPresenter( $this, $this->cloud_acl, $this->local_lockout, $this->ip_resolver );
 		$this->mfa_flow_login           = new MfaFlowLoginHandler( $this->ip_resolver );
 		$this->auth_handler             = new LoginAuthenticationHandler(
@@ -445,10 +456,10 @@ class LimitLoginAttempts
 		include LLA_PLUGIN_DIR . 'views/admin-dashboard-widgets.php';
 	}
 
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Get failed login attempts count for the last 24 hours in local mode.
 	 *
@@ -458,11 +469,11 @@ class LimitLoginAttempts
 		return $this->local_lockout->get_local_retries_count_for_last_day();
 	}
 
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
 	 * Build data for failed attempts circle widget.
 	 *
@@ -924,14 +935,14 @@ class LimitLoginAttempts
 		return $this->auth_handler->authenticate_guard_filter( $user, $username, $password );
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
 
 	/**
 	 * Delete the CloudApp object
@@ -1108,8 +1119,8 @@ class LimitLoginAttempts
 	}
 
 
-	
-	
+
+
 	/**
 	 * Check if it is ok to login
 	 *
@@ -1182,8 +1193,8 @@ class LimitLoginAttempts
 		return $errors;
 	}
 
-	
-	
+
+
 	/**
 	 * Action when login attempt failed
 	 *
@@ -1344,7 +1355,7 @@ class LimitLoginAttempts
 		return $this->error_presenter->fixup_error_messages_wc( $error );
 	}
 
-	
+
 	/**
 	 * Get correct remote address
 	 *
@@ -1410,13 +1421,13 @@ class LimitLoginAttempts
 		return $seconds_left <= MfaConstants::RESCUE_NOTICE_THRESHOLD;
 	}
 
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	/**
 	 * Show error message
 	 *
@@ -1430,8 +1441,8 @@ class LimitLoginAttempts
 		);
 	}
 
-	
-	
+
+
 
 	private function plan_name_match( $plan = 'default' )
 	{
@@ -1524,9 +1535,9 @@ class LimitLoginAttempts
 
 
 
-	
 
-	
+
+
 	/**
 	 * Public wrapper for llar_api_response to allow integrations to use it
 	 * Only allows calls from integration classes within this plugin
@@ -1597,4 +1608,3 @@ class LimitLoginAttempts
 		$this->admin_notices_controller->render( 'leave-review' );
 	}
 }
-

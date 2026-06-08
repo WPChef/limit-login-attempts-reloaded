@@ -66,7 +66,7 @@ class LoginAuthenticationHandler {
 		if ( LimitLoginAttempts::$cloud_app && $response = $this->cloud_acl->get_auth_acl_response( $username ) ) {
 			if ( 'deny' === $response['result'] ) {
 				$time_left = ! empty( $response['time_left'] ) ? (int) $response['time_left'] : 0;
-				$error_message = $this->build_lockout_error_message( $time_left );
+				$error_message = $this->error_presenter->build_lockout_error_message( $time_left );
 
 				LimitLoginAttempts::$cloud_app->add_error( $error_message );
 				$this->log_security_event( 'cloud_acl_deny', $username, $this->ip_resolver->get_address(), array( 'time_left' => $time_left ) );
@@ -98,8 +98,8 @@ class LoginAuthenticationHandler {
 			( ! $this->local_lockout->is_username_whitelisted( $username ) && ! $this->ip_resolver->is_ip_whitelisted( $ip ) )
 			&& ( $this->local_lockout->is_username_blacklisted( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
 		) {
-			$error_message = $this->build_lockout_error_message();
-			$this->log_security_event( 'local_blacklist_block', $username, $ip );
+			$error_message = $this->error_presenter->build_lockout_error_message();
+				$this->log_security_event( 'local_blacklist_block', $username, $ip );
 			LoginFlowTransientStore::ensure_token();
 			LoginFlowTransientStore::merge(
 				array(
@@ -122,27 +122,6 @@ class LoginAuthenticationHandler {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Build lockout error message with optional time left.
-	 *
-	 * @param int $time_left
-	 * @return string
-	 */
-	private function build_lockout_error_message( $time_left = 0 ) {
-		$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
-
-		if ( 0 < $time_left ) {
-			if ( 60 < $time_left ) {
-				$time_left = ceil( $time_left / 60 );
-				$err .= ' ' . sprintf( _n( 'Please try again in %d hour.', 'Please try again in %d hours.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
-			} else {
-				$err .= ' ' . sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $time_left, 'limit-login-attempts-reloaded' ), $time_left );
-			}
-		}
-
-		return '<span>' . wp_kses_post( $err ) . '</span>';
 	}
 
 	/**

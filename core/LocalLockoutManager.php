@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Local lockout recording, ACL/local allow checks, notifications, and list filters.
- */
+	 * Local lockout recording, ACL/local allow checks, notifications, and list filters.
+	 */
 class LocalLockoutManager {
 
 	/**
@@ -37,14 +37,42 @@ class LocalLockoutManager {
 	private $plugin;
 
 	/**
-	 * @param IpAddressResolver  $ip_resolver IP resolution and whitelist/blacklist filters.
-	 * @param CloudAclService    $cloud_acl   Cloud ACL cache.
-	 * @param LimitLoginAttempts $plugin      Plugin facade.
+	 * @var WhitelistBlacklistChecker
 	 */
-	public function __construct( IpAddressResolver $ip_resolver, CloudAclService $cloud_acl, LimitLoginAttempts $plugin ) {
-		$this->ip_resolver = $ip_resolver;
-		$this->cloud_acl   = $cloud_acl;
-		$this->plugin      = $plugin;
+	private $whitelist_checker;
+
+	/**
+	 * @var LockoutNotificationService
+	 */
+	private $notification_service;
+
+	/**
+	 * @var LockoutCleanupService
+	 */
+	private $cleanup_service;
+
+	/**
+	 * @param IpAddressResolver          $ip_resolver          IP resolution.
+	 * @param CloudAclService            $cloud_acl            Cloud ACL cache.
+	 * @param LimitLoginAttempts         $plugin               Plugin facade.
+	 * @param WhitelistBlacklistChecker  $whitelist_checker    Whitelist/blacklist checker.
+	 * @param LockoutNotificationService $notification_service Notification service.
+	 * @param LockoutCleanupService      $cleanup_service      Cleanup service.
+	 */
+	public function __construct(
+		IpAddressResolver $ip_resolver,
+		CloudAclService $cloud_acl,
+		LimitLoginAttempts $plugin,
+		WhitelistBlacklistChecker $whitelist_checker,
+		LockoutNotificationService $notification_service,
+		LockoutCleanupService $cleanup_service
+	) {
+		$this->ip_resolver          = $ip_resolver;
+		$this->cloud_acl            = $cloud_acl;
+		$this->plugin               = $plugin;
+		$this->whitelist_checker    = $whitelist_checker;
+		$this->notification_service = $notification_service;
+		$this->cleanup_service      = $cleanup_service;
 	}
 
 	/**
@@ -94,7 +122,7 @@ class LocalLockoutManager {
 	 * @return bool
 	 */
 	public function check_whitelist_ips( $allow, $ip ) {
-		return Helpers::ip_in_range( $ip, (array) Config::get( 'whitelist' ) );
+		return $this->whitelist_checker->check_whitelist_ips( $allow, $ip );
 	}
 
 	/**
@@ -103,7 +131,7 @@ class LocalLockoutManager {
 	 * @return bool
 	 */
 	public function check_whitelist_usernames( $allow, $username ) {
-		return in_array( $username, (array) Config::get( 'whitelist_usernames' ) );
+		return $this->whitelist_checker->check_whitelist_usernames( $allow, $username );
 	}
 
 	/**
@@ -112,7 +140,7 @@ class LocalLockoutManager {
 	 * @return bool
 	 */
 	public function check_blacklist_ips( $allow, $ip ) {
-		return Helpers::ip_in_range( $ip, (array) Config::get( 'blacklist' ) );
+		return $this->whitelist_checker->check_blacklist_ips( $allow, $ip );
 	}
 
 	/**
@@ -121,7 +149,7 @@ class LocalLockoutManager {
 	 * @return bool
 	 */
 	public function check_blacklist_usernames( $allow, $username ) {
-		return in_array( $username, (array) Config::get( 'blacklist_usernames' ) );
+		return $this->whitelist_checker->check_blacklist_usernames( $allow, $username );
 	}
 
 	/**
@@ -171,21 +199,7 @@ class LocalLockoutManager {
 	 * @return bool|void
 	 */
 	public function notify( $user ) {
-		if ( is_object( $user ) ) {
-			return false;
-		}
-
-		$this->notify_log( $user );
-
-		$args = explode( ',', Config::get( 'lockout_notify' ) );
-
-		if ( empty( $args ) ) {
-			return;
-		}
-
-		if ( in_array( 'email', $args ) ) {
-			$this->notify_email( $user );
-		}
+		$this->notification_service->notify( $user );
 	}
 
 	/**
@@ -195,102 +209,7 @@ class LocalLockoutManager {
 	 * @return void
 	 */
 	public function notify_email( $user ) {
-		$ip      = $this->ip_resolver->get_address();
-		$retries = Config::get( 'retries' );
-
-		if ( ! is_array( $retries ) ) {
-			$retries = array();
-		}
-
-		if (
-			isset( $retries[ $ip ] )
-			&& ( ( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % Config::get( 'notify_email_after' ) ) != 0
-		) {
-			return;
-		}
-
-		if ( ! isset( $retries[ $ip ] ) ) {
-			$count    = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
-			$lockouts = Config::get( 'allowed_lockouts' );
-			$time     = round( Config::get( 'long_duration' ) / 3600 );
-			$when     = sprintf( _n( '%d hour', '%d hours', $time, 'limit-login-attempts-reloaded' ), $time );
-		} else {
-			$count    = $retries[ $ip ];
-			$lockouts = floor( ( $count ) / Config::get( 'allowed_retries' ) );
-			$time     = round( Config::get( 'lockout_duration' ) / 60 );
-			$when     = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
-		}
-
-		if ( $custom_admin_email = Config::get( 'admin_notify_email' ) ) {
-			$admin_email = $custom_admin_email;
-		} else {
-			$admin_email = get_site_option( 'admin_email' );
-		}
-
-		$admin_name = '';
-
-		global $wpdb;
-
-		$res = $wpdb->get_col(
-			$wpdb->prepare(
-				"
-                SELECT u.display_name
-                FROM $wpdb->users AS u
-                LEFT JOIN $wpdb->usermeta AS m ON u.ID = m.user_id
-                WHERE u.user_email = %s
-                AND m.meta_key LIKE 'wp_capabilities'
-                AND m.meta_value LIKE '%administrator%'",
-				$admin_email
-			)
-		);
-
-		if ( $res ) {
-			$admin_name = $res[0];
-		}
-
-		$site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
-		$blogname    = Helpers::use_local_options() ? get_option( 'blogname' ) : get_site_option( 'site_name' );
-		$blogname    = htmlspecialchars_decode( $blogname, ENT_QUOTES );
-
-		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
-
-		$subject = sprintf(
-			__( 'Failed login by IP %1$s %2$s', 'limit-login-attempts-reloaded' ),
-			esc_html( $ip ),
-			esc_html( $site_domain )
-		);
-
-		ob_start();
-		include LLA_PLUGIN_DIR . 'views/emails/failed-login.php';
-		$email_body = ob_get_clean();
-
-		$current_url_label = preg_replace( '/^\/|\/$/', '', $_SERVER['REQUEST_URI'] );
-		$current_url       = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : get_site_url() . $_SERVER['REQUEST_URI'];
-
-		$placeholders = array(
-			'{name}'              => $admin_name,
-			'{domain}'            => $site_domain,
-			'{attempts_count}'    => $count,
-			'{lockouts_count}'    => $lockouts,
-			'{ip_address}'        => esc_html( $ip ),
-			'{ip_address_link}'   => esc_url( 'https://www.limitloginattempts.com/location/?ip=' . $ip ),
-			'{username}'          => $user,
-			'{blocked_duration}'  => $when,
-			'{dashboard_url}'     => $this->plugin->get_options_page_uri(),
-			'{premium_url}'       => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
-			'{llar_url}'          => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
-			'{unsubscribe_url}'   => $this->plugin->get_options_page_uri( 'settings' ),
-			'{current_url}'       => $current_url,
-			'{current_url_label}' => $current_url_label,
-		);
-
-		$email_body = str_replace(
-			array_keys( $placeholders ),
-			array_values( $placeholders ),
-			$email_body
-		);
-
-		Helpers::send_mail_with_logo( $admin_email, $subject, $email_body );
+		$this->notification_service->notify_email( $user );
 	}
 
 	/**
@@ -300,33 +219,7 @@ class LocalLockoutManager {
 	 * @return void
 	 */
 	public function notify_log( $user_login ) {
-		if ( ! $user_login ) {
-			return;
-		}
-
-		$log    = $option = Config::get( Config::OPTION_LOGGED );
-		$log    = is_array( $log ) ? $log : array();
-		$ip     = $this->ip_resolver->get_address();
-
-		if ( ! isset( $log[ $ip ] ) ) {
-			$log[ $ip ] = array();
-		}
-
-		if ( ! isset( $log[ $ip ][ $user_login ] ) ) {
-			$log[ $ip ][ $user_login ] = array( 'counter' => 0 );
-		} elseif ( ! is_array( $log[ $ip ][ $user_login ] ) ) {
-			$log[ $ip ][ $user_login ] = array( 'counter' => $log[ $ip ][ $user_login ] );
-		}
-
-		$log[ $ip ][ $user_login ]['counter']++;
-		$log[ $ip ][ $user_login ]['date']    = time();
-		$log[ $ip ][ $user_login ]['gateway'] = Helpers::detect_gateway();
-
-		if ( $option === false ) {
-			Config::add( 'logged', $log );
-		} else {
-			Config::update( Config::OPTION_LOGGED, $log );
-		}
+		$this->notification_service->notify_log( $user_login );
 	}
 
 	/**
@@ -336,13 +229,7 @@ class LocalLockoutManager {
 	 * @return bool
 	 */
 	public function is_username_whitelisted( $username ) {
-		if ( empty( $username ) ) {
-			return false;
-		}
-
-		$whitelisted = apply_filters( 'limit_login_whitelist_usernames', false, $username );
-
-		return ( $whitelisted === true );
+		return $this->whitelist_checker->is_username_whitelisted( $username );
 	}
 
 	/**
@@ -352,13 +239,7 @@ class LocalLockoutManager {
 	 * @return bool
 	 */
 	public function is_username_blacklisted( $username ) {
-		if ( empty( $username ) ) {
-			return false;
-		}
-
-		$blacklisted = apply_filters( 'limit_login_blacklist_usernames', false, $username );
-
-		return ( $blacklisted === true );
+		return $this->whitelist_checker->is_username_blacklisted( $username );
 	}
 
 	/**
@@ -370,65 +251,7 @@ class LocalLockoutManager {
 	 * @return void
 	 */
 	public function cleanup( $retries = null, $lockouts = null, $valid = null ) {
-		$now      = time();
-		$lockouts = ! is_null( $lockouts ) ? $lockouts : Config::get( Config::OPTION_LOCKOUTS );
-		$log      = Config::get( Config::OPTION_LOGGED );
-
-		if ( is_array( $lockouts ) ) {
-			foreach ( $lockouts as $ip => $lockout ) {
-				if ( $lockout < $now ) {
-					unset( $lockouts[ $ip ] );
-
-					if ( is_array( $log ) && isset( $log[ $ip ] ) ) {
-						foreach ( $log[ $ip ] as $user_login => &$data ) {
-							if ( ! is_array( $data ) ) {
-								$data = array();
-							}
-							$data['unlocked'] = true;
-						}
-					}
-				}
-			}
-			Config::update( Config::OPTION_LOCKOUTS, $lockouts );
-		}
-
-		Config::update( Config::OPTION_LOGGED, $log );
-
-		$valid   = ! is_null( $valid ) ? $valid : Config::get( 'retries_valid' );
-		$retries = ! is_null( $retries ) ? $retries : Config::get( 'retries' );
-
-		if ( ! is_array( $valid ) || ! is_array( $retries ) ) {
-			return;
-		}
-
-		foreach ( $valid as $ip => $lockout ) {
-			if ( $lockout < $now ) {
-				unset( $valid[ $ip ] );
-				unset( $retries[ $ip ] );
-			}
-		}
-
-		foreach ( $retries as $ip => $retry ) {
-			if ( ! isset( $valid[ $ip ] ) ) {
-				unset( $retries[ $ip ] );
-			}
-		}
-
-		$retries_stats = Config::get( 'retries_stats' );
-
-		if ( $retries_stats ) {
-			$stats_cutoff = strtotime( '-8 day' );
-			foreach ( $retries_stats as $key => $count ) {
-				if ( RiskLevelMath::is_retries_stats_bucket_expired( $key, $stats_cutoff ) ) {
-					unset( $retries_stats[ $key ] );
-				}
-			}
-
-			Config::update( 'retries_stats', $retries_stats );
-		}
-
-		Config::update( 'retries', $retries );
-		Config::update( 'retries_valid', $valid );
+		$this->cleanup_service->cleanup( $retries, $lockouts, $valid );
 	}
 
 	/**
