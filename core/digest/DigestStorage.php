@@ -7,13 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class DigestStorage {
-	const POST_TYPE = 'llar_digest_day';
-	const CLEANUP_TRANSIENT_KEY = 'llar_digest_storage_cleanup_lock';
-	const META_DAY_TS = '_llar_digest_day_ts';
-	const META_LOCKOUTS_COUNT = '_llar_digest_lockouts_count';
+	const POST_TYPE                  = 'llar_digest_day';
+	const CLEANUP_TRANSIENT_KEY      = 'llar_digest_storage_cleanup_lock';
+	const META_DAY_TS                = '_llar_digest_day_ts';
+	const META_LOCKOUTS_COUNT        = '_llar_digest_lockouts_count';
 	const META_FAILED_ATTEMPTS_COUNT = '_llar_digest_failed_attempts_count';
-	const META_IP_STATS = '_llar_digest_ip_stats';
-	const META_USERNAME_STATS = '_llar_digest_username_stats';
+	const META_IP_STATS              = '_llar_digest_ip_stats';
+	const META_USERNAME_STATS        = '_llar_digest_username_stats';
 
 	/**
 	 * Register internal CPT for daily digest stats.
@@ -54,10 +54,10 @@ class DigestStorage {
 	public static function get_or_create_day_post( $day_ts ) {
 		$day_ts = (int) $day_ts;
 		$slug   = gmdate( 'Y-m-d', $day_ts );
-		$post = get_page_by_path( $slug, OBJECT, self::POST_TYPE );
+		$post   = get_page_by_path( $slug, OBJECT, self::POST_TYPE );
 
 		if ( $post && ! empty( $post->ID ) ) {
-			$post_id        = (int) $post->ID;
+			$post_id       = (int) $post->ID;
 			$stored_day_ts = (int) get_post_meta( $post_id, self::META_DAY_TS, true );
 			if ( $stored_day_ts === $day_ts ) {
 				return $post_id;
@@ -143,8 +143,8 @@ class DigestStorage {
 		$retention_days = defined( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS' )
 			? max( 1, (int) LLA_LOCKOUT_HISTORY_RETENTION_DAYS )
 			: 60;
-		$cutoff_ts = (int) current_time( 'timestamp' ) - ( $retention_days * DAY_IN_SECONDS );
-		$expired_ids = get_posts(
+		$cutoff_ts      = (int) current_time( 'timestamp' ) - ( $retention_days * DAY_IN_SECONDS );
+		$expired_ids    = get_posts(
 			array(
 				'post_type'      => self::POST_TYPE,
 				'post_status'    => 'private',
@@ -184,9 +184,9 @@ class DigestStorage {
 			return;
 		}
 
-		$ip = sanitize_text_field( (string) $ip );
+		$ip       = sanitize_text_field( (string) $ip );
 		$username = sanitize_user( (string) $username, true );
-		$gateway = sanitize_key( (string) $gateway );
+		$gateway  = sanitize_key( (string) $gateway );
 
 		if ( '' !== $ip ) {
 			$ip_stats = get_post_meta( $post_id, self::META_IP_STATS, true );
@@ -197,7 +197,7 @@ class DigestStorage {
 					'lockouts' => 0,
 				);
 			}
-			$ip_stats[ $ip ]['attempts'] = (int) $ip_stats[ $ip ]['attempts'] + 1;
+			$ip_stats[ $ip ]['attempts']  = (int) $ip_stats[ $ip ]['attempts'] + 1;
 			$ip_stats[ $ip ]['last_seen'] = time();
 			if ( '' !== $gateway ) {
 				$ip_stats[ $ip ]['gateway'] = $gateway;
@@ -206,8 +206,8 @@ class DigestStorage {
 		}
 
 		if ( '' !== $username ) {
-			$username_stats = get_post_meta( $post_id, self::META_USERNAME_STATS, true );
-			$username_stats = is_array( $username_stats ) ? $username_stats : array();
+			$username_stats              = get_post_meta( $post_id, self::META_USERNAME_STATS, true );
+			$username_stats              = is_array( $username_stats ) ? $username_stats : array();
 			$username_stats[ $username ] = isset( $username_stats[ $username ] ) ? (int) $username_stats[ $username ] + 1 : 1;
 			update_post_meta( $post_id, self::META_USERNAME_STATS, $username_stats );
 		}
@@ -228,7 +228,7 @@ class DigestStorage {
 			return;
 		}
 
-		$ip = sanitize_text_field( (string) $ip );
+		$ip      = sanitize_text_field( (string) $ip );
 		$gateway = sanitize_key( (string) $gateway );
 		if ( '' === $ip ) {
 			return;
@@ -242,7 +242,7 @@ class DigestStorage {
 				'lockouts' => 0,
 			);
 		}
-		$ip_stats[ $ip ]['lockouts'] = (int) $ip_stats[ $ip ]['lockouts'] + 1;
+		$ip_stats[ $ip ]['lockouts']  = (int) $ip_stats[ $ip ]['lockouts'] + 1;
 		$ip_stats[ $ip ]['last_seen'] = time();
 		if ( '' !== $gateway ) {
 			$ip_stats[ $ip ]['gateway'] = $gateway;
@@ -326,5 +326,4 @@ class DigestStorage {
 			)
 		);
 	}
-
 }

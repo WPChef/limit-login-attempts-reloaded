@@ -17,7 +17,7 @@ class DigestRetriesController {
 	 */
 	public static function save_failed_attempt( $ip, $username ) {
 		$day_start_ts = self::get_day_start_ts();
-		$gateway = Helpers::detect_gateway();
+		$gateway      = Helpers::detect_gateway();
 
 		DigestStorage::increment_failed_attempts( $day_start_ts, 1 );
 		DigestStorage::track_failed_attempt( $day_start_ts, $ip, $username, $gateway );
@@ -31,7 +31,7 @@ class DigestRetriesController {
 	 */
 	public static function save_lockout( $ip ) {
 		$day_start_ts = self::get_day_start_ts();
-		$gateway = Helpers::detect_gateway();
+		$gateway      = Helpers::detect_gateway();
 
 		DigestStorage::increment_lockouts( $day_start_ts, 1 );
 		DigestStorage::track_lockout( $day_start_ts, $ip, $gateway );

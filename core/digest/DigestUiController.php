@@ -15,7 +15,7 @@ class DigestUiController {
 	 * @return void
 	 */
 	public static function save_settings_from_request() {
-		$request = wp_unslash( $_POST );
+		$request            = wp_unslash( $_POST );
 		$digest_definitions = self::get_definitions();
 
 		foreach ( $digest_definitions as $digest_key => $digest_definition ) {
@@ -31,14 +31,14 @@ class DigestUiController {
 	 */
 	public static function get_notification_checkboxes() {
 		$digest_definitions = self::get_definitions();
-		$checkboxes = array();
+		$checkboxes         = array();
 
 		foreach ( $digest_definitions as $digest_key => $digest_definition ) {
-			$option_key = self::get_option_key( $digest_key );
+			$option_key   = self::get_option_key( $digest_key );
 			$checkboxes[] = array(
-				'name' => $option_key,
-				'label' => isset( $digest_definition['name'] ) ? (string) $digest_definition['name'] : $digest_key,
-				'checked' => (bool) Config::get( $option_key ),
+				'name'             => $option_key,
+				'label'            => isset( $digest_definition['name'] ) ? (string) $digest_definition['name'] : $digest_key,
+				'checked'          => (bool) Config::get( $option_key ),
 				'interval_seconds' => isset( $digest_definition['interval_seconds'] ) ? (int) $digest_definition['interval_seconds'] : 0,
 			);
 		}
