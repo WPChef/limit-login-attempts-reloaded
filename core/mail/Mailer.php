@@ -51,7 +51,7 @@ class Mailer {
 	 * @return bool
 	 */
 	public static function send( $to, $subject, $message, $headers = array(), $attachments = array(), $suppress_errors = false, $layout = array() ) {
-		$layout = is_array( $layout ) ? $layout : array();
+		$layout  = is_array( $layout ) ? $layout : array();
 		$headers = self::ensure_llar_email_header( $headers );
 
 		self::$runtime_send_active = true;

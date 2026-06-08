@@ -28,7 +28,7 @@ class DigestDispatcher {
 	 * @return void
 	 */
 	public static function dispatch( $digest_key ) {
-		$digest_key = sanitize_key( (string) $digest_key );
+		$digest_key  = sanitize_key( (string) $digest_key );
 		$definitions = self::get_definitions();
 		if ( empty( $definitions[ $digest_key ] ) || empty( $definitions[ $digest_key ]['interval_seconds'] ) ) {
 			return;
@@ -38,8 +38,8 @@ class DigestDispatcher {
 			return;
 		}
 
-		$period = self::get_period_bounds( $digest_key );
-		$stats = self::get_period_stats( $period['start_ts'], $period['end_ts'] );
+		$period      = self::get_period_bounds( $digest_key );
+		$stats       = self::get_period_stats( $period['start_ts'], $period['end_ts'] );
 		$admin_email = self::get_admin_email();
 
 		if ( '' === $admin_email ) {
@@ -60,8 +60,8 @@ class DigestDispatcher {
 		set_transient( $lock_key, 1, HOUR_IN_SECONDS );
 
 		$subject = self::build_subject( $digest_key, $stats['lockouts_total'] );
-		$body = self::build_body( $digest_key, $period, $stats );
-		$sent = Helpers::send_mail_with_logo( $admin_email, $subject, $body );
+		$body    = self::build_body( $digest_key, $period, $stats );
+		$sent    = Helpers::send_mail_with_logo( $admin_email, $subject, $body );
 
 		delete_transient( $lock_key );
 		if ( $sent ) {
@@ -91,7 +91,7 @@ class DigestDispatcher {
 	 * @return array
 	 */
 	private static function get_period_bounds( $digest_key ) {
-		$now_local = (int) current_time( 'timestamp' );
+		$now_local   = (int) current_time( 'timestamp' );
 		$today_start = gmmktime(
 			0,
 			0,
@@ -103,8 +103,8 @@ class DigestDispatcher {
 
 		if ( 'weekly' === $digest_key ) {
 			$monday_this_week = $today_start - ( ( (int) gmdate( 'N', $today_start ) - 1 ) * DAY_IN_SECONDS );
-			$start_ts = $monday_this_week - WEEK_IN_SECONDS;
-			$end_ts = $monday_this_week - 1;
+			$start_ts         = $monday_this_week - WEEK_IN_SECONDS;
+			$end_ts           = $monday_this_week - 1;
 		} elseif ( 'monthly' === $digest_key ) {
 			$first_day_this_month = gmmktime(
 				0,
@@ -114,7 +114,7 @@ class DigestDispatcher {
 				1,
 				(int) gmdate( 'Y', $today_start )
 			);
-			$start_ts = gmmktime(
+			$start_ts             = gmmktime(
 				0,
 				0,
 				0,
@@ -122,7 +122,7 @@ class DigestDispatcher {
 				1,
 				(int) gmdate( 'Y', $first_day_this_month )
 			);
-			$end_ts = $first_day_this_month - 1;
+			$end_ts               = $first_day_this_month - 1;
 		} else {
 			// Daily: previous calendar day (00:00 to 23:59).
 			$start_ts = $today_start - DAY_IN_SECONDS;
@@ -170,9 +170,9 @@ class DigestDispatcher {
 			update_meta_cache( 'post', $post_ids );
 		}
 
-		$lockouts_total = 0;
-		$attempts_total = 0;
-		$top_ips_map = array();
+		$lockouts_total    = 0;
+		$attempts_total    = 0;
+		$top_ips_map       = array();
 		$top_usernames_map = array();
 
 		foreach ( $post_ids as $post_id ) {
@@ -235,24 +235,24 @@ class DigestDispatcher {
 
 		arsort( $top_usernames_map );
 
-		$most_attempted_ip = '';
+		$most_attempted_ip          = '';
 		$most_attempted_ip_attempts = 0;
 		foreach ( $top_ips_map as $ip => $row ) {
-			$most_attempted_ip = (string) $ip;
+			$most_attempted_ip          = (string) $ip;
 			$most_attempted_ip_attempts = isset( $row['attempts'] ) ? (int) $row['attempts'] : 0;
 			break;
 		}
 
 		return array(
-			'lockouts_total'         => (int) $lockouts_total,
-			'attempts_total'         => (int) $attempts_total,
-			'unique_ips_total'       => (int) count( $top_ips_map ),
-			'unique_usernames_total' => (int) count( $top_usernames_map ),
-			'top_ips'                => array_slice( $top_ips_map, 0, 10, true ),
-			'top_usernames'          => array_slice( $top_usernames_map, 0, 3, true ),
-			'most_attempted_ip'      => $most_attempted_ip,
-			'most_attempted_attempts'=> (int) $most_attempted_ip_attempts,
-			'attack_threat_level'    => self::resolve_attack_threat_level( $attempts_total, $lockouts_total ),
+			'lockouts_total'          => (int) $lockouts_total,
+			'attempts_total'          => (int) $attempts_total,
+			'unique_ips_total'        => (int) count( $top_ips_map ),
+			'unique_usernames_total'  => (int) count( $top_usernames_map ),
+			'top_ips'                 => array_slice( $top_ips_map, 0, 10, true ),
+			'top_usernames'           => array_slice( $top_usernames_map, 0, 3, true ),
+			'most_attempted_ip'       => $most_attempted_ip,
+			'most_attempted_attempts' => (int) $most_attempted_ip_attempts,
+			'attack_threat_level'     => self::resolve_attack_threat_level( $attempts_total, $lockouts_total ),
 		);
 	}
 
@@ -288,7 +288,7 @@ class DigestDispatcher {
 	private static function build_subject( $digest_key, $lockouts_total ) {
 		$site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
 		$definitions = self::get_definitions();
-		$label = ! empty( $definitions[ $digest_key ]['name'] )
+		$label       = ! empty( $definitions[ $digest_key ]['name'] )
 			? (string) $definitions[ $digest_key ]['name']
 			: ucfirst( $digest_key );
 
@@ -310,31 +310,31 @@ class DigestDispatcher {
 	 */
 	private static function build_body( $digest_key, $period, $stats ) {
 		$definitions = self::get_definitions();
-		$definition = ! empty( $definitions[ $digest_key ] ) && is_array( $definitions[ $digest_key ] )
+		$definition  = ! empty( $definitions[ $digest_key ] ) && is_array( $definitions[ $digest_key ] )
 			? $definitions[ $digest_key ]
 			: array();
 
-		$site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
-		$start_label = date_i18n( 'Y-m-d H:i', (int) $period['start_ts'] );
-		$end_label = date_i18n( 'Y-m-d H:i', (int) $period['end_ts'] );
-		$dashboard_url = admin_url( 'options-general.php?page=limit-login-attempts&tab=logs-local' );
+		$site_domain     = str_replace( array( 'http://', 'https://' ), '', home_url() );
+		$start_label     = date_i18n( 'Y-m-d H:i', (int) $period['start_ts'] );
+		$end_label       = date_i18n( 'Y-m-d H:i', (int) $period['end_ts'] );
+		$dashboard_url   = admin_url( 'options-general.php?page=limit-login-attempts&tab=logs-local' );
 		$unsubscribe_url = admin_url( 'options-general.php?page=limit-login-attempts&tab=settings' );
 
-		$template_file = ! empty( $definition['email_template'] ) ? (string) $definition['email_template'] : 'digest-daily-content.php';
-		$title_mode = ! empty( $definition['title_mode'] ) ? (string) $definition['title_mode'] : 'date';
-		$intro_text = ! empty( $definition['intro_text'] ) ? (string) $definition['intro_text'] : 'This is your security summary from Limit Login Attempts Reloaded for';
+		$template_file           = ! empty( $definition['email_template'] ) ? (string) $definition['email_template'] : 'digest-daily-content.php';
+		$title_mode              = ! empty( $definition['title_mode'] ) ? (string) $definition['title_mode'] : 'date';
+		$intro_text              = ! empty( $definition['intro_text'] ) ? (string) $definition['intro_text'] : 'This is your security summary from Limit Login Attempts Reloaded for';
 		$unsubscribe_footer_text = self::build_unsubscribe_footer_text( $definition, $unsubscribe_url );
-		$show_threat_level = ! empty( $definition['show_threat_level'] );
+		$show_threat_level       = ! empty( $definition['show_threat_level'] );
 
-		$email_title = self::build_email_title( $title_mode, $period, $start_label, $end_label, $definition );
-		$summary_items = self::build_summary_items( $stats, $show_threat_level );
-		$top_ips_rows = self::build_top_ips_rows( $stats['top_ips'] );
-		$top_usernames_rows = self::build_top_usernames_rows( $stats['top_usernames'] );
+		$email_title            = self::build_email_title( $title_mode, $period, $start_label, $end_label, $definition );
+		$summary_items          = self::build_summary_items( $stats, $show_threat_level );
+		$top_ips_rows           = self::build_top_ips_rows( $stats['top_ips'] );
+		$top_usernames_rows     = self::build_top_usernames_rows( $stats['top_usernames'] );
 		$most_attempted_ip_text = ! empty( $stats['most_attempted_ip'] )
 			? (string) $stats['most_attempted_ip'] . ' (' . (int) $stats['most_attempted_attempts'] . ')'
 			: 'n/a';
-		$reporting_period = $start_label . ' to ' . $end_label;
-		$template_path = LLA_PLUGIN_DIR . 'views/emails/' . $template_file;
+		$reporting_period       = $start_label . ' to ' . $end_label;
+		$template_path          = LLA_PLUGIN_DIR . 'views/emails/' . $template_file;
 
 		if ( ! file_exists( $template_path ) ) {
 			$template_path = LLA_PLUGIN_DIR . 'views/emails/digest-daily-content.php';
@@ -400,7 +400,7 @@ class DigestDispatcher {
 	 * @return string
 	 */
 	private static function build_email_title( $title_mode, $period, $start_label, $end_label, $definition = array() ) {
-		$name = ! empty( $definition['name'] ) ? (string) $definition['name'] : '';
+		$name   = ! empty( $definition['name'] ) ? (string) $definition['name'] : '';
 		$prefix = '' !== $name ? $name . ' ' : '';
 
 		switch ( true ) {
@@ -448,11 +448,11 @@ class DigestDispatcher {
 		$rows = array();
 		foreach ( $top_ips as $ip => $row ) {
 			$rows[] = array(
-				'ip'       => (string) $ip,
-				'lockouts' => isset( $row['lockouts'] ) ? (int) $row['lockouts'] : 0,
-				'attempts' => isset( $row['attempts'] ) ? (int) $row['attempts'] : 0,
-				'last_seen'=> ! empty( $row['last_seen'] ) ? date_i18n( 'Y-m-d H:i', (int) $row['last_seen'] ) : '-',
-				'top_url'  => ! empty( $row['gateway'] ) ? (string) $row['gateway'] : '-',
+				'ip'        => (string) $ip,
+				'lockouts'  => isset( $row['lockouts'] ) ? (int) $row['lockouts'] : 0,
+				'attempts'  => isset( $row['attempts'] ) ? (int) $row['attempts'] : 0,
+				'last_seen' => ! empty( $row['last_seen'] ) ? date_i18n( 'Y-m-d H:i', (int) $row['last_seen'] ) : '-',
+				'top_url'   => ! empty( $row['gateway'] ) ? (string) $row['gateway'] : '-',
 			);
 		}
 
@@ -504,5 +504,4 @@ class DigestDispatcher {
 	private static function build_period_lock_key( $digest_key, $start_ts, $end_ts ) {
 		return md5( (string) $digest_key . '|' . (int) $start_ts . '|' . (int) $end_ts );
 	}
-
 }
