@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class DigestScheduler {
-	const HOOK_PREFIX = 'llar_cron_digest_';
+	const HOOK_PREFIX     = 'llar_cron_digest_';
 	const SCHEDULE_PREFIX = 'llar_schedule_digest_';
 
 	/**
@@ -44,7 +44,7 @@ class DigestScheduler {
 				continue;
 			}
 
-			$schedule_name = self::get_schedule_name( $digest_key );
+			$schedule_name               = self::get_schedule_name( $digest_key );
 			$schedules[ $schedule_name ] = array(
 				'interval' => $interval_seconds,
 				'display'  => sprintf( 'LLAR Digest %s', ucfirst( (string) $digest_key ) ),
@@ -68,7 +68,7 @@ class DigestScheduler {
 			}
 
 			$event_hook = self::get_event_hook( $digest_key );
-			$next_run = wp_next_scheduled( $event_hook, array( $digest_key ) );
+			$next_run   = wp_next_scheduled( $event_hook, array( $digest_key ) );
 			$is_enabled = (bool) Config::get( self::get_option_key( $digest_key ) );
 
 			if ( ! $is_enabled ) {
@@ -120,7 +120,7 @@ class DigestScheduler {
 	 * @return int
 	 */
 	private static function get_first_run_timestamp( $digest_key, $interval_seconds ) {
-		$now_local = (int) current_time( 'timestamp' );
+		$now_local         = (int) current_time( 'timestamp' );
 		$today_dispatch_ts = gmmktime(
 			LLA_DIGEST_DISPATCH_HOUR_LOCAL,
 			0,
@@ -131,7 +131,7 @@ class DigestScheduler {
 		);
 
 		if ( 'weekly' === $digest_key ) {
-			$weekday = (int) gmdate( 'N', $now_local ); // 1=Mon..7=Sun
+			$weekday           = (int) gmdate( 'N', $now_local ); // 1=Mon..7=Sun
 			$days_until_monday = ( 8 - $weekday ) % 7;
 
 			if ( 0 === $days_until_monday && $now_local < $today_dispatch_ts ) {
