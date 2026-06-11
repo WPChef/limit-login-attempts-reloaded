@@ -322,11 +322,11 @@ class DigestDispatcher {
 
 		$template_file           = ! empty( $definition['email_template'] ) ? (string) $definition['email_template'] : 'digest-daily-content.php';
 		$title_mode              = ! empty( $definition['title_mode'] ) ? (string) $definition['title_mode'] : 'date';
-		$intro_text              = ! empty( $definition['intro_text'] ) ? (string) $definition['intro_text'] : 'This is your security summary from Limit Login Attempts Reloaded for';
+		$intro_text              = $definition['intro_text'];
 		$unsubscribe_footer_text = self::build_unsubscribe_footer_text( $definition, $unsubscribe_url );
 		$show_threat_level       = ! empty( $definition['show_threat_level'] );
 
-		$email_title            = self::build_email_title( $title_mode, $period, $start_label, $end_label, $definition );
+		$email_title = self::build_email_title( $title_mode, $period, $start_label, $end_label );
 		$summary_items          = self::build_summary_items( $stats, $show_threat_level );
 		$top_ips_rows           = self::build_top_ips_rows( $stats['top_ips'] );
 		$top_usernames_rows     = self::build_top_usernames_rows( $stats['top_usernames'] );
@@ -396,21 +396,17 @@ class DigestDispatcher {
 	 * @param array  $period      Period bounds.
 	 * @param string $start_label Formatted start datetime.
 	 * @param string $end_label   Formatted end datetime.
-	 * @param array  $definition  Digest definition (for dynamic label in range mode).
 	 * @return string
 	 */
-	private static function build_email_title( $title_mode, $period, $start_label, $end_label, $definition = array() ) {
-		$name   = ! empty( $definition['name'] ) ? (string) $definition['name'] : '';
-		$prefix = '' !== $name ? $name . ' ' : '';
-
+	private static function build_email_title( $title_mode, $period, $start_label, $end_label ) {
 		switch ( true ) {
 			case 'range' === $title_mode:
-				return $prefix . 'Login Security Summary - ' . $start_label . ' to ' . $end_label;
+				return 'Login Security Summary - ' . $start_label . ' to ' . $end_label;
 			case 'month' === $title_mode:
-				return $prefix . 'Login Security Summary - ' . date_i18n( 'F Y', (int) $period['start_ts'] );
+				return 'Login Security Summary - ' . date_i18n( 'F Y', (int) $period['start_ts'] );
 			case 'date' === $title_mode:
 			default:
-				return $prefix . 'Login Security Summary - ' . date_i18n( 'Y-m-d', (int) $period['end_ts'] );
+				return 'Login Security Summary - ' . date_i18n( 'Y-m-d', (int) $period['end_ts'] );
 		}
 	}
 
