@@ -7,7 +7,7 @@
 
 <p><?php echo esc_html( $reporting_period ); ?> <?php esc_html_e( 'from Limit Login Attempts Security for', 'limit-login-attempts-reloaded' ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong></p>
 
-<h3>Summary</h3>
+<h3><?php esc_html_e( 'Summary', 'limit-login-attempts-reloaded' ); ?></h3>
 <ul>
 	<?php foreach ( $summary_items as $label => $value ) : ?>
 		<li>
@@ -21,31 +21,31 @@
 	<?php endforeach; ?>
 </ul>
 
-<h3>Top IPs blocked</h3>
+<h3><?php esc_html_e( 'Top IPs blocked', 'limit-login-attempts-reloaded' ); ?></h3>
 <ul>
 	<?php if ( ! empty( $top_ips_rows ) ) : ?>
 		<?php foreach ( $top_ips_rows as $row ) : ?>
 			<li>
 				<strong><?php echo esc_html( $row['ip'] ); ?></strong><br>
-				Lockouts: <?php echo esc_html( (string) $row['lockouts'] ); ?>
-				&#8226; Attempts: <?php echo esc_html( (string) $row['attempts'] ); ?>
-				&#8226; Last seen: <?php echo esc_html( $row['last_seen'] ); ?>
-				&#8226; Gateway: <?php echo esc_html( $row['top_url'] ); ?>
+				<?php esc_html_e( 'Lockouts', 'limit-login-attempts-reloaded' ); ?>: <?php echo esc_html( (string) $row['lockouts'] ); ?>
+				&#8226; <?php esc_html_e( 'Attempts', 'limit-login-attempts-reloaded' ); ?>: <?php echo esc_html( (string) $row['attempts'] ); ?>
+				&#8226; <?php esc_html_e( 'Last seen', 'limit-login-attempts-reloaded' ); ?>: <?php echo esc_html( $row['last_seen'] ); ?>
+				&#8226; <?php esc_html_e( 'Gateway', 'limit-login-attempts-reloaded' ); ?>: <?php echo esc_html( $row['top_url'] ); ?>
 			</li>
 		<?php endforeach; ?>
 	<?php else : ?>
-		<li>No IP activity in this period.</li>
+		<li><?php esc_html_e( 'No IP activity in this period.', 'limit-login-attempts-reloaded' ); ?></li>
 	<?php endif; ?>
 </ul>
 
-<h3>Most targeted usernames</h3>
+<h3><?php esc_html_e( 'Most targeted usernames', 'limit-login-attempts-reloaded' ); ?></h3>
 <ul>
 	<?php if ( ! empty( $top_usernames_rows ) ) : ?>
 		<?php foreach ( $top_usernames_rows as $row ) : ?>
 			<li><?php echo esc_html( $row['username'] ); ?> (<?php echo esc_html( (string) $row['attempts'] ); ?>)</li>
 		<?php endforeach; ?>
 	<?php else : ?>
-		<li>No targeted usernames in this period.</li>
+		<li><?php esc_html_e( 'No targeted usernames in this period.', 'limit-login-attempts-reloaded' ); ?></li>
 	<?php endif; ?>
 </ul>
 
