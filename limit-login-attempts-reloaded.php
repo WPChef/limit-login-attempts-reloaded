@@ -156,7 +156,7 @@ defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 			'show_threat_level' => false,
 			'intro_text' => '',
 			'preview_text' => 'Daily digest of lockouts, top IPs, and what to review next.',
-			'unsubscribe_text' => 'Unsubscribe from these notifications.',
+			'unsubscribe_text' => '{unsubscribe} from these notifications.',
 			'title_mode' => 'date',
 		),
 		'weekly' => array(
@@ -167,7 +167,7 @@ defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 			'show_threat_level' => true,
 			'intro_text' => '',
 			'preview_text' => 'Weekly digest of lockouts, top IPs, and what to review next.',
-			'unsubscribe_text' => 'Unsubscribe from these notifications.',
+			'unsubscribe_text' => '{unsubscribe} from these notifications.',
 			'title_mode' => 'range',
 		),
 		'monthly' => array(
@@ -178,7 +178,7 @@ defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 			'show_threat_level' => true,
 			'intro_text' => '',
 			'preview_text' => 'Monthly digest of lockouts, top IPs, and what to review next.',
-			'unsubscribe_text' => 'Unsubscribe from these notifications.',
+			'unsubscribe_text' => '{unsubscribe} from these notifications.',
 			'title_mode' => 'month',
 		),
 	)
