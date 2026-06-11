@@ -5,7 +5,7 @@
 <p><?php echo esc_html( $intro_text ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong>.</p>
 <?php endif; ?>
 
-<p><?php esc_html_e( 'Date range', 'limit-login-attempts-reloaded' ); ?>: <?php echo esc_html( $reporting_period ); ?> <?php esc_html_e( 'from Limit Login Attempts Security for', 'limit-login-attempts-reloaded' ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong></p>
+<p><?php echo esc_html( $reporting_period ); ?> <?php esc_html_e( 'from Limit Login Attempts Security for', 'limit-login-attempts-reloaded' ); ?> <strong><?php echo esc_html( $site_domain ); ?></strong></p>
 
 <h3>Summary</h3>
 <ul>
