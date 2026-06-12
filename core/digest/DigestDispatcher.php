@@ -386,7 +386,9 @@ class DigestDispatcher {
 		$unsubscribe_link = '<a href="' . esc_url( $unsubscribe_url ) . '" target="_blank" rel="noopener" style="color:#6b7280;text-decoration:underline;">'
 			. esc_html__( 'Unsubscribe', 'limit-login-attempts-reloaded' ) . '</a>';
 
-		return str_replace( '{unsubscribe}', $unsubscribe_link, $template );
+		$template = str_replace( '{unsubscribe}', $unsubscribe_link, $template );
+
+		return $template . ' ' . esc_html__( 'from these notifications.', 'limit-login-attempts-reloaded' );
 	}
 
 	/**
@@ -401,12 +403,25 @@ class DigestDispatcher {
 	private static function build_email_title( $title_mode, $period, $start_label, $end_label ) {
 		switch ( true ) {
 			case 'range' === $title_mode:
-				return 'Login Security Summary - ' . $start_label . ' to ' . $end_label;
+				return sprintf(
+					/* translators: 1: start date, 2: end date */
+					__( 'Login Security Summary - %1$s to %2$s', 'limit-login-attempts-reloaded' ),
+					$start_label,
+					$end_label
+				);
 			case 'month' === $title_mode:
-				return 'Login Security Summary - ' . date_i18n( 'F Y', (int) $period['start_ts'] );
+				return sprintf(
+					/* translators: %s: month and year */
+					__( 'Login Security Summary - %s', 'limit-login-attempts-reloaded' ),
+					date_i18n( 'F Y', (int) $period['start_ts'] )
+				);
 			case 'date' === $title_mode:
 			default:
-				return 'Login Security Summary - ' . date_i18n( 'Y-m-d', (int) $period['end_ts'] );
+				return sprintf(
+					/* translators: %s: date in Y-m-d format */
+					__( 'Login Security Summary - %s', 'limit-login-attempts-reloaded' ),
+					date_i18n( 'Y-m-d', (int) $period['end_ts'] )
+				);
 		}
 	}
 
