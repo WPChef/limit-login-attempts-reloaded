@@ -22,15 +22,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 $gdpr                       = Config::get( 'gdpr' );
 $gdpr_message               = Config::get( 'gdpr_message' );
 
-$v                          = explode( ',', Config::get( 'lockout_notify' ) );
-$email_checked              = in_array( 'email', $v );
-
 $show_top_level_menu_item   = Config::get( 'show_top_level_menu_item' );
 $show_top_bar_menu_item     = Config::get( 'show_top_bar_menu_item' );
 $hide_dashboard_widget      = Config::get( 'hide_dashboard_widget' );
 $show_warning_badge         = Config::get( 'show_warning_badge' );
 
 $admin_notify_email         = Config::get( 'admin_notify_email' );
+$default_admin_email        = is_multisite() ? get_site_option( 'admin_email' ) : get_option( 'admin_email' );
+$admin_notify_email         = ! empty( $admin_notify_email ) ? $admin_notify_email : $default_admin_email;
 
 $trusted_ip_origins         = Config::get( 'trusted_ip_origins' );
 $trusted_ip_origins         = ( is_array( $trusted_ip_origins ) && ! empty( $trusted_ip_origins ) ) ? implode( ", ", $trusted_ip_origins ) : 'REMOTE_ADDR';
@@ -144,6 +143,57 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                 <h3><?php _e( 'Local App', 'limit-login-attempts-reloaded' ); ?></h3>
                 <div>
                     <table class="llar-form-table">
+                        <tr>
+                            <th scope="row" valign="top" id="llar_lockout_notify"><?php _e( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="hint_tooltip-parent">
+                                    <span class="dashicons dashicons-editor-help"></span>
+                                    <div class="hint_tooltip">
+                                        <div class="hint_tooltip-content">
+                                            <?php _e( 'Email address to which lockout notifications will be sent.', 'limit-login-attempts-reloaded' ); ?>
+                                        </div>
+                                    </div>
+                                </span>
+                            </th>
+                            <td>
+                                <input type="checkbox" name="lockout_notify_email" <?php checked ( $email_checked ); ?>
+                                       value="email"/> <?php _e( 'Email to', 'limit-login-attempts-reloaded' ); ?>
+                                <input class="input_border" type="email" name="admin_notify_email"
+                                       required
+                                       value="<?php esc_attr_e( $admin_notify_email ) ?>"
+                                       placeholder="<?php echo esc_attr( $default_admin_email ); ?>"/> <?php _e( 'after', 'limit-login-attempts-reloaded' ); ?>
+                                <input class="input_border" type="text" size="3" maxlength="4"
+                                       value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
+                                       name="email_after"/> <?php _e( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
+                                <button class="button menu__item col llar-test-email-notification-btn button__transparent_orange">
+								    <?php _e( 'Test Email Notifications', 'limit-login-attempts-reloaded' ); ?>
+                                </button>
+                                <span class="preloader-wrapper llar-test-email-notification-loader">
+                                <span class="spinner llar-app-ajax-spinner"></span>
+                                <span class="msg"></span>
+                            </span>
+                                <div class="description-secondary"><?php echo sprintf(
+									    __( 'It\'s not uncommon for web hosts to turn off emails for plugins as a security measure.<br>We\'ve <a class="llar_bold link__style_color_inherit" href="%s" target="_blank">created an article</a> to troubleshoot common email deliverability issues.', 'limit-login-attempts-reloaded' ),
+									    'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
+								    ); ?>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row" valign="top"><?php _e( 'Email Digests', 'limit-login-attempts-reloaded' ); ?></th>
+                            <td>
+                                <div class="llar-digest-checkboxes">
+	                            <?php foreach ( $digest_notification_checkboxes as $digest_checkbox ) : ?>
+                                    <label class="llar-digest-checkbox-item">
+                                        <input type="checkbox"
+                                               name="<?php echo esc_attr( $digest_checkbox['name'] ); ?>"
+                                               value="1"
+								            <?php checked( ! empty( $digest_checkbox['checked'] ) ); ?> />
+								            <?php echo esc_html( $digest_checkbox['label'] ); ?>
+                                    </label>
+	                            <?php endforeach; ?>
+                                </div>
+                            </td>
+                        </tr>
                         <tr>
                             <th scope="row" valign="top"><?php _e( 'Lockout', 'limit-login-attempts-reloaded' ); ?>
                                 <span class="hint_tooltip-parent">
@@ -576,41 +626,6 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
 			    <?php endif; ?>
 
                 <tr>
-                    <th scope="row" valign="top" id="llar_lockout_notify"><?php _e( 'Notify on lockout', 'limit-login-attempts-reloaded' ); ?>
-                        <span class="hint_tooltip-parent">
-                            <span class="dashicons dashicons-editor-help"></span>
-                            <div class="hint_tooltip">
-                                <div class="hint_tooltip-content">
-                                    <?php _e( 'Email address to which lockout notifications will be sent.', 'limit-login-attempts-reloaded' ); ?>
-                                </div>
-                            </div>
-                        </span>
-                    </th>
-                    <td>
-                        <input type="checkbox" name="lockout_notify_email" <?php checked ( $email_checked ); ?>
-                               value="email"/> <?php _e( 'Email to', 'limit-login-attempts-reloaded' ); ?>
-                        <input class="input_border" type="email" name="admin_notify_email"
-                               value="<?php esc_attr_e( $admin_notify_email ) ?>"
-                               placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"/> <?php _e( 'after', 'limit-login-attempts-reloaded' ); ?>
-                        <input class="input_border" type="text" size="3" maxlength="4"
-                               value="<?php echo( Config::get( 'notify_email_after' ) ); ?>"
-                               name="email_after"/> <?php _e( 'lockouts', 'limit-login-attempts-reloaded' ); ?>
-                        <button class="button menu__item col llar-test-email-notification-btn button__transparent_orange">
-						    <?php _e( 'Test Email Notifications', 'limit-login-attempts-reloaded' ); ?>
-                        </button>
-                        <span class="preloader-wrapper llar-test-email-notification-loader">
-                        <span class="spinner llar-app-ajax-spinner"></span>
-                        <span class="msg"></span>
-                    </span>
-                        <div class="description-secondary"><?php echo sprintf(
-							    __( 'It\'s not uncommon for web hosts to turn off emails for plugins as a security measure.<br>We\'ve <a class="llar_bold link__style_color_inherit" href="%s" target="_blank">created an article</a> to troubleshoot common email deliverability issues.', 'limit-login-attempts-reloaded' ),
-							    'https://www.limitloginattempts.com/troubleshooting-guide-fixing-issues-with-non-functioning-emails-from-your-wordpress-site/'
-						    ); ?>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
                     <th scope="row" valign="top"><?php _e( 'Display top menu item', 'limit-login-attempts-reloaded' ); ?>
                         <span class="hint_tooltip-parent">
                             <span class="dashicons dashicons-editor-help"></span>
@@ -789,27 +804,66 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                         const $email_input = $( 'input[name="admin_notify_email"]' );
                         const $test_email_loader = $( '.llar-test-email-notification-loader' );
                         const $test_email_loader_msg = $test_email_loader.find( '.msg' );
+                        const email = ( $email_input.val() || '' ).trim();
 
-                        $test_email_loader_msg.text( '' );
+                        $test_email_loader_msg.removeClass( 'success error' ).text( '' );
 
-                        $test_email_loader.toggleClass( 'loading' );
+                        if ( ! email ) {
+                            $test_email_loader_msg
+                                .addClass( 'error' )
+                                .text( '<?php echo esc_js( __( 'Email is required.', 'limit-login-attempts-reloaded' ) ); ?>' );
+                            return;
+                        }
+
+                        $test_email_loader.addClass( 'loading' );
 
                         $.post( ajaxurl, {
                             action: 'test_email_notifications',
-                            email: $email_input.val() || $email_input.attr( 'placeholder' ),
+                            email: email,
                             sec: '<?php echo esc_js( wp_create_nonce( "llar-test-email-notifications" ) ); ?>',
                         }, function ( res ) {
                             if ( res?.success ) {
-                                $test_email_loader_msg.addClass( 'success' ).text( '<?php echo esc_js( __( 'Test email has been sent!', 'limit-login-attempts-reloaded' ) ) ?>' )
+                                $test_email_loader_msg
+                                    .removeClass( 'error' )
+                                    .addClass( 'success' )
+                                    .text( '<?php echo esc_js( __( 'Test email has been sent!', 'limit-login-attempts-reloaded' ) ); ?>' );
+                            } else {
+                                $test_email_loader_msg
+                                    .removeClass( 'success' )
+                                    .addClass( 'error' )
+                                    .text( res?.data?.msg || '<?php echo esc_js( __( 'Failed to send test email.', 'limit-login-attempts-reloaded' ) ); ?>' );
                             }
 
-                            $test_email_loader.toggleClass( 'loading' );
+                            $test_email_loader.removeClass( 'loading' );
                         } );
                     } )
                 } );
 
             })(jQuery);
         </script>
+        <style>
+            .llar-test-email-notification-loader .msg.error {
+                color: #EC4652 !important;
+            }
+
+            .llar-digest-checkboxes {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px 18px;
+                align-items: center;
+            }
+            .llar-digest-checkbox-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                line-height: 1.4;
+                cursor: pointer;
+                margin: 0;
+            }
+            .llar-digest-checkbox-item input[type="checkbox"] {
+                margin: 0;
+            }
+        </style>
 
         <p class="submit">
             <input class="button menu__item col button__orange" name="llar_update_settings"
