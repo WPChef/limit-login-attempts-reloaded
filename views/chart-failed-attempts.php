@@ -172,7 +172,7 @@ $chart2__color_gradient_requests = '#AEAEAE33';
 	     ?>
 	     Monthly Usage:
 	     <span class="hint_tooltip-parent llar-usage-number">
-	         <?php echo esc_html( $requests_usage ); ?>
+	         <span class="llar-usage-number__text"><?php echo esc_html( $requests_usage ); ?></span>
 	         <div class="hint_tooltip">
 	             <div class="hint_tooltip-content">
 	                 <?php esc_attr_e( 'Requests used by this site since the first day of the month.', 'limit-login-attempts-reloaded' ); ?>
@@ -181,7 +181,7 @@ $chart2__color_gradient_requests = '#AEAEAE33';
 	     </span>
 	     <?php if ( null !== $requests_usage_total ) : ?>
 	     (<span class="hint_tooltip-parent llar-usage-number">
-	         <?php echo esc_html( $requests_usage_total ); ?>
+	         <span class="llar-usage-number__text"><?php echo esc_html( $requests_usage_total ); ?></span>
 	         <div class="hint_tooltip">
 	             <div class="hint_tooltip-content">
 	                 <?php esc_attr_e( 'Requests used by all sites in your account since the first day of the month.', 'limit-login-attempts-reloaded' ); ?>
@@ -191,7 +191,7 @@ $chart2__color_gradient_requests = '#AEAEAE33';
 	     <?php endif; ?>
 	     /
 	     <span class="hint_tooltip-parent llar-usage-number">
-	         <?php echo esc_html( $requests_quota ); ?>
+	         <span class="llar-usage-number__text"><?php echo esc_html( $requests_quota ); ?></span>
 	         <div class="hint_tooltip">
 	             <div class="hint_tooltip-content">
 	                 <?php esc_attr_e( 'Total shared request quota for your account.', 'limit-login-attempts-reloaded' ); ?>
