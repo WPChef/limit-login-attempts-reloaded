@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.3.0 =
+* Added daily, weekly, and monthly email digests summarizing lockouts and failed login attempts.
+
 = 3.2.4 =
 * Added compatibility with WordPress 7.
 
