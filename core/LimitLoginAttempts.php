@@ -4,6 +4,11 @@ namespace LLAR\Core;
 
 use Exception;
 use IXR_Error;
+use LLAR\Core\Digest\DigestDispatcher;
+use LLAR\Core\Digest\DigestRetriesController;
+use LLAR\Core\Digest\DigestScheduler;
+use LLAR\Core\Digest\DigestStorage;
+use LLAR\Core\Digest\DigestUiController;
 use LLAR\Core\Http\Http;
 use LLAR\Core\Integrations\BaseIntegration;
 use LLAR\Core\Integrations\IntegrationManager;
@@ -15,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class LimitLoginAttempts
 {
+
 	/**
 	 * Admin options page slug
 	 * @var string
@@ -326,10 +332,11 @@ class LimitLoginAttempts
 	{
 		Helpers::persist_stored_plugin_version();
 
-		if ( ! Config::get( 'activation_timestamp' ) ) {
-
+		if ( ! Config::exists( 'activation_timestamp' ) ) {
 			set_transient( 'llar_dashboard_redirect', true, 30 );
 		}
+
+		Config::apply_digest_defaults_on_fresh_activation();
 	}
 
 	/**
@@ -355,6 +362,10 @@ class LimitLoginAttempts
 		$new_version = (string) Config::get( 'plugin_version' );
 
 		if ( $old_version !== $new_version ) {
+			if ( '' !== $old_version ) {
+				Config::ensure_digest_defaults_for_existing_site();
+			}
+
 			/**
 			 * Fires after LLAR plugin version is persisted post-update.
 			 *
@@ -364,6 +375,7 @@ class LimitLoginAttempts
 			do_action( 'llar_plugin_version_updated', $old_version, $new_version );
 		}
 	}
+
 
 	public function setup_cookie()
 	{
@@ -810,6 +822,8 @@ class LimitLoginAttempts
 		add_action( 'init', array( __CLASS__, 'reset_request_guards' ), 0 );
 
 		$this->register_mfa_providers();
+		DigestScheduler::bootstrap();
+		DigestDispatcher::bootstrap();
 
 		// Check if installed old plugin
 		$this->check_original_installed();
@@ -871,6 +885,7 @@ class LimitLoginAttempts
 
 		// MFA flow callback: llar_mfa=1&token=...&code=...
 		add_action( 'init', array( $this, 'mfa_flow_callback' ), 1 );
+		add_action( 'init', array( DigestStorage::class, 'register_post_type' ) );
 		add_filter( 'query_vars', array( $this, 'add_mfa_flow_query_var' ) );
 		MfaRestApi::register();
 
@@ -2393,6 +2408,7 @@ class LimitLoginAttempts
 			}
 			$retries_stats = $this->prune_retries_stats_old_buckets( $retries_stats );
 			Config::update( 'retries_stats', $retries_stats );
+			DigestRetriesController::save_failed_attempt( $ip, $username );
 
 			/* Check validity and add one to retries */
 			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ] ) {
@@ -2449,6 +2465,8 @@ class LimitLoginAttempts
 					/* normal lockout */
 					$lockouts[ $ip ] = time() + Config::get( 'lockout_duration' );
 				}
+
+				DigestRetriesController::save_lockout( $ip );
 			}
 
 			/* do housecleaning and save values */
@@ -2518,6 +2536,8 @@ class LimitLoginAttempts
 	{
 		$ip = $this->get_address();
 		$retries = Config::get( 'retries' );
+		$notify_email_after = (int) Config::get( 'notify_email_after' );
+		$notify_email_after = max( 1, $notify_email_after );
 
 		if ( ! is_array( $retries ) ) {
 			$retries = array();
@@ -2526,7 +2546,7 @@ class LimitLoginAttempts
 		/* check if we are at the right nr to do notification */
 		if (
 			isset( $retries[ $ip ] )
-			&& ( ( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % Config::get( 'notify_email_after' ) ) != 0
+			&& ( ( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % $notify_email_after ) != 0
 		) {
 			return;
 		}
@@ -2588,29 +2608,34 @@ class LimitLoginAttempts
 			esc_html( $site_domain )
 		);
 
+		$unsubscribe_url = admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' );
+		$unsubscribe_footer_text = DigestDispatcher::build_unsubscribe_footer_text(
+			array( 'unsubscribe_text' => LLA_DIGEST_DEFINITIONS['daily']['unsubscribe_text'] ),
+			$unsubscribe_url
+		);
+
 		ob_start();
-		include LLA_PLUGIN_DIR . 'views/emails/failed-login.php';
+		include LLA_PLUGIN_DIR . 'views/emails/failed-login-content.php';
 		$email_body = ob_get_clean();
 
 		// get current url with the current page and the current query string
-		$current_url_label = preg_replace( '/^\/|\/$/', '', $_SERVER['REQUEST_URI'] );
-		$current_url = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : get_site_url() . $_SERVER['REQUEST_URI'];
+		$current_url_label = Helpers::get_current_url_label();
+		$current_url = Helpers::get_current_url();
 
 		$placeholders = array(
-			'{name}'                => $admin_name,
-			'{domain}'              => $site_domain,
-			'{attempts_count}'      => $count,
-			'{lockouts_count}'      => $lockouts,
+			'{name}'                => esc_html( (string) $admin_name ),
+			'{domain}'              => esc_html( (string) $site_domain ),
+			'{attempts_count}'      => (int) $count,
+			'{lockouts_count}'      => (int) $lockouts,
 			'{ip_address}'          => esc_html( $ip ),
 			'{ip_address_link}'     => esc_url( 'https://www.limitloginattempts.com/location/?ip=' . $ip ),
-			'{username}'            => $user,
-			'{blocked_duration}'    => $when,
+			'{username}'            => esc_html( (string) $user ),
+			'{blocked_duration}'    => esc_html( (string) $when ),
 			'{dashboard_url}'       => admin_url( 'options-general.php?page=' . $this->_options_page_slug ),
 			'{premium_url}'         => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
 			'{llar_url}'            => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
-			'{unsubscribe_url}'     => admin_url( 'options-general.php?page=' . $this->_options_page_slug . '&tab=settings' ),
-			'{current_url}'         => $current_url,
-			'{current_url_label}'   => $current_url_label,
+			'{current_url}'         => esc_url( $current_url ),
+			'{current_url_label}'   => esc_html( (string) $current_url_label ),
 		);
 
 		$email_body = str_replace(
@@ -3311,7 +3336,13 @@ class LimitLoginAttempts
 				Config::update('notify_email_after',        (int)$_POST['email_after'] );
 				Config::update('gdpr_message',              sanitize_textarea_field( Helpers::deslash( $_POST['gdpr_message'] ) ) );
 				Config::update('custom_error_message',      sanitize_textarea_field( Helpers::deslash( $_POST['custom_error_message'] ) ) );
-				Config::update('admin_notify_email',        sanitize_email( $_POST['admin_notify_email'] ) );
+				$admin_notify_email = isset( $_POST['admin_notify_email'] ) ? sanitize_email( wp_unslash( $_POST['admin_notify_email'] ) ) : '';
+				if ( empty( $admin_notify_email ) ) {
+					$this->show_message( __( 'Please enter a valid admin notification email.', 'limit-login-attempts-reloaded' ), true );
+					$admin_notify_email = Config::get( 'admin_notify_email' );
+				}
+				Config::update('admin_notify_email',        $admin_notify_email );
+				DigestUiController::save_settings_from_request();
 
 				Config::update( Config::OPTION_ACTIVE_APP, sanitize_text_field( $_POST['active_app'] ) );
 
@@ -3381,6 +3412,10 @@ class LimitLoginAttempts
 			// After MFA form submit, we're still on MFA tab
 			$current_tab = 'mfa';
 		}
+
+		$lockout_notify_items = explode( ',', (string) Config::get( 'lockout_notify' ) );
+		$email_checked = in_array( 'email', $lockout_notify_items, true );
+		$digest_notification_checkboxes = DigestUiController::get_notification_checkboxes();
 
 		// MFA tab data comes from get_settings_for_view() (single source in MfaSettingsManager)
 		include_once LLA_PLUGIN_DIR . 'views/options-page.php';
