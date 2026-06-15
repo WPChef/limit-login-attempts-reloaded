@@ -199,6 +199,10 @@
     .msg {
       margin-left: 5px;
 
+      &.error {
+        color: #EC4652;
+      }
+
       &.success {
         color: #71c21b;
       }
