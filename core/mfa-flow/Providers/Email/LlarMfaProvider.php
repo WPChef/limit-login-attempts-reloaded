@@ -97,6 +97,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 
 	/**
 	 * Send verification code to the user by email.
+	 * Renders content-only view and delegates header/footer layout to Mailer.
 	 *
 	 * @param \WP_User $user    User to send code to.
 	 * @param string   $code    Verification code.
@@ -150,9 +151,13 @@ class LlarMfaProvider implements MfaProviderInterface {
 			}
 		}
 
+		$email_title    = $subject;
+		$email_logo_cid = $llar_mfa_otp_logo_cid;
+		$email_css_text = \LLAR\Core\Helpers::get_email_css_text();
+
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/mfa-verification.php';
-		$body = (string) ob_get_clean();
+		$message = (string) ob_get_clean();
 
 		$headers  = array( 'Content-Type: text/html; charset=UTF-8' );
 		$to_email = $user->user_email;
@@ -165,7 +170,7 @@ class LlarMfaProvider implements MfaProviderInterface {
 
 		$sent = false;
 		try {
-			$sent = wp_mail( $to_email, $subject, $body, $headers );
+			$sent = wp_mail( $to_email, $subject, $message, $headers );
 		} finally {
 			if ( $llar_mfa_otp_logo_cid !== '' ) {
 				remove_action( 'phpmailer_init', array( __CLASS__, 'phpmailer_embed_otp_logo' ), 10 );
