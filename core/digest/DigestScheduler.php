@@ -60,14 +60,22 @@ class DigestScheduler {
 	 * @return void
 	 */
 	public static function sync_scheduled_events() {
+		$is_local = 'local' === Config::get( Config::OPTION_ACTIVE_APP );
+
 		foreach ( self::get_definitions() as $digest_key => $digest_definition ) {
+			$event_hook = self::get_event_hook( $digest_key );
+
+			if ( ! $is_local ) {
+				wp_clear_scheduled_hook( $event_hook, array( $digest_key ) );
+				continue;
+			}
+
 			$interval_seconds = self::get_schedule_interval_seconds( $digest_key, $digest_definition );
 
 			if ( $interval_seconds <= 0 ) {
 				continue;
 			}
 
-			$event_hook = self::get_event_hook( $digest_key );
 			$next_run   = wp_next_scheduled( $event_hook, array( $digest_key ) );
 			$is_enabled = (bool) Config::get( self::get_option_key( $digest_key ) );
 
@@ -99,6 +107,10 @@ class DigestScheduler {
 		$digest_key = sanitize_key( (string) $digest_key );
 
 		if ( '' === $digest_key ) {
+			return;
+		}
+
+		if ( 'local' !== Config::get( Config::OPTION_ACTIVE_APP ) ) {
 			return;
 		}
 
