@@ -495,10 +495,6 @@ class DigestDispatcher {
 	 */
 	private static function get_admin_email() {
 		$email = (string) Config::get( 'admin_notify_email' );
-		if ( '' === $email ) {
-			$email = (string) get_site_option( 'admin_email' );
-		}
-
 		$email = sanitize_email( $email );
 
 		return is_email( $email ) ? $email : '';
