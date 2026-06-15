@@ -2539,7 +2539,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-dashboard-page .section-title__new .llar-label.request {
   background-color: unset;
 }
-#llar-dashboard-page .section-title__new .llar-label.request .llar-usage-number {
+#llar-dashboard-page .section-title__new .llar-label.request .llar-usage-number__text {
   text-decoration: underline;
   text-decoration-style: dotted;
   text-underline-offset: 3px;

@@ -95,11 +95,11 @@
   	    &.request {
   	      background-color: unset;
 
-  	      .llar-usage-number {
-  	        text-decoration: underline;
-  	        text-decoration-style: dotted;
-  	        text-underline-offset: 3px;
-  	      }
+	      .llar-usage-number__text {
+	        text-decoration: underline;
+	        text-decoration-style: dotted;
+	        text-underline-offset: 3px;
+	      }
   	    }
     }
   }
