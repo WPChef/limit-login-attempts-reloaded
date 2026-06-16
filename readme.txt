@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 3.3.0
+Stable tag: 3.3.1
 
 WordPress login security with brute force protection, Two-factor authentication (2FA/MFA), firewall, IP/country blocking, and login monitoring
 
@@ -17,7 +17,7 @@ Protect your WordPress website against brute force attacks, bot attacks, and una
 
 Trusted by 2 million WordPress websites, Limit Login Attempts Security is designed specifically to protect the most targeted part of your website: the login page.
 
-https://www.youtube.com/watch?v=dX7Qu5MN2ok
+https://www.youtube.com/watch?v=S3nf8Zpbcfs
 
 = Why Use Limit Login Attempts Security? =
 
@@ -250,6 +250,9 @@ By default, you will need to copy and paste the lists to each site manually. For
 
 == Changelog ==
 
+= 3.3.1 =
+* Fixed email digest behavior in cloud mode.
+
 = 3.3.0 =
 * Added daily, weekly, and monthly email digests summarizing lockouts and failed login attempts.
 
@@ -270,23 +273,6 @@ By default, you will need to copy and paste the lists to each site manually. For
 = 3.2.0 =
 * Improved WooCommerce registration protection in cloud mode.
 * Refactored third-party integrations into a unified architecture (WooCommerce, MemberPress).
-
-= 3.1.0 =
-* Added technical details to the network issue notice.
-* Fixed logo rendering in Gmail MFA notifications.
-* Improved local risk indicator thresholds and refactored rendering.
-* Improved compatibility with WPS Hide Login, WooCommerce, and MemberPress login flows; added WooCommerce cloud registration checks.
-
-= 3.0.2 =
-* Hardened admin tab parameter (whitelist, strict checks) before loading tab views.
-* Onboarding: redirect to Dashboard when setup is incomplete and a tab other than Dashboard is opened.
-* Failed-login email subject: numbered placeholders for translation-friendly word order (e.g. for Dutch).
-* Onboarding popup: hide body scroll while open, restore on close; focus modal content.
-
-= 3.0.1 =
-* Hardened MFA security.
-* MFA UI improved.
-* Refactored the codebase.
 
 = Earlier versions =
 For the changelog of earlier versions, please refer to the <a href="https://plugins.svn.wordpress.org/limit-login-attempts-reloaded/trunk/changelog.txt">changelog.txt</a> file.
