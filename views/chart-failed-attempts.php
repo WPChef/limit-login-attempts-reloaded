@@ -85,14 +85,13 @@ $chart2__color_gradient_requests = '#AEAEAE33';
 	$retries_stats = Config::get( 'retries_stats' );
 
 	if ( is_array( $retries_stats ) && $retries_stats ) {
-		$keys = array_keys( $retries_stats );
-		$start_key = is_numeric( reset( $keys ) ) ? (int) min( $keys ) : reset( $keys );
-		$start = is_numeric( $start_key ) ? date_i18n( 'Y-m-d', $start_key ) : $start_key;
+		$key = key( $retries_stats );
+		$start = is_numeric( $key ) ? date_i18n( 'Y-m-d', $key ) : $key;
 
 		$daterange = new DatePeriod(
 			new DateTime( $start ),
 			new DateInterval('P1D'),
-			( new DateTime() )->modify( '+1 day' )
+			new DateTime('-1 day')
 		);
 
 		$retries_per_day = array();
