@@ -158,23 +158,17 @@ $chart2__color_gradient_requests = '#AEAEAE33';
     </div>
     	<?php if ( ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) && $is_active_app_custom && ! $is_agency ) : ?>
     	 <span class="llar-label request <?php echo  $is_exhausted  ? 'exhausted' : '' ?>">
-    	     <?php
+	     <?php
 	     $requests_quota = isset( $requests['quota'] ) ? $requests['quota'] : '';
 	     $requests_usage = isset( $requests['usage'] ) ? $requests['usage'] : '';
 	     $requests_usage_total = isset( $requests['usage_total'] ) ? $requests['usage_total'] : null;
-
-	     // Build usage part: "usage" or "usage (usage_total)".
-	     $usage_part = $requests_usage;
-	     if ( null !== $requests_usage_total ) {
-	         $usage_part .= ' (' . $requests_usage_total . ')';
-	     }
 	     ?>
-	     Monthly Usage:
+	     <?php esc_html_e( 'Monthly Usage:', 'limit-login-attempts-reloaded' ); ?>
 	     <span class="hint_tooltip-parent llar-usage-number">
 	         <span class="llar-usage-number__text"><?php echo esc_html( $requests_usage ); ?></span>
 	         <div class="hint_tooltip">
 	             <div class="hint_tooltip-content">
-	                 <?php esc_attr_e( 'Requests used by this site since the first day of the month.', 'limit-login-attempts-reloaded' ); ?>
+	                 <?php esc_html_e( 'Requests used by this site since the first day of the month.', 'limit-login-attempts-reloaded' ); ?>
 	             </div>
 	         </div>
 	     </span>
@@ -183,7 +177,7 @@ $chart2__color_gradient_requests = '#AEAEAE33';
 	         <span class="llar-usage-number__text"><?php echo esc_html( $requests_usage_total ); ?></span>
 	         <div class="hint_tooltip">
 	             <div class="hint_tooltip-content">
-	                 <?php esc_attr_e( 'Requests used by all sites in your account since the first day of the month.', 'limit-login-attempts-reloaded' ); ?>
+	                 <?php esc_html_e( 'Requests used by all sites in your account since the first day of the month.', 'limit-login-attempts-reloaded' ); ?>
 	             </div>
 	         </div>
 	     </span>)
@@ -193,7 +187,7 @@ $chart2__color_gradient_requests = '#AEAEAE33';
 	         <span class="llar-usage-number__text"><?php echo esc_html( $requests_quota ); ?></span>
 	         <div class="hint_tooltip">
 	             <div class="hint_tooltip-content">
-	                 <?php esc_attr_e( 'Total shared request quota for your account.', 'limit-login-attempts-reloaded' ); ?>
+	                 <?php esc_html_e( 'Total shared request quota for your account.', 'limit-login-attempts-reloaded' ); ?>
 	             </div>
 	         </div>
 	     </span>
