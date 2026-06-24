@@ -1061,7 +1061,7 @@ class LimitLoginAttempts
 				$slug = $this->get_options_page_uri('dashboard#modal_micro_cloud');
 
 				$actions = array_merge( array(
-					'<a href="' . esc_html( $slug ) . '" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+					'<a href="' . esc_html( $slug ) . '" style="font-weight: bold;">' . __( 'Free Trial', 'limit-login-attempts-reloaded' ) . '</a>',
 				), $actions );
 			} else {
 
@@ -1802,7 +1802,7 @@ class LimitLoginAttempts
 		if ( ! $is_cloud_app_enabled ) {
 
 			$slug       = '&tab=dashboard#modal_micro_cloud';
-			$name_item  = $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' );
+			$name_item  = $is_local_empty_setup_code ? __( 'Free Trial', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' );
 			$url_item   = $is_local_empty_setup_code ? $slug : '&tab=premium';
 
 			$submenu_items[] = array(

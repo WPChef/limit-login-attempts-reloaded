@@ -44,9 +44,17 @@ $retries_count       = isset( $chart_circle_data['retries_count'] ) ? (int) $cha
         <span class="llar-label__url">
         </span>
 	<?php endif; ?>
-	<?php echo ( $is_active_app_custom && ! $is_exhausted )
-		? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>'
-		: ''; ?>
+	<?php
+	$premium_label = '';
+	if ( $is_active_app_custom && ! $is_exhausted ) {
+		$premium_label = ( 'Micro Cloud' === $block_sub_group )
+			? __( 'Free Trial', 'limit-login-attempts-reloaded' )
+			: __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' );
+	}
+	if ( $premium_label ) {
+		echo '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . esc_html( $premium_label ) . '</span>';
+	}
+	?>
 </div>
 <div class="section-content">
     <div class="chart">

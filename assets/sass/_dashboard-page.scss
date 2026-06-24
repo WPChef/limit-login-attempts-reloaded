@@ -302,6 +302,10 @@
           flex-direction: row;
           column-gap: 16px;
 
+          &--centered {
+            justify-content: center;
+          }
+
           a {
             text-transform: uppercase;
             font-size: 16px;

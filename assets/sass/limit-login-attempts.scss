@@ -209,18 +209,6 @@
     }
   }
 
-  .llar-protect-notice {
-    font-size: 15px;
-    color: #848484;
-    margin-left: 10px;
-
-    a {
-      color: #222222;
-      text-decoration: none;
-      border-bottom: 1px dashed;
-    }
-  }
-
   .llar-toggle-setup-field {
     color: #2271b1;
     text-decoration-style: dashed;
@@ -474,7 +462,7 @@
             }
           }
 
-          .description-additional, .description-secondary, .llar-protect-notice {
+          .description-additional, .description-secondary {
             font-size: 16px;
             line-height: inherit;
             color: $typography-additional;
@@ -486,22 +474,8 @@
             }
           }
 
-          .description-secondary, .llar-protect-notice {
+          .description-secondary {
             color: $typography-secondary;
-          }
-
-          .llar-protect-notice {
-            font-size: inherit;
-            color: inherit;
-
-            a {
-              text-decoration: none;
-              border-bottom: unset;
-
-              &:hover {
-                border-bottom: 1px solid currentColor;
-              }
-            }
           }
         }
       }

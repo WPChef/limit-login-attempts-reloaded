@@ -574,16 +574,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .limit-login-page-settings .llar-test-email-notification-loader .msg.success {
   color: #71c21b;
 }
-.limit-login-page-settings .llar-protect-notice {
-  font-size: 15px;
-  color: #848484;
-  margin-left: 10px;
-}
-.limit-login-page-settings .llar-protect-notice a {
-  color: #222222;
-  text-decoration: none;
-  border-bottom: 1px dashed;
-}
 .limit-login-page-settings .llar-toggle-setup-field {
   color: #2271b1;
   text-decoration-style: dashed;
@@ -809,7 +799,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink:hover {
   border-bottom: unset;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary {
   font-size: 16px;
   line-height: inherit;
   color: #A4A8B7;
@@ -817,23 +807,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   max-width: 740px;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary {
     font-size: 14px;
   }
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary {
   color: #666D84;
-}
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice {
-  font-size: inherit;
-  color: inherit;
-}
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a {
-  text-decoration: none;
-  border-bottom: unset;
-}
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover {
-  border-bottom: 1px solid currentColor;
 }
 #llar-setting-page .add_block__under_table, #llar-setting-page-logs .add_block__under_table, #llar-setting-page-logs__active .add_block__under_table, #llar-setting-page-debug .add_block__under_table, #llar-setting-page-premium .add_block__under_table, #llar-setting-page-help .add_block__under_table {
   margin: 8px 0;
@@ -2723,6 +2702,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: flex;
   flex-direction: row;
   column-gap: 16px;
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons--centered {
+  justify-content: center;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons a {
   text-transform: uppercase;

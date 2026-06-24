@@ -7,14 +7,9 @@
  *
  */
 
-use LLAR\Core\Config;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
-
-$setup_code = Config::get( 'app_setup_code' );
-$is_local_no_empty_setup_code = ( ! $is_active_app_custom && ! empty( $setup_code ) );
 
 $min_plan = 'Premium';
 $plans = $this->array_name_plans();
@@ -118,19 +113,10 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
         $features = array(
             'Features',
             'Free',
-            'Micro Cloud',
             'Premium',
             'Premium +',
             'Professional',
         );
-
-        if ( $is_local_no_empty_setup_code ) {
-	        $key = array_search('Micro Cloud', $features);
-
-	        if ($key !== false) {
-		        unset($features[$key]);
-	        }
-        }
 
         $compare_list = require LLA_PLUGIN_DIR . '/resources/compare-plans-data.php';
     ?>
