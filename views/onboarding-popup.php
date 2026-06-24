@@ -46,7 +46,7 @@ ob_start(); ?>
         <div class="point__block" data-step="3">
             <div class="point"></div>
             <div class="description">
-				<?php esc_html_e( 'Limited Upgrade', 'limit-login-attempts-reloaded' ); ?>
+				<?php esc_html_e( 'Free Trial', 'limit-login-attempts-reloaded' ); ?>
             </div>
         </div>
         <div class="point__block" data-step="4">
@@ -123,7 +123,7 @@ ob_start(); ?>
 						<?php esc_html_e( 'Yes, show me plan options', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                     <button class="button next_step menu__item button__transparent_orange">
-						<?php esc_html_e( 'No, I don\'t want advanced protection', 'limit-login-attempts-reloaded' ); ?>
+						<?php esc_html_e( 'No thank you, let\'s continue', 'limit-login-attempts-reloaded' ); ?>
                     </button>
                 </div>
             </div>
@@ -177,28 +177,32 @@ ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
         <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/rocket-min.png">
-		<?php esc_html_e( 'Limited Upgrade (Free)', 'limit-login-attempts-reloaded' ); ?>
+		<?php esc_html_e( 'Unlock Premium FREE for 14 Days', 'limit-login-attempts-reloaded' ); ?>
+    </div>
+    <div class="title_description">
+		<?php esc_html_e( 'No Credit Card Required', 'limit-login-attempts-reloaded' ); ?>
     </div>
     <div class="card mx-auto">
         <div class="field-wrap" id="llar-description-step-3">
             <div class="field-desc-add">
-				<?php 
-				/* translators: %s: line break */
-				printf( esc_html__( 'Help us secure the WordPress network, and in return, we\'ll give you access to Micro Cloud - Our FREE premium plan. %s', 'limit-login-attempts-reloaded' ), '<br />' ); ?>
-                <br>
-				<?php 
-				/* translators: %1$s: opening span tag, %2$s: closing span tag, %3$s: line break */
-				printf( esc_html__( 'You\'ll receive %1$s 1,000 monthly cloud requests %2$s to power advanced login protection tools that block more than 97%% of all attempted logins. %3$s', 'limit-login-attempts-reloaded' ), '<span class="llar_turquoise">', '</span>', '<br />' );
+				<?php
+				echo wp_kses_post(
+					sprintf(
+						__( 'Unlock advanced security features including %1$sCloud Protection, Block by Country, Login Firewall, Successful Login Logs, and much more!%2$s', 'limit-login-attempts-reloaded' ),
+						'<strong>',
+						'</strong>'
+					)
+				);
 				?>
-                <br>
-				<?php 
-				/* translators: %1$s: opening span tag, %2$s: closing span tag, %3$s: line break */
-				printf( esc_html__( '%1$s By proceeding, you agree to participate in our threat-sharing network. %2$s %3$s', 'limit-login-attempts-reloaded' ), '<span class="llar_turquoise">', '</span>', '<br />' );
-				?>
-				<?php esc_html_e( 'You can switch back to the free version of the plugin at any time, which will deactivate Micro Cloud and stop all data sharing.', 'limit-login-attempts-reloaded' ); ?>
+                <br><br>
+				<?php esc_html_e( 'These powerful tools help stop brute force attacks before they happen, protecting your WordPress login from malicious bots and automated attacks.', 'limit-login-attempts-reloaded' ); ?>
+                <br><br>
+				<?php esc_html_e( 'Experience the strongest login protection available for WordPress and see the difference premium security can make.', 'limit-login-attempts-reloaded' ); ?>
+                <br><br>
+				<?php esc_html_e( 'You can return to the free version at any time.', 'limit-login-attempts-reloaded' ); ?>
             </div>
             <div class="field-desc-add">
-				<b><?php esc_html_e( 'Would you like to opt-in?', 'limit-login-attempts-reloaded' ); ?></b>
+				<b><?php esc_html_e( 'Would you like to start your free trial?', 'limit-login-attempts-reloaded' ); ?></b>
             </div>
         </div>
         <div class="llar-upgrade-subscribe">

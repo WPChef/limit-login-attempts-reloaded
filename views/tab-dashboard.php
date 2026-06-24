@@ -49,38 +49,29 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         <?php if ( ! $is_active_app_custom && empty( $setup_code ) ) : ?>
 		<div class="info-box-3">
             <div class="section-title__new">
-                <div class="title"><?php _e( 'Enable Micro Cloud (FREE)', 'limit-login-attempts-reloaded' ); ?></div>
+                <div class="title"><?php _e( 'Experience Premium Free for 14 Days', 'limit-login-attempts-reloaded' ); ?></div>
             </div>
             <div class="section-content">
                 <div class="desc">
                     <ul class="list-unstyled">
                         <li class="star">
-                            <?php _e( 'Help us secure our network by providing access to your login IP data.', 'limit-login-attempts-reloaded' ); ?>
+                            <?php _e( 'No credit card required. Automatically revert to the free version when the trial is complete.', 'limit-login-attempts-reloaded' ); ?>
                         </li>
                         <li class="star">
-                            <?php _e( 'In return, receive access to our premium features up to 1,000 requests per month, and 100 for each subsequent month.', 'limit-login-attempts-reloaded' ); ?>
+                            <?php _e( 'Unlock advanced security features including Cloud Protection, Block by Country, Login Firewall, and Successful Login Logs', 'limit-login-attempts-reloaded' ); ?>
                         </li>
                         <li class="star">
-                            <?php _e( 'Once the allocated requests are consumed, the premium app will switch back to the free version and reset the following month.', 'limit-login-attempts-reloaded' ); ?>
+                            <?php _e( 'Stop brute force attacks before they reach your login page with one of the strongest login protection systems for WordPress', 'limit-login-attempts-reloaded' ); ?>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="actions">
-                <div class="actions__buttons">
-                    <a href="https://www.limitloginattempts.com/premium-security-zero-cost-discover-the-benefits-of-micro-cloud/"
-                       title="Learn More"
-                       target="_blank"
-                       class="button menu__item button__transparent_orange link__style_unlink">
-                        <?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?>
-                    </a>
-                    <a title="Upgrade To Micro Cloud"
+                <div class="actions__buttons actions__buttons--centered">
+                    <a title="<?php esc_attr_e( '14 Day Trial', 'limit-login-attempts-reloaded' ); ?>"
                        class="button menu__item button__orange button_micro_cloud link__style_unlink">
-                        <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( '14 Day Trial', 'limit-login-attempts-reloaded' ); ?>
                     </a>
-                </div>
-                <div class="remark">
-	                <?php _e( '* A request is utilized when our cloud app validates an IP before it is able to perform a login attempt.', 'limit-login-attempts-reloaded' ); ?>
                 </div>
             </div>
         </div>
