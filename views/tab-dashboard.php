@@ -68,9 +68,9 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
             </div>
             <div class="actions">
                 <div class="actions__buttons actions__buttons--centered">
-                    <a title="<?php esc_attr_e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>"
+                    <a title="<?php esc_attr_e( '14 Day Trial', 'limit-login-attempts-reloaded' ); ?>"
                        class="button menu__item button__orange button_micro_cloud link__style_unlink">
-                        <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( '14 Day Trial', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>
             </div>

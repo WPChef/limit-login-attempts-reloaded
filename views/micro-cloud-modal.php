@@ -23,7 +23,7 @@ ob_start(); ?>
             <div class="micro_cloud_modal__body_header">
                 <div class="left_side">
                     <div class="title">
-                        <?php _e( 'Start Your 14 Day Free Trial', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Start your 14 day free trial', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <div class="description">
                         <?php _e( 'Unlock full access to our premium features including our login firewall, IP Intelligence, and performance optimizer. No credit card required.', 'limit-login-attempts-reloaded' ); ?>

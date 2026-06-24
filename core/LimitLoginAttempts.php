@@ -460,7 +460,7 @@ class LimitLoginAttempts
 	private function get_micro_cloud_recommendation_html() {
 		return sprintf(
 			__(
-				'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.',
+				'Based on your level of brute force activity, we recommend <a class="llar_orange %s">starting a free 14 day trial</a> to access features to reduce failed logins and improve site performance.',
 				'limit-login-attempts-reloaded'
 			),
 			'button_micro_cloud'

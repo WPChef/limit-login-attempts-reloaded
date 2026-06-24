@@ -67,7 +67,7 @@ if ( $is_active_app_custom ) {
                 <span class="dashicons dashicons-superhero"></span>
 				<?php
 				echo sprintf(
-					__( 'Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
+					__( 'Enjoying your free trial? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
 					add_query_arg('id', '4', $upgrade_premium_url) );
 				?>
             </p>
