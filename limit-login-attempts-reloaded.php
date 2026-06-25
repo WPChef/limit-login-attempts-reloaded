@@ -140,16 +140,21 @@ define( 'LLA_LOCKOUT_NOTIFY_ALLOWED', 'log,email' );
 defined( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS' ) || define( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS', 60 );
 defined( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL' ) || define( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL', 10 );
 
+defined( 'LLA_DIGEST_LABEL_DAILY' ) || define( 'LLA_DIGEST_LABEL_DAILY', 'Daily' );
+defined( 'LLA_DIGEST_LABEL_WEEKLY' ) || define( 'LLA_DIGEST_LABEL_WEEKLY', 'Weekly' );
+defined( 'LLA_DIGEST_LABEL_MONTHLY' ) || define( 'LLA_DIGEST_LABEL_MONTHLY', 'Monthly' );
+
 /**
  * Digest definitions (name, interval, templates). Default on/off profiles for new vs
  * existing installs are defined in Config::get_digest_defaults_for_*_install().
+ * Label strings: LLA_DIGEST_LABEL_DAILY, LLA_DIGEST_LABEL_WEEKLY, LLA_DIGEST_LABEL_MONTHLY.
  * Format: {key: {name: string, interval_seconds: int, is_default: bool, ...}}
  */
 defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 	'LLA_DIGEST_DEFINITIONS',
 	array(
 		'daily' => array(
-			'name' => 'Daily',
+			'name' => LLA_DIGEST_LABEL_DAILY,
 			'interval_seconds' => DAY_IN_SECONDS,
 			'is_default' => true,
 			'email_template' => 'digest-daily-content.php',
@@ -160,7 +165,7 @@ defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 			'title_mode' => 'date',
 		),
 		'weekly' => array(
-			'name' => 'Weekly',
+			'name' => LLA_DIGEST_LABEL_WEEKLY,
 			'interval_seconds' => WEEK_IN_SECONDS,
 			'is_default' => true,
 			'email_template' => 'digest-weekly-content.php',
@@ -171,7 +176,7 @@ defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 			'title_mode' => 'range',
 		),
 		'monthly' => array(
-			'name' => 'Monthly',
+			'name' => LLA_DIGEST_LABEL_MONTHLY,
 			'interval_seconds' => MONTH_IN_SECONDS,
 			'is_default' => true,
 			'email_template' => 'digest-monthly-content.php',
