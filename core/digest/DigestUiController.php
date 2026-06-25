@@ -53,16 +53,14 @@ class DigestUiController {
 	 * @return string
 	 */
 	public static function get_digest_label( $digest_key ) {
-		switch ( $digest_key ) {
-			case 'daily':
-				return __( 'Daily', 'limit-login-attempts-reloaded' );
-			case 'weekly':
-				return __( 'Weekly', 'limit-login-attempts-reloaded' );
-			case 'monthly':
-				return __( 'Monthly', 'limit-login-attempts-reloaded' );
-			default:
-				return ucfirst( $digest_key );
+		$digest_key  = sanitize_key( (string) $digest_key );
+		$definitions = self::get_definitions();
+
+		if ( empty( $definitions[ $digest_key ]['name'] ) ) {
+			return ucfirst( $digest_key );
 		}
+
+		return __( (string) $definitions[ $digest_key ]['name'], 'limit-login-attempts-reloaded' );
 	}
 
 	/**
