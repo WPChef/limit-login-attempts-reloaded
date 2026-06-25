@@ -2546,7 +2546,7 @@ class LimitLoginAttempts
 		/* check if we are at the right nr to do notification */
 		if (
 			isset( $retries[ $ip ] )
-			&& ( ( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % $notify_email_after ) != 0
+			&& 0 != ( (int) floor( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % $notify_email_after )
 		) {
 			return;
 		}
