@@ -287,10 +287,7 @@ class DigestDispatcher {
 	 */
 	private static function build_subject( $digest_key, $lockouts_total ) {
 		$site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
-		$definitions = self::get_definitions();
-		$label       = ! empty( $definitions[ $digest_key ]['name'] )
-			? (string) $definitions[ $digest_key ]['name']
-			: ucfirst( $digest_key );
+		$label       = DigestUiController::get_digest_label( $digest_key );
 
 		return sprintf(
 			'%1$s Security Summary for %2$s: %3$d lockouts',
