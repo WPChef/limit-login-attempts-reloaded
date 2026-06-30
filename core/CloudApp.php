@@ -321,8 +321,10 @@ class CloudApp
             $message .= ' (' . implode( '; ', $details ) . ')';
         }
 
-        echo '<div class="notice notice-error" style="display: block;"><p>' . esc_html( $message ) . '</p>';
-        echo '<p><a href="javascript:void(0);" onclick="window.location.reload();" class="button button-primary">' . esc_html__( 'Click here to refresh the page', 'limit-login-attempts-reloaded' ) . '</a></p></div>';
+        $refresh_label = __( 'Click here to refresh the page', 'limit-login-attempts-reloaded' );
+
+        echo '<div class="notice notice-error" style="display: block;"><p>' . $message . '</p>';
+        echo '<p><a href="javascript:void(0);" onclick="window.location.reload();" class="button button-primary">' . esc_html( $refresh_label ) . '</a></p></div>';
     }
 
 	/**
