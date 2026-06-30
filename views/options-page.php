@@ -27,23 +27,27 @@ if ( $is_active_app_custom ) {
 	$block_sub_group = $this->info_sub_group();
 	$upgrade_premium_url = $this->info_upgrade_url();
 	$is_agency = $block_sub_group === 'Agency';
-	$requests = ! $is_agency ? $this->info_requests() : false;
+	$info_has_valid_data = $this->info_has_valid_data();
+	$info_is_cloud_unavailable = $this->info_is_cloud_unavailable();
+	$requests = ! $is_agency && $info_has_valid_data ? $this->info_requests() : false;
 	$is_exhausted = ! $is_agency && $this->info_is_exhausted();
 } else {
 
 	$is_exhausted = false;
+	$info_has_valid_data = false;
+	$info_is_cloud_unavailable = false;
 	$block_sub_group = '';
 	$upgrade_premium_url = '';
 }?>
 
 <div class="header_massage">
     <?php
-    if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' ) :
+    if ( $is_active_app_custom && ( $is_exhausted || $info_is_cloud_unavailable ) ) :
 
 	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
-	$upgrade_premium_url = $this->info_upgrade_url();
-
-    if ( $is_exhausted ) :
+	if ( empty( $upgrade_premium_url ) ) {
+		$upgrade_premium_url = 'https://www.limitloginattempts.com/info.php?id=0';
+	}
 
         if ( time() > $notifications_message_shown ) : ?>
             <div id="llar-header-upgrade-premium-message" class="exhausted">
@@ -61,7 +65,7 @@ if ( $is_active_app_custom ) {
             </div>
         <?php endif; ?>
 
-    <?php else : ?>
+    <?php elseif ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && $info_has_valid_data ) : ?>
         <div id="llar-header-upgrade-mc-message">
             <p>
                 <span class="dashicons dashicons-superhero"></span>
@@ -72,8 +76,6 @@ if ( $is_active_app_custom ) {
 				?>
             </p>
         </div>
-
-        <?php endif; ?>
 
     <?php endif; ?>
 </div>

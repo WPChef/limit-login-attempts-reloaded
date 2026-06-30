@@ -3786,6 +3786,48 @@ class LimitLoginAttempts
 		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
 	}
 
+	/**
+	 * Whether /info returned usable quota and plan data for the dashboard UI.
+	 *
+	 * @return bool
+	 */
+	public function info_has_valid_data()
+	{
+		if ( empty( $this->info_data ) ) {
+
+			$this->info_data = $this->info();
+		}
+
+		if ( empty( $this->info_data ) || ! is_array( $this->info_data ) ) {
+			return false;
+		}
+
+		if ( empty( $this->info_data['requests'] ) || ! is_array( $this->info_data['requests'] ) ) {
+			return false;
+		}
+
+		return array_key_exists( 'quota', $this->info_data['requests'] )
+			&& '' !== (string) $this->info_data['requests']['quota'];
+	}
+
+	/**
+	 * Cloud API responded to /info but access is denied (e.g. quota exhausted or unpaid domain).
+	 *
+	 * @return bool
+	 */
+	public function info_is_cloud_unavailable()
+	{
+		if ( ! self::$cloud_app ) {
+			return false;
+		}
+
+		if ( $this->info_has_valid_data() ) {
+			return false;
+		}
+
+		return ! self::$cloud_app->is_info_network_failure();
+	}
+
 
 	public function info_requests()
 	{
