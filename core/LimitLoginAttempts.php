@@ -3794,7 +3794,6 @@ class LimitLoginAttempts
 	public function info_has_valid_data()
 	{
 		if ( empty( $this->info_data ) ) {
-
 			$this->info_data = $this->info();
 		}
 

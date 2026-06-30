@@ -1,4 +1,11 @@
 <?php
+/**
+ * Options page
+ *
+ * @var bool $info_has_valid_data
+ * @var bool $info_is_cloud_unavailable
+ *
+ */
 
 use LLAR\Core\Config;
 use LLAR\Core\Helpers;
@@ -46,7 +53,7 @@ if ( $is_active_app_custom ) {
 
 	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
 	if ( empty( $upgrade_premium_url ) ) {
-		$upgrade_premium_url = 'https://www.limitloginattempts.com/info.php?id=0';
+		$upgrade_premium_url = LLA_INFO_UPGRADE_FALLBACK_URL;
 	}
 
         if ( time() > $notifications_message_shown ) : ?>
