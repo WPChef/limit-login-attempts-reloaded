@@ -8,6 +8,7 @@
  * @var bool $is_agency
  * @var array $requests
  * @var bool|string $is_exhausted
+ * @var bool $info_has_valid_data
  *
  */
 
@@ -156,7 +157,7 @@ $chart2__color_gradient_requests = '#AEAEAE33';
             </span>
 		<?php endif; ?>
     </div>
-    	<?php if ( ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) && $is_active_app_custom && ! $is_agency ) : ?>
+    	<?php if ( ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) && $is_active_app_custom && ! $is_agency && ! empty( $info_has_valid_data ) ) : ?>
     	 <span class="llar-label request <?php echo  $is_exhausted  ? 'exhausted' : '' ?>">
 	     <?php
 	     $requests_quota = isset( $requests['quota'] ) ? $requests['quota'] : '';

@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.3.3 =
+* Fixed the dashboard incorrectly showing a network error when the cloud API is reachable but access is restricted.
+* Fixed a PHP 8.1+ deprecation notice by avoiding implicit float-to-int conversion in the lockout email notification check.
+
 = 3.3.2 =
 * Improved usage information in cloud mode.
 
