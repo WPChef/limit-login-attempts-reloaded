@@ -338,7 +338,7 @@ class DigestDispatcher {
 		}
 
 		ob_start();
-		echo self::build_preview_text_html( $definition );
+		echo self::build_preview_text_html( $digest_key );
 		include $template_path;
 		return (string) ob_get_clean();
 	}
@@ -346,15 +346,15 @@ class DigestDispatcher {
 	/**
 	 * Build hidden preheader HTML for inbox preview snippet (Gmail, etc.).
 	 *
-	 * @param array $definition Digest definition from LLA_DIGEST_DEFINITIONS.
+	 * @param string $digest_key Digest key (daily/weekly/monthly).
 	 * @return string
 	 */
-	public static function build_preview_text_html( $definition ) {
-		if ( empty( $definition['preview_text'] ) ) {
+	public static function build_preview_text_html( $digest_key ) {
+		$preview_text = DigestUiController::get_digest_preview_text( $digest_key );
+
+		if ( '' === $preview_text ) {
 			return '';
 		}
-
-		$preview_text = (string) $definition['preview_text'];
 
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/email-preview-text.php';
