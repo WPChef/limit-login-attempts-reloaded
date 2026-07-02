@@ -9,17 +9,19 @@ use LLAR\Core\LimitLoginAttempts;
 
 if ( ! defined( 'ABSPATH' ) ) exit();
 
-$active_app = ( Config::get( 'active_app' ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
+$active_app = ( Config::get( Config::OPTION_ACTIVE_APP ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $is_active_app_custom = $active_app === 'custom';
 
 if ( $is_active_app_custom ) {
 
 	$is_exhausted = $this->info_is_exhausted();
+	$info_has_valid_data = $this->info_has_valid_data();
 	$block_sub_group = $this->info_sub_group();
 	$upgrade_premium_url = $this->info_upgrade_url();
 } else {
 
 	$is_exhausted = false;
+	$info_has_valid_data = false;
 	$block_sub_group = '';
 	$upgrade_premium_url = '';
 }

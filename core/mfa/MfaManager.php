@@ -4,6 +4,10 @@ namespace LLAR\Core\Mfa;
 
 use LLAR\Core\Config;
 use LLAR\Core\MfaConstants;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadOptionsStorage;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageInterface;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector;
+use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadTransientStorage;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,6 +31,8 @@ class MfaManager {
 	private $endpoint;
 	/** @var MfaSettingsInterface */
 	private $settings;
+	/** @var RescuePayloadStorageInterface */
+	private $payload_storage;
 
 	/**
 	 * Build per-user transient key for pending rescue hashes.
@@ -102,37 +108,52 @@ class MfaManager {
 	}
 
 	/**
-	 * Whether the _transient_* row for this rescue payload exists in wp_options.
+	 * Constructor. Dependencies are injected for testability and single responsibility.
 	 *
-	 * @param string $transient_key Full transient name (prefix + hash), no _transient_ part.
-	 * @return bool
+	 * @param MfaBackupCodesInterface              $backup_codes    Backup/rescue codes service.
+	 * @param MfaEndpointInterface                 $endpoint        Rescue endpoint handler.
+	 * @param MfaSettingsInterface                 $settings        MFA settings service.
+	 * @param RescuePayloadStorageInterface|null $payload_storage Rescue payload storage (no type hint on param: PHP 8.4 implicit-null deprecation; validated below).
 	 */
-	private function rescue_transient_row_exists( $transient_key ) {
-		global $wpdb;
-		if ( '' === $transient_key || ! is_string( $transient_key ) ) {
-			return false;
+	public function __construct( MfaBackupCodesInterface $backup_codes, MfaEndpointInterface $endpoint, MfaSettingsInterface $settings, $payload_storage = null ) {
+		if ( null !== $payload_storage && ! $payload_storage instanceof RescuePayloadStorageInterface ) {
+			throw new \InvalidArgumentException( 'Expected RescuePayloadStorageInterface or null.' );
 		}
-		$option_name = '_transient_' . $transient_key;
-		$one         = $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT 1 FROM ' . $wpdb->options . ' WHERE option_name = %s LIMIT 1',
-				$option_name
-			)
-		);
-		return null !== $one;
+		$this->backup_codes    = $backup_codes;
+		$this->endpoint        = $endpoint;
+		$this->settings        = $settings;
+		$this->payload_storage = $payload_storage ? $payload_storage : RescuePayloadStorageSelector::get_storage();
 	}
 
 	/**
-	 * Constructor. Dependencies are injected for testability and single responsibility.
+	 * Return seconds left until latest rescue payload expiry.
 	 *
-	 * @param MfaBackupCodesInterface $backup_codes Backup/rescue codes service.
-	 * @param MfaEndpointInterface    $endpoint    Rescue endpoint handler.
-	 * @param MfaSettingsInterface   $settings    MFA settings service.
+	 * @return int|null
 	 */
-	public function __construct( MfaBackupCodesInterface $backup_codes, MfaEndpointInterface $endpoint, MfaSettingsInterface $settings ) {
-		$this->backup_codes = $backup_codes;
-		$this->endpoint     = $endpoint;
-		$this->settings     = $settings;
+	public function get_rescue_links_seconds_left() {
+		$max_expiry = $this->payload_storage->get_max_expiry();
+		if ( null === $max_expiry ) {
+			// Notice must work even when links were generated with another provider
+			// during a different request profile (e.g. AJAX generation path).
+			switch ( true ) {
+				case $this->payload_storage instanceof RescuePayloadTransientStorage:
+					$fallback_expiry = ( new RescuePayloadOptionsStorage() )->get_max_expiry();
+					if ( null !== $fallback_expiry ) {
+						$max_expiry = (int) $fallback_expiry;
+					}
+					break;
+				case $this->payload_storage instanceof RescuePayloadOptionsStorage:
+					$fallback_expiry = ( new RescuePayloadTransientStorage() )->get_max_expiry();
+					if ( null !== $fallback_expiry ) {
+						$max_expiry = (int) $fallback_expiry;
+					}
+					break;
+			}
+		}
+		if ( null === $max_expiry ) {
+			return null;
+		}
+		return (int) $max_expiry - time();
 	}
 
 	/**
@@ -424,12 +445,11 @@ class MfaManager {
 		// same request (some object-cache setups don't expose just-set transients to the same process,
 		// and the first slot occasionally misses — regenerate so every URL has a live payload).
 		foreach ( $rescue_urls as $i => $u ) {
-			$h  = $this->get_rescue_hash_from_rescue_url( $u );
-			$tk = ( '' === $h ) ? '' : ( MfaConstants::TRANSIENT_RESCUE_PREFIX . $h );
-			if ( '' === $tk ) {
+			$h = $this->get_rescue_hash_from_rescue_url( $u );
+			if ( '' === $h ) {
 				continue;
 			}
-			if ( false !== get_transient( $tk ) || $this->rescue_transient_row_exists( $tk ) ) {
+			if ( $this->payload_storage->exists( $h ) ) {
 				continue;
 			}
 			if ( ! isset( $plain_codes[ $i ] ) || ! is_string( $plain_codes[ $i ] ) ) {

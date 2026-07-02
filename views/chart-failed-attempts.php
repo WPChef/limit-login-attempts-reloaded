@@ -8,6 +8,7 @@
  * @var bool $is_agency
  * @var array $requests
  * @var bool|string $is_exhausted
+ * @var bool $info_has_valid_data
  *
  */
 
@@ -25,57 +26,57 @@ $chart2__color_gradient_attempts = '#58C3FF4D';
 $chart2__color_requests = '#AEAEAEB2';
 $chart2__color_gradient_requests = '#AEAEAE33';
 
-if ( $is_active_app_custom ) {
+	if ( $is_active_app_custom ) {
 
-	$stats_dates = array();
-	$stats_values = array();
-	$date_format = trim( get_option( 'date_format' ), ' yY,._:;-/\\' );
-	$date_format = str_replace( 'F', 'M', $date_format );
+		$stats_dates = array();
+		$stats_values = array();
+		$date_format = trim( get_option( 'date_format' ), ' yY,._:;-/\\' );
+		$date_format = str_replace( 'F', 'M', $date_format );
 
-	$attempts_dataset = array(
-		'label'             => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
-		'data'              => array(),
-		'backgroundColor'   => $chart2__color_gradient_attempts,
-		'borderColor'       => $chart2__color_attempts,
-		'fill'              => true,
-	);
+		$attempts_dataset = array(
+			'label'             => __( 'Failed Login Attempts', 'limit-login-attempts-reloaded' ),
+			'data'              => array(),
+			'backgroundColor'   => $chart2__color_gradient_attempts,
+			'borderColor'       => $chart2__color_attempts,
+			'fill'              => true,
+		);
 
-	$requests_dataset = array(
-		'label'             => __( 'Requests', 'limit-login-attempts-reloaded' ),
-		'data'              => array(),
-		'backgroundColor'   => $chart2__color_gradient_requests,
-		'borderColor'       => $chart2__color_requests,
-		'fill'              => true,
-		'yAxisID'           => 'requests',
-	);
+		$requests_dataset = array(
+			'label'             => __( 'Requests', 'limit-login-attempts-reloaded' ),
+			'data'              => array(),
+			'backgroundColor'   => $chart2__color_gradient_requests,
+			'borderColor'       => $chart2__color_requests,
+			'fill'              => true,
+			'yAxisID'           => 'requests',
+		);
 
-	if ( $api_stats ) {
+		if ( $api_stats ) {
 
-		if ( !empty( $api_stats['attempts'] ) ) {
+			if ( !empty( $api_stats['attempts'] ) ) {
 
-			foreach ( $api_stats['attempts']['at'] as $timestamp ) {
+				foreach ( $api_stats['attempts']['at'] as $timestamp ) {
 
-				$stats_dates[] = date( $date_format, $timestamp );
+					$stats_dates[] = date( $date_format, $timestamp );
+				}
+
+				$chart2_labels = $stats_dates;
+				$attempts_dataset['data'] = $api_stats['attempts']['count'];
 			}
 
-			$chart2_labels = $stats_dates;
-			$attempts_dataset['data'] = $api_stats['attempts']['count'];
+			if ( !empty( $api_stats['requests'] ) ) {
+
+				$requests_dataset['data'] = $api_stats['requests']['count'];
+			}
+
+			if ( !empty( $api_stats['attempts_y'] ) )
+				$chart2_attempts_scale_max = (int) $api_stats['attempts_y'];
+
+			if ( !empty( $api_stats['requests_y'] ) )
+				$chart2_requests_scale_max = (int) $api_stats['requests_y'];
 		}
 
-		if ( !empty( $api_stats['requests'] ) ) {
-
-			$requests_dataset['data'] = $api_stats['requests']['count'];
-		}
-
-		if ( !empty( $api_stats['attempts_y'] ) )
-			$chart2_attempts_scale_max = (int) $api_stats['attempts_y'];
-
-		if ( !empty( $api_stats['requests_y'] ) )
-			$chart2_requests_scale_max = (int) $api_stats['requests_y'];
-	}
-
-	$chart2_datasets[] = $attempts_dataset;
-	$chart2_datasets[] = $requests_dataset;
+		$chart2_datasets[] = $attempts_dataset;
+		$chart2_datasets[] = $requests_dataset;
 
 } else {
 
@@ -156,13 +157,36 @@ if ( $is_active_app_custom ) {
             </span>
 		<?php endif; ?>
     </div>
-    <?php if ( ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) && $is_active_app_custom && ! $is_agency ) : ?>
-     <span class="llar-label request <?php echo  $is_exhausted  ? 'exhausted' : '' ?>">
-         <?php echo ( isset( $requests['usage'], $requests['quota'] ) )
-                 ? ( __( 'Monthly Usage: ', 'limit-login-attempts-reloaded' ) . $requests['usage'] . '/' . $requests['quota'] )
-                 : '' ?>
-     </span>
-    <?php endif; ?>
+    	<?php if ( ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) && $is_active_app_custom && ! $is_agency && ! empty( $info_has_valid_data ) ) : ?>
+    	 <span class="llar-label request <?php echo  $is_exhausted  ? 'exhausted' : '' ?>">
+	     <?php
+	     $requests_quota = isset( $requests['quota'] ) ? $requests['quota'] : '';
+	     $requests_usage = isset( $requests['usage'] ) ? $requests['usage'] : '';
+	     $requests_usage_total = isset( $requests['usage_total'] ) ? $requests['usage_total'] : null;
+	     ?>
+	     <?php esc_html_e( 'Monthly Usage:', 'limit-login-attempts-reloaded' ); ?>
+	     <span class="hint_tooltip-parent llar-usage-number">
+	         <span class="llar-usage-number__text"><?php echo esc_html( $requests_usage ); ?></span>
+	         <div class="hint_tooltip">
+	             <div class="hint_tooltip-content">
+	                 <?php esc_html_e( 'Requests used by this site since the first day of the month.', 'limit-login-attempts-reloaded' ); ?>
+	             </div>
+	         </div>
+	     </span>
+	     <?php if ( null !== $requests_usage_total ) : ?>
+	     (<span class="hint_tooltip-parent llar-usage-number"><span class="llar-usage-number__text"><?php echo esc_html( $requests_usage_total ); ?></span><div class="hint_tooltip"><div class="hint_tooltip-content"><?php esc_html_e( 'Requests used by all sites in your account since the first day of the month.', 'limit-login-attempts-reloaded' ); ?></div></div></span>)
+	     <?php endif; ?>
+	     /
+	     <span class="hint_tooltip-parent llar-usage-number">
+	         <span class="llar-usage-number__text"><?php echo esc_html( $requests_quota ); ?></span>
+	         <div class="hint_tooltip">
+	             <div class="hint_tooltip-content">
+	                 <?php esc_html_e( 'Total shared request quota for your account.', 'limit-login-attempts-reloaded' ); ?>
+	             </div>
+	         </div>
+	     </span>
+    	 </span>
+    	<?php endif; ?>
 </div>
 <div class="section-content">
     <div class="llar-chart-wrap">
