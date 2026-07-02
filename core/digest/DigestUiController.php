@@ -37,13 +37,55 @@ class DigestUiController {
 			$option_key   = self::get_option_key( $digest_key );
 			$checkboxes[] = array(
 				'name'             => $option_key,
-				'label'            => isset( $digest_definition['name'] ) ? (string) $digest_definition['name'] : $digest_key,
+				'label'            => self::get_digest_label( $digest_key ),
 				'checked'          => (bool) Config::get( $option_key ),
 				'interval_seconds' => isset( $digest_definition['interval_seconds'] ) ? (int) $digest_definition['interval_seconds'] : 0,
 			);
 		}
 
 		return $checkboxes;
+	}
+
+	/**
+	 * Translated digest label for UI and email subject.
+	 *
+	 * @param string $digest_key Digest definition key (daily/weekly/monthly).
+	 * @return string
+	 */
+	public static function get_digest_label( $digest_key ) {
+		$digest_key = sanitize_key( (string) $digest_key );
+
+		switch ( $digest_key ) {
+			case 'daily':
+				return __( 'Daily', 'limit-login-attempts-reloaded' );
+			case 'weekly':
+				return __( 'Weekly', 'limit-login-attempts-reloaded' );
+			case 'monthly':
+				return __( 'Monthly', 'limit-login-attempts-reloaded' );
+		}
+
+		return ucfirst( $digest_key );
+	}
+
+	/**
+	 * Translated digest email preheader for inbox preview snippet.
+	 *
+	 * @param string $digest_key Digest definition key (daily/weekly/monthly).
+	 * @return string
+	 */
+	public static function get_digest_preview_text( $digest_key ) {
+		$digest_key = sanitize_key( (string) $digest_key );
+
+		switch ( $digest_key ) {
+			case 'daily':
+				return __( 'Daily digest of lockouts, top IPs, and what to review next.', 'limit-login-attempts-reloaded' );
+			case 'weekly':
+				return __( 'Weekly digest of lockouts, top IPs, and what to review next.', 'limit-login-attempts-reloaded' );
+			case 'monthly':
+				return __( 'Monthly digest of lockouts, top IPs, and what to review next.', 'limit-login-attempts-reloaded' );
+		}
+
+		return '';
 	}
 
 	/**
