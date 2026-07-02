@@ -22,6 +22,9 @@ define( 'LLA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LLA_PLUGIN_FILE', __FILE__ );
 define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
+/** Fallback premium upgrade URL when Cloud App /v1/info does not return upgrade_url. */
+defined( 'LLA_INFO_UPGRADE_FALLBACK_URL' ) || define( 'LLA_INFO_UPGRADE_FALLBACK_URL', 'https://www.limitloginattempts.com/info.php?id=0' );
+
 /**
  * Default risk widget config (bounds, colors, level rules).
  *

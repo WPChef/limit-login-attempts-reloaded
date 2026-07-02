@@ -7,6 +7,7 @@
  * @var string $is_active_app_custom
  * @var bool|mixed $api_stats
  * @var bool|string $is_exhausted
+ * @var bool $info_has_valid_data
  * @var string $block_sub_group
  * @var string $upgrade_premium_url
  *
@@ -44,7 +45,7 @@ $retries_count       = isset( $chart_circle_data['retries_count'] ) ? (int) $cha
         <span class="llar-label__url">
         </span>
 	<?php endif; ?>
-	<?php echo ( $is_active_app_custom && ! $is_exhausted )
+	<?php echo ( $is_active_app_custom && ! empty( $info_has_valid_data ) && ! $is_exhausted )
 		? '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' ) . '</span>'
 		: ''; ?>
 </div>
