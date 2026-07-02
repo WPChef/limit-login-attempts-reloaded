@@ -140,49 +140,42 @@ define( 'LLA_LOCKOUT_NOTIFY_ALLOWED', 'log,email' );
 defined( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS' ) || define( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS', 60 );
 defined( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL' ) || define( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL', 10 );
 
-defined( 'LLA_DIGEST_LABEL_DAILY' ) || define( 'LLA_DIGEST_LABEL_DAILY', 'Daily' );
-defined( 'LLA_DIGEST_LABEL_WEEKLY' ) || define( 'LLA_DIGEST_LABEL_WEEKLY', 'Weekly' );
-defined( 'LLA_DIGEST_LABEL_MONTHLY' ) || define( 'LLA_DIGEST_LABEL_MONTHLY', 'Monthly' );
-
 /**
- * Digest definitions (name, interval, templates). Default on/off profiles for new vs
+ * Digest definitions (interval, templates). Default on/off profiles for new vs
  * existing installs are defined in Config::get_digest_defaults_for_*_install().
- * Label strings: LLA_DIGEST_LABEL_DAILY, LLA_DIGEST_LABEL_WEEKLY, LLA_DIGEST_LABEL_MONTHLY.
- * Format: {key: {name: string, interval_seconds: int, is_default: bool, ...}}
+ * Format: {key: {interval_seconds: int, is_default: bool, ...}}
+ *
+ * Translatable digest strings (labels and email preheaders) are not stored here.
+ * Add or change them in DigestUiController::get_digest_label() and
+ * DigestUiController::get_digest_preview_text() so i18n tools can extract literals.
  */
 defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 	'LLA_DIGEST_DEFINITIONS',
 	array(
 		'daily' => array(
-			'name' => LLA_DIGEST_LABEL_DAILY,
 			'interval_seconds' => DAY_IN_SECONDS,
 			'is_default' => true,
 			'email_template' => 'digest-daily-content.php',
 			'show_threat_level' => false,
 			'intro_text' => '',
-			'preview_text' => 'Daily digest of lockouts, top IPs, and what to review next.',
 			'unsubscribe_text' => '{unsubscribe}',
 			'title_mode' => 'date',
 		),
 		'weekly' => array(
-			'name' => LLA_DIGEST_LABEL_WEEKLY,
 			'interval_seconds' => WEEK_IN_SECONDS,
 			'is_default' => true,
 			'email_template' => 'digest-weekly-content.php',
 			'show_threat_level' => true,
 			'intro_text' => '',
-			'preview_text' => 'Weekly digest of lockouts, top IPs, and what to review next.',
 			'unsubscribe_text' => '{unsubscribe}',
 			'title_mode' => 'range',
 		),
 		'monthly' => array(
-			'name' => LLA_DIGEST_LABEL_MONTHLY,
 			'interval_seconds' => MONTH_IN_SECONDS,
 			'is_default' => true,
 			'email_template' => 'digest-monthly-content.php',
 			'show_threat_level' => true,
 			'intro_text' => '',
-			'preview_text' => 'Monthly digest of lockouts, top IPs, and what to review next.',
 			'unsubscribe_text' => '{unsubscribe}',
 			'title_mode' => 'month',
 		),
