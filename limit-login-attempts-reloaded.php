@@ -5,7 +5,7 @@ Description: Block excessive login attempts and protect your site against brute 
 Author: Limit Login Attempts Reloaded
 Author URI: https://www.limitloginattempts.com/
 Text Domain: limit-login-attempts-reloaded
-Version: 3.2.1
+Version: 3.3.3
 
 Copyright 2008-2012 Johan Eenfeldt, 2016–present Limit Login Attempts Reloaded
 */
@@ -21,6 +21,9 @@ define( 'LLA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'LLA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LLA_PLUGIN_FILE', __FILE__ );
 define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+
+/** Fallback premium upgrade URL when Cloud App /v1/info does not return upgrade_url. */
+defined( 'LLA_INFO_UPGRADE_FALLBACK_URL' ) || define( 'LLA_INFO_UPGRADE_FALLBACK_URL', 'https://www.limitloginattempts.com/info.php?id=0' );
 
 /**
  * Default risk widget config (bounds, colors, level rules).
@@ -137,6 +140,52 @@ define( 'LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR' );
 
 /* Notify value checked against these in limit_login_sanitize_variables() */
 define( 'LLA_LOCKOUT_NOTIFY_ALLOWED', 'log,email' );
+defined( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS' ) || define( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS', 60 );
+defined( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL' ) || define( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL', 10 );
+
+/**
+ * Digest definitions (name, interval, templates). Default on/off profiles for new vs
+ * existing installs are defined in Config::get_digest_defaults_for_*_install().
+ * Format: {key: {name: string, interval_seconds: int, is_default: bool, ...}}
+ */
+defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
+	'LLA_DIGEST_DEFINITIONS',
+	array(
+		'daily' => array(
+			'name' => 'Daily',
+			'interval_seconds' => DAY_IN_SECONDS,
+			'is_default' => true,
+			'email_template' => 'digest-daily-content.php',
+			'show_threat_level' => false,
+			'intro_text' => '',
+			'preview_text' => 'Daily digest of lockouts, top IPs, and what to review next.',
+			'unsubscribe_text' => '{unsubscribe}',
+			'title_mode' => 'date',
+		),
+		'weekly' => array(
+			'name' => 'Weekly',
+			'interval_seconds' => WEEK_IN_SECONDS,
+			'is_default' => true,
+			'email_template' => 'digest-weekly-content.php',
+			'show_threat_level' => true,
+			'intro_text' => '',
+			'preview_text' => 'Weekly digest of lockouts, top IPs, and what to review next.',
+			'unsubscribe_text' => '{unsubscribe}',
+			'title_mode' => 'range',
+		),
+		'monthly' => array(
+			'name' => 'Monthly',
+			'interval_seconds' => MONTH_IN_SECONDS,
+			'is_default' => true,
+			'email_template' => 'digest-monthly-content.php',
+			'show_threat_level' => true,
+			'intro_text' => '',
+			'preview_text' => 'Monthly digest of lockouts, top IPs, and what to review next.',
+			'unsubscribe_text' => '{unsubscribe}',
+			'title_mode' => 'month',
+		),
+	)
+);
 
 /** Regex: valid email for obfuscation (1=first, 2=middle, 3=last, 4=domain). */
 define( 'LLA_EMAIL_OBFUSCATE_REGEX', '/^(.)([^@]*)(.?)@(.*)$/' );
@@ -219,9 +268,8 @@ if ( file_exists( LLA_PLUGIN_DIR . 'autoload.php' ) ) {
 			wp_schedule_event( time(), 'daily', 'llar_mfa_daily_cleanup' );
 		}
 
-		if ( class_exists( 'LLAR\\Core\\Helpers' ) ) {
-			\LLAR\Core\Helpers::persist_stored_plugin_version();
-		}
+		\LLAR\Core\Helpers::persist_stored_plugin_version();
+		\LLAR\Core\Config::apply_digest_defaults_on_fresh_activation();
 	}
 
 	/**

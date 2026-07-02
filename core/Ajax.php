@@ -3,6 +3,7 @@
 namespace LLAR\Core;
 
 use LLAR\Core\Http\Http;
+use LLAR\Core\Mail\Mailer;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -54,16 +55,16 @@ class Ajax
 		check_ajax_referer( 'llar-unlock', 'sec' );
 		$ip = (string) @$_POST['ip'];
 
-		$lockouts = (array) Config::get( 'lockouts' );
+		$lockouts = (array) Config::get( Config::OPTION_LOCKOUTS );
 
 		if ( isset( $lockouts[ $ip ] ) ) {
 			unset( $lockouts[ $ip ] );
-			Config::update( 'lockouts', $lockouts );
+			Config::update( Config::OPTION_LOCKOUTS, $lockouts );
 		}
 
 		//save to log
 		$user_login = @(string) $_POST['username'];
-		$log        = Config::get( 'logged' );
+		$log        = Config::get( Config::OPTION_LOGGED );
 
 		if ( @$log[ $ip ][ $user_login ] ) {
 			if ( ! is_array( $log[ $ip ][ $user_login ] ) ) {
@@ -73,7 +74,7 @@ class Ajax
 			}
 			$log[ $ip ][ $user_login ]['unlocked'] = true;
 
-			Config::update( 'logged', $log );
+			Config::update( Config::OPTION_LOGGED, $log );
 		}
 
 		header( 'Content-Type: application/json' );
@@ -1007,7 +1008,7 @@ class Ajax
 
         check_ajax_referer( 'llar-action-onboarding-reset', 'sec' );
 
-        if ( Config::get( 'active_app' ) !== 'local' || ! empty( Config::get( 'app_setup_code' ) ) ) {
+        if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'local' || ! empty( Config::get( 'app_setup_code' ) ) ) {
 
             wp_send_json_error( array() );
         }
@@ -1120,6 +1121,11 @@ class Ajax
 		wp_send_json_success();
 	}
 
+	/**
+	 * Send a test notification email using shared Mailer layout rendering.
+	 *
+	 * @return void
+	 */
 	public function test_email_notifications_callback() {
 
 		$this->check_user_capabilities();
@@ -1135,11 +1141,30 @@ class Ajax
             ) );
 		}
 
-		if( wp_mail(
-            $to,
-            __( 'LLAR Security Notifications [TEST]', 'limit-login-attempts-reloaded' ),
-            __( 'Your email notifications for Limit Login Attempts Reloaded are working correctly. If this email is going to spam, please be sure to add this address to your safelist.', 'limit-login-attempts-reloaded' )
-        ) ) {
+		$subject        = __( 'LLAR Security Notifications [TEST]', 'limit-login-attempts-reloaded' );
+
+		ob_start();
+		include LLA_PLUGIN_DIR . 'views/emails/test-notification-content.php';
+		$content = (string) ob_get_clean();
+
+		add_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
+
+		$sent = Mailer::send(
+			$to,
+			$subject,
+			$content,
+			array( 'content-type: text/html' ),
+			array(),
+			false,
+			array(
+				'title'    => $subject,
+				'logo_cid' => 'logo',
+			)
+		);
+
+		remove_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
+
+		if ( $sent ) {
 
 			wp_send_json_success();
 		} else {
