@@ -5,7 +5,7 @@ Description: Block excessive login attempts and protect your site against brute 
 Author: Limit Login Attempts Reloaded
 Author URI: https://www.limitloginattempts.com/
 Text Domain: limit-login-attempts-reloaded
-Version: 3.3.2
+Version: 3.3.3
 
 Copyright 2008-2012 Johan Eenfeldt, 2016–present Limit Login Attempts Reloaded
 */
@@ -21,6 +21,9 @@ define( 'LLA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'LLA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LLA_PLUGIN_FILE', __FILE__ );
 define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+
+/** Fallback premium upgrade URL when Cloud App /v1/info does not return upgrade_url. */
+defined( 'LLA_INFO_UPGRADE_FALLBACK_URL' ) || define( 'LLA_INFO_UPGRADE_FALLBACK_URL', 'https://www.limitloginattempts.com/info.php?id=0' );
 
 /**
  * Default risk widget config (bounds, colors, level rules).
