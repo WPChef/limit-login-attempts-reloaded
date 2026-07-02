@@ -1121,7 +1121,19 @@ class LimitLoginAttempts
 
 	public function check_whitelist_usernames( $allow, $username )
 	{
-		return in_array( $username, ( array ) Config::get( 'whitelist_usernames' ) );
+		$username = trim( (string) $username );
+		if ( '' === $username ) {
+			return false;
+		}
+
+		$whitelist_usernames = (array) Config::get( 'whitelist_usernames' );
+		foreach ( $whitelist_usernames as $whitelist_username ) {
+			if ( 0 === strcasecmp( $username, trim( (string) $whitelist_username ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public function check_blacklist_ips( $allow, $ip )
@@ -1328,6 +1340,10 @@ class LimitLoginAttempts
 		}
 
 		$ip = $this->get_address();
+		if ( $this->is_ip_whitelisted( $ip ) || $this->is_local_allowlisted_username( $username ) ) {
+			return false;
+		}
+
 		if (
 			( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) )
 			&& ( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
@@ -2190,6 +2206,16 @@ class LimitLoginAttempts
 			return;
 		}
 		$ip = $this->get_address();
+		if ( $this->is_ip_whitelisted( $ip ) || $this->is_local_allowlisted_username( $username, $authenticated_user ) ) {
+			return;
+		}
+
+		if ( self::$cloud_app ) {
+			$acl_response = $this->get_auth_acl_response( $username );
+			if ( is_array( $acl_response ) && ! empty( $acl_response['result'] ) && 'pass' === $acl_response['result'] ) {
+				return;
+			}
+		}
 
 		$mfa_temporarily_disabled = false !== get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
 		$mfa_enabled              = (bool) Config::get( 'mfa_enabled' ) && ! $mfa_temporarily_disabled;
@@ -2780,7 +2806,7 @@ class LimitLoginAttempts
 		}
 		$ip       = $this->get_address();
 		$user_login = is_a( $user, 'WP_User' ) ? $user->user_login : ( ( ! empty( $user ) && ! is_wp_error( $user ) ) ? $user : '' );
-		$not_locked_out = $this->check_whitelist_ips( false, $ip ) || $this->check_whitelist_usernames( false, $user_login ) || $this->is_limit_login_ok( $username );
+		$not_locked_out = $this->check_whitelist_ips( false, $ip ) || $this->is_local_allowlisted_username( $username, $user ) || $this->check_whitelist_usernames( false, $user_login ) || $this->is_limit_login_ok( $username );
 
 		if ( is_wp_error( $user ) ) {
 			return $user;
@@ -2820,6 +2846,7 @@ class LimitLoginAttempts
 
 		if (
 			$this->check_whitelist_ips( false, $ip )
+			|| $this->is_local_allowlisted_username( $username, $user )
 			|| $this->check_whitelist_usernames( false, $user_login )
 			|| $this->is_limit_login_ok( $username )
 		) {
@@ -2847,6 +2874,37 @@ class LimitLoginAttempts
 		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
 		return $error;
+	}
+
+	/**
+	 * Determine if submitted login identifier maps to local allowed usernames.
+	 *
+	 * Supports direct username, case-insensitive username match and email-based login.
+	 *
+	 * @param string  $username Submitted login value (username or email).
+	 * @param WP_User $user     Optional authenticated user object.
+	 * @return bool
+	 */
+	private function is_local_allowlisted_username( $username, $user = null ) {
+		$username = trim( (string) $username );
+		if ( '' !== $username && $this->is_username_whitelisted( $username ) ) {
+			return true;
+		}
+
+		if ( is_a( $user, 'WP_User' ) && ! empty( $user->user_login ) && $this->is_username_whitelisted( $user->user_login ) ) {
+			return true;
+		}
+
+		if ( '' === $username || ! function_exists( 'is_email' ) || ! is_email( $username ) ) {
+			return false;
+		}
+
+		$user_by_email = get_user_by( 'email', $username );
+		if ( ! $user_by_email || ! is_a( $user_by_email, 'WP_User' ) ) {
+			return false;
+		}
+
+		return $this->is_username_whitelisted( $user_by_email->user_login );
 	}
 
 	/**
