@@ -4,6 +4,11 @@ namespace LLAR\Core;
 
 use Exception;
 use IXR_Error;
+use LLAR\Core\Digest\DigestDispatcher;
+use LLAR\Core\Digest\DigestRetriesController;
+use LLAR\Core\Digest\DigestScheduler;
+use LLAR\Core\Digest\DigestStorage;
+use LLAR\Core\Digest\DigestUiController;
 use LLAR\Core\Http\Http;
 use LLAR\Core\Dashboard\DashboardRiskRenderer;
 use LLAR\Core\Integrations\BaseIntegration;
@@ -18,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class LimitLoginAttempts implements OptionsPageUriProvider
 {
+
 	/**
 	 * Admin options page slug
 	 * @var string
@@ -381,10 +387,11 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	{
 		Helpers::persist_stored_plugin_version();
 
-		if ( ! Config::get( 'activation_timestamp' ) ) {
-
+		if ( ! Config::exists( 'activation_timestamp' ) ) {
 			set_transient( 'llar_dashboard_redirect', true, 30 );
 		}
+
+		Config::apply_digest_defaults_on_fresh_activation();
 	}
 
 	/**
@@ -410,6 +417,10 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		$new_version = (string) Config::get( 'plugin_version' );
 
 		if ( $old_version !== $new_version ) {
+			if ( '' !== $old_version ) {
+				Config::ensure_digest_defaults_for_existing_site();
+			}
+
 			/**
 			 * Fires after LLAR plugin version is persisted post-update.
 			 *
@@ -419,6 +430,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 			do_action( 'llar_plugin_version_updated', $old_version, $new_version );
 		}
 	}
+
 
 	public function setup_cookie()
 	{
@@ -565,6 +577,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		add_action( 'init', array( __CLASS__, 'reset_request_guards' ), 0 );
 
 		$this->register_mfa_providers();
+		DigestScheduler::bootstrap();
+		DigestDispatcher::bootstrap();
 
 		// Check if installed old plugin
 		$this->check_original_installed();
@@ -626,6 +640,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 
 		// MFA flow callback: llar_mfa=1&token=...&code=...
 		add_action( 'init', array( $this, 'mfa_flow_callback' ), 1 );
+		add_action( 'init', array( DigestStorage::class, 'register_post_type' ) );
 		add_filter( 'query_vars', array( $this, 'add_mfa_flow_query_var' ) );
 		MfaRestApi::register();
 
@@ -1193,8 +1208,6 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		return $errors;
 	}
 
-
-
 	/**
 	 * Action when login attempt failed
 	 *
@@ -1483,6 +1496,47 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		}
 
 		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+	}
+
+	/**
+	 * Whether /info returned usable quota and plan data for the dashboard UI.
+	 *
+	 * @return bool
+	 */
+	public function info_has_valid_data()
+	{
+		if ( empty( $this->info_data ) ) {
+			$this->info_data = $this->info();
+		}
+
+		if ( empty( $this->info_data ) || ! is_array( $this->info_data ) ) {
+			return false;
+		}
+
+		if ( empty( $this->info_data['requests'] ) || ! is_array( $this->info_data['requests'] ) ) {
+			return false;
+		}
+
+		return array_key_exists( 'quota', $this->info_data['requests'] )
+			&& '' !== (string) $this->info_data['requests']['quota'];
+	}
+
+	/**
+	 * Cloud API responded to /info but access is denied (e.g. quota exhausted or unpaid domain).
+	 *
+	 * @return bool
+	 */
+	public function info_is_cloud_unavailable()
+	{
+		if ( ! self::$cloud_app ) {
+			return false;
+		}
+
+		if ( $this->info_has_valid_data() ) {
+			return false;
+		}
+
+		return ! self::$cloud_app->is_info_network_failure();
 	}
 
 

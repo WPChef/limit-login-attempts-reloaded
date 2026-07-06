@@ -230,38 +230,101 @@ class CloudApp
      */
     public function info()
     {
-        $info = $this->request( 'info' );
-        if ( ! $info  && ! defined( 'LLAR_FAILED_INFO_NOTICE_SHOWN' )) {
+        $info = $this->request_info();
+
+        if ( ! $info && ! defined( 'LLAR_FAILED_INFO_NOTICE_SHOWN' ) && $this->is_info_network_failure() ) {
             define( 'LLAR_FAILED_INFO_NOTICE_SHOWN', true );
-            $details = array();
-
-            if ( null !== $this->last_response_code ) {
-                $details[] = sprintf(
-                    /* translators: %d: HTTP response code. */
-                    __( 'Code: %d', 'limit-login-attempts-reloaded' ),
-                    intval( $this->last_response_code )
-                );
-            }
-
-            if ( ! empty( $this->last_error_message ) ) {
-                $details[] = sprintf(
-                    /* translators: %s: technical error reason. */
-                    __( 'Reason: %s', 'limit-login-attempts-reloaded' ),
-                    esc_html( $this->get_readable_error_reason( $this->last_error_message ) )
-                );
-            }
-
-            $message = __( 'Oops, it looks like the site is having a temporary network issue.', 'limit-login-attempts-reloaded' );
-
-            if ( ! empty( $details ) ) {
-                $message .= ' (' . implode( '; ', $details ) . ')';
-            }
-
-            echo '<div class="notice notice-error" style="display: block;"><p>' . $message . '</p>';
-            echo '<p><a href="javascript:void(0);" onclick="window.location.reload();" class="button button-primary">' . __( 'Click here to refresh the page', 'limit-login-attempts-reloaded' ) . '</a></p></div>';
+            $this->render_info_network_failure_notice();
         }
 
         return $info;
+    }
+
+    /**
+     * Whether the last /info call failed before reaching the Cloud API (transport / DNS / timeout).
+     *
+     * @return bool
+     */
+    public function is_info_network_failure()
+    {
+        if ( 0 < (int) $this->last_response_code ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool|mixed
+     * @throws Exception
+     */
+    private function request_info()
+    {
+        if ( ! $this->api ) {
+            throw new Exception( 'Cloud API endpoint is not configured.' );
+        }
+
+        $headers   = array();
+        $headers[] = "{$this->config['header']}: {$this->config['key']}";
+
+        $response = Http::get(
+            $this->api . '/info',
+            array(
+                'headers' => $headers,
+            )
+        );
+
+        $this->last_response_code = ! empty( $response['status'] ) ? $response['status'] : 0;
+        $this->last_error_message = ! empty( $response['error'] ) ? $response['error'] : null;
+
+        $info = false;
+        if ( ! empty( $response['data'] ) ) {
+            $decoded = json_decode( $response['data'], true );
+            if ( is_array( $decoded ) && ! empty( $decoded ) ) {
+                $info = Helpers::sanitize_stripslashes_deep( $decoded );
+            }
+        }
+
+        if ( 200 !== (int) $this->last_response_code ) {
+            error_log( 'LLAR: CloudApp info request failed: ' . $this->api . '/info ' . $this->last_response_code );
+        }
+
+        return $info;
+    }
+
+    /**
+     * Admin notice when /info could not reach the Cloud API at all.
+     */
+    private function render_info_network_failure_notice()
+    {
+        $details = array();
+
+        if ( null !== $this->last_response_code ) {
+            $details[] = sprintf(
+                /* translators: %d: HTTP response code. */
+                __( 'Code: %d', 'limit-login-attempts-reloaded' ),
+                intval( $this->last_response_code )
+            );
+        }
+
+        if ( ! empty( $this->last_error_message ) ) {
+            $details[] = sprintf(
+                /* translators: %s: technical error reason. */
+                __( 'Reason: %s', 'limit-login-attempts-reloaded' ),
+                esc_html( $this->get_readable_error_reason( $this->last_error_message ) )
+            );
+        }
+
+        $message = __( 'Oops, it looks like the site is having a temporary network issue.', 'limit-login-attempts-reloaded' );
+
+        if ( ! empty( $details ) ) {
+            $message .= ' (' . implode( '; ', $details ) . ')';
+        }
+
+        $refresh_label = __( 'Click here to refresh the page', 'limit-login-attempts-reloaded' );
+
+        echo '<div class="notice notice-error" style="display: block;"><p>' . $message . '</p>';
+        echo '<p><a href="javascript:void(0);" onclick="window.location.reload();" class="button button-primary">' . esc_html( $refresh_label ) . '</a></p></div>';
     }
 
 	/**

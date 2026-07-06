@@ -3,6 +3,7 @@
 namespace LLAR\Core;
 
 use Exception;
+use LLAR\Core\Digest\DigestRetriesController;
 use LLAR\Core\Utils\RiskLevelMath;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -337,6 +338,7 @@ class LocalLockoutManager {
 			}
 			$retries_stats = RiskLevelMath::prune_retries_stats_old_buckets( $retries_stats );
 			Config::update( 'retries_stats', $retries_stats );
+			DigestRetriesController::save_failed_attempt( $ip, $username );
 
 			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ] ) {
 				$retries[ $ip ]++;
@@ -376,6 +378,8 @@ class LocalLockoutManager {
 				} else {
 					$lockouts[ $ip ] = time() + Config::get( 'lockout_duration' );
 				}
+
+				DigestRetriesController::save_lockout( $ip );
 			}
 
 			$this->cleanup( $retries, $lockouts, $valid );

@@ -8,6 +8,7 @@
 
 namespace LLAR\Core;
 
+use LLAR\Core\Digest\DigestDispatcher;
 use LLAR\Core\Interfaces\OptionsPageUriProvider;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -76,14 +77,18 @@ class LockoutNotificationService {
 			$retries = array();
 		}
 
+		$notify_email_after = (int) Config::get( 'notify_email_after' );
+		$notify_email_after = max( 1, $notify_email_after );
+
+		/* check if we are at the right nr to do notification */
 		if (
 			isset( $retries[ $ip ] )
-			&& ( ( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % Config::get( 'notify_email_after' ) ) != 0
+			&& 0 != ( (int) floor( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % $notify_email_after )
 		) {
 			return;
 		}
 
-		if ( ! isset( $retries[ $ip ] ) ) {
+		/* Format message. First current lockout duration */
 			$count    = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
 			$lockouts = Config::get( 'allowed_lockouts' );
 			$time     = round( Config::get( 'long_duration' ) / 3600 );
@@ -134,37 +139,33 @@ class LockoutNotificationService {
 			esc_html( $site_domain )
 		);
 
+		$unsubscribe_url = $this->options_page_provider->get_options_page_uri( 'settings' );
+		$unsubscribe_footer_text = DigestDispatcher::build_unsubscribe_footer_text(
+			array( 'unsubscribe_text' => LLA_DIGEST_DEFINITIONS['daily']['unsubscribe_text'] ),
+			$unsubscribe_url
+		);
+
 		ob_start();
-		include LLA_PLUGIN_DIR . 'views/emails/failed-login.php';
+		include LLA_PLUGIN_DIR . 'views/emails/failed-login-content.php';
 		$email_body = ob_get_clean();
 
-		$current_url_label = preg_replace( '/^\/|\/$/', '', $_SERVER['REQUEST_URI'] );
-		$current_url       = '';
-		if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
-			$referer = filter_var( $_SERVER['HTTP_REFERER'], FILTER_VALIDATE_URL );
-			if ( false !== $referer ) {
-				$current_url = esc_url_raw( $referer );
-			}
-		}
-		if ( empty( $current_url ) ) {
-			$current_url = get_site_url() . $_SERVER['REQUEST_URI'];
-		}
+		$current_url_label = Helpers::get_current_url_label();
+		$current_url = Helpers::get_current_url();
 
 		$placeholders = array(
-			'{name}'              => $admin_name,
-			'{domain}'            => $site_domain,
-			'{attempts_count}'    => $count,
-			'{lockouts_count}'    => $lockouts,
-			'{ip_address}'        => esc_html( $ip ),
-			'{ip_address_link}'   => esc_url( 'https://www.limitloginattempts.com/location/?ip=' . $ip ),
-			'{username}'          => $user,
-			'{blocked_duration}'  => $when,
-			'{dashboard_url}'     => $this->options_page_provider->get_options_page_uri(),
-			'{premium_url}'       => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
-			'{llar_url}'          => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
-			'{unsubscribe_url}'   => $this->options_page_provider->get_options_page_uri( 'settings' ),
-			'{current_url}'       => $current_url,
-			'{current_url_label}' => $current_url_label,
+			'{name}'                => esc_html( (string) $admin_name ),
+			'{domain}'              => esc_html( (string) $site_domain ),
+			'{attempts_count}'      => (int) $count,
+			'{lockouts_count}'      => (int) $lockouts,
+			'{ip_address}'          => esc_html( $ip ),
+			'{ip_address_link}'     => esc_url( 'https://www.limitloginattempts.com/location/?ip=' . $ip ),
+			'{username}'            => esc_html( (string) $user ),
+			'{blocked_duration}'    => esc_html( (string) $when ),
+			'{dashboard_url}'       => $this->options_page_provider->get_options_page_uri(),
+			'{premium_url}'         => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
+			'{llar_url}'            => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
+			'{current_url}'         => esc_url( $current_url ),
+			'{current_url_label}'   => esc_html( (string) $current_url_label ),
 		);
 
 		$email_body = str_replace(

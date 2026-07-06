@@ -1,5 +1,18 @@
 == Changelog ==
 
+= 3.3.3 =
+* Fixed the dashboard incorrectly showing a network error when the cloud API is reachable but access is restricted.
+* Fixed a PHP 8.1+ deprecation notice by avoiding implicit float-to-int conversion in the lockout email notification check.
+
+= 3.3.2 =
+* Improved usage information in cloud mode.
+
+= 3.3.1 =
+* Fixed email digest behavior in cloud mode.
+
+= 3.3.0 =
+* Added daily, weekly, and monthly email digests summarizing lockouts and failed login attempts.
+
 = 3.2.4 =
 * Added compatibility with WordPress 7.
 

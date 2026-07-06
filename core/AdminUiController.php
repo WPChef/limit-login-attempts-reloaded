@@ -2,6 +2,8 @@
 
 namespace LLAR\Core;
 
+use LLAR\Core\Digest\DigestUiController;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -775,7 +777,13 @@ class AdminUiController {
 				Config::update('notify_email_after',        (int)$_POST['email_after'] );
 				Config::update('gdpr_message',              sanitize_textarea_field( Helpers::deslash( $_POST['gdpr_message'] ) ) );
 				Config::update('custom_error_message',      sanitize_textarea_field( Helpers::deslash( $_POST['custom_error_message'] ) ) );
-				Config::update('admin_notify_email',        sanitize_email( $_POST['admin_notify_email'] ) );
+				$admin_notify_email = isset( $_POST['admin_notify_email'] ) ? sanitize_email( wp_unslash( $_POST['admin_notify_email'] ) ) : '';
+				if ( empty( $admin_notify_email ) ) {
+					$this->plugin->show_message( __( 'Please enter a valid admin notification email.', 'limit-login-attempts-reloaded' ), true );
+					$admin_notify_email = Config::get( 'admin_notify_email' );
+				}
+				Config::update('admin_notify_email',        $admin_notify_email );
+				DigestUiController::save_settings_from_request();
 
 				Config::update( Config::OPTION_ACTIVE_APP, sanitize_text_field( $_POST['active_app'] ) );
 
@@ -845,6 +853,10 @@ class AdminUiController {
 			// After MFA form submit, we're still on MFA tab
 			$current_tab = 'mfa';
 		}
+
+		$lockout_notify_items = explode( ',', (string) Config::get( 'lockout_notify' ) );
+		$email_checked = in_array( 'email', $lockout_notify_items, true );
+		$digest_notification_checkboxes = DigestUiController::get_notification_checkboxes();
 
 		// MFA tab data comes from get_settings_for_view() (single source in MfaSettingsManager)
 		include_once LLA_PLUGIN_DIR . 'views/options-page.php';
