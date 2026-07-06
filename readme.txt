@@ -253,6 +253,7 @@ By default, you will need to copy and paste the lists to each site manually. For
 = 3.3.3 =
 * Fixed the dashboard incorrectly showing a network error when the cloud API is reachable but access is restricted.
 * Fixed a PHP 8.1+ deprecation notice by avoiding implicit float-to-int conversion in the lockout email notification check.
+* Made the email digest labels (Daily/Weekly/Monthly) and preview text translatable.
 
 = 3.3.2 =
 * Improved usage information in cloud mode.
