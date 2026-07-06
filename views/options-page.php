@@ -2,8 +2,9 @@
 /**
  * Options page
  *
- * @var bool $info_has_valid_data
- * @var bool $info_is_cloud_unavailable
+ * @var bool   $info_has_valid_data
+ * @var bool   $info_is_cloud_unavailable
+ * @var string $sync_error_message
  *
  */
 
@@ -38,6 +39,11 @@ if ( $is_active_app_custom ) {
 	$info_is_cloud_unavailable = $this->info_is_cloud_unavailable();
 	$requests = ! $is_agency && $info_has_valid_data ? $this->info_requests() : false;
 	$is_exhausted = ! $is_agency && $this->info_is_exhausted();
+
+	$app_config = Config::get( 'app_config' );
+	$sync_error_message = ( is_array( $app_config ) && ! empty( $app_config['messages']['sync_error'] ) )
+		? $app_config['messages']['sync_error']
+		: '';
 } else {
 
 	$is_exhausted = false;
@@ -45,16 +51,14 @@ if ( $is_active_app_custom ) {
 	$info_is_cloud_unavailable = false;
 	$block_sub_group = '';
 	$upgrade_premium_url = '';
+	$sync_error_message = '';
 }?>
 
 <div class="header_massage">
     <?php
-    if ( $is_active_app_custom && ( $is_exhausted || $info_is_cloud_unavailable ) ) :
+    if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && ( $is_exhausted || $info_is_cloud_unavailable ) ) :
 
 	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
-	if ( empty( $upgrade_premium_url ) ) {
-		$upgrade_premium_url = LLA_INFO_UPGRADE_FALLBACK_URL;
-	}
 
         if ( time() > $notifications_message_shown ) : ?>
             <div id="llar-header-upgrade-premium-message" class="exhausted">
@@ -82,6 +86,11 @@ if ( $is_active_app_custom ) {
 					add_query_arg('id', '4', $upgrade_premium_url) );
 				?>
             </p>
+        </div>
+
+    <?php elseif ( $is_active_app_custom && $info_is_cloud_unavailable && ! empty( $sync_error_message ) ) : ?>
+        <div class="notice notice-error" style="display: block;">
+            <p><?php echo wp_kses_post( $sync_error_message ); ?></p>
         </div>
 
     <?php endif; ?>
