@@ -179,7 +179,7 @@ class AdminUiController {
 				LimitLoginAttempts::$capabilities,
 				$this->options_page_slug,
 				array( $this, 'options_page' ),
-				'data:image/svg+xml;base64,' . base64_encode( $this->plugin->get_svg_logo_content() ),
+				'data:image/svg+xml;base64,' . base64_encode( $this->get_svg_logo_content() ),
 				74
 			);
 
@@ -847,7 +847,7 @@ class AdminUiController {
 		// Prepare roles data for MFA tab (before including view to ensure data is ready)
 		// Check if we're on MFA tab (GET or POST with tab parameter, or default after form submit)
 		$current_tab = 'settings';
-		if ( isset( $_GET['tab'] ) && in_array( $_GET['tab'], self::$allowed_tabs ) ) {
+		if ( isset( $_GET['tab'] ) && in_array( $_GET['tab'], LimitLoginAttempts::$allowed_tabs ) ) {
 			$current_tab = sanitize_text_field( $_GET['tab'] );
 		} elseif ( isset( $_POST['llar_update_mfa_settings'] ) ) {
 			// After MFA form submit, we're still on MFA tab
@@ -869,5 +869,80 @@ class AdminUiController {
 	 * @param array  $args       Variables to pass to the notice view.
 	 * @return void
 	 */
+
+	/**
+	 * Magic method: delegate method calls to the plugin instance
+	 * for methods used in views (options-page.php, tab-*.php, etc.)
+	 * that were originally on LimitLoginAttempts.
+	 *
+	 * @param string $name      Method name.
+	 * @param array  $arguments Method arguments.
+	 * @return mixed
+	 */
+	public function __call( $name, $arguments ) {
+		if ( method_exists( $this->plugin, $name ) ) {
+			return call_user_func_array( array( $this->plugin, $name ), $arguments );
+		}
+		trigger_error(
+			sprintf( 'Call to undefined method %s::%s()', __CLASS__, esc_html( $name ) ),
+			E_USER_ERROR
+		);
+	}
+
+	/**
+	 * Magic isset: delegate to plugin instance for properties accessible via __get.
+	 *
+	 * @param string $name Property name.
+	 * @return bool
+	 */
+	public function __isset( $name ) {
+		return property_exists( $this, $name ) || property_exists( $this->plugin, $name );
+	}
+
+	/**
+	 * Magic setter: delegate property writes to the plugin instance.
+	 *
+	 * @param string $name  Property name.
+	 * @param mixed  $value Property value.
+	 * @return void
+	 */
+	public function __set( $name, $value ) {
+		if ( property_exists( $this, $name ) ) {
+			$ref = new \ReflectionProperty( $this, $name );
+			$ref->setAccessible( true );
+			$ref->setValue( $this, $value );
+			return;
+		}
+		$this->plugin->$name = $value;
+	}
+
+	/**
+	 * Magic getter: delegate to plugin instance for methods/properties
+	 * used in views that were originally on LimitLoginAttempts.
+	 *
+	 * Uses reflection to access private properties of both this controller
+	 * and the plugin instance.
+	 *
+	 * @param string $name Property name.
+	 * @return mixed
+	 */
+	public function __get( $name ) {
+		// First check own properties (e.g. $plugin reference for views)
+		if ( property_exists( $this, $name ) ) {
+			$ref = new \ReflectionProperty( $this, $name );
+			$ref->setAccessible( true );
+			return $ref->getValue( $this );
+		}
+		// Then delegate to plugin instance
+		if ( property_exists( $this->plugin, $name ) ) {
+			$ref = new \ReflectionProperty( $this->plugin, $name );
+			$ref->setAccessible( true );
+			return $ref->getValue( $this->plugin );
+		}
+		trigger_error(
+			sprintf( 'Undefined property: %s::$%s', __CLASS__, esc_html( $name ) ),
+			E_USER_NOTICE
+		);
+	}
 
 }
