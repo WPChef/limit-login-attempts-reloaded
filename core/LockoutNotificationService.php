@@ -89,6 +89,7 @@ class LockoutNotificationService {
 		}
 
 		/* Format message. First current lockout duration */
+		if ( ! isset( $retries[ $ip ] ) ) {
 			$count    = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
 			$lockouts = Config::get( 'allowed_lockouts' );
 			$time     = round( Config::get( 'long_duration' ) / 3600 );
