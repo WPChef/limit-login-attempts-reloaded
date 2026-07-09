@@ -125,7 +125,9 @@ class CloudApp
 
 		if ( ! empty( $setup_response['error'] ) ) {
 
-			$return['error'] = $setup_response['error'];
+			$return['error'] = ! empty( $setup_response['status'] )
+				? $setup_response['error']
+				: __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
 
 		} elseif( $setup_response['status'] === 200 ) {
 
@@ -157,6 +159,13 @@ class CloudApp
 
 				Config::update( Config::OPTION_ACTIVE_APP, 'custom' );
 				Config::update( 'app_setup_code', $setup_code );
+
+				// Verify persistence by reading values back
+				if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'custom'
+				     || Config::get( 'app_setup_code' ) !== $setup_code ) {
+
+					return false;
+				}
 
 				$setup_result['app_config']['messages']['setup_success'] =
 					! empty( $setup_result['app_config']['messages']['setup_success'] )
