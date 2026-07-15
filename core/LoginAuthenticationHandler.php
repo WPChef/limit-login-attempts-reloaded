@@ -412,11 +412,11 @@ class LoginAuthenticationHandler {
 	public function wp_authenticate_user( $user, $password )
 	{
 		$username = isset( $_REQUEST['log'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['log'] ) ) : '';
-		if ( '' === $username && $this->plugin->integration_manager ) {
-			$username = $this->plugin->integration_manager->get_login_identifier();
+		if ( '' === $username && $this->plugin->get_integration_manager() ) {
+			$username = $this->plugin->get_integration_manager()->get_login_identifier();
 		}
-		if ( empty( $password ) && $this->plugin->integration_manager ) {
-			$integration_credentials = $this->plugin->integration_manager->get_login_credentials();
+		if ( empty( $password ) && $this->plugin->get_integration_manager() ) {
+			$integration_credentials = $this->plugin->get_integration_manager()->get_login_credentials();
 			if ( is_array( $integration_credentials ) && ! empty( $integration_credentials['password'] ) ) {
 				$password = $integration_credentials['password'];
 			}

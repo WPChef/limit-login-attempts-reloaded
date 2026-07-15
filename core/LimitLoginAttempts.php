@@ -311,6 +311,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	}
 
 	/**
+	 * @return IntegrationManager|null
+	 */
+	public function get_integration_manager() {
+		return $this->integration_manager;
+	}
+
+	/**
 	 * Login identifier from active integration (MemberPress, Woo, etc.).
 	 *
 	 * @return string
