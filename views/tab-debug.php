@@ -67,7 +67,7 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
 
     <div class="llar-settings-wrap llar-compat-wrap" style="margin-top: 30px;">
         <h3><?php echo esc_html__( 'Compatibility', 'limit-login-attempts-reloaded' ); ?></h3>
-        <p class="description-secondary"><?php echo esc_html__( 'Compatibility of LLAR features with third-party plugins based on readme.txt and codebase integration analysis.', 'limit-login-attempts-reloaded' ); ?></p>
+        <p class="description-secondary"><?php echo esc_html__( 'Compatibility of LLAR features with third-party plugins.', 'limit-login-attempts-reloaded' ); ?></p>
 
         <table class="llar-form-table llar-compat-table">
             <thead>

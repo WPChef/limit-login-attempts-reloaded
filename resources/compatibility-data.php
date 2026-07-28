@@ -8,65 +8,63 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Compatibility data for the Debug tab.
  *
  * Shows which LLAR features work with which third-party plugins.
- * Data sourced from readme.txt and codebase integration analysis.
+ * Values reflect actual integration code in core/integrations/ and the
+ * "Compatible With" list in readme.txt. Empty string means the feature
+ * is not integrated with that plugin.
+ *
+ * - 'both'  : works in Local and Cloud modes.
+ * - 'cloud' : works in Cloud mode only.
+ * - ''      : not supported.
  *
  * @return array
  */
 return array(
-	'WooCommerce' => array(
+	'WooCommerce'     => array(
 		'login'    => 'both',
 		'register' => 'cloud',
 		'password' => '',
-		'2fa'      => 'cloud',
-		'gdpr'     => 'both',
+		'2fa'      => '',
+		'gdpr'     => '',
 		'error'    => 'both',
 	),
-	'MemberPress' => array(
+	'MemberPress'     => array(
 		'login'    => 'both',
 		'register' => '',
 		'password' => '',
-		'2fa'      => 'cloud',
-		'gdpr'     => 'both',
-		'error'    => 'both',
+		'2fa'      => '',
+		'gdpr'     => '',
+		'error'    => '',
 	),
 	'Ultimate Member' => array(
 		'login'    => 'both',
 		'register' => '',
 		'password' => '',
-		'2fa'      => 'cloud',
-		'gdpr'     => 'both',
-		'error'    => 'both',
+		'2fa'      => '',
+		'gdpr'     => '',
+		'error'    => '',
 	),
-	'Wordfence' => array(
+	'Wordfence'       => array(
 		'login'    => 'both',
 		'register' => '',
 		'password' => '',
-		'2fa'      => 'cloud',
-		'gdpr'     => 'both',
-		'error'    => 'both',
+		'2fa'      => '',
+		'gdpr'     => '',
+		'error'    => '',
 	),
-	'BuddyPress' => array(
+	'Sucuri'          => array(
 		'login'    => 'both',
 		'register' => '',
 		'password' => '',
-		'2fa'      => 'cloud',
-		'gdpr'     => 'both',
-		'error'    => 'both',
+		'2fa'      => '',
+		'gdpr'     => '',
+		'error'    => '',
 	),
-	'Sucuri' => array(
+	'WPS Hide Login'  => array(
 		'login'    => 'both',
 		'register' => '',
 		'password' => '',
-		'2fa'      => 'cloud',
-		'gdpr'     => 'both',
-		'error'    => 'both',
-	),
-	'WPS Hide Login' => array(
-		'login'    => 'both',
-		'register' => '',
-		'password' => '',
-		'2fa'      => 'cloud',
-		'gdpr'     => 'both',
-		'error'    => 'both',
+		'2fa'      => '',
+		'gdpr'     => '',
+		'error'    => '',
 	),
 );
