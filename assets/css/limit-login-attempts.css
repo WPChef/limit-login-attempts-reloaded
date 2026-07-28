@@ -4758,4 +4758,38 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 15px !important;
 }
 
+.llar-compat-wrap .llar-compat-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+.llar-compat-wrap .llar-compat-table th,
+.llar-compat-wrap .llar-compat-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-size: 13px;
+}
+.llar-compat-wrap .llar-compat-table th {
+  font-weight: 600;
+  color: #1d2327;
+  white-space: nowrap;
+}
+.llar-compat-wrap .llar-compat-table td.llar-compat-cell {
+  text-align: center;
+  width: 80px;
+}
+.llar-compat-wrap .llar-compat-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  cursor: help;
+}
+.llar-compat-wrap .llar-compat-icon.llar-compat-icon--both {
+  background: url(../img/icon-compat-both.svg) no-repeat center / contain;
+}
+.llar-compat-wrap .llar-compat-icon.llar-compat-icon--cloud {
+  background: url(../img/icon-compat-cloud.svg) no-repeat center / contain;
+}
+
 /*# sourceMappingURL=limit-login-attempts.css.map */

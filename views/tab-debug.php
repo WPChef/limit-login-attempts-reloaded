@@ -61,7 +61,42 @@ $plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
                     </td>
                 </tr>
 			<?php endif; ?>
+	        </table>
+	    </div>
+	</div>
+
+    <div class="llar-settings-wrap llar-compat-wrap" style="margin-top: 30px;">
+        <h3><?php echo esc_html__( 'Compatibility', 'limit-login-attempts-reloaded' ); ?></h3>
+        <p class="description-secondary"><?php echo esc_html__( 'Compatibility of LLAR features with third-party plugins based on readme.txt and codebase integration analysis.', 'limit-login-attempts-reloaded' ); ?></p>
+
+        <table class="llar-form-table llar-compat-table">
+            <thead>
+                <tr>
+                    <th><?php echo esc_html__( 'Plugin', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th><?php echo esc_html__( 'Login protection', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th><?php echo esc_html__( 'Registration protection', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th><?php echo esc_html__( 'Password recovery protection', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th><?php echo esc_html__( '2FA', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th><?php echo esc_html__( 'Custom GDPR message', 'limit-login-attempts-reloaded' ); ?></th>
+                    <th><?php echo esc_html__( 'Custom error message', 'limit-login-attempts-reloaded' ); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $compat_data = Helpers::get_compatibility_data();
+                ?>
+                <?php foreach ( $compat_data as $plugin_name => $features ) : ?>
+                <tr>
+                    <td><strong><?php echo esc_html( $plugin_name ); ?></strong></td>
+                    <td class="llar-compat-cell"><?php if ( 'both' === $features['login'] ) : ?><span class="llar-compat-icon llar-compat-icon--both" title="<?php esc_attr_e( 'Local + Cloud modes', 'limit-login-attempts-reloaded' ); ?>"></span><?php elseif ( 'cloud' === $features['login'] ) : ?><span class="llar-compat-icon llar-compat-icon--cloud" title="<?php esc_attr_e( 'Cloud mode only', 'limit-login-attempts-reloaded' ); ?>"></span><?php endif; ?></td>
+                    <td class="llar-compat-cell"><?php if ( 'both' === $features['register'] ) : ?><span class="llar-compat-icon llar-compat-icon--both" title="<?php esc_attr_e( 'Local + Cloud modes', 'limit-login-attempts-reloaded' ); ?>"></span><?php elseif ( 'cloud' === $features['register'] ) : ?><span class="llar-compat-icon llar-compat-icon--cloud" title="<?php esc_attr_e( 'Cloud mode only', 'limit-login-attempts-reloaded' ); ?>"></span><?php endif; ?></td>
+                    <td class="llar-compat-cell"><?php if ( 'both' === $features['password'] ) : ?><span class="llar-compat-icon llar-compat-icon--both" title="<?php esc_attr_e( 'Local + Cloud modes', 'limit-login-attempts-reloaded' ); ?>"></span><?php elseif ( 'cloud' === $features['password'] ) : ?><span class="llar-compat-icon llar-compat-icon--cloud" title="<?php esc_attr_e( 'Cloud mode only', 'limit-login-attempts-reloaded' ); ?>"></span><?php endif; ?></td>
+                    <td class="llar-compat-cell"><?php if ( 'both' === $features['2fa'] ) : ?><span class="llar-compat-icon llar-compat-icon--both" title="<?php esc_attr_e( 'Local + Cloud modes', 'limit-login-attempts-reloaded' ); ?>"></span><?php elseif ( 'cloud' === $features['2fa'] ) : ?><span class="llar-compat-icon llar-compat-icon--cloud" title="<?php esc_attr_e( 'Cloud mode only', 'limit-login-attempts-reloaded' ); ?>"></span><?php endif; ?></td>
+                    <td class="llar-compat-cell"><?php if ( 'both' === $features['gdpr'] ) : ?><span class="llar-compat-icon llar-compat-icon--both" title="<?php esc_attr_e( 'Local + Cloud modes', 'limit-login-attempts-reloaded' ); ?>"></span><?php elseif ( 'cloud' === $features['gdpr'] ) : ?><span class="llar-compat-icon llar-compat-icon--cloud" title="<?php esc_attr_e( 'Cloud mode only', 'limit-login-attempts-reloaded' ); ?>"></span><?php endif; ?></td>
+                    <td class="llar-compat-cell"><?php if ( 'both' === $features['error'] ) : ?><span class="llar-compat-icon llar-compat-icon--both" title="<?php esc_attr_e( 'Local + Cloud modes', 'limit-login-attempts-reloaded' ); ?>"></span><?php elseif ( 'cloud' === $features['error'] ) : ?><span class="llar-compat-icon llar-compat-icon--cloud" title="<?php esc_attr_e( 'Cloud mode only', 'limit-login-attempts-reloaded' ); ?>"></span><?php endif; ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
         </table>
     </div>
-</div>
 
