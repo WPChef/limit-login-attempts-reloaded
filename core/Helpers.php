@@ -693,7 +693,7 @@ class Helpers {
 	 * Returns compatibility data for the Debug tab.
 	 *
 	 * Shows which LLAR features work with which third-party plugins.
-	 * Data sourced from readme.txt and codebase integration analysis.
+	 * Values reflect integration code and the readme "Compatible With" list.
 	 *
 	 * @return array
 	 */
