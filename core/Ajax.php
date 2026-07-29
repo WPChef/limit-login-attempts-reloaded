@@ -143,14 +143,6 @@ class Ajax
 		wp_send_json_success( array() );
 	}
 
-	/**
-	 * @return string
-	 */
-	private function get_save_error_message() {
-
-		return __( 'The settings could not be saved due to an error on this site. Possible causes include a corrupted database or a PHP error. Please check the error logs, verify the database integrity, fix any issues found, and then try again.', 'limit-login-attempts-reloaded' );
-	}
-
 	public function app_setup_callback() {
 
 		$this->check_user_capabilities();
@@ -161,29 +153,19 @@ class Ajax
 
 			$setup_code = sanitize_text_field( $_POST['code'] );
 
-			if ( $key_result = CloudApp::activate_license_key( $setup_code ) ) {
+			$key_result = CloudApp::activate_license_key( $setup_code );
 
-			    if ( $key_result['success'] ) {
+			if ( $key_result['success'] ) {
 
-				    wp_send_json_success( array(
-					    'msg' => ( $key_result['app_config']['messages']['setup_success'] )
-				    ) );
-                } else {
+				wp_send_json_success( array(
+					'msg' => ( $key_result['app_config']['messages']['setup_success'] )
+				) );
+			} else {
 
-				    $error_msg = ! empty( $key_result['error'] )
-					    ? $key_result['error']
-					    : $this->get_save_error_message();
-
-				    wp_send_json_error( array(
-					    'msg' => $error_msg
-				    ) );
-                }
-            } else {
-
-	            wp_send_json_error( array(
-		            'msg' => $this->get_save_error_message()
-	            ) );
-            }
+				wp_send_json_error( array(
+					'msg' => ( $key_result['error'] )
+				) );
+			}
 		}
 
 		wp_send_json_error( array(
