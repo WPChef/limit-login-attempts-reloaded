@@ -125,9 +125,15 @@ class CloudApp
 
 		if ( ! empty( $setup_response['error'] ) ) {
 
-			$return['error'] = ! empty( $setup_response['status'] )
-				? $setup_response['error']
-				: __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
+			if ( ! empty( $setup_response['status'] ) ) {
+				// HTTP-level error with a response - the message is user-facing.
+				$return['error'] = $setup_response['error'];
+			} else {
+				// Transport-level failure (DNS, timeout, etc.) - keep the raw error for diagnostics.
+				error_log( 'Limit Login Attempts Reloaded: app setup request transport error - ' . $setup_response['error'] );
+
+				$return['error'] = __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
+			}
 
 		} elseif( $setup_response['status'] === 200 ) {
 
@@ -157,15 +163,19 @@ class CloudApp
 
 				Helpers::cloud_app_update_config( $setup_result['app_config'], true );
 
-				Config::update( Config::OPTION_ACTIVE_APP, 'custom' );
 				Config::update( 'app_setup_code', $setup_code );
 
-				// Verify persistence by reading values back
-				if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'custom'
-				     || Config::get( 'app_setup_code' ) !== $setup_code ) {
+				// Verify the setup code persisted before switching the active app, to avoid
+				// an inconsistent state (active app set to "custom" without a setup code).
+				if ( Config::get( 'app_setup_code' ) !== $setup_code ) {
 
-					return false;
+					$setup_result['success'] = false;
+					$setup_result['error']   = __( 'The settings could not be saved due to an error on this site. Please check the error logs and try again.', 'limit-login-attempts-reloaded' );
+
+					return $setup_result;
 				}
+
+				Config::update( Config::OPTION_ACTIVE_APP, 'custom' );
 
 				$setup_result['app_config']['messages']['setup_success'] =
 					! empty( $setup_result['app_config']['messages']['setup_success'] )
