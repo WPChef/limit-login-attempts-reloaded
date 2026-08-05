@@ -122,6 +122,23 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	/** @var AdminUiController */
 	private $admin_ui = null;
 
+	private $auth_acl_response_cache = array();
+	private $auth_acl_response_cache_max_size = 50;
+
+	/**
+	 * Request-scoped cache: hook callback -> reflection file path (avoids repeated Reflection API).
+	 *
+	 * @var array
+	 */
+	private static $hook_callback_source_file_cache = array();
+
+	/**
+	 * Request-scoped cache: normalized source file path -> plugin metadata (avoids repeated get_plugins scans).
+	 *
+	 * @var array
+	 */
+	private static $hook_source_file_plugin_cache = array();
+
 	/**
 	 * Pending flash message to display on options page (e.g. "Settings saved").
 	 * Rendered via AdminNoticesController when options-page is loaded.
@@ -190,6 +207,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		LocalLockoutManager::reset_failed_login_recorded_in_request();
 		MfaFlowLoginHandler::reset_handshake_guard();
 	}
+
 
 	/**
 	 * Allowed tabs for options page
@@ -293,7 +311,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		$this->dashboard_renderer       = new DashboardRiskRenderer( $this, $this->local_lockout );
 		$this->registration_limiter     = new RegistrationLimiter( $this );
 		$this->admin_ui                 = new AdminUiController( $this );
-
+	
 		$this->hooks_init();
 		$this->setup();
 		$this->cloud_app_init();
@@ -511,7 +529,6 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
 		return $this->dashboard_renderer->get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats );
 	}
-
 	/**
 	 * Redirect to dashboard page after installed
 	 */
@@ -965,7 +982,6 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 
 
 
-
 	/**
 	 * Delete the CloudApp object
 	 */
@@ -1144,6 +1160,57 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 
 
 	/**
+	 * Resolve login identifier for cloud ACL checks.
+	 *
+	 * @param string $username Optional username from the auth hook.
+	 * @return string
+	 */
+	private function resolve_login_username( $username = '' ) {
+		if ( '' !== $username ) {
+			return $username;
+		}
+
+		if ( isset( $_REQUEST['log'] ) ) {
+			return sanitize_text_field( wp_unslash( $_REQUEST['log'] ) );
+		}
+
+		if ( $this->integration_manager ) {
+			return $this->integration_manager->get_login_identifier();
+		}
+
+		return '';
+	}
+
+	/**
+	 * Cloud ACL lockout state for the current request.
+	 *
+	 * Returns null when cloud mode is off, the username cannot be resolved, or
+	 * the Cloud API is unreachable — in those cases the caller must fall back
+	 * to the local lockouts check so failover keeps blocking attackers.
+	 *
+	 * @param string $username Optional username from the auth hook.
+	 * @return bool|null True when login is allowed, false when denied, null when local check applies.
+	 * @throws Exception
+	 */
+	private function is_cloud_login_allowed( $username = '' ) {
+		if ( ! self::$cloud_app ) {
+			return null;
+		}
+
+		$username = $this->resolve_login_username( $username );
+		if ( '' === $username ) {
+			return null;
+		}
+
+		$response = $this->get_auth_acl_response( $username );
+		if ( ! $response ) {
+			return null;
+		}
+
+		return ( 'deny' !== $response['result'] );
+	}
+
+	/**
 	 * Check if it is ok to login
 	 *
 	 * @param string $username Optional username from the auth hook.
@@ -1216,7 +1283,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	}
 
 	/**
-	 * Action when login attempt failed
+	 * Run MFA flow on login: handshake, save session, redirect to MFA app.
+	 * Exits on successful redirect. Call only after password verification.
 	 *
 	 * @param string $username Login username.
 	 */
@@ -1306,6 +1374,37 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	public function wp_authenticate_user( $user, $password )
 	{
 		return $this->auth_handler->wp_authenticate_user( $user, $password );
+	}
+
+	/**
+	 * Determine if submitted login identifier maps to local allowed usernames.
+	 *
+	 * Supports direct username, case-insensitive username match and email-based login.
+	 *
+	 * @param string  $username Submitted login value (username or email).
+	 * @param WP_User $user     Optional authenticated user object.
+	 * @return bool
+	 */
+	private function is_local_allowlisted_username( $username, $user = null ) {
+		$username = trim( (string) $username );
+		if ( '' !== $username && $this->is_username_whitelisted( $username ) ) {
+			return true;
+		}
+
+		if ( is_a( $user, 'WP_User' ) && ! empty( $user->user_login ) && $this->is_username_whitelisted( $user->user_login ) ) {
+			return true;
+		}
+
+		if ( '' === $username || ! function_exists( 'is_email' ) || ! is_email( $username ) ) {
+			return false;
+		}
+
+		$user_by_email = get_user_by( 'email', $username );
+		if ( ! $user_by_email || ! is_a( $user_by_email, 'WP_User' ) ) {
+			return false;
+		}
+
+		return $this->is_username_whitelisted( $user_by_email->user_login );
 	}
 
 	/**
@@ -1440,20 +1539,6 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 
 		return $seconds_left <= MfaConstants::RESCUE_NOTICE_THRESHOLD;
 	}
-
-
-
-
-
-
-
-
-	/**
-	 * Show error message
-	 *
-	 * @param $msg
-	 * @param bool $is_error
-	 */
 	public function show_message( $msg, $is_error = false ) {
 		$this->pending_admin_message = array(
 			'msg'      => $msg,
@@ -1610,6 +1695,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	public function check_registration_api( $user_data, $integration = null ) {
 		return $this->registration_limiter->check_registration_api( $user_data, $integration );
 	}
+
 
 
 	/**

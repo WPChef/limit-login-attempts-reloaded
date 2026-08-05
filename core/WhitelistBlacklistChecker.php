@@ -48,7 +48,19 @@ class WhitelistBlacklistChecker {
 	 * @return bool
 	 */
 	public function check_whitelist_usernames( $allow, $username ) {
-		return in_array( $username, (array) Config::get( 'whitelist_usernames' ), true );
+		$username = trim( (string) $username );
+		if ( '' === $username ) {
+			return false;
+		}
+
+		$whitelist_usernames = (array) Config::get( 'whitelist_usernames' );
+		foreach ( $whitelist_usernames as $whitelist_username ) {
+			if ( 0 === strcasecmp( $username, trim( (string) $whitelist_username ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -70,7 +82,19 @@ class WhitelistBlacklistChecker {
 	 * @return bool
 	 */
 	public function check_blacklist_usernames( $allow, $username ) {
-		return in_array( $username, (array) Config::get( 'blacklist_usernames' ), true );
+		$username = trim( (string) $username );
+		if ( '' === $username ) {
+			return false;
+		}
+
+		$blacklist_usernames = (array) Config::get( 'blacklist_usernames' );
+		foreach ( $blacklist_usernames as $blacklist_username ) {
+			if ( 0 === strcasecmp( $username, trim( (string) $blacklist_username ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
