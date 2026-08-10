@@ -2856,10 +2856,15 @@ class LimitLoginAttempts
 			$user_login = $user;
 		}
 
-		// Enforce the deny list on the canonical user_login/email BEFORE the
-		// not-locked-out early return, so a valid password cannot bypass a
-		// deny-listed account via a case variant or the account email.
-		if ( $this->is_local_blacklisted_username( $username, $user ) || $this->is_ip_blacklisted( $this->get_address() ) ) {
+		// Enforce the deny list BEFORE the not-locked-out early return.
+		// Allowlist always wins: skip the denylist for allowlisted users/IPs,
+		// mirroring the early authenticate hook logic.
+		if (
+			! $this->check_whitelist_ips( false, $ip )
+			&& ! $this->is_local_allowlisted_username( $username, $user )
+			&& ! $this->check_whitelist_usernames( false, $user_login )
+			&& ( $this->is_local_blacklisted_username( $username, $user ) || $this->is_ip_blacklisted( $this->get_address() ) )
+		) {
 
 			$error = new WP_Error();
 			global $limit_login_my_error_shown;
@@ -2932,10 +2937,10 @@ class LimitLoginAttempts
 	/**
 	 * Determine if submitted login identifier maps to local blacklisted usernames.
 	 *
-	 * Mirrors is_local_allowlisted_username() for the deny list: supports direct
-	 * username, case-insensitive match and email-based login by resolving the
-	 * canonical user_login. Without this, a deny-listed account could be
-	 * authenticated with the correct password via a case variant or its email.
+	 * Compares case-insensitively and, when the canonical user object is available
+	 * (late authenticate hook), checks its user_login too so a case variant cannot
+	 * bypass a deny-listed account. The allowlist path resolves the email to
+	 * user_login independently.
 	 *
 	 * @param string  $username Submitted login value (username or email).
 	 * @param WP_User $user     Optional authenticated user object.
@@ -2951,16 +2956,7 @@ class LimitLoginAttempts
 			return true;
 		}
 
-		if ( '' === $username || ! function_exists( 'is_email' ) || ! is_email( $username ) ) {
-			return false;
-		}
-
-		$user_by_email = get_user_by( 'email', $username );
-		if ( ! $user_by_email || ! is_a( $user_by_email, 'WP_User' ) ) {
-			return false;
-		}
-
-		return $this->is_username_blacklisted( $user_by_email->user_login );
+		return false;
 	}
 
 	/**
