@@ -2870,11 +2870,14 @@ class LimitLoginAttempts
 			global $limit_login_my_error_shown;
 			$limit_login_my_error_shown = true;
 
-			$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
-			$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
+			$err = $this->build_lockout_error_message();
 
 			$error->add( 'username_blacklisted', $err );
 			$this->all_errors_array['late_hook_errors'] = $err;
+
+			// Prevent fixup_error_messages() from masking the deny-list error with a
+			// generic "incorrect" message when the IP is not yet locked out.
+			remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
 
 			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
