@@ -55,9 +55,12 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 		$context = stream_context_create( array(
 			'http' => array(
-                'method'  => $method,
-                'header'  => implode( "\r\n", $headers ),
-                'content' => $request_data
+                'method'        => $method,
+                'header'        => implode( "\r\n", $headers ),
+                'content'       => $request_data,
+                // Keep the stream open on 4xx/5xx so the response body can be read
+                // (needed to surface API error messages, e.g. /checkout/network).
+                'ignore_errors' => true,
             )
 		));
 
