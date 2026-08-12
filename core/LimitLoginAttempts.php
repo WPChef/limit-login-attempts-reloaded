@@ -1143,7 +1143,19 @@ class LimitLoginAttempts
 
 	public function check_blacklist_usernames( $allow, $username )
 	{
-		return in_array( $username, ( array ) Config::get( 'blacklist_usernames' ) );
+		$username = trim( (string) $username );
+		if ( '' === $username ) {
+			return false;
+		}
+
+		$blacklist_usernames = ( array ) Config::get( 'blacklist_usernames' );
+		foreach ( $blacklist_usernames as $blacklist_username ) {
+			if ( 0 === strcasecmp( $username, trim( (string) $blacklist_username ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -1227,7 +1239,7 @@ class LimitLoginAttempts
 				// Check if username is blacklisted
 				if (
 					( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) )
-					&& ( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
+					&& ( $this->is_local_blacklisted_username( $username ) || $this->is_ip_blacklisted( $ip ) )
 				) {
 
 					LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
@@ -1346,7 +1358,7 @@ class LimitLoginAttempts
 
 		if (
 			( ! $this->is_username_whitelisted( $username ) && ! $this->is_ip_whitelisted( $ip ) )
-			&& ( $this->is_username_blacklisted( $username ) || $this->is_ip_blacklisted( $ip ) )
+			&& ( $this->is_local_blacklisted_username( $username ) || $this->is_ip_blacklisted( $ip ) )
 		) {
 			$error_message = $this->build_lockout_error_message();
 			$this->log_security_event( 'local_blacklist_block', $username, $ip );
@@ -2844,6 +2856,34 @@ class LimitLoginAttempts
 			$user_login = $user;
 		}
 
+		// Enforce the deny list BEFORE the not-locked-out early return.
+		// Allowlist always wins: skip the denylist for allowlisted users/IPs,
+		// mirroring the early authenticate hook logic.
+		if (
+			! $this->check_whitelist_ips( false, $ip )
+			&& ! $this->is_local_allowlisted_username( $username, $user )
+			&& ! $this->check_whitelist_usernames( false, $user_login )
+			&& ( $this->is_local_blacklisted_username( $username, $user ) || $this->is_ip_blacklisted( $this->get_address() ) )
+		) {
+
+			$error = new WP_Error();
+			global $limit_login_my_error_shown;
+			$limit_login_my_error_shown = true;
+
+			$err = $this->build_lockout_error_message();
+
+			$error->add( 'username_blacklisted', $err );
+			$this->all_errors_array['late_hook_errors'] = $err;
+
+			// Prevent fixup_error_messages() from masking the deny-list error with a
+			// generic "incorrect" message when the IP is not yet locked out.
+			remove_filter( 'login_errors', array( $this, 'fixup_error_messages' ) );
+
+			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
+
+			return $error;
+		}
+
 		if (
 			$this->check_whitelist_ips( false, $ip )
 			|| $this->is_local_allowlisted_username( $username, $user )
@@ -2858,18 +2898,8 @@ class LimitLoginAttempts
 		global $limit_login_my_error_shown;
 		$limit_login_my_error_shown = true;
 
-		if ( $this->is_username_blacklisted( $user_login ) || $this->is_ip_blacklisted( $this->get_address() ) ) {
-
-			$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
-			$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
-
-			$error->add( 'username_blacklisted', $err );
-			$this->all_errors_array['late_hook_errors'] = $err;
-		} else {
-
-			// This error should be the same as in "shake it" filter below
-			$error->add( 'too_many_retries', $this->error_msg( $username ) );
-		}
+		// This error should be the same as in "shake it" filter below
+		$error->add( 'too_many_retries', $this->error_msg( $username ) );
 
 		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
@@ -2905,6 +2935,31 @@ class LimitLoginAttempts
 		}
 
 		return $this->is_username_whitelisted( $user_by_email->user_login );
+	}
+
+	/**
+	 * Determine if submitted login identifier maps to local blacklisted usernames.
+	 *
+	 * Compares case-insensitively and, when the canonical user object is available
+	 * (late authenticate hook), checks its user_login too so a case variant cannot
+	 * bypass a deny-listed account. The allowlist path resolves the email to
+	 * user_login independently.
+	 *
+	 * @param string  $username Submitted login value (username or email).
+	 * @param WP_User $user     Optional authenticated user object.
+	 * @return bool
+	 */
+	private function is_local_blacklisted_username( $username, $user = null ) {
+		$username = trim( (string) $username );
+		if ( '' !== $username && $this->is_username_blacklisted( $username ) ) {
+			return true;
+		}
+
+		if ( is_a( $user, 'WP_User' ) && ! empty( $user->user_login ) && $this->is_username_blacklisted( $user->user_login ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
