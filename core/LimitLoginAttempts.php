@@ -1337,6 +1337,9 @@ class LimitLoginAttempts
 
 				return true;
 			}
+
+			// Cloud ACL allowed the login — in cloud mode the local blacklist is failover only.
+			return false;
 		}
 
 		$ip = $this->get_address();
