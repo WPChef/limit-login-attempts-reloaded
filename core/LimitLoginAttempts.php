@@ -122,9 +122,6 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	/** @var AdminUiController */
 	private $admin_ui = null;
 
-	private $auth_acl_response_cache = array();
-	private $auth_acl_response_cache_max_size = 50;
-
 	/**
 	 * Request-scoped cache: hook callback -> reflection file path (avoids repeated Reflection API).
 	 *
@@ -974,14 +971,6 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		return $this->auth_handler->authenticate_guard_filter( $user, $username, $password );
 	}
 
-
-
-
-
-
-
-
-
 	/**
 	 * Delete the CloudApp object
 	 */
@@ -1158,57 +1147,6 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 
 
 
-
-	/**
-	 * Resolve login identifier for cloud ACL checks.
-	 *
-	 * @param string $username Optional username from the auth hook.
-	 * @return string
-	 */
-	private function resolve_login_username( $username = '' ) {
-		if ( '' !== $username ) {
-			return $username;
-		}
-
-		if ( isset( $_REQUEST['log'] ) ) {
-			return sanitize_text_field( wp_unslash( $_REQUEST['log'] ) );
-		}
-
-		if ( $this->integration_manager ) {
-			return $this->integration_manager->get_login_identifier();
-		}
-
-		return '';
-	}
-
-	/**
-	 * Cloud ACL lockout state for the current request.
-	 *
-	 * Returns null when cloud mode is off, the username cannot be resolved, or
-	 * the Cloud API is unreachable — in those cases the caller must fall back
-	 * to the local lockouts check so failover keeps blocking attackers.
-	 *
-	 * @param string $username Optional username from the auth hook.
-	 * @return bool|null True when login is allowed, false when denied, null when local check applies.
-	 * @throws Exception
-	 */
-	private function is_cloud_login_allowed( $username = '' ) {
-		if ( ! self::$cloud_app ) {
-			return null;
-		}
-
-		$username = $this->resolve_login_username( $username );
-		if ( '' === $username ) {
-			return null;
-		}
-
-		$response = $this->get_auth_acl_response( $username );
-		if ( ! $response ) {
-			return null;
-		}
-
-		return ( 'deny' !== $response['result'] );
-	}
 
 	/**
 	 * Check if it is ok to login
