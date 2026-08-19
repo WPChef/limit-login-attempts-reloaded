@@ -3031,14 +3031,13 @@ class LimitLoginAttempts
 		$ip       = $this->get_address();
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 		$a        = $this->checkKey($lockouts, $ip);
-		$b        = $this->checkKey($lockouts, $this->getHash($ip));
 
 		$msg = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' ) . ' ';
 
 		if (
 			! is_array( $lockouts )
-			|| ( ! isset( $lockouts[ $ip ] ) && ! isset( $lockouts[ $this->getHash( $ip ) ] ) )
-			|| ( time() >= $a && time() >= $b )
+			|| ! isset( $lockouts[ $ip ] )
+			|| time() >= $a
 		){
 			/* Huh? No timeout active? */
 			$msg .= __( 'Please try again later.', 'limit-login-attempts-reloaded' );
@@ -3049,7 +3048,7 @@ class LimitLoginAttempts
 			return $msg;
 		}
 
-		$when = ceil( ( ($a > $b ? $a : $b) - time() ) / 60 );
+		$when = ceil( ( $a - time() ) / 60 );
 		if ( $when > 60 ) {
 
 			$when = ceil( $when / 60 );
@@ -3189,9 +3188,7 @@ class LimitLoginAttempts
 		$retries = Config::get( 'retries' );
 		$valid   = Config::get( 'retries_valid' );
 		$a = $this->checkKey($retries, $ip);
-		$b = $this->checkKey($retries, $this->getHash($ip));
 		$c = $this->checkKey($valid, $ip);
-		$d = $this->checkKey($valid, $this->getHash($ip));
 
 		/* Should we show retries remaining? */
 		if ( ! is_array( $retries ) || ! is_array( $valid ) ) {
@@ -3199,22 +3196,19 @@ class LimitLoginAttempts
 			return $remaining;
 		}
 		if (
-			( ! isset( $retries[ $ip ] ) && ! isset( $retries[ $this->getHash($ip) ] ))
-			|| ( ! isset( $valid[ $ip ] ) && ! isset( $valid[ $this->getHash($ip) ] ))
-			|| ( time() > $c && time() > $d )
+			! isset( $retries[ $ip ] )
+			|| ! isset( $valid[ $ip ] )
+			|| ( time() > $c )
 		) {
 			/* no: no valid retries */
 			return $remaining;
 		}
-		if (
-			( $a % Config::get( 'allowed_retries' ) ) == 0
-			&& ( $b % Config::get( 'allowed_retries' ) ) == 0
-		) {
+		if ( ( $a % Config::get( 'allowed_retries' ) ) == 0 ) {
 			/* no: already been locked out for these retries */
 			return $remaining;
 		}
 
-		$remaining = max( ( Config::get( 'allowed_retries' ) - ( ($a + $b) % Config::get( 'allowed_retries' ) ) ), 0 );
+		$remaining = max( ( Config::get( 'allowed_retries' ) - ( $a % Config::get( 'allowed_retries' ) ) ), 0 );
 		return (int) $remaining;
 	}
 
@@ -3837,14 +3831,6 @@ class LimitLoginAttempts
 			'msg'      => $msg,
 			'is_error' => $is_error,
 		);
-	}
-
-	/**
-	 * returns IP with its md5 value
-	 */
-	private function getHash( $str )
-	{
-		return md5( $str );
 	}
 
 	/**
