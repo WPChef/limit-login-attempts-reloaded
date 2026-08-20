@@ -320,6 +320,8 @@ class LimitLoginAttempts
 		add_action( 'login_form_register', array( $this, 'llar_submit_login_form_register' ), 10 );
 		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
 
+		add_action( 'lostpassword_post', array( $this, 'llar_lostpassword_post' ), 10, 2 );
+
 		register_activation_hook( LLA_PLUGIN_FILE, array( $this, 'activation' ) );
 
 		add_action( 'upgrader_process_complete', array( $this, 'after_plugin_update' ), 10, 2 );
@@ -4193,6 +4195,24 @@ class LimitLoginAttempts
 		return $limit_registration === 'on';
 	}
 
+	/**
+	 * Check if cloud mode has Limit Password Recovery enabled.
+	 *
+	 * @return bool
+	 */
+	private function is_limit_password_recovery() {
+		if ( ! self::$cloud_app ) {
+			return false;
+		}
+
+		$app_config              = Config::get( 'app_config' );
+		$limit_password_recovery = isset( $app_config['settings']['limit_password_recovery']['value'] )
+			? $app_config['settings']['limit_password_recovery']['value']
+			: '';
+
+		return 'on' === $limit_password_recovery;
+	}
+
 
 	/**
 	 * API response
@@ -4317,6 +4337,68 @@ class LimitLoginAttempts
 		}
 
 		return $errors;
+	}
+
+	/**
+	 * Cloud ACL check for password recovery (WP + WooCommerce via shared hook).
+	 *
+	 * @param \WP_Error      $errors    Errors from retrieve_password flow.
+	 * @param \WP_User|false $user_data User object or false.
+	 * @return void
+	 */
+	public function llar_lostpassword_post( $errors, $user_data ) {
+		unset( $user_data );
+
+		if ( ! $this->is_limit_password_recovery() ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WP/WooCommerce before retrieve_password.
+		if ( empty( $_POST['user_login'] ) || ! is_string( $_POST['user_login'] ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WP/WooCommerce before retrieve_password.
+		$user_login = trim( wp_unslash( $_POST['user_login'] ) );
+		if ( '' === $user_login ) {
+			return;
+		}
+
+		if ( false !== strpos( $user_login, '@' ) ) {
+			$check_login = sanitize_email( $user_login );
+			// Malformed addresses (e.g. "foo@") must not skip ACL.
+			if ( empty( $check_login ) ) {
+				$check_login = sanitize_user( $user_login );
+			}
+		} else {
+			$check_login = sanitize_user( $user_login );
+		}
+
+		if ( empty( $check_login ) ) {
+			$check_login = sanitize_text_field( $user_login );
+		}
+
+		if ( empty( $check_login ) ) {
+			return;
+		}
+
+		$response = $this->llar_api_response( $check_login );
+
+		if ( ! is_array( $response ) || ! isset( $response['result'] ) || 'deny' !== $response['result'] ) {
+			return;
+		}
+
+		// Prevent WordPress / WooCommerce from continuing the reset flow.
+		$_POST['user_login'] = '';
+
+		$this->user_blocking  = true;
+		$this->error_messages = __( '<strong>Error:</strong> There is no account with that username or email address.' );
+
+		if ( is_wp_error( $errors ) ) {
+			$errors->remove( 'empty_username' );
+			$errors->remove( 'invalid_email' );
+			$errors->add( 'invalidcombo', $this->error_messages );
+		}
 	}
 }
 
