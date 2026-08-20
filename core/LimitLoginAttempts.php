@@ -296,7 +296,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 			$cleanup_service
 		);
 		$this->error_presenter          = new LoginErrorPresenter( $this, $this->cloud_acl, $this->local_lockout, $this->ip_resolver );
-		$this->mfa_flow_login           = new MfaFlowLoginHandler( $this->ip_resolver );
+		$this->mfa_flow_login           = new MfaFlowLoginHandler( $this->ip_resolver, $this->local_lockout, $this->cloud_acl );
 		$this->auth_handler             = new LoginAuthenticationHandler(
 			$this,
 			$this->cloud_acl,
@@ -1312,37 +1312,6 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	public function wp_authenticate_user( $user, $password )
 	{
 		return $this->auth_handler->wp_authenticate_user( $user, $password );
-	}
-
-	/**
-	 * Determine if submitted login identifier maps to local allowed usernames.
-	 *
-	 * Supports direct username, case-insensitive username match and email-based login.
-	 *
-	 * @param string  $username Submitted login value (username or email).
-	 * @param WP_User $user     Optional authenticated user object.
-	 * @return bool
-	 */
-	private function is_local_allowlisted_username( $username, $user = null ) {
-		$username = trim( (string) $username );
-		if ( '' !== $username && $this->is_username_whitelisted( $username ) ) {
-			return true;
-		}
-
-		if ( is_a( $user, 'WP_User' ) && ! empty( $user->user_login ) && $this->is_username_whitelisted( $user->user_login ) ) {
-			return true;
-		}
-
-		if ( '' === $username || ! function_exists( 'is_email' ) || ! is_email( $username ) ) {
-			return false;
-		}
-
-		$user_by_email = get_user_by( 'email', $username );
-		if ( ! $user_by_email || ! is_a( $user_by_email, 'WP_User' ) ) {
-			return false;
-		}
-
-		return $this->is_username_whitelisted( $user_by_email->user_login );
 	}
 
 	/**

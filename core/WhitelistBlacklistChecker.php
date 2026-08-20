@@ -128,4 +128,59 @@ class WhitelistBlacklistChecker {
 
 		return ( $blacklisted === true );
 	}
+
+	/**
+	 * Determine if submitted login identifier maps to local allowed usernames.
+	 *
+	 * Supports direct username, canonical user_login and email-based login.
+	 *
+	 * @param string   $username Submitted login value (username or email).
+	 * @param \WP_User $user     Optional authenticated user object.
+	 * @return bool
+	 */
+	public function is_local_allowlisted_username( $username, $user = null ) {
+		$username = trim( (string) $username );
+		if ( '' !== $username && $this->is_username_whitelisted( $username ) ) {
+			return true;
+		}
+
+		if ( is_a( $user, 'WP_User' ) && ! empty( $user->user_login ) && $this->is_username_whitelisted( $user->user_login ) ) {
+			return true;
+		}
+
+		if ( '' === $username || ! function_exists( 'is_email' ) || ! is_email( $username ) ) {
+			return false;
+		}
+
+		$user_by_email = get_user_by( 'email', $username );
+		if ( ! $user_by_email || ! is_a( $user_by_email, 'WP_User' ) ) {
+			return false;
+		}
+
+		return $this->is_username_whitelisted( $user_by_email->user_login );
+	}
+
+	/**
+	 * Determine if submitted login identifier maps to local denied usernames.
+	 *
+	 * Checks the canonical user_login too when the user object is available, so a
+	 * case variant cannot bypass a deny-listed account. Email is not resolved here:
+	 * the allowlist path resolves it independently and always wins.
+	 *
+	 * @param string   $username Submitted login value (username or email).
+	 * @param \WP_User $user     Optional authenticated user object.
+	 * @return bool
+	 */
+	public function is_local_blacklisted_username( $username, $user = null ) {
+		$username = trim( (string) $username );
+		if ( '' !== $username && $this->is_username_blacklisted( $username ) ) {
+			return true;
+		}
+
+		if ( is_a( $user, 'WP_User' ) && ! empty( $user->user_login ) && $this->is_username_blacklisted( $user->user_login ) ) {
+			return true;
+		}
+
+		return false;
+	}
 }

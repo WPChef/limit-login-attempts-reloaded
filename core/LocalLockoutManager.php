@@ -244,6 +244,28 @@ class LocalLockoutManager {
 	}
 
 	/**
+	 * Check submitted identifier (username or email) against the local allowlist.
+	 *
+	 * @param string   $username Submitted login value.
+	 * @param \WP_User $user     Optional authenticated user object.
+	 * @return bool
+	 */
+	public function is_local_allowlisted_username( $username, $user = null ) {
+		return $this->whitelist_checker->is_local_allowlisted_username( $username, $user );
+	}
+
+	/**
+	 * Check submitted identifier against the local denylist.
+	 *
+	 * @param string   $username Submitted login value.
+	 * @param \WP_User $user     Optional authenticated user object.
+	 * @return bool
+	 */
+	public function is_local_blacklisted_username( $username, $user = null ) {
+		return $this->whitelist_checker->is_local_blacklisted_username( $username, $user );
+	}
+
+	/**
 	 * Clean up old lockouts and retries, and save supplied arrays.
 	 *
 	 * @param array|null $retries  Retries array or null to load from config.

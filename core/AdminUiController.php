@@ -344,7 +344,7 @@ class AdminUiController {
 	 */
 	public function limit_login_success( $username, $user ) {
 
-		if ( ! self::$cloud_app ) {
+		if ( ! LimitLoginAttempts::$cloud_app ) {
 			return;
 		}
 
@@ -372,7 +372,7 @@ class AdminUiController {
 				'url'       => $clean_url,
 			);
 
-			self::$cloud_app->request( 'login', 'post', $data );
+			LimitLoginAttempts::$cloud_app->request( 'login', 'post', $data );
 		}
 	}
 
@@ -807,7 +807,7 @@ class AdminUiController {
 
 				Config::sanitize_options();
 
-				if ( ! empty( $_POST['llar_app_settings'] ) && self::$cloud_app ) {
+				if ( ! empty( $_POST['llar_app_settings'] ) && LimitLoginAttempts::$cloud_app ) {
 
 					if ( ( $app_setup_code = Config::get( 'app_setup_code' ) ) && $setup_result = CloudApp::setup( strrev( $app_setup_code ) ) ) {
 

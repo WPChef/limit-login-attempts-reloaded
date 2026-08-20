@@ -94,9 +94,13 @@ class LoginAuthenticationHandler {
 		}
 
 		$ip = $this->ip_resolver->get_address();
+		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->local_lockout->is_local_allowlisted_username( $username ) ) {
+			return false;
+		}
+
 		if (
 			( ! $this->local_lockout->is_username_whitelisted( $username ) && ! $this->ip_resolver->is_ip_whitelisted( $ip ) )
-			&& ( $this->local_lockout->is_username_blacklisted( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
+			&& ( $this->local_lockout->is_local_blacklisted_username( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
 		) {
 			$error_message = $this->error_presenter->build_lockout_error_message();
 				$this->log_security_event( 'local_blacklist_block', $username, $ip );
@@ -271,7 +275,7 @@ class LoginAuthenticationHandler {
 				// Check if username is blacklisted
 				if (
 					( ! $this->local_lockout->is_username_whitelisted( $username ) && ! $this->ip_resolver->is_ip_whitelisted( $ip ) )
-					&& ( $this->local_lockout->is_username_blacklisted( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
+					&& ( $this->local_lockout->is_local_blacklisted_username( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
 				) {
 
 					LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
@@ -423,7 +427,7 @@ class LoginAuthenticationHandler {
 		}
 		$ip       = $this->ip_resolver->get_address();
 		$user_login = is_a( $user, 'WP_User' ) ? $user->user_login : ( ( ! empty( $user ) && ! is_wp_error( $user ) ) ? $user : '' );
-		$not_locked_out = $this->local_lockout->check_whitelist_ips( false, $ip ) || $this->local_lockout->check_whitelist_usernames( false, $user_login ) || $this->local_lockout->is_limit_login_ok( $username );
+		$not_locked_out = $this->local_lockout->check_whitelist_ips( false, $ip ) || $this->local_lockout->is_local_allowlisted_username( $username, $user ) || $this->local_lockout->check_whitelist_usernames( false, $user_login ) || $this->local_lockout->is_limit_login_ok( $username );
 
 		if ( is_wp_error( $user ) ) {
 			return $user;
@@ -461,8 +465,38 @@ class LoginAuthenticationHandler {
 			$user_login = $user;
 		}
 
+		// Enforce the deny list BEFORE the not-locked-out early return.
+		// Allowlist always wins: skip the denylist for allowlisted users/IPs,
+		// mirroring the early authenticate hook logic.
+		if (
+			! $this->local_lockout->check_whitelist_ips( false, $ip )
+			&& ! $this->local_lockout->is_local_allowlisted_username( $username, $user )
+			&& ! $this->local_lockout->check_whitelist_usernames( false, $user_login )
+			&& ( $this->local_lockout->is_local_blacklisted_username( $username, $user ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
+		) {
+
+			$error = new WP_Error();
+
+			global $limit_login_my_error_shown;
+			$limit_login_my_error_shown = true;
+
+			$err = $this->error_presenter->build_lockout_error_message();
+
+			$error->add( 'username_blacklisted', $err );
+			$this->plugin->all_errors_array['late_hook_errors'] = $err;
+
+			// Prevent fixup_error_messages() from masking the deny-list error with a
+			// generic "incorrect" message when the IP is not yet locked out.
+			remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
+
+			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
+
+			return $error;
+		}
+
 		if (
 			$this->local_lockout->check_whitelist_ips( false, $ip )
+			|| $this->local_lockout->is_local_allowlisted_username( $username, $user )
 			|| $this->local_lockout->check_whitelist_usernames( false, $user_login )
 			|| $this->local_lockout->is_limit_login_ok( $username )
 		) {
@@ -474,18 +508,8 @@ class LoginAuthenticationHandler {
 		global $limit_login_my_error_shown;
 		$limit_login_my_error_shown = true;
 
-		if ( $this->local_lockout->is_username_blacklisted( $user_login ) || $this->ip_resolver->is_ip_blacklisted( $this->ip_resolver->get_address() ) ) {
-
-			$err = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' );
-			$err = ! empty( $err ) ? '<span>' . $err . '</span>' : '';
-
-			$error->add( 'username_blacklisted', $err );
-			$this->plugin->all_errors_array['late_hook_errors'] = $err;
-		} else {
-
-			// This error should be the same as in "shake it" filter below
-			$error->add( 'too_many_retries', $this->error_presenter->error_msg( $username ) );
-		}
+		// This error should be the same as in "shake it" filter below
+		$error->add( 'too_many_retries', $this->error_presenter->error_msg( $username ) );
 
 		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
