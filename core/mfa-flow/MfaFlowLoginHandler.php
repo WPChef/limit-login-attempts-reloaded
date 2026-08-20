@@ -2,9 +2,11 @@
 
 namespace LLAR\Core\MfaFlow;
 
+use LLAR\Core\CloudAclService;
 use LLAR\Core\Config;
 use LLAR\Core\IpAddressResolver;
 use LLAR\Core\LimitLoginAttempts;
+use LLAR\Core\LocalLockoutManager;
 use LLAR\Core\MfaConstants;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,10 +29,24 @@ class MfaFlowLoginHandler {
 	private $ip_resolver;
 
 	/**
-	 * @param IpAddressResolver $ip_resolver Client IP resolver.
+	 * @var LocalLockoutManager
 	 */
-	public function __construct( IpAddressResolver $ip_resolver ) {
-		$this->ip_resolver = $ip_resolver;
+	private $local_lockout;
+
+	/**
+	 * @var CloudAclService
+	 */
+	private $cloud_acl;
+
+	/**
+	 * @param IpAddressResolver   $ip_resolver   Client IP resolver.
+	 * @param LocalLockoutManager $local_lockout Local allowlist/denylist and lockout state.
+	 * @param CloudAclService     $cloud_acl     Cloud ACL service.
+	 */
+	public function __construct( IpAddressResolver $ip_resolver, LocalLockoutManager $local_lockout, CloudAclService $cloud_acl ) {
+		$this->ip_resolver   = $ip_resolver;
+		$this->local_lockout = $local_lockout;
+		$this->cloud_acl     = $cloud_acl;
 	}
 
 	/**
@@ -69,10 +85,22 @@ class MfaFlowLoginHandler {
 	 * @return void
 	 */
 	public function try_mfa_flow_redirect( $username, $is_pre_authenticated = false, $authenticated_user = null ) {
+		// CRITICAL: never fetch or disclose any user info unless password was verified.
 		if ( ! $is_pre_authenticated ) {
 			return;
 		}
 		$ip = $this->ip_resolver->get_address();
+
+		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->local_lockout->is_local_allowlisted_username( $username, $authenticated_user ) ) {
+			return;
+		}
+
+		if ( LimitLoginAttempts::$cloud_app ) {
+			$acl_response = $this->cloud_acl->get_auth_acl_response( $username );
+			if ( is_array( $acl_response ) && ! empty( $acl_response['result'] ) && 'pass' === $acl_response['result'] ) {
+				return;
+			}
+		}
 
 		$mfa_temporarily_disabled = false !== get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
 		$mfa_enabled              = (bool) Config::get( 'mfa_enabled' ) && ! $mfa_temporarily_disabled;
