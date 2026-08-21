@@ -8,13 +8,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Compatibility data for the Debug tab.
  *
  * Shows which LLAR features work with which third-party plugins.
- * Values reflect actual integration code in core/integrations/ and the
- * "Compatible With" list in readme.txt. Empty string means the feature
- * is not integrated with that plugin.
+ * Values reflect the integration code in core/integrations/, the hooks in
+ * core/LimitLoginAttempts.php and the "Compatible With" list in readme.txt.
  *
- * - 'both'  : works in Local and Cloud modes.
- * - 'cloud' : works in Cloud mode only.
- * - ''      : not supported.
+ * - 'both'  : compatible (green check). Also used when a feature is not
+ *             applicable to a plugin (e.g. the plugin has no registration
+ *             or password recovery page of its own and keeps the WordPress
+ *             core flow intact), because such a plugin cannot conflict
+ *             with the feature.
+ * - 'cloud' : compatible in Cloud mode only.
+ * - ''      : not supported yet (custom plugin flow replaces the form).
  *
  * @return array
  */
@@ -22,8 +25,8 @@ return array(
 	'WooCommerce'     => array(
 		'login'    => 'both',
 		'register' => 'cloud',
-		'password' => '',
-		'2fa'      => '',
+		'password' => 'both',
+		'2fa'      => 'cloud',
 		'gdpr'     => '',
 		'error'    => 'both',
 	),
@@ -31,9 +34,9 @@ return array(
 		'login'    => 'both',
 		'register' => '',
 		'password' => '',
-		'2fa'      => '',
+		'2fa'      => 'cloud',
 		'gdpr'     => '',
-		'error'    => '',
+		'error'    => 'both',
 	),
 	'Ultimate Member' => array(
 		'login'    => 'both',
@@ -41,30 +44,30 @@ return array(
 		'password' => '',
 		'2fa'      => '',
 		'gdpr'     => '',
-		'error'    => '',
+		'error'    => 'both',
 	),
 	'Wordfence'       => array(
 		'login'    => 'both',
-		'register' => '',
-		'password' => '',
-		'2fa'      => '',
-		'gdpr'     => '',
-		'error'    => '',
+		'register' => 'both',
+		'password' => 'both',
+		'2fa'      => 'both',
+		'gdpr'     => 'both',
+		'error'    => 'both',
 	),
 	'Sucuri'          => array(
 		'login'    => 'both',
-		'register' => '',
-		'password' => '',
-		'2fa'      => '',
-		'gdpr'     => '',
-		'error'    => '',
+		'register' => 'both',
+		'password' => 'both',
+		'2fa'      => 'both',
+		'gdpr'     => 'both',
+		'error'    => 'both',
 	),
 	'WPS Hide Login'  => array(
 		'login'    => 'both',
-		'register' => '',
-		'password' => '',
-		'2fa'      => '',
-		'gdpr'     => '',
-		'error'    => '',
+		'register' => 'both',
+		'password' => 'both',
+		'2fa'      => 'both',
+		'gdpr'     => 'both',
+		'error'    => 'both',
 	),
 );
