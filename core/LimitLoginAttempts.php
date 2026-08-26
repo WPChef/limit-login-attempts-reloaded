@@ -937,7 +937,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 			return $error;
 		}
 
-		if ( $login_error = $this->get_message() ) {
+		if ( $login_error = $this->error_presenter->get_message() ) {
 
 			return new IXR_Error( 403, strip_tags( $login_error ) );
 		}
