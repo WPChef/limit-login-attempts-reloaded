@@ -415,6 +415,7 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
 
 						<?php if ( $is_active_app_custom && ! empty( $active_app_config['settings'] ) ) : ?>
 							<?php foreach ( $active_app_config['settings'] as $setting_name => $setting_params ) : ?>
+								<?php $setting_params = wp_parse_args( $setting_params, array( 'label' => '', 'description' => '', 'value' => '' ) ); ?>
                                 <tr>
                                     <th scope="row" valign="top"><?php echo $setting_params['label']; ?>
                                         <span class="hint_tooltip-parent">
