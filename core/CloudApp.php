@@ -125,7 +125,15 @@ class CloudApp
 
 		if ( ! empty( $setup_response['error'] ) ) {
 
-			$return['error'] = $setup_response['error'];
+			if ( ! empty( $setup_response['status'] ) ) {
+				// HTTP-level error with a response - the message is user-facing.
+				$return['error'] = $setup_response['error'];
+			} else {
+				// Transport-level failure (DNS, timeout, etc.) - keep the raw error for diagnostics.
+				error_log( 'Limit Login Attempts Reloaded: app setup request transport error - ' . $setup_response['error'] );
+
+				$return['error'] = __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
+			}
 
 		} elseif( $setup_response['status'] === 200 ) {
 
@@ -146,8 +154,19 @@ class CloudApp
 
 	public static function activate_license_key( $setup_code )
 	{
-		$link = strrev( $setup_code );
+		$link         = strrev( $setup_code );
 		$setup_result = self::setup( $link );
+
+		/**
+		 * Filters the result of the remote setup() call.
+		 *
+		 * Intended for integration tests to stub the remote response without
+		 * performing a real HTTP request.
+		 *
+		 * @param array  $setup_result Result from setup().
+		 * @param string $setup_code   Original setup code.
+		 */
+		$setup_result = apply_filters( 'llar_app_setup_result', $setup_result, $setup_code );
 
 		if ( $setup_result['success'] ) {
 
@@ -155,8 +174,32 @@ class CloudApp
 
 				Helpers::cloud_app_update_config( $setup_result['app_config'], true );
 
-				Config::update( Config::OPTION_ACTIVE_APP, 'custom' );
 				Config::update( 'app_setup_code', $setup_code );
+
+				// Verify the setup code persisted before switching the active app, to avoid
+				// an inconsistent state (active app set to "custom" without a setup code).
+				$persisted_code = Config::get( 'app_setup_code' );
+
+				/**
+				 * Filters the read-back value of the persisted setup code.
+				 *
+				 * Intended for integration tests to simulate a storage failure: returning
+				 * a value that differs from $setup_code forces the save-error branch.
+				 *
+				 * @param string $persisted_code Value read back from storage.
+				 * @param string $setup_code     The code that was just saved.
+				 */
+				$persisted_code = apply_filters( 'llar_app_setup_code_readback', $persisted_code, $setup_code );
+
+				if ( $persisted_code !== $setup_code ) {
+
+					$setup_result['success'] = false;
+					$setup_result['error']   = __( 'The settings could not be saved due to an error on this site. Possible causes include a corrupted database or a PHP error. Please check the error logs, verify the database integrity, fix any issues found, and then try again.', 'limit-login-attempts-reloaded' );
+
+					return $setup_result;
+				}
+
+				Config::update( Config::OPTION_ACTIVE_APP, 'custom' );
 
 				$setup_result['app_config']['messages']['setup_success'] =
 					! empty( $setup_result['app_config']['messages']['setup_success'] )

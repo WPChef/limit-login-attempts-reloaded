@@ -238,7 +238,7 @@ a.llar_turquoise {
 .dashicons-secondary {
   margin-left: 8px;
   font-size: 170%;
-  line-height: inherit;
+  line-height: 1;
   position: relative;
   z-index: 1;
   color: $border-element__ghostly-white;
@@ -258,7 +258,7 @@ a.llar_turquoise {
     left: 50%;
     font-size: inherit;
     font-weight: inherit;
-    line-height: inherit;
+    line-height: 1;
     transform: translate(-50%, -50%);
   }
 }

@@ -12,6 +12,10 @@
     font-weight: $text-font-weight;
     color: $typography-primary;
   }
+
+  .dashicons {
+    line-height: 1;
+  }
 }
 
 
@@ -1155,10 +1159,6 @@
   }
 
   &.limit-login-app-dashboard {
-
-    .dashicons {
-      line-height: 1;
-    }
 
     .llar-preloader-wrap {
       position: relative;
