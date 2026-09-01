@@ -1,5 +1,17 @@
 == Changelog ==
 
+= 3.3.7 =
+* Fixed PHP warnings when a cloud app custom setting is missing the label, description, or value field.
+* Added the SameSite=Lax attribute to the login flow cookie for better CSRF protection.
+* Fixed dashicons line-height on all admin pages and dashboard widgets for WordPress 7 compatibility.
+* Fixed the cloud app setup so it verifies the setup code was saved before activating the custom app, preventing an inconsistent state on storage errors.
+
+= 3.3.6 =
+* Refactored the core plugin class into smaller services.
+
+= 3.3.5 =
+* Hardened denylist matching to make username blocking more reliable and consistent. Thanks to Artus KG for finding and reporting this issue.
+
 = 3.3.4 =
 * Fixed icon positioning.
 
