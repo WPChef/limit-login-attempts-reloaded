@@ -123,29 +123,31 @@ class CloudApp
 		$response_data = isset( $setup_response['data'] ) ? $setup_response['data'] : '{}';
 		$setup_response_body = json_decode( $response_data, true );
 
-		if ( ! empty( $setup_response['error'] ) ) {
+		if ( $setup_response['status'] === 200 && empty( $setup_response['error'] ) ) {
 
-			if ( ! empty( $setup_response['status'] ) ) {
-				// HTTP-level error with a response - the message is user-facing.
-				$return['error'] = $setup_response['error'];
-			} else {
-				// Transport-level failure (DNS, timeout, etc.) - keep the raw error for diagnostics.
-				error_log( 'Limit Login Attempts Reloaded: app setup request transport error - ' . $setup_response['error'] );
-
-				$return['error'] = __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
-			}
-
-		} elseif( $setup_response['status'] === 200 ) {
-
-			$return['success'] = true;
+			$return['success']    = true;
 			$return['app_config'] = $setup_response_body;
+
+		} elseif ( ! empty( $setup_response_body['message'] ) ) {
+
+			$return['error']         = $setup_response_body['message'];
+			$return['response_code'] = $setup_response['status'];
+
+		} elseif ( ! empty( $setup_response['error'] ) && empty( $setup_response['status'] ) ) {
+
+			// Transport-level failure (DNS, timeout, etc.) - keep the raw error for diagnostics.
+			error_log( 'Limit Login Attempts Reloaded: app setup request transport error - ' . $setup_response['error'] );
+
+			$return['error'] = __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
+
+		} elseif ( ! empty( $setup_response['error'] ) ) {
+
+			$return['error']         = $setup_response['error'];
+			$return['response_code'] = $setup_response['status'];
 
 		} else {
 
-			$return['error'] = ( ! empty( $setup_response_body['message'] ) )
-								? $setup_response_body['message']
-								: __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
-
+			$return['error']         = __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
 			$return['response_code'] = $setup_response['status'];
 		}
 
