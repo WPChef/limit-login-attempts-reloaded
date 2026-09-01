@@ -45,6 +45,11 @@ class CloudApp
 	private $stats_cache = array();
 
 	/**
+	 * @var array
+	 */
+	private $missing_config_fields = array();
+
+	/**
 	 * App constructor.
 	 * @param array $config
 	 */
@@ -54,9 +59,37 @@ class CloudApp
 			return false;
 		}
 
-		$this->id = 'app_' . $config['id'];
-		$this->api = $config['api'];
+		// Read required fields defensively: a missing field must surface as a
+		// user-facing error later, not as a PHP warning here.
+		$this->id = isset( $config['id'] ) ? 'app_' . $config['id'] : null;
+		$this->api = isset( $config['api'] ) ? $config['api'] : null;
 		$this->config = $config;
+
+		foreach ( array( 'id', 'api', 'header', 'key' ) as $required_field ) {
+			if ( empty( $config[ $required_field ] ) ) {
+				$this->missing_config_fields[] = $required_field;
+			}
+		}
+	}
+
+	/**
+	 * Names of the required config fields that are missing.
+	 *
+	 * @return array
+	 */
+	public function get_missing_config_fields()
+	{
+		return $this->missing_config_fields;
+	}
+
+	/**
+	 * Whether the app config has every field required to call the Cloud API.
+	 *
+	 * @return bool
+	 */
+	public function is_config_valid()
+	{
+		return empty( $this->missing_config_fields );
 	}
 
 	/**
@@ -275,6 +308,15 @@ class CloudApp
      */
     public function info()
     {
+        if ( ! $this->is_config_valid() ) {
+            if ( ! defined( 'LLAR_FAILED_INFO_NOTICE_SHOWN' ) ) {
+                define( 'LLAR_FAILED_INFO_NOTICE_SHOWN', true );
+                $this->render_config_incomplete_notice();
+            }
+
+            return false;
+        }
+
         $info = $this->request_info();
 
         if ( ! $info && ! defined( 'LLAR_FAILED_INFO_NOTICE_SHOWN' ) && $this->is_info_network_failure() ) {
@@ -306,7 +348,10 @@ class CloudApp
     private function request_info()
     {
         if ( ! $this->api ) {
-            throw new Exception( 'Cloud API endpoint is not configured.' );
+            error_log( 'LLAR: CloudApp info request skipped - Cloud API endpoint is not configured. Missing fields: ' . implode( ', ', $this->missing_config_fields ) );
+            $this->last_error_message = 'Cloud API endpoint is not configured.';
+
+            return false;
         }
 
         $headers   = array();
@@ -335,6 +380,21 @@ class CloudApp
         }
 
         return $info;
+    }
+
+    /**
+     * Admin notice when the stored app config is incomplete: a required
+     * field (e.g. "api") is missing, so no Cloud API call is possible.
+     */
+    private function render_config_incomplete_notice()
+    {
+        $message = sprintf(
+            /* translators: %s: comma-separated list of missing config fields. */
+            __( 'The Cloud App configuration is incomplete (missing field(s): %s). Please re-enter your Setup Code on the Settings tab to re-import the app configuration.', 'limit-login-attempts-reloaded' ),
+            esc_html( implode( ', ', $this->missing_config_fields ) )
+        );
+
+        echo '<div class="notice notice-error" style="display: block;"><p>' . $message . '</p></div>';
     }
 
     /**
@@ -537,6 +597,15 @@ class CloudApp
 	{
 		if ( ! $method ) {
 			throw new Exception( 'You must specify API method.' );
+		}
+
+		// An incomplete config cannot produce a valid API call — fail
+		// gracefully instead of building a request from missing values.
+		if ( ! $this->is_config_valid() ) {
+			error_log( 'LLAR: CloudApp request skipped - app config is incomplete. Missing fields: ' . implode( ', ', $this->missing_config_fields ) );
+			$this->last_error_message = 'Cloud API endpoint is not configured.';
+
+			return false;
 		}
 
 		$headers = array();
