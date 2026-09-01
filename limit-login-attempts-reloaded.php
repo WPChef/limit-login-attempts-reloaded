@@ -5,7 +5,7 @@ Description: Block excessive login attempts and protect your site against brute 
 Author: Limit Login Attempts Reloaded
 Author URI: https://www.limitloginattempts.com/
 Text Domain: limit-login-attempts-reloaded
-Version: 3.3.6
+Version: 3.3.7
 
 Copyright 2008-2012 Johan Eenfeldt, 2016–present Limit Login Attempts Reloaded
 */
@@ -223,7 +223,7 @@ defined( 'LLA_MFA_FLOW_OTP_TTL' ) || define( 'LLA_MFA_FLOW_OTP_TTL', 180 );
 defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD', 60 );
 defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX', 5 );
 defined( 'LLA_MFA_FLOW_LOG_PREFIX' ) || define( 'LLA_MFA_FLOW_LOG_PREFIX', 'LLAR MFA Flow: ' );
-/* POST field name for confirming a suspected-prefetch rescue request (value 1 + WP nonce). */
+/* POST field name for confirming a suspected-prefetch rescue request (value 1). */
 defined( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG' ) || define( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG', 'llar_rescue_confirm' );
 
 /** MFA Flow: API and session (values from constants, no UI settings). */
