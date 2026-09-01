@@ -5,7 +5,7 @@ Description: Block excessive login attempts and protect your site against brute 
 Author: Limit Login Attempts Reloaded
 Author URI: https://www.limitloginattempts.com/
 Text Domain: limit-login-attempts-reloaded
-Version: 3.3.1
+Version: 3.3.7
 
 Copyright 2008-2012 Johan Eenfeldt, 2016–present Limit Login Attempts Reloaded
 */
@@ -141,43 +141,41 @@ defined( 'LLA_LOCKOUT_HISTORY_RETENTION_DAYS' ) || define( 'LLA_LOCKOUT_HISTORY_
 defined( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL' ) || define( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL', 10 );
 
 /**
- * Digest definitions (name, interval, templates). Default on/off profiles for new vs
+ * Digest definitions (interval, templates). Default on/off profiles for new vs
  * existing installs are defined in Config::get_digest_defaults_for_*_install().
- * Format: {key: {name: string, interval_seconds: int, is_default: bool, ...}}
+ * Format: {key: {interval_seconds: int, is_default: bool, ...}}
+ *
+ * Translatable digest strings (labels and email preheaders) are not stored here.
+ * Add or change them in DigestUiController::get_digest_label() and
+ * DigestUiController::get_digest_preview_text() so i18n tools can extract literals.
  */
 defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 	'LLA_DIGEST_DEFINITIONS',
 	array(
 		'daily' => array(
-			'name' => 'Daily',
 			'interval_seconds' => DAY_IN_SECONDS,
 			'is_default' => true,
 			'email_template' => 'digest-daily-content.php',
 			'show_threat_level' => false,
 			'intro_text' => '',
-			'preview_text' => 'Daily digest of lockouts, top IPs, and what to review next.',
 			'unsubscribe_text' => '{unsubscribe}',
 			'title_mode' => 'date',
 		),
 		'weekly' => array(
-			'name' => 'Weekly',
 			'interval_seconds' => WEEK_IN_SECONDS,
 			'is_default' => true,
 			'email_template' => 'digest-weekly-content.php',
 			'show_threat_level' => true,
 			'intro_text' => '',
-			'preview_text' => 'Weekly digest of lockouts, top IPs, and what to review next.',
 			'unsubscribe_text' => '{unsubscribe}',
 			'title_mode' => 'range',
 		),
 		'monthly' => array(
-			'name' => 'Monthly',
 			'interval_seconds' => MONTH_IN_SECONDS,
 			'is_default' => true,
 			'email_template' => 'digest-monthly-content.php',
 			'show_threat_level' => true,
 			'intro_text' => '',
-			'preview_text' => 'Monthly digest of lockouts, top IPs, and what to review next.',
 			'unsubscribe_text' => '{unsubscribe}',
 			'title_mode' => 'month',
 		),
@@ -225,7 +223,7 @@ defined( 'LLA_MFA_FLOW_OTP_TTL' ) || define( 'LLA_MFA_FLOW_OTP_TTL', 180 );
 defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_PERIOD', 60 );
 defined( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX' ) || define( 'LLA_MFA_FLOW_HANDSHAKE_RATE_LIMIT_MAX', 5 );
 defined( 'LLA_MFA_FLOW_LOG_PREFIX' ) || define( 'LLA_MFA_FLOW_LOG_PREFIX', 'LLAR MFA Flow: ' );
-/* POST field name for confirming a suspected-prefetch rescue request (value 1 + WP nonce). */
+/* POST field name for confirming a suspected-prefetch rescue request (value 1). */
 defined( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG' ) || define( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG', 'llar_rescue_confirm' );
 
 /** MFA Flow: API and session (values from constants, no UI settings). */

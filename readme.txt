@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 5.0
-Tested up to: 7.0
-Stable tag: 3.3.1
+Tested up to: 7.1
+Stable tag: 3.3.7
 
 WordPress login security with brute force protection, Two-factor authentication (2FA/MFA), firewall, IP/country blocking, and login monitoring
 
@@ -250,29 +250,29 @@ By default, you will need to copy and paste the lists to each site manually. For
 
 == Changelog ==
 
-= 3.3.1 =
-* Fixed email digest behavior in cloud mode.
+= 3.3.7 =
+* Fixed PHP warnings when a cloud app custom setting is missing the label, description, or value field.
+* Added the SameSite=Lax attribute to the login flow cookie for better CSRF protection.
+* Fixed dashicons line-height on all admin pages and dashboard widgets for WordPress 7 compatibility.
+* Fixed the cloud app setup so it verifies the setup code was saved before activating the custom app, preventing an inconsistent state on storage errors.
 
-= 3.3.0 =
-* Added daily, weekly, and monthly email digests summarizing lockouts and failed login attempts.
+= 3.3.6 =
+* Refactored the core plugin class into smaller services.
 
-= 3.2.4 =
-* Added compatibility with WordPress 7.
+= 3.3.5 =
+* Hardened denylist matching to make username blocking more reliable and consistent. Thanks to Artus KG for finding and reporting this issue.
 
-= 3.2.3 =
-* Broadened MFA state cookie scope to the site root for wider path coverage.
-* Fixed Active Lockouts counter not showing on the local Logs page.
+= 3.3.4 =
+* Fixed icon positioning.
 
-= 3.2.2 =
-* Improved MFA rescue link compatibility on hosts with external object cache enabled.
+= 3.3.3 =
+* Fixed the dashboard incorrectly showing a network error when the cloud API is reachable but access is restricted.
+* Fixed a PHP 8.1+ deprecation notice by avoiding implicit float-to-int conversion in the lockout email notification check.
+* Made the email digest labels (Daily/Weekly/Monthly) and preview text translatable.
+* Allowed safelisted usernames (matched case-insensitively, including by email) to bypass lockouts and the MFA prompt on login.
 
-= 3.2.1 =
-* Fixed rescue link behavior and updated the format.
-* 2FA is pre-selected for administrators; when no user groups are selected, 2FA stays disabled.
-
-= 3.2.0 =
-* Improved WooCommerce registration protection in cloud mode.
-* Refactored third-party integrations into a unified architecture (WooCommerce, MemberPress).
+= 3.3.2 =
+* Improved usage information in cloud mode.
 
 = Earlier versions =
 For the changelog of earlier versions, please refer to the <a href="https://plugins.svn.wordpress.org/limit-login-attempts-reloaded/trunk/changelog.txt">changelog.txt</a> file.
