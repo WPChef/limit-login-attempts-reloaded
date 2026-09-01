@@ -1044,44 +1044,60 @@ class Ajax
                 'email' => $email
             ];
 
-            $response = Http::post( $url_api, array(
-                'data' => $data
-            ) );
+            $response      = Http::post( $url_api, array( 'data' => $data ) );
+            $response_body = json_decode( $response['data'], true );
 
             if ( ! empty( $response['error'] ) ) {
 
-                wp_send_json_error( $response['error'] );
+                // Transport-level failure (DNS, connection refused, etc.).
+                wp_send_json_error( array( 'msg' => $this->micro_cloud_fallback_error_message() ) );
 
-            } else {
+            } elseif ( 200 !== (int) $response['status'] ) {
 
-                $response_body = json_decode( $response['data'], true );
+                // Non-200 from /checkout/network (e.g. program closed, trial denied).
+                // Surface the API-provided message to the user as-is.
+                $message = ( ! empty( $response_body['message'] ) )
+                    ? (string) $response_body['message']
+                    : $this->micro_cloud_fallback_error_message();
 
-                if ( ! empty( $response_body['setup_code'] ) ) {
+                wp_send_json_error( array( 'msg' => $message ) );
 
-	                if ( $key_result = CloudApp::activate_license_key( $response_body['setup_code'] ) ) {
+            } elseif ( ! empty( $response_body['setup_code'] ) ) {
 
-		                if ( $key_result['success'] ) {
+                if ( $key_result = CloudApp::activate_license_key( $response_body['setup_code'] ) ) {
 
-			                wp_send_json_success( array(
-				                'msg' => ( $key_result )
-			                ) );
-		                } else {
+	                if ( $key_result['success'] ) {
 
-			                wp_send_json_error( array(
-				                'msg' => ( $key_result )
-			                ) );
-		                }
+		                wp_send_json_success( array(
+			                'msg' => ( $key_result )
+		                ) );
 	                } else {
 
 		                wp_send_json_error( array(
-			                'msg' => $key_result['error']
+			                'msg' => ( $key_result )
 		                ) );
 	                }
+                } else {
+
+	                wp_send_json_error( array(
+		                'msg' => $key_result['error']
+	                ) );
                 }
             }
         }
 
 	    wp_send_json_error( array() );
+    }
+
+    /**
+     * Generic message shown when Micro Cloud activation fails without an
+     * explicit API message (transport error or unexpected response).
+     *
+     * @return string
+     */
+    private function micro_cloud_fallback_error_message() {
+
+        return __( 'The Micro Cloud service is temporarily unavailable. Please try again later.', 'limit-login-attempts-reloaded' );
     }
 
 
