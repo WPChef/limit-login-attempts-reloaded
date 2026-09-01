@@ -2,6 +2,7 @@
 
 = 3.3.7 =
 * Fixed PHP warnings when a cloud app custom setting is missing the label, description, or value field.
+* Added the SameSite=Lax attribute to the login flow cookie for better CSRF protection.
 
 = 3.3.6 =
 * Refactored the core plugin class into smaller services.
