@@ -133,6 +133,8 @@ class AdminNoticesController {
 					'type'    => 'notice-success',
 					'class'   => 'llar-notice-review-wrap',
 					'content' => $content,
+					// The view is a fully rendered trusted notice (own wrapper markup, inline JS).
+					'raw'     => true,
 				);
 			case 'mfa-recovery-links-expired':
 				$mfa_url = isset( $args['mfa_url'] ) ? (string) $args['mfa_url'] : '';
@@ -175,6 +177,7 @@ class AdminNoticesController {
 		$notice_type    = $config['type'];
 		$notice_class   = $config['class'];
 		$notice_content = $config['content'];
+		$notice_raw     = ! empty( $config['raw'] );
 		include $path;
 	}
 }
