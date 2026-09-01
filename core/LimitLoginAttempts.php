@@ -1608,6 +1608,30 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		return 'on' === $limit_password_recovery;
 	}
 
+	/**
+	 * Cloud ACL response for the current password-recovery request.
+	 *
+	 * Mirrors RegistrationLimiter::llar_api_response(): the gateway is
+	 * detected from the current request (wp_lostpassword on the
+	 * wp-login.php lostpassword form).
+	 *
+	 * @param string $user_data User login or email.
+	 * @return array|false
+	 */
+	private function llar_api_response( $user_data ) {
+		if ( ! self::$cloud_app ) {
+			return false;
+		}
+
+		return self::$cloud_app->acl_check(
+			array(
+				'ip'      => Helpers::get_all_ips(),
+				'login'   => $user_data,
+				'gateway' => Helpers::detect_gateway(),
+			)
+		);
+	}
+
 
 
 
