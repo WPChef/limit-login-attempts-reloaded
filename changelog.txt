@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.3.7 =
+* Fixed PHP warnings when a cloud app custom setting is missing the label, description, or value field.
+
 = 3.3.6 =
 * Refactored the core plugin class into smaller services.
 
