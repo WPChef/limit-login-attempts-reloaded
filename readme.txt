@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 5.0
-Tested up to: 7.0
-Stable tag: 3.3.5
+Tested up to: 7.1
+Stable tag: 3.3.6
 
 WordPress login security with brute force protection, Two-factor authentication (2FA/MFA), firewall, IP/country blocking, and login monitoring
 
@@ -250,6 +250,9 @@ By default, you will need to copy and paste the lists to each site manually. For
 
 == Changelog ==
 
+= 3.3.6 =
+* Refactored the core plugin class into smaller services.
+
 = 3.3.5 =
 * Hardened denylist matching to make username blocking more reliable and consistent. Thanks to Artus KG for finding and reporting this issue.
 
@@ -264,15 +267,6 @@ By default, you will need to copy and paste the lists to each site manually. For
 
 = 3.3.2 =
 * Improved usage information in cloud mode.
-
-= 3.3.1 =
-* Fixed email digest behavior in cloud mode.
-
-= 3.3.0 =
-* Added daily, weekly, and monthly email digests summarizing lockouts and failed login attempts.
-
-= 3.2.4 =
-* Added compatibility with WordPress 7.
 
 = Earlier versions =
 For the changelog of earlier versions, please refer to the <a href="https://plugins.svn.wordpress.org/limit-login-attempts-reloaded/trunk/changelog.txt">changelog.txt</a> file.
