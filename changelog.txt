@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.3.6 =
+* Refactored the core plugin class into smaller services.
+
 = 3.3.5 =
 * Hardened denylist matching to make username blocking more reliable and consistent. Thanks to Artus KG for finding and reporting this issue.
 
