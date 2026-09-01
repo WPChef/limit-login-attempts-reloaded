@@ -61,7 +61,18 @@ class LoginFlowTransientStore {
 		}
 		$t = wp_generate_password( 32, false, false );
 		$expire = time() + self::ttl();
-		setcookie( self::COOKIE_NAME, $t, $expire, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
+		if ( version_compare( PHP_VERSION, '7.3', '>=' ) ) {
+			setcookie( self::COOKIE_NAME, $t, array(
+				'expires'  => $expire,
+				'path'     => COOKIEPATH,
+				'domain'   => COOKIE_DOMAIN,
+				'secure'   => is_ssl(),
+				'httponly' => true,
+				'samesite' => 'Lax',
+			) );
+		} else {
+			setcookie( self::COOKIE_NAME, $t, $expire, COOKIEPATH . '; SameSite=Lax', COOKIE_DOMAIN, is_ssl(), true );
+		}
 		$_COOKIE[ self::COOKIE_NAME ] = $t;
 
 		return $t;

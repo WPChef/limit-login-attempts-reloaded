@@ -153,25 +153,19 @@ class Ajax
 
 			$setup_code = sanitize_text_field( $_POST['code'] );
 
-			if ( $key_result = CloudApp::activate_license_key( $setup_code ) ) {
+			$key_result = CloudApp::activate_license_key( $setup_code );
 
-			    if ( $key_result['success'] ) {
+			if ( $key_result['success'] ) {
 
-				    wp_send_json_success( array(
-					    'msg' => ( $key_result['app_config']['messages']['setup_success'] )
-				    ) );
-                } else {
+				wp_send_json_success( array(
+					'msg' => ( $key_result['app_config']['messages']['setup_success'] )
+				) );
+			} else {
 
-				    wp_send_json_error( array(
-					    'msg' => ( $key_result['error'] )
-				    ) );
-                }
-            } else {
-
-                wp_send_json_error( array(
-                    'msg' => $key_result['error']
-                ) );
-            }
+				wp_send_json_error( array(
+					'msg' => ( $key_result['error'] )
+				) );
+			}
 		}
 
 		wp_send_json_error( array(
