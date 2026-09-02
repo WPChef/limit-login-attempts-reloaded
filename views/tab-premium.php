@@ -7,14 +7,9 @@
  *
  */
 
-use LLAR\Core\Config;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
-
-$setup_code = Config::get( 'app_setup_code' );
-$is_local_no_empty_setup_code = ( ! $is_active_app_custom && ! empty( $setup_code ) );
 
 $min_plan = 'Premium';
 $plans = $this->array_name_plans();
@@ -30,7 +25,7 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
             <path opacity="0.7" d="M38.9531 12.3636C39.025 11.8567 39.0625 11.3405 39.0625 10.8182C39.0625 4.85273 34.1562 0 28.125 0C24.2531 0 20.6781 2.06164 18.7437 5.27927C17.7687 4.85582 16.7156 4.63636 15.625 4.63636C11.3187 4.63636 7.8125 8.10436 7.8125 12.3636C7.8125 12.5213 7.81563 12.6758 7.82813 12.8273C3.26875 14.1347 0 18.3322 0 23.1818C0 29.1473 4.90625 34 10.9375 34H39.0625C45.0938 34 50 29.1473 50 23.1818C50 17.1824 45.0812 12.3142 38.9531 12.3636Z" fill="#ECFAFB"/>
         </svg>
         <div class="llar-notification-premium-text">
-		    <?php _e( 'New users receive <span>37% OFF</span> their first year when they upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
+		    <?php _e( 'New users receive <span>50% OFF</span> their first year when they upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
         </div>
         <svg class="llar-cloud-right" xmlns="http://www.w3.org/2000/svg" width="50" height="34" viewBox="0 0 50 34" fill="none">
             <path opacity="0.7" d="M38.9531 12.3636C39.025 11.8567 39.0625 11.3405 39.0625 10.8182C39.0625 4.85273 34.1562 0 28.125 0C24.2531 0 20.6781 2.06164 18.7437 5.27927C17.7687 4.85582 16.7156 4.63636 15.625 4.63636C11.3187 4.63636 7.8125 8.10436 7.8125 12.3636C7.8125 12.5213 7.81563 12.6758 7.82813 12.8273C3.26875 14.1347 0 18.3322 0 23.1818C0 29.1473 4.90625 34 10.9375 34H39.0625C45.0938 34 50 29.1473 50 23.1818C50 17.1824 45.0812 12.3142 38.9531 12.3636Z" fill="#ECFAFB"/>
@@ -118,19 +113,9 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
         $features = array(
             'Features',
             'Free',
-            'Micro Cloud',
-            'Premium',
-            'Premium +',
-            'Professional',
+            'Hobby',
+            'Business',
         );
-
-        if ( $is_local_no_empty_setup_code ) {
-	        $key = array_search('Micro Cloud', $features);
-
-	        if ($key !== false) {
-		        unset($features[$key]);
-	        }
-        }
 
         $compare_list = require LLA_PLUGIN_DIR . '/resources/compare-plans-data.php';
     ?>
