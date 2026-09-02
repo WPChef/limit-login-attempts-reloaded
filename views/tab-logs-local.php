@@ -151,7 +151,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                     <?php _e( 'Upgrade To Premium For Our Login Firewall', 'limit-login-attempts-reloaded' ); ?>
                 </div>
                 <a href="https://www.limitloginattempts.com/info.php?id=20" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
-                    <?php _e( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+                    <?php _e( '14 Day Trial', 'limit-login-attempts-reloaded' ); ?>
                 </a>
             </div>
             <div class="add_block__list">
@@ -259,7 +259,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                         <?php _e( 'Upgrade Today For Enhanced Logs & IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <a href="<?php echo $url_try_for_free . 'logs-log' ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
-                        <?php _e( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( '14 Day Trial', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>
                 <div class="add_block__list">

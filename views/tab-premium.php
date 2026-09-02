@@ -7,14 +7,9 @@
  *
  */
 
-use LLAR\Core\Config;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
-
-$setup_code = Config::get( 'app_setup_code' );
-$is_local_no_empty_setup_code = ( ! $is_active_app_custom && ! empty( $setup_code ) );
 
 $min_plan = 'Premium';
 $plans = $this->array_name_plans();
@@ -44,7 +39,7 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
             <div class="text">
                 <div class="title">
                     <?php if ( $block_sub_group && $block_sub_group === 'Micro Cloud' ) : ?>
-                        <?php _e( 'Limit Login Attempts Reloaded <strong>Micro Cloud</strong>', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Limit Login Attempts Reloaded <strong>Free Trial</strong>', 'limit-login-attempts-reloaded' ); ?>
                     <?php else : ?>
 	                    <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
                     <?php endif; ?>
@@ -90,7 +85,7 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
                 </span>
             <?php elseif( $block_sub_group ) : ?>
                 <?php if( $block_sub_group === 'Micro Cloud' ) : ?>
-                    <?php _e( 'You are currently using Micro Cloud, which provides access to premium cloud app on a limited basis. To prevent interruption, upgrade to one of our paid plans below.', 'limit-login-attempts-reloaded' ); ?>
+                    <?php _e( 'You are currently using the 14 day free trial, which provides access to the premium cloud app on a limited basis. To prevent interruption, upgrade to one of our paid plans below.', 'limit-login-attempts-reloaded' ); ?>
                 <?php else : ?>
                     <?php _e( 'You are currently using the premium version of Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded' ); ?>
 	            <?php endif ?>
@@ -118,19 +113,10 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
         $features = array(
             'Features',
             'Free',
-            'Micro Cloud',
             'Premium',
             'Premium +',
             'Professional',
         );
-
-        if ( $is_local_no_empty_setup_code ) {
-	        $key = array_search('Micro Cloud', $features);
-
-	        if ($key !== false) {
-		        unset($features[$key]);
-	        }
-        }
 
         $compare_list = require LLA_PLUGIN_DIR . '/resources/compare-plans-data.php';
     ?>

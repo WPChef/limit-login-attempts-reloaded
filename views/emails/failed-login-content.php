@@ -38,7 +38,7 @@ $admin_name = isset( $admin_name ) && is_string( $admin_name ) ? $admin_name : '
 </p>
 <p style="margin:0 0 12px;font-size:14px;line-height:1.5;color:#333333;">
 	<?php esc_html_e( 'Experiencing frequent attacks or degraded performance?', 'limit-login-attempts-reloaded' ); ?>
-	<a href="{premium_url}" target="_blank" rel="noopener"><?php esc_html_e( 'Try Micro Cloud.', 'limit-login-attempts-reloaded' ); ?></a>
+	<a href="{premium_url}" target="_blank" rel="noopener"><?php esc_html_e( 'Start your 14 day free trial.', 'limit-login-attempts-reloaded' ); ?></a>
 </p>
 <?php include LLA_PLUGIN_DIR . 'views/emails/failed-login-faq.php'; ?>
 <?php if ( Helpers::is_mu() ) : ?>

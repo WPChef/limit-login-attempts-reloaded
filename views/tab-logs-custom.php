@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit();
                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/micro-cloud-image-min.png">
                 </div>
                 <div class="col-second">
-	                <?php _e( 'Your Micro Cloud plan has exhausted its requests for the month, which is required to operate the Login Firewall.', 'limit-login-attempts-reloaded' ) ?>
+	                <?php _e( 'Your 14 day free trial has ended, which is required to operate the Login Firewall.', 'limit-login-attempts-reloaded' ) ?>
                 </div>
                 <div class="col-third">
                     <div class="row-first">
