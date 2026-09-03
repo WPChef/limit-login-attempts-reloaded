@@ -91,6 +91,9 @@ class LoginAuthenticationHandler {
 
 				return true;
 			}
+
+			// Cloud ACL allowed the login — in cloud mode the local blacklist is failover only.
+			return false;
 		}
 
 		$ip = $this->ip_resolver->get_address();
@@ -465,11 +468,23 @@ class LoginAuthenticationHandler {
 			$user_login = $user;
 		}
 
+		// In cloud mode the local deny list is failover only: when the cloud ACL
+		// answered with a non-deny result, the late hook must not enforce it
+		// (mirrors the early hook in check_login_blocked()).
+		$cloud_acl_allowed = false;
+		if ( LimitLoginAttempts::$cloud_app ) {
+			$cloud_acl_response = $this->cloud_acl->get_auth_acl_response( $username );
+			if ( $cloud_acl_response && 'deny' !== $cloud_acl_response['result'] ) {
+				$cloud_acl_allowed = true;
+			}
+		}
+
 		// Enforce the deny list BEFORE the not-locked-out early return.
 		// Allowlist always wins: skip the denylist for allowlisted users/IPs,
 		// mirroring the early authenticate hook logic.
 		if (
-			! $this->local_lockout->check_whitelist_ips( false, $ip )
+			! $cloud_acl_allowed
+			&& ! $this->local_lockout->check_whitelist_ips( false, $ip )
 			&& ! $this->local_lockout->is_local_allowlisted_username( $username, $user )
 			&& ! $this->local_lockout->check_whitelist_usernames( false, $user_login )
 			&& ( $this->local_lockout->is_local_blacklisted_username( $username, $user ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
