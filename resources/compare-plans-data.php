@@ -3,161 +3,108 @@
  * Array for plans comparison block
  *
  * @var string $active_app
+ * @var array  $display_plans
  * @var LLAR\Core\LimitLoginAttempts $this
  *
  */
 
-use LLAR\Core\Config;
+$min_plan = 'custom' === $active_app ? 'Micro Cloud' : 'Free';
 
-$min_plan = $active_app === 'custom' ? 'Micro Cloud' : 'Free';
+$plans       = $this->array_name_plans();
+$actual_plan = 'custom' === $active_app ? $this->info_sub_group() : $min_plan;
 
-$plans = $this->array_name_plans();
-$actual_plan = $active_app === 'custom' ? $this->info_sub_group() : $min_plan;
-$upgrade_url = $active_app === 'custom' ? $this->info_upgrade_url() : 'https://www.limitloginattempts.com/info.php?from=plugin-premium-tab-upgrade';
+$actual_rate = isset( $plans[ $actual_plan ] ) ? $plans[ $actual_plan ] : $plans['Free'];
 
-$attribute = [];
-foreach ( $plans as $plan => $rate ) {
+$upgrade_urls = array(
+	'Hobby'    => ( 'Micro Cloud' === $min_plan )
+		? add_query_arg( 'id', '9', $this->info_upgrade_url() )
+		: 'https://www.limitloginattempts.com/info.php?id=29',
+	'Business' => ( 'Micro Cloud' === $min_plan )
+		? add_query_arg( 'id', '11', $this->info_upgrade_url() )
+		: 'https://www.limitloginattempts.com/info.php?id=30',
+);
 
-    if ( $rate < $plans[$actual_plan] ) {
-        $attribute[$plan]['attr'] = '';
-        $attribute[$plan]['title'] = '';
-    }
-    elseif ( $rate === $plans[$actual_plan] ) {
-	    $attribute[$plan]['attr'] = 'class="button menu__item button__transparent_orange llar-disabled"';
-	    $attribute[$plan]['title'] = __( 'Installed', 'limit-login-attempts-reloaded' );
-    }
-    elseif ( $plan === 'Micro Cloud' ) {
-        $attribute[$plan]['attr'] = 'class="button menu__item button__orange button_micro_cloud"';
-        $attribute[$plan]['title'] = __( 'Get Started (Free)', 'limit-login-attempts-reloaded' );
-    }
-    else {
-		if ( $plan === 'Premium' ) {
-			$attribute[$plan]['attr'] = 'class="button menu__item button__orange" href="' . esc_url(( $min_plan === 'Micro Cloud' )	? add_query_arg('id', '9', $this->info_upgrade_url())	: "https://www.limitloginattempts.com/info.php?id=24") . '" target="_blank"';
-		}
-		if ( $plan === 'Premium +' ) {
-			$attribute[$plan]['attr'] = 'class="button menu__item button__orange" href="' . esc_url(( $min_plan === 'Micro Cloud' )	? add_query_arg('id', '10', $this->info_upgrade_url())	: "https://www.limitloginattempts.com/info.php?id=25") . '" target="_blank"';
-		}
-		if ( $plan === 'Professional' ) {
-			$attribute[$plan]['attr'] = 'class="button menu__item button__orange" href="' . esc_url(( $min_plan === 'Micro Cloud' )	? add_query_arg('id', '11', $this->info_upgrade_url())	: "https://www.limitloginattempts.com/info.php?id=26") . '" target="_blank"';
-		}
-        $attribute[$plan]['title'] = __( 'Upgrade now', 'limit-login-attempts-reloaded' );
-    }
+$buttons_row = array();
+foreach ( $display_plans as $plan ) {
+	$plan_rate = isset( $plans[ $plan ] ) ? $plans[ $plan ] : $plans['Free'];
+
+	if ( $plan_rate < $actual_rate ) {
+		$buttons_row[ $plan ] = '';
+	} elseif ( $plan_rate === $actual_rate || ( 'Free' === $plan && 'local' === $active_app ) ) {
+		$buttons_row[ $plan ] = '<a class="button menu__item button__transparent_orange llar-disabled">' . esc_html__( 'Installed', 'limit-login-attempts-reloaded' ) . '</a>';
+	} elseif ( isset( $upgrade_urls[ $plan ] ) ) {
+		$buttons_row[ $plan ] = '<a class="button menu__item button__orange" href="' . esc_url( $upgrade_urls[ $plan ] ) . '" target="_blank">' . esc_html__( 'Upgrade now', 'limit-login-attempts-reloaded' ) . '</a>';
+	} else {
+		$buttons_row[ $plan ] = '';
+	}
 }
 
 $lock = '<img src="' . LLA_PLUGIN_URL . 'assets/css/images/icon-lock-bw.png" class="icon-lock">';
-$yes = '<span class="llar_orange">&#x2713;</span>';
+$yes  = '<span class="llar_orange">&#x2713;</span>';
+
+// Every paid plan.
+$yes_row          = array_fill_keys( $display_plans, $yes );
+$paid_row         = $yes_row;
+$paid_row['Free'] = $lock;
+
+// Micro Cloud, Premium Plus, Pro, Business, Agency.
+$full_row            = $paid_row;
+$full_row['Hobby']   = $lock;
+$full_row['Premium'] = $lock;
+
+// Micro Cloud, Pro, Business, Agency.
+$top_row                 = $full_row;
+$top_row['Premium Plus'] = $lock;
+
+$performance_optimizer_row = $paid_row;
+/* translators: %s: line break. */
+$performance_optimizer_row['Micro Cloud']  = $yes . '<span class="description">' . sprintf( esc_html__( '1k for first month%s(100 per month after)', 'limit-login-attempts-reloaded' ), '<br>' ) . '</span>';
+$performance_optimizer_row['Hobby']        = $yes . '<span class="description">' . esc_html__( '50k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Premium']      = $yes . '<span class="description">' . esc_html__( '100k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Premium Plus'] = $yes . '<span class="description">' . esc_html__( '200k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Pro']          = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Business']     = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Agency']       = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
 
 $compare_list = array(
-	'buttons_header'                                => array(
-		'Free'          => '<a ' . $attribute['Free']['attr'] . '>' . esc_html__( $attribute['Free']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-		'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['attr'] . '>' . esc_html__( $attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-		'Premium'       => '<a ' . $attribute['Premium']['attr'] . '>' . esc_html__( $attribute['Premium']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-		'Premium +'     => '<a ' . $attribute['Premium +']['attr'] . '>' . esc_html__( $attribute['Premium +']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-		'Professional'  => '<a ' . $attribute['Professional']['attr'] . '>' . esc_html__( $attribute['Professional']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-	),
-    __( 'Limit Number of Retry Attempts', 'limit-login-attempts-reloaded' )                => array(
-        'Free'          => $yes,
-        'Micro Cloud'   => $yes,
-        'Premium'       => $yes,
-        'Premium +'     => $yes,
-        'Professional'  => $yes,
-    ),
-    __( 'Configurable Lockout Timing', 'limit-login-attempts-reloaded' )                   => array(
-        'Free'          => $yes,
-        'Micro Cloud'   => $yes,
-        'Premium'       => $yes,
-        'Premium +'     => $yes,
-        'Professional'  => $yes,
-    ),
-    __( 'Login Firewall', 'limit-login-attempts-reloaded' )                                => array(
-        'description'   =>  __( "Secure your login page with our cutting-edge login firewall, defending against unauthorized access attempts and protecting your users' accounts and sensitive information.", 'limit-login-attempts-reloaded' ),
-        'Free'          => $lock,
-        'Micro Cloud'   => $yes,
-        'Premium'       => $yes,
-        'Premium +'     => $yes,
-        'Professional'  => $yes,
-    ),
-    __( 'Performance Optimizer', 'limit-login-attempts-reloaded' )                         => array(
-        'description'   =>  __( 'Absorb failed login attempts from brute force bots in the cloud to keep your website at its optimal performance.', 'limit-login-attempts-reloaded' ),
-        'Free'          => $lock,
-        'Micro Cloud'   => $yes . '<span class="description">' . sprintf(esc_html__( '1k for first month%s(100 per month after)', 'limit-login-attempts-reloaded' ),'<br>') . '</span>',
-        'Premium'       => $yes . '<span class="description">' . esc_html__( '100k requests per month', 'limit-login-attempts-reloaded' ) . '</span>',
-        'Premium +'     => $yes . '<span class="description">' . esc_html__( '200k requests per month', 'limit-login-attempts-reloaded' ) . '</span>',
-        'Professional'  => $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>',
-    ),
-	__( 'Successful Login Logs', 'limit-login-attempts-reloaded' )                         => array(
-		'description'   =>  __( 'Ensure the security and integrity of your website by logging your successful logins.', 'limit-login-attempts-reloaded' ),
-		'Free'          => $lock,
-		'Micro Cloud'   => $yes,
-		'Premium'       => $yes,
-		'Premium +'     => $yes,
-		'Professional'  => $yes,
-	),
-    __( 'Block By Country', 'limit-login-attempts-reloaded' )                              => array(
-        'description'   =>  __( 'Disable IPs from any region to disable logins.', 'limit-login-attempts-reloaded' ),
-        'Free'          => $lock,
-        'Micro Cloud'   => $yes,
-        'Premium'       => $lock,
-        'Premium +'     => $yes,
-        'Professional'  => $yes,
-    ),
-    __( 'Access Blocklist of Malicious IPs', 'limit-login-attempts-reloaded' )             => array(
-        'description'   =>  __( 'Add another layer of protection from brute force bots by accessing a global database of known IPs with malicious activity.', 'limit-login-attempts-reloaded' ),
-        'Free'          => $lock,
-        'Micro Cloud'   => $yes,
-        'Premium'       => $lock,
-        'Premium +'     => $yes,
-        'Professional'  => $yes,
-    ),
-    __( 'Auto IP Blocklist', 'limit-login-attempts-reloaded' )                             => array(
-        'description'   =>  __( 'Automatically add malicious IPs to your blocklist when triggered by the system.', 'limit-login-attempts-reloaded' ),
-        'Free'          => $lock,
-        'Micro Cloud'   => $yes,
-        'Premium'       => $lock,
-        'Premium +'     => $lock,
-        'Professional'  => $yes,
-    ),
-    __( 'Access Active Cloud Blocklist', 'limit-login-attempts-reloaded' )                 => array(
-        'description'   =>  __( 'Use system wide data from over 10,000 WordPress websites to identify and block malicious IPs. This is an active list in real-time.', 'limit-login-attempts-reloaded' ),
-        'Free'          => $lock,
-        'Micro Cloud'   => $yes,
-        'Premium'       => $lock,
-        'Premium +'     => $lock,
-        'Professional'  => $yes,
-    ),
-    __( 'Intelligent IP Blocking', 'limit-login-attempts-reloaded' )                       => array(
-        'description'   =>  __( 'Use active IP database via the cloud to automatically block users before they are able to make a failed login.', 'limit-login-attempts-reloaded' ),
-        'Free'          => $lock,
-        'Micro Cloud'   => $yes,
-        'Premium'       => $yes,
-        'Premium +'     => $yes,
-        'Professional'  => $yes,
-    ),
-    __( 'Synchronize Lockouts & Safelists/Blocklists', 'limit-login-attempts-reloaded' )   => array(
-        'description'   =>  __( 'Lockouts & safelists/blocklists can be shared between multiple domains to enhance protection.', 'limit-login-attempts-reloaded' ),
-        'Free'          => $lock,
-        'Micro Cloud'   => $lock,
-        'Premium'       => $yes,
-        'Premium +'     => $yes,
-        'Professional'  => $yes,
-    ),
-    __( 'Premium Support', 'limit-login-attempts-reloaded' )                               => array(
-        'description'   =>  sprintf(
-        	__( 'Receive 1 on 1 technical support via email for any issues. Free support availabe in the <a href="%s" target="_blank">WordPress support forum</a>.', 'limit-login-attempts-reloaded' ),
-	        'https://wordpress.org/support/plugin/limit-login-attempts-reloaded/'),
-        'Free'          => $lock,
-        'Micro Cloud'   => $lock,
-        'Premium'       => $yes,
-        'Premium +'     => $yes,
-        'Professional'  => $yes,
-    ),
-    'buttons_footer'                                => array(
-	    'Free'          => '<a ' . $attribute['Free']['attr'] . '>' . esc_html__( $attribute['Free']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-	    'Micro Cloud'   => '<a ' . $attribute['Micro Cloud']['attr'] . '>' . esc_html__( $attribute['Micro Cloud']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-	    'Premium'       => '<a ' . $attribute['Premium']['attr'] . '>' . esc_html__( $attribute['Premium']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-	    'Premium +'     => '<a ' . $attribute['Premium +']['attr'] . '>' . esc_html__( $attribute['Premium +']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-	    'Professional'  => '<a ' . $attribute['Professional']['attr'] . '>' . esc_html__( $attribute['Professional']['title'], 'limit-login-attempts-reloaded' ) . '</a>',
-    ),
+	'buttons_header' => $buttons_row,
+	__( 'Limit Number of Retry Attempts', 'limit-login-attempts-reloaded' ) => $yes_row,
+	__( 'Configurable Lockout Timing', 'limit-login-attempts-reloaded' ) => $yes_row,
+	__( 'Login Firewall', 'limit-login-attempts-reloaded' ) => array(
+		'description' => __( "Secure your login page with our cutting-edge login firewall, defending against unauthorized access attempts and protecting your users' accounts and sensitive information.", 'limit-login-attempts-reloaded' ),
+	) + $paid_row,
+	__( 'Performance Optimizer', 'limit-login-attempts-reloaded' ) => array(
+		'description' => __( 'Absorb failed login attempts from brute force bots in the cloud to keep your website at its optimal performance.', 'limit-login-attempts-reloaded' ),
+	) + $performance_optimizer_row,
+	__( 'Successful Login Logs', 'limit-login-attempts-reloaded' ) => array(
+		'description' => __( 'Ensure the security and integrity of your website by logging your successful logins.', 'limit-login-attempts-reloaded' ),
+	) + $paid_row,
+	__( 'Block By Country', 'limit-login-attempts-reloaded' ) => array(
+		'description' => __( 'Disable IPs from any region to disable logins.', 'limit-login-attempts-reloaded' ),
+	) + $full_row,
+	__( 'Access Blocklist of Malicious IPs', 'limit-login-attempts-reloaded' ) => array(
+		'description' => __( 'Add another layer of protection from brute force bots by accessing a global database of known IPs with malicious activity.', 'limit-login-attempts-reloaded' ),
+	) + $full_row,
+	__( 'Auto IP Blocklist', 'limit-login-attempts-reloaded' ) => array(
+		'description' => __( 'Automatically add malicious IPs to your blocklist when triggered by the system.', 'limit-login-attempts-reloaded' ),
+	) + $top_row,
+	__( 'Access Active Cloud Blocklist', 'limit-login-attempts-reloaded' ) => array(
+		'description' => __( 'Use system wide data from over 10,000 WordPress websites to identify and block malicious IPs. This is an active list in real-time.', 'limit-login-attempts-reloaded' ),
+	) + $top_row,
+	__( 'Intelligent IP Blocking', 'limit-login-attempts-reloaded' ) => array(
+		'description' => __( 'Use active IP database via the cloud to automatically block users before they are able to make a failed login.', 'limit-login-attempts-reloaded' ),
+	) + $paid_row,
+	__( 'Synchronize Lockouts & Safelists/Blocklists', 'limit-login-attempts-reloaded' ) => array(
+		'description' => __( 'Lockouts & safelists/blocklists can be shared between multiple domains to enhance protection.', 'limit-login-attempts-reloaded' ),
+	) + $paid_row,
+	__( 'Premium Support', 'limit-login-attempts-reloaded' ) => array(
+		'description' => sprintf(
+			/* translators: %s: WordPress support forum URL. */
+			__( 'Receive 1 on 1 technical support via email for any issues. Free support availabe in the <a href="%s" target="_blank">WordPress support forum</a>.', 'limit-login-attempts-reloaded' ),
+			'https://wordpress.org/support/plugin/limit-login-attempts-reloaded/'
+		),
+	) + $paid_row,
+	'buttons_footer' => $buttons_row,
 );
 
 return $compare_list;
