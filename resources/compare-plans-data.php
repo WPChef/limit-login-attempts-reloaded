@@ -34,13 +34,13 @@ foreach ( $display_plans as $plan ) {
 	} elseif ( $plan === 'Hobby' ) {
 		$hobby_url = ( $min_plan === 'Micro Cloud' )
 			? add_query_arg( 'id', '9', $this->info_upgrade_url() )
-			: 'https://www.limitloginattempts.com/info.php?id=24';
+			: 'https://www.limitloginattempts.com/info.php?id=29';
 		$attribute[ $plan ]['attr']  = 'class="button menu__item button__orange" href="' . esc_url( $hobby_url ) . '" target="_blank"';
 		$attribute[ $plan ]['title'] = __( 'Upgrade now', 'limit-login-attempts-reloaded' );
 	} elseif ( $plan === 'Business' ) {
 		$business_url = ( $min_plan === 'Micro Cloud' )
 			? add_query_arg( 'id', '11', $this->info_upgrade_url() )
-			: 'https://www.limitloginattempts.com/info.php?id=26';
+			: 'https://www.limitloginattempts.com/info.php?id=30';
 		$attribute[ $plan ]['attr']  = 'class="button menu__item button__orange" href="' . esc_url( $business_url ) . '" target="_blank"';
 		$attribute[ $plan ]['title'] = __( 'Upgrade now', 'limit-login-attempts-reloaded' );
 	}
