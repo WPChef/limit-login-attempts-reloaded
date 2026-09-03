@@ -87,7 +87,12 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
                 <?php if( $block_sub_group === 'Micro Cloud' ) : ?>
                     <?php _e( 'You are currently using Micro Cloud, which provides access to premium cloud app on a limited basis. To prevent interruption, upgrade to one of our paid plans below.', 'limit-login-attempts-reloaded' ); ?>
                 <?php else : ?>
-                    <?php _e( 'You are currently using the premium version of Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded' ); ?>
+                    <?php
+                    /* translators: %s: current plan name. */
+                    printf(
+                        esc_html__( 'You are currently using the %s version of Limit Login Attempts Reloaded.', 'limit-login-attempts-reloaded' ),
+                        '<strong>' . esc_html( ucfirst( $block_sub_group ) ) . '</strong>'
+                    ); ?>
 	            <?php endif ?>
             <?php endif ?>
         </div>
@@ -110,12 +115,22 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
     </h3>
 
     <?php
-        $features = array(
-            'Features',
-            'Free',
-            'Hobby',
-            'Business',
-        );
+        $plans_order  = array( 'Free', 'Micro Cloud', 'Hobby', 'Premium', 'Premium Plus', 'Pro', 'Business', 'Agency' );
+        $base_plans   = array( 'Free', 'Hobby', 'Business' );
+        $extra_plans  = array( 'Micro Cloud', 'Premium', 'Premium Plus', 'Pro', 'Agency' );
+
+        $actual_plan = ( 'custom' === $active_app ) ? $block_sub_group : 'Free';
+
+        $display_plans = array();
+        foreach ( $plans_order as $plan ) {
+            $is_installed_extra_plan = ( $plan === $actual_plan && in_array( $plan, $extra_plans, true ) );
+
+            if ( in_array( $plan, $base_plans, true ) || $is_installed_extra_plan ) {
+                $display_plans[] = $plan;
+            }
+        }
+
+        $features = array_merge( array( 'Features' ), $display_plans );
 
         $compare_list = require LLA_PLUGIN_DIR . '/resources/compare-plans-data.php';
     ?>
