@@ -262,11 +262,11 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 			'rate'          => 30,
 		),
 		'plus'          => array(
-			'name'          => 'Premium Plus',
+			'name'          => 'Premium +',
 			'rate'          => 40,
 		),
 		'pro'           => array(
-			'name'          => 'Pro',
+			'name'          => 'Professional',
 			'rate'          => 50,
 		),
 		'business'      => array(

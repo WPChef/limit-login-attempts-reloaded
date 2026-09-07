@@ -47,24 +47,24 @@ $yes_row          = array_fill_keys( $display_plans, $yes );
 $paid_row         = $yes_row;
 $paid_row['Free'] = $lock;
 
-// Micro Cloud, Premium Plus, Pro, Business, Agency.
-$full_row            = $paid_row;
+// Micro Cloud, Premium +, Professional, Business, Agency.
+$full_row             = $paid_row;
 $full_row['Personal'] = $lock;
-$full_row['Premium'] = $lock;
+$full_row['Premium']  = $lock;
 
-// Micro Cloud, Pro, Business, Agency.
-$top_row                 = $full_row;
-$top_row['Premium Plus'] = $lock;
+// Micro Cloud, Professional, Business, Agency.
+$top_row                = $full_row;
+$top_row['Premium +']   = $lock;
 
 $performance_optimizer_row = $paid_row;
 /* translators: %s: line break. */
-$performance_optimizer_row['Micro Cloud']  = $yes . '<span class="description">' . sprintf( esc_html__( '1k for first month%s(100 per month after)', 'limit-login-attempts-reloaded' ), '<br>' ) . '</span>';
-$performance_optimizer_row['Personal']     = $yes . '<span class="description">' . esc_html__( '50k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Premium']      = $yes . '<span class="description">' . esc_html__( '100k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Premium Plus'] = $yes . '<span class="description">' . esc_html__( '200k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Pro']          = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Business']     = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Agency']       = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Micro Cloud']    = $yes . '<span class="description">' . sprintf( esc_html__( '1k for first month%s(100 per month after)', 'limit-login-attempts-reloaded' ), '<br>' ) . '</span>';
+$performance_optimizer_row['Personal']       = $yes . '<span class="description">' . esc_html__( '50k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Premium']        = $yes . '<span class="description">' . esc_html__( '100k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Premium +']      = $yes . '<span class="description">' . esc_html__( '200k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Professional']   = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Business']       = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Agency']         = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
 
 $compare_list = array(
 	'buttons_header' => $buttons_row,

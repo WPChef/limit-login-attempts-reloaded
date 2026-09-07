@@ -115,9 +115,9 @@ $is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min
     </h3>
 
     <?php
-        $plans_order  = array( 'Free', 'Micro Cloud', 'Personal', 'Premium', 'Premium Plus', 'Pro', 'Business', 'Agency' );
+        $plans_order  = array( 'Free', 'Micro Cloud', 'Personal', 'Premium', 'Premium +', 'Professional', 'Business', 'Agency' );
         $base_plans   = array( 'Free', 'Personal', 'Business' );
-        $extra_plans  = array( 'Micro Cloud', 'Premium', 'Premium Plus', 'Pro', 'Agency' );
+        $extra_plans  = array( 'Micro Cloud', 'Premium', 'Premium +', 'Professional', 'Agency' );
 
         $actual_plan = ( 'custom' === $active_app ) ? $block_sub_group : 'Free';
 
