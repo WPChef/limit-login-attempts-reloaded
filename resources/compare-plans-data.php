@@ -16,7 +16,7 @@ $actual_plan = 'custom' === $active_app ? $this->info_sub_group() : $min_plan;
 $actual_rate = isset( $plans[ $actual_plan ] ) ? $plans[ $actual_plan ] : $plans['Free'];
 
 $upgrade_urls = array(
-	'Hobby'    => ( 'Micro Cloud' === $min_plan )
+	'Personal' => ( 'Micro Cloud' === $min_plan )
 		? add_query_arg( 'id', '9', $this->info_upgrade_url() )
 		: 'https://www.limitloginattempts.com/info.php?id=29',
 	'Business' => ( 'Micro Cloud' === $min_plan )
@@ -49,7 +49,7 @@ $paid_row['Free'] = $lock;
 
 // Micro Cloud, Premium Plus, Pro, Business, Agency.
 $full_row            = $paid_row;
-$full_row['Hobby']   = $lock;
+$full_row['Personal'] = $lock;
 $full_row['Premium'] = $lock;
 
 // Micro Cloud, Pro, Business, Agency.
@@ -59,7 +59,7 @@ $top_row['Premium Plus'] = $lock;
 $performance_optimizer_row = $paid_row;
 /* translators: %s: line break. */
 $performance_optimizer_row['Micro Cloud']  = $yes . '<span class="description">' . sprintf( esc_html__( '1k for first month%s(100 per month after)', 'limit-login-attempts-reloaded' ), '<br>' ) . '</span>';
-$performance_optimizer_row['Hobby']        = $yes . '<span class="description">' . esc_html__( '50k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Personal']     = $yes . '<span class="description">' . esc_html__( '50k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
 $performance_optimizer_row['Premium']      = $yes . '<span class="description">' . esc_html__( '100k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
 $performance_optimizer_row['Premium Plus'] = $yes . '<span class="description">' . esc_html__( '200k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
 $performance_optimizer_row['Pro']          = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';

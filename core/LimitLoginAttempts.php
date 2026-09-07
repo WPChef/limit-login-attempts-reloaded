@@ -254,7 +254,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 			'rate'          => 20,
 		),
 		'hobby'         => array(
-			'name'          => 'Hobby',
+			'name'          => 'Personal',
 			'rate'          => 25,
 		),
 		'premium'       => array(
