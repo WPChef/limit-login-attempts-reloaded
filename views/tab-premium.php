@@ -13,7 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $min_plan = 'Personal';
 $plans = $this->array_name_plans();
-$is_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min_plan] );
+$current_plan_rate = isset( $plans[ $block_sub_group ] ) ? $plans[ $block_sub_group ] : 0;
+$is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan ] );
 ?>
 
 <div id="llar-setting-page-premium" class="llar-premium-page-wrapper">
