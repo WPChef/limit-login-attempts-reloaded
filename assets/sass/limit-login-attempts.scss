@@ -16,6 +16,58 @@
   .dashicons {
     line-height: 1;
   }
+
+  .button,
+  button.button,
+  a.button {
+    .dashicons,
+    i.dashicons {
+      vertical-align: middle;
+    }
+  }
+
+  .llar-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 40px 0 5px;
+
+    .title_page {
+      margin-top: 0;
+
+      span {
+        color: $typography-secondary;
+        font-size: 80%;
+        font-weight: 400;
+        margin-left: 10px;
+      }
+    }
+
+    .right-link {
+      font-size: 16px;
+      line-height: 1.625;
+      margin-right: 5px;
+      text-align: center;
+
+      .button,
+      button.button,
+      a.button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .dashicons-image-rotate {
+        font-size: 16px;
+        vertical-align: middle;
+      }
+
+      .dashicons-editor-help {
+        vertical-align: middle;
+      }
+    }
+  }
 }
 
 
@@ -844,40 +896,6 @@
 
   @extend #llar-setting-page-logs;
 
-  .llar-table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin: 40px 0 5px;
-
-    .title_page {
-      margin-top: 0;
-
-      span {
-        color: $typography-secondary;
-        font-size: 80%;
-        font-weight: 400;
-        margin-left: 10px;
-      }
-    }
-
-    .right-link {
-      font-size: 16px;
-      line-height: 1.625;
-      margin-right: 5px;
-      text-align: center;
-
-      .dashicons-image-rotate {
-        font-size: 16px;
-        vertical-align: middle;
-      }
-
-      .dashicons-editor-help {
-        vertical-align: middle;
-      }
-    }
-  }
-
   .llar-table-scroll-wrap {
     max-height: 400px;
     padding: 0 20px 30px;
@@ -1661,15 +1679,47 @@
             }
 
             .dashicons {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              width: 18px;
+              height: 18px;
+              font-size: 18px;
+              line-height: 1;
+              margin: 0;
+              vertical-align: middle;
               color: $typography-additional;
 
+              &:before {
+                line-height: 1;
+                width: 18px;
+                height: 18px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              }
+
               @include _1599 {
-                line-height: unset;
+                line-height: 1;
                 font-size: 14px;
+                width: 16px;
+                height: 16px;
+
+                &:before {
+                  width: 16px;
+                  height: 16px;
+                }
               }
 
               @include _767 {
                 font-size: 12px;
+                width: 14px;
+                height: 14px;
+
+                &:before {
+                  width: 14px;
+                  height: 14px;
+                }
               }
             }
           }
@@ -1725,24 +1775,55 @@
           }
 
           &.llar-add-login-open {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 30px;
             min-width: unset;
             min-height: 30px;
             padding: 0;
             text-align: center;
-            line-height: 20px;
+            line-height: 1;
             cursor: pointer;
             color: $typography-additional;
             border-color: currentColor;
+
+            .dashicons,
+            i.dashicons {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              width: 20px;
+              height: 20px;
+              font-size: 20px;
+              line-height: 1;
+              margin: 0;
+              vertical-align: unset;
+
+              &:before {
+                line-height: 1;
+                width: 20px;
+                height: 20px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              }
+            }
 
             @include _767 {
               width: 25px;
               min-height: 25px;
 
-              .dashicons {
-                font-size: 14px;
+              .dashicons,
+              i.dashicons {
+                width: 16px;
                 height: 16px;
+                font-size: 14px;
+
+                &:before {
+                  width: 16px;
+                  height: 16px;
+                }
               }
             }
 
@@ -1759,6 +1840,8 @@
 
         &.button-open {
           padding: 0 2px;
+          vertical-align: middle;
+          text-align: center;
         }
 
         &.cell-login {
