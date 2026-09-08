@@ -106,12 +106,17 @@
               vertical-align: middle;
 
               &.gdpr-information-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
 
                 &:after {
                   position: relative;
                   font-size: inherit;
-                  line-height: inherit;
+                  line-height: 1;
                   right: 0;
+                  top: auto;
+                  transform: none;
                   vertical-align: middle;
                   color: $typography-additional;
                 }
