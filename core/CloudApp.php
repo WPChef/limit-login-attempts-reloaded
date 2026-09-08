@@ -45,6 +45,11 @@ class CloudApp
 	private $stats_cache = array();
 
 	/**
+	 * @var array
+	 */
+	private $missing_config_fields = array();
+
+	/**
 	 * App constructor.
 	 * @param array $config
 	 */
@@ -54,9 +59,37 @@ class CloudApp
 			return false;
 		}
 
-		$this->id = 'app_' . $config['id'];
-		$this->api = $config['api'];
+		// Read required fields defensively: a missing field must surface as a
+		// user-facing error later, not as a PHP warning here.
+		$this->id = isset( $config['id'] ) ? 'app_' . $config['id'] : null;
+		$this->api = isset( $config['api'] ) ? $config['api'] : null;
 		$this->config = $config;
+
+		foreach ( array( 'id', 'api', 'header', 'key' ) as $required_field ) {
+			if ( empty( $config[ $required_field ] ) ) {
+				$this->missing_config_fields[] = $required_field;
+			}
+		}
+	}
+
+	/**
+	 * Names of the required config fields that are missing.
+	 *
+	 * @return array
+	 */
+	public function get_missing_config_fields()
+	{
+		return $this->missing_config_fields;
+	}
+
+	/**
+	 * Whether the app config has every field required to call the Cloud API.
+	 *
+	 * @return bool
+	 */
+	public function is_config_valid()
+	{
+		return empty( $this->missing_config_fields );
 	}
 
 	/**
@@ -123,29 +156,31 @@ class CloudApp
 		$response_data = isset( $setup_response['data'] ) ? $setup_response['data'] : '{}';
 		$setup_response_body = json_decode( $response_data, true );
 
-		if ( ! empty( $setup_response['error'] ) ) {
+		if ( $setup_response['status'] === 200 && empty( $setup_response['error'] ) ) {
 
-			if ( ! empty( $setup_response['status'] ) ) {
-				// HTTP-level error with a response - the message is user-facing.
-				$return['error'] = $setup_response['error'];
-			} else {
-				// Transport-level failure (DNS, timeout, etc.) - keep the raw error for diagnostics.
-				error_log( 'Limit Login Attempts Reloaded: app setup request transport error - ' . $setup_response['error'] );
-
-				$return['error'] = __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
-			}
-
-		} elseif( $setup_response['status'] === 200 ) {
-
-			$return['success'] = true;
+			$return['success']    = true;
 			$return['app_config'] = $setup_response_body;
+
+		} elseif ( ! empty( $setup_response_body['message'] ) ) {
+
+			$return['error']         = $setup_response_body['message'];
+			$return['response_code'] = $setup_response['status'];
+
+		} elseif ( ! empty( $setup_response['error'] ) && empty( $setup_response['status'] ) ) {
+
+			// Transport-level failure (DNS, timeout, etc.) - keep the raw error for diagnostics.
+			error_log( 'Limit Login Attempts Reloaded: app setup request transport error - ' . $setup_response['error'] );
+
+			$return['error'] = __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
+
+		} elseif ( ! empty( $setup_response['error'] ) ) {
+
+			$return['error']         = $setup_response['error'];
+			$return['response_code'] = $setup_response['status'];
 
 		} else {
 
-			$return['error'] = ( ! empty( $setup_response_body['message'] ) )
-								? $setup_response_body['message']
-								: __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
-
+			$return['error']         = __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
 			$return['response_code'] = $setup_response['status'];
 		}
 
@@ -273,6 +308,15 @@ class CloudApp
      */
     public function info()
     {
+        if ( ! $this->is_config_valid() ) {
+            if ( ! defined( 'LLAR_FAILED_INFO_NOTICE_SHOWN' ) ) {
+                define( 'LLAR_FAILED_INFO_NOTICE_SHOWN', true );
+                $this->render_config_incomplete_notice();
+            }
+
+            return false;
+        }
+
         $info = $this->request_info();
 
         if ( ! $info && ! defined( 'LLAR_FAILED_INFO_NOTICE_SHOWN' ) && $this->is_info_network_failure() ) {
@@ -304,7 +348,10 @@ class CloudApp
     private function request_info()
     {
         if ( ! $this->api ) {
-            throw new Exception( 'Cloud API endpoint is not configured.' );
+            error_log( 'LLAR: CloudApp info request skipped - Cloud API endpoint is not configured. Missing fields: ' . implode( ', ', $this->missing_config_fields ) );
+            $this->last_error_message = 'Cloud API endpoint is not configured.';
+
+            return false;
         }
 
         $headers   = array();
@@ -333,6 +380,21 @@ class CloudApp
         }
 
         return $info;
+    }
+
+    /**
+     * Admin notice when the stored app config is incomplete: a required
+     * field (e.g. "api") is missing, so no Cloud API call is possible.
+     */
+    private function render_config_incomplete_notice()
+    {
+        $message = sprintf(
+            /* translators: %s: comma-separated list of missing config fields. */
+            __( 'The Cloud App configuration is incomplete (missing field(s): %s). Please re-enter your Setup Code on the Settings tab to re-import the app configuration.', 'limit-login-attempts-reloaded' ),
+            esc_html( implode( ', ', $this->missing_config_fields ) )
+        );
+
+        echo '<div class="notice notice-error" style="display: block;"><p>' . $message . '</p></div>';
     }
 
     /**
@@ -535,6 +597,15 @@ class CloudApp
 	{
 		if ( ! $method ) {
 			throw new Exception( 'You must specify API method.' );
+		}
+
+		// An incomplete config cannot produce a valid API call — fail
+		// gracefully instead of building a request from missing values.
+		if ( ! $this->is_config_valid() ) {
+			error_log( 'LLAR: CloudApp request skipped - app config is incomplete. Missing fields: ' . implode( ', ', $this->missing_config_fields ) );
+			$this->last_error_message = 'Cloud API endpoint is not configured.';
+
+			return false;
 		}
 
 		$headers = array();

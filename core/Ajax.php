@@ -1044,60 +1044,53 @@ class Ajax
                 'email' => $email
             ];
 
-            $response      = Http::post( $url_api, array( 'data' => $data ) );
-            $response_body = json_decode( $response['data'], true );
+            $response = Http::post( $url_api, array(
+                'data' => $data
+            ) );
 
             if ( ! empty( $response['error'] ) ) {
 
-                // Transport-level failure (DNS, connection refused, etc.).
-                wp_send_json_error( array( 'msg' => $this->micro_cloud_fallback_error_message() ) );
+                wp_send_json_error( array(
+                    'message' => is_string( $response['error'] ) ? $response['error'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
+                ) );
 
-            } elseif ( 200 !== (int) $response['status'] ) {
+            } else {
 
-                // Non-200 from /checkout/network (e.g. program closed, trial denied).
-                // Surface the API-provided message to the user as-is.
-                $message = ( ! empty( $response_body['message'] ) )
-                    ? (string) $response_body['message']
-                    : $this->micro_cloud_fallback_error_message();
+                $response_body = json_decode( $response['data'], true );
 
-                wp_send_json_error( array( 'msg' => $message ) );
+                if ( ! empty( $response_body['setup_code'] ) ) {
 
-            } elseif ( ! empty( $response_body['setup_code'] ) ) {
+	                if ( $key_result = CloudApp::activate_license_key( $response_body['setup_code'] ) ) {
 
-                if ( $key_result = CloudApp::activate_license_key( $response_body['setup_code'] ) ) {
+		                if ( $key_result['success'] ) {
 
-	                if ( $key_result['success'] ) {
+			                wp_send_json_success( array(
+				                'msg' => ( $key_result )
+			                ) );
+		                } else {
 
-		                wp_send_json_success( array(
-			                'msg' => ( $key_result )
-		                ) );
+			                wp_send_json_error( array(
+				                'message' => ! empty( $key_result['error'] ) ? $key_result['error'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
+			                ) );
+		                }
 	                } else {
 
 		                wp_send_json_error( array(
-			                'msg' => ( $key_result )
+			                'message' => __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
 		                ) );
 	                }
                 } else {
 
-	                wp_send_json_error( array(
-		                'msg' => $key_result['error']
-	                ) );
+                    wp_send_json_error( array(
+                        'message' => ! empty( $response_body['message'] ) ? $response_body['message'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
+                    ) );
                 }
             }
         }
 
-	    wp_send_json_error( array() );
-    }
-
-    /**
-     * Generic message shown when Micro Cloud activation fails without an
-     * explicit API message (transport error or unexpected response).
-     *
-     * @return string
-     */
-    private function micro_cloud_fallback_error_message() {
-
-        return __( 'The Micro Cloud service is temporarily unavailable. Please try again later.', 'limit-login-attempts-reloaded' );
+	    wp_send_json_error( array(
+            'message' => __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
+        ) );
     }
 
 

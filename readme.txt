@@ -255,6 +255,8 @@ By default, you will need to copy and paste the lists to each site manually. For
 * Added the SameSite=Lax attribute to the login flow cookie for better CSRF protection.
 * Fixed dashicons line-height on all admin pages and dashboard widgets for WordPress 7 compatibility.
 * Fixed the cloud app setup so it verifies the setup code was saved before activating the custom app, preventing an inconsistent state on storage errors.
+* Fixed the review admin notice buttons not working because its inline script was being stripped by output sanitization.
+* Fixed the Micro Cloud setup so it surfaces the actual server error message to admins and handles an incomplete app configuration gracefully instead of failing silently.
 
 = 3.3.6 =
 * Refactored the core plugin class into smaller services.
