@@ -419,13 +419,28 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .dashicons {
   line-height: 1;
 }
+.toplevel_page_limit-login-attempts .dashicons:before {
+  line-height: 1;
+}
 .toplevel_page_limit-login-attempts .button .dashicons,
 .toplevel_page_limit-login-attempts .button i.dashicons,
 .toplevel_page_limit-login-attempts button.button .dashicons,
 .toplevel_page_limit-login-attempts button.button i.dashicons,
 .toplevel_page_limit-login-attempts a.button .dashicons,
 .toplevel_page_limit-login-attempts a.button i.dashicons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   vertical-align: middle;
+}
+.toplevel_page_limit-login-attempts .button .dashicons:before,
+.toplevel_page_limit-login-attempts .button i.dashicons:before,
+.toplevel_page_limit-login-attempts button.button .dashicons:before,
+.toplevel_page_limit-login-attempts button.button i.dashicons:before,
+.toplevel_page_limit-login-attempts a.button .dashicons:before,
+.toplevel_page_limit-login-attempts a.button i.dashicons:before {
+  line-height: 1;
 }
 .toplevel_page_limit-login-attempts .llar-table-header {
   display: flex;
@@ -456,12 +471,30 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   justify-content: center;
   gap: 4px;
 }
-.toplevel_page_limit-login-attempts .llar-table-header .right-link .dashicons-image-rotate {
+.toplevel_page_limit-login-attempts .llar-table-header .right-link .hint_tooltip-parent {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+.toplevel_page_limit-login-attempts .llar-table-header .right-link .dashicons-image-rotate,
+.toplevel_page_limit-login-attempts .llar-table-header .right-link .dashicons-editor-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 1;
   vertical-align: middle;
 }
-.toplevel_page_limit-login-attempts .llar-table-header .right-link .dashicons-editor-help {
-  vertical-align: middle;
+.toplevel_page_limit-login-attempts .llar-table-header .right-link .dashicons-image-rotate:before,
+.toplevel_page_limit-login-attempts .llar-table-header .right-link .dashicons-editor-help:before {
+  width: 16px;
+  height: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .limit-login-page-settings {
@@ -1291,12 +1324,32 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .button.llar-app-log-action-btn {
   min-width: 35px;
   text-align: center;
-  display: inline-block;
-  line-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   cursor: pointer;
 }
-#llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .button.llar-app-log-action-btn i {
+#llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .button.llar-app-log-action-btn i,
+#llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .button.llar-app-log-action-btn .dashicons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 1;
+  margin: 0;
   vertical-align: middle;
+}
+#llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .button.llar-app-log-action-btn i:before,
+#llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .button.llar-app-log-action-btn .dashicons:before {
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td .button.llar-app-log-action-btn:hover i {
   color: #3c8dbc;
@@ -1411,6 +1464,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .llar-form-table tbody td select {
   min-width: 200px;
   margin-right: 0;
+  background: #FDFDFD url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234ACAD8FF'%3e%3cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") no-repeat right 8px center;
+  background-size: 16px 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 28px;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .llar-form-table tbody td .button {
   min-width: 20px;
@@ -1449,9 +1507,35 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: rgba(255, 150, 155, 0.1490196078);
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .llar-form-table tbody .llar-app-acl-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  min-width: 30px;
+  min-height: 30px;
+  padding: 0;
+  line-height: 1;
   color: #EC4652;
   border-color: #EC4652;
   background-color: rgba(255, 150, 155, 0.1490196078);
+}
+#llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .llar-form-table tbody .llar-app-acl-remove .dashicons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 1;
+  margin: 0;
+}
+#llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .llar-form-table tbody .llar-app-acl-remove .dashicons:before {
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 #llar-setting-page-logs__active.limit-login-app-dashboard .llar-app-acl-rules .app-rules-col .llar-form-table .origin {
   float: right;
@@ -3607,7 +3691,14 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button .dashicons, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button .dashicons {
   margin-left: 15px;
-  line-height: inherit;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .button .dashicons:before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .button .dashicons:before {
+  line-height: 1;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-error {
   display: none;
@@ -3846,11 +3937,18 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   position: relative;
   vertical-align: middle;
 }
+#llar-setting-page-premium .llar-premium-page-promo .section-1 .text .links li a.gdpr-information-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .text .links li a.gdpr-information-link:after {
   position: relative;
   font-size: inherit;
-  line-height: inherit;
+  line-height: 1;
   right: 0;
+  top: auto;
+  transform: none;
   vertical-align: middle;
   color: #A4A8B7;
 }
@@ -4159,6 +4257,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   text-align: center;
 }
 #llar-setting-page-help.llar-help-page .section-1 .block .actions .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-transform: uppercase;
   font-size: 18px;
   line-height: 1.4;
