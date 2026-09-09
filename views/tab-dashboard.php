@@ -167,9 +167,11 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         $checklist = Config::get( 'checklist' );
         $is_checklist =  $checklist === 'true' ? ' checked disabled' : '';
 
-        $min_plan = 'Premium';
-        $plans = $this->array_name_plans();
-        $upgrade_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min_plan] ) ? ' checked' : '';
+        $min_paid_plan = 'Personal';
+        $min_plan      = 'Premium';
+        $plans         = $this->array_name_plans();
+        $current_plan_rate = isset( $plans[ $block_sub_group ] ) ? $plans[ $block_sub_group ] : 0;
+        $upgrade_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_paid_plan ] ) ? ' checked' : '';
 
         $checked_block_by_country = Config::get( 'block_by_country' ) === 'true' ? ' checked disabled' : '';
         $block_by_country = $block_sub_group ? $this->info_block_by_country() : false;
@@ -261,7 +263,7 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                         <?php _e( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
-	                    <?php if ( $is_active_app_custom && ( $plans[ $block_sub_group ] >= $plans[ $min_plan ] ) ) : ?>
+	                    <?php if ( $is_active_app_custom && ( $current_plan_rate >= $plans[ $min_paid_plan ] ) ) : ?>
 		                    <?php _e( 'Upgrade to our premium version for advanced protection.', 'limit-login-attempts-reloaded' ) ?>
                         <?php else : ?>
 		                    <?php $link__allow_deny = $is_active_app_custom
