@@ -491,6 +491,13 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                                     .catch( function ( response ) {
                                         $body.removeClass( disabled );
                                         $button_skip.removeClass( disabled );
+
+                                        $.alert( {
+                                            title: false,
+                                            content: llar_micro_cloud_error_message( response ),
+                                            type: 'red',
+                                        } );
+
                                         thank_you_for_completing_setup();
                                     })
                                     .finally( function () {
