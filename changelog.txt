@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.3.8 =
+* Added Personal and Business plans to the premium comparison table and made the displayed plans adapt to the currently installed plan.
+
 = 3.3.7 =
 * Fixed PHP warnings when a cloud app custom setting is missing the label, description, or value field.
 * Added the SameSite=Lax attribute to the login flow cookie for better CSRF protection.
