@@ -91,14 +91,13 @@ class LoginErrorPresenter {
 		$ip       = $this->ip_resolver->get_address();
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 		$a        = $this->local_lockout->check_key($lockouts, $ip);
-		$b        = $this->local_lockout->check_key($lockouts, $this->local_lockout->get_hash($ip));
 
 		$msg = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' ) . ' ';
 
 		if (
 			! is_array( $lockouts )
-			|| ( ! isset( $lockouts[ $ip ] ) && ! isset( $lockouts[ $this->local_lockout->get_hash( $ip ) ] ) )
-			|| ( time() >= $a && time() >= $b )
+			|| ! isset( $lockouts[ $ip ] )
+			|| time() >= $a
 		){
 			/* Huh? No timeout active? */
 			$msg .= __( 'Please try again later.', 'limit-login-attempts-reloaded' );
@@ -109,7 +108,7 @@ class LoginErrorPresenter {
 			return $msg;
 		}
 
-		$when = ceil( ( ($a > $b ? $a : $b) - time() ) / 60 );
+		$when = ceil( ( $a - time() ) / 60 );
 		if ( $when > 60 ) {
 
 			$when = ceil( $when / 60 );

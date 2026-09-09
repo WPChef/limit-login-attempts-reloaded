@@ -473,38 +473,25 @@ class LocalLockoutManager {
 		$retries = Config::get( 'retries' );
 		$valid   = Config::get( 'retries_valid' );
 		$a       = $this->check_key( $retries, $ip );
-		$b       = $this->check_key( $retries, $this->get_hash( $ip ) );
 		$c       = $this->check_key( $valid, $ip );
-		$d       = $this->check_key( $valid, $this->get_hash( $ip ) );
 
 		if ( ! is_array( $retries ) || ! is_array( $valid ) ) {
 			return $remaining;
 		}
 		if (
-			( ! isset( $retries[ $ip ] ) && ! isset( $retries[ $this->get_hash( $ip ) ] ) )
-			|| ( ! isset( $valid[ $ip ] ) && ! isset( $valid[ $this->get_hash( $ip ) ] ) )
-			|| ( time() > $c && time() > $d )
+			! isset( $retries[ $ip ] )
+			|| ! isset( $valid[ $ip ] )
+			|| time() > $c
 		) {
 			return $remaining;
 		}
-		if (
-			( $a % Config::get( 'allowed_retries' ) ) == 0
-			&& ( $b % Config::get( 'allowed_retries' ) ) == 0
-		) {
+		if ( ( $a % Config::get( 'allowed_retries' ) ) == 0 ) {
 			return $remaining;
 		}
 
-		$remaining = max( ( Config::get( 'allowed_retries' ) - ( ( $a + $b ) % Config::get( 'allowed_retries' ) ) ), 0 );
+		$remaining = max( ( Config::get( 'allowed_retries' ) - ( $a % Config::get( 'allowed_retries' ) ) ), 0 );
 
 		return (int) $remaining;
-	}
-
-	/**
-	 * @param string $str IP or other string.
-	 * @return string
-	 */
-	public function get_hash( $str ) {
-		return md5( $str );
 	}
 
 	/**
