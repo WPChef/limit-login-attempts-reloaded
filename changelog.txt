@@ -4,6 +4,7 @@
 * Added Personal and Business plans to the premium comparison table and made the displayed plans adapt to the currently installed plan.
 * Aligned dashicons across the logs, premium, ACL and help admin pages for WordPress 7 compatibility.
 * Fixed the failed-login page script being blocked under a nonce-based Content Security Policy by printing it with wp_get_inline_script_tag(). Thanks to Oskar Schöldström (@oxyc) for the pull request.
+* Fixed the denylist matching the account email when only the username was listed; now the submitted login is matched literally (case-insensitive), while explicit email entries still apply.
 
 = 3.3.7 =
 * Fixed PHP warnings when a cloud app custom setting is missing the label, description, or value field.
