@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile WordPress.Files.FileName -- The file name must match the class name; IntegrationManager resolves integration files by class name.
 
 namespace LLAR\Core\Integrations;
 
@@ -79,12 +80,12 @@ class WooCommerceIntegration extends BaseIntegration {
 	 * @return string
 	 */
 	public function get_login_identifier() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only access to request data
+		// phpcs:ignore WordPress.Security.NonceVerification -- Read-only access to request data
 		if ( ! isset( $_REQUEST['username'] ) ) {
 			return '';
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only access to request data
+		// phpcs:ignore WordPress.Security.NonceVerification -- Read-only access to request data
 		return sanitize_text_field( wp_unslash( $_REQUEST['username'] ) );
 	}
 
@@ -125,9 +126,9 @@ class WooCommerceIntegration extends BaseIntegration {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by WooCommerce
 		$user_login = isset( $_POST['user_login'] ) ? sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) : '';
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by WooCommerce
 		// Note: sanitize_email() is used here for form data retrieval, but sanitize_user() is used in wc_register_post_handler()
 		// for API calls to match the original API behavior
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by WooCommerce
 		$user_email = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
 
 		// Only return if at least one field is present
@@ -213,7 +214,7 @@ class WooCommerceIntegration extends BaseIntegration {
 		// Continue if at least one field is valid
 		// Logic: exit if (username is invalid) AND (email is invalid)
 		$username_invalid = empty( $username ) || ! validate_username( $username );
-		$email_invalid = empty( $user_email ) || ! is_email( $user_email );
+		$email_invalid    = empty( $user_email ) || ! is_email( $user_email );
 		if ( $username_invalid && $email_invalid ) {
 			return;
 		}
