@@ -196,6 +196,15 @@ class WooCommerceIntegration extends BaseIntegration {
 			return;
 		}
 
+		/*
+		 * Customer account creation during checkout must stay available: the
+		 * checkout flow is guarded by a nonce and a payment step, so it is not
+		 * a spam target. Public registration forms remain protected.
+		 */
+		if ( defined( 'WOOCOMMERCE_CHECKOUT' ) && WOOCOMMERCE_CHECKOUT ) {
+			return;
+		}
+
 		if ( empty( $username ) && empty( $user_email ) ) {
 			return;
 		}
