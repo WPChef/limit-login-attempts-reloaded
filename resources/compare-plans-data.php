@@ -15,14 +15,22 @@ $actual_plan = 'custom' === $active_app ? $this->info_sub_group() : $min_plan;
 
 $actual_rate = isset( $plans[ $actual_plan ] ) ? $plans[ $actual_plan ] : $plans['Free'];
 
-$upgrade_urls = array(
-	'Personal' => ( 'Micro Cloud' === $min_plan )
-		? add_query_arg( 'id', '9', $this->info_upgrade_url() )
-		: 'https://www.limitloginattempts.com/info.php?id=29',
-	'Business' => ( 'Micro Cloud' === $min_plan )
-		? add_query_arg( 'id', '11', $this->info_upgrade_url() )
-		: 'https://www.limitloginattempts.com/info.php?id=30',
-);
+if ( 'local' === $active_app ) {
+	$upgrade_urls = array(
+		'Personal' => 'https://www.limitloginattempts.com/info.php?id=29',
+		'Business' => 'https://www.limitloginattempts.com/info.php?id=30',
+	);
+} elseif ( 'Micro Cloud' === $actual_plan ) {
+	$upgrade_urls = array(
+		'Personal' => add_query_arg( 'id', '31', $this->info_upgrade_url() ),
+		'Business' => add_query_arg( 'id', '32', $this->info_upgrade_url() ),
+	);
+} else {
+	// Paid premium plans: upgrade CTA only for Business (or none if already on/above it).
+	$upgrade_urls = array(
+		'Business' => add_query_arg( 'id', '33', $this->info_upgrade_url() ),
+	);
+}
 
 $buttons_row = array();
 foreach ( $display_plans as $plan ) {
