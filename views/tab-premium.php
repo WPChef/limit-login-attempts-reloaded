@@ -49,7 +49,7 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
             <?php if ( ! $is_premium ) : ?>
                 <div class="action">
                     <a class="button menu__item button__orange" href="<?php echo esc_url( ( $block_sub_group === 'Micro Cloud' )
-                        ? 'https://www.limitloginattempts.com/info.php?id=31'
+                        ? add_query_arg( 'id', '31', $this->info_upgrade_url() )
                         : 'https://www.limitloginattempts.com/info.php?id=29' ); ?>" target="_blank">
                         <?php _e( 'Upgrade to Personal – $1.25/mo', 'limit-login-attempts-reloaded' ); ?>
                     </a>

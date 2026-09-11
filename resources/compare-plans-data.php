@@ -22,13 +22,13 @@ if ( 'local' === $active_app ) {
 	);
 } elseif ( 'Micro Cloud' === $actual_plan ) {
 	$upgrade_urls = array(
-		'Personal' => 'https://www.limitloginattempts.com/info.php?id=31',
-		'Business' => 'https://www.limitloginattempts.com/info.php?id=32',
+		'Personal' => add_query_arg( 'id', '31', $this->info_upgrade_url() ),
+		'Business' => add_query_arg( 'id', '32', $this->info_upgrade_url() ),
 	);
 } else {
 	// Paid premium plans: upgrade CTA only for Business (or none if already on/above it).
 	$upgrade_urls = array(
-		'Business' => 'https://www.limitloginattempts.com/info.php?id=33',
+		'Business' => add_query_arg( 'id', '33', $this->info_upgrade_url() ),
 	);
 }
 
