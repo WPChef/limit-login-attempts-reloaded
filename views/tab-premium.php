@@ -45,35 +45,13 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
 	                    <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
                     <?php endif; ?>
                 </div>
-                <ul class="links mt-1_5">
-                    <li class="button tags tags_add">
-                        <a href="https://www.limitloginattempts.com/info.php?id=16" class="link__style_unlink gdpr-information-link" target="_blank">
-                            <?php _e( 'Full feature list', 'limit-login-attempts-reloaded' ); ?>
-                        </a>
-                    </li>
-                    <li class="button tags tags_add">
-                        <a href="https://www.limitloginattempts.com/info.php?id=17" class="link__style_unlink gdpr-information-link" target="_blank">
-                            <?php _e( 'Pre-sales FAQs', 'limit-login-attempts-reloaded' ); ?>
-                        </a>
-                    </li>
-                    <li class="button tags tags_add">
-                        <a href="https://www.limitloginattempts.com/info.php?id=18" class="link__style_unlink gdpr-information-link" target="_blank">
-                            <?php _e( 'Ask a pre-sales question', 'limit-login-attempts-reloaded' ); ?>
-                        </a>
-                    </li>
-                    <li class="button tags tags_add">
-                        <a href="https://www.limitloginattempts.com/info.php?id=19" class="link__style_unlink gdpr-information-link" target="_blank">
-                            <?php _e( 'Support', 'limit-login-attempts-reloaded' ); ?>
-                        </a>
-                    </li>
-                </ul>
             </div>
             <?php if ( ! $is_premium ) : ?>
                 <div class="action">
                     <a class="button menu__item button__orange" href="<?php echo esc_url( ( $block_sub_group === 'Micro Cloud' )
-                        ? add_query_arg('id', '9', $this->info_upgrade_url())
+                        ? 'https://www.limitloginattempts.com/info.php?id=31'
                         : 'https://www.limitloginattempts.com/info.php?id=29' ); ?>" target="_blank">
-                        <?php _e( 'Get It Here', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Upgrade to Personal – $1.25/mo', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>
 	        <?php endif; ?>
