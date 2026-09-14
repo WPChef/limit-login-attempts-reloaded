@@ -16,25 +16,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="llar-plan-pricing">
 	<div class="llar-plan-pricing__price-row">
 		<span class="llar-plan-pricing__price"><?php echo esc_html( $price ); ?></span>
-		<?php if ( ! empty( $price_old ) ) : ?>
+		<?php
+		if ( ! empty( $price_old ) ) {
+			?>
 			<span class="llar-plan-pricing__price-old"><?php echo esc_html( $price_old ); ?></span>
-		<?php endif; ?>
+			<?php
+		}
+		?>
 	</div>
-	<?php if ( ! empty( $billing_label ) || ! empty( $save_badge ) ) : ?>
+	<?php
+	if ( ! empty( $billing_label ) || ! empty( $save_badge ) ) {
+		?>
 		<div class="llar-plan-pricing__billing">
-			<?php if ( ! empty( $billing_label ) ) : ?>
+			<?php
+			if ( ! empty( $billing_label ) ) {
+				?>
 				<span class="llar-plan-pricing__billing-label"><?php echo esc_html( $billing_label ); ?></span>
-			<?php endif; ?>
-			<?php if ( ! empty( $save_badge ) ) : ?>
+				<?php
+			}
+			if ( ! empty( $save_badge ) ) {
+				?>
 				<span class="llar-plan-pricing__save"><?php echo esc_html( $save_badge ); ?></span>
-			<?php endif; ?>
+				<?php
+			}
+			?>
 		</div>
-	<?php endif; ?>
-	<?php if ( ! empty( $description_items ) && is_array( $description_items ) ) : ?>
+		<?php
+	}
+	if ( ! empty( $description_items ) && is_array( $description_items ) ) {
+		?>
 		<ul class="llar-plan-pricing__list">
-			<?php foreach ( $description_items as $item ) : ?>
+			<?php
+			foreach ( $description_items as $item ) {
+				?>
 				<li><?php echo esc_html( $item ); ?></li>
-			<?php endforeach; ?>
+				<?php
+			}
+			?>
 		</ul>
-	<?php endif; ?>
+		<?php
+	}
+	?>
 </div>
