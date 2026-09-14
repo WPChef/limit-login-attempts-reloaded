@@ -146,34 +146,74 @@ class LockoutNotificationService {
 			$unsubscribe_url
 		);
 
+		$current_url_label = Helpers::get_current_url_label();
+		$current_url       = Helpers::get_current_url();
+		$ip_address_link   = 'https://www.limitloginattempts.com/location/?ip=' . $ip;
+		$dashboard_url     = $this->options_page_provider->get_options_page_uri();
+		$premium_url       = 'https://www.limitloginattempts.com/info.php?id=36';
+		$llar_url          = 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'];
+
+		$greeting = ! empty( $admin_name )
+			? sprintf(
+				/* translators: %s: admin display name */
+				__( 'Hello %s,', 'limit-login-attempts-reloaded' ),
+				$admin_name
+			)
+			: __( 'Hello,', 'limit-login-attempts-reloaded' );
+
+		$auto_notice = __( 'This notification was sent automatically via Limit Login Attempts Reloaded Plugin.', 'limit-login-attempts-reloaded' );
+
+		$installed_on_html = sprintf(
+			/* translators: %s: site domain */
+			__( 'This is installed on your <strong>%s</strong> WordPress site.', 'limit-login-attempts-reloaded' ),
+			esc_html( (string) $site_domain )
+		);
+
+		$details_heading = __( 'The failed login details include:', 'limit-login-attempts-reloaded' );
+
+		$attempts_line_html = sprintf(
+			/* translators: 1: attempts count, 2: lockouts count, 3: IP lookup URL, 4: IP address */
+			__( '%1$d failed login attempts (%2$d lockout(s)) from IP <strong><a href="%3$s" target="_blank" rel="noopener">%4$s</a></strong>', 'limit-login-attempts-reloaded' ),
+			(int) $count,
+			(int) $lockouts,
+			esc_url( $ip_address_link ),
+			esc_html( $ip )
+		);
+
+		$username_line_html = sprintf(
+			/* translators: %s: username */
+			__( 'Last user attempted: <strong>%s</strong>', 'limit-login-attempts-reloaded' ),
+			esc_html( (string) $user )
+		);
+
+		$blocked_duration_line = sprintf(
+			/* translators: %s: lockout duration label */
+			__( 'IP was blocked for %s', 'limit-login-attempts-reloaded' ),
+			$when
+		);
+
+		$login_address_line_html = sprintf(
+			/* translators: 1: login URL, 2: login URL label */
+			__( 'Login address: <strong><a href="%1$s" target="_blank" rel="noopener">%2$s</a></strong>', 'limit-login-attempts-reloaded' ),
+			esc_url( $current_url ),
+			esc_html( (string) $current_url_label )
+		);
+
+		$dashboard_prompt       = __( 'Please visit your WordPress dashboard for additional details, investigation options, and help articles.', 'limit-login-attempts-reloaded' );
+		$dashboard_button_label = __( 'Go to Dashboard', 'limit-login-attempts-reloaded' );
+
+		$premium_cta_html = sprintf(
+			/* translators: %s: premium upgrade URL */
+			__( 'Experiencing frequent attacks or degraded performance? For only USD $1.25/month, you can join thousands of WordPress users who have upgraded to LLAR premium for advanced IP intelligence and cloud protection. Only takes 5 minutes to set up and leave the rest to us. <a href="%s" target="_blank" rel="noopener">Join</a>', 'limit-login-attempts-reloaded' ),
+			esc_url( $premium_url )
+		);
+
+		$show_mu_notice = Helpers::is_mu();
+		$mu_notice      = __( 'This alert was sent by your website where Limit Login Attempts Reloaded free version is installed and you are listed as the admin.', 'limit-login-attempts-reloaded' );
+
 		ob_start();
 		include LLA_PLUGIN_DIR . 'views/emails/failed-login-content.php';
 		$email_body = ob_get_clean();
-
-		$current_url_label = Helpers::get_current_url_label();
-		$current_url = Helpers::get_current_url();
-
-		$placeholders = array(
-			'{name}'                => esc_html( (string) $admin_name ),
-			'{domain}'              => esc_html( (string) $site_domain ),
-			'{attempts_count}'      => (int) $count,
-			'{lockouts_count}'      => (int) $lockouts,
-			'{ip_address}'          => esc_html( $ip ),
-			'{ip_address_link}'     => esc_url( 'https://www.limitloginattempts.com/location/?ip=' . $ip ),
-			'{username}'            => esc_html( (string) $user ),
-			'{blocked_duration}'    => esc_html( (string) $when ),
-			'{dashboard_url}'       => $this->options_page_provider->get_options_page_uri(),
-			'{premium_url}'         => 'https://www.limitloginattempts.com/info.php?id=36',
-			'{llar_url}'            => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
-			'{current_url}'         => esc_url( $current_url ),
-			'{current_url_label}'   => esc_html( (string) $current_url_label ),
-		);
-
-		$email_body = str_replace(
-			array_keys( $placeholders ),
-			array_values( $placeholders ),
-			$email_body
-		);
 
 		Helpers::send_mail_with_logo( $admin_email, $subject, $email_body );
 	}

@@ -1,51 +1,75 @@
 <?php
-use LLAR\Core\Helpers;
+/**
+ * Lockout email body. All copy and URLs come from the controller.
+ *
+ * Expected variables (set by LockoutNotificationService):
+ * @var string $greeting
+ * @var string $auto_notice
+ * @var string $installed_on_html
+ * @var string $details_heading
+ * @var string $attempts_line_html
+ * @var string $username_line_html
+ * @var string $blocked_duration_line
+ * @var string $login_address_line_html
+ * @var string $dashboard_prompt
+ * @var string $dashboard_url
+ * @var string $dashboard_button_label
+ * @var string $premium_cta_html
+ * @var string $site_domain
+ * @var string $llar_url
+ * @var bool   $show_mu_notice
+ * @var string $mu_notice
+ * @var string $unsubscribe_footer_text
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-$admin_name = isset( $admin_name ) && is_string( $admin_name ) ? $admin_name : '';
+$kses_strong = array( 'strong' => array() );
+$kses_link   = array(
+	'a' => array(
+		'href'   => array(),
+		'target' => array(),
+		'rel'    => array(),
+		'style'  => array(),
+	),
+);
+$kses_strong_link = array_merge( $kses_strong, $kses_link );
 ?>
 <p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php ( ! empty( $admin_name ) ) ? esc_html_e( 'Hello {name},', 'limit-login-attempts-reloaded' ) : esc_html_e( 'Hello,', 'limit-login-attempts-reloaded' ); ?>
+	<?php echo esc_html( $greeting ); ?>
 </p>
 <p style="margin:0 0 10px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php esc_html_e( 'This notification was sent automatically via Limit Login Attempts Reloaded Plugin.', 'limit-login-attempts-reloaded' ); ?>
+	<?php echo esc_html( $auto_notice ); ?>
 </p>
 <p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php echo wp_kses( __( 'This is installed on your <strong>{domain}</strong> WordPress site.', 'limit-login-attempts-reloaded' ), array( 'strong' => array() ) ); ?>
+	<?php echo wp_kses( $installed_on_html, $kses_strong ); ?>
 </p>
 <p style="margin:0 0 8px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php esc_html_e( 'The failed login details include:', 'limit-login-attempts-reloaded' ); ?>
+	<?php echo esc_html( $details_heading ); ?>
 </p>
 <ul style="margin:0 0 16px;padding-left:18px;font-size:14px;line-height:1.5;color:#333333;">
-	<li style="margin-bottom:8px;">
-		<?php esc_html_e( '{attempts_count} failed login attempts ({lockouts_count} lockout(s)) from IP', 'limit-login-attempts-reloaded' ); ?>
-		<strong><a href="{ip_address_link}" target="_blank" rel="noopener">{ip_address}</a></strong>
-	</li>
-	<li style="margin-bottom:8px;"><?php echo wp_kses( __( 'Last user attempted: <strong>{username}</strong>', 'limit-login-attempts-reloaded' ), array( 'strong' => array() ) ); ?></li>
-	<li style="margin-bottom:8px;"><?php esc_html_e( 'IP was blocked for {blocked_duration}', 'limit-login-attempts-reloaded' ); ?></li>
-	<li style="margin-bottom:8px;"><?php echo wp_kses( __( 'Login address: <strong><a href="{current_url}" target="_blank" rel="noopener">{current_url_label}</a></strong>', 'limit-login-attempts-reloaded' ), array( 'strong' => array(), 'a' => array( 'href' => array(), 'target' => array(), 'rel' => array() ) ) ); ?></li>
+	<li style="margin-bottom:8px;"><?php echo wp_kses( $attempts_line_html, $kses_strong_link ); ?></li>
+	<li style="margin-bottom:8px;"><?php echo wp_kses( $username_line_html, $kses_strong ); ?></li>
+	<li style="margin-bottom:8px;"><?php echo esc_html( $blocked_duration_line ); ?></li>
+	<li style="margin-bottom:8px;"><?php echo wp_kses( $login_address_line_html, $kses_strong_link ); ?></li>
 </ul>
 <p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php esc_html_e( 'Please visit your WordPress dashboard for additional details, investigation options, and help articles.', 'limit-login-attempts-reloaded' ); ?>
+	<?php echo esc_html( $dashboard_prompt ); ?>
 </p>
 <p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:#333333;text-align:center;">
-	<a href="{dashboard_url}" target="_blank" rel="noopener" style="display:inline-block;background:#50c1cd;color:#ffffff;border-radius:30px;padding:10px 20px;text-decoration:none;">
-		<?php esc_html_e( 'Go to Dashboard', 'limit-login-attempts-reloaded' ); ?>
+	<a href="<?php echo esc_url( $dashboard_url ); ?>" target="_blank" rel="noopener" style="display:inline-block;background:#50c1cd;color:#ffffff;border-radius:30px;padding:10px 20px;text-decoration:none;">
+		<?php echo esc_html( $dashboard_button_label ); ?>
 	</a>
 </p>
 <p style="margin:0 0 12px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php echo wp_kses(
-		__( 'Experiencing frequent attacks or degraded performance? For only USD $1.25/month, you can join thousands of WordPress users who have upgraded to LLAR premium for advanced IP intelligence and cloud protection. Only takes 5 minutes to set up and leave the rest to us. <a href="{premium_url}" target="_blank" rel="noopener">Join</a>', 'limit-login-attempts-reloaded' ),
-		array( 'a' => array( 'href' => array(), 'target' => array(), 'rel' => array() ) )
-	); ?>
+	<?php echo wp_kses( $premium_cta_html, $kses_link ); ?>
 </p>
 <?php include LLA_PLUGIN_DIR . 'views/emails/failed-login-faq.php'; ?>
-<?php if ( Helpers::is_mu() ) : ?>
+<?php if ( ! empty( $show_mu_notice ) ) : ?>
 <p style="margin:0 0 12px;font-size:13px;line-height:1.5;color:#4b5563;">
-	<em><?php esc_html_e( 'This alert was sent by your website where Limit Login Attempts Reloaded free version is installed and you are listed as the admin.', 'limit-login-attempts-reloaded' ); ?></em>
+	<em><?php echo esc_html( $mu_notice ); ?></em>
 </p>
 <?php endif; ?>
 <?php include LLA_PLUGIN_DIR . 'views/emails/footer-unsubscribe-text.php'; ?>
