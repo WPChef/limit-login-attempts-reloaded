@@ -47,6 +47,9 @@ foreach ( $display_plans as $plan ) {
 	}
 }
 
+$pricing_presenter = new \LLAR\Core\PremiumPlansPresenter();
+$pricing_row       = $pricing_presenter->build_pricing_row( $display_plans, $actual_rate, $plans );
+
 $lock = '<img src="' . LLA_PLUGIN_URL . 'assets/css/images/icon-lock-bw.png" class="icon-lock">';
 $yes  = '<span class="llar_orange">&#x2713;</span>';
 
@@ -76,6 +79,7 @@ $performance_optimizer_row['Agency']         = $yes . '<span class="description"
 
 $compare_list = array(
 	'buttons_header' => $buttons_row,
+	'pricing'        => $pricing_row,
 	__( 'Limit Number of Retry Attempts', 'limit-login-attempts-reloaded' ) => $yes_row,
 	__( 'Configurable Lockout Timing', 'limit-login-attempts-reloaded' ) => $yes_row,
 	__( 'Login Firewall', 'limit-login-attempts-reloaded' ) => array(
