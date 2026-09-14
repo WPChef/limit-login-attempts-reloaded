@@ -4125,6 +4125,58 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields {
   text-align: center;
 }
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields .llar-plan-pricing {
+  text-align: left;
+  max-width: 260px;
+  margin: 0 auto;
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields .llar-plan-pricing__price-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields .llar-plan-pricing__price {
+  font-size: 22px;
+  font-weight: 600;
+  color: #2A2F40;
+  line-height: 1.2;
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields .llar-plan-pricing__price-old {
+  font-size: 14px;
+  color: #666D84;
+  text-decoration: line-through;
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields .llar-plan-pricing__billing {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #666D84;
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields .llar-plan-pricing__save {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background-color: rgba(255, 124, 6, 0.12);
+  color: #FF7C06;
+  font-weight: 500;
+  font-size: 12px;
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields .llar-plan-pricing__list {
+  margin: 0;
+  padding-left: 18px;
+  color: #666D84;
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: left;
+}
+#llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields .llar-plan-pricing__list li + li {
+  margin-top: 6px;
+}
 
 #llar-setting-page-help.llar-help-page {
   font-family: inherit;

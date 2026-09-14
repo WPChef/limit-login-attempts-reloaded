@@ -124,6 +124,11 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
 
         $display_plans = array();
         foreach ( $plans_order as $plan ) {
+            // Professional (Pro) users do not see Business as an upgrade path.
+            if ( 'Business' === $plan && 'Professional' === $actual_plan ) {
+                continue;
+            }
+
             $is_installed_extra_plan = ( $plan === $actual_plan && in_array( $plan, $extra_plans, true ) );
 
             if ( in_array( $plan, $base_plans, true ) || $is_installed_extra_plan ) {
@@ -132,6 +137,9 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
         }
 
         $features = array_merge( array( 'Features' ), $display_plans );
+
+        // Rows that render UI chrome (buttons/pricing), not a feature category label.
+        $compare_rows_without_label = array( 'buttons_header', 'buttons_footer', 'pricing' );
 
         $compare_list = require LLA_PLUGIN_DIR . '/resources/compare-plans-data.php';
     ?>
@@ -151,7 +159,7 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
                     <tr>
                         <td>
                             <div class="category">
-	                            <?php echo ($category === 'buttons_header' || $category === 'buttons_footer') ? '' : $category ?>
+	                            <?php echo in_array( $category, $compare_rows_without_label, true ) ? '' : $category; ?>
                             </div>
                             <div class="description">
                                 <?php echo !empty($list['description']) ? $list['description'] : '' ?>
