@@ -163,7 +163,7 @@ class LockoutNotificationService {
 			'{username}'            => esc_html( (string) $user ),
 			'{blocked_duration}'    => esc_html( (string) $when ),
 			'{dashboard_url}'       => $this->options_page_provider->get_options_page_uri(),
-			'{premium_url}'         => 'https://www.limitloginattempts.com/info.php?from=plugin-lockout-email&v=' . $plugin_data['Version'],
+			'{premium_url}'         => 'https://www.limitloginattempts.com/info.php?id=36',
 			'{llar_url}'            => 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'],
 			'{current_url}'         => esc_url( $current_url ),
 			'{current_url_label}'   => esc_html( (string) $current_url_label ),

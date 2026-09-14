@@ -37,8 +37,10 @@ $admin_name = isset( $admin_name ) && is_string( $admin_name ) ? $admin_name : '
 	</a>
 </p>
 <p style="margin:0 0 12px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php esc_html_e( 'Experiencing frequent attacks or degraded performance?', 'limit-login-attempts-reloaded' ); ?>
-	<a href="{premium_url}" target="_blank" rel="noopener"><?php esc_html_e( 'Try Micro Cloud.', 'limit-login-attempts-reloaded' ); ?></a>
+	<?php echo wp_kses(
+		__( 'Experiencing frequent attacks or degraded performance? For only USD $1.25/month, you can join thousands of WordPress users who have upgraded to LLAR premium for advanced IP intelligence and cloud protection. Only takes 5 minutes to set up and leave the rest to us. <a href="{premium_url}" target="_blank" rel="noopener">Join</a>', 'limit-login-attempts-reloaded' ),
+		array( 'a' => array( 'href' => array(), 'target' => array(), 'rel' => array() ) )
+	); ?>
 </p>
 <?php include LLA_PLUGIN_DIR . 'views/emails/failed-login-faq.php'; ?>
 <?php if ( Helpers::is_mu() ) : ?>
