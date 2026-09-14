@@ -396,7 +396,8 @@ class LoginAuthenticationHandler {
 
 		$ip = $this->ip_resolver->get_address();
 		if (
-			! $this->ip_resolver->is_ip_whitelisted( $ip )
+			true !== LoginFlowTransientStore::get( 'llar_user_is_whitelisted', false )
+			&& ! $this->ip_resolver->is_ip_whitelisted( $ip )
 			&& ! $this->local_lockout->is_username_whitelisted( $username )
 			&& ! $this->local_lockout->is_limit_login_ok( $username )
 		) {
@@ -500,6 +501,18 @@ class LoginAuthenticationHandler {
 			|| $this->local_lockout->check_whitelist_usernames( false, $user_login )
 			|| $this->local_lockout->is_limit_login_ok( $username )
 		) {
+			// Mirror the early authenticate allowlist path: do not record failed
+			// attempts for allowlisted users who log in via account email (no
+			// get_user_by in the early hook).
+			if (
+				$this->local_lockout->check_whitelist_ips( false, $ip )
+				|| $this->local_lockout->is_local_allowlisted_username( $username, $user )
+				|| $this->local_lockout->check_whitelist_usernames( false, $user_login )
+			) {
+				LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => true ) );
+				remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
+				remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
+			}
 			return $user;
 		}
 
