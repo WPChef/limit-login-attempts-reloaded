@@ -284,6 +284,11 @@ class LocalLockoutManager {
 	 * @return void
 	 */
 	public function record_failed_login_attempt( $username ) {
+		// Allowlisted via early string match or late $user->user_login (email login).
+		if ( true === LoginFlowTransientStore::get( 'llar_user_is_whitelisted', false ) ) {
+			return;
+		}
+
 		self::$failed_login_recorded_in_request = true;
 
 		LoginFlowTransientStore::ensure_token();
