@@ -325,6 +325,66 @@
 
               &.inner_fields {
                 text-align: center;
+
+                .llar-plan-pricing {
+                  text-align: left;
+                  max-width: 260px;
+                  margin: 0 auto;
+
+                  &__price-row {
+                    display: flex;
+                    align-items: baseline;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                    margin-bottom: 6px;
+                  }
+
+                  &__price {
+                    font-size: 22px;
+                    font-weight: 600;
+                    color: $typography-primary;
+                    line-height: 1.2;
+                  }
+
+                  &__price-old {
+                    font-size: 14px;
+                    color: $typography-secondary;
+                    text-decoration: line-through;
+                  }
+
+                  &__billing {
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                    margin-bottom: 12px;
+                    font-size: 13px;
+                    color: $typography-secondary;
+                  }
+
+                  &__save {
+                    display: inline-block;
+                    padding: 2px 8px;
+                    border-radius: 4px;
+                    background-color: rgba(255, 124, 6, 0.12);
+                    color: $primary-colors__orange;
+                    font-weight: 500;
+                    font-size: 12px;
+                  }
+
+                  &__list {
+                    margin: 0;
+                    padding-left: 18px;
+                    color: $typography-secondary;
+                    font-size: 13px;
+                    line-height: 1.45;
+                    text-align: left;
+
+                    li + li {
+                      margin-top: 6px;
+                    }
+                  }
+                }
               }
             }
           }

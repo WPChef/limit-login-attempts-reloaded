@@ -15,14 +15,22 @@ $actual_plan = 'custom' === $active_app ? $this->info_sub_group() : $min_plan;
 
 $actual_rate = isset( $plans[ $actual_plan ] ) ? $plans[ $actual_plan ] : $plans['Free'];
 
-$upgrade_urls = array(
-	'Personal' => ( 'Micro Cloud' === $min_plan )
-		? add_query_arg( 'id', '9', $this->info_upgrade_url() )
-		: 'https://www.limitloginattempts.com/info.php?id=29',
-	'Business' => ( 'Micro Cloud' === $min_plan )
-		? add_query_arg( 'id', '11', $this->info_upgrade_url() )
-		: 'https://www.limitloginattempts.com/info.php?id=30',
-);
+if ( 'local' === $active_app ) {
+	$upgrade_urls = array(
+		'Personal' => 'https://www.limitloginattempts.com/info.php?id=29',
+		'Business' => 'https://www.limitloginattempts.com/info.php?id=30',
+	);
+} elseif ( 'Micro Cloud' === $actual_plan ) {
+	$upgrade_urls = array(
+		'Personal' => add_query_arg( 'id', '31', $this->info_upgrade_url() ),
+		'Business' => add_query_arg( 'id', '32', $this->info_upgrade_url() ),
+	);
+} else {
+	// Paid premium plans: upgrade CTA only for Business (or none if already on/above it).
+	$upgrade_urls = array(
+		'Business' => add_query_arg( 'id', '33', $this->info_upgrade_url() ),
+	);
+}
 
 $buttons_row = array();
 foreach ( $display_plans as $plan ) {
@@ -38,6 +46,9 @@ foreach ( $display_plans as $plan ) {
 		$buttons_row[ $plan ] = '';
 	}
 }
+
+$pricing_presenter = new \LLAR\Core\PremiumPlansPresenter();
+$pricing_row       = $pricing_presenter->build_pricing_row( $display_plans, $actual_rate, $plans );
 
 $lock = '<img src="' . LLA_PLUGIN_URL . 'assets/css/images/icon-lock-bw.png" class="icon-lock">';
 $yes  = '<span class="llar_orange">&#x2713;</span>';
@@ -68,6 +79,7 @@ $performance_optimizer_row['Agency']         = $yes . '<span class="description"
 
 $compare_list = array(
 	'buttons_header' => $buttons_row,
+	'pricing'        => $pricing_row,
 	__( 'Limit Number of Retry Attempts', 'limit-login-attempts-reloaded' ) => $yes_row,
 	__( 'Configurable Lockout Timing', 'limit-login-attempts-reloaded' ) => $yes_row,
 	__( 'Login Firewall', 'limit-login-attempts-reloaded' ) => array(
