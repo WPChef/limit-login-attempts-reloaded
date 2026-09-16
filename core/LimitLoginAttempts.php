@@ -1510,6 +1510,21 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	}
 
 	/**
+	 * Whether /info reports the Micro Cloud quota as almost exhausted.
+	 *
+	 * @return bool
+	 */
+	public function info_is_almost_exhausted()
+	{
+		if ( empty( $this->info_data ) ) {
+
+			$this->info_data = $this->info();
+		}
+
+		return isset( $this->info_data['requests']['almost_exhausted'] ) ? filter_var( $this->info_data['requests']['almost_exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+	}
+
+	/**
 	 * Whether /info returned usable quota and plan data for the dashboard UI.
 	 *
 	 * @return bool
