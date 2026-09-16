@@ -287,7 +287,15 @@
 
               .dashicons {
                 margin-left: 15px;
-                line-height: inherit;
+                line-height: 1;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                vertical-align: middle;
+
+                &:before {
+                  line-height: 1;
+                }
               }
             }
           }
