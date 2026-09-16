@@ -40,7 +40,7 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
             <div class="text">
                 <div class="title">
                     <?php if ( $block_sub_group && $block_sub_group === 'Micro Cloud' ) : ?>
-                        <?php _e( 'Limit Login Attempts Reloaded <strong>Micro Cloud</strong>', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Limit Login Attempts Reloaded <strong>Free Trial</strong>', 'limit-login-attempts-reloaded' ); ?>
                     <?php else : ?>
 	                    <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
                     <?php endif; ?>
@@ -64,7 +64,7 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
                 </span>
             <?php elseif( $block_sub_group ) : ?>
                 <?php if( $block_sub_group === 'Micro Cloud' ) : ?>
-                    <?php _e( 'You are currently using Micro Cloud, which provides access to premium cloud app on a limited basis. To prevent interruption, upgrade to one of our paid plans below.', 'limit-login-attempts-reloaded' ); ?>
+                    <?php _e( 'You are currently using the 14 day free trial, which provides access to the premium cloud app on a limited basis. To prevent interruption, upgrade to one of our paid plans below.', 'limit-login-attempts-reloaded' ); ?>
                 <?php else : ?>
                     <?php
                     /* translators: %s: current plan name. */

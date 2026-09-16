@@ -23,13 +23,13 @@ ob_start(); ?>
             <div class="micro_cloud_modal__body_header">
                 <div class="left_side">
                     <div class="title">
-                        <?php _e( 'Get Started with Micro Cloud for FREE', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Start your 14 day free trial', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <div class="description">
-                        <?php _e( 'Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP Intelligence, and performance optimizer.', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'Unlock full access to our premium features including our login firewall, IP Intelligence, and performance optimizer. No credit card required.', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                     <div class="description-add">
-                        <?php _e( 'Please note that some domains have very high brute force activity, which may cause Micro Cloud to run out of resources in under 24 hours. We will send an email when resources are fully utilized and the app reverts back to the free version. You may upgrade to one of our premium plans to prevent the app from reverting.', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'When your 14 day free trial ends, the app automatically reverts to the free version. You may upgrade to one of our premium plans at any time to keep cloud protection.', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </div>
                 <div class="right_side">
@@ -40,7 +40,7 @@ ob_start(); ?>
                 <div class="card-header">
                     <div class="title">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/tools.png">
-                        <?php _e( 'How To Activate Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
+                        <?php _e( 'How To Activate Your Free Trial', 'limit-login-attempts-reloaded' ); ?>
                     </div>
                 </div>
                 <div class="card-body step-first">
@@ -86,7 +86,7 @@ ob_start(); ?>
                         </div>
                         <div class="description_add">
                             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
-	                        <?php _e( 'Micro Cloud has been activated!', 'limit-login-attempts-reloaded' ); ?>
+	                        <?php _e( 'Your free trial has been activated!', 'limit-login-attempts-reloaded' ); ?>
                         </div>
                     </div>
                     <div class="button_block-single">

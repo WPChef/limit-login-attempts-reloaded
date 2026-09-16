@@ -87,15 +87,13 @@ $limit = 10;
 	            <?php _e('All logs are stored in the cloud to ensure malicious users are unable to delete or manipulate site login data.', 'limit-login-attempts-reloaded'); ?>
             </div>
             <div class="footer">
-	            <?php if ( ! empty ( $setup_code ) ) :
-		            $text_no_custom = __( 'This feature is only available for<br><a class="link__style_unlink llar_turquoise" href="%s">Premium</a> users.', 'limit-login-attempts-reloaded' );
-	            else:
-		            $text_no_custom = __( 'This feature is only available for<br><a class="link__style_unlink llar_turquoise" href="%s">Premium</a> and <a class="link__style_unlink llar_turquoise button_micro_cloud">Micro Cloud (FREE!)</a> users.', 'limit-login-attempts-reloaded' );
-	            endif ?>
-	            <?php echo sprintf(
+	            <?php
+	            $text_no_custom = __( 'This feature is only available for<br><a class="link__style_unlink llar_turquoise" href="%s">Premium</a> users.', 'limit-login-attempts-reloaded' );
+	            echo sprintf(
 		            $text_no_custom,
 		            '/wp-admin/admin.php?page=limit-login-attempts&tab=premium'
-	            ); ?>
+	            );
+	            ?>
             </div>
         </div>
     </div>
