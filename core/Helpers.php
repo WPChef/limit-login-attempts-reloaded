@@ -394,6 +394,11 @@ class Helpers {
 			case 'register' === $action && false !== strpos( $request_uri, 'wp-login.php' ):
 				$gateway = 'wp_register';
 				break;
+			case false !== strpos( $request_uri, 'lost-password' )
+				|| false !== strpos( $request_uri, 'lostpassword' )
+				|| ( function_exists( 'is_lost_password_page' ) && is_lost_password_page() ):
+				$gateway = 'wp_lostpassword';
+				break;
 			case isset( $GLOBALS['wp_xmlrpc_server'] ) && is_object( $GLOBALS['wp_xmlrpc_server'] ):
 				$gateway = 'wp_xmlrpc';
 				break;
