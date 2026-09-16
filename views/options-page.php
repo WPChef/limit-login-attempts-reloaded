@@ -39,6 +39,7 @@ if ( $is_active_app_custom ) {
 	$info_is_cloud_unavailable = $this->info_is_cloud_unavailable();
 	$requests = ! $is_agency && $info_has_valid_data ? $this->info_requests() : false;
 	$is_exhausted = ! $is_agency && $this->info_is_exhausted();
+	$is_almost_exhausted = ! $is_agency && $this->info_is_almost_exhausted();
 
 	$app_config = Config::get( 'app_config' );
 	$sync_error_message = ( is_array( $app_config ) && ! empty( $app_config['messages']['sync_error'] ) )
@@ -47,16 +48,46 @@ if ( $is_active_app_custom ) {
 } else {
 
 	$is_exhausted = false;
+	$is_almost_exhausted = false;
 	$info_has_valid_data = false;
 	$info_is_cloud_unavailable = false;
 	$block_sub_group = '';
 	$upgrade_premium_url = '';
 	$sync_error_message = '';
-}?>
+	$requests = false;
+}
+
+$request_usage = ( is_array( $requests ) && isset( $requests['usage'] ) ) ? (string) $requests['usage'] : '';
+$request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (string) $requests['quota'] : '';
+?>
 
 <div class="header_massage">
     <?php
-    if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && ( $is_exhausted || $info_is_cloud_unavailable ) ) :
+    if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && $is_almost_exhausted && $info_has_valid_data ) :
+
+	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
+
+        if ( time() > $notifications_message_shown ) : ?>
+            <div id="llar-header-upgrade-premium-message" class="exhausted">
+                <p>
+                    <span class="dashicons dashicons-superhero"></span>
+                    <?php
+					echo sprintf(
+						/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL */
+						__( 'Micro Cloud: %1$s of %2$s requests used - cloud protection pauses at %2$s. <a href="%3$s" class="link__style_color_inherit" target="_blank">Keep it running for $1.25/mo →</a>', 'limit-login-attempts-reloaded' ),
+						esc_html( $request_usage ),
+						esc_html( $request_quota ),
+						esc_url( add_query_arg( 'id', '35', $upgrade_premium_url ) )
+					);
+                    ?>
+                </p>
+                <div class="close">
+                    <span class="dashicons dashicons-no-alt"></span>
+                </div>
+            </div>
+        <?php endif; ?>
+
+    <?php elseif ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && ( $is_exhausted || $info_is_cloud_unavailable ) ) :
 
 	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
 
@@ -82,8 +113,12 @@ if ( $is_active_app_custom ) {
                 <span class="dashicons dashicons-superhero"></span>
 				<?php
 				echo sprintf(
-					__( 'Enjoying Micro Cloud? To prevent interruption of the cloud app, <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> today', 'limit-login-attempts-reloaded' ),
-					add_query_arg('id', '4', $upgrade_premium_url) );
+					/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL */
+					__( 'Micro Cloud: %1$s of %2$s requests used this month. <a href="%3$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $1.25/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
+					esc_html( $request_usage ),
+					esc_html( $request_quota ),
+					esc_url( add_query_arg( 'id', '34', $upgrade_premium_url ) )
+				);
 				?>
             </p>
         </div>

@@ -35,23 +35,26 @@ if ( !defined( 'ABSPATH' ) ) exit();
 
 		$(document).ready(function () {
 
-			var $log_table = $('.llar-table-app-lockouts'),
+			let $log_table = $('.llar-table-app-lockouts'),
 			    $log_table_body = $log_table.find('tbody'),
                 $preloader_wrap = $log_table.closest('.llar-preloader-wrap'),
                 $log_table_empty = $log_table_body.html(),
                 $infinity_box = $('.llar-app-lockouts-infinity-scroll'),
                 loading_data = false,
                 page_offset = '',
-                page_limit = 10;
+                page_limit = 10,
+                total_loaded = 0;
 
             $infinity_box.on('scroll', function (){
                 if (!loading_data && $infinity_box.get(0).scrollTop + $infinity_box.get(0).clientHeight >= $infinity_box.get(0).scrollHeight - 1) {
+                    total_loaded = 0;
                     load_lockouts_data();
                 }
             });
 
             $log_table.on('llar:refresh', function () {
                 page_offset = '';
+                total_loaded = 0;
                 $log_table_body.html($log_table_empty);
                 load_lockouts_data();
             });
@@ -60,6 +63,7 @@ if ( !defined( 'ABSPATH' ) ) exit();
 
             $('.llar-global-reload-btn').on('click', function() {
                 page_offset = '';
+                total_loaded = 0;
                 $log_table_body.html($log_table_empty);
                 load_lockouts_data();
             });
@@ -83,22 +87,38 @@ if ( !defined( 'ABSPATH' ) ) exit();
 
                     $preloader_wrap.removeClass('loading');
 
-					if(response.success) {
+                    if (!response.success) {
 
-                        $log_table_body.append(response.data.html);
-
-                        if(response.data.offset) {
-                            page_offset = response.data.offset;
-                        } else {
-                            page_offset = false;
+                        if (response.data.error_notice) {
+                            $('.limit-login-app-dashboard').find('.llar-app-notice').remove();
+                            $('.limit-login-app-dashboard').prepend(response.data.error_notice);
                         }
-					} else {
 
-						if(response.data.error_notice) {
-							$('.limit-login-app-dashboard').find('.llar-app-notice').remove();
-							$('.limit-login-app-dashboard').prepend(response.data.error_notice);
-						}
-					}
+                        loading_data = false;
+                        return;
+                    }
+
+                    $log_table_body.append(response.data.html);
+
+                    total_loaded += response.data.total_items;
+
+                    switch (true) {
+
+                        // No offset means the whole list has been loaded.
+                        case !response.data.offset:
+                            page_offset = false;
+                            break;
+
+                        // A partial batch with an offset means there is more data,
+                        // keep requesting until the page limit is filled up.
+                        case response.data.total_items < page_limit && total_loaded < page_limit:
+                            page_offset = response.data.offset;
+                            load_lockouts_data();
+                            return; // keep loading_data locked while the extra request is in flight
+
+                        default:
+                            page_offset = response.data.offset;
+                    }
 
                     loading_data = false;
 				});
