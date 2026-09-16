@@ -132,10 +132,14 @@ class WhitelistBlacklistChecker {
 	/**
 	 * Determine if submitted login identifier maps to local allowed usernames.
 	 *
-	 * Supports direct username, canonical user_login and email-based login.
+	 * Matches the submitted string and, when available, the canonical
+	 * $user->user_login. Does not map email → user_login via get_user_by: an
+	 * allow-listed username entered as that account's email is recognized in
+	 * the late hook where $user is already resolved. Emails placed on the
+	 * allowlist as literal strings still match on the submitted value.
 	 *
-	 * @param string   $username Submitted login value (username or email).
-	 * @param \WP_User $user     Optional authenticated user object.
+	 * @param string        $username Submitted login value (username or email).
+	 * @param \WP_User|null $user     Optional authenticated user object.
 	 * @return bool
 	 */
 	public function is_local_allowlisted_username( $username, $user = null ) {
@@ -148,16 +152,7 @@ class WhitelistBlacklistChecker {
 			return true;
 		}
 
-		if ( '' === $username || ! function_exists( 'is_email' ) || ! is_email( $username ) ) {
-			return false;
-		}
-
-		$user_by_email = get_user_by( 'email', $username );
-		if ( ! $user_by_email || ! is_a( $user_by_email, 'WP_User' ) ) {
-			return false;
-		}
-
-		return $this->is_username_whitelisted( $user_by_email->user_login );
+		return false;
 	}
 
 	/**
