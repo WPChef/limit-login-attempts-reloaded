@@ -1,0 +1,32 @@
+ Volume llar-e2e-tests_e2e_node_modules Creating 
+ Volume llar-e2e-tests_e2e_node_modules Created 
+ Container llar-e2e-tests-e2e-run-9dcd662b7777 Creating 
+ Container llar-e2e-tests-e2e-run-9dcd662b7777 Created 
+
+added 5 packages, and audited 6 packages in 6s
+
+2 high severity vulnerabilities
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+npm notice
+npm notice New major version of npm available! 10.9.2 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+[provision] GET http://wordpress/test.php?provision
+[provision] HTTP 200
+PROVISIONED
+ACTIVE    limit-login-attempts-reloaded/limit-login-attempts-reloaded.php
+ACTIVE    woocommerce/woocommerce.php
+ACTIVE    ultimate-member/ultimate-member.php
+SET       woocommerce_enable_myaccount_registration=yes
+UM        setup ran
+UM        core pages installed
+
+Running 282 tests using 1 worker
+
+  -  1 [chromium] › tests/dashboard/info-api-errors.spec.js:37:9 › Dashboard /info API errors › 403 /info (forbidden) shows cloud unavailable header
+  -  2 [chromium] › tests/dashboard/info-api-errors.spec.js:37:9 › Dashboard /info API errors › 403 /info (exhausted) shows cloud unavailable header

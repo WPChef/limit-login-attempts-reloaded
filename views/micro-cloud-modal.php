@@ -78,7 +78,7 @@ ob_start(); ?>
                 <div class="card-body step-second llar-display-none">
                     <div class="llar-upgrade-subscribe_notification__error llar-display-none">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
-                        <?php _e( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ); ?>
+                        <span class="llar-micro-cloud-error-message"><?php _e( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ); ?></span>
                     </div>
                     <div class="llar-upgrade-subscribe_notification">
                         <div class="field-image">
@@ -221,9 +221,11 @@ $micro_cloud_popup_content = ob_get_clean();
                                 microCloudActivationCompleted = true;
                                 $button_subscribe_email.removeClass( disabled );
                             } )
-                            .catch( function() {
+                            .catch( function( response ) {
 
                                 microCloudActivationCompleted = false;
+                                const errorMessage = llar_micro_cloud_error_message( response );
+                                $subscribe_notification_error.find( '.llar-micro-cloud-error-message' ).text( errorMessage );
                                 $subscribe_notification_error.removeClass( 'llar-display-none' );
                                 $subscribe_notification.addClass( 'llar-display-none' );
                             } )

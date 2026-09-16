@@ -40,9 +40,10 @@ $custom_error_message       = Config::get( 'custom_error_message' );
 
 $is_local_empty_setup_code  = ( ! $is_active_app_custom && empty( $app_setup_code ) );
 
-$min_plan                   = 'Premium';
+$min_plan                   = 'Personal';
 $plans                      = $this->array_name_plans();
-$is_premium                 = ( $is_active_app_custom && $plans[ $block_sub_group ] >= $plans[ $min_plan ] );
+$current_plan_rate          = isset( $plans[ $block_sub_group ] ) ? $plans[ $block_sub_group ] : 0;
+$is_premium                 = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan ] );
 
 $url_try_for_free           = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
 $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_url() : '';

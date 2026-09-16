@@ -712,8 +712,9 @@ class Ajax
 			<?php
 
 			wp_send_json_success( array(
-				'html'   => ob_get_clean(),
-				'offset' => $lockouts['offset']
+				'html'        => ob_get_clean(),
+				'offset'      => $lockouts['offset'],
+				'total_items' => count( $lockouts['items'] )
 			) );
 
 		} elseif ( intval( LimitLoginAttempts::$cloud_app->last_response_code ) >= 400 && intval( LimitLoginAttempts::$cloud_app->last_response_code ) < 500 ) {
@@ -1050,7 +1051,9 @@ class Ajax
 
             if ( ! empty( $response['error'] ) ) {
 
-                wp_send_json_error( $response['error'] );
+                wp_send_json_error( array(
+                    'message' => is_string( $response['error'] ) ? $response['error'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
+                ) );
 
             } else {
 
@@ -1068,20 +1071,27 @@ class Ajax
 		                } else {
 
 			                wp_send_json_error( array(
-				                'msg' => ( $key_result )
+				                'message' => ! empty( $key_result['error'] ) ? $key_result['error'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
 			                ) );
 		                }
 	                } else {
 
 		                wp_send_json_error( array(
-			                'msg' => $key_result['error']
+			                'message' => __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
 		                ) );
 	                }
+                } else {
+
+                    wp_send_json_error( array(
+                        'message' => ! empty( $response_body['message'] ) ? $response_body['message'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
+                    ) );
                 }
             }
         }
 
-	    wp_send_json_error( array() );
+	    wp_send_json_error( array(
+            'message' => __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
+        ) );
     }
 
 

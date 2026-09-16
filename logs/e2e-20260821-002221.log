@@ -1,0 +1,49 @@
+ Volume llar-e2e-tests_e2e_node_modules Creating 
+ Volume llar-e2e-tests_e2e_node_modules Created 
+ Container llar-e2e-tests-e2e-run-deae77602988 Creating 
+ Container llar-e2e-tests-e2e-run-deae77602988 Created 
+npm warn exec The following package was not found and will be installed: playwright@1.62.1
+Error: Cannot find module '@playwright/test'
+Require stack:
+- /work/playwright.config.js
+- /root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/common/index.js
+- /root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/program.js
+- /root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/cli.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1225:15)
+    at Function.resolveFilename [as _resolveFilename] (/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/common/index.js:1174:36)
+    at Function._load (node:internal/modules/cjs/loader:1055:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (/work/playwright.config.js:2:1)
+    at Module._compile (node:internal/modules/cjs/loader:1554:14)
+    at Module.newCompile2 (/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/common/index.js:910:29)
+    at Object.<anonymous> (node:internal/modules/cjs/loader:1706:10)
+    at Object.newLoader2 [as .js] (/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/common/index.js:916:22)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at requireOrImport (/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/common/index.js:1138:18)
+    at loadUserConfig (/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/common/index.js:1323:52)
+    at loadConfig (/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/common/index.js:1330:28)
+    at Object.loadConfigFromFile (/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/common/index.js:1546:10)
+    at runTests (/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/cli/testActions.js:46:18)
+    at _Command.<anonymous> (/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/program.js:55:7) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/work/playwright.config.js',
+    '/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/common/index.js',
+    '/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/lib/program.js',
+    '/root/.npm/_npx/e41f203b7505f1fb/node_modules/playwright/cli.js'
+  ]
+}
+npm notice
+npm notice New major version of npm available! 10.9.2 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+
