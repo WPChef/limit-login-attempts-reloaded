@@ -161,26 +161,25 @@ class WhitelistBlacklistChecker {
 	}
 
 	/**
-	 * Determine if submitted login identifier maps to local denied usernames.
+	 * Determine if the submitted login identifier is on the local denylist.
 	 *
-	 * Checks the canonical user_login too when the user object is available, so a
-	 * case variant cannot bypass a deny-listed account. Email is not resolved here:
-	 * the allowlist path resolves it independently and always wins.
+	 * Matches the submitted string only (case-insensitive via the blacklist
+	 * filter). Does not map email → user_login: a deny-listed username must be
+	 * entered as that username; logging in with the account email is allowed
+	 * unless the email itself is on the denylist. Case variants of a deny-listed
+	 * username are still blocked. The $user argument is kept for call-site
+	 * compatibility and is unused.
 	 *
-	 * @param string   $username Submitted login value (username or email).
-	 * @param \WP_User $user     Optional authenticated user object.
+	 * @param string        $username Submitted login value (username or email).
+	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
 	 * @return bool
 	 */
 	public function is_local_blacklisted_username( $username, $user = null ) {
 		$username = trim( (string) $username );
-		if ( '' !== $username && $this->is_username_blacklisted( $username ) ) {
-			return true;
+		if ( '' === $username ) {
+			return false;
 		}
 
-		if ( is_a( $user, 'WP_User' ) && ! empty( $user->user_login ) && $this->is_username_blacklisted( $user->user_login ) ) {
-			return true;
-		}
-
-		return false;
+		return $this->is_username_blacklisted( $username );
 	}
 }

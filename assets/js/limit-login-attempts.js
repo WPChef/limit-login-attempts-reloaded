@@ -33,6 +33,35 @@ function llar_is_valid_email( email ) {
     return email_regex.test( email );
 }
 
+function llar_micro_cloud_error_message( response ) {
+
+    const fallback = 'The server is not working, try again later';
+
+    if ( ! response || ! response.data ) {
+        return fallback;
+    }
+
+    if ( typeof response.data === 'string' && response.data.trim() !== '' ) {
+        return response.data;
+    }
+
+    if ( response.data.message ) {
+        return response.data.message;
+    }
+
+    if ( response.data.msg ) {
+        if ( typeof response.data.msg === 'string' ) {
+            return response.data.msg;
+        }
+        if ( response.data.msg.error ) {
+            return response.data.msg.error;
+        }
+    }
+
+    return fallback;
+}
+
+
 function llar_ajax_callback_post( ajaxurl = null, data ) {
 
     return new Promise(function( resolve, reject ) {
