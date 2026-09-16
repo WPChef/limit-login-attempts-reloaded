@@ -93,9 +93,15 @@
         background-color: $state-color__error_back;
       }
 
-      &.request {
-        background-color: unset;
-      }
+  	    &.request {
+  	      background-color: unset;
+
+	      .llar-usage-number__text {
+	        text-decoration: underline;
+	        text-decoration-style: dotted;
+	        text-underline-offset: 3px;
+	      }
+  	    }
     }
   }
 
@@ -694,7 +700,7 @@
           color: $typography-additional;
 
           @include _1599 {
-            line-height: unset;
+            line-height: 1;
             font-size: 14px;
             width: 12px;
           }

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) exit();
  */
 
 $lockouts_total = Config::get( 'lockouts_total' );
-$lockouts = Config::get( 'login_lockouts' );
+$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 $lockouts_now = is_array( $lockouts ) ? count( $lockouts ) : 0;
 
 $white_list_ips = Config::get( 'whitelist' );
@@ -184,9 +184,9 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
     </div>
 
     <?php
-    $log = Config::get( 'logged' );
+    $log = Config::get( Config::OPTION_LOGGED );
     $log = Helpers::sorted_log_by_date( $log );
-    $lockouts = (array) Config::get( 'lockouts' );
+    $lockouts = (array) Config::get( Config::OPTION_LOCKOUTS );
 
     if ( is_array( $log ) && ! empty( $log ) ) : ?>
         <h3 class="title_page">

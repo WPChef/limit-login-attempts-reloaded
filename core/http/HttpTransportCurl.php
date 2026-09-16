@@ -63,6 +63,7 @@ class HttpTransportCurl implements HttpTransportInterface {
 
 		$response = curl_exec( $handle );
 		$response_status = curl_getinfo( $handle, CURLINFO_HTTP_CODE );
+		$response_error = ( false === $response ) ? curl_error( $handle ) : null;
 
 		curl_close( $handle );
 
@@ -74,7 +75,7 @@ class HttpTransportCurl implements HttpTransportInterface {
 		return array(
 			'data'      => $response,
 			'status'    => intval( $response_status ),
-			'error'     => !$response ? curl_error( $handle ) : null,
+			'error'     => $response_error,
 			'context'   => $context
 		);
 	}

@@ -18,6 +18,14 @@ if ( ! defined( 'ABSPATH' ) ) exit();
 $api_stats = $is_active_app_custom ? LimitLoginAttempts::$cloud_app->stats() : false;
 
 $setup_code = Config::get( 'app_setup_code' );
+$chart_circle_data = $this->get_failed_attempts_circle_data(
+	$is_active_app_custom,
+	$is_exhausted,
+	$block_sub_group,
+	$setup_code,
+	$upgrade_premium_url,
+	$api_stats
+);
 
 $wp_locale = str_replace( '_', '-', get_locale() );
 $is_tab_dashboard = true;
@@ -144,9 +152,11 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
         $checklist = Config::get( 'checklist' );
         $is_checklist =  $checklist === 'true' ? ' checked disabled' : '';
 
-        $min_plan = 'Premium';
-        $plans = $this->array_name_plans();
-        $upgrade_premium = ( $is_active_app_custom && $plans[$block_sub_group] >= $plans[$min_plan] ) ? ' checked' : '';
+        $min_paid_plan = 'Personal';
+        $min_plan      = 'Premium';
+        $plans         = $this->array_name_plans();
+        $current_plan_rate = isset( $plans[ $block_sub_group ] ) ? $plans[ $block_sub_group ] : 0;
+        $upgrade_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_paid_plan ] ) ? ' checked' : '';
 
         $checked_block_by_country = Config::get( 'block_by_country' ) === 'true' ? ' checked disabled' : '';
         $block_by_country = $block_sub_group ? $this->info_block_by_country() : false;
@@ -238,11 +248,11 @@ if ( ! $is_active_app_custom && empty( $setup_code ) ) {
                         <?php _e( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ); ?>
                     </span>
                     <div class="desc">
-	                    <?php if ( $is_active_app_custom && ( $plans[ $block_sub_group ] >= $plans[ $min_plan ] ) ) : ?>
+	                    <?php if ( $is_active_app_custom && ( $current_plan_rate >= $plans[ $min_paid_plan ] ) ) : ?>
 		                    <?php _e( 'Upgrade to our premium version for advanced protection.', 'limit-login-attempts-reloaded' ) ?>
                         <?php else : ?>
 		                    <?php $link__allow_deny = $is_active_app_custom
-			                    ? str_replace('id=0', 'id=5', $this->info_upgrade_url())
+			                    ? add_query_arg('id', '5', $this->info_upgrade_url())
 			                    : 'https://www.limitloginattempts.com/info.php?id=3' ?>
 		                    <?php echo sprintf(
 			                    __( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Upgrade to our premium</a> version for advanced protection.', 'limit-login-attempts-reloaded' ),

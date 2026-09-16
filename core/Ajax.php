@@ -3,6 +3,7 @@
 namespace LLAR\Core;
 
 use LLAR\Core\Http\Http;
+use LLAR\Core\Mail\Mailer;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -43,6 +44,8 @@ class Ajax
 		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
 		add_action( 'wp_ajax_activate_micro_cloud', array( $this, 'activate_micro_cloud_callback' ) );
 		add_action( 'wp_ajax_test_email_notifications', array( $this, 'test_email_notifications_callback' ) );
+		add_action( 'wp_ajax_nopriv_llar_mfa_flow_send_code', array( $this, 'mfa_flow_send_code_callback' ) );
+		add_action( 'wp_ajax_llar_mfa_flow_send_code', array( $this, 'mfa_flow_send_code_callback' ) );
 	}
 
 	public function ajax_unlock() {
@@ -52,16 +55,16 @@ class Ajax
 		check_ajax_referer( 'llar-unlock', 'sec' );
 		$ip = (string) @$_POST['ip'];
 
-		$lockouts = (array) Config::get( 'lockouts' );
+		$lockouts = (array) Config::get( Config::OPTION_LOCKOUTS );
 
 		if ( isset( $lockouts[ $ip ] ) ) {
 			unset( $lockouts[ $ip ] );
-			Config::update( 'lockouts', $lockouts );
+			Config::update( Config::OPTION_LOCKOUTS, $lockouts );
 		}
 
 		//save to log
 		$user_login = @(string) $_POST['username'];
-		$log        = Config::get( 'logged' );
+		$log        = Config::get( Config::OPTION_LOGGED );
 
 		if ( @$log[ $ip ][ $user_login ] ) {
 			if ( ! is_array( $log[ $ip ][ $user_login ] ) ) {
@@ -71,7 +74,7 @@ class Ajax
 			}
 			$log[ $ip ][ $user_login ]['unlocked'] = true;
 
-			Config::update( 'logged', $log );
+			Config::update( Config::OPTION_LOGGED, $log );
 		}
 
 		header( 'Content-Type: application/json' );
@@ -150,25 +153,19 @@ class Ajax
 
 			$setup_code = sanitize_text_field( $_POST['code'] );
 
-			if ( $key_result = CloudApp::activate_license_key( $setup_code ) ) {
+			$key_result = CloudApp::activate_license_key( $setup_code );
 
-			    if ( $key_result['success'] ) {
+			if ( $key_result['success'] ) {
 
-				    wp_send_json_success( array(
-					    'msg' => ( $key_result['app_config']['messages']['setup_success'] )
-				    ) );
-                } else {
+				wp_send_json_success( array(
+					'msg' => ( $key_result['app_config']['messages']['setup_success'] )
+				) );
+			} else {
 
-				    wp_send_json_error( array(
-					    'msg' => ( $key_result['error'] )
-				    ) );
-                }
-            } else {
-
-                wp_send_json_error( array(
-                    'msg' => $key_result['error']
-                ) );
-            }
+				wp_send_json_error( array(
+					'msg' => ( $key_result['error'] )
+				) );
+			}
 		}
 
 		wp_send_json_error( array(
@@ -715,8 +712,9 @@ class Ajax
 			<?php
 
 			wp_send_json_success( array(
-				'html'   => ob_get_clean(),
-				'offset' => $lockouts['offset']
+				'html'        => ob_get_clean(),
+				'offset'      => $lockouts['offset'],
+				'total_items' => count( $lockouts['items'] )
 			) );
 
 		} elseif ( intval( LimitLoginAttempts::$cloud_app->last_response_code ) >= 400 && intval( LimitLoginAttempts::$cloud_app->last_response_code ) < 500 ) {
@@ -983,11 +981,7 @@ class Ajax
 
 		check_ajax_referer( 'llar-get-remaining-attempts-message', 'sec' );
 
-		if ( ! session_id() ) {
-			session_start();
-		}
-
-		$remaining = ! empty( $_SESSION['login_attempts_left'] ) ? (int)$_SESSION['login_attempts_left'] : 0;
+		$remaining = (int) LoginFlowTransientStore::get( 'login_attempts_left', 0 );
 
 		if ( ! empty( $remaining ) && $remaining > 0 ) {
 
@@ -1009,7 +1003,7 @@ class Ajax
 
         check_ajax_referer( 'llar-action-onboarding-reset', 'sec' );
 
-        if ( Config::get( 'active_app' ) !== 'local' || ! empty( Config::get( 'app_setup_code' ) ) ) {
+        if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'local' || ! empty( Config::get( 'app_setup_code' ) ) ) {
 
             wp_send_json_error( array() );
         }
@@ -1021,6 +1015,8 @@ class Ajax
 
 
     public function close_premium_message() {
+
+	    $this->check_user_capabilities();
 
 	    check_ajax_referer( 'llar-close-premium-message', 'sec' );
 
@@ -1055,7 +1051,9 @@ class Ajax
 
             if ( ! empty( $response['error'] ) ) {
 
-                wp_send_json_error( $response['error'] );
+                wp_send_json_error( array(
+                    'message' => is_string( $response['error'] ) ? $response['error'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
+                ) );
 
             } else {
 
@@ -1073,20 +1071,27 @@ class Ajax
 		                } else {
 
 			                wp_send_json_error( array(
-				                'msg' => ( $key_result )
+				                'message' => ! empty( $key_result['error'] ) ? $key_result['error'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
 			                ) );
 		                }
 	                } else {
 
 		                wp_send_json_error( array(
-			                'msg' => $key_result['error']
+			                'message' => __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
 		                ) );
 	                }
+                } else {
+
+                    wp_send_json_error( array(
+                        'message' => ! empty( $response_body['message'] ) ? $response_body['message'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
+                    ) );
                 }
             }
         }
 
-	    wp_send_json_error( array() );
+	    wp_send_json_error( array(
+            'message' => __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
+        ) );
     }
 
 
@@ -1120,6 +1125,11 @@ class Ajax
 		wp_send_json_success();
 	}
 
+	/**
+	 * Send a test notification email using shared Mailer layout rendering.
+	 *
+	 * @return void
+	 */
 	public function test_email_notifications_callback() {
 
 		$this->check_user_capabilities();
@@ -1135,11 +1145,30 @@ class Ajax
             ) );
 		}
 
-		if( wp_mail(
-            $to,
-            __( 'LLAR Security Notifications [TEST]', 'limit-login-attempts-reloaded' ),
-            __( 'Your email notifications for Limit Login Attempts Reloaded are working correctly. If this email is going to spam, please be sure to add this address to your safelist.', 'limit-login-attempts-reloaded' )
-        ) ) {
+		$subject        = __( 'LLAR Security Notifications [TEST]', 'limit-login-attempts-reloaded' );
+
+		ob_start();
+		include LLA_PLUGIN_DIR . 'views/emails/test-notification-content.php';
+		$content = (string) ob_get_clean();
+
+		add_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
+
+		$sent = Mailer::send(
+			$to,
+			$subject,
+			$content,
+			array( 'content-type: text/html' ),
+			array(),
+			false,
+			array(
+				'title'    => $subject,
+				'logo_cid' => 'logo',
+			)
+		);
+
+		remove_action( 'phpmailer_init', array( 'LLAR\Core\Helpers', 'add_attachments_to_php_mailer' ) );
+
+		if ( $sent ) {
 
 			wp_send_json_success();
 		} else {
@@ -1148,6 +1177,46 @@ class Ajax
 		}
 	}
 
+	/**
+	 * MFA flow: send code to user email (AJAX fallback when REST API is unavailable).
+	 * POST only: token, secret (send_email secret), code in $_POST.
+	 */
+	public function mfa_flow_send_code_callback() {
+		check_ajax_referer( 'llar_mfa_flow_send_code', '_ajax_nonce', true );
+
+		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : '';
+		if ( 'POST' !== $method ) {
+			status_header( 405 );
+			wp_send_json_error( array( 'message' => 'Method not allowed' ) );
+		}
+
+		$token   = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
+		$secret  = isset( $_POST['secret'] ) ? sanitize_text_field( wp_unslash( $_POST['secret'] ) ) : '';
+		$code    = isset( $_POST['code'] ) ? sanitize_text_field( wp_unslash( $_POST['code'] ) ) : '';
+		$ip       = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
+		$browser  = isset( $_POST['browser'] ) ? sanitize_text_field( wp_unslash( $_POST['browser'] ) ) : '';
+		$location = isset( $_POST['location'] ) ? sanitize_text_field( wp_unslash( $_POST['location'] ) ) : '';
+		$context  = array(
+			'ip'       => is_string( $ip ) ? $ip : '',
+			'browser'  => is_string( $browser ) ? $browser : '',
+			'location' => is_string( $location ) ? $location : '',
+		);
+
+		if ( '' === $token || '' === $secret ) {
+			status_header( 403 );
+			wp_send_json_error( array( 'message' => 'Forbidden' ) );
+		}
+
+		$result  = \LLAR\Core\MfaFlow\MfaFlowSendCode::execute( $token, $secret, $code, $context );
+		$status  = isset( $result['http_status'] ) ? (int) $result['http_status'] : 200;
+		$message = isset( $result['message'] ) ? $result['message'] : '';
+
+		status_header( $status );
+		if ( ! empty( $result['success'] ) ) {
+			wp_send_json_success();
+		}
+		wp_send_json_error( array( 'message' => $message ? $message : 'Forbidden' ) );
+	}
 
 	/**
 	 * Access capabilities checks

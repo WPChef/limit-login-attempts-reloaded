@@ -57,10 +57,10 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 		$stream_context = stream_context_create( array(
 			'http' => array(
-                'method'  => $method,
-                'header'  => implode( "\r\n", $headers ),
-                'content' => $request_data,
-                'ignore_errors' => true
+                'method'        => $method,
+                'header'        => implode( "\r\n", $headers ),
+                'content'       => $request_data,
+                'ignore_errors' => true,
             )
 		));
 

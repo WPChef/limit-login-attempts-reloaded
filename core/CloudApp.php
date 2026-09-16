@@ -35,9 +35,19 @@ class CloudApp
 	public $last_response_code = null;
 
 	/**
+	 * @var string|null
+	 */
+	public $last_error_message = null;
+
+	/**
 	 * @var array
 	 */
 	private $stats_cache = array();
+
+	/**
+	 * @var array
+	 */
+	private $missing_config_fields = array();
 
 	/**
 	 * App constructor.
@@ -49,9 +59,37 @@ class CloudApp
 			return false;
 		}
 
-		$this->id = 'app_' . $config['id'];
-		$this->api = $config['api'];
+		// Read required fields defensively: a missing field must surface as a
+		// user-facing error later, not as a PHP warning here.
+		$this->id = isset( $config['id'] ) ? 'app_' . $config['id'] : null;
+		$this->api = isset( $config['api'] ) ? $config['api'] : null;
 		$this->config = $config;
+
+		foreach ( array( 'id', 'api', 'header', 'key' ) as $required_field ) {
+			if ( empty( $config[ $required_field ] ) ) {
+				$this->missing_config_fields[] = $required_field;
+			}
+		}
+	}
+
+	/**
+	 * Names of the required config fields that are missing.
+	 *
+	 * @return array
+	 */
+	public function get_missing_config_fields()
+	{
+		return $this->missing_config_fields;
+	}
+
+	/**
+	 * Whether the app config has every field required to call the Cloud API.
+	 *
+	 * @return bool
+	 */
+	public function is_config_valid()
+	{
+		return empty( $this->missing_config_fields );
 	}
 
 	/**
@@ -118,21 +156,31 @@ class CloudApp
 		$response_data = isset( $setup_response['data'] ) ? $setup_response['data'] : '{}';
 		$setup_response_body = json_decode( $response_data, true );
 
-		if ( ! empty( $setup_response['error'] ) ) {
+		if ( $setup_response['status'] === 200 && empty( $setup_response['error'] ) ) {
 
-			$return['error'] = $setup_response['error'];
-
-		} elseif( $setup_response['status'] === 200 ) {
-
-			$return['success'] = true;
+			$return['success']    = true;
 			$return['app_config'] = $setup_response_body;
+
+		} elseif ( ! empty( $setup_response_body['message'] ) ) {
+
+			$return['error']         = $setup_response_body['message'];
+			$return['response_code'] = $setup_response['status'];
+
+		} elseif ( ! empty( $setup_response['error'] ) && empty( $setup_response['status'] ) ) {
+
+			// Transport-level failure (DNS, timeout, etc.) - keep the raw error for diagnostics.
+			error_log( 'Limit Login Attempts Reloaded: app setup request transport error - ' . $setup_response['error'] );
+
+			$return['error'] = __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
+
+		} elseif ( ! empty( $setup_response['error'] ) ) {
+
+			$return['error']         = $setup_response['error'];
+			$return['response_code'] = $setup_response['status'];
 
 		} else {
 
-			$return['error'] = ( ! empty( $setup_response_body['message'] ) )
-								? $setup_response_body['message']
-								: __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
-
+			$return['error']         = __( 'The endpoint is not responding. Please contact your app provider to settle that.', 'limit-login-attempts-reloaded' );
 			$return['response_code'] = $setup_response['status'];
 		}
 
@@ -141,8 +189,19 @@ class CloudApp
 
 	public static function activate_license_key( $setup_code )
 	{
-		$link = strrev( $setup_code );
+		$link         = strrev( $setup_code );
 		$setup_result = self::setup( $link );
+
+		/**
+		 * Filters the result of the remote setup() call.
+		 *
+		 * Intended for integration tests to stub the remote response without
+		 * performing a real HTTP request.
+		 *
+		 * @param array  $setup_result Result from setup().
+		 * @param string $setup_code   Original setup code.
+		 */
+		$setup_result = apply_filters( 'llar_app_setup_result', $setup_result, $setup_code );
 
 		if ( $setup_result['success'] ) {
 
@@ -150,8 +209,32 @@ class CloudApp
 
 				Helpers::cloud_app_update_config( $setup_result['app_config'], true );
 
-				Config::update( 'active_app', 'custom' );
 				Config::update( 'app_setup_code', $setup_code );
+
+				// Verify the setup code persisted before switching the active app, to avoid
+				// an inconsistent state (active app set to "custom" without a setup code).
+				$persisted_code = Config::get( 'app_setup_code' );
+
+				/**
+				 * Filters the read-back value of the persisted setup code.
+				 *
+				 * Intended for integration tests to simulate a storage failure: returning
+				 * a value that differs from $setup_code forces the save-error branch.
+				 *
+				 * @param string $persisted_code Value read back from storage.
+				 * @param string $setup_code     The code that was just saved.
+				 */
+				$persisted_code = apply_filters( 'llar_app_setup_code_readback', $persisted_code, $setup_code );
+
+				if ( $persisted_code !== $setup_code ) {
+
+					$setup_result['success'] = false;
+					$setup_result['error']   = __( 'The settings could not be saved due to an error on this site. Possible causes include a corrupted database or a PHP error. Please check the error logs, verify the database integrity, fix any issues found, and then try again.', 'limit-login-attempts-reloaded' );
+
+					return $setup_result;
+				}
+
+				Config::update( Config::OPTION_ACTIVE_APP, 'custom' );
 
 				$setup_result['app_config']['messages']['setup_success'] =
 					! empty( $setup_result['app_config']['messages']['setup_success'] )
@@ -225,7 +308,128 @@ class CloudApp
      */
     public function info()
     {
-        return $this->request( 'info' );
+        if ( ! $this->is_config_valid() ) {
+            if ( ! defined( 'LLAR_FAILED_INFO_NOTICE_SHOWN' ) ) {
+                define( 'LLAR_FAILED_INFO_NOTICE_SHOWN', true );
+                $this->render_config_incomplete_notice();
+            }
+
+            return false;
+        }
+
+        $info = $this->request_info();
+
+        if ( ! $info && ! defined( 'LLAR_FAILED_INFO_NOTICE_SHOWN' ) && $this->is_info_network_failure() ) {
+            define( 'LLAR_FAILED_INFO_NOTICE_SHOWN', true );
+            $this->render_info_network_failure_notice();
+        }
+
+        return $info;
+    }
+
+    /**
+     * Whether the last /info call failed before reaching the Cloud API (transport / DNS / timeout).
+     *
+     * @return bool
+     */
+    public function is_info_network_failure()
+    {
+        if ( 0 < (int) $this->last_response_code ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool|mixed
+     * @throws Exception
+     */
+    private function request_info()
+    {
+        if ( ! $this->api ) {
+            error_log( 'LLAR: CloudApp info request skipped - Cloud API endpoint is not configured. Missing fields: ' . implode( ', ', $this->missing_config_fields ) );
+            $this->last_error_message = 'Cloud API endpoint is not configured.';
+
+            return false;
+        }
+
+        $headers   = array();
+        $headers[] = "{$this->config['header']}: {$this->config['key']}";
+
+        $response = Http::get(
+            $this->api . '/info',
+            array(
+                'headers' => $headers,
+            )
+        );
+
+        $this->last_response_code = ! empty( $response['status'] ) ? $response['status'] : 0;
+        $this->last_error_message = ! empty( $response['error'] ) ? $response['error'] : null;
+
+        $info = false;
+        if ( ! empty( $response['data'] ) ) {
+            $decoded = json_decode( $response['data'], true );
+            if ( is_array( $decoded ) && ! empty( $decoded ) ) {
+                $info = Helpers::sanitize_stripslashes_deep( $decoded );
+            }
+        }
+
+        if ( 200 !== (int) $this->last_response_code ) {
+            error_log( 'LLAR: CloudApp info request failed: ' . $this->api . '/info ' . $this->last_response_code );
+        }
+
+        return $info;
+    }
+
+    /**
+     * Admin notice when the stored app config is incomplete: a required
+     * field (e.g. "api") is missing, so no Cloud API call is possible.
+     */
+    private function render_config_incomplete_notice()
+    {
+        $message = sprintf(
+            /* translators: %s: comma-separated list of missing config fields. */
+            __( 'The Cloud App configuration is incomplete (missing field(s): %s). Please re-enter your Setup Code on the Settings tab to re-import the app configuration.', 'limit-login-attempts-reloaded' ),
+            esc_html( implode( ', ', $this->missing_config_fields ) )
+        );
+
+        echo '<div class="notice notice-error" style="display: block;"><p>' . $message . '</p></div>';
+    }
+
+    /**
+     * Admin notice when /info could not reach the Cloud API at all.
+     */
+    private function render_info_network_failure_notice()
+    {
+        $details = array();
+
+        if ( null !== $this->last_response_code ) {
+            $details[] = sprintf(
+                /* translators: %d: HTTP response code. */
+                __( 'Code: %d', 'limit-login-attempts-reloaded' ),
+                intval( $this->last_response_code )
+            );
+        }
+
+        if ( ! empty( $this->last_error_message ) ) {
+            $details[] = sprintf(
+                /* translators: %s: technical error reason. */
+                __( 'Reason: %s', 'limit-login-attempts-reloaded' ),
+                esc_html( $this->get_readable_error_reason( $this->last_error_message ) )
+            );
+        }
+
+        $message = __( 'Oops, it looks like the site is having a temporary network issue.', 'limit-login-attempts-reloaded' );
+
+        if ( ! empty( $details ) ) {
+            $message .= ' (' . implode( '; ', $details ) . ')';
+        }
+
+        $refresh_label = __( 'Click here to refresh the page', 'limit-login-attempts-reloaded' );
+
+        echo '<div class="notice notice-error" style="display: block;"><p>' . $message . '</p>';
+        echo '<p><a href="javascript:void(0);" onclick="window.location.reload();" class="button button-primary">' . esc_html( $refresh_label ) . '</a></p></div>';
     }
 
 	/**
@@ -395,24 +599,60 @@ class CloudApp
 			throw new Exception( 'You must specify API method.' );
 		}
 
+		// An incomplete config cannot produce a valid API call — fail
+		// gracefully instead of building a request from missing values.
+		if ( ! $this->is_config_valid() ) {
+			error_log( 'LLAR: CloudApp request skipped - app config is incomplete. Missing fields: ' . implode( ', ', $this->missing_config_fields ) );
+			$this->last_error_message = 'Cloud API endpoint is not configured.';
+
+			return false;
+		}
+
 		$headers = array();
 		$headers[] = "{$this->config['header']}: {$this->config['key']}";
 
-		$response = Http::$type( $this->api.'/'.$method, array(
+		$response = Http::$type( $this->api . '/' . $method, array(
 			'data'      => $data,
 			'headers'   => $headers
 		) );
 
 		$this->last_response_code = !empty( $response['status'] ) ? $response['status'] : 0;
+		$this->last_error_message = ! empty( $response['error'] ) ? $response['error'] : null;
 
-		if ( !empty( $response['context'] ) ) {
+		if ( ! empty( $response['context'] ) ) {
 			$context = $response['context'];
-			do_action( 'limit_login_response_context_'.$context, $response );
+			do_action( 'limit_login_response_context_' . $context, $response );
 		}
-		if ( $response['status'] !== 200 ) {
+		if ( 200 !== $response['status'] ) {
+			error_log( 'LLAR: CloudApp request failed: ' . $this->api . '/' . $method . ' ' . $this->last_response_code );
 			return false;
 		}
 
-		return Helpers::sanitize_stripslashes_deep( json_decode( $response['data'], true ) );
+		$decoded = json_decode( $response['data'], true );
+
+		return Helpers::sanitize_stripslashes_deep( $decoded );
+	}
+
+	/**
+	 * Tries to keep technical reason readable and avoid leaking full URL.
+	 *
+	 * @param string $error_message
+	 * @return string
+	 */
+	private function get_readable_error_reason( $error_message ) {
+		$reason = trim( (string) $error_message );
+
+		if ( false !== strpos( $reason, 'Failed to open stream:' ) ) {
+			$parts = explode( 'Failed to open stream:', $reason, 2 );
+			if ( ! empty( $parts[1] ) ) {
+				$reason = trim( $parts[1] );
+			}
+		}
+
+		if ( 220 < strlen( $reason ) ) {
+			$reason = substr( $reason, 0, 217 ) . '...';
+		}
+
+		return $reason;
 	}
 }
