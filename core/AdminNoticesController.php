@@ -17,7 +17,7 @@ class AdminNoticesController {
 	 *
 	 * @var array
 	 */
-	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired', 'leave-review' );
+	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired', 'leave-review', 'login-page-cache' );
 
 	/**
 	 * Get type, CSS class and HTML content for a notice key.
@@ -30,7 +30,7 @@ class AdminNoticesController {
 		$text_domain = 'limit-login-attempts-reloaded';
 		switch ( $notice_key ) {
 			case 'auto-update':
-				$content = \__( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', $text_domain );
+				$content  = \__( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', $text_domain );
 				$content .= ' <a href="#" class="auto-enable-update-option" data-val="yes">';
 				$content .= \__( 'Yes, enable auto-update', $text_domain ) . '</a> | ';
 				$content .= '<a href="#" class="auto-enable-update-option" data-val="no">';
@@ -58,18 +58,18 @@ class AdminNoticesController {
 					return null;
 				}
 
-				$content = \__( 'These plugins register additional callbacks on the authenticate filter and may affect LLAR login protection.', $text_domain );
+				$content       = \__( 'These plugins register additional callbacks on the authenticate filter and may affect LLAR login protection.', $text_domain );
 				$grouped_hooks = array();
 				foreach ( $hooks as $hook ) {
-					$plugin_slug = 'unknown';
-					$plugin_label = 'Unknown plugin';
+					$plugin_slug        = 'unknown';
+					$plugin_label       = 'Unknown plugin';
 					$plugin_details_url = '';
 
 					if ( ! empty( $hook['plugin'] ) && is_array( $hook['plugin'] ) ) {
-						$plugin_name = isset( $hook['plugin']['name'] ) ? (string) $hook['plugin']['name'] : '';
+						$plugin_name     = isset( $hook['plugin']['name'] ) ? (string) $hook['plugin']['name'] : '';
 						$plugin_slug_raw = isset( $hook['plugin']['slug'] ) ? (string) $hook['plugin']['slug'] : '';
-						$plugin_slug = '' !== $plugin_slug_raw ? \sanitize_key( $plugin_slug_raw ) : 'unknown';
-						$plugin_version = isset( $hook['plugin']['version'] ) ? (string) $hook['plugin']['version'] : '';
+						$plugin_slug     = '' !== $plugin_slug_raw ? \sanitize_key( $plugin_slug_raw ) : 'unknown';
+						$plugin_version  = isset( $hook['plugin']['version'] ) ? (string) $hook['plugin']['version'] : '';
 
 						if ( '' !== $plugin_name ) {
 							$plugin_label = $plugin_name;
@@ -132,6 +132,20 @@ class AdminNoticesController {
 				return array(
 					'type'    => 'notice-success',
 					'class'   => 'llar-notice-review-wrap',
+					'content' => $content,
+					// The view is a fully rendered trusted notice (own wrapper markup, inline JS).
+					'raw'     => true,
+				);
+			case 'login-page-cache':
+				ob_start();
+				$path_login_cache = LLA_PLUGIN_DIR . 'views/admin-notice-login-cache.php';
+				if ( is_readable( $path_login_cache ) ) {
+					include $path_login_cache;
+				}
+				$content = ob_get_clean();
+				return array(
+					'type'    => 'notice-warning',
+					'class'   => 'llar-options-notice llar-login-cache-notice',
 					'content' => $content,
 					// The view is a fully rendered trusted notice (own wrapper markup, inline JS).
 					'raw'     => true,
