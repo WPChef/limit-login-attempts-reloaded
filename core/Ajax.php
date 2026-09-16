@@ -712,8 +712,9 @@ class Ajax
 			<?php
 
 			wp_send_json_success( array(
-				'html'   => ob_get_clean(),
-				'offset' => $lockouts['offset']
+				'html'        => ob_get_clean(),
+				'offset'      => $lockouts['offset'],
+				'total_items' => count( $lockouts['items'] )
 			) );
 
 		} elseif ( intval( LimitLoginAttempts::$cloud_app->last_response_code ) >= 400 && intval( LimitLoginAttempts::$cloud_app->last_response_code ) < 500 ) {
