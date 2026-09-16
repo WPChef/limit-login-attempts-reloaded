@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 3.3.7
+Stable tag: 3.3.9
 
 WordPress login security with brute force protection, Two-factor authentication (2FA/MFA), firewall, IP/country blocking, and login monitoring
 
@@ -249,6 +249,20 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 3.3.9 =
+* Reworked the premium tab upgrade CTAs to show plan-specific pricing and adapt the upgrade links to the currently installed plan.
+* Added Micro Cloud usage banners that show the monthly requests used and warn when the quota is almost exhausted.
+* Updated the lockout notification email with a new premium upgrade call to action.
+* Fixed the cloud Active Lockouts widget showing too few lockouts by auto-loading additional pages when a short batch did not fill the list.
+* Fixed the local denylist still blocking logins in cloud mode after the cloud ACL allowed them; local rules now apply only as a failover when the cloud ACL is unavailable.
+* Fixed WooCommerce customers being unable to register during checkout when cloud registration limiting was enabled; account creation is now allowed during checkout while standalone registration forms stay protected.
+
+= 3.3.8 =
+* Added Personal and Business plans to the premium comparison table and made the displayed plans adapt to the currently installed plan.
+* Aligned dashicons across the logs, premium, ACL and help admin pages for WordPress 7 compatibility.
+* Fixed the failed-login page script being blocked under a nonce-based Content Security Policy by printing it with wp_get_inline_script_tag(). Thanks to Oskar Schöldström (@oxyc) for the pull request.
+* Fixed the denylist matching the account email when only the username was listed; now the submitted login is matched literally (case-insensitive), while explicit email entries still apply.
 
 = 3.3.7 =
 * Fixed PHP warnings when a cloud app custom setting is missing the label, description, or value field.

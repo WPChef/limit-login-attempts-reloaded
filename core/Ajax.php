@@ -780,8 +780,9 @@ class Ajax {
 
 			wp_send_json_success(
 				array(
-					'html'   => ob_get_clean(),
-					'offset' => $lockouts['offset'],
+					'html'        => ob_get_clean(),
+					'offset'      => $lockouts['offset'],
+					'total_items' => count( $lockouts['items'] ),
 				)
 			);
 
