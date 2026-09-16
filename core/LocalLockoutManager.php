@@ -255,10 +255,10 @@ class LocalLockoutManager {
 	}
 
 	/**
-	 * Check submitted identifier against the local denylist.
+	 * Check submitted identifier against the local denylist (literal match only).
 	 *
-	 * @param string   $username Submitted login value.
-	 * @param \WP_User $user     Optional authenticated user object.
+	 * @param string        $username Submitted login value.
+	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
 	 * @return bool
 	 */
 	public function is_local_blacklisted_username( $username, $user = null ) {
