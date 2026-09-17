@@ -8,7 +8,6 @@
 
 namespace LLAR\Core;
 
-use LLAR\Core\Digest\DigestDispatcher;
 use LLAR\Core\Interfaces\OptionsPageUriProvider;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -107,111 +106,104 @@ class LockoutNotificationService {
 			$admin_email = get_site_option( 'admin_email' );
 		}
 
-		$admin_name = '';
-
-		global $wpdb;
-
-		$res = $wpdb->get_col(
-			$wpdb->prepare(
-				"
-                SELECT u.display_name
-                FROM $wpdb->users AS u
-                LEFT JOIN $wpdb->usermeta AS m ON u.ID = m.user_id
-                WHERE u.user_email = %s
-                AND m.meta_key LIKE 'wp_capabilities'
-                AND m.meta_value LIKE '%administrator%'",
-				$admin_email
-			)
-		);
-
-		if ( $res ) {
-			$admin_name = $res[0];
-		}
-
 		$site_domain = str_replace( array( 'http://', 'https://' ), '', home_url() );
-		$blogname    = Helpers::use_local_options() ? get_option( 'blogname' ) : get_site_option( 'site_name' );
-		$blogname    = htmlspecialchars_decode( $blogname, ENT_QUOTES );
-
-		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 
 		$subject = sprintf(
-			__( 'Failed login by IP %1$s %2$s', 'limit-login-attempts-reloaded' ),
-			esc_html( $ip ),
-			esc_html( $site_domain )
-		);
-
-		$unsubscribe_url = $this->options_page_provider->get_options_page_uri( 'settings' );
-		$unsubscribe_footer_text = DigestDispatcher::build_unsubscribe_footer_text(
-			array( 'unsubscribe_text' => LLA_DIGEST_DEFINITIONS['daily']['unsubscribe_text'] ),
-			$unsubscribe_url
-		);
-
-		$current_url_label = Helpers::get_current_url_label();
-		$current_url       = Helpers::get_current_url();
-		$ip_address_link   = 'https://www.limitloginattempts.com/location/?ip=' . $ip;
-		$dashboard_url     = $this->options_page_provider->get_options_page_uri();
-		$premium_url       = 'https://www.limitloginattempts.com/info.php?id=36';
-		$llar_url          = 'https://www.limitloginattempts.com/?from=plugin-lockout-email&v=' . $plugin_data['Version'];
-
-		$greeting = ! empty( $admin_name )
-			? sprintf(
-				/* translators: %s: admin display name */
-				__( 'Hello %s,', 'limit-login-attempts-reloaded' ),
-				$admin_name
-			)
-			: __( 'Hello,', 'limit-login-attempts-reloaded' );
-
-		$auto_notice = __( 'This notification was sent automatically via Limit Login Attempts Reloaded Plugin.', 'limit-login-attempts-reloaded' );
-
-		$installed_on_html = sprintf(
-			/* translators: %s: site domain */
-			__( 'This is installed on your <strong>%s</strong> WordPress site.', 'limit-login-attempts-reloaded' ),
-			esc_html( (string) $site_domain )
-		);
-
-		$details_heading = __( 'The failed login details include:', 'limit-login-attempts-reloaded' );
-
-		$attempts_line_html = sprintf(
-			/* translators: 1: attempts count, 2: lockouts count, 3: IP lookup URL, 4: IP address */
-			__( '%1$d failed login attempts (%2$d lockout(s)) from IP <strong><a href="%3$s" target="_blank" rel="noopener">%4$s</a></strong>', 'limit-login-attempts-reloaded' ),
-			(int) $count,
-			(int) $lockouts,
-			esc_url( $ip_address_link ),
+			/* translators: 1: site domain, 2: IP address */
+			__( '%1$s - Login blocked from %2$s', 'limit-login-attempts-reloaded' ),
+			esc_html( $site_domain ),
 			esc_html( $ip )
 		);
 
-		$username_line_html = sprintf(
+		$preview_text = __(
+			'Limit Login Attempts Reloaded temporarily blocked this IP after unsuccessful login attempts.',
+			'limit-login-attempts-reloaded'
+		);
+
+		$current_url_label   = Helpers::get_current_url_label();
+		$dashboard_url       = $this->options_page_provider->get_options_page_uri();
+		$manage_settings_url = $this->options_page_provider->get_options_page_uri( 'settings' );
+		$premium_url         = 'https://www.limitloginattempts.com/info.php?id=36';
+
+		$greeting = __( 'Hello,', 'limit-login-attempts-reloaded' );
+
+		$intro_html = sprintf(
+			/* translators: %s: site domain */
+			__( 'Limit Login Attempts Reloaded detected unsuccessful login attempts on <strong>%s</strong>.', 'limit-login-attempts-reloaded' ),
+			esc_html( (string) $site_domain )
+		);
+
+		$login_activity_heading = __( 'Login activity', 'limit-login-attempts-reloaded' );
+
+		$failed_attempts_line_html = sprintf(
+			/* translators: %d: failed attempts count */
+			__( 'Failed attempts: <strong>%d</strong>', 'limit-login-attempts-reloaded' ),
+			(int) $count
+		);
+
+		$ip_address_line_html = sprintf(
+			/* translators: %s: IP address */
+			__( 'IP address: <strong>%s</strong>', 'limit-login-attempts-reloaded' ),
+			esc_html( $ip )
+		);
+
+		$username_attempted_line_html = sprintf(
 			/* translators: %s: username */
-			__( 'Last user attempted: <strong>%s</strong>', 'limit-login-attempts-reloaded' ),
+			__( 'Username attempted: <strong>%s</strong>', 'limit-login-attempts-reloaded' ),
 			esc_html( (string) $user )
 		);
 
-		$blocked_duration_line = sprintf(
+		$action_taken_line_html = sprintf(
 			/* translators: %s: lockout duration label */
-			__( 'IP was blocked for %s', 'limit-login-attempts-reloaded' ),
-			$when
+			__( 'Action taken: <strong>IP blocked for %s</strong>', 'limit-login-attempts-reloaded' ),
+			esc_html( (string) $when )
 		);
 
-		$login_address_line_html = sprintf(
-			/* translators: 1: login URL, 2: login URL label */
-			__( 'Login address: <strong><a href="%1$s" target="_blank" rel="noopener">%2$s</a></strong>', 'limit-login-attempts-reloaded' ),
-			esc_url( $current_url ),
+		$login_page_line_html = sprintf(
+			/* translators: %s: login page label */
+			__( 'Login page: <strong>%s</strong>', 'limit-login-attempts-reloaded' ),
 			esc_html( (string) $current_url_label )
 		);
 
-		$dashboard_prompt       = __( 'Please visit your WordPress dashboard for additional details, investigation options, and help articles.', 'limit-login-attempts-reloaded' );
-		$dashboard_button_label = __( 'Go to Dashboard', 'limit-login-attempts-reloaded' );
-
-		$premium_cta_html = sprintf(
-			/* translators: %s: premium upgrade URL */
-			__( 'Experiencing frequent attacks or degraded performance? For only USD $1.25/month, you can join thousands of WordPress users who have upgraded to LLAR premium for advanced IP intelligence and cloud protection. Only takes 5 minutes to set up and leave the rest to us. <a href="%s" target="_blank" rel="noopener">Join</a>', 'limit-login-attempts-reloaded' ),
-			esc_url( $premium_url )
+		$no_action_required = __(
+			'No action is required unless you recognize this activity or would like to review additional details.',
+			'limit-login-attempts-reloaded'
 		);
+
+		$review_activity_url   = $dashboard_url;
+		$review_activity_label = __( 'Review Login Activity', 'limit-login-attempts-reloaded' );
+		$dashboard_button_label = $review_activity_label;
+
+		$dashboard_helper_text = __(
+			'You can view recent login attempts, adjust your settings, and review blocked IP addresses from your WordPress dashboard.',
+			'limit-login-attempts-reloaded'
+		);
+
+		$additional_protection_heading = __( 'Want additional protection?', 'limit-login-attempts-reloaded' );
+
+		$additional_protection_text = __(
+			'If your site receives frequent login attempts, additional protection options are available within Limit Login Attempts Security. These options can help identify and block suspicious traffic before it reaches your login page.',
+			'limit-login-attempts-reloaded'
+		);
+
+		$additional_protection_url   = $premium_url;
+		$additional_protection_label = __( 'Learn about additional protection', 'limit-login-attempts-reloaded' );
+
+		$about_notification_heading = __( 'About this notification', 'limit-login-attempts-reloaded' );
+
+		$about_notification_html = sprintf(
+			/* translators: %s: site domain */
+			__( 'You received this message because login notifications are enabled for <strong>%s</strong>.', 'limit-login-attempts-reloaded' ),
+			esc_html( (string) $site_domain )
+		);
+
+		$manage_settings_label = __( 'Manage notification settings', 'limit-login-attempts-reloaded' );
 
 		$show_mu_notice = Helpers::is_mu();
 		$mu_notice      = __( 'This alert was sent by your website where Limit Login Attempts Reloaded free version is installed and you are listed as the admin.', 'limit-login-attempts-reloaded' );
 
 		ob_start();
+		include LLA_PLUGIN_DIR . 'views/emails/email-preview-text.php';
 		include LLA_PLUGIN_DIR . 'views/emails/failed-login-content.php';
 		$email_body = ob_get_clean();
 
