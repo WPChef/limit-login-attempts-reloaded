@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit();
 }
 
-$allowed_tabs = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help', 'mfa' );
+$allowed_tabs = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'extensions', 'help', 'mfa' );
 $requested_tab = isset( $_GET['tab'] ) && is_string( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : '';
 $active_tab = in_array( $requested_tab, $allowed_tabs, true ) ? $requested_tab : 'dashboard';
 
@@ -245,7 +245,11 @@ if ( 'debug' === $active_tab && $this->has_capability ) {
         </a>
         <a href="<?php echo $this->get_options_page_uri( 'premium' ); ?>"
            class="nav-tab<?php echo $active_tab === 'premium' ? $nav_tab_active : '' ?>">
-            <?php _e( 'Premium / Extensions', 'limit-login-attempts-reloaded' ); ?>
+            <?php _e( 'Premium', 'limit-login-attempts-reloaded' ); ?>
+        </a>
+        <a href="<?php echo $this->get_options_page_uri( 'extensions' ); ?>"
+           class="nav-tab<?php echo $active_tab === 'extensions' ? $nav_tab_active : '' ?>">
+            <?php _e( 'Extensions', 'limit-login-attempts-reloaded' ); ?>
         </a>
 
         <?php if ( $active_tab === 'logs-custom' ) : ?>
