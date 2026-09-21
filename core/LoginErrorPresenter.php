@@ -149,8 +149,10 @@ class LoginErrorPresenter {
 	 * Core only repopulates the username input for the 'incorrect_password' and
 	 * 'empty_password' codes; any other code ('invalid_username', 'invalid_email',
 	 * lockout codes) empties the field. Combined with a generic error message this
-	 * still leaks whether the account exists, so rewrite the code after a failed
-	 * credentials POST to make the form behavior identical in every case.
+	 * still leaks whether the account exists. Rename the first error code to
+	 * 'incorrect_password' while keeping the original messages and error data:
+	 * messages can be rendered as-is (e.g. when fixup_error_messages() is removed
+	 * for allow-listed or deny-listed requests), so they must stay untouched.
 	 *
 	 * @param \WP_Error $errors      WP_Error object passed to login_header().
 	 * @param string    $redirect_to Redirect URL.
@@ -165,13 +167,27 @@ class LoginErrorPresenter {
 			return $errors;
 		}
 
-		$code = $errors->get_error_code();
+		$codes = $errors->get_error_codes();
 
-		if ( 'incorrect_password' === $code || 'empty_password' === $code ) {
+		if ( 'incorrect_password' === $codes[0] || 'empty_password' === $codes[0] ) {
 			return $errors;
 		}
 
-		return new WP_Error( 'incorrect_password', __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' ) );
+		$normalized = new WP_Error();
+		foreach ( $codes as $index => $code ) {
+			$target_code = ( 0 === $index ) ? 'incorrect_password' : $code;
+
+			foreach ( $errors->get_error_messages( $code ) as $message ) {
+				$normalized->add( $target_code, $message );
+			}
+
+			$data = $errors->get_error_data( $code );
+			if ( null !== $data ) {
+				$normalized->add_data( $data, $target_code );
+			}
+		}
+
+		return $normalized;
 	}
 
 	/**
