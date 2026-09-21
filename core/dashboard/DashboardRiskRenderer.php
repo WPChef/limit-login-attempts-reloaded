@@ -88,7 +88,7 @@ class DashboardRiskRenderer {
 	 * @param bool|array  $api_stats            API stats.
 	 * @return array
 	 */
-	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
+	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats, $info_has_valid_data = false ) {
 		$risk_config         = llar_get_risk_config();
 		$risk_levels         = ( isset( $risk_config['levels'] ) && is_array( $risk_config['levels'] ) ) ? $risk_config['levels'] : array();
 		$risk_colors         = ( isset( $risk_config['colors'] ) && is_array( $risk_config['colors'] ) ) ? $risk_config['colors'] : array();
@@ -122,11 +122,24 @@ class DashboardRiskRenderer {
 			$retries_chart_color = isset( $risk_colors['green'] ) ? $risk_colors['green'] : '#97F6C8';
 		}
 
+		$hint_tooltip = $is_active_app_custom
+			? __( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' )
+			: __( 'An IP that has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' );
+
+		$premium_label = '';
+		if ( $is_active_app_custom && ! empty( $info_has_valid_data ) && ! $is_exhausted ) {
+			$premium_label = ( 'Micro Cloud' === $block_sub_group )
+				? __( 'Free Trial', 'limit-login-attempts-reloaded' )
+				: __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' );
+		}
+
 		return array(
 			'retries_chart_title' => $retries_chart_title,
 			'retries_chart_desc'  => $retries_chart_desc,
 			'retries_chart_color' => $retries_chart_color,
 			'retries_count'       => (int) $retries_count,
+			'hint_tooltip'        => $hint_tooltip,
+			'premium_label'       => $premium_label,
 		);
 	}
 

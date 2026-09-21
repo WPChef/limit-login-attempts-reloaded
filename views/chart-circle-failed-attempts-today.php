@@ -2,14 +2,12 @@
 /**
  * Chart circle failed attempts today
  *
+ * All copy (title, description, tooltip, premium label) comes from
+ * $chart_circle_data provided by the controller.
+ *
  * @var string $active_app
- * @var string $setup_code
- * @var string $is_active_app_custom
- * @var bool|mixed $api_stats
- * @var bool|string $is_exhausted
- * @var bool $info_has_valid_data
- * @var string $block_sub_group
- * @var string $upgrade_premium_url
+ * @var array  $chart_circle_data
+ * @var bool   $is_tab_dashboard
  *
  */
 
@@ -23,6 +21,8 @@ $retries_chart_title = isset( $chart_circle_data['retries_chart_title'] ) ? $cha
 $retries_chart_desc  = isset( $chart_circle_data['retries_chart_desc'] ) ? $chart_circle_data['retries_chart_desc'] : '';
 $retries_chart_color = isset( $chart_circle_data['retries_chart_color'] ) ? $chart_circle_data['retries_chart_color'] : '#97F6C8';
 $retries_count       = isset( $chart_circle_data['retries_count'] ) ? (int) $chart_circle_data['retries_count'] : 0;
+$hint_tooltip        = isset( $chart_circle_data['hint_tooltip'] ) ? $chart_circle_data['hint_tooltip'] : '';
+$premium_label       = isset( $chart_circle_data['premium_label'] ) ? $chart_circle_data['premium_label'] : '';
 ?>
 
 <div class="section-title__new">
@@ -33,10 +33,7 @@ $retries_count       = isset( $chart_circle_data['retries_count'] ) ? (int) $cha
                 <span class="dashicons dashicons-editor-help"></span>
                 <div class="hint_tooltip">
                     <div class="hint_tooltip-content">
-                        <?php $is_active_app_custom
-	                        ? esc_attr_e( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' )
-	                       : esc_attr_e( 'An IP that has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' );
-                        ?>
+                        <?php echo esc_attr( $hint_tooltip ); ?>
                     </div>
                 </div>
             </span>
@@ -45,17 +42,9 @@ $retries_count       = isset( $chart_circle_data['retries_count'] ) ? (int) $cha
         <span class="llar-label__url">
         </span>
 	<?php endif; ?>
-	<?php
-	$premium_label = '';
-	if ( $is_active_app_custom && ! empty( $info_has_valid_data ) && ! $is_exhausted ) {
-		$premium_label = ( 'Micro Cloud' === $block_sub_group )
-			? __( 'Free Trial', 'limit-login-attempts-reloaded' )
-			: __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' );
-	}
-	if ( $premium_label ) {
-		echo '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . esc_html( $premium_label ) . '</span>';
-	}
-	?>
+	<?php if ( $premium_label ) : ?>
+		<?php echo '<span class="llar-premium-label"><span class="dashicons dashicons-saved"></span>' . esc_html( $premium_label ) . '</span>'; ?>
+	<?php endif; ?>
 </div>
 <div class="section-content">
     <div class="chart">
