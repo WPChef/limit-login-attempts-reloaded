@@ -292,16 +292,16 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   text-transform: inherit;
   text-decoration: none;
 }
-.llar_button.button__orange, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button, #llar-setting-page .button__orange.button, #llar-setting-page-logs .button__orange.button, #llar-setting-page-logs__active .button__orange.button, #llar-setting-page-debug .button__orange.button, #llar-setting-page-premium .button__orange.button, #llar-setting-page-help .button__orange.button {
+.llar_button.button__orange, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button, #llar-setting-page .button__orange.button, #llar-setting-page-logs .button__orange.button, #llar-setting-page-logs__active .button__orange.button, #llar-setting-page-debug .button__orange.button, #llar-setting-page-premium .button__orange.button, #llar-setting-page-help .button__orange.button, #llar-setting-page-extensions .button__orange.button {
   color: white !important;
   background: #FF7C06 !important;
   border: 1px solid #FF7C06 !important;
   box-shadow: 0 6px 12px 0 rgba(255, 124, 6, 0.4980392157) !important;
 }
-.llar_button.button__orange:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button:hover, #llar-setting-page .button__orange.button:hover, #llar-setting-page-logs .button__orange.button:hover, #llar-setting-page-logs__active .button__orange.button:hover, #llar-setting-page-debug .button__orange.button:hover, #llar-setting-page-premium .button__orange.button:hover, #llar-setting-page-help .button__orange.button:hover {
+.llar_button.button__orange:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button:hover, #llar-setting-page .button__orange.button:hover, #llar-setting-page-logs .button__orange.button:hover, #llar-setting-page-logs__active .button__orange.button:hover, #llar-setting-page-debug .button__orange.button:hover, #llar-setting-page-premium .button__orange.button:hover, #llar-setting-page-help .button__orange.button:hover, #llar-setting-page-extensions .button__orange.button:hover {
   background: #F07200 !important;
 }
-.llar_button.button__orange:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button:disabled, #llar-setting-page .button__orange.button:disabled, #llar-setting-page-logs .button__orange.button:disabled, #llar-setting-page-logs__active .button__orange.button:disabled, #llar-setting-page-debug .button__orange.button:disabled, #llar-setting-page-premium .button__orange.button:disabled, #llar-setting-page-help .button__orange.button:disabled {
+.llar_button.button__orange:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button:disabled, #llar-setting-page .button__orange.button:disabled, #llar-setting-page-logs .button__orange.button:disabled, #llar-setting-page-logs__active .button__orange.button:disabled, #llar-setting-page-debug .button__orange.button:disabled, #llar-setting-page-premium .button__orange.button:disabled, #llar-setting-page-help .button__orange.button:disabled, #llar-setting-page-extensions .button__orange.button:disabled {
   border: 1px solid rgba(255, 124, 6, 0.4980392157) !important;
   background: rgba(255, 124, 6, 0.4980392157) !important;
   cursor: auto;
@@ -2579,6 +2579,20 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #wpadminbar li .llar-alert-icon .plugin-count {
   vertical-align: middle;
   margin-top: -3px;
+}
+
+/* Red dot when Micro Cloud requests are exhausted. Explicit color:
+   WP core paints .update-plugins with the admin color scheme (blue in
+   "modern") and has no marker styling for the admin bar. */
+#adminmenu li a span.llar-mc-exhausted-icon,
+#wpadminbar li span.llar-mc-exhausted-icon {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background-color: #d63638;
+  vertical-align: middle;
 }
 
 .llar-options-notice {
@@ -4993,4 +5007,72 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .llar-mfa-action-alert .jconfirm-content-pane, .jconfirm-type-red .jconfirm-content-pane {
   padding: 15px !important;
+}
+
+/* Extensions tab */
+#llar-setting-page-extensions .llar-extensions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin: 20px 0;
+}
+#llar-setting-page-extensions .llar-extension-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background: #FFFFFF;
+  border: 1px solid #E4E6EB;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px 0 rgba(164, 168, 183, 0.2980392157);
+}
+#llar-setting-page-extensions .llar-extension-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#llar-setting-page-extensions .llar-extension-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+#llar-setting-page-extensions .llar-extension-card__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1D2327;
+  text-decoration: none;
+}
+#llar-setting-page-extensions .llar-extension-card__name:hover {
+  color: #2271B1;
+}
+#llar-setting-page-extensions .llar-extension-card__description {
+  flex: 1 1 auto;
+  margin: 14px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #50575E;
+}
+#llar-setting-page-extensions .llar-extension-card__footer {
+  text-align: right;
+}
+#llar-setting-page-extensions .llar-extension-card__footer .button {
+  min-width: 100px;
+}
+#llar-setting-page-extensions .llar-extension-install--active {
+  opacity: 0.9;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-setting-page-extensions .llar-extensions-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-setting-page-extensions .llar-extensions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media screen and (max-width: 767.5px) {
+  #llar-setting-page-extensions .llar-extensions-grid {
+    grid-template-columns: 1fr;
+  }
 }
