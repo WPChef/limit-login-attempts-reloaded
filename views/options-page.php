@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit();
 }
 
-$allowed_tabs = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help', 'mfa' );
+$allowed_tabs = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'extensions', 'help', 'mfa' );
 $requested_tab = isset( $_GET['tab'] ) && is_string( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : '';
 $active_tab = in_array( $requested_tab, $allowed_tabs, true ) ? $requested_tab : 'dashboard';
 
