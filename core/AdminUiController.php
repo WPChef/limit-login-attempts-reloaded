@@ -294,7 +294,7 @@ class AdminUiController {
 	}
 
 	/**
-	 * Red bubble icon shown while the active Cloud App (Micro Cloud)
+	 * Red dot icon shown while the active Cloud App (Micro Cloud)
 	 * reports requests.exhausted, so the admin sees that cloud protection
 	 * is paused even outside the plugin pages. Not dismissible and not
 	 * gated by the "Display Menu Warning Icon" setting (that one only
@@ -312,7 +312,7 @@ class AdminUiController {
 			return '';
 		}
 
-		return ' <span class="update-plugins count-1 llar-alert-icon llar-mc-exhausted-icon"><span class="plugin-count">!</span></span>';
+		return ' <span class="llar-mc-exhausted-icon"></span>';
 	}
 
 	public function setting_menu_alert_icon()
