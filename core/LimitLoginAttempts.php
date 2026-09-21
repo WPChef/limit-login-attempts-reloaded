@@ -628,12 +628,16 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
 
+			add_action( 'network_admin_menu', array( $this, 'network_setting_menu_mc_exhausted_icon' ), 11 );
+
 			if ( Config::get( 'show_warning_badge' ) )
 				add_action( 'network_admin_menu', array( $this, 'network_setting_menu_alert_icon' ) );
 		}
 
 		if ( Helpers::allow_local_options() ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+
+			add_action( 'admin_menu', array( $this, 'setting_menu_mc_exhausted_icon' ), 11 );
 
 			if ( Config::get( 'show_top_bar_menu_item' ) )
 				add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 999 );
@@ -1104,6 +1108,14 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	public function network_setting_menu_alert_icon()
 	{
 		$this->admin_ui->network_setting_menu_alert_icon();
+	}
+	public function setting_menu_mc_exhausted_icon()
+	{
+		$this->admin_ui->setting_menu_mc_exhausted_icon();
+	}
+	public function network_setting_menu_mc_exhausted_icon()
+	{
+		$this->admin_ui->network_setting_menu_mc_exhausted_icon();
 	}
 	/**
 	 * Get the correct options page URI

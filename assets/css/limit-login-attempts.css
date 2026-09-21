@@ -2581,6 +2581,36 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: -3px;
 }
 
+/* Red bubble when Micro Cloud requests are exhausted. Explicit color:
+   WP core paints .update-plugins with the admin color scheme (blue in
+   "modern") and does not style the admin bar bubble at all. */
+#adminmenu li a span.llar-mc-exhausted-icon.llar-alert-icon,
+#wpadminbar li span.llar-mc-exhausted-icon.llar-alert-icon {
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background-color: #d63638;
+  color: #fff;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  vertical-align: middle;
+}
+#wpadminbar li span.llar-mc-exhausted-icon.llar-alert-icon {
+  margin-left: 6px;
+}
+#adminmenu li a span.llar-mc-exhausted-icon.llar-alert-icon .plugin-count,
+#wpadminbar li span.llar-mc-exhausted-icon.llar-alert-icon .plugin-count {
+  display: inline;
+  vertical-align: baseline;
+  margin-top: 0;
+  line-height: inherit;
+  color: #fff;
+}
+
 .llar-options-notice {
   display: block !important;
 }
