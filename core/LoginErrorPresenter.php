@@ -144,6 +144,37 @@ class LoginErrorPresenter {
 	}
 
 	/**
+	 * Normalize the login error code so wp-login.php keeps the submitted username.
+	 *
+	 * Core only repopulates the username input for the 'incorrect_password' and
+	 * 'empty_password' codes; any other code ('invalid_username', 'invalid_email',
+	 * lockout codes) empties the field. Combined with a generic error message this
+	 * still leaks whether the account exists, so rewrite the code after a failed
+	 * credentials POST to make the form behavior identical in every case.
+	 *
+	 * @param \WP_Error $errors      WP_Error object passed to login_header().
+	 * @param string    $redirect_to Redirect URL.
+	 * @return \WP_Error
+	 */
+	public function normalize_login_error_code( $errors, $redirect_to = '' ) {
+		if ( ! isset( $_POST['log'] ) || ! is_string( $_POST['log'] ) || '' === $_POST['log'] ) {
+			return $errors;
+		}
+
+		if ( ! is_wp_error( $errors ) || ! $errors->has_errors() ) {
+			return $errors;
+		}
+
+		$code = $errors->get_error_code();
+
+		if ( 'incorrect_password' === $code || 'empty_password' === $code ) {
+			return $errors;
+		}
+
+		return new WP_Error( 'incorrect_password', __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' ) );
+	}
+
+	/**
 	 * Fix up the error message before showing it
 	 *
 	 * @param $content
