@@ -688,4 +688,17 @@ class Helpers {
 		Config::update( 'plugin_version', $version );
 	}
 
+
+	/**
+	 * Returns compatibility data for the Debug tab.
+	 *
+	 * Shows which LLAR features work with which third-party plugins.
+	 * Values reflect integration code and the readme "Compatible With" list.
+	 *
+	 * @return array
+	 */
+	public static function get_compatibility_data() {
+		return require LLA_PLUGIN_DIR . 'resources/compatibility-data.php';
+	}
+
 }

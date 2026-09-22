@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 3.3.9
+Stable tag: 3.3.10
 
 WordPress login security with brute force protection, Two-factor authentication (2FA/MFA), firewall, IP/country blocking, and login monitoring
 
@@ -249,6 +249,11 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 3.3.10 =
+* Added detection of a cached or optimizer-stripped login page and an admin notice warning that it can break the email code (MFA) login flow.
+* Fixed the onboarding Micro Cloud step silently completing on activation errors; it now shows the server error message so users learn when the program is closed or trial is unavailable.
+* Added a compatibility table to the Debug tab showing which LLAR features work with popular third-party plugins.
 
 = 3.3.9 =
 * Reworked the premium tab upgrade CTAs to show plan-specific pricing and adapt the upgrade links to the currently installed plan.
