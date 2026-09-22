@@ -13,48 +13,48 @@ use LLAR\Core\Helpers;
 use LLAR\Core\LimitLoginAttempts;
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit();
+	exit();
 }
 
-$allowed_tabs = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help', 'mfa' );
+$allowed_tabs  = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help', 'mfa' );
 $requested_tab = isset( $_GET['tab'] ) && is_string( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : '';
-$active_tab = in_array( $requested_tab, $allowed_tabs, true ) ? $requested_tab : 'dashboard';
+$active_tab    = in_array( $requested_tab, $allowed_tabs, true ) ? $requested_tab : 'dashboard';
 
 if ( $active_tab === 'logs-custom' && ! LimitLoginAttempts::$cloud_app ) {
 	$active_tab = 'logs-local';
 }
 
-$active_app = ( Config::get( Config::OPTION_ACTIVE_APP ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
+$active_app           = ( Config::get( Config::OPTION_ACTIVE_APP ) === 'custom' && LimitLoginAttempts::$cloud_app ) ? 'custom' : 'local';
 $is_active_app_custom = $active_app === 'custom';
 
 $auto_update_choice = Config::get( 'auto_update_choice' );
-$is_agency = false;
+$is_agency          = false;
 
 if ( $is_active_app_custom ) {
 
-	$block_sub_group = $this->info_sub_group();
-	$upgrade_premium_url = $this->info_upgrade_url();
-	$is_agency = $block_sub_group === 'Agency';
-	$info_has_valid_data = $this->info_has_valid_data();
+	$block_sub_group           = $this->info_sub_group();
+	$upgrade_premium_url       = $this->info_upgrade_url();
+	$is_agency                 = $block_sub_group === 'Agency';
+	$info_has_valid_data       = $this->info_has_valid_data();
 	$info_is_cloud_unavailable = $this->info_is_cloud_unavailable();
-	$requests = ! $is_agency && $info_has_valid_data ? $this->info_requests() : false;
-	$is_exhausted = ! $is_agency && $this->info_is_exhausted();
-	$is_almost_exhausted = ! $is_agency && $this->info_is_almost_exhausted();
+	$requests                  = ! $is_agency && $info_has_valid_data ? $this->info_requests() : false;
+	$is_exhausted              = ! $is_agency && $this->info_is_exhausted();
+	$is_almost_exhausted       = ! $is_agency && $this->info_is_almost_exhausted();
 
-	$app_config = Config::get( 'app_config' );
+	$app_config         = Config::get( 'app_config' );
 	$sync_error_message = ( is_array( $app_config ) && ! empty( $app_config['messages']['sync_error'] ) )
 		? $app_config['messages']['sync_error']
 		: '';
 } else {
 
-	$is_exhausted = false;
-	$is_almost_exhausted = false;
-	$info_has_valid_data = false;
+	$is_exhausted              = false;
+	$is_almost_exhausted       = false;
+	$info_has_valid_data       = false;
 	$info_is_cloud_unavailable = false;
-	$block_sub_group = '';
-	$upgrade_premium_url = '';
-	$sync_error_message = '';
-	$requests = false;
+	$block_sub_group           = '';
+	$upgrade_premium_url       = '';
+	$sync_error_message        = '';
+	$requests                  = false;
 }
 
 $request_usage = ( is_array( $requests ) && isset( $requests['usage'] ) ) ? (string) $requests['usage'] : '';
@@ -62,8 +62,8 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 ?>
 
 <div class="header_massage">
-    <?php
-    if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && $is_almost_exhausted && $info_has_valid_data ) :
+	<?php
+	if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && $is_almost_exhausted && $info_has_valid_data ) :
 
 	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
 
@@ -89,7 +89,7 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 
     <?php elseif ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && ( $is_exhausted || $info_is_cloud_unavailable ) ) :
 
-	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
+		$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
 
         if ( time() > $notifications_message_shown ) : ?>
             <div id="llar-header-upgrade-premium-message" class="exhausted">
@@ -107,10 +107,10 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
             </div>
         <?php endif; ?>
 
-    <?php elseif ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && $info_has_valid_data ) : ?>
-        <div id="llar-header-upgrade-mc-message">
-            <p>
-                <span class="dashicons dashicons-superhero"></span>
+	<?php elseif ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && $info_has_valid_data ) : ?>
+		<div id="llar-header-upgrade-mc-message">
+			<p>
+				<span class="dashicons dashicons-superhero"></span>
 				<?php
 				echo sprintf(
 					/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL */
@@ -120,15 +120,15 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 					esc_url( add_query_arg( 'id', '34', $upgrade_premium_url ) )
 				);
 				?>
-            </p>
-        </div>
+			</p>
+		</div>
 
-    <?php elseif ( $is_active_app_custom && $info_is_cloud_unavailable && ! empty( $sync_error_message ) ) : ?>
-        <div class="notice notice-error" style="display: block;">
-            <p><?php echo wp_kses_post( $sync_error_message ); ?></p>
-        </div>
+	<?php elseif ( $is_active_app_custom && $info_is_cloud_unavailable && ! empty( $sync_error_message ) ) : ?>
+		<div class="notice notice-error" style="display: block;">
+			<p><?php echo wp_kses_post( $sync_error_message ); ?></p>
+		</div>
 
-    <?php endif; ?>
+	<?php endif; ?>
 </div>
 
 <?php
@@ -143,6 +143,16 @@ if ( $this->should_show_mfa_recovery_links_expired_notice() ) {
 			'mfa_url' => $this->get_options_page_uri( 'mfa' ),
 		)
 	);
+}
+$login_page_cache_detector = LimitLoginAttempts::$instance->get_login_page_cache_detector();
+if ( null !== $login_page_cache_detector ) {
+	$login_page_cache_detector->maybe_self_check();
+	if ( $login_page_cache_detector->has_visible_issue() ) {
+		$this->render_admin_notice(
+			'login-page-cache',
+			array( 'issue' => $login_page_cache_detector->get_issue() )
+		);
+	}
 }
 if ( ( $auto_update_choice || $auto_update_choice === null ) && ! Helpers::is_auto_update_enabled() ) {
 	$this->render_admin_notice( 'auto-update', array() );
@@ -164,104 +174,106 @@ if ( 'debug' === $active_tab && $this->has_capability ) {
 ?>
 
 <div id="llar_popup_error_content" style="display: none">
-    <div class="popup_error_content__content">
-        <div class="popup_error_content__body">
-            <div class="card mx-auto">
-                <div class="card-body">
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="popup_error_content__content">
+		<div class="popup_error_content__body">
+			<div class="card mx-auto">
+				<div class="card-body">
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="wrap limit-login-page-settings">
 
-    <div class="limit-login-page-settings__logo_block">
-        <img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/logo-llap.png">
+	<div class="limit-login-page-settings__logo_block">
+		<img class="limit-login-page-settings__logo" src="<?php echo LLA_PLUGIN_URL; ?>assets/css/images/logo-llap.png">
 
-	    <?php if ( $is_active_app_custom ) : 
-            $app_config = get_option( 'limit_login_app_config' );
-            ?>
-            <div class="link__style_unlink">
-                <a href="https://my.limitloginattempts.com/" target="_blank">
-                    &nbsp;&nbsp;&nbsp;<?php esc_html_e( 'Account Login', 'limit-login-attempts-reloaded' ); ?>
-                    <div class="info-box-icon">
-                        <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-backup-big-bw.png">
-                    </div>
-                </a>
-            <?php
-            if ( is_array( $app_config ) && ! empty( $app_config['key'] ) ) {
-                $customer_id = substr( $app_config['key'], 0, 8 );
-                ?>
-                    <span class="llar-customer-id">
-                        <?php esc_html_e( 'Customer ID:', 'limit-login-attempts-reloaded' ); ?>
-                        <?php echo esc_html( $customer_id ); ?>
-                    </span>
-                <?php
-            }
-            ?>
-            </div>
-            <?php
+		<?php
+		if ( $is_active_app_custom ) :
+			$app_config = get_option( 'limit_login_app_config' );
+			?>
+			<div class="link__style_unlink">
+				<a href="https://my.limitloginattempts.com/" target="_blank">
+					&nbsp;&nbsp;&nbsp;<?php esc_html_e( 'Account Login', 'limit-login-attempts-reloaded' ); ?>
+					<div class="info-box-icon">
+						<img src="<?php echo LLA_PLUGIN_URL; ?>assets/css/images/icon-backup-big-bw.png">
+					</div>
+				</a>
+			<?php
+			if ( is_array( $app_config ) && ! empty( $app_config['key'] ) ) {
+				$customer_id = substr( $app_config['key'], 0, 8 );
+				?>
+					<span class="llar-customer-id">
+						<?php esc_html_e( 'Customer ID:', 'limit-login-attempts-reloaded' ); ?>
+						<?php echo esc_html( $customer_id ); ?>
+					</span>
+				<?php
+			}
+			?>
+			</div>
+			<?php
 
-        endif; ?>
+		endif;
+		?>
 
-    </div>
+	</div>
 
-    <?php $nav_tab_active = ' nav-tab-active'; ?>
-    <div class="nav-tab-wrapper">
-        <a href="<?php echo $this->get_options_page_uri( 'dashboard' ); ?>"
-           class="nav-tab<?php echo $active_tab === 'dashboard' ? $nav_tab_active : '' ?>">
-            <?php _e( 'Dashboard', 'limit-login-attempts-reloaded' ); ?>
-        </a>
-        <a href="<?php echo $this->get_options_page_uri( 'settings' ); ?>"
-           class="nav-tab<?php echo $active_tab === 'settings' ? $nav_tab_active : '' ?>">
-            <?php _e( 'Settings', 'limit-login-attempts-reloaded' ); ?>
-        </a>
-        <a href="<?php echo $this->get_options_page_uri( 'mfa' ); ?>"
-           class="nav-tab<?php echo $active_tab === 'mfa' ? $nav_tab_active : '' ?>">
-            <?php _e( '2FA', 'limit-login-attempts-reloaded' ); ?>
-        </a>
+	<?php $nav_tab_active = ' nav-tab-active'; ?>
+	<div class="nav-tab-wrapper">
+		<a href="<?php echo $this->get_options_page_uri( 'dashboard' ); ?>"
+			class="nav-tab<?php echo $active_tab === 'dashboard' ? $nav_tab_active : ''; ?>">
+			<?php _e( 'Dashboard', 'limit-login-attempts-reloaded' ); ?>
+		</a>
+		<a href="<?php echo $this->get_options_page_uri( 'settings' ); ?>"
+			class="nav-tab<?php echo $active_tab === 'settings' ? $nav_tab_active : ''; ?>">
+			<?php _e( 'Settings', 'limit-login-attempts-reloaded' ); ?>
+		</a>
+		<a href="<?php echo $this->get_options_page_uri( 'mfa' ); ?>"
+			class="nav-tab<?php echo $active_tab === 'mfa' ? $nav_tab_active : ''; ?>">
+			<?php _e( '2FA', 'limit-login-attempts-reloaded' ); ?>
+		</a>
 
-        <?php if( $active_app === 'custom' ) : ?>
-            <a href="<?php echo $this->get_options_page_uri( 'logs-custom' ); ?>"
-               class="nav-tab<?php echo $active_tab === 'logs-custom' ? $nav_tab_active : '' ?>">
-                <?php _e( 'Login Firewall', 'limit-login-attempts-reloaded' ); ?>
-                <?php echo ( $is_exhausted && $block_sub_group === 'Micro Cloud' ) ? '<span class="llar-alert-icon">!</span>' : '' ?>
-            </a>
-        <?php else : ?>
-            <a href="<?php echo $this->get_options_page_uri( 'logs-local' ); ?>"
-               class="nav-tab<?php echo $active_tab === 'logs-local' ? $nav_tab_active : '' ?>">
-                <?php _e( 'Logs', 'limit-login-attempts-reloaded' ); ?>
-            </a>
+		<?php if ( $active_app === 'custom' ) : ?>
+			<a href="<?php echo $this->get_options_page_uri( 'logs-custom' ); ?>"
+				class="nav-tab<?php echo $active_tab === 'logs-custom' ? $nav_tab_active : ''; ?>">
+				<?php _e( 'Login Firewall', 'limit-login-attempts-reloaded' ); ?>
+				<?php echo ( $is_exhausted && $block_sub_group === 'Micro Cloud' ) ? '<span class="llar-alert-icon">!</span>' : ''; ?>
+			</a>
+		<?php else : ?>
+			<a href="<?php echo $this->get_options_page_uri( 'logs-local' ); ?>"
+				class="nav-tab<?php echo $active_tab === 'logs-local' ? $nav_tab_active : ''; ?>">
+				<?php _e( 'Logs', 'limit-login-attempts-reloaded' ); ?>
+			</a>
 		<?php endif; ?>
 
-        <a href="<?php echo $this->get_options_page_uri( 'debug' ); ?>"
-           class="nav-tab<?php echo $active_tab === 'debug' ? $nav_tab_active : '' ?>">
-            <?php _e( 'Debug', 'limit-login-attempts-reloaded' ); ?>
-        </a>
-        <a href="<?php echo $this->get_options_page_uri( 'help' ); ?>"
-           class="nav-tab<?php echo $active_tab === 'help' ? $nav_tab_active : '' ?>">
-            <?php _e( 'Help', 'limit-login-attempts-reloaded' ); ?>
-        </a>
-        <a href="<?php echo $this->get_options_page_uri( 'premium' ); ?>"
-           class="nav-tab<?php echo $active_tab === 'premium' ? $nav_tab_active : '' ?>">
-            <?php _e( 'Premium / Extensions', 'limit-login-attempts-reloaded' ); ?>
-        </a>
+		<a href="<?php echo $this->get_options_page_uri( 'debug' ); ?>"
+			class="nav-tab<?php echo $active_tab === 'debug' ? $nav_tab_active : ''; ?>">
+			<?php _e( 'Debug', 'limit-login-attempts-reloaded' ); ?>
+		</a>
+		<a href="<?php echo $this->get_options_page_uri( 'help' ); ?>"
+			class="nav-tab<?php echo $active_tab === 'help' ? $nav_tab_active : ''; ?>">
+			<?php _e( 'Help', 'limit-login-attempts-reloaded' ); ?>
+		</a>
+		<a href="<?php echo $this->get_options_page_uri( 'premium' ); ?>"
+			class="nav-tab<?php echo $active_tab === 'premium' ? $nav_tab_active : ''; ?>">
+			<?php _e( 'Premium / Extensions', 'limit-login-attempts-reloaded' ); ?>
+		</a>
 
-        <?php if ( $active_tab === 'logs-custom' ) : ?>
-            <a class="unlink llar-label llar-failover-link" href="<?php echo $this->get_options_page_uri( 'logs-local' ); ?>">
-                <?php _e( 'Failover', 'limit-login-attempts-reloaded' ); ?>
-                <span class="hint_tooltip-parent">
-                    <span class="dashicons dashicons-editor-help"></span>
-                    <div class="hint_tooltip">
-                        <div class="hint_tooltip-content">
-                            <?php _e( 'Automatic switch to free version when premium stops working (usually due to non-payment or exceeding monthly resource budget).', 'limit-login-attempts-reloaded' ); ?>
-                        </div>
-                    </div>
-                </span>
-            </a>
-        <?php endif; ?>
-    </div>
+		<?php if ( $active_tab === 'logs-custom' ) : ?>
+			<a class="unlink llar-label llar-failover-link" href="<?php echo $this->get_options_page_uri( 'logs-local' ); ?>">
+				<?php _e( 'Failover', 'limit-login-attempts-reloaded' ); ?>
+				<span class="hint_tooltip-parent">
+					<span class="dashicons dashicons-editor-help"></span>
+					<div class="hint_tooltip">
+						<div class="hint_tooltip-content">
+							<?php _e( 'Automatic switch to free version when premium stops working (usually due to non-payment or exceeding monthly resource budget).', 'limit-login-attempts-reloaded' ); ?>
+						</div>
+					</div>
+				</span>
+			</a>
+		<?php endif; ?>
+	</div>
 
-    <?php include_once( LLA_PLUGIN_DIR . 'views/tab-' . $active_tab . '.php' ); ?>
+	<?php require_once LLA_PLUGIN_DIR . 'views/tab-' . $active_tab . '.php'; ?>
 </div>
