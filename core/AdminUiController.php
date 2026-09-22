@@ -97,7 +97,7 @@ class AdminUiController {
 		add_submenu_page(
 			'settings.php',
 			'Limit Login Attempts',
-			'Limit Login Attempts' . $this->menu_alert_icon(),
+			'Limit Login Attempts' . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
 			LimitLoginAttempts::$capabilities,
 			$this->options_page_slug,
 			array( $this, 'options_page' ) );
@@ -175,7 +175,7 @@ class AdminUiController {
 
 			add_menu_page(
 				'Limit Login Attempts',
-				'Limit Login Attempts' . $this->menu_alert_icon(),
+				'Limit Login Attempts' . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
 				LimitLoginAttempts::$capabilities,
 				$this->options_page_slug,
 				array( $this, 'options_page' ),
@@ -219,7 +219,7 @@ class AdminUiController {
 
 			add_options_page(
 				'Limit Login Attempts',
-				'Limit Login Attempts' . $this->menu_alert_icon(),
+				'Limit Login Attempts' . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
 				LimitLoginAttempts::$capabilities,
 				$this->options_page_slug,
 				array( $this, 'options_page' )
@@ -237,7 +237,7 @@ class AdminUiController {
 
 		$admin_bar->add_node( array(
 			'id'    => $root_item_id,
-			'title' => __( 'LLAR', 'limit-login-attempts-reloaded' ) . $this->menu_alert_icon(),
+			'title' => __( 'LLAR', 'limit-login-attempts-reloaded' ) . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
 			'href'  => $href,
 		) );
 
@@ -293,6 +293,28 @@ class AdminUiController {
 		return ' <span class="update-plugins count-1 llar-alert-icon"><span class="plugin-count">1</span></span>';
 	}
 
+	/**
+	 * Red dot icon shown while the active Cloud App (Micro Cloud)
+	 * reports requests.exhausted, so the admin sees that cloud protection
+	 * is paused even outside the plugin pages. Not dismissible and not
+	 * gated by the "Display Menu Warning Icon" setting (that one only
+	 * controls the local 100-attempts-per-day badge).
+	 *
+	 * @return string
+	 */
+	private function menu_mc_exhausted_icon()
+	{
+		if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'custom' || ! LimitLoginAttempts::$cloud_app ) {
+			return '';
+		}
+
+		if ( ! $this->plugin->info_is_exhausted() ) {
+			return '';
+		}
+
+		return ' <span class="llar-mc-exhausted-icon"></span>';
+	}
+
 	public function setting_menu_alert_icon()
 	{
 		global $menu;
@@ -310,6 +332,30 @@ class AdminUiController {
 		if ( ! empty( $menu[25][0] ) ) {
 
 			$menu[25][0] .= $this->menu_alert_icon();
+		}
+	}
+
+	public function setting_menu_mc_exhausted_icon()
+	{
+		global $menu;
+
+		if ( ! $this->plugin->has_capability ) return;
+
+		if ( ! Config::get( 'show_top_level_menu_item' ) && ! empty( $menu[80][0] ) ) {
+
+			$menu[80][0] .= $this->menu_mc_exhausted_icon();
+		}
+	}
+
+	public function network_setting_menu_mc_exhausted_icon()
+	{
+		global $menu;
+
+		if ( ! $this->plugin->has_capability ) return;
+
+		if ( ! empty( $menu[25][0] ) ) {
+
+			$menu[25][0] .= $this->menu_mc_exhausted_icon();
 		}
 	}
 
