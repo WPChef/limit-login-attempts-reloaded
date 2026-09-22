@@ -89,15 +89,13 @@ class LockoutNotificationService {
 
 		/* Format message. First current lockout duration */
 		if ( ! isset( $retries[ $ip ] ) ) {
-			$count    = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
-			$lockouts = Config::get( 'allowed_lockouts' );
-			$time     = round( Config::get( 'long_duration' ) / 3600 );
-			$when     = sprintf( _n( '%d hour', '%d hours', $time, 'limit-login-attempts-reloaded' ), $time );
+			$count = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
+			$time  = round( Config::get( 'long_duration' ) / 3600 );
+			$when  = sprintf( _n( '%d hour', '%d hours', $time, 'limit-login-attempts-reloaded' ), $time );
 		} else {
-			$count    = $retries[ $ip ];
-			$lockouts = floor( ( $count ) / Config::get( 'allowed_retries' ) );
-			$time     = round( Config::get( 'lockout_duration' ) / 60 );
-			$when     = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
+			$count = $retries[ $ip ];
+			$time  = round( Config::get( 'lockout_duration' ) / 60 );
+			$when  = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
 		}
 
 		if ( $custom_admin_email = Config::get( 'admin_notify_email' ) ) {
