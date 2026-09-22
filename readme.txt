@@ -254,6 +254,7 @@ By default, you will need to copy and paste the lists to each site manually. For
 * Added detection of a cached or optimizer-stripped login page and an admin notice warning that it can break the email code (MFA) login flow.
 * Fixed the onboarding Micro Cloud step silently completing on activation errors; it now shows the server error message so users learn when the program is closed or trial is unavailable.
 * Added a compatibility table to the Debug tab showing which LLAR features work with popular third-party plugins.
+* Redesigned the lockout notification email.
 
 = 3.3.9 =
 * Reworked the premium tab upgrade CTAs to show plan-specific pricing and adapt the upgrade links to the currently installed plan.
