@@ -8,6 +8,7 @@
 
 namespace LLAR\Core;
 
+use LLAR\Core\Digest\DigestDispatcher;
 use LLAR\Core\Interfaces\OptionsPageUriProvider;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -170,9 +171,7 @@ class LockoutNotificationService {
 			'limit-login-attempts-reloaded'
 		);
 
-		$review_activity_url   = $dashboard_url;
-		$review_activity_label = __( 'Review Login Activity', 'limit-login-attempts-reloaded' );
-		$dashboard_button_label = $review_activity_label;
+		$dashboard_button_label = __( 'Review Login Activity', 'limit-login-attempts-reloaded' );
 
 		$dashboard_helper_text = __(
 			'You can view recent login attempts, adjust your settings, and review blocked IP addresses from your WordPress dashboard.',
@@ -198,6 +197,12 @@ class LockoutNotificationService {
 		);
 
 		$manage_settings_label = __( 'Manage notification settings', 'limit-login-attempts-reloaded' );
+
+		/* Gray footer block: manage-settings link, styled like the digest unsubscribe footer. */
+		$unsubscribe_footer_text = DigestDispatcher::build_unsubscribe_footer_text(
+			array( 'unsubscribe_text' => $manage_settings_label ),
+			$manage_settings_url
+		);
 
 		$show_mu_notice = Helpers::is_mu();
 		$mu_notice      = __( 'This alert was sent by your website where Limit Login Attempts Reloaded free version is installed and you are listed as the admin.', 'limit-login-attempts-reloaded' );
