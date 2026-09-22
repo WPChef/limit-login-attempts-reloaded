@@ -1,29 +1,24 @@
 <?php
 
-use LLAR\Core\Config;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
 /**
- * @var $this LLAR\Core\LimitLoginAttempts
+ * Onboarding popup.
+ *
+ * All copy and state comes from the controller via get_onboarding_popup_view_vars().
+ *
+ * @var $this LLAR\Core\AdminUiController
  */
 
-$admin_notify_email      = Config::get( 'admin_notify_email' );
-$admin_email             = ! empty($admin_notify_email)
-                               ? $admin_notify_email
-                               : ( ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' ) );
-$onboarding_popup_shown = Config::get( 'onboarding_popup_shown' );
-$setup_code             = Config::get( 'app_setup_code' );
+$popup = $this->get_onboarding_popup_view_vars();
 
-$url_site = wp_parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
-
-$spinner = '<span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>';
-
-if ( $onboarding_popup_shown || ! empty( $setup_code ) ) {
+if ( ! $popup['should_show'] ) {
 	return;
 }
+
+$spinner = '<span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>';
 
 ob_start(); ?>
 <div class="llar-onboarding-popup__content">
@@ -31,55 +26,39 @@ ob_start(); ?>
         <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/img/icon-logo-menu-dark.png">
     </div>
     <div class="llar-onboarding__line">
-        <div class="point__block visited active" data-step="1">
+        <?php foreach ( $popup['steps'] as $step_index => $step_label ) : ?>
+        <div class="point__block<?php echo 0 === $step_index ? ' visited active' : ''; ?>" data-step="<?php echo (int) $step_index + 1; ?>">
             <div class="point"></div>
             <div class="description">
-				<?php esc_html_e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
+				<?php echo esc_html( $step_label ); ?>
             </div>
         </div>
-        <div class="point__block" data-step="2">
-            <div class="point"></div>
-            <div class="description">
-				<?php esc_html_e( 'Notifications', 'limit-login-attempts-reloaded' ); ?>
-            </div>
-        </div>
-        <div class="point__block" data-step="3">
-            <div class="point"></div>
-            <div class="description">
-				<?php esc_html_e( 'Limited Upgrade', 'limit-login-attempts-reloaded' ); ?>
-            </div>
-        </div>
-        <div class="point__block" data-step="4">
-            <div class="point"></div>
-            <div class="description">
-				<?php esc_html_e( 'Completion', 'limit-login-attempts-reloaded' ); ?>
-            </div>
-        </div>
+        <?php endforeach ?>
     </div>
     <div class="llar-onboarding__body">
         <div class="title">
             <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/welcome.png">
-			<?php esc_html_e( 'Welcome', 'limit-login-attempts-reloaded' ); ?>
+			<?php echo esc_html( $popup['step1']['title'] ); ?>
         </div>
         <div class="title_description">
-		    <?php esc_html_e( 'Before you start using the plugin, please complete onboarding (It only takes a minute).', 'limit-login-attempts-reloaded' ); ?>
+		    <?php echo esc_html( $popup['step1']['subtitle'] ); ?>
         </div>
         <div class="card mx-auto">
             <div class="field-wrap">
                 <div class="field-title">
-			        <?php esc_html_e( 'Already using Premium? Add your Setup Code', 'limit-login-attempts-reloaded' ); ?>
+			        <?php echo esc_html( $popup['step1']['setup_title'] ); ?>
                 </div>
                 <div class="field-key">
-                    <input type="text" class="input_border" id="llar-setup-code-field" placeholder="<?php esc_attr_e('Your Setup Code', 'limit-login-attempts-reloaded' ); ?>" value="">
+                    <input type="text" class="input_border" id="llar-setup-code-field" placeholder="<?php echo esc_attr( $popup['step1']['setup_placeholder'] ); ?>" value="">
                     <button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
-				        <?php esc_html_e( 'Activate', 'limit-login-attempts-reloaded' ); ?>
+				        <?php echo esc_html( $popup['step1']['setup_button'] ); ?>
                         <span class="dashicons dashicons-arrow-right-alt"></span>
                         <?php echo $spinner; ?>
                     </button>
                 </div>
                 <div class="field-error"></div>
                 <div class="field-desc">
-			        <?php esc_html_e( 'The Setup Code can be found in your email confirmation.', 'limit-login-attempts-reloaded' ); ?>
+			        <?php echo esc_html( $popup['step1']['setup_desc'] ); ?>
                 </div>
             </div>
         </div>
@@ -87,43 +66,26 @@ ob_start(); ?>
             <div class="field-wrap">
             <div class="field-wrap">
                 <div class="field-title">
-		            <?php esc_html_e( 'Not using Premium yet?', 'limit-login-attempts-reloaded' ); ?>
+		            <?php echo esc_html( $popup['step1']['premium_title'] ); ?>
                 </div>
                 <div class="field-desc-add">
-					<?php 
-					/* translators: %1$s: opening span tag, %2$s: closing span tag */
-					printf( esc_html__( 'With Premium, your site becomes part of a powerful, real-time threat intelligence network built on the data of %1$s over 80,000 WordPress sites. %2$s That means you\'re not just blocking attackers after they strike — you\'re %1$s preventing them from making legitimate login attempts. %2$s', 'limit-login-attempts-reloaded' ), '<span class="llar_turquoise">', '</span>' );
-					?>
+					<?php echo $popup['step1']['premium_pitch']; ?>
                 </div>
                 <div class="field-list-desc">
+                    <?php foreach ( $popup['step1']['premium_features'] as $feature ) : ?>
                     <div class="field-desc-item">
-                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/icon-shield.png">
-		                <?php esc_html_e( 'Cloud-based login protection with dynamic IP blocklists', 'limit-login-attempts-reloaded' ); ?>
+                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/<?php echo $feature['icon']; ?>">
+		                <?php echo esc_html( $feature['text'] ); ?>
                     </div>
-                    <div class="field-desc-item">
-                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/icon-lock.png">
-		                <?php esc_html_e( '97% of brute force attacks blocked before they begin', 'limit-login-attempts-reloaded' ); ?>
-                    </div>
-                    <div class="field-desc-item">
-                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/icon-reload.png">
-		                <?php esc_html_e( 'Real-time threat updates powered by our global network', 'limit-login-attempts-reloaded' ); ?>
-                    </div>
-                    <div class="field-desc-item">
-                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/icon-web.png">
-		                <?php esc_html_e( 'Country & IP controls for greater control', 'limit-login-attempts-reloaded' ); ?>
-                    </div>
-                    <div class="field-desc-item">
-                        <img class="field-desc-item-icon" src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/icon-dollar.png">
-		                <?php esc_html_e( 'Powerful login security from just $0.10/day - built for sites of all sizes', 'limit-login-attempts-reloaded' ); ?>
-                    </div>
+                    <?php endforeach ?>
                 </div>
                 <div class="button_block">
-                    <a href="https://www.limitloginattempts.com/info.php?from=plugin-onboarding-plans"
+                    <a href="<?php echo esc_url( $popup['step1']['plans_url'] ); ?>"
                        class="button menu__item button__orange" target="_blank">
-						<?php esc_html_e( 'Yes, show me plan options', 'limit-login-attempts-reloaded' ); ?>
+						<?php echo esc_html( $popup['step1']['plans_cta'] ); ?>
                     </a>
                     <button class="button next_step menu__item button__transparent_orange">
-						<?php esc_html_e( 'No, I don\'t want advanced protection', 'limit-login-attempts-reloaded' ); ?>
+						<?php echo esc_html( $popup['step1']['skip_cta'] ); ?>
                     </button>
                 </div>
             </div>
@@ -139,31 +101,31 @@ ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
         <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/email.png">
-		<?php esc_html_e( 'Notification Settings', 'limit-login-attempts-reloaded' ); ?>
+		<?php echo esc_html( $popup['step2']['title'] ); ?>
     </div>
     <div class="card mx-auto">
         <div class="field-wrap">
             <div class="field-email">
-                <input type="text" class="input_border" id="llar-subscribe-email" placeholder="<?php esc_attr_e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"
-                       value="<?php echo esc_attr( $admin_email ); ?>">
+                <input type="text" class="input_border" id="llar-subscribe-email" placeholder="<?php echo esc_attr( $popup['step2']['email_placeholder'] ); ?>"
+                       value="<?php echo esc_attr( $popup['admin_email'] ); ?>">
             </div>
             <div class="field-desc-additional">
-				<?php esc_html_e( 'This email will receive notifications of unauthorized access to your website. You may turn this off in your settings.', 'limit-login-attempts-reloaded' ); ?>
+				<?php echo esc_html( $popup['step2']['desc'] ); ?>
             </div>
             <div class="field-checkbox">
                 <input type="checkbox" name="lockout_notify_email" value="email"/>
                 <span>
-                    <?php esc_html_e( 'Sign me up for the LLAR newsletter to receive important security alerts, plugin updates, and helpful guides.', 'limit-login-attempts-reloaded' ); ?>
+                    <?php echo esc_html( $popup['step2']['checkbox_label'] ); ?>
                 </span>
             </div>
         </div>
     </div>
     <div class="button_block-horizon">
         <button class="button menu__item button__orange" id="llar-subscribe-email-button">
-			<?php esc_html_e( 'Continue', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
+			<?php echo esc_html( $popup['step2']['continue_label'] ); echo $spinner; ?>
         </button>
         <button class="button next_step menu__item button__transparent_orange button-skip" style="display: none">
-			<?php esc_html_e( 'Skip', 'limit-login-attempts-reloaded' ); ?>
+			<?php echo esc_html( $popup['step2']['skip_label'] ); ?>
         </button>
     </div>
 </div>
@@ -177,44 +139,33 @@ ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
         <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/rocket-min.png">
-		<?php esc_html_e( 'Limited Upgrade (Free)', 'limit-login-attempts-reloaded' ); ?>
+		<?php echo esc_html( $popup['step3']['title'] ); ?>
+    </div>
+    <div class="title_description">
+		<?php echo esc_html( $popup['step3']['subtitle'] ); ?>
     </div>
     <div class="card mx-auto">
         <div class="field-wrap" id="llar-description-step-3">
             <div class="field-desc-add">
-				<?php 
-				/* translators: %s: line break */
-				printf( esc_html__( 'Help us secure the WordPress network, and in return, we\'ll give you access to Micro Cloud - Our FREE premium plan. %s', 'limit-login-attempts-reloaded' ), '<br />' ); ?>
-                <br>
-				<?php 
-				/* translators: %1$s: opening span tag, %2$s: closing span tag, %3$s: line break */
-				printf( esc_html__( 'You\'ll receive %1$s 1,000 monthly cloud requests %2$s to power advanced login protection tools that block more than 97%% of all attempted logins. %3$s', 'limit-login-attempts-reloaded' ), '<span class="llar_turquoise">', '</span>', '<br />' );
-				?>
-                <br>
-				<?php 
-				/* translators: %1$s: opening span tag, %2$s: closing span tag, %3$s: line break */
-				printf( esc_html__( '%1$s By proceeding, you agree to participate in our threat-sharing network. %2$s %3$s', 'limit-login-attempts-reloaded' ), '<span class="llar_turquoise">', '</span>', '<br />' );
-				?>
-				<?php esc_html_e( 'You can switch back to the free version of the plugin at any time, which will deactivate Micro Cloud and stop all data sharing.', 'limit-login-attempts-reloaded' ); ?>
+				<?php echo $popup['step3']['pitch']; ?>
+                <br><br>
+				<?php echo $popup['step3']['paragraphs_html']; ?>
             </div>
             <div class="field-desc-add">
-				<b><?php esc_html_e( 'Would you like to opt-in?', 'limit-login-attempts-reloaded' ); ?></b>
+				<b><?php echo esc_html( $popup['step3']['cta'] ); ?></b>
             </div>
         </div>
         <div class="llar-upgrade-subscribe">
             <div class="button_block-horizon">
                 <button class="button next_step menu__item button__transparent_orange" id="llar-limited-upgrade-subscribe">
-		            <?php esc_html_e( 'Yes', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
+		            <?php echo esc_html( $popup['step3']['yes_label'] ); echo $spinner; ?>
                 </button>
                 <button class="button next_step menu__item button__transparent_grey" id="llar-limited-upgrade-no_subscribe">
-		            <?php esc_html_e( 'No', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
+		            <?php echo esc_html( $popup['step3']['no_label'] ); echo $spinner; ?>
                 </button>
             </div>
             <div class="explanations">
-				<?php 
-				/* translators: %1$s: opening link tag, %2$s: closing link tag */
-				printf(	esc_html__( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our %1$s terms of service %2$s by participating in this program.', 'limit-login-attempts-reloaded' ), '<a class="link__style_color_inherit llar_turquoise" href="https://www.limitloginattempts.com/terms/" target="_blank">', '</a>' );
-				?>
+				<?php echo $popup['step3']['terms']; ?>
             </div>
         </div>
     </div>
@@ -229,7 +180,7 @@ ob_start(); ?>
 <div class="llar-onboarding__body">
     <div class="title">
         <img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/like-min.png">
-		<?php esc_html_e( 'Thank you for completing the setup', 'limit-login-attempts-reloaded' ); ?>
+		<?php echo esc_html( $popup['step4']['title'] ); ?>
     </div>
     <div class="card mx-auto">
         <div class="field-image">
@@ -237,7 +188,7 @@ ob_start(); ?>
         </div>
         <div class="button_block-single">
             <button class="button next_step menu__item button__orange">
-				<?php esc_html_e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
+				<?php echo esc_html( $popup['step4']['button_label'] ); echo $spinner; ?>
             </button>
         </div>
     </div>
@@ -464,7 +415,7 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
 
 
                             if ( email === '' || email === null ) {
-                                email = '<?php echo esc_js( $admin_email ); ?>'
+                                email = '<?php echo esc_js( $popup['admin_email'] ); ?>'
                             }
 
                             $limited_upgrade_no_subscribe.on( 'click', function () {

@@ -3,6 +3,7 @@
 namespace LLAR\Core\Dashboard;
 
 use LLAR\Core\Config;
+use LLAR\Core\Helpers;
 use LLAR\Core\LimitLoginAttempts;
 use LLAR\Core\LocalLockoutManager;
 use LLAR\Core\Utils\RiskLevelMath;
@@ -88,7 +89,7 @@ class DashboardRiskRenderer {
 	 * @param bool|array  $api_stats            API stats.
 	 * @return array
 	 */
-	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
+	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats, $info_has_valid_data = false ) {
 		$risk_config         = llar_get_risk_config();
 		$risk_levels         = ( isset( $risk_config['levels'] ) && is_array( $risk_config['levels'] ) ) ? $risk_config['levels'] : array();
 		$risk_colors         = ( isset( $risk_config['colors'] ) && is_array( $risk_config['colors'] ) ) ? $risk_config['colors'] : array();
@@ -122,11 +123,24 @@ class DashboardRiskRenderer {
 			$retries_chart_color = isset( $risk_colors['green'] ) ? $risk_colors['green'] : '#97F6C8';
 		}
 
+		$hint_tooltip = $is_active_app_custom
+			? __( 'An IP that hasn\'t been previously denied by the cloud app, but has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' )
+			: __( 'An IP that has made an unsuccessful login attempt on your website.', 'limit-login-attempts-reloaded' );
+
+		$premium_label = '';
+		if ( $is_active_app_custom && ! empty( $info_has_valid_data ) && ! $is_exhausted ) {
+			$premium_label = ( 'Micro Cloud' === $block_sub_group )
+				? __( 'Free Trial', 'limit-login-attempts-reloaded' )
+				: __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' );
+		}
+
 		return array(
 			'retries_chart_title' => $retries_chart_title,
 			'retries_chart_desc'  => $retries_chart_desc,
 			'retries_chart_color' => $retries_chart_color,
 			'retries_count'       => (int) $retries_count,
+			'hint_tooltip'        => $hint_tooltip,
+			'premium_label'       => $premium_label,
 		);
 	}
 
@@ -155,7 +169,7 @@ class DashboardRiskRenderer {
 	private function get_micro_cloud_recommendation_html() {
 		return sprintf(
 			__(
-				'Based on your level of brute force activity, we recommend <a class="llar_orange %s">free Micro Cloud upgrade</a> to access features to reduce failed logins and improve site performance.',
+				'Based on your level of brute force activity, we recommend <a class="llar_orange %s">starting a free 14 day trial</a> to access features to reduce failed logins and improve site performance.',
 				'limit-login-attempts-reloaded'
 			),
 			'button_micro_cloud'
@@ -289,6 +303,182 @@ class DashboardRiskRenderer {
 			'retries_chart_title' => $retries_chart_title,
 			'retries_chart_desc'  => $retries_chart_desc,
 			'retries_chart_color' => $retries_chart_color,
+		);
+	}
+
+	/**
+	 * View data for views/tab-dashboard.php: copy, URLs and checklist state.
+	 *
+	 * @param string $active_app           Active app slug ('local'|'custom').
+	 * @param bool   $is_active_app_custom Whether the cloud app is active.
+	 * @param string $block_sub_group      Cloud plan name.
+	 * @param bool   $is_exhausted         Cloud quota exhausted flag.
+	 *
+	 * @return array
+	 */
+	public function build_dashboard_tab_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
+		$setup_code          = Config::get( 'app_setup_code' );
+		$api_stats           = $is_active_app_custom ? LimitLoginAttempts::$cloud_app->stats() : false;
+		$info_has_valid_data = $is_active_app_custom ? $this->plugin->info_has_valid_data() : false;
+		$upgrade_premium_url = $is_active_app_custom ? $this->plugin->info_upgrade_url() : '';
+
+		$chart_circle_data = $this->get_failed_attempts_circle_data(
+			$is_active_app_custom,
+			$is_exhausted,
+			$block_sub_group,
+			$setup_code,
+			$upgrade_premium_url,
+			$api_stats,
+			$info_has_valid_data
+		);
+
+		$url_site = is_multisite() ? network_site_url() : site_url();
+
+		// --- Login Security Checklist state ---
+		$lockout_notify = explode( ',', Config::get( 'lockout_notify' ) );
+		$email_checked  = in_array( 'email', $lockout_notify ) ? ' checked disabled' : '';
+		$email_checked  = $is_active_app_custom ? ' checked disabled' : $email_checked;
+
+		$is_checklist = Config::get( 'checklist' ) === 'true' ? ' checked disabled' : '';
+
+		$min_paid_plan     = 'Personal';
+		$min_plan          = 'Premium';
+		$plans             = $this->plugin->array_name_plans();
+		$current_plan_rate = isset( $plans[ $block_sub_group ] ) ? $plans[ $block_sub_group ] : 0;
+		$upgrade_premium   = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_paid_plan ] ) ? ' checked' : '';
+
+		$checked_block_by_country = Config::get( 'block_by_country' ) === 'true' ? ' checked disabled' : '';
+		$block_by_country         = $block_sub_group ? $this->plugin->info_block_by_country() : false;
+		$block_by_country_disabled = $block_sub_group ? '' : ' disabled';
+		$is_by_country            = $block_by_country ? $checked_block_by_country : $block_by_country_disabled;
+
+		$is_auto_update_choice = ( Helpers::is_auto_update_enabled() && ! Helpers::is_block_automatic_update_disabled() ) ? ' checked' : '';
+
+		$app_config   = Config::get( 'app_config' );
+		$full_log_url = ! empty( $app_config['key'] ) ? 'https://my.limitloginattempts.com/logs?key=' . esc_attr( $app_config['key'] ) : false;
+
+		$list_name = __( 'Deny/Allow countries', 'limit-login-attempts-reloaded' );
+		if ( ! $is_active_app_custom || ( $is_active_app_custom && ( $plans[ $block_sub_group ] === $plans[ $min_plan ] ) ) ) {
+			$list_name = __( 'Deny/Allow countries (Premium+ Users)', 'limit-login-attempts-reloaded' );
+		}
+
+		$checklist = array(
+			'heading' => __( 'Login Security Checklist', 'limit-login-attempts-reloaded' ),
+			'desc'    => __( 'Recommended tasks to greatly improve the security of your website.', 'limit-login-attempts-reloaded' ),
+			'full_log_url' => $full_log_url,
+			'items'   => array(
+				array(
+					'name'    => 'lockout_notify_email',
+					'checked' => $email_checked,
+					'disabled_attr' => '',
+					'label'   => __( 'Enable Email Notifications', 'limit-login-attempts-reloaded' ),
+					'list_add' => '',
+					'desc'     => sprintf(
+						__( '<a class="link__style_unlink llar_turquoise" href="%s">Enable email notifications</a> to receive timely alerts and updates via email.', 'limit-login-attempts-reloaded' ),
+						'/wp-admin/admin.php?page=limit-login-attempts&tab=settings#llar_lockout_notify'
+					),
+				),
+				array(
+					'name'    => 'strong_account_policies',
+					'checked' => $is_checklist,
+					'disabled_attr' => '',
+					'label'   => __( 'Implement strong account policies', 'limit-login-attempts-reloaded' ),
+					'list_add' => __( 'Check when done.', 'limit-login-attempts-reloaded' ),
+					'desc'     => sprintf(
+						__( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Read our guide</a> on implementing and enforcing strong password policies in your organization.', 'limit-login-attempts-reloaded' ),
+						'https://www.limitloginattempts.com/info.php?id=1'
+					),
+				),
+				array(
+					'name'    => 'block_by_country',
+					'checked' => $is_by_country . $block_by_country_disabled,
+					'disabled_attr' => '',
+					'label'   => $list_name,
+					'list_add' => __( 'Check when done.', 'limit-login-attempts-reloaded' ),
+					'desc'     => sprintf(
+						__( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Allow or Deny countries</a> to ensure only legitimate users login.', 'limit-login-attempts-reloaded' ),
+						$block_by_country
+							? $url_site . '/wp-admin/admin.php?page=limit-login-attempts&tab=logs-custom'
+							: 'https://www.limitloginattempts.com/info.php?id=2'
+					),
+				),
+				array(
+					'name'    => 'auto_update_choice',
+					'checked' => $is_auto_update_choice,
+					'disabled_attr' => ' disabled',
+					'label'   => __( 'Turn on plugin auto-updates', 'limit-login-attempts-reloaded' ),
+					'list_add' => '',
+					'desc'     => ! empty( $is_auto_update_choice )
+						? __( 'Enable automatic updates to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' )
+						: __( '<a class="link__style_unlink llar_turquoise" href="#llar_auto_update_choice">Enable automatic updates</a> to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' ),
+				),
+				array(
+					'name'    => 'upgrade_premium',
+					'checked' => ' ' . $upgrade_premium,
+					'disabled_attr' => ' disabled',
+					'label'   => __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ),
+					'list_add' => '',
+					'desc'     => ( $is_active_app_custom && ( $current_plan_rate >= $plans[ $min_paid_plan ] ) )
+						? __( 'Upgrade to our premium version for advanced protection.', 'limit-login-attempts-reloaded' )
+						: sprintf(
+							__( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Upgrade to our premium</a> version for advanced protection.', 'limit-login-attempts-reloaded' ),
+							$is_active_app_custom
+								? add_query_arg( 'id', '5', $this->plugin->info_upgrade_url() )
+								: 'https://www.limitloginattempts.com/info.php?id=3'
+						),
+				),
+			),
+		);
+
+		return array(
+			'setup_code'           => $setup_code,
+			'api_stats'            => $api_stats,
+			'upgrade_premium_url'  => $upgrade_premium_url,
+			'show_onboarding'      => ! $is_active_app_custom && empty( $setup_code ),
+			'chart_circle_data'    => $chart_circle_data,
+			'show_trial_block'           => ! $is_active_app_custom && empty( $setup_code ),
+			'show_premium_disabled_block' => ! $is_active_app_custom && ! empty( $setup_code ),
+			'trial_block'         => array(
+				'title'     => __( 'Experience Premium Free for 14 Days', 'limit-login-attempts-reloaded' ),
+				'bullets'   => array(
+					__( 'No credit card required. Automatically revert to the free version when the trial is complete.', 'limit-login-attempts-reloaded' ),
+					__( 'Unlock advanced security features including Cloud Protection, Block by Country, Login Firewall, and Successful Login Logs', 'limit-login-attempts-reloaded' ),
+					__( 'Stop brute force attacks before they reach your login page with one of the strongest login protection systems for WordPress', 'limit-login-attempts-reloaded' ),
+				),
+				'cta_title' => __( '14 Day Trial', 'limit-login-attempts-reloaded' ),
+				'cta_label' => __( '14 Day Trial', 'limit-login-attempts-reloaded' ),
+			),
+			'premium_disabled_block' => array(
+				'title'        => __( 'Premium Protection Disabled', 'limit-login-attempts-reloaded' ),
+				'desc'         => __( 'As a free user, your local server is absorbing the traffic brought on by brute force attacks, potentially slowing down your website. Upgrade to Premium today to outsource these attacks through our cloud app, and slow down future attacks with advanced throttling.', 'limit-login-attempts-reloaded' ),
+				'url'          => 'https://www.limitloginattempts.com/upgrade/?from=plugin-dashboard-cta',
+				'cta_title'    => 'Upgrade To Premium',
+				'button_label' => __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ),
+			),
+			'quick_links'         => array(
+				array(
+					'icon'   => 'icon-exploitation.png',
+					'href'   => $this->plugin->get_options_page_uri( 'logs-' . $active_app ),
+					'target' => '',
+					'title'  => __( 'Tools', 'limit-login-attempts-reloaded' ),
+					'desc'   => __( 'View lockouts logs, block or whitelist usernames or IPs, and more.', 'limit-login-attempts-reloaded' ),
+				),
+				array(
+					'icon'   => 'icon-help.png',
+					'href'   => 'https://www.limitloginattempts.com/info.php?from=plugin-dashboard-help',
+					'target' => ' target="_blank"',
+					'title'  => __( 'Help', 'limit-login-attempts-reloaded' ),
+					'desc'   => __( 'Find the documentation and help you need.', 'limit-login-attempts-reloaded' ),
+				),
+				array(
+					'icon'   => 'icon-web.png',
+					'href'   => $this->plugin->get_options_page_uri( 'settings' ),
+					'target' => '',
+					'title'  => __( 'Global Options', 'limit-login-attempts-reloaded' ),
+					'desc'   => __( 'Many options such as notifications, alerts, premium status, and more.', 'limit-login-attempts-reloaded' ),
+				),
+			),
+			'checklist'           => $checklist,
 		);
 	}
 }

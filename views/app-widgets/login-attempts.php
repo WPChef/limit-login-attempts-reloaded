@@ -1,10 +1,10 @@
 <?php
 /**
- * Dashboard
+ * Successful login attempts widget.
  *
- * @var string $setup_code
- * @var bool $is_active_app_custom
- * @var string $upgrade_premium_url
+ * All copy and state comes from the controller via get_login_attempts_widget_view_vars().
+ *
+ * @var bool $is_tab_dashboard
  *
  */
 
@@ -12,20 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-$limit = 10;
+$widget = $this->get_login_attempts_widget_view_vars( isset( $is_tab_dashboard ) && $is_tab_dashboard );
 ?>
 
-<?php if ( isset( $is_tab_dashboard ) && $is_tab_dashboard ) :
-
-    $limit = 5; ?>
+<?php if ( $widget['is_tab_dashboard'] ) : ?>
 
     <div class="section-title__new">
         <div class="title">
-			<?php _e( 'Successful Login Attempts', 'limit-login-attempts-reloaded' ) ?>
+			<?php echo $widget['title']; ?>
         </div>
         <div class="view">
-            <a class="link__style_unlink llar_turquoise" href="/wp-admin/admin.php?page=limit-login-attempts&tab=logs-custom">
-		        <?php _e( ' View more', 'limit-login-attempts-reloaded' ) ?>
+            <a class="link__style_unlink llar_turquoise" href="<?php echo $widget['view_more_url']; ?>">
+		        <?php echo $widget['view_more_label']; ?>
             </a>
         </div>
     </div>
@@ -35,7 +33,7 @@ $limit = 10;
     <div class="llar-table-header">
         <h3 class="title_page">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-help.png">
-	        <?php _e( 'Successful Login Attempts', 'limit-login-attempts-reloaded' ) ?>
+	        <?php echo $widget['title']; ?>
         </h3>
     </div>
 
@@ -46,20 +44,18 @@ $limit = 10;
         <table class="llar-form-table llar-table-app-login">
             <thead>
                 <tr>
-                    <th scope="col"><?php _e( "Time", 'limit-login-attempts-reloaded' ); ?></th>
-                    <th scope="col"><?php _e( "Login", 'limit-login-attempts-reloaded' ); ?></th>
-                    <th scope="col"><?php _e( "IP", 'limit-login-attempts-reloaded' ); ?></th>
-                    <th scope="col"><?php _e( "Role", 'limit-login-attempts-reloaded' ); ?></th>
-                    <th scope="col"></th>
+                    <?php foreach ( $widget['headers'] as $header ) : ?>
+                    <th scope="col"><?php echo $header; ?></th>
+                    <?php endforeach ?>
                 </tr>
             </thead>
             <tbody class="login-attempts"></tbody>
-            <?php if ( empty( $is_tab_dashboard ) ) : ?>
+            <?php if ( ! $widget['is_tab_dashboard'] ) : ?>
                 <tfoot class="table-inline-preloader">
                     <tr>
                         <td colspan="100%">
                             <div class="load-more-button"><a href="#">
-                                    <?php _e( "Load older events", 'limit-login-attempts-reloaded' ); ?>
+                                    <?php echo $widget['load_more_label']; ?>
                                 </a>
                             </div>
                             <div class="preloader-row">
@@ -73,7 +69,7 @@ $limit = 10;
     </div>
 </div>
 
-<?php if ( ! $is_active_app_custom ) : ?>
+<?php if ( ! $widget['is_active_app_custom'] ) : ?>
 
     <?php $app_custom = 'false'; ?>
 
@@ -81,21 +77,13 @@ $limit = 10;
         <div class="llar-blur-block-text">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-block.png">
             <div class="title">
-                <?php _e('View a complete history of successful logins for your WordPress account', 'limit-login-attempts-reloaded'); ?>
+                <?php echo $widget['blur_title']; ?>
             </div>
             <div class="description">
-	            <?php _e('All logs are stored in the cloud to ensure malicious users are unable to delete or manipulate site login data.', 'limit-login-attempts-reloaded'); ?>
+	            <?php echo $widget['blur_description']; ?>
             </div>
             <div class="footer">
-	            <?php if ( ! empty ( $setup_code ) ) :
-		            $text_no_custom = __( 'This feature is only available for<br><a class="link__style_unlink llar_turquoise" href="%s">Premium</a> users.', 'limit-login-attempts-reloaded' );
-	            else:
-		            $text_no_custom = __( 'This feature is only available for<br><a class="link__style_unlink llar_turquoise" href="%s">Premium</a> and <a class="link__style_unlink llar_turquoise button_micro_cloud">Micro Cloud (FREE!)</a> users.', 'limit-login-attempts-reloaded' );
-	            endif ?>
-	            <?php echo sprintf(
-		            $text_no_custom,
-		            '/wp-admin/admin.php?page=limit-login-attempts&tab=premium'
-	            ); ?>
+	            <?php echo $widget['blur_footer']; ?>
             </div>
         </div>
     </div>
@@ -116,7 +104,7 @@ $limit = 10;
                 login_button_open = '.llar-add-login-open',
                 loading_data = false,
                 page_offset = '',
-                page_limit = '<?php echo esc_js( $limit ) ?>',
+                page_limit = '<?php echo esc_js( $widget['limit'] ) ?>',
                 total_loaded = 0;
 
             load_login_data();
@@ -180,7 +168,7 @@ $limit = 10;
                     offset:         page_offset,
                     limit:          page_limit,
                     custom:         '<?php echo esc_js( $app_custom ); ?>',
-                    url_premium:    '<?php echo esc_js( $upgrade_premium_url ); ?>',
+                    url_premium:    '<?php echo esc_js( $widget['upgrade_premium_url'] ); ?>',
                     sec:            '<?php echo wp_create_nonce( "llar-app-load-login" ); ?>'
                 }, function(response){
 

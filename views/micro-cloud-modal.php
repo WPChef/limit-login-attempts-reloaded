@@ -1,21 +1,22 @@
 <?php
 
-use LLAR\Core\Config;
-
 if( !defined( 'ABSPATH' ) ) exit();
 
 /**
- * @var $this LLAR\Core\LimitLoginAttempts
+ * Micro Cloud free trial modal.
+ *
+ * All copy and state comes from the controller via get_micro_cloud_modal_view_vars().
+ *
+ * @var $this LLAR\Core\AdminUiController
  */
 
-$setup_code = Config::get( 'app_setup_code' );
+$modal = $this->get_micro_cloud_modal_view_vars();
 
-if ( ! empty( $setup_code ) ) {
+if ( ! $modal['should_show'] ) {
 	return;
 }
+
 $spinner = '<span class="preloader-wrapper"><span class="spinner llar-app-ajax-spinner"></span></span>';
-$admin_email = ( !is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
-$url_site = parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
 
 ob_start(); ?>
     <div class="micro_cloud_modal__content">
@@ -23,13 +24,13 @@ ob_start(); ?>
             <div class="micro_cloud_modal__body_header">
                 <div class="left_side">
                     <div class="title">
-                        <?php _e( 'Get Started with Micro Cloud for FREE', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo $modal['title']; ?>
                     </div>
                     <div class="description">
-                        <?php _e( 'Help us secure our network and we’ll provide you with limited access to our premium features including our login firewall, IP Intelligence, and performance optimizer.', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo $modal['description']; ?>
                     </div>
                     <div class="description-add">
-                        <?php _e( 'Please note that some domains have very high brute force activity, which may cause Micro Cloud to run out of resources in under 24 hours. We will send an email when resources are fully utilized and the app reverts back to the free version. You may upgrade to one of our premium plans to prevent the app from reverting.', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo $modal['description_add']; ?>
                     </div>
                 </div>
                 <div class="right_side">
@@ -40,45 +41,39 @@ ob_start(); ?>
                 <div class="card-header">
                     <div class="title">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/tools.png">
-                        <?php _e( 'How To Activate Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo $modal['card_title']; ?>
                     </div>
                 </div>
                 <div class="card-body step-first">
                     <div class="description">
-                        <?php _e( 'Please enter the email that will receive activation confirmation', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo $modal['email_desc']; ?>
                     </div>
                     <div class="field-wrap">
                         <div class="field-email">
                             <input type="text" class="input_border" id="llar-subscribe-email"
-                                   placeholder="<?php _e( 'Your email', 'limit-login-attempts-reloaded' ); ?>"
-                                   value="<?php esc_attr_e( $admin_email ); ?>">
+                                   placeholder="<?php echo $modal['email_placeholder']; ?>"
+                                   value="<?php echo esc_attr( $modal['admin_email'] ); ?>">
                         </div>
                     </div>
                     <div class="field-checkbox">
                         <input type="checkbox" id="mc_consent_registering"/>
                         <span>
-                            <?php echo sprintf(
-	                            __( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service.', 'limit-login-attempts-reloaded' ),
-	                            $url_site);
-                            ?>
+                            <?php echo $modal['consent']; ?>
                         </span>
                     </div>
                     <div class="button_block-single">
                         <button class="button menu__item button__orange" id="llar-button_subscribe-email">
-                            <?php _e( 'Continue', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
+                            <?php echo $modal['continue_label']; echo $spinner; ?>
                         </button>
                         <div class="description_add">
-                            <?php echo sprintf(
-                                __( 'By signing up you agree to our <a href="%s" class="llar_turquoise">terms of service</a> and <a href="%s" class="llar_turquoise">privacy policy.</a>', 'limit-login-attempts-reloaded' ),
-                                'https://www.limitloginattempts.com/terms/', 'https://www.limitloginattempts.com/privacy-policy/' );
-                            ?>
+                            <?php echo $modal['terms']; ?>
                         </div>
                     </div>
                 </div>
                 <div class="card-body step-second llar-display-none">
                     <div class="llar-upgrade-subscribe_notification__error llar-display-none">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
-                        <span class="llar-micro-cloud-error-message"><?php _e( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ); ?></span>
+                        <span class="llar-micro-cloud-error-message"><?php echo $modal['error_message']; ?></span>
                     </div>
                     <div class="llar-upgrade-subscribe_notification">
                         <div class="field-image">
@@ -86,12 +81,12 @@ ob_start(); ?>
                         </div>
                         <div class="description_add">
                             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/start.png">
-	                        <?php _e( 'Micro Cloud has been activated!', 'limit-login-attempts-reloaded' ); ?>
+	                        <?php echo $modal['success_text']; ?>
                         </div>
                     </div>
                     <div class="button_block-single">
                         <button class="button next_step menu__item button__orange" id="llar-button_dashboard">
-                            <?php _e( 'Go To Dashboard', 'limit-login-attempts-reloaded' ); echo $spinner; ?>
+                            <?php echo $modal['dashboard_label']; echo $spinner; ?>
                         </button>
                     </div>
                 </div>

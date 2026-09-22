@@ -152,7 +152,7 @@ class AdminUiController {
 		if ( ! $is_cloud_app_enabled ) {
 
 			$slug       = '&tab=dashboard#modal_micro_cloud';
-			$name_item  = $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' );
+			$name_item  = $is_local_empty_setup_code ? __( 'Free Trial', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' );
 			$url_item   = $is_local_empty_setup_code ? $slug : '&tab=premium';
 
 			$submenu_items[] = array(
@@ -860,6 +860,49 @@ class AdminUiController {
 
 		// MFA tab data comes from get_settings_for_view() (single source in MfaSettingsManager)
 		include_once LLA_PLUGIN_DIR . 'views/options-page.php';
+	}
+
+	/**
+	 * View data for views/tab-dashboard.php. Delegates to DashboardRiskRenderer.
+	 *
+	 * @param string $active_app          Active app slug ('local'|'custom').
+	 * @param bool   $is_active_app_custom Whether the cloud app is active.
+	 * @param string $block_sub_group     Cloud plan name.
+	 * @param bool   $is_exhausted        Cloud quota exhausted flag.
+	 *
+	 * @return array
+	 */
+	public function get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
+		return $this->plugin->get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
+	}
+
+	/**
+	 * View data for views/onboarding-popup.php.
+	 *
+	 * @return array
+	 */
+	public function get_onboarding_popup_view_vars() {
+		return ( new OnboardingPopupPresenter() )->get_view_vars();
+	}
+
+	/**
+	 * View data for views/micro-cloud-modal.php.
+	 *
+	 * @return array
+	 */
+	public function get_micro_cloud_modal_view_vars() {
+		return ( new MicroCloudModalPresenter() )->get_view_vars();
+	}
+
+	/**
+	 * View data for views/app-widgets/login-attempts.php.
+	 *
+	 * @param bool $is_tab_dashboard Whether the widget renders on the dashboard tab.
+	 *
+	 * @return array
+	 */
+	public function get_login_attempts_widget_view_vars( $is_tab_dashboard ) {
+		return ( new LoginAttemptsWidgetPresenter( $this->plugin ) )->get_view_vars( $is_tab_dashboard );
 	}
 
 	/**
