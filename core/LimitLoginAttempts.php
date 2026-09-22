@@ -635,6 +635,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 		add_filter( 'shake_error_codes', array( $this, 'failure_shake' ) );
 		add_filter( 'wp_login_errors', array( $this, 'inject_mfa_return_login_error' ), 10, 2 );
+		add_filter( 'wp_login_errors', array( $this, 'normalize_login_error_code' ), 20, 2 );
 		add_action( 'login_errors', array( $this, 'fixup_error_messages' ) );
 		// hook for the plugin UM
 		add_action( 'um_submit_form_errors_hook_login', array( $this, 'um_limit_login_failed' ) );
@@ -1363,6 +1364,17 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 */
 	public function inject_mfa_return_login_error( $errors, $redirect_to ) {
 		return $this->error_presenter->inject_mfa_return_login_error( $errors, $redirect_to );
+	}
+
+	/**
+	 * Normalize the login error code so wp-login.php keeps the submitted username.
+	 *
+	 * @param \WP_Error $errors      WP_Error object passed to login_header().
+	 * @param string    $redirect_to Redirect URL.
+	 * @return \WP_Error
+	 */
+	public function normalize_login_error_code( $errors, $redirect_to = '' ) {
+		return $this->error_presenter->normalize_login_error_code( $errors, $redirect_to );
 	}
 
 	/**
