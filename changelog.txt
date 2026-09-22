@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.3.10 =
+* Added detection of a cached or optimizer-stripped login page and an admin notice warning that it can break the email code (MFA) login flow.
+
 = 3.3.9 =
 * Reworked the premium tab upgrade CTAs to show plan-specific pricing and adapt the upgrade links to the currently installed plan.
 * Added Micro Cloud usage banners that show the monthly requests used and warn when the quota is almost exhausted.

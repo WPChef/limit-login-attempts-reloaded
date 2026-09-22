@@ -20,7 +20,7 @@ $checked_url = isset( $issue['url'] ) ? (string) $issue['url'] : '';
 			echo wp_kses_post(
 				sprintf(
 				// translators: %d: age of the cached login page copy, in minutes.
-					__( 'Your login page appears to be served from a page cache (cached copy is about %d minutes old). A cached login page can break the email code (MFA) login flow with the "session expired" error. Please exclude your login URL from page caching (for example, WP Engine Evercache, Perfmatters or other caching solutions). If the page was simply opened a long time ago, no action is needed.', 'limit-login-attempts-reloaded' ),
+					__( 'Your login page appears to be served from a page cache (cached copy is about %d minutes old). A cached login page can break the email code (MFA) login flow with the "session expired" error. Please exclude your login URL from page caching (for example, Evercache, Perfmatters or other caching solutions). If the page was simply opened a long time ago, no action is needed.', 'limit-login-attempts-reloaded' ),
 					$age_minutes
 				)
 			);
