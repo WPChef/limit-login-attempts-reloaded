@@ -66,7 +66,7 @@ $kses_strong = array( 'strong' => array() );
 	<?php echo esc_html( $additional_protection_text ); ?>
 </p>
 <p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:#333333;text-align:center;">
-	<a href="<?php echo esc_url( $additional_protection_url ); ?>" target="_blank" rel="noopener" style="display:inline-block;background:#50c1cd;color:#ffffff;border-radius:30px;padding:10px 20px;text-decoration:none;">
+	<a href="<?php echo esc_url( $additional_protection_url ); ?>" target="_blank" rel="noopener" style="display:inline-block;background:#fda33b;color:#ffffff;border-radius:30px;padding:10px 20px;text-decoration:none;">
 		<?php echo esc_html( $additional_protection_label ); ?>
 	</a>
 </p>
