@@ -1670,11 +1670,12 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		if ( ! $this->is_leave_review_notice_visible() ) {
 			return;
 		}
+		$plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
 		wp_enqueue_script(
 			'llar-admin-review-notice',
 			LLA_PLUGIN_URL . 'assets/js/llar-admin-review-notice.js',
 			array( 'jquery' ),
-			LLA_VERSION,
+			isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '',
 			true
 		);
 		wp_localize_script(
