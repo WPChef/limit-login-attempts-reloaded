@@ -6,7 +6,7 @@
  * @var string $notice_class   Plugin-specific class (e.g. 'llar-options-notice').
  * @var string $notice_content HTML content for inside the notice (inside <p>).
  * @var bool   $notice_raw     Whether $notice_content is fully rendered trusted view output
- *                             (own wrapper markup, inline JS) that must bypass wp_kses_post().
+ *                             (own wrapper markup) that must bypass wp_kses_post().
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,10 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! empty( $notice_raw ) ) {
 	/*
-	 * Trusted view output. wp_kses_post() strips <script> tags while keeping their
-	 * body, which prints the JS as plain text and breaks the notice JS handlers.
+	 * Trusted view output with its own wrapper markup. wp_kses_post() strips
+	 * <script> tags while keeping their body, which prints JS as plain text,
+	 * so notice views must not ship inline scripts (use enqueued assets).
 	 */
-	echo $notice_content; // phpcs:ignore WordPress.Security.EscapeOutput -- trusted plugin view output with inline script.
+	echo $notice_content; // phpcs:ignore WordPress.Security.EscapeOutput -- trusted plugin view output.
 	return;
 }
 ?>
