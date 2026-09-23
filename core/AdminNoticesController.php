@@ -27,14 +27,13 @@ class AdminNoticesController {
 	 * @return array|null Array with 'type', 'class', 'content' or null if unknown.
 	 */
 	private function get_notice_config( $notice_key, array $args = array() ) {
-		$text_domain = 'limit-login-attempts-reloaded';
 		switch ( $notice_key ) {
 			case 'auto-update':
-				$content  = \__( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', $text_domain );
+				$content  = \__( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', 'limit-login-attempts-reloaded' );
 				$content .= ' <a href="#" class="auto-enable-update-option" data-val="yes">';
-				$content .= \__( 'Yes, enable auto-update', $text_domain ) . '</a> | ';
+				$content .= \__( 'Yes, enable auto-update', 'limit-login-attempts-reloaded' ) . '</a> | ';
 				$content .= '<a href="#" class="auto-enable-update-option" data-val="no">';
-				$content .= \__( 'No thanks', $text_domain ) . '</a>';
+				$content .= \__( 'No thanks', 'limit-login-attempts-reloaded' ) . '</a>';
 				return array(
 					'type'    => 'notice-error',
 					'class'   => 'llar-options-notice llar-auto-update-notice',
@@ -44,13 +43,13 @@ class AdminNoticesController {
 				return array(
 					'type'    => 'notice-warning',
 					'class'   => 'llar-options-notice',
-					'content' => \__( 'Your site is not using HTTPS. Enabling HTTPS is recommended for better security.', $text_domain ),
+					'content' => \__( 'Your site is not using HTTPS. Enabling HTTPS is recommended for better security.', 'limit-login-attempts-reloaded' ),
 				);
 			case 'https-recommended-mfa':
 				return array(
 					'type'    => 'notice-warning',
 					'class'   => 'llar-options-notice',
-					'content' => \__( 'Before enabling 2FA/MFA, we strongly recommend ensuring your website is accessible only via HTTPS.', $text_domain ),
+					'content' => \__( 'Before enabling 2FA/MFA, we strongly recommend ensuring your website is accessible only via HTTPS.', 'limit-login-attempts-reloaded' ),
 				);
 			case 'debug-foreign-auth-hooks':
 				$hooks = isset( $args['hooks'] ) && is_array( $args['hooks'] ) ? $args['hooks'] : array();
@@ -58,7 +57,7 @@ class AdminNoticesController {
 					return null;
 				}
 
-				$content       = \__( 'These plugins register additional callbacks on the authenticate filter and may affect LLAR login protection.', $text_domain );
+				$content       = \__( 'These plugins register additional callbacks on the authenticate filter and may affect LLAR login protection.', 'limit-login-attempts-reloaded' );
 				$grouped_hooks = array();
 				foreach ( $hooks as $hook ) {
 					$plugin_slug        = 'unknown';
@@ -100,7 +99,7 @@ class AdminNoticesController {
 					$content .= '<li><strong>' . \esc_html( $plugin_group['label'] ) . '</strong>';
 					if ( '' !== $plugin_group['url'] ) {
 						$content .= ' - <a href="' . \esc_url( $plugin_group['url'] ) . '" class="thickbox open-plugin-details-modal" target="_blank" rel="noopener noreferrer">'
-							. \esc_html__( 'View details', $text_domain ) . '</a>';
+							. \esc_html__( 'View details', 'limit-login-attempts-reloaded' ) . '</a>';
 					}
 					$content .= '</li>';
 				}
@@ -114,7 +113,7 @@ class AdminNoticesController {
 			case 'flash':
 				$msg      = isset( $args['msg'] ) ? $args['msg'] : '';
 				$is_error = ! empty( $args['is_error'] );
-				if ( $msg === '' ) {
+				if ( '' === $msg ) {
 					return null;
 				}
 				return array(
@@ -159,6 +158,7 @@ class AdminNoticesController {
 					'type'    => 'notice-error',
 					'class'   => 'llar-options-notice llar-mfa-recovery-links-expired',
 					'content' => sprintf(
+						// translators: %s: URL of the 2FA settings page.
 						__( '⚠️ Action required: Your existing 2FA recovery links are no longer valid. On the <a href="%s">2FA settings page</a>, turn 2FA off and then back on, then follow the prompts to download the new recovery links.', 'limit-login-attempts-reloaded' ),
 						\esc_url( $mfa_url )
 					),

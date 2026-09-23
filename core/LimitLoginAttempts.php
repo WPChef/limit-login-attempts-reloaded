@@ -262,11 +262,11 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			'name' => 'Micro Cloud',
 			'rate' => 20,
 		),
-		'personal'  => array(
+		'personal'   => array(
 			'name' => 'Personal',
 			'rate' => 25,
 		),
-		'premium'   => array(
+		'premium'    => array(
 			'name' => 'Premium',
 			'rate' => 30,
 		),
@@ -278,7 +278,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			'name' => 'Professional',
 			'rate' => 50,
 		),
-		'business'    => array(
+		'business'   => array(
 			'name' => 'Business',
 			'rate' => 55,
 		),
@@ -512,7 +512,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 	public function dashboard_widgets_content() {
 		$vars = $this->dashboard_renderer->build_dashboard_widget_vars();
-		extract( $vars, EXTR_SKIP );
+		extract( $vars, EXTR_SKIP ); // phpcs:ignore WordPress.PHP.DontExtract -- template variables for the dashboard widget view, EXTR_SKIP prevents overwriting locals.
 		include LLA_PLUGIN_DIR . 'views/admin-dashboard-widgets.php';
 	}
 
@@ -598,13 +598,15 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * Hook 'plugins_loaded'
 	 */
 	public function setup() {
-		if ( ! ( $activation_timestamp = Config::get( 'activation_timestamp' ) ) ) {
+		$activation_timestamp = Config::get( 'activation_timestamp' );
+		if ( ! $activation_timestamp ) {
 
 			// Write time when the plugin is activated
 			Config::update( 'activation_timestamp', time() );
 		}
 
-		if ( ! ( $activation_timestamp = Config::get( 'notice_enable_notify_timestamp' ) ) ) {
+		$notify_notice_timestamp = Config::get( 'notice_enable_notify_timestamp' );
+		if ( ! $notify_notice_timestamp ) {
 
 			// Write time when the plugin is activated
 			Config::update( 'notice_enable_notify_timestamp', strtotime( '-32 day' ) );
@@ -743,7 +745,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : '';
 		// Same error output as failed login for any MFA redirect (session_expired, code_invalid, etc.).
-		$show_mfa_return_error = ( $llar_mfa_error !== '' );
+		$show_mfa_return_error = ( '' !== $llar_mfa_error );
 
 		if ( Config::get( Config::OPTION_ACTIVE_APP ) === 'local' && ! $limit_login_nonempty_credentials && ! $show_mfa_return_error ) {
 			return;
@@ -751,7 +753,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 		$custom_error         = Config::get( 'custom_error_message' );
 		$late_hook_errors     = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
-		$is_wp_login_page     = isset( $_POST['log'] );
+		$is_wp_login_page     = isset( $_POST['log'] ); // phpcs:ignore WordPress.Security.NonceVerification -- wp-login form POST, presence check only; core login form has no nonce.
 		$is_custom_login_page = $this->integration_manager->is_custom_login_page();
 
 		$mfa_return_message = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
@@ -759,7 +761,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			ob_start();
 			?>
 				;( function( $ ) {
-					let ajaxUrlObj = new URL( `<?php echo admin_url( 'admin-ajax.php' ); ?>` );
+					let ajaxUrlObj = new URL( `<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>` );
 					let um_limit_login_failed = `<?php echo esc_js( isset( $um_limit_login_failed ) ? $um_limit_login_failed : '' ); ?>`;
 					let late_hook_errors = <?php echo wp_json_encode( wp_kses_post( ( $late_hook_errors ) ) ); ?>;
 					let custom_error = <?php echo wp_json_encode( nl2br( esc_html( $custom_error ) ) ); ?>;
@@ -770,7 +772,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 					$.post( ajaxUrlObj.toString(), {
 						action: 'get_remaining_attempts_message',
-						sec: '<?php echo wp_create_nonce( 'llar-get-remaining-attempts-message' ); ?>'
+						sec: '<?php echo esc_js( wp_create_nonce( 'llar-get-remaining-attempts-message' ) ); ?>'
 					}, function( response ) {
 						if ( llar_mfa_return_error ) {
 							if ( response.success && response.data ) {
@@ -846,8 +848,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			$script = ob_get_clean();
 
 			echo function_exists( 'wp_get_inline_script_tag' )
-				? wp_get_inline_script_tag( $script )
-				: '<script>' . $script . '</script>';
+				? wp_get_inline_script_tag( $script ) // phpcs:ignore WordPress.Security.EscapeOutput -- trusted plugin-generated inline script for the login page.
+				: '<script>' . $script . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput -- trusted plugin-generated inline script for the login page.
 		endif;
 	}
 
@@ -907,9 +909,10 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	public function cloud_app_init() {
-		if ( Config::get( Config::OPTION_ACTIVE_APP ) === 'custom' && $config = Config::get( 'app_config' ) ) {
+		$app_config = Config::get( 'app_config' );
+		if ( Config::get( Config::OPTION_ACTIVE_APP ) === 'custom' && $app_config ) {
 
-			self::$cloud_app = new CloudApp( $config );
+			self::$cloud_app = new CloudApp( $app_config );
 		}
 	}
 
@@ -965,7 +968,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			return $error;
 		}
 
-		if ( $login_error = $this->error_presenter->get_message() ) {
+		$login_error = $this->error_presenter->get_message();
+		if ( $login_error ) {
 
 			return new IXR_Error( 403, strip_tags( $login_error ) );
 		}
@@ -1205,12 +1209,12 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * @return array Errors for MemberPress; when LLAR blocks login, returns that message as first error.
 	 */
 	public function mepr_validate_login_handler( $errors, $params = array() ) {
-		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
+		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- MemberPress third-party login form; no LLAR nonce available.
 			return $errors;
 		}
 
-		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
-		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
+		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) ); // phpcs:ignore WordPress.Security.NonceVerification -- MemberPress third-party login form; no LLAR nonce available.
+		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- password must stay unsanitized; MemberPress third-party login form.
 
 		// Trigger authenticate filter to track credentials and check lockouts.
 		$auth_result = apply_filters( 'authenticate', null, $log, $pwd );
@@ -1495,8 +1499,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 *
 	 * @return bool
 	 */
-	public function info_is_almost_exhausted()
-	{
+	public function info_is_almost_exhausted() {
 		if ( empty( $this->info_data ) ) {
 
 			$this->info_data = $this->info();
