@@ -24,26 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</ul>
 	</div>
 </div>
-<script type="text/javascript">
-( function( $ ) {
-	$( document ).ready( function() {
-		$( '.llar-review-dismiss' ).on( 'click', function( e ) {
-			e.preventDefault();
-			var type = $( this ).data( 'type' );
-			$.post( ajaxurl, {
-				action: 'dismiss_review_notice',
-				type: type,
-				sec: '<?php echo esc_js( wp_create_nonce( 'llar-dismiss-review' ) ); ?>'
-			} );
-			$( this ).closest( '.llar-notice-review' ).remove();
-		} );
-		$( '.llar-notice-review' ).on( 'click', '.notice-dismiss', function () {
-			var expires = '';
-			var date = new Date();
-			date.setTime( date.getTime() + ( 30 * 24 * 60 * 60 * 1000 ) );
-			expires = '; expires=' + date.toUTCString();
-			document.cookie = encodeURIComponent( 'llar_review_notice_shown' ) + '=1' + expires + '; path=/';
-		} );
-	} );
-} )( jQuery );
-</script>
+<?php
+// Dismiss handlers live in assets/js/llar-admin-review-notice.js (enqueued and
+// localized by LimitLoginAttempts::enqueue_leave_review_notice_script()).
+// No inline <script> here: kses-based output filters on admin_notices strip
+// script tags but keep their body, printing the JS as plain text.

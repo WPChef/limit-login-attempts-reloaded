@@ -21,6 +21,7 @@ define( 'LLA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'LLA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LLA_PLUGIN_FILE', __FILE__ );
 define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+define( 'LLA_VERSION', '3.3.10' );
 
 /**
  * Default risk widget config (bounds, colors, level rules).

@@ -133,7 +133,7 @@ class AdminNoticesController {
 					'type'    => 'notice-success',
 					'class'   => 'llar-notice-review-wrap',
 					'content' => $content,
-					// The view is a fully rendered trusted notice (own wrapper markup, inline JS).
+					// The view is fully rendered trusted notice markup (own wrapper div).
 					'raw'     => true,
 				);
 			case 'login-page-cache':
@@ -147,7 +147,7 @@ class AdminNoticesController {
 					'type'    => 'notice-warning',
 					'class'   => 'llar-options-notice llar-login-cache-notice',
 					'content' => $content,
-					// The view is a fully rendered trusted notice (own wrapper markup, inline JS).
+					// The view is fully rendered trusted notice markup (own wrapper div).
 					'raw'     => true,
 				);
 			case 'mfa-recovery-links-expired':

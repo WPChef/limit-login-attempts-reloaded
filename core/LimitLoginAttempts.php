@@ -402,6 +402,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
 
 		add_action( 'admin_notices', array( $this, 'render_leave_review_admin_notice' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_leave_review_notice_script' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -1636,26 +1637,68 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * Admin notice: leave a review (dashboard/plugins/LLAR screens).
+	 * Whether the leave-review notice should show on the current admin screen.
 	 *
-	 * @return void
+	 * Side-effect free (no cookie consumption), so it can gate both the
+	 * admin_notices render and the admin_enqueue_scripts asset loading.
+	 *
+	 * @return bool
 	 */
-	public function render_leave_review_admin_notice() {
+	private function is_leave_review_notice_visible() {
 		$screen = get_current_screen();
-		if ( isset( $_COOKIE['llar_review_notice_shown'] ) ) {
-			Config::update( 'review_notice_shown', true );
-			@setcookie( 'llar_review_notice_shown', '', time() - 3600, '/' );
-		}
 		if (
 			! $this->has_capability
 			|| Config::get( 'review_notice_shown' )
 			|| ! $screen
 			|| ! in_array( $screen->base, array( 'dashboard', 'plugins', 'toplevel_page_limit-login-attempts' ), true )
 		) {
-			return;
+			return false;
 		}
 		$activation_timestamp = Config::get( 'activation_timestamp' );
-		if ( ! $activation_timestamp || $activation_timestamp >= strtotime( '-1 month' ) ) {
+		return $activation_timestamp && $activation_timestamp < strtotime( '-1 month' );
+	}
+
+	/**
+	 * Enqueue and localize the external review-notice dismiss script on admin
+	 * screens where the notice shows. The notice markup ships no inline JS:
+	 * kses-based output filters strip <script> tags but keep their body, which
+	 * printed the JS as plain text on the dashboard (PR #303 follow-up).
+	 *
+	 * @return void
+	 */
+	public function enqueue_leave_review_notice_script() {
+		if ( ! $this->is_leave_review_notice_visible() ) {
+			return;
+		}
+		wp_enqueue_script(
+			'llar-admin-review-notice',
+			LLA_PLUGIN_URL . 'assets/js/llar-admin-review-notice.js',
+			array( 'jquery' ),
+			LLA_VERSION,
+			true
+		);
+		wp_localize_script(
+			'llar-admin-review-notice',
+			'llarReviewNotice',
+			array(
+				'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
+				'nonce'      => wp_create_nonce( 'llar-dismiss-review' ),
+				'cookieName' => 'llar_review_notice_shown',
+			)
+		);
+	}
+
+	/**
+	 * Admin notice: leave a review (dashboard/plugins/LLAR screens).
+	 *
+	 * @return void
+	 */
+	public function render_leave_review_admin_notice() {
+		if ( isset( $_COOKIE['llar_review_notice_shown'] ) ) {
+			Config::update( 'review_notice_shown', true );
+			@setcookie( 'llar_review_notice_shown', '', time() - 3600, '/' );
+		}
+		if ( ! $this->is_leave_review_notice_visible() ) {
 			return;
 		}
 		$this->admin_notices_controller->render( 'leave-review' );
