@@ -1224,11 +1224,28 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			}
 		}
 
-		if ( ! $this->is_limit_login_ok( $log ) ) {
+		if ( ! $this->is_limit_login_ok( $log ) && ! $this->is_mepr_lockout_error_suppressed( $log ) ) {
 			return array( $this->error_msg( $log ) );
 		}
 
 		return $errors;
+	}
+
+	/**
+	 * Whether the MemberPress fallback must hide the lockout message.
+	 * Mirrors wp-login.php: whitelisted usernames/IPs never see it.
+	 *
+	 * @param string $log Login username.
+	 * @return bool
+	 */
+	private function is_mepr_lockout_error_suppressed( $log ) {
+		if ( '' !== $log && ( $this->is_username_whitelisted( $log ) || $this->check_whitelist_usernames( false, $log ) ) ) {
+			return true;
+		}
+
+		$ip = $this->get_address();
+
+		return $this->is_ip_whitelisted( $ip ) || $this->check_whitelist_ips( false, $ip );
 	}
 
 	/**
