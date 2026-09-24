@@ -270,41 +270,10 @@ class MemberPressIntegration extends BaseIntegration {
 		// call wp_authenticate_user (where too_many_retries is added after a valid password check), and
 		// authenticate_late_lockout_check runs only on WP 7.0+. is_login_allowed() uses cloud ACL
 		// (or local lockouts when cloud is off) to surface the lockout message on this path.
-		if ( ! $this->is_login_allowed() && ! $this->is_lockout_error_suppressed() ) {
+		if ( ! $this->is_login_allowed() && ! $this->llar_instance->is_lockout_error_suppressed( $this->get_login_identifier() ) ) {
 			return array( $this->get_error_message() );
 		}
 
 		return $errors;
-	}
-
-	/**
-	 * Whether the lockout message must stay hidden for this request.
-	 *
-	 * Mirrors the wp-login.php authenticate chain (wp_authenticate_user +
-	 * authenticate_late_lockout_check): whitelisted usernames and IPs never see
-	 * the lockout error even while their IP is locked. is_login_allowed() checks
-	 * the IP lockout only, so the MemberPress fallback must consult the
-	 * whitelists itself to keep parity with wp-login.php behavior.
-	 *
-	 * @return bool True when whitelists suppress the lockout message.
-	 */
-	private function is_lockout_error_suppressed() {
-		$username = $this->get_login_identifier();
-
-		if ( '' !== $username ) {
-			if ( $this->llar_instance->is_username_whitelisted( $username ) ) {
-				return true;
-			}
-			if ( $this->llar_instance->check_whitelist_usernames( false, $username ) ) {
-				return true;
-			}
-		}
-
-		$ip = $this->llar_instance->get_address();
-		if ( $this->llar_instance->is_ip_whitelisted( $ip ) ) {
-			return true;
-		}
-
-		return $this->llar_instance->check_whitelist_ips( false, $ip );
 	}
 }

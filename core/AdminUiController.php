@@ -413,64 +413,6 @@ class AdminUiController {
 	}
 
 	/**
-	 * For plugin MemberPress
-	 * Triggers authenticate filter to allow Limit Login Attempts Reloaded
-	 * to track credentials and check lockouts before MemberPress validates the password
-	 * This enables the plugin to display remaining attempts messages
-	 *
-	 * @param array $errors Array of existing errors (MemberPress passes validate_login output first).
-	 * @param array $params Login parameters (log, pwd)
-	 * @return array Errors for MemberPress; when LLAR blocks login, returns that message as first error.
-	 */
-	public function mepr_validate_login_handler( $errors, $params = array() )
-	{
-		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
-			return $errors;
-		}
-
-		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
-		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
-
-		// Trigger authenticate filter to track credentials and check lockouts.
-		$auth_result = apply_filters( 'authenticate', null, $log, $pwd );
-
-		if ( is_wp_error( $auth_result ) ) {
-			$codes = $auth_result->get_error_codes();
-			if ( in_array( 'too_many_retries', $codes, true ) ) {
-				return array( $auth_result->get_error_message( 'too_many_retries' ) );
-			}
-			if ( in_array( 'username_blacklisted', $codes, true ) ) {
-				return array( $auth_result->get_error_message( 'username_blacklisted' ) );
-			}
-		}
-
-		if ( ! $this->is_limit_login_ok( $log ) && ! $this->is_mepr_lockout_error_suppressed( $log ) ) {
-			return array( $this->error_msg( $log ) );
-		}
-
-		return $errors;
-	}
-
-	/**
-	 * Whether the MemberPress fallback must hide the lockout message.
-	 * Mirrors wp-login.php: whitelisted usernames/IPs never see it.
-	 *
-	 * @param string $log Login username.
-	 * @return bool
-	 */
-	private function is_mepr_lockout_error_suppressed( $log ) {
-		if ( '' !== $log && ( $this->is_username_whitelisted( $log ) || $this->local_lockout->check_whitelist_usernames( false, $log ) ) ) {
-			return true;
-		}
-
-		$ip = $this->get_address();
-
-		return $this->is_ip_whitelisted( $ip ) || $this->local_lockout->check_whitelist_ips( false, $ip );
-	}
-
-	
-	
-	/**
 	 * Action when login attempt failed
 	 *
 	 * @param string $username Login username.
