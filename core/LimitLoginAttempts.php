@@ -1194,41 +1194,26 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * For plugin MemberPress
-	 * Triggers authenticate filter to allow Limit Login Attempts Reloaded
-	 * to track credentials and check lockouts before MemberPress validates the password
-	 * This enables the plugin to display remaining attempts messages
+	 * Whether lockout messaging must stay hidden for this login attempt.
 	 *
-	 * @param array $errors Array of existing errors (MemberPress passes validate_login output first).
-	 * @param array $params Login parameters (log, pwd)
-	 * @return array Errors for MemberPress; when LLAR blocks login, returns that message as first error.
+	 * Mirrors the wp-login.php authenticate chain (wp_authenticate_user +
+	 * authenticate_late_lockout_check): whitelisted usernames and IPs never see
+	 * the lockout error even while their IP is locked. Used by MemberPress
+	 * fallback when is_login_allowed() is false (IP lockout only).
+	 *
+	 * @param string $username Submitted login identifier.
+	 * @return bool
 	 */
-	public function mepr_validate_login_handler( $errors, $params = array() ) {
-		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
-			return $errors;
-		}
-
-		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
-		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
-
-		// Trigger authenticate filter to track credentials and check lockouts.
-		$auth_result = apply_filters( 'authenticate', null, $log, $pwd );
-
-		if ( is_wp_error( $auth_result ) ) {
-			$codes = $auth_result->get_error_codes();
-			if ( in_array( 'too_many_retries', $codes, true ) ) {
-				return array( $auth_result->get_error_message( 'too_many_retries' ) );
-			}
-			if ( in_array( 'username_blacklisted', $codes, true ) ) {
-				return array( $auth_result->get_error_message( 'username_blacklisted' ) );
+	public function is_lockout_error_suppressed( $username = '' ) {
+		if ( '' !== $username ) {
+			if ( $this->is_username_whitelisted( $username ) || $this->check_whitelist_usernames( false, $username ) ) {
+				return true;
 			}
 		}
 
-		if ( ! $this->is_limit_login_ok( $log ) ) {
-			return array( $this->error_msg( $log ) );
-		}
+		$ip = $this->get_address();
 
-		return $errors;
+		return $this->is_ip_whitelisted( $ip ) || $this->check_whitelist_ips( false, $ip );
 	}
 
 	/**
