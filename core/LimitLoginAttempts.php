@@ -30,14 +30,14 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * Admin options page slug
 	 * @var string
 	 */
-	private $_options_page_slug = 'limit-login-attempts';
+	private $options_page_slug = 'limit-login-attempts';
 
 	/**
 	 * Errors messages
 	 *
 	 * @var array
 	 */
-	public $_errors = array();
+	public $errors = array();
 
 	public $all_errors_array = array();
 
@@ -481,7 +481,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 
 	public function setup_cookie() {
-		if ( empty( $_GET['page'] ) || $_GET['page'] !== $this->_options_page_slug ) {
+		if ( empty( $_GET['page'] ) || $_GET['page'] !== $this->options_page_slug ) { // phpcs:ignore WordPress.Security.NonceVerification -- read-only routing check, no state change.
 
 			return;
 		}
@@ -558,14 +558,14 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public function dashboard_page_redirect() {
 		if (
 			! get_transient( 'llar_dashboard_redirect' )
-			|| isset( $_GET['activate-multi'] ) || is_network_admin()
+			|| isset( $_GET['activate-multi'] ) || is_network_admin() // phpcs:ignore WordPress.Security.NonceVerification -- plugin activation request, no nonce exists at activation time.
 		) {
 			return;
 		}
 
 		delete_transient( 'llar_dashboard_redirect' );
 
-		wp_redirect( admin_url( 'index.php?page=' . $this->_options_page_slug ) );
+		wp_safe_redirect( admin_url( 'index.php?page=' . $this->options_page_slug ) );
 		exit();
 	}
 
@@ -574,10 +574,10 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * Runs on admin_init before any output to avoid "headers already sent" when using wp_safe_redirect().
 	 */
 	public function onboarding_redirect_to_dashboard() {
-		if ( empty( $_GET['page'] ) || $this->_options_page_slug !== $_GET['page'] ) {
+		if ( empty( $_GET['page'] ) || $this->options_page_slug !== $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification -- read-only routing check, no state change.
 			return;
 		}
-		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'dashboard';
+		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'dashboard'; // phpcs:ignore WordPress.Security.NonceVerification -- read-only tab routing.
 		if ( 'dashboard' === $tab ) {
 			return;
 		}
@@ -629,7 +629,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		// Check if installed old plugin
 		$this->check_original_installed();
 
-		// Setup default plugin options
+		// Setup default plugin options // phpcs:ignore Squiz.PHP.CommentedOutCode -- prose comment, not commented-out code.
 		//$this->sanitize_options();
 
 		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
@@ -687,7 +687,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
 
-		// MFA flow callback: llar_mfa=1&token=...&code=...
+		// MFA flow callback: llar_mfa=1&token=...&code=... // phpcs:ignore Squiz.PHP.CommentedOutCode -- query-string documentation, not commented-out code.
 		add_action( 'init', array( $this, 'mfa_flow_callback' ), 1 );
 		add_action( 'init', array( DigestStorage::class, 'register_post_type' ) );
 		add_filter( 'query_vars', array( $this, 'add_mfa_flow_query_var' ) );
@@ -722,7 +722,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 	public function login_page_gdpr_message() {
 
-		if ( ! Config::get( 'gdpr' ) || isset( $_REQUEST['interim-login'] ) ) {
+		if ( ! Config::get( 'gdpr' ) || isset( $_REQUEST['interim-login'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- read-only display condition on the login page.
 			return;
 		}
 
@@ -743,7 +743,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		}
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $um_limit_login_failed;
 
-		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : '';
+		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification -- sanitized read-only error flag set by this plugin's own redirect.
 		// Same error output as failed login for any MFA redirect (session_expired, code_invalid, etc.).
 		$show_mfa_return_error = ( '' !== $llar_mfa_error );
 
@@ -917,14 +917,18 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	public function load_admin_scripts() {
-		if ( ! empty( $_REQUEST['page'] ) && $_REQUEST['page'] !== $this->_options_page_slug ) {
+		if ( ! empty( $_REQUEST['page'] ) && $_REQUEST['page'] !== $this->options_page_slug ) { // phpcs:ignore WordPress.Security.NonceVerification -- read-only routing check, no state change.
 			return;
 		}
 
-		wp_enqueue_script( 'jquery-ui-accordion' );
-		wp_enqueue_style( 'llar-jquery-ui', LLA_PLUGIN_URL . 'assets/css/jquery-ui.css' );
+		$plugin_data = get_plugin_data( LLA_PLUGIN_FILE );
 
-		wp_enqueue_script( 'llar-charts', LLA_PLUGIN_URL . 'assets/js/chart.umd.js' );
+		wp_enqueue_script( 'jquery-ui-accordion' );
+		wp_enqueue_style( 'llar-jquery-ui', LLA_PLUGIN_URL . 'assets/css/jquery-ui.css', array(), $plugin_data['Version'] );
+
+		// Charts must load in the head: the dashboard widget views run inline
+		// chart initialization scripts that require Chart.js to be defined.
+		wp_enqueue_script( 'llar-charts', LLA_PLUGIN_URL . 'assets/js/chart.umd.js', array(), $plugin_data['Version'], false );
 	}
 
 	public function check_whitelist_ips( $allow, $ip ) {
@@ -971,7 +975,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		$login_error = $this->error_presenter->get_message();
 		if ( $login_error ) {
 
-			return new IXR_Error( 403, strip_tags( $login_error ) );
+			return new IXR_Error( 403, wp_strip_all_tags( $login_error ) );
 		}
 
 		return $error;
@@ -1142,7 +1146,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
 
 				$referer_url    = $_SERVER['HTTP_REFERER'];
-				$referer_parsed = parse_url( $referer_url );
+				$referer_parsed = wp_parse_url( $referer_url );
 
 				$clean_url = isset( $referer_parsed['path'] ) ? $referer_parsed['path'] : '';
 				$clean_url = trim( $clean_url, '/' );
@@ -1700,7 +1704,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public function render_leave_review_admin_notice() {
 		if ( isset( $_COOKIE['llar_review_notice_shown'] ) ) {
 			Config::update( 'review_notice_shown', true );
-			@setcookie( 'llar_review_notice_shown', '', time() - 3600, '/' );
+			if ( ! headers_sent() ) {
+				setcookie( 'llar_review_notice_shown', '', time() - 3600, '/' );
+			}
 		}
 		if ( ! $this->is_leave_review_notice_visible() ) {
 			return;
