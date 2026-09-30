@@ -247,6 +247,40 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
 
         } )
 
+
+        $( document ).on( 'click', '.llar-extension-install', function ( e ) {
+            e.preventDefault();
+
+            const $button = $( this );
+
+            if ( $button.prop( 'disabled' ) || $button.hasClass( 'llar-extension-install--active' ) ) {
+                return;
+            }
+
+            const original_text = $button.text();
+
+            $button.prop( 'disabled', true ).text( llar_vars.extension_installing_text );
+
+            let data = {
+                action: 'extension_install',
+                slug: $button.data( 'slug' ),
+                sec: llar_vars.nonce_extension_install
+            }
+
+            llar_ajax_callback_post( ajaxurl, data )
+                .then( function () {
+                    $button.addClass( 'llar-extension-install--active' )
+                        .text( llar_vars.extension_active_text );
+                } )
+                .catch( function ( response ) {
+                    $button.prop( 'disabled', false ).text( original_text );
+
+                    notice_popup_error_update.content = content_html;
+                    notice_popup_error_update.msg = llar_micro_cloud_error_message( response );
+                    notice_popup_error_update.open();
+                } )
+        } )
+
     } );
 
 } )(jQuery)

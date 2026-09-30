@@ -54,6 +54,7 @@ class Ajax {
 		add_action( 'wp_ajax_nopriv_llar_login_cache_check', array( $this, 'login_cache_check_callback' ) );
 		add_action( 'wp_ajax_llar_login_cache_check', array( $this, 'login_cache_check_callback' ) );
 		add_action( 'wp_ajax_llar_dismiss_login_cache_notice', array( $this, 'dismiss_login_cache_notice_callback' ) );
+		add_action( 'wp_ajax_extension_install', array( $this, 'extension_install_callback' ) );
 	}
 
 	public function ajax_unlock() {
@@ -1362,6 +1363,92 @@ class Ajax {
 	public function dismiss_login_cache_notice_callback() {
 		check_ajax_referer( 'llar-dismiss-login-cache', 'sec' );
 		LimitLoginAttempts::$instance->get_login_page_cache_detector()->handle_dismiss();
+	}
+
+	/**
+	 * Install (if needed) and activate an extension plugin from the Extensions tab
+	 */
+	public function extension_install_callback() {
+
+		$this->check_user_capabilities();
+
+		check_ajax_referer( 'llar-extension-install', 'sec' );
+
+		$slug = isset( $_POST['slug'] ) ? sanitize_text_field( wp_unslash( $_POST['slug'] ) ) : '';
+
+		if ( empty( $slug ) ) {
+			wp_send_json_error( array(
+				'message' => __( 'Invalid request.', 'limit-login-attempts-reloaded' ),
+			) );
+		}
+
+		// Whitelist: only extensions from the curated list can be installed
+		$extensions     = require LLA_PLUGIN_DIR . '/resources/extensions-list.php';
+		$extension_file = '';
+
+		foreach ( $extensions as $extension ) {
+			if ( $extension['slug'] === $slug ) {
+				$extension_file = $extension['file'];
+				break;
+			}
+		}
+
+		if ( empty( $extension_file ) ) {
+			wp_send_json_error( array(
+				'message' => __( 'Unknown extension.', 'limit-login-attempts-reloaded' ),
+			) );
+		}
+
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		if ( ! is_plugin_active( $extension_file ) ) {
+
+			if ( ! file_exists( WP_PLUGIN_DIR . '/' . $extension_file ) ) {
+
+				if ( ! function_exists( 'plugins_api' ) ) {
+					include_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+				}
+
+				include_once ABSPATH . 'wp-admin/includes/file.php';
+				include_once ABSPATH . 'wp-admin/includes/misc.php';
+				include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+
+				$api = plugins_api( 'plugin_information', array(
+					'slug'   => $slug,
+					'fields' => array( 'sections' => false ),
+				) );
+
+				if ( is_wp_error( $api ) || empty( $api->download_link ) ) {
+					wp_send_json_error( array(
+						'message' => __( 'Could not connect to the WordPress.org plugin directory. Please try again later.', 'limit-login-attempts-reloaded' ),
+					) );
+				}
+
+				$skin     = new \WP_Ajax_Upgrader_Skin();
+				$upgrader = new \Plugin_Upgrader( $skin );
+				$result   = $upgrader->install( $api->download_link );
+
+				if ( is_wp_error( $result ) || true !== $result ) {
+					wp_send_json_error( array(
+						'message' => __( 'The extension could not be installed. Please try again later.', 'limit-login-attempts-reloaded' ),
+					) );
+				}
+			}
+
+			$activated = activate_plugins( $extension_file );
+
+			if ( is_wp_error( $activated ) ) {
+				wp_send_json_error( array(
+					'message' => $activated->get_error_message(),
+				) );
+			}
+		}
+
+		wp_send_json_success( array(
+			'slug' => $slug,
+		) );
 	}
 
 	/**

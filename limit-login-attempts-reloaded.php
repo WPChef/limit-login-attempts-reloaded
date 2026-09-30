@@ -10,7 +10,7 @@ Version: 3.3.10
 Copyright 2008-2012 Johan Eenfeldt, 2016–present Limit Login Attempts Reloaded
 */
 
-if ( !defined( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -40,7 +40,7 @@ function llar_get_risk_config_defaults() {
 			'red'    => '#FF6633',
 		),
 		'levels' => array(
-			'local'                 => array(
+			'local' => array(
 				array(
 					'exact' => 0,
 					'title' => 'zero_title',
@@ -152,32 +152,32 @@ defined( 'LLA_DIGEST_DISPATCH_HOUR_LOCAL' ) || define( 'LLA_DIGEST_DISPATCH_HOUR
 defined( 'LLA_DIGEST_DEFINITIONS' ) || define(
 	'LLA_DIGEST_DEFINITIONS',
 	array(
-		'daily' => array(
-			'interval_seconds' => DAY_IN_SECONDS,
-			'is_default' => true,
-			'email_template' => 'digest-daily-content.php',
+		'daily'   => array(
+			'interval_seconds'  => DAY_IN_SECONDS,
+			'is_default'        => true,
+			'email_template'    => 'digest-daily-content.php',
 			'show_threat_level' => false,
-			'intro_text' => '',
-			'unsubscribe_text' => '{unsubscribe}',
-			'title_mode' => 'date',
+			'intro_text'        => '',
+			'unsubscribe_text'  => '{unsubscribe}',
+			'title_mode'        => 'date',
 		),
-		'weekly' => array(
-			'interval_seconds' => WEEK_IN_SECONDS,
-			'is_default' => true,
-			'email_template' => 'digest-weekly-content.php',
+		'weekly'  => array(
+			'interval_seconds'  => WEEK_IN_SECONDS,
+			'is_default'        => true,
+			'email_template'    => 'digest-weekly-content.php',
 			'show_threat_level' => true,
-			'intro_text' => '',
-			'unsubscribe_text' => '{unsubscribe}',
-			'title_mode' => 'range',
+			'intro_text'        => '',
+			'unsubscribe_text'  => '{unsubscribe}',
+			'title_mode'        => 'range',
 		),
 		'monthly' => array(
-			'interval_seconds' => MONTH_IN_SECONDS,
-			'is_default' => true,
-			'email_template' => 'digest-monthly-content.php',
+			'interval_seconds'  => MONTH_IN_SECONDS,
+			'is_default'        => true,
+			'email_template'    => 'digest-monthly-content.php',
 			'show_threat_level' => true,
-			'intro_text' => '',
-			'unsubscribe_text' => '{unsubscribe}',
-			'title_mode' => 'month',
+			'intro_text'        => '',
+			'unsubscribe_text'  => '{unsubscribe}',
+			'title_mode'        => 'month',
 		),
 	)
 );

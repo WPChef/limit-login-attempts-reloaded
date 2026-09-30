@@ -40,6 +40,7 @@ class AdminUiController {
 			$activate_micro_cloud       = wp_create_nonce( 'llar-activate-micro-cloud' );
 			$subscribe_email            = wp_create_nonce( 'llar-subscribe-email' );
 			$close_premium_message      = wp_create_nonce( 'llar-close-premium-message' );
+			$extension_install          = wp_create_nonce( 'llar-extension-install' );
 			wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array('jquery'), $plugin_data['Version'], false );
 			wp_localize_script('lla-main', 'llar_vars', array(
 				'nonce_auto_update'               => $auto_update,
@@ -51,6 +52,9 @@ class AdminUiController {
 				'nonce_activate_micro_cloud'      => $activate_micro_cloud,
 				'nonce_subscribe_email'           => $subscribe_email,
 				'nonce_close_premium_message'     => $close_premium_message,
+				'nonce_extension_install'         => $extension_install,
+				'extension_installing_text'        => __( 'Installing...', 'limit-login-attempts-reloaded' ),
+				'extension_active_text'            => __( 'Active', 'limit-login-attempts-reloaded' ),
 			));
 
 			global $wp_scripts, $wp_styles;
@@ -97,7 +101,7 @@ class AdminUiController {
 		add_submenu_page(
 			'settings.php',
 			'Limit Login Attempts',
-			'Limit Login Attempts' . $this->menu_alert_icon(),
+			'Limit Login Attempts' . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
 			LimitLoginAttempts::$capabilities,
 			$this->options_page_slug,
 			array( $this, 'options_page' ) );
@@ -152,7 +156,7 @@ class AdminUiController {
 		if ( ! $is_cloud_app_enabled ) {
 
 			$slug       = '&tab=dashboard#modal_micro_cloud';
-			$name_item  = $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' );
+			$name_item  = $is_local_empty_setup_code ? __( 'Free Trial', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' );
 			$url_item   = $is_local_empty_setup_code ? $slug : '&tab=premium';
 
 			$submenu_items[] = array(
@@ -161,6 +165,12 @@ class AdminUiController {
 				'url'   => $url_item,
 			);
 		}
+
+		$submenu_items[] = array(
+			'id'    => 'extensions',
+			'name'  => __( 'Extensions', 'limit-login-attempts-reloaded' ),
+			'url'   => '&tab=extensions',
+		);
 
 		return $submenu_items;
 	}
@@ -175,7 +185,7 @@ class AdminUiController {
 
 			add_menu_page(
 				'Limit Login Attempts',
-				'Limit Login Attempts' . $this->menu_alert_icon(),
+				'Limit Login Attempts' . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
 				LimitLoginAttempts::$capabilities,
 				$this->options_page_slug,
 				array( $this, 'options_page' ),
@@ -206,20 +216,29 @@ class AdminUiController {
 			remove_submenu_page( $this->options_page_slug, $this->options_page_slug );
 
 			if ( ! $is_cloud_app_enabled && isset( $submenu[$this->options_page_slug] ) ) {
-				// Premium is the last submenu item (Dashboard, Settings, 2FA, Logs, Debug, Help, Premium).
-				$submenu_keys = array_keys( $submenu[$this->options_page_slug] );
-				$premium_key  = end( $submenu_keys );
-				$submenu[$this->options_page_slug][$premium_key][4] =
-					! empty( $submenu[$this->options_page_slug][$premium_key][4] )
-						? $submenu[$this->options_page_slug][$premium_key][4] . ' llar-submenu-premium-item'
-						: 'llar-submenu-premium-item';
+				// Highlight the Premium submenu item (Dashboard, Settings, 2FA, Logs, Debug, Help, Premium, Extensions).
+				$premium_key = null;
+
+				foreach ( $submenu[$this->options_page_slug] as $key => $item ) {
+					if ( ! empty( $item[2] ) && ( false !== strpos( $item[2], '&tab=premium' ) || false !== strpos( $item[2], '#modal_micro_cloud' ) ) ) {
+						$premium_key = $key;
+						break;
+					}
+				}
+
+				if ( null !== $premium_key ) {
+					$submenu[$this->options_page_slug][$premium_key][4] =
+						! empty( $submenu[$this->options_page_slug][$premium_key][4] )
+							? $submenu[$this->options_page_slug][$premium_key][4] . ' llar-submenu-premium-item'
+							: 'llar-submenu-premium-item';
+				}
 			}
 
 		} else {
 
 			add_options_page(
 				'Limit Login Attempts',
-				'Limit Login Attempts' . $this->menu_alert_icon(),
+				'Limit Login Attempts' . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
 				LimitLoginAttempts::$capabilities,
 				$this->options_page_slug,
 				array( $this, 'options_page' )
@@ -237,7 +256,7 @@ class AdminUiController {
 
 		$admin_bar->add_node( array(
 			'id'    => $root_item_id,
-			'title' => __( 'LLAR', 'limit-login-attempts-reloaded' ) . $this->menu_alert_icon(),
+			'title' => __( 'LLAR', 'limit-login-attempts-reloaded' ) . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
 			'href'  => $href,
 		) );
 
@@ -293,6 +312,28 @@ class AdminUiController {
 		return ' <span class="update-plugins count-1 llar-alert-icon"><span class="plugin-count">1</span></span>';
 	}
 
+	/**
+	 * Red dot icon shown while the active Cloud App (Micro Cloud)
+	 * reports requests.exhausted, so the admin sees that cloud protection
+	 * is paused even outside the plugin pages. Not dismissible and not
+	 * gated by the "Display Menu Warning Icon" setting (that one only
+	 * controls the local 100-attempts-per-day badge).
+	 *
+	 * @return string
+	 */
+	private function menu_mc_exhausted_icon()
+	{
+		if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'custom' || ! LimitLoginAttempts::$cloud_app ) {
+			return '';
+		}
+
+		if ( ! $this->plugin->info_is_exhausted() ) {
+			return '';
+		}
+
+		return ' <span class="llar-mc-exhausted-icon"></span>';
+	}
+
 	public function setting_menu_alert_icon()
 	{
 		global $menu;
@@ -310,6 +351,30 @@ class AdminUiController {
 		if ( ! empty( $menu[25][0] ) ) {
 
 			$menu[25][0] .= $this->menu_alert_icon();
+		}
+	}
+
+	public function setting_menu_mc_exhausted_icon()
+	{
+		global $menu;
+
+		if ( ! $this->plugin->has_capability ) return;
+
+		if ( ! Config::get( 'show_top_level_menu_item' ) && ! empty( $menu[80][0] ) ) {
+
+			$menu[80][0] .= $this->menu_mc_exhausted_icon();
+		}
+	}
+
+	public function network_setting_menu_mc_exhausted_icon()
+	{
+		global $menu;
+
+		if ( ! $this->plugin->has_capability ) return;
+
+		if ( ! empty( $menu[25][0] ) ) {
+
+			$menu[25][0] .= $this->menu_mc_exhausted_icon();
 		}
 	}
 
@@ -412,47 +477,6 @@ class AdminUiController {
 		$um_limit_login_failed = true;
 	}
 
-	/**
-	 * For plugin MemberPress
-	 * Triggers authenticate filter to allow Limit Login Attempts Reloaded
-	 * to track credentials and check lockouts before MemberPress validates the password
-	 * This enables the plugin to display remaining attempts messages
-	 *
-	 * @param array $errors Array of existing errors (MemberPress passes validate_login output first).
-	 * @param array $params Login parameters (log, pwd)
-	 * @return array Errors for MemberPress; when LLAR blocks login, returns that message as first error.
-	 */
-	public function mepr_validate_login_handler( $errors, $params = array() )
-	{
-		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
-			return $errors;
-		}
-
-		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
-		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
-
-		// Trigger authenticate filter to track credentials and check lockouts.
-		$auth_result = apply_filters( 'authenticate', null, $log, $pwd );
-
-		if ( is_wp_error( $auth_result ) ) {
-			$codes = $auth_result->get_error_codes();
-			if ( in_array( 'too_many_retries', $codes, true ) ) {
-				return array( $auth_result->get_error_message( 'too_many_retries' ) );
-			}
-			if ( in_array( 'username_blacklisted', $codes, true ) ) {
-				return array( $auth_result->get_error_message( 'username_blacklisted' ) );
-			}
-		}
-
-		if ( ! $this->is_limit_login_ok( $log ) ) {
-			return array( $this->error_msg( $log ) );
-		}
-
-		return $errors;
-	}
-
-	
-	
 	/**
 	 * Action when login attempt failed
 	 *
@@ -860,6 +884,50 @@ class AdminUiController {
 
 		// MFA tab data comes from get_settings_for_view() (single source in MfaSettingsManager)
 		include_once LLA_PLUGIN_DIR . 'views/options-page.php';
+	}
+
+	/**
+	 * View data for views/tab-dashboard.php. Delegates to DashboardRiskRenderer.
+	 *
+	 * @param string $active_app          Active app slug ('local'|'custom').
+	 * @param bool   $is_active_app_custom Whether the cloud app is active.
+	 * @param string $block_sub_group     Cloud plan name.
+	 * @param bool   $is_exhausted        Cloud quota exhausted flag.
+	 *
+	 * @return array
+	 */
+	public function get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
+		return $this->plugin->get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
+	}
+
+	/**
+	 * View data for views/onboarding-popup.php.
+	 *
+	 * @return array
+	 */
+	public function get_onboarding_popup_view_vars() {
+		return ( new OnboardingPopupPresenter() )->get_view_vars();
+	}
+
+	/**
+	 * View data for views/micro-cloud-modal.php.
+	 *
+	 * @param string $tab Current plugin tab.
+	 * @return array
+	 */
+	public function get_micro_cloud_modal_view_vars( $tab = 'dashboard' ) {
+		return ( new MicroCloudModalPresenter() )->get_view_vars( $tab );
+	}
+
+	/**
+	 * View data for views/app-widgets/login-attempts.php.
+	 *
+	 * @param bool $is_tab_dashboard Whether the widget renders on the dashboard tab.
+	 *
+	 * @return array
+	 */
+	public function get_login_attempts_widget_view_vars( $is_tab_dashboard ) {
+		return ( new LoginAttemptsWidgetPresenter( $this->plugin ) )->get_view_vars( $is_tab_dashboard );
 	}
 
 	/**

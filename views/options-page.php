@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-$allowed_tabs  = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help', 'mfa' );
+$allowed_tabs  = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'extensions', 'help', 'mfa' );
 $requested_tab = isset( $_GET['tab'] ) && is_string( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : '';
 $active_tab    = in_array( $requested_tab, $allowed_tabs, true ) ? $requested_tab : 'dashboard';
 
@@ -91,23 +91,21 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 
 		$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
 
-		if ( time() > $notifications_message_shown ) :
-			?>
-			<div id="llar-header-upgrade-premium-message" class="exhausted">
-				<p>
-					<span class="dashicons dashicons-superhero"></span>
-					<?php
-					printf(
-						__( 'You have exhausted your monthly quota of free Micro Cloud requests. The plugin has now reverted to the free version. <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to the premium</a> version today to maintain cloud protection and advanced features.', 'limit-login-attempts-reloaded' ),
-						add_query_arg( 'id', '4', $upgrade_premium_url )
-					);
-					?>
-				</p>
-				<div class="close">
-					<span class="dashicons dashicons-no-alt"></span>
-				</div>
-			</div>
-		<?php endif; ?>
+        if ( time() > $notifications_message_shown ) : ?>
+            <div id="llar-header-upgrade-premium-message" class="exhausted">
+                <p>
+                    <span class="dashicons dashicons-superhero"></span>
+                    <?php
+					echo sprintf(
+                        __( 'Your 14 day free trial has ended and the plugin has reverted to the free version. <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> to restore cloud protection and advanced features.', 'limit-login-attempts-reloaded' ),
+                        add_query_arg('id', '4', $upgrade_premium_url) );
+                    ?>
+                </p>
+                <div class="close">
+                    <span class="dashicons dashicons-no-alt"></span>
+                </div>
+            </div>
+        <?php endif; ?>
 
 	<?php elseif ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && $info_has_valid_data ) : ?>
 		<div id="llar-header-upgrade-mc-message">
@@ -260,6 +258,10 @@ if ( 'debug' === $active_tab && $this->has_capability ) {
 		<a href="<?php echo $this->get_options_page_uri( 'premium' ); ?>"
 			class="nav-tab<?php echo $active_tab === 'premium' ? $nav_tab_active : ''; ?>">
 			<?php _e( 'Premium / Extensions', 'limit-login-attempts-reloaded' ); ?>
+		</a>
+		<a href="<?php echo $this->get_options_page_uri( 'extensions' ); ?>"
+			class="nav-tab<?php echo $active_tab === 'extensions' ? $nav_tab_active : ''; ?>">
+			<?php _e( 'Extensions', 'limit-login-attempts-reloaded' ); ?>
 		</a>
 
 		<?php if ( $active_tab === 'logs-custom' ) : ?>

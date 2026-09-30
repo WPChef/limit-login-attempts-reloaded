@@ -189,8 +189,21 @@ class CloudApp
 
 	public static function activate_license_key( $setup_code )
 	{
-		$link         = strrev( $setup_code );
-		$setup_result = self::setup( $link );
+		$link = strrev( $setup_code );
+
+		/**
+		 * Short-circuit remote setup() (e.g. e2e stubs) before any HTTP call.
+		 *
+		 * Return an array shaped like setup()'s result to skip the network request.
+		 * Return null/false to proceed with the normal setup() call.
+		 *
+		 * @param array|null $pre_result Null to continue; array to short-circuit.
+		 * @param string     $setup_code Original setup code.
+		 */
+		$setup_result = apply_filters( 'llar_pre_app_setup', null, $setup_code );
+		if ( ! is_array( $setup_result ) ) {
+			$setup_result = self::setup( $link );
+		}
 
 		/**
 		 * Filters the result of the remote setup() call.

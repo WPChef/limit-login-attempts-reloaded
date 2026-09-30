@@ -39,6 +39,9 @@ $active_app_config          = Config::get( 'app_config' );
 $custom_error_message       = Config::get( 'custom_error_message' );
 
 $is_local_empty_setup_code  = ( ! $is_active_app_custom && empty( $app_setup_code ) );
+$trial_modal                = $is_local_empty_setup_code
+	? $this->get_micro_cloud_modal_view_vars( 'settings' )
+	: null;
 
 $min_plan                   = 'Personal';
 $plans                      = $this->array_name_plans();
@@ -69,41 +72,6 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
             </div>
             <div class="llar-settings-wrap">
                 <table class="llar-form-table">
-	                <?php if ( $is_local_empty_setup_code ) : ?>
-                    <tr>
-                        <th scope="row" valign="top"><?php _e( 'Micro Cloud', 'limit-login-attempts-reloaded' ); ?>
-                            <span class="hint_tooltip-parent">
-                                <span class="dashicons dashicons-editor-help"></span>
-                                <div class="hint_tooltip">
-                                    <div class="hint_tooltip-content">
-                                        <?php _e( 'Micro Cloud is a limited upgrade to our cloud app that provides complimentary access to our premium features', 'limit-login-attempts-reloaded' ); ?>
-                                    </div>
-                                </div>
-                            </span>
-                        </th>
-                        <td>
-                            <div class="description-secondary p-0">
-								<?php _e('Help us secure our network by sharing your login IP data. In return, receive limited access to our premium features up to 1,000 requests for the first month, and 100 requests each subsequent month. Once requests are exceeded for a given month, the premium app will switch to FREE and reset the following month.', 'limit-login-attempts-reloaded' ) ?>
-                            </div>
-                            <div class="description-additional p-0 pt-1_5">
-		                        <?php _e('* Requests are utilized when the cloud app validates an IP address before it is able to perform a login.', 'limit-login-attempts-reloaded' ) ?>
-                            </div>
-                            <div class="button_block">
-                                <a href="https://www.limitloginattempts.com/premium-security-zero-cost-discover-the-benefits-of-micro-cloud/"
-                                   title="Learn More"
-                                   target="_blank"
-                                   class="button menu__item button__transparent_orange link__style_unlink">
-		                            <?php _e( 'Learn More', 'limit-login-attempts-reloaded' ); ?>
-                                </a>
-                                <a title="Upgrade To Micro Cloud"
-                                   class="button menu__item button__orange button_micro_cloud link__style_unlink">
-		                            <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-	                <?php endif; ?>
-
                     <tr>
                         <th scope="row" valign="top"><?php _e( 'Active App', 'limit-login-attempts-reloaded' ); ?>
                             <span class="hint_tooltip-parent">
@@ -127,14 +95,6 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                                     </option>
 								<?php endif; ?>
                             </select>
-							<?php if ( ! $is_active_app_custom ) : ?>
-                                <span class="llar-protect-notice">
-                                    <?php echo sprintf(
-		                                __( 'Get advanced protection by <a href="%s" class="unlink llar-upgrade-to-cloud">upgrading to our Cloud App</a>.', 'limit-login-attempts-reloaded' ),
-                                '#' );
-                                ?>
-                                    </span>
-							<?php endif; ?>
                         </td>
                     </tr>
                 </table>
@@ -348,10 +308,14 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                                 </div>
                             </div>
                         </div>
-	                    <?php if ( $is_local_empty_setup_code ) : ?>
-		                    <?php require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php') ?>
-                            <a class="button menu__item button_micro_cloud button__transparent_orange" target="_blank">
-			                    <?php _e( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+	                    <?php if ( $is_local_empty_setup_code && $trial_modal ) : ?>
+		                    <?php
+		                    $modal = $trial_modal;
+		                    require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php');
+		                    ?>
+                            <a href="<?php echo esc_attr( $trial_modal['landing_url'] ); ?>"
+                               class="button menu__item button_micro_cloud button__transparent_orange">
+			                    <?php _e( '14 Day Trial', 'limit-login-attempts-reloaded' ); ?>
                             </a>
                         <?php elseif ( $block_sub_group === 'Micro Cloud' ) : ?>
                             <a href="<?php echo esc_url( $url_try_for_free_cloud ) ?>" class="button menu__item button__transparent_orange" target="_blank">
@@ -457,9 +421,10 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                                 <div class="description mt-1_5">
 									<?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
-	                            <?php if ( $is_local_empty_setup_code ) : ?>
-                                    <a class="button menu__item button_micro_cloud button__transparent_orange mt-1_5" target="_blank">
-			                            <?php _e( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+	                            <?php if ( $is_local_empty_setup_code && $trial_modal ) : ?>
+                                    <a href="<?php echo esc_attr( $trial_modal['landing_url'] ); ?>"
+                                       class="button menu__item button_micro_cloud button__transparent_orange mt-1_5">
+			                            <?php _e( '14 Day Trial', 'limit-login-attempts-reloaded' ); ?>
                                     </a>
 	                            <?php elseif ( $block_sub_group === 'Micro Cloud' ) : ?>
                                     <a href="<?php echo esc_url( add_query_arg('id', '6', $url_try_for_free_cloud)) ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
@@ -788,17 +753,6 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                         }, 200)
 
                     })
-
-
-                    $( '.llar-upgrade-to-cloud' ).on( 'click', function ( e ) {
-                        e.preventDefault();
-
-                        $( "#ui-id-3" ).click();
-
-                        $( [document.documentElement, document.body] ).animate( {
-                            scrollTop: $( "#llar-apps-accordion" ).offset().top
-                        }, 500 );
-                    } );
 
                     $( '.llar-test-email-notification-btn' ).on( 'click', function ( e ) {
                         e.preventDefault();
