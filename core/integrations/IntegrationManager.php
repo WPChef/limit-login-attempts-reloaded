@@ -37,8 +37,7 @@ class IntegrationManager {
 		$integration_classes = array(
 			'MemberPressIntegration',
 			'WooCommerceIntegration',
-			// Other integrations can be added here in the future:
-			// 'UltimateMemberIntegration',
+			'UltimateMemberIntegration',
 		);
 
 		// Allow filtering the list of integration classes
