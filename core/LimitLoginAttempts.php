@@ -1582,7 +1582,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			$this->info_data = $this->info();
 		}
 
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['block_by_country'] ) ) ? $this->info_data['block_by_country'] : '';
+		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['block_by_country'] ) );
 	}
 
 
