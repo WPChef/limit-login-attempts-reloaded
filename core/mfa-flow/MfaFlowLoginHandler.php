@@ -159,19 +159,33 @@ class MfaFlowLoginHandler {
 			$user_group = reset( $user->roles );
 		}
 		// WP login uses redirect_to; WooCommerce (checkout/global form) uses redirect.
-		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
-		if ( '' === $redirect_to && ! empty( $_REQUEST['redirect'] ) ) {
+		// is_string() guards: query arrays (redirect[]=x) must never reach esc_url_raw()
+		// (ltrim() TypeError on PHP 8 = HTTP 500 on the login form).
+		$redirect_to = ( isset( $_REQUEST['redirect_to'] ) && is_string( $_REQUEST['redirect_to'] ) ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+		if ( '' === $redirect_to && isset( $_REQUEST['redirect'] ) && is_string( $_REQUEST['redirect'] ) ) {
 			$redirect_to = esc_url_raw( wp_unslash( $_REQUEST['redirect'] ) );
 		}
-		$cancel_url          = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		$current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$cancel_url = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
+		// Rebuild the current URL from scheme + host + REQUEST_URI instead of
+		// home_url( $uri ): home_url() prepends its own path, duplicating it in
+		// subdirectory installs (https://site/blog + /blog/my-account/ => /blog/blog/...).
+		$current_request_uri = ( isset( $_SERVER['REQUEST_URI'] ) && is_string( $_SERVER['REQUEST_URI'] ) ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
 		$current_login_url   = '';
-		if ( is_string( $current_request_uri ) && '' !== $current_request_uri ) {
-			$current_login_url = esc_url_raw( home_url( $current_request_uri ) );
+		if ( '' !== $current_request_uri ) {
+			$home_url_parts = wp_parse_url( home_url() );
+			$home_scheme    = ( is_array( $home_url_parts ) && ! empty( $home_url_parts['scheme'] ) ) ? $home_url_parts['scheme'] : 'http';
+			$request_host   = ( isset( $_SERVER['HTTP_HOST'] ) && is_string( $_SERVER['HTTP_HOST'] ) ) ? preg_replace( '/[^a-zA-Z0-9.\-:\[\]]/', '', wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
+			$current_host   = ( '' !== $request_host ) ? $request_host : ( ( is_array( $home_url_parts ) && ! empty( $home_url_parts['host'] ) ) ? $home_url_parts['host'] : '' );
+			if ( '' !== $current_host ) {
+				$current_login_url = esc_url_raw( $home_scheme . '://' . $current_host . $current_request_uri );
+			}
 		}
 		// Classic /my-account/ form often has no redirect field; WC then uses referer.
 		// After MFA the referer is the MFA app, so persist the login page as destination.
-		if ( '' === $redirect_to && '' !== $current_login_url ) {
+		// WooCommerce contexts only: wp_authenticate_user fires for every wp_signon()
+		// call, so capturing the current page for xmlrpc/admin-ajax/REST/custom
+		// endpoints would send the user to a dead page after a successful MFA.
+		if ( '' === $redirect_to && '' !== $current_login_url && $this->is_woocommerce_login_request() ) {
 			$path = (string) wp_parse_url( $current_login_url, PHP_URL_PATH );
 			if ( '' !== $path && false === strpos( $path, 'wp-login.php' ) ) {
 				$redirect_to = $current_login_url;
@@ -233,5 +247,45 @@ class MfaFlowLoginHandler {
 
 		$rate['c'] = (int) $rate['c'] + 1;
 		set_transient( $rate_key, $rate, $period );
+	}
+
+	/**
+	 * Whether the current request is a WooCommerce login form submission.
+	 *
+	 * All WC login forms (my-account page, checkout, global/block form) post the
+	 * woocommerce-login-nonce field; custom templates without it still post to a
+	 * WC page, so the request path is checked against my-account/checkout too.
+	 * Marker checks only — the nonce itself was already verified by WC before
+	 * wp_signon(), and wp_authenticate_user also fires for non-HTML channels
+	 * (xmlrpc/admin-ajax/REST) that must not be captured as MFA destinations.
+	 *
+	 * @return bool
+	 */
+	private function is_woocommerce_login_request() {
+		if ( isset( $_REQUEST['woocommerce-login-nonce'] ) ) {
+			return true;
+		}
+		if ( ! function_exists( 'wc_get_page_id' ) ) {
+			return false;
+		}
+		$uri = ( isset( $_SERVER['REQUEST_URI'] ) && is_string( $_SERVER['REQUEST_URI'] ) ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+		if ( '' === $uri ) {
+			return false;
+		}
+		foreach ( array( 'myaccount', 'checkout' ) as $page ) {
+			$page_id = (int) wc_get_page_id( $page );
+			if ( $page_id <= 0 ) {
+				continue;
+			}
+			$permalink = get_permalink( $page_id );
+			if ( ! is_string( $permalink ) || '' === $permalink ) {
+				continue;
+			}
+			$page_path = (string) wp_parse_url( $permalink, PHP_URL_PATH );
+			if ( '' !== $page_path && untrailingslashit( $uri ) === untrailingslashit( $page_path ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
