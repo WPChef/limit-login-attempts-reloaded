@@ -37,7 +37,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 *
 	 * @var array
 	 */
-	public $_errors = array(); // phpcs:ignore WordPress.NamingConventions.ValidPropertyName -- underscore name kept for BC; public property on the global plugin object.
+	public $_errors = array(); // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore -- underscore name kept for BC; public property on the global plugin object.
 
 	public $all_errors_array = array();
 
