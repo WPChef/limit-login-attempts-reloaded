@@ -5,6 +5,14 @@
 
     <rule ref="WordPress-Extra"/>
 
+    <!-- Legacy class files use CamelCase names; the autoloader and includes map
+         them explicitly, so renaming to the class-*.php convention is a breaking
+         change. Only the sniff itself is excluded, naming stays enforced elsewhere. -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+    </rule>
+
     <arg name="extensions" value="php"/>
     <arg name="report" value="full"/>
     <arg name="no-colors"/>
