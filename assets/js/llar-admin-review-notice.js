@@ -2,6 +2,13 @@
 	'use strict';
 
 	$( document ).ready( function() {
+		// The localized data ships in a separate inline <script>; JS optimizers
+		// (Perfmatters, WP Rocket, FlyingPress) may strip or delay it while the
+		// file still loads. Bail out instead of throwing on click.
+		if ( typeof llarReviewNotice === 'undefined' ) {
+			return;
+		}
+
 		$( '.llar-review-dismiss' ).on( 'click', function( e ) {
 			e.preventDefault();
 			var type = $( this ).data( 'type' );

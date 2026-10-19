@@ -37,7 +37,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 *
 	 * @var array
 	 */
-	public $errors = array();
+	public $_errors = array(); // phpcs:ignore WordPress.NamingConventions.ValidPropertyName -- underscore name kept for BC; public property on the global plugin object.
 
 	public $all_errors_array = array();
 
@@ -402,6 +402,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
 
 		add_action( 'admin_notices', array( $this, 'render_leave_review_admin_notice' ) );
+		add_action( 'admin_init', array( $this, 'consume_review_notice_cookie' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_leave_review_notice_script' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -761,7 +762,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			ob_start();
 			?>
 				;( function( $ ) {
-					let ajaxUrlObj = new URL( `<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>` );
+					let ajaxUrlObj = new URL( <?php echo wp_json_encode( esc_url_raw( admin_url( 'admin-ajax.php' ) ) ); ?> );
 					let um_limit_login_failed = `<?php echo esc_js( isset( $um_limit_login_failed ) ? $um_limit_login_failed : '' ); ?>`;
 					let late_hook_errors = <?php echo wp_json_encode( wp_kses_post( ( $late_hook_errors ) ) ); ?>;
 					let custom_error = <?php echo wp_json_encode( nl2br( esc_html( $custom_error ) ) ); ?>;
@@ -1697,17 +1698,32 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
+	 * Persist the client-side review-notice dismissal on the first admin
+	 * request that carries the cookie.
+	 *
+	 * Runs on admin_init, which fires before both admin_enqueue_scripts and
+	 * admin_notices, so is_leave_review_notice_visible() never sees stale
+	 * Config state and the dismiss script is not enqueued on the very load
+	 * that consumes the cookie.
+	 *
+	 * @return void
+	 */
+	public function consume_review_notice_cookie() {
+		if ( ! isset( $_COOKIE['llar_review_notice_shown'] ) ) {
+			return;
+		}
+		Config::update( 'review_notice_shown', true );
+		if ( ! headers_sent() ) {
+			setcookie( 'llar_review_notice_shown', '', time() - 3600, '/' );
+		}
+	}
+
+	/**
 	 * Admin notice: leave a review (dashboard/plugins/LLAR screens).
 	 *
 	 * @return void
 	 */
 	public function render_leave_review_admin_notice() {
-		if ( isset( $_COOKIE['llar_review_notice_shown'] ) ) {
-			Config::update( 'review_notice_shown', true );
-			if ( ! headers_sent() ) {
-				setcookie( 'llar_review_notice_shown', '', time() - 3600, '/' );
-			}
-		}
 		if ( ! $this->is_leave_review_notice_visible() ) {
 			return;
 		}
