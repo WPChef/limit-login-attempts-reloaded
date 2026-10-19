@@ -1194,26 +1194,26 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * Whether lockout messaging must stay hidden for this login attempt.
+	 * Whether lockout messaging must stay hidden for a whitelisted username.
 	 *
-	 * Mirrors the wp-login.php authenticate chain (wp_authenticate_user +
-	 * authenticate_late_lockout_check): whitelisted usernames and IPs never see
-	 * the lockout error even while their IP is locked. Used by MemberPress
-	 * fallback when is_login_allowed() is false (IP lockout only).
+	 * Mirrors the username branch of the wp-login.php authenticate chain
+	 * (wp_authenticate_user + authenticate_late_lockout_check): whitelisted
+	 * usernames never see the lockout error even while their IP is locked.
+	 * IP whitelisting is intentionally not checked here: callers only reach this
+	 * method when is_limit_login_ok() is false, and that method already returns
+	 * true for whitelisted IPs.
+	 *
+	 * Used by MemberPress fallback when is_login_allowed() is false (IP lockout only).
 	 *
 	 * @param string $username Submitted login identifier.
 	 * @return bool
 	 */
 	public function is_lockout_error_suppressed( $username = '' ) {
-		if ( '' !== $username ) {
-			if ( $this->is_username_whitelisted( $username ) || $this->check_whitelist_usernames( false, $username ) ) {
-				return true;
-			}
+		if ( '' === $username ) {
+			return false;
 		}
 
-		$ip = $this->get_address();
-
-		return $this->is_ip_whitelisted( $ip ) || $this->check_whitelist_ips( false, $ip );
+		return $this->is_username_whitelisted( $username );
 	}
 
 	/**
