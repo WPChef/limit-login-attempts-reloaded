@@ -49,6 +49,8 @@ class HttpTransportCurl implements HttpTransportInterface {
 		$handle = curl_init( $url );
 		
 		curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $handle, CURLOPT_CONNECTTIMEOUT, self::DEFAULT_TIMEOUT );
+		curl_setopt( $handle, CURLOPT_TIMEOUT, self::DEFAULT_TIMEOUT );
 
 		if( $method === 'POST' ) {
 			curl_setopt($handle, CURLOPT_POST, true);

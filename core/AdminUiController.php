@@ -304,6 +304,10 @@ class AdminUiController {
 	 */
 	private function menu_mc_exhausted_icon()
 	{
+		if ( ! is_admin() ) {
+			return '';
+		}
+
 		if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'custom' || ! LimitLoginAttempts::$cloud_app ) {
 			return '';
 		}

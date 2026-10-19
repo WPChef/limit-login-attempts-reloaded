@@ -82,6 +82,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	private $integration_manager = null;
 
 	private $info_data = array();
+	private $info_attempted = false;
 
 	/**
 	 * MFA manager instance (MfaManager: MfaBackupCodes, MfaEndpoint, MfaSettings, MfaValidator).
@@ -1485,20 +1486,70 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	private function info() {
+		if ( $this->info_attempted ) {
+			return $this->info_data;
+		}
+
 		if ( self::$cloud_app ) {
-			$this->info_data = self::$cloud_app->info();
+			$this->info_attempted = true;
+			$this->info_data     = self::$cloud_app->info();
 		}
 
 		return $this->info_data;
 	}
 
 	public function info_is_exhausted() {
-		if ( empty( $this->info_data ) ) {
-
-			$this->info_data = $this->info();
+		if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'custom' || ! self::$cloud_app ) {
+			return false;
 		}
 
-		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		if ( is_array( $this->info_data ) && ! empty( $this->info_data ) ) {
+			return $this->parse_mc_exhausted( $this->info_data );
+		}
+
+		$cached = get_transient( $this->mc_exhausted_cache_key() );
+
+		if ( false !== $cached ) {
+			return '1' === $cached;
+		}
+
+		$info = $this->info();
+
+		if ( is_array( $info ) && ! empty( $info ) ) {
+			return $this->parse_mc_exhausted( $info );
+		}
+
+		return false;
+	}
+
+	private function parse_mc_exhausted( $info ) {
+		$exhausted = isset( $info['requests']['exhausted'] )
+			? filter_var( $info['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE )
+			: false;
+
+		$exhausted = null === $exhausted ? false : (bool) $exhausted;
+
+		$this->cache_mc_exhausted( $exhausted );
+
+		return $exhausted;
+	}
+
+	private function cache_mc_exhausted( $exhausted ) {
+		$key   = $this->mc_exhausted_cache_key();
+		$value = $exhausted ? '1' : '0';
+
+		if ( get_transient( $key ) === $value ) {
+			return;
+		}
+
+		set_transient( $key, $value, $exhausted ? 12 * HOUR_IN_SECONDS : 15 * MINUTE_IN_SECONDS );
+	}
+
+	private function mc_exhausted_cache_key() {
+		$app_config = Config::get( 'app_config' );
+		$app_id     = is_array( $app_config ) && ! empty( $app_config['id'] ) ? (string) $app_config['id'] : 'unknown';
+
+		return 'limit_login_mc_exhausted_' . md5( $app_id . '|' . get_current_blog_id() );
 	}
 
 	/**
@@ -1508,12 +1559,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 */
 	public function info_is_almost_exhausted()
 	{
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return isset( $this->info_data['requests']['almost_exhausted'] ) ? filter_var( $this->info_data['requests']['almost_exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		return isset( $info['requests']['almost_exhausted'] ) ? filter_var( $info['requests']['almost_exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
 	}
 
 	/**
@@ -1522,20 +1570,18 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * @return bool
 	 */
 	public function info_has_valid_data() {
-		if ( empty( $this->info_data ) ) {
-			$this->info_data = $this->info();
-		}
+		$info = $this->info();
 
-		if ( empty( $this->info_data ) || ! is_array( $this->info_data ) ) {
+		if ( empty( $info ) || ! is_array( $info ) ) {
 			return false;
 		}
 
-		if ( empty( $this->info_data['requests'] ) || ! is_array( $this->info_data['requests'] ) ) {
+		if ( empty( $info['requests'] ) || ! is_array( $info['requests'] ) ) {
 			return false;
 		}
 
-		return array_key_exists( 'quota', $this->info_data['requests'] )
-			&& '' !== (string) $this->info_data['requests']['quota'];
+		return array_key_exists( 'quota', $info['requests'] )
+			&& '' !== (string) $info['requests']['quota'];
 	}
 
 	/**
@@ -1557,44 +1603,31 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 
 	public function info_requests() {
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['requests'] ) ) ? $this->info_data['requests'] : '';
+		return ( ! empty( $info ) && ! empty( $info['requests'] ) ) ? $info['requests'] : '';
 	}
 
 
 	public function info_sub_group() {
-		if ( empty( $this->info_data ) ) {
-
-			$this->info_data = $this->info();
-		}
-
-		$data = ( ! empty( $this->info_data ) && ! empty( $this->info_data['sub_group'] ) ) ? $this->info_data['sub_group'] : '';
+		$info = $this->info();
+		$data = ( ! empty( $info ) && ! empty( $info['sub_group'] ) ) ? $info['sub_group'] : '';
 
 		return $this->plan_name_match( $data );
 	}
 
 
 	public function info_upgrade_url() {
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['upgrade_url'] ) ) ? $this->info_data['upgrade_url'] : '';
+		return ( ! empty( $info ) && ! empty( $info['upgrade_url'] ) ) ? $info['upgrade_url'] : '';
 	}
 
 
 	public function info_block_by_country() {
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['block_by_country'] ) ) ? $this->info_data['block_by_country'] : '';
+		return ( ! empty( $info ) && ! empty( $info['block_by_country'] ) ) ? $info['block_by_country'] : '';
 	}
 
 

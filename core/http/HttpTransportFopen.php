@@ -59,6 +59,7 @@ class HttpTransportFopen implements HttpTransportInterface {
                 'header'        => implode( "\r\n", $headers ),
                 'content'       => $request_data,
                 'ignore_errors' => true,
+                'timeout'       => self::DEFAULT_TIMEOUT,
             )
 		));
 
