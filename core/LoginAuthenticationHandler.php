@@ -308,7 +308,13 @@ class LoginAuthenticationHandler {
 					}
 
 				} elseif ( $this->local_lockout->is_username_whitelisted( $username ) || $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
-					LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => true ) );
+					// Trusted IP mutes the whole request; username allowlist binds
+					// the guard to the submitted login string.
+					if ( $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
+						LocalLockoutManager::mark_allowlisted_ip_in_request();
+					} else {
+						LocalLockoutManager::mark_allowlisted_login_in_request( $username );
+					}
 					// Do not run limit_login_failed for whitelist: no lockout, but lockout_check / retries would still run and hit the API.
 					remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
 					$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
@@ -399,7 +405,7 @@ class LoginAuthenticationHandler {
 
 		$ip = $this->ip_resolver->get_address();
 		if (
-			true !== LoginFlowTransientStore::get( 'llar_user_is_whitelisted', false )
+			! LocalLockoutManager::is_allowlisted_in_request( $username )
 			&& ! $this->ip_resolver->is_ip_whitelisted( $ip )
 			&& ! $this->local_lockout->is_username_whitelisted( $username )
 			&& ! $this->local_lockout->is_limit_login_ok( $username )
@@ -510,16 +516,26 @@ class LoginAuthenticationHandler {
 			return $error;
 		}
 
-		$is_allowlisted = $this->local_lockout->check_whitelist_ips( false, $ip )
-			|| $this->local_lockout->is_local_allowlisted_username( $username, $user )
+		// Username/email allowlist only. IP allowlist is handled by the early
+		// hook, which sets the request-scoped flag before this code runs.
+		$allowlisted_via_user = $this->local_lockout->is_local_allowlisted_username( $username, $user )
 			|| $this->local_lockout->check_whitelist_usernames( false, $user_login );
+
+		$is_allowlisted = $this->local_lockout->check_whitelist_ips( false, $ip )
+			|| $allowlisted_via_user;
 
 		if ( $is_allowlisted || $this->local_lockout->is_limit_login_ok( $username ) ) {
 			// Mirror the early authenticate allowlist path: do not record failed
 			// attempts for allowlisted users who log in via account email (no
-			// get_user_by in the early hook).
-			if ( $is_allowlisted ) {
-				LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => true ) );
+			// get_user_by in the early hook). The guard is request-scoped and
+			// bound to the allowlisted identity so it cannot mute recording for
+			// other users later in the same request (system.multicall).
+			if ( $allowlisted_via_user ) {
+				if ( is_a( $user, 'WP_User' ) && ! empty( $user->ID ) ) {
+					LocalLockoutManager::mark_allowlisted_user_in_request( $user->ID );
+				} else {
+					LocalLockoutManager::mark_allowlisted_login_in_request( '' !== $user_login ? $user_login : $username );
+				}
 				remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
 				remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
 			}
