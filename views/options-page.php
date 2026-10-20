@@ -92,29 +92,6 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 			</div>
 		<?php endif; ?>
 
-	<?php elseif ( $is_active_app_custom && $is_trial_group && ( $is_exhausted || $info_is_cloud_unavailable ) ) :
-
-		$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
-
-		if ( time() > $notifications_message_shown ) : ?>
-			<div id="llar-header-upgrade-premium-message" class="exhausted">
-				<p>
-					<span class="dashicons dashicons-superhero"></span>
-				<?php
-				printf(
-					/* translators: 1: trial length in days, 2: upgrade URL */
-					__( 'Your %1$d day free trial has ended and the plugin has reverted to the free version. <a href="%2$s" class="link__style_color_inherit" target="_blank">Upgrade to Premium</a> to restore cloud protection and advanced features.', 'limit-login-attempts-reloaded' ),
-					LimitLoginAttempts::TRIAL_DAYS,
-					esc_url( add_query_arg( 'id', '41', $upgrade_premium_url ) )
-				);
-				?>
-				</p>
-				<div class="close">
-					<span class="dashicons dashicons-no-alt"></span>
-				</div>
-			</div>
-		<?php endif; ?>
-
 	<?php elseif ( $is_active_app_custom && $is_trial_group && $info_has_valid_data ) : ?>
 		<div id="llar-header-upgrade-mc-message">
 			<p>
@@ -206,6 +183,12 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 if ( ! empty( $this->pending_admin_message ) ) {
 	$this->render_admin_notice( 'flash', $this->pending_admin_message );
 	$this->pending_admin_message = null;
+}
+$trial_return = \LLAR\Core\TrialLanding::parse_return_request();
+if ( ! empty( $trial_return['return_error'] ) ) {
+	echo '<div class="notice notice-error" style="display: block;"><p>'
+		. esc_html__( 'Your trial activation link is invalid or has expired. Please start the free trial again to receive a new activation link.', 'limit-login-attempts-reloaded' )
+		. '</p></div>';
 }
 if ( $this->should_show_mfa_recovery_links_expired_notice() ) {
 	$this->render_admin_notice(

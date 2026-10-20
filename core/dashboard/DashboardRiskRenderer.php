@@ -6,6 +6,7 @@ use LLAR\Core\Config;
 use LLAR\Core\Helpers;
 use LLAR\Core\LimitLoginAttempts;
 use LLAR\Core\LocalLockoutManager;
+use LLAR\Core\TrialLanding;
 use LLAR\Core\Utils\RiskLevelMath;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -129,7 +130,7 @@ class DashboardRiskRenderer {
 
 		$premium_label = '';
 		if ( $is_active_app_custom && ! empty( $info_has_valid_data ) && ! $is_exhausted ) {
-			$premium_label = ( 'Micro Cloud' === $block_sub_group )
+			$premium_label = ( LimitLoginAttempts::trial_plan_name() === $block_sub_group )
 				? __( 'Free Trial', 'limit-login-attempts-reloaded' )
 				: __( 'Cloud protection enabled', 'limit-login-attempts-reloaded' );
 		}
@@ -167,12 +168,19 @@ class DashboardRiskRenderer {
 	 * @return string
 	 */
 	private function get_micro_cloud_recommendation_html() {
+		$landing_url = TrialLanding::build_url(
+			TrialLanding::INFO_ID_DASHBOARD,
+			TrialLanding::resolve_email(),
+			TrialLanding::dashboard_return_url( 'dashboard' ),
+			'dashboard'
+		);
+
 		return sprintf(
 			__(
-				'Based on your level of brute force activity, we recommend <a class="llar_orange %1$s">starting a free %2$d day trial</a> to access features to reduce failed logins and improve site performance.',
+				'Based on your level of brute force activity, we recommend <a href="%1$s" class="llar_orange" target="_blank" rel="noopener noreferrer">starting a free %2$d day trial</a> to access features to reduce failed logins and improve site performance.',
 				'limit-login-attempts-reloaded'
 			),
-			'button_micro_cloud',
+			esc_url( $landing_url ),
 			LimitLoginAttempts::TRIAL_DAYS
 		);
 	}

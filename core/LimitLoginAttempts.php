@@ -885,11 +885,16 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 			if ( empty( Config::get( 'app_setup_code' ) ) ) {
 
-				$slug = $this->get_options_page_uri( 'dashboard#modal_micro_cloud' );
+				$landing_url = TrialLanding::build_url(
+					TrialLanding::INFO_ID_DASHBOARD,
+					TrialLanding::resolve_email(),
+					TrialLanding::dashboard_return_url( 'dashboard' ),
+					'dashboard'
+				);
 
 				$actions = array_merge(
 					array(
-						'<a href="' . esc_html( $slug ) . '" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+						'<a href="' . esc_url( $landing_url ) . '" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
 					),
 					$actions
 				);

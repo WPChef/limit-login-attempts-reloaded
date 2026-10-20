@@ -12,7 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Before leaving for info.php the plugin stores a one-time nonce in a transient
  * (24h) and embeds it into the url= parameter of the outbound landing link, so
  * only a return from a user-initiated outbound click can auto-activate a
- * setup_code.
+ * setup_code. The active token is reused (not regenerated) while it is still
+ * fresh, so page views no longer grow wp_options.
  */
 class TrialLanding {
 
@@ -24,7 +25,10 @@ class TrialLanding {
 	const LANDING_BASE       = 'https://www.limitloginattempts.com/info.php';
 
 	/**
-	 * Create a one-time return token for the current admin.
+	 * Create (or reuse) the one-time return token for the current admin.
+	 *
+	 * While a previously issued token is still unconsumed and fresh, it is
+	 * reused instead of writing a new transient on every page view.
 	 *
 	 * @param string $context onboarding|dashboard
 	 * @return string Empty string on failure.
@@ -35,8 +39,17 @@ class TrialLanding {
 			return '';
 		}
 
-		$context = self::normalize_context( $context );
-		$token   = wp_generate_password( 32, false, false );
+		$context    = self::normalize_context( $context );
+		$active_key = self::active_token_key( $user_id, $context );
+
+		$existing = get_transient( $active_key );
+		if ( ! empty( $existing )
+			&& false !== get_transient( self::TRANSIENT_PREFIX . $existing )
+		) {
+			return $existing;
+		}
+
+		$token = wp_generate_password( 32, false, false );
 		$stored  = array(
 			'user_id' => (int) $user_id,
 			'context' => $context,
@@ -44,6 +57,7 @@ class TrialLanding {
 		);
 
 		set_transient( self::TRANSIENT_PREFIX . $token, $stored, self::TOKEN_TTL );
+		set_transient( $active_key, $token, self::TOKEN_TTL );
 
 		return $token;
 	}
@@ -73,7 +87,23 @@ class TrialLanding {
 			return false;
 		}
 
+		$active_key = self::active_token_key( (int) $data['user_id'], self::normalize_context( $data['context'] ) );
+		if ( get_transient( $active_key ) === $token ) {
+			delete_transient( $active_key );
+		}
+
 		return $data;
+	}
+
+	/**
+	 * Transient key holding the reusable active token for a user + context.
+	 *
+	 * @param int    $user_id User ID.
+	 * @param string $context onboarding|dashboard
+	 * @return string
+	 */
+	private static function active_token_key( $user_id, $context ) {
+		return self::TRANSIENT_PREFIX . 'active_' . (int) $user_id . '_' . $context;
 	}
 
 	/**
@@ -182,6 +212,7 @@ class TrialLanding {
 	 *     @type string $setup_code      Setup code to activate (empty if none).
 	 *     @type string $context         onboarding|dashboard|''.
 	 *     @type bool   $can_activate    Token valid and site has no setup code yet.
+	 *     @type bool   $return_error    Setup code was returned but the token is invalid or expired.
 	 * }
 	 */
 	public static function parse_return_request() {
@@ -194,6 +225,7 @@ class TrialLanding {
 			'setup_code'      => '',
 			'context'         => '',
 			'can_activate'    => false,
+			'return_error'    => false,
 		);
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- public return URL from external landing.
@@ -221,6 +253,7 @@ class TrialLanding {
 
 		$token_data = self::consume_token( $token );
 		if ( empty( $token_data ) ) {
+			$result['return_error'] = true;
 			self::$parsed_return = $result;
 			return self::$parsed_return;
 		}

@@ -1,15 +1,3 @@
-function llar_activate_micro_cloud( email ) {
-
-    let data = {
-        action: 'activate_micro_cloud',
-        email: email,
-        sec: llar_vars.nonce_activate_micro_cloud,
-    }
-
-    return llar_ajax_callback_post( ajaxurl, data )
-}
-
-
 function llar_activate_license_key( $setup_code ) {
 
     let data = {

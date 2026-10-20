@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit();
 
 <div id="llar-setting-page-logs__active" class="limit-login-app-dashboard">
 
-    <?php if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && $is_exhausted ) : ?>
+    <?php if ( $is_active_app_custom && $is_exhausted && ( 'Micro Cloud' === $block_sub_group || \LLAR\Core\LimitLoginAttempts::trial_plan_name() === $block_sub_group ) ) : ?>
 
         <div id="llar-header-login-custom-message">
             <div class="message-flex">
@@ -23,7 +23,11 @@ if ( ! defined( 'ABSPATH' ) ) exit();
                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/micro-cloud-image-min.png">
                 </div>
                 <div class="col-second">
-	                <?php printf( esc_html__( 'Your %d day free trial has ended, which is required to operate the Login Firewall.', 'limit-login-attempts-reloaded' ), \LLAR\Core\LimitLoginAttempts::TRIAL_DAYS ); ?>
+                    <?php if ( 'Micro Cloud' === $block_sub_group ) : ?>
+                        <?php _e( 'Your Micro Cloud plan has exhausted its requests for the month, which is required to operate the Login Firewall.', 'limit-login-attempts-reloaded' ); ?>
+                    <?php else : ?>
+                        <?php printf( esc_html__( 'Your %d day free trial has exhausted its requests, which is required to operate the Login Firewall.', 'limit-login-attempts-reloaded' ), \LLAR\Core\LimitLoginAttempts::TRIAL_DAYS ); ?>
+                    <?php endif; ?>
                 </div>
                 <div class="col-third">
                     <div class="row-first">

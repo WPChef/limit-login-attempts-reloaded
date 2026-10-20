@@ -37,7 +37,6 @@ class AdminUiController {
 			$block_country              = wp_create_nonce( 'llar-block_by_country' );
 			$onboarding_reset           = wp_create_nonce( 'llar-action-onboarding-reset' );
 			$dismiss_onboarding_popup   = wp_create_nonce( 'llar-dismiss-onboarding-popup' );
-			$activate_micro_cloud       = wp_create_nonce( 'llar-activate-micro-cloud' );
 			$subscribe_email            = wp_create_nonce( 'llar-subscribe-email' );
 			$close_premium_message      = wp_create_nonce( 'llar-close-premium-message' );
 			wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array('jquery'), $plugin_data['Version'], false );
@@ -48,7 +47,6 @@ class AdminUiController {
 				'nonce_block_by_country'          => $block_country,
 				'nonce_onboarding_reset'          => $onboarding_reset,
 				'nonce_dismiss_onboarding_popup'  => $dismiss_onboarding_popup,
-				'nonce_activate_micro_cloud'      => $activate_micro_cloud,
 				'nonce_subscribe_email'           => $subscribe_email,
 				'nonce_close_premium_message'     => $close_premium_message,
 			));
@@ -146,6 +144,17 @@ class AdminUiController {
 				'url'   => '&tab=help'
 			)
 		);
+
+		if ( ! $is_cloud_app_enabled ) {
+
+			$is_local_empty_setup_code = empty( Config::get( 'app_setup_code' ) );
+
+			$submenu_items[] = array(
+				'id'    => 'premium',
+				'name'  => $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' ),
+				'url'   => $is_local_empty_setup_code ? '&tab=dashboard' : '&tab=premium',
+			);
+		}
 
 		return $submenu_items;
 	}
