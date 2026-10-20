@@ -55,15 +55,12 @@ class UltimateMemberIntegration extends BaseIntegration {
 			return null;
 		}
 
-		$source   = $this->get_post_data();
 		$username = $this->extract_field_value(
 			array( 'username', 'user_email', 'user_login' ),
-			$source,
 			$form_id
 		);
 		$password = $this->extract_field_value(
 			array( 'user_password' ),
-			$source,
 			$form_id
 		);
 
@@ -94,7 +91,6 @@ class UltimateMemberIntegration extends BaseIntegration {
 
 		return $this->extract_field_value(
 			array( 'username', 'user_email', 'user_login' ),
-			$this->get_post_data(),
 			$form_id
 		);
 	}
@@ -132,15 +128,16 @@ class UltimateMemberIntegration extends BaseIntegration {
 	/**
 	 * Read a field posted under UM's dynamic name (base-{form_id}).
 	 *
-	 * @param string[]            $base_keys Field meta keys without form id.
-	 * @param array<string,mixed> $source    Request data.
-	 * @param int                 $form_id   UM form post id.
+	 * @param string[] $base_keys Field meta keys without form id.
+	 * @param int      $form_id   UM form post id.
 	 * @return string Sanitized text for identifiers; unslashed only for passwords.
 	 */
-	private function extract_field_value( array $base_keys, array $source, $form_id ) {
+	private function extract_field_value( array $base_keys, $form_id ) {
 		if ( $form_id <= 0 ) {
 			return '';
 		}
+
+		$source = $this->get_post_data();
 
 		foreach ( $base_keys as $base_key ) {
 			$field_name = $base_key . '-' . $form_id;
