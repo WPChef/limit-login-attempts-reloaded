@@ -213,6 +213,11 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public static function reset_request_guards() {
 		LocalLockoutManager::reset_failed_login_recorded_in_request();
 		MfaFlowLoginHandler::reset_handshake_guard();
+
+		if ( self::$instance ) {
+			self::$instance->info_data      = array();
+			self::$instance->info_attempted = false;
+		}
 	}
 
 
@@ -1492,7 +1497,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 		if ( self::$cloud_app ) {
 			$this->info_attempted = true;
-			$this->info_data     = self::$cloud_app->info();
+			$this->info_data      = self::$cloud_app->info();
 		}
 
 		return $this->info_data;
@@ -1507,7 +1512,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			return $this->parse_mc_exhausted( $this->info_data );
 		}
 
-		$cached = get_transient( $this->mc_exhausted_cache_key() );
+		$cached = $this->is_plugin_ui_request() ? false : get_transient( $this->mc_exhausted_cache_key() );
 
 		if ( false !== $cached ) {
 			return '1' === $cached;
@@ -1550,6 +1555,20 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		$app_id     = is_array( $app_config ) && ! empty( $app_config['id'] ) ? (string) $app_config['id'] : 'unknown';
 
 		return 'limit_login_mc_exhausted_' . md5( $app_id . '|' . get_current_blog_id() );
+	}
+
+	private function is_plugin_ui_request() {
+		if ( ! is_admin() || ! $this->has_capability ) {
+			return false;
+		}
+
+		if ( ! empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_options_page_slug ) {
+			return true;
+		}
+
+		global $pagenow;
+
+		return 'index.php' === $pagenow && ! Config::get( 'hide_dashboard_widget' );
 	}
 
 	/**
