@@ -116,7 +116,9 @@ class TrialLanding {
 	 * url verbatim for the nonce to survive the round trip.
 	 *
 	 * @param int    $info_id    Landing id (37 onboarding, 38 dashboard).
-	 * @param string $email      Notification / admin email.
+	 * @param string $email      Notification / admin email. Empty when the user
+	 *                            has not consented to sharing it — the landing
+	 *                            asks for the email on its own form instead.
 	 * @param string $return_url Absolute URL the landing should send the user back to.
 	 * @param string $context    onboarding|dashboard
 	 * @param string $token      Optional pre-created token; created when empty.
@@ -129,10 +131,15 @@ class TrialLanding {
 
 		$return_url = self::with_token( $return_url, $token );
 
-		return self::LANDING_BASE
+		$url = self::LANDING_BASE
 			. '?id=' . (int) $info_id
-			. '&url=' . rawurlencode( $return_url )
-			. '&email=' . rawurlencode( $email );
+			. '&url=' . rawurlencode( $return_url );
+
+		if ( '' !== $email ) {
+			$url .= '&email=' . rawurlencode( $email );
+		}
+
+		return $url;
 	}
 
 	/**
@@ -185,16 +192,18 @@ class TrialLanding {
 	 * Ready-made outbound dashboard landing URL.
 	 *
 	 * Keeps every "start the free trial" link on the same contract
-	 * (info id, email, return tab, context).
+	 * (info id, return tab, context). The email is only pre-filled for
+	 * consent-gated CTAs; everywhere else the landing asks for it.
 	 *
-	 * @param string $tab   Plugin tab slug to return to.
-	 * @param string $token Optional pre-created token.
+	 * @param string $tab        Plugin tab slug to return to.
+	 * @param string $token      Optional pre-created token.
+	 * @param bool   $with_email Whether the admin email may be shared (consent given).
 	 * @return string
 	 */
-	public static function dashboard_landing_url( $tab = 'dashboard', $token = '' ) {
+	public static function dashboard_landing_url( $tab = 'dashboard', $token = '', $with_email = true ) {
 		return self::build_url(
 			self::INFO_ID_DASHBOARD,
-			self::resolve_email(),
+			$with_email ? self::resolve_email() : '',
 			self::dashboard_return_url( $tab ),
 			'dashboard',
 			$token

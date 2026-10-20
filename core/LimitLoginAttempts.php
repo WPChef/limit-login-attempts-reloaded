@@ -885,7 +885,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 			if ( empty( Config::get( 'app_setup_code' ) ) ) {
 
-				$landing_url = TrialLanding::dashboard_landing_url();
+				// No consent collected on the Plugins screen — no email in the URL.
+				$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '', false );
 
 				$actions = array_merge(
 					array(

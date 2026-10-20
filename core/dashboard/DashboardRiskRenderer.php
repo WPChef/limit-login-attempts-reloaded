@@ -168,7 +168,9 @@ class DashboardRiskRenderer {
 	 * @return string
 	 */
 	private function get_micro_cloud_recommendation_html() {
-		$landing_url = TrialLanding::dashboard_landing_url();
+		// Risk recommendation has no consent checkbox (it also renders inside
+		// the WP dashboard widget) — the email must not travel in the URL.
+		$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '', false );
 
 		return sprintf(
 			__(

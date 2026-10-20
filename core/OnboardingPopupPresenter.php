@@ -39,7 +39,6 @@ class OnboardingPopupPresenter {
 			'admin_email' => $admin_email,
 			'trial_return' => array(
 				'open_step_3'   => $open_trial && empty( Config::get( 'app_setup_code' ) ),
-				'error'         => ! empty( $trial_return['return_error'] ) ? TrialLanding::invalid_return_message() : '',
 				'can_activate'  => ! empty( $trial_return['can_activate'] ) && 'onboarding' === $trial_return['context'],
 				'setup_code'    => ! empty( $trial_return['can_activate'] ) && 'onboarding' === $trial_return['context']
 					? $trial_return['setup_code']
