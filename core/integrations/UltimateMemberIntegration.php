@@ -1,5 +1,5 @@
 <?php
-// phpcs:ignoreFile WordPress.Files.FileName -- The file name must match the class name; IntegrationManager resolves integration files by class name.
+// phpcs:disable WordPress.Files.FileName -- IntegrationManager resolves integration files by class name, so file names cannot match class names.
 
 namespace LLAR\Core\Integrations;
 
@@ -43,20 +43,28 @@ class UltimateMemberIntegration extends BaseIntegration {
 			return false;
 		}
 
-		return '' !== $this->get_login_identifier();
+		return $this->is_login_form( $this->get_form_id() );
 	}
 
 	/**
 	 * @return array|null
 	 */
 	public function get_login_credentials() {
+		$form_id = $this->get_form_id();
+		if ( ! $this->is_login_form( $form_id ) ) {
+			return null;
+		}
+
+		$source   = $this->get_post_data();
 		$username = $this->extract_field_value(
-			array( 'username', 'user_login', 'user_email' ),
-			$_POST // phpcs:ignore WordPress.Security.NonceVerification.Missing -- UM verifies its own form nonce.
+			array( 'username', 'user_email', 'user_login' ),
+			$source,
+			$form_id
 		);
 		$password = $this->extract_field_value(
 			array( 'user_password' ),
-			$_POST // phpcs:ignore WordPress.Security.NonceVerification.Missing -- UM verifies its own form nonce.
+			$source,
+			$form_id
 		);
 
 		if ( '' === $username || '' === $password ) {
@@ -70,47 +78,74 @@ class UltimateMemberIntegration extends BaseIntegration {
 	}
 
 	/**
-	 * Resolve UM username/email from dynamic form fields (username-{form_id}).
+	 * Resolve the UM login identifier from the submitted login form.
+	 *
+	 * Only the field bound to the posted UM form id is trusted. Plain or
+	 * arbitrary username/user_login keys are ignored so a request cannot point
+	 * LLAR at a different identifier than the one UM authenticates.
 	 *
 	 * @return string
 	 */
 	public function get_login_identifier() {
-		$from_request = $this->extract_field_value(
-			array( 'username', 'user_login', 'user_email' ),
-			$_REQUEST // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only identifier for auth/MFA.
-		);
-		if ( '' !== $from_request ) {
-			return $from_request;
+		$form_id = $this->get_form_id();
+		if ( ! $this->is_login_form( $form_id ) ) {
+			return '';
 		}
 
 		return $this->extract_field_value(
-			array( 'username', 'user_login', 'user_email' ),
-			$_POST // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only identifier for auth/MFA.
+			array( 'username', 'user_email', 'user_login' ),
+			$this->get_post_data(),
+			$form_id
 		);
 	}
 
 	/**
-	 * Find a posted value by exact key or by UM dynamic suffix (base-{form_id}).
-	 *
-	 * @param string[]            $base_keys Field meta keys without form id.
-	 * @param array<string,mixed> $source    Request/post bag.
-	 * @return string Sanitized text for identifiers; unsanitized (only unslashed) for passwords when base is user_password.
+	 * @return int
 	 */
-	private function extract_field_value( array $base_keys, array $source ) {
-		foreach ( $base_keys as $base_key ) {
-			if ( isset( $source[ $base_key ] ) && '' !== $source[ $base_key ] && is_scalar( $source[ $base_key ] ) ) {
-				return $this->normalize_field_value( $base_key, $source[ $base_key ] );
-			}
+	private function get_form_id() {
+		if ( ! isset( $_POST['form_id'] ) || ! is_scalar( $_POST['form_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- UM verifies its own form nonce.
+			return 0;
 		}
 
-		foreach ( $source as $key => $value ) {
-			if ( ! is_string( $key ) || ! is_scalar( $value ) || '' === $value ) {
-				continue;
-			}
-			foreach ( $base_keys as $base_key ) {
-				if ( strpos( $key, $base_key . '-' ) === 0 ) {
-					return $this->normalize_field_value( $base_key, $value );
-				}
+		return absint( wp_unslash( $_POST['form_id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- UM verifies its own form nonce.
+	}
+
+	/**
+	 * @param int $form_id UM form post id.
+	 * @return bool
+	 */
+	private function is_login_form( $form_id ) {
+		if ( $form_id <= 0 || 'um_form' !== get_post_type( $form_id ) ) {
+			return false;
+		}
+
+		return 'login' === get_post_meta( $form_id, '_um_mode', true );
+	}
+
+	/**
+	 * @return array<string,mixed>
+	 */
+	private function get_post_data() {
+		return $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- UM verifies its own form nonce.
+	}
+
+	/**
+	 * Read a field posted under UM's dynamic name (base-{form_id}).
+	 *
+	 * @param string[]            $base_keys Field meta keys without form id.
+	 * @param array<string,mixed> $source    Request data.
+	 * @param int                 $form_id   UM form post id.
+	 * @return string Sanitized text for identifiers; unslashed only for passwords.
+	 */
+	private function extract_field_value( array $base_keys, array $source, $form_id ) {
+		if ( $form_id <= 0 ) {
+			return '';
+		}
+
+		foreach ( $base_keys as $base_key ) {
+			$field_name = $base_key . '-' . $form_id;
+			if ( isset( $source[ $field_name ] ) && is_scalar( $source[ $field_name ] ) && '' !== $source[ $field_name ] ) {
+				return $this->normalize_field_value( $base_key, $source[ $field_name ] );
 			}
 		}
 

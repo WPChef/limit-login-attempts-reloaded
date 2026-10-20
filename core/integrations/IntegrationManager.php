@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.Files.FileName -- IntegrationManager resolves integration files by class name, so file names cannot match class names.
 
 namespace LLAR\Core\Integrations;
 
@@ -59,7 +60,7 @@ class IntegrationManager {
 				if ( ! class_exists( $full_class_name ) ) {
 					// Log error for debugging (only if WP_DEBUG is enabled)
 					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-						error_log( sprintf( 'LLAR: Failed to load integration class %s', $full_class_name ) );
+						error_log( sprintf( 'LLAR: Failed to load integration class %s', $full_class_name ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 					}
 					continue;
 				}
@@ -71,7 +72,7 @@ class IntegrationManager {
 			}
 
 			// Only create instance if plugin is active
-			$integration = new $full_class_name( $this->llar_instance );
+			$integration          = new $full_class_name( $this->llar_instance );
 			$this->integrations[] = $integration;
 			$integration->register_hooks();
 		}
@@ -84,7 +85,7 @@ class IntegrationManager {
 	 * @return string|false File path or false if not found
 	 */
 	private function get_integration_file_path( $class_name ) {
-		$base_dir = dirname( __FILE__ );
+		$base_dir  = __DIR__;
 		$file_path = $base_dir . '/' . $class_name . '.php';
 
 		return file_exists( $file_path ) ? $file_path : false;
