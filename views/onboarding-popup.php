@@ -148,6 +148,11 @@ ob_start(); ?>
 		<?php echo esc_html( $popup['step3']['subtitle'] ); ?>
     </div>
     <div class="card mx-auto">
+        <?php if ( ! empty( $popup['trial_return']['error'] ) ) : ?>
+        <div class="field-error llar-trial-return-error" style="display: block;">
+            <?php echo esc_html( $popup['trial_return']['error'] ); ?>
+        </div>
+        <?php endif; ?>
         <div class="field-wrap" id="llar-description-step-3">
             <div class="field-desc-add">
 				<?php echo $popup['step3']['pitch']; ?>

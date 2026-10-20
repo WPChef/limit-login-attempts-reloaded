@@ -168,12 +168,7 @@ class DashboardRiskRenderer {
 	 * @return string
 	 */
 	private function get_micro_cloud_recommendation_html() {
-		$landing_url = TrialLanding::build_url(
-			TrialLanding::INFO_ID_DASHBOARD,
-			TrialLanding::resolve_email(),
-			TrialLanding::dashboard_return_url( 'dashboard' ),
-			'dashboard'
-		);
+		$landing_url = TrialLanding::dashboard_landing_url();
 
 		return sprintf(
 			__(

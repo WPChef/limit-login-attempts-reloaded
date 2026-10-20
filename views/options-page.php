@@ -187,7 +187,7 @@ if ( ! empty( $this->pending_admin_message ) ) {
 $trial_return = \LLAR\Core\TrialLanding::parse_return_request();
 if ( ! empty( $trial_return['return_error'] ) ) {
 	echo '<div class="notice notice-error" style="display: block;"><p>'
-		. esc_html__( 'Your trial activation link is invalid or has expired. Please start the free trial again to receive a new activation link.', 'limit-login-attempts-reloaded' )
+		. esc_html( \LLAR\Core\TrialLanding::invalid_return_message() )
 		. '</p></div>';
 }
 if ( $this->should_show_mfa_recovery_links_expired_notice() ) {

@@ -885,12 +885,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 			if ( empty( Config::get( 'app_setup_code' ) ) ) {
 
-				$landing_url = TrialLanding::build_url(
-					TrialLanding::INFO_ID_DASHBOARD,
-					TrialLanding::resolve_email(),
-					TrialLanding::dashboard_return_url( 'dashboard' ),
-					'dashboard'
-				);
+				$landing_url = TrialLanding::dashboard_landing_url();
 
 				$actions = array_merge(
 					array(

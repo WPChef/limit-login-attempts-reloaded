@@ -50,13 +50,7 @@ class MicroCloudModalPresenter {
 		$landing_url   = '';
 		if ( empty( Config::get( 'app_setup_code' ) ) ) {
 			$landing_token = TrialLanding::create_token( 'dashboard' );
-			$landing_url   = TrialLanding::build_url(
-				TrialLanding::INFO_ID_DASHBOARD,
-				$admin_email,
-				TrialLanding::dashboard_return_url( $tab ),
-				'dashboard',
-				$landing_token
-			);
+			$landing_url   = TrialLanding::dashboard_landing_url( $tab, $landing_token );
 		}
 
 		self::$view_vars_by_tab[ $tab ] = array(

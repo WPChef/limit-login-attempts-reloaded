@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Optional trial registration landing redirects (Wordfence-style outbound hop).
  *
  * Before leaving for info.php the plugin stores a one-time nonce in a transient
- * (24h) and embeds it into the url= parameter of the outbound landing link, so
+ * (30 min) and embeds it into the url= parameter of the outbound landing link, so
  * only a return from a user-initiated outbound click can auto-activate a
  * setup_code. The active token is reused (not regenerated) while it is still
  * fresh, so page views no longer grow wp_options.
@@ -21,8 +21,10 @@ class TrialLanding {
 	const INFO_ID_DASHBOARD  = 38;
 	const TOKEN_QUERY_ARG    = 'llar_trial_token';
 	const TRANSIENT_PREFIX   = 'llar_trial_land_';
-	const TOKEN_TTL          = 86400;
+	const TOKEN_TTL          = 1800;
 	const LANDING_BASE       = 'https://www.limitloginattempts.com/info.php';
+	// Reversed "api.limitloginattempts.com/" marker every cloud setup code ends with.
+	const SETUP_CODE_SUFFIX  = '/moc.stpmettanigoltimil.ipa';
 
 	/**
 	 * Create (or reuse) the one-time return token for the current admin.
@@ -180,6 +182,53 @@ class TrialLanding {
 	}
 
 	/**
+	 * Ready-made outbound dashboard landing URL.
+	 *
+	 * Keeps every "start the free trial" link on the same contract
+	 * (info id, email, return tab, context).
+	 *
+	 * @param string $tab   Plugin tab slug to return to.
+	 * @param string $token Optional pre-created token.
+	 * @return string
+	 */
+	public static function dashboard_landing_url( $tab = 'dashboard', $token = '' ) {
+		return self::build_url(
+			self::INFO_ID_DASHBOARD,
+			self::resolve_email(),
+			self::dashboard_return_url( $tab ),
+			'dashboard',
+			$token
+		);
+	}
+
+	/**
+	 * Whether a setup code was issued by the LLAR cloud.
+	 *
+	 * Every real cloud setup code ends with the reversed-domain marker, so an
+	 * arbitrary string in the return URL can never auto-activate a trial.
+	 *
+	 * @param string $setup_code Raw setup code from the return URL.
+	 * @return bool
+	 */
+	public static function is_trusted_setup_code( $setup_code ) {
+		$setup_code = (string) $setup_code;
+		if ( strlen( $setup_code ) <= strlen( self::SETUP_CODE_SUFFIX ) ) {
+			return false;
+		}
+
+		return substr( $setup_code, -strlen( self::SETUP_CODE_SUFFIX ) ) === self::SETUP_CODE_SUFFIX;
+	}
+
+	/**
+	 * Message shown when a trial return link cannot be used.
+	 *
+	 * @return string
+	 */
+	public static function invalid_return_message() {
+		return __( 'The link you\'re using to activate your trial period is invalid or has expired.', 'limit-login-attempts-reloaded' );
+	}
+
+	/**
 	 * Best-effort admin notification email for the client payload.
 	 *
 	 * @return string
@@ -211,8 +260,8 @@ class TrialLanding {
 	 *     @type bool   $open_trial_step Jump onboarding to step 3.
 	 *     @type string $setup_code      Setup code to activate (empty if none).
 	 *     @type string $context         onboarding|dashboard|''.
-	 *     @type bool   $can_activate    Token valid and site has no setup code yet.
-	 *     @type bool   $return_error    Setup code was returned but the token is invalid or expired.
+	 *     @type bool   $can_activate    Token valid, setup code trusted and site has no setup code yet.
+	 *     @type bool   $return_error    Setup code was returned but the token or the setup code is invalid/expired.
 	 * }
 	 */
 	public static function parse_return_request() {
@@ -248,6 +297,13 @@ class TrialLanding {
 		// Already activated — ignore inbound setup_code entirely.
 		if ( ! empty( Config::get( 'app_setup_code' ) ) ) {
 			self::$parsed_return = $result;
+			return self::$parsed_return;
+		}
+
+		// Only setup codes issued by the LLAR cloud may auto-activate.
+		if ( ! self::is_trusted_setup_code( $setup_code ) ) {
+			$result['return_error'] = true;
+			self::$parsed_return  = $result;
 			return self::$parsed_return;
 		}
 
