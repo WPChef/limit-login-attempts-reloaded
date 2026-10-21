@@ -42,11 +42,16 @@ $buttons_row = array();
 foreach ( $display_plans as $plan ) {
 
 	if ( $trial_plan_name === $plan ) {
-		// The trial column is "Active" only for trial users; it is never
-		// installable or upgradable from other plans.
-		$buttons_row[ $plan ] = ( $trial_plan_name === $actual_plan )
-			? '<a class="button menu__item button__transparent_orange llar-disabled">' . esc_html__( 'Active', 'limit-login-attempts-reloaded' ) . '</a>'
-			: '';
+		// Trial column: "Active" for trial users, a start CTA for eligible
+		// first-time users, and empty otherwise. It is never installable or
+		// upgradable from other plans.
+		if ( $trial_plan_name === $actual_plan ) {
+			$buttons_row[ $plan ] = '<a class="button menu__item button__transparent_orange llar-disabled">' . esc_html__( 'Active', 'limit-login-attempts-reloaded' ) . '</a>';
+		} elseif ( empty( \LLAR\Core\Config::get( 'app_setup_code' ) ) ) {
+			$buttons_row[ $plan ] = '<a href="' . esc_url( \LLAR\Core\TrialLanding::cta_landing_url( \LLAR\Core\TrialLanding::INFO_ID_PREMIUM, 'premium' ) ) . '" data-llar-info-id="' . esc_attr( \LLAR\Core\TrialLanding::INFO_ID_PREMIUM ) . '" class="button menu__item button__transparent_orange llar-trial-start-cta">' . esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ) . '</a>';
+		} else {
+			$buttons_row[ $plan ] = '';
+		}
 		continue;
 	}
 
