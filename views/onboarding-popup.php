@@ -115,12 +115,12 @@ ob_start(); ?>
             <div class="field-desc-additional">
 				<?php echo esc_html( $popup['step2']['desc'] ); ?>
             </div>
-            <div class="field-checkbox">
+            <label class="field-checkbox">
                 <input type="checkbox" name="lockout_notify_email" value="email"/>
                 <span>
                     <?php echo esc_html( $popup['step2']['checkbox_label'] ); ?>
                 </span>
-            </div>
+            </label>
         </div>
     </div>
     <div class="button_block-horizon">
