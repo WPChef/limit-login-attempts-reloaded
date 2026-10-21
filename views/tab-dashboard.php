@@ -57,47 +57,17 @@ if ( $dashboard['show_onboarding'] ) {
                 </div>
             </div>
             <div class="actions">
-                <div class="field-checkbox actions__consent">
-                    <input type="checkbox" id="llar-dashboard-trial-consent" value="consent"/>
-                    <span>
-                        <?php echo esc_html( $dashboard['trial_block']['consent_label'] ); ?>
-                    </span>
-                </div>
                 <div class="actions__buttons actions__buttons--centered">
                     <a href="<?php echo esc_url( $trial_modal['landing_url'] ); ?>"
                        title="<?php echo esc_attr( $dashboard['trial_block']['cta_title'] ); ?>"
                        id="llar-dashboard-trial-cta"
-                       class="button menu__item button__orange button_micro_cloud button_trial_cta link__style_unlink llar-disabled"
-                       aria-disabled="true">
+                       class="button menu__item button__orange button_micro_cloud button_trial_cta link__style_unlink llar-trial-start-cta">
                         <?php echo $dashboard['trial_block']['cta_label']; ?>
                     </a>
                 </div>
             </div>
-            <script>
-                ;( function( $ ) {
-                    $( function() {
-                        const $consent = $( '#llar-dashboard-trial-consent' );
-                        const $cta = $( '#llar-dashboard-trial-cta' );
-                        const disabled = 'llar-disabled';
-
-                        $consent.on( 'change', function() {
-                            if ( $( this ).prop( 'checked' ) ) {
-                                $cta.removeClass( disabled ).attr( 'aria-disabled', 'false' );
-                            } else {
-                                $cta.addClass( disabled ).attr( 'aria-disabled', 'true' );
-                            }
-                        } );
-
-                        $cta.on( 'click', function( e ) {
-                            if ( $cta.hasClass( disabled ) || ! $consent.prop( 'checked' ) ) {
-                                e.preventDefault();
-                                e.stopImmediatePropagation();
-                            }
-                        } );
-                    } );
-                } )( jQuery );
-            </script>
-        </div>
+            <!-- Consent + email are collected in the trial start popup. -->
+         </div>
         <?php
         $modal = $trial_modal;
         require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php');

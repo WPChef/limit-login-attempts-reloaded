@@ -168,13 +168,14 @@ class DashboardRiskRenderer {
 	 * @return string
 	 */
 	private function get_micro_cloud_recommendation_html() {
-		// Risk recommendation has no consent checkbox (it also renders inside
-		// the WP dashboard widget) — the email must not travel in the URL.
+		// No email in the fallback href (this also renders inside the WP
+		// dashboard widget) — the trial start popup collects the email and
+		// consent right before leaving the site.
 		$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '', false );
 
 		return sprintf(
 			__(
-				'Based on your level of brute force activity, we recommend <a href="%1$s" class="llar_orange" target="_blank" rel="noopener noreferrer">starting a free %2$d day trial</a> to access features to reduce failed logins and improve site performance.',
+				'Based on your level of brute force activity, we recommend <a href="%1$s" class="llar_orange llar-trial-start-cta">starting a free %2$d day trial</a> to access features to reduce failed logins and improve site performance.',
 				'limit-login-attempts-reloaded'
 			),
 			esc_url( $landing_url ),

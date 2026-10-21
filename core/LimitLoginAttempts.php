@@ -706,6 +706,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
 
+		// "Start Your 7-Day Free Trial" popup behind every non-onboarding CTA.
+		TrialStartPopup::init();
+
 		// MFA flow callback: llar_mfa=1&token=...&code=...
 		add_action( 'init', array( $this, 'mfa_flow_callback' ), 1 );
 		add_action( 'init', array( DigestStorage::class, 'register_post_type' ) );
@@ -885,12 +888,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 			if ( empty( Config::get( 'app_setup_code' ) ) ) {
 
-				// No consent collected on the Plugins screen — no email in the URL.
+				// No email in the fallback href — the trial start popup collects
+				// the email + consent right before leaving the site.
 				$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '', false );
 
 				$actions = array_merge(
 					array(
-						'<a href="' . esc_url( $landing_url ) . '" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+						'<a href="' . esc_url( $landing_url ) . '" class="llar-trial-start-cta" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
 					),
 					$actions
 				);

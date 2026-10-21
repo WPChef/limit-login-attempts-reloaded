@@ -50,9 +50,9 @@ class MicroCloudModalPresenter {
 		$landing_url   = '';
 		if ( empty( Config::get( 'app_setup_code' ) ) ) {
 			$landing_token = TrialLanding::create_token( 'dashboard' );
-			// Email pre-fill only where the user consents first: the dashboard
-			// trial block checkbox. Other tabs' buttons carry no email.
-			$landing_url = TrialLanding::dashboard_landing_url( $tab, $landing_token, 'dashboard' === $tab );
+			// Fallback href only — the trial start popup collects the email and
+			// consent before leaving, so no email ever sits in the markup.
+			$landing_url = TrialLanding::dashboard_landing_url( $tab, $landing_token, false );
 		}
 
 		self::$view_vars_by_tab[ $tab ] = array(

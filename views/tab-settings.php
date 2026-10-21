@@ -314,7 +314,7 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
 		                    require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php');
 		                    ?>
                             <a href="<?php echo esc_url( $trial_modal['landing_url'] ); ?>"
-                               class="button menu__item button_micro_cloud button__transparent_orange">
+                               class="button menu__item button_micro_cloud button__transparent_orange llar-trial-start-cta">
 			                    <?php echo esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ); ?>
                             </a>
                         <?php elseif ( $block_sub_group === 'Micro Cloud' ) : ?>
@@ -423,7 +423,7 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
                                 </div>
 	                            <?php if ( $is_local_empty_setup_code && $trial_modal ) : ?>
                                     <a href="<?php echo esc_url( $trial_modal['landing_url'] ); ?>"
-                                       class="button menu__item button_micro_cloud button__transparent_orange mt-1_5">
+                                       class="button menu__item button_micro_cloud button__transparent_orange mt-1_5 llar-trial-start-cta">
 			                            <?php echo esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ); ?>
                                     </a>
 	                            <?php elseif ( $block_sub_group === 'Micro Cloud' ) : ?>
