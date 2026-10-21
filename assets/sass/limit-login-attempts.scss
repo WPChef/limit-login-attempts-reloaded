@@ -574,6 +574,14 @@
     background-color: $background__sky-blue;
     border-radius: $border-radius;
 
+    // Promo CTAs (7 Day Trial / Upgrade / Get Started) are fixed-height
+    // 40px buttons; inline-block would top-align their label. Center it.
+    .button.menu__item {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     @include _1199 {
       padding: 16px;
     }

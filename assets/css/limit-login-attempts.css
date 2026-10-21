@@ -900,6 +900,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: #F6FBFF;
   border-radius: 20px;
 }
+#llar-setting-page .add_block__under_table .button.menu__item, #llar-setting-page-logs .add_block__under_table .button.menu__item, #llar-setting-page-logs__active .add_block__under_table .button.menu__item, #llar-setting-page-debug .add_block__under_table .button.menu__item, #llar-setting-page-premium .add_block__under_table .button.menu__item, #llar-setting-page-help .add_block__under_table .button.menu__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 @media screen and (max-width: 1199.5px) {
   #llar-setting-page .add_block__under_table, #llar-setting-page-logs .add_block__under_table, #llar-setting-page-logs__active .add_block__under_table, #llar-setting-page-debug .add_block__under_table, #llar-setting-page-premium .add_block__under_table, #llar-setting-page-help .add_block__under_table {
     padding: 16px;
