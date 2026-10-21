@@ -215,8 +215,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		MfaFlowLoginHandler::reset_handshake_guard();
 
 		if ( self::$instance ) {
-			self::$instance->info_data      = array();
-			self::$instance->info_attempted = false;
+			self::$instance->reset_info_cache();
 		}
 	}
 
@@ -1503,6 +1502,14 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		return $this->info_data;
 	}
 
+	/**
+	 * Drop the per-request /info memo so the next call reflects updated config.
+	 */
+	public function reset_info_cache() {
+		$this->info_data      = array();
+		$this->info_attempted = false;
+	}
+
 	public function info_is_exhausted() {
 		if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'custom' || ! self::$cloud_app ) {
 			return false;
@@ -1512,7 +1519,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			return $this->parse_mc_exhausted( $this->info_data );
 		}
 
-		$cached = $this->is_plugin_ui_request() ? false : get_transient( $this->mc_exhausted_cache_key() );
+		$cached = $this->is_plugin_ui_request() ? false : get_transient( self::mc_exhausted_cache_key() );
 
 		if ( false !== $cached ) {
 			return '1' === $cached;
@@ -1540,7 +1547,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	private function cache_mc_exhausted( $exhausted ) {
-		$key   = $this->mc_exhausted_cache_key();
+		$key   = self::mc_exhausted_cache_key();
 		$value = $exhausted ? '1' : '0';
 
 		if ( get_transient( $key ) === $value ) {
@@ -1550,8 +1557,17 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		set_transient( $key, $value, $exhausted ? 12 * HOUR_IN_SECONDS : 15 * MINUTE_IN_SECONDS );
 	}
 
-	private function mc_exhausted_cache_key() {
-		$app_config = Config::get( 'app_config' );
+	/**
+	 * Drop the cached MC-exhausted flag (e.g. after the cloud app config changed).
+	 *
+	 * @param array|null $app_config Config to build the key for; the current one by default.
+	 */
+	public static function clear_mc_exhausted_cache( $app_config = null ) {
+		delete_transient( self::mc_exhausted_cache_key( $app_config ) );
+	}
+
+	private static function mc_exhausted_cache_key( $app_config = null ) {
+		$app_config = is_array( $app_config ) ? $app_config : Config::get( 'app_config' );
 		$app_id     = is_array( $app_config ) && ! empty( $app_config['id'] ) ? (string) $app_config['id'] : 'unknown';
 
 		return 'limit_login_mc_exhausted_' . md5( $app_id . '|' . get_current_blog_id() );

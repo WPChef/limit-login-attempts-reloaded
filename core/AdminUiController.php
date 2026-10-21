@@ -883,6 +883,10 @@ class AdminUiController {
 				}
 				$this->plugin->show_message( __( 'Settings saved.', 'limit-login-attempts-reloaded' ) );
 				$this->cloud_app_init();
+				// App config / active app may have changed: do not reuse the
+				// /info data and the exhausted flag fetched earlier in this request.
+				$this->plugin->reset_info_cache();
+				LimitLoginAttempts::clear_mc_exhausted_cache();
 			} elseif ( isset( $_POST['llar_update_mfa_settings'] ) ) {
 				// Handle MFA settings submission via controller (capability checked inside)
 				if ( $this->mfa_controller ) {

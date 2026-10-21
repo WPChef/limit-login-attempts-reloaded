@@ -151,7 +151,8 @@ class CloudApp
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 		$link = add_query_arg( 'version', $plugin_data['Version'], $link );
 
-		$setup_response = Http::get( $link );
+		// Provisioning is slower than regular API calls — allow more time.
+		$setup_response = Http::get( $link, array( 'timeout' => 20 ) );
 
 		$response_data = isset( $setup_response['data'] ) ? $setup_response['data'] : '{}';
 		$setup_response_body = json_decode( $response_data, true );

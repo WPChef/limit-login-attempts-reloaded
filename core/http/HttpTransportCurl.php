@@ -4,6 +4,8 @@ namespace LLAR\Core\Http;
 
 class HttpTransportCurl implements HttpTransportInterface {
 
+	use HttpTimeoutTrait;
+
 	/**
 	 * @param $url
 	 * @param array $options
@@ -19,7 +21,7 @@ class HttpTransportCurl implements HttpTransportInterface {
 
 		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
 
-		return $this->request( $url, 'GET', $headers );
+		return $this->request( $url, 'GET', $headers, array(), $this->resolve_timeout( $options ) );
 	}
 
 	/**
@@ -33,7 +35,7 @@ class HttpTransportCurl implements HttpTransportInterface {
 		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
 		$data = !empty( $options['data'] ) ? $options['data'] : array();
 
-		return $this->request( $url, 'POST', $headers, $data );
+		return $this->request( $url, 'POST', $headers, $data, $this->resolve_timeout( $options ) );
 	}
 
 	/**
@@ -41,16 +43,17 @@ class HttpTransportCurl implements HttpTransportInterface {
 	 * @param $method
 	 * @param array $headers
 	 * @param array $data
+	 * @param int $timeout
 	 *
 	 * @return array
 	 */
-	private function request( $url, $method, $headers = array(), $data = array() ) {
+	private function request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT ) {
 
 		$handle = curl_init( $url );
 		
 		curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $handle, CURLOPT_CONNECTTIMEOUT, self::DEFAULT_TIMEOUT );
-		curl_setopt( $handle, CURLOPT_TIMEOUT, self::DEFAULT_TIMEOUT );
+		curl_setopt( $handle, CURLOPT_CONNECTTIMEOUT, $timeout );
+		curl_setopt( $handle, CURLOPT_TIMEOUT, $timeout );
 
 		if( $method === 'POST' ) {
 			curl_setopt($handle, CURLOPT_POST, true);
