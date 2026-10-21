@@ -2855,11 +2855,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 14px;
   line-height: 1.5;
 }
-#llar-dashboard-page .dashboard-section-1 .info-box-3 .section-content .list-unstyled li.star {
-  display: list-item;
-  list-style: disc;
-  list-style-position: inside;
-  text-align: left;
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .section-content .list-unstyled li.star::before {
+  top: 0.75em;
+  transform: none;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .desc {
   color: #666D84;
@@ -4021,6 +4019,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .action {
   margin-left: auto;
   text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .action a.button {
   font-size: 16px;

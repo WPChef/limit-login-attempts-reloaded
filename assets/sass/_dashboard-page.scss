@@ -284,11 +284,12 @@
           line-height: 1.5;
 
           li.star {
-            // The marker belongs to the first line of the entry.
-            display: list-item;
-            list-style: disc;
-            list-style-position: inside;
-            text-align: left;
+            // The sparkle marker is an absolutely positioned ::before pinned
+            // to top:50% of the whole entry. Keep it on the first text line.
+            &::before {
+              top: 0.75em;
+              transform: none;
+            }
           }
         }
       }
