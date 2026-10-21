@@ -53,8 +53,18 @@ class TrialStartPopup {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 		$id     = $screen ? $screen->id : '';
 
-		$toplevel = 'toplevel_page_limit-login-attempts';
-		if ( $toplevel !== $id && 'plugins' !== $id && 'dashboard' !== $id ) {
+		// Covers both menu modes (top-level page and the Settings submenu
+		// when "show_top_level_menu_item" is off), the Plugins list in site
+		// and network admin, and the WP dashboard widget screen.
+		$screens = array(
+			'toplevel_page_limit-login-attempts',
+			'settings_page_limit-login-attempts',
+			'settings_page_limit-login-attempts-network',
+			'plugins',
+			'plugins-network',
+			'dashboard',
+		);
+		if ( ! in_array( $id, $screens, true ) ) {
 			return;
 		}
 

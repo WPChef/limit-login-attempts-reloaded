@@ -2872,22 +2872,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   left: 50%;
   transform: translateX(-50%);
 }
-#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__consent {
-  display: flex;
-  align-items: flex-start;
-  color: #666D84;
-  font-size: 13px;
-  line-height: 1.4;
-  text-align: left;
-  margin: 0 0 12px;
-}
-#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__consent input {
-  flex-shrink: 0;
-  margin: 2px 10px 0 0;
-}
-#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__consent span {
-  display: inline-block;
-}
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons {
   display: flex;
   flex-direction: row;
@@ -2930,12 +2914,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button_trial_cta {
     min-width: 110px;
   }
-}
-#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button_trial_cta.llar-disabled {
-  border-color: rgba(255, 124, 6, 0.4980392157) !important;
-  background: rgba(255, 124, 6, 0.4980392157) !important;
-  box-shadow: none !important;
-  opacity: 0.7;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button_trial_cta:not(.llar-disabled):hover {
   background: #F07200 !important;
@@ -3713,11 +3691,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   width: 12.5px;
   margin-right: 2px;
 }
- .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .llar-upgrade-subscribe_notification__error {
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .llar-upgrade-subscribe_notification__error {
   color: #EC4652;
   background-color: rgba(236, 70, 82, 0.1019607843);
 }
-/* PR #322: trial step-3 email input under the "Would you like..." caption */
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .llar-trial-email {
   margin-top: 12px;
 }
@@ -5124,10 +5101,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   cursor: help;
 }
 .llar-compat-wrap .llar-compat-icon.llar-compat-icon--both {
-  background: url(../img/icon-compat-both.svg) no-repeat center / contain;
+  background: url(../img/icon-compat-both.svg) no-repeat center/contain;
 }
 .llar-compat-wrap .llar-compat-icon.llar-compat-icon--cloud {
-  background: url(../img/icon-compat-cloud.svg) no-repeat center / contain;
+  background: url(../img/icon-compat-cloud.svg) no-repeat center/contain;
 }
 .llar-compat-wrap .llar-compat-legend {
   margin-top: 12px;
@@ -5139,5 +5116,3 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .llar-compat-wrap .llar-compat-legend .llar-compat-icon.llar-compat-icon--cloud {
   margin-left: 18px;
 }
-
-/*# sourceMappingURL=limit-login-attempts.css.map */

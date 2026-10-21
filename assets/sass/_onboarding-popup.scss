@@ -288,6 +288,11 @@
             color: $state-color__error;
             background-color: $state-color__error_back;
           }
+
+          // PR #322: trial step-3 email input under the "Would you like..." caption.
+          .llar-trial-email {
+            margin-top: 12px;
+          }
         }
 
         .field {

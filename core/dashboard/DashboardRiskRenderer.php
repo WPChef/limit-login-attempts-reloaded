@@ -456,7 +456,6 @@ class DashboardRiskRenderer {
 					__( 'Unlock advanced security features including Cloud Protection, Block by Country, Login Firewall, and Successful Login Logs', 'limit-login-attempts-reloaded' ),
 					__( 'Stop brute force attacks before they reach your login page with one of the strongest login protection systems for WordPress', 'limit-login-attempts-reloaded' ),
 				),
-				'consent_label' => __( 'I consent to my domain name and email address being sent to the Limit Login Attempts Reloaded server for trial account registration.', 'limit-login-attempts-reloaded' ),
 				'cta_title' => LimitLoginAttempts::trial_label(),
 				'cta_label' => LimitLoginAttempts::trial_label(),
 			),

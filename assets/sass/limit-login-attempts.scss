@@ -2672,4 +2672,83 @@
 @import "micro-cloud-modal";
 @import "mfa-tab";
 
+// Compatibility status card on the Debug tab (hand-added with the feature;
+// kept here so the CSS bundle stays in sync with the SCSS sources).
+.llar-compat-wrap {
+  .llar-compat-card {
+    background: #FDFDFD;
+    border-radius: 20px;
+    box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
+    padding: 6px 24px;
+    margin-top: 15px;
+    overflow-x: auto;
+  }
+
+  .llar-compat-table {
+    width: 100%;
+    min-width: 660px;
+    border-collapse: collapse;
+    margin: 0;
+
+    th,
+    td {
+      padding: 14px 10px;
+      text-align: left;
+      border-bottom: 1px solid #E9EDF2;
+      font-size: 14px;
+      color: #2A2F40;
+      vertical-align: middle;
+    }
+
+    thead th {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child th,
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    th.llar-compat-plugin {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    td.llar-compat-cell {
+      text-align: center;
+      width: 90px;
+    }
+  }
+
+  .llar-compat-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    cursor: help;
+
+    &.llar-compat-icon--both {
+      background: url(../img/icon-compat-both.svg) no-repeat center / contain;
+    }
+
+    &.llar-compat-icon--cloud {
+      background: url(../img/icon-compat-cloud.svg) no-repeat center / contain;
+    }
+  }
+
+  .llar-compat-legend {
+    margin-top: 12px;
+
+    .llar-compat-icon {
+      margin: 0 6px 0 0;
+      cursor: default;
+
+      &.llar-compat-icon--cloud {
+        margin-left: 18px;
+      }
+    }
+  }
+}
+
 

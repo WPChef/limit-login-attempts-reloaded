@@ -67,7 +67,7 @@ if ( $dashboard['show_onboarding'] ) {
                 </div>
             </div>
             <!-- Consent + email are collected in the trial start popup. -->
-         </div>
+        </div>
         <?php
         $modal = $trial_modal;
         require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php');
