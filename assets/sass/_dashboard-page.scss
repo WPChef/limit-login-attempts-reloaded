@@ -282,6 +282,14 @@
           padding-left: 5px;
           font-size: 14px;
           line-height: 1.5;
+
+          li.star {
+            // The marker belongs to the first line of the entry.
+            display: list-item;
+            list-style: disc;
+            list-style-position: inside;
+            text-align: left;
+          }
         }
       }
 

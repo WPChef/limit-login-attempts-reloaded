@@ -50,6 +50,15 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
             </div>
             <?php if ( ! $is_premium ) : ?>
                 <div class="action">
+                    <?php if ( \LLAR\Core\LimitLoginAttempts::trial_plan_name() !== $block_sub_group
+                        && 'Micro Cloud' !== $block_sub_group
+                        && empty( \LLAR\Core\Config::get( 'app_setup_code' ) ) ) : ?>
+                        <a href="<?php echo esc_url( \LLAR\Core\TrialLanding::cta_landing_url( \LLAR\Core\TrialLanding::INFO_ID_PREMIUM, 'premium' ) ); ?>"
+                           data-llar-info-id="<?php echo esc_attr( \LLAR\Core\TrialLanding::INFO_ID_PREMIUM ); ?>"
+                           class="button menu__item button__transparent_orange llar-trial-start-cta">
+		                    <?php echo esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ); ?>
+                        </a>
+                    <?php endif; ?>
                     <a class="button menu__item button__orange" href="<?php echo esc_url( ( \LLAR\Core\LimitLoginAttempts::trial_plan_name() === $block_sub_group )
                         ? add_query_arg( 'id', '41', $this->info_upgrade_url() )
                         : ( ( $block_sub_group === 'Micro Cloud' )

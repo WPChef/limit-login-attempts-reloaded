@@ -490,6 +490,8 @@
             margin-top: 10px;
             margin-left: 25px;
             text-align: left;
+            // The whole consent text toggles the checkbox.
+            cursor: pointer;
 
             input {
               margin-top: 15px;

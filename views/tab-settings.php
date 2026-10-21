@@ -73,7 +73,7 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
             <div class="llar-settings-wrap">
                 <table class="llar-form-table">
                     <tr>
-                        <th scope="row" valign="top"><?php _e( 'Active App', 'limit-login-attempts-reloaded' ); ?>
+                        <th scope="row" valign="middle"><?php _e( 'Active App', 'limit-login-attempts-reloaded' ); ?>
                             <span class="hint_tooltip-parent">
                                 <span class="dashicons dashicons-editor-help"></span>
                                 <div class="hint_tooltip">
@@ -313,7 +313,8 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
 		                    $modal = $trial_modal;
 		                    require_once( LLA_PLUGIN_DIR . 'views/micro-cloud-modal.php');
 		                    ?>
-                            <a href="<?php echo esc_url( $trial_modal['landing_url'] ); ?>"
+                            <a href="<?php echo esc_url( \LLAR\Core\TrialLanding::cta_landing_url( \LLAR\Core\TrialLanding::INFO_ID_SETTINGS_LOCAL, 'settings' ) ); ?>"
+                               data-llar-info-id="<?php echo esc_attr( \LLAR\Core\TrialLanding::INFO_ID_SETTINGS_LOCAL ); ?>"
                                class="button menu__item button_micro_cloud button__transparent_orange llar-trial-start-cta">
 			                    <?php echo esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ); ?>
                             </a>
@@ -322,7 +323,7 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
 			                    <?php _e( 'Upgrade', 'limit-login-attempts-reloaded' ); ?>
                             </a>
 	                    <?php else : ?>
-                            <a href="<?php echo esc_url( $url_try_for_free )  . 'settings-local-block' ?>" class="button menu__item button__transparent_orange" target="_blank">
+                            <a href="<?php echo esc_url( add_query_arg( 'id', \LLAR\Core\TrialLanding::INFO_ID_UPGRADE_LOCAL, $url_try_for_free . 'settings-local-block' ) ); ?>" class="button menu__item button__transparent_orange" target="_blank">
 			                    <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
                             </a>
 	                    <?php endif; ?>
@@ -422,7 +423,8 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
 									<?php _e( 'Why Use Our Premium Cloud App?', 'limit-login-attempts-reloaded' ); ?>
                                 </div>
 	                            <?php if ( $is_local_empty_setup_code && $trial_modal ) : ?>
-                                    <a href="<?php echo esc_url( $trial_modal['landing_url'] ); ?>"
+                                    <a href="<?php echo esc_url( \LLAR\Core\TrialLanding::cta_landing_url( \LLAR\Core\TrialLanding::INFO_ID_SETTINGS_CLOUD, 'settings' ) ); ?>"
+                                       data-llar-info-id="<?php echo esc_attr( \LLAR\Core\TrialLanding::INFO_ID_SETTINGS_CLOUD ); ?>"
                                        class="button menu__item button_micro_cloud button__transparent_orange mt-1_5 llar-trial-start-cta">
 			                            <?php echo esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ); ?>
                                     </a>
@@ -431,7 +433,7 @@ $url_try_for_free_cloud     = ( $is_active_app_custom ) ? $this->info_upgrade_ur
 			                            <?php _e( 'Upgrade', 'limit-login-attempts-reloaded' ); ?>
                                     </a>
 	                            <?php else : ?>
-                                    <a href="<?php echo esc_url( $url_try_for_free ) . 'settings-cloud-block' ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
+                                    <a href="<?php echo esc_url( add_query_arg( 'id', \LLAR\Core\TrialLanding::INFO_ID_UPGRADE_CLOUD, $url_try_for_free . 'settings-cloud-block' ) ); ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
 			                            <?php _e( 'Get Started', 'limit-login-attempts-reloaded' ); ?>
                                     </a>
 	                            <?php endif; ?>

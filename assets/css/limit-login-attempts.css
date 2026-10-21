@@ -2855,6 +2855,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 14px;
   line-height: 1.5;
 }
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .section-content .list-unstyled li.star {
+  display: list-item;
+  list-style: disc;
+  list-style-position: inside;
+  text-align: left;
+}
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .desc {
   color: #666D84;
   font-size: 16px;
@@ -3846,6 +3852,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: 10px;
   margin-left: 25px;
   text-align: left;
+  cursor: pointer;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-checkbox input {
   margin-top: 15px;
@@ -5052,6 +5059,14 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .llar-mfa-action-alert .jconfirm-content-pane, .jconfirm-type-red .jconfirm-content-pane {
   padding: 15px !important;
+}
+
+.llar-trial-start-cta.llar-trial-start-cta,
+.add_block__title .button__transparent_orange {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
 }
 
 .llar-compat-wrap .llar-compat-card {

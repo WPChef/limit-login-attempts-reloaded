@@ -2672,6 +2672,17 @@
 @import "micro-cloud-modal";
 @import "mfa-tab";
 
+// Trial / upsell CTAs: keep the label vertically centered inside the button
+// on every page (dashboard block, settings, logs, premium, plugins).
+// The doubled class outspecifies `.wp-core-ui .button { display:inline-block }`.
+.llar-trial-start-cta.llar-trial-start-cta,
+.add_block__title .button__transparent_orange {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
 // Compatibility status card on the Debug tab (hand-added with the feature;
 // kept here so the CSS bundle stays in sync with the SCSS sources).
 .llar-compat-wrap {

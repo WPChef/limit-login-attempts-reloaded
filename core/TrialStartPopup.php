@@ -158,7 +158,11 @@ class TrialStartPopup {
 	var consent = document.getElementById( 'llar-trial-start-consent' );
 	var yesBtn = document.getElementById( 'llar-trial-start-yes' );
 
-	var open = function () {
+	var infoId = config.landing.info_id;
+
+	var open = function ( ctaInfoId ) {
+		// Each CTA carries its own marketing info id.
+		infoId = ctaInfoId || config.landing.info_id;
 		consent.checked = false;
 		yesBtn.classList.add( 'llar-disabled' );
 		emailInput.classList.remove( 'is-invalid' );
@@ -179,7 +183,7 @@ class TrialStartPopup {
 
 	var buildLandingUrl = function ( email ) {
 		return config.landing.base_url
-			+ '?id=' + encodeURIComponent( config.landing.info_id )
+			+ '?id=' + encodeURIComponent( infoId )
 			+ '&url=' + encodeURIComponent( config.landing.return_url )
 			+ '&email=' + encodeURIComponent( email );
 	};
@@ -226,7 +230,7 @@ class TrialStartPopup {
 			return;
 		}
 		e.preventDefault();
-		open();
+		open( link.getAttribute( 'data-llar-info-id' ) );
 	} );
 } )();
 </script>

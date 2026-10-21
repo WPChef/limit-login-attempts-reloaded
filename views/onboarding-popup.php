@@ -164,12 +164,12 @@ ob_start(); ?>
                 <input type="email" class="input_border" id="llar-trial-email" placeholder="<?php echo esc_attr( $popup['step3']['email_placeholder'] ); ?>"
                        value="<?php echo esc_attr( $popup['admin_email'] ); ?>">
             </div>
-			<div class="field-checkbox">
+			<label class="field-checkbox" for="llar-trial-consent">
 				<input type="checkbox" id="llar-trial-consent" value="consent"/>
 				<span>
 					<?php echo esc_html( $popup['step3']['consent_label'] ); ?>
 				</span>
-			</div>
+			</label>
         </div>
         <div class="llar-upgrade-subscribe">
             <div class="button_block-horizon button_block-horizon--trial">
@@ -486,11 +486,11 @@ add_filter( 'wp_kses_allowed_html', function( $tags, $context ) {
                                     $error.text( response.data.msg ).show();
                                     $body.removeClass( disabled );
                                     $closeIcon.removeClass( hidden );
-                                    setTimeout( function () {
-                                        $error.text( '' ).hide();
-                                        $setup_code_key.val( '' );
-
-                                    }, 4000 );
+                                    // Keep the error visible until the next
+                                    // attempt — e.g. "This domain is not
+                                    // eligible for trial because it has
+                                    // already been used with our service
+                                    // before" must not vanish on a timer.
                                     $spinner.removeClass( visibility );
                                 }
                             } )

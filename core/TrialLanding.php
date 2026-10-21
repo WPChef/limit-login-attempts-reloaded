@@ -19,6 +19,13 @@ class TrialLanding {
 
 	const INFO_ID_ONBOARDING = 37;
 	const INFO_ID_DASHBOARD  = 38;
+	// Per-CTA marketing info ids: each entry point gets its own landing tag.
+	const INFO_ID_LOGS            = 42;
+	const INFO_ID_PREMIUM         = 43;
+	const INFO_ID_SETTINGS_LOCAL  = 44;
+	const INFO_ID_SETTINGS_CLOUD  = 45;
+	const INFO_ID_UPGRADE_LOCAL   = 46;
+	const INFO_ID_UPGRADE_CLOUD   = 47;
 	const TOKEN_QUERY_ARG    = 'llar_trial_token';
 	const TRANSIENT_PREFIX   = 'llar_trial_land_';
 	const TOKEN_TTL          = 1800;
@@ -207,6 +214,28 @@ class TrialLanding {
 			self::dashboard_return_url( $tab ),
 			'dashboard',
 			$token
+		);
+	}
+
+	/**
+	 * Ready-made outbound landing URL for a specific CTA info id.
+	 *
+	 * Non-dashboard CTAs (logs, premium, settings) open the trial start
+	 * popup, so the admin email is never pre-filled here — the landing
+	 * asks for it after the consent click.
+	 *
+	 * @param int    $info_id    Marketing info id of the CTA.
+	 * @param string $tab        Plugin tab slug to return to.
+	 * @param bool   $with_email Whether the admin email may be shared (consent given).
+	 * @return string
+	 */
+	public static function cta_landing_url( $info_id, $tab = 'dashboard', $with_email = false ) {
+		return self::build_url(
+			(int) $info_id,
+			$with_email ? self::resolve_email() : '',
+			self::dashboard_return_url( $tab ),
+			'dashboard',
+			''
 		);
 	}
 
