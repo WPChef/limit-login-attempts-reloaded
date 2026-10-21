@@ -284,10 +284,11 @@
           line-height: 1.5;
 
           li.star {
-            // The sparkle marker is an absolutely positioned ::before pinned
-            // to top:50% of the whole entry. Keep it on the first text line.
+            // The sparkle marker is an absolutely positioned ::before whose
+            // glyph box starts at `top`. Anchor it to the entry top so it
+            // stays on the first text line instead of mid-entry.
             &::before {
-              top: 0.75em;
+              top: 0;
               transform: none;
             }
           }
