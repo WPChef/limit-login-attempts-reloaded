@@ -24,7 +24,7 @@ $limit = 10;
 			<?php _e( 'Successful Login Attempts', 'limit-login-attempts-reloaded' ) ?>
         </div>
         <div class="view">
-            <a class="link__style_unlink llar_turquoise" href="/wp-admin/admin.php?page=limit-login-attempts&tab=logs-custom">
+            <a class="link__style_unlink llar_turquoise" href="<?php echo $this->get_options_page_uri( 'logs-custom' ); ?>">
 		        <?php _e( ' View more', 'limit-login-attempts-reloaded' ) ?>
             </a>
         </div>
@@ -94,7 +94,7 @@ $limit = 10;
 	            endif ?>
 	            <?php echo sprintf(
 		            $text_no_custom,
-		            '/wp-admin/admin.php?page=limit-login-attempts&tab=premium'
+		            $this->get_options_page_uri( 'premium' )
 	            ); ?>
             </div>
         </div>
