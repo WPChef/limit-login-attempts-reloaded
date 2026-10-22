@@ -1,5 +1,6 @@
 @import "settings";
-.toplevel_page_limit-login-attempts { // top level css
+.toplevel_page_limit-login-attempts,
+.settings_page_limit-login-attempts { // plugin admin page (left menu or Settings submenu)
 
   #wpwrap {
     background-color: $background__sky-blue;
@@ -2562,7 +2563,8 @@
 }
 
 .dashboard_page_llar-welcome,
-.toplevel_page_limit-login-attempts {
+.toplevel_page_limit-login-attempts,
+.settings_page_limit-login-attempts {
   .update-nag,
   .notice:not(.llar-notice-review):not(.llar-options-notice) {
     margin-top: 15px;
@@ -2697,5 +2699,6 @@
 @import "help-page";
 @import "micro-cloud-modal";
 @import "mfa-tab";
+@import "compatibility-table";
 
 

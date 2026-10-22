@@ -1650,7 +1650,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			! $this->has_capability
 			|| Config::get( 'review_notice_shown' )
 			|| ! $screen
-			|| ! in_array( $screen->base, array( 'dashboard', 'plugins', 'toplevel_page_limit-login-attempts' ), true )
+			|| ! in_array( $screen->base, array( 'dashboard', 'plugins', 'toplevel_page_limit-login-attempts', 'settings_page_limit-login-attempts' ), true )
 		) {
 			return;
 		}

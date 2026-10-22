@@ -323,8 +323,11 @@ class AdminUiController {
 	{
 		if ( is_network_admin() ) {
 			$uri = network_admin_url( 'settings.php?page=' . $this->options_page_slug );
-		} else {
+		} elseif ( Config::get( 'show_top_level_menu_item' ) ) {
 			$uri = admin_url( 'admin.php?page=' . $this->options_page_slug );
+		} else {
+			// add_options_page registers under Settings → options-general.php
+			$uri = admin_url( 'options-general.php?page=' . $this->options_page_slug );
 		}
 
 		if ( ! empty( $tab ) ) {
