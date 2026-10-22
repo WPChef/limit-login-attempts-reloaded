@@ -125,11 +125,24 @@ class LocalLockoutManager {
 	/**
 	 * Bind the request allowlist guard to a login string (user not resolved yet).
 	 *
-	 * @param string $username Login username.
+	 * An allowlisted literal email is canonicalized to the account user_login
+	 * when a user exists: later recordings in the same request carry the
+	 * identity as it was submitted (which may be the same email), and the
+	 * guard compares canonically — a raw email bound to user_login would never
+	 * match and the allowlisted user's own attempt would be recorded.
+	 *
+	 * @param string $username Login username or email.
 	 * @return void
 	 */
 	public static function mark_allowlisted_login_in_request( $username ) {
-		self::$allowlisted_in_request = (string) $username;
+		$canonical = trim( (string) $username );
+		if ( '' !== $canonical && is_email( $canonical ) ) {
+			$user = get_user_by( 'email', $canonical );
+			if ( $user instanceof \WP_User && '' !== $user->user_login ) {
+				$canonical = $user->user_login;
+			}
+		}
+		self::$allowlisted_in_request = $canonical;
 	}
 
 	/**
