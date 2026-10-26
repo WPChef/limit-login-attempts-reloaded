@@ -494,7 +494,9 @@
             cursor: pointer;
 
             input {
-              margin-top: 15px;
+              // Center the 18px checkbox against the first text line
+              // (line box ~21px, offset by the span's 10px top margin).
+              margin-top: 11px;
               margin-left: -25px;
               vertical-align: top;
             }

@@ -3858,7 +3858,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   cursor: pointer;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-checkbox input {
-  margin-top: 15px;
+  margin-top: 11px;
   margin-left: -25px;
   vertical-align: top;
 }

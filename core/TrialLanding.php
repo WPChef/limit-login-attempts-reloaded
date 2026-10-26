@@ -192,6 +192,14 @@ class TrialLanding {
 			$tab = 'dashboard';
 		}
 
+		// Auto-activation on return is rendered by the micro cloud modal,
+		// which is included only on these tabs. A return to any other tab
+		// (e.g. logs-local) would burn the token with nothing to activate,
+		// so bounce those to the dashboard.
+		if ( ! in_array( $tab, array( 'dashboard', 'premium', 'settings' ), true ) ) {
+			$tab = 'dashboard';
+		}
+
 		return admin_url( 'admin.php?page=limit-login-attempts&tab=' . $tab );
 	}
 

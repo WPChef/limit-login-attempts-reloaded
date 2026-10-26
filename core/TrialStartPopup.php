@@ -24,9 +24,17 @@ class TrialStartPopup {
 	/**
 	 * Whether the popup is needed on this screen.
 	 *
+	 * Limited to users who can actually manage the plugin: the markup
+	 * pre-fills the admin email, which must not leak to subscribers, and
+	 * the return-token transients are only worth creating for admins.
+	 *
 	 * @return bool
 	 */
 	public static function should_show() {
+		if ( ! current_user_can( 'manage_options' ) && ! current_user_can( LimitLoginAttempts::$capabilities ) ) {
+			return false;
+		}
+
 		return empty( Config::get( 'app_setup_code' ) );
 	}
 
@@ -120,7 +128,8 @@ class TrialStartPopup {
 .llar-trial-start__input:focus{border-color:#FF7C06;outline:2px solid rgba(255,124,6,.25);}
 .llar-trial-start__input.is-invalid{border-color:#d63638;outline:2px solid rgba(214,54,56,.25);}
 .llar-trial-start__consent{display:flex;align-items:flex-start;gap:8px;margin:0 0 20px;font-size:13px;line-height:1.5;color:#3c434a;cursor:pointer;}
-.llar-trial-start__consent input{margin-top:2px;}
+/* Specificity above .toplevel_page_... input[type=checkbox], which pins -4px. */
+.llar-trial-start .llar-trial-start__consent input{margin-top:0;}
 .llar-trial-start__submit{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;height:42px;padding:0 18px;border:1px solid #FF7C06;border-radius:4px;background:#FF7C06;color:#fff;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 6px 12px rgba(255,124,6,.5);}
 .llar-trial-start__submit:hover{background:#F07200;}
 .llar-trial-start__submit .dashicons{font-size:16px;width:16px;height:16px;}
