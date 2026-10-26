@@ -158,12 +158,35 @@ class MfaFlowLoginHandler {
 		if ( $user && ! empty( $user->roles ) && is_array( $user->roles ) ) {
 			$user_group = reset( $user->roles );
 		}
-		$redirect_to         = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
-		$cancel_url          = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		$current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		// WP login uses redirect_to; WooCommerce (checkout/global form) uses redirect.
+		// is_string() guards: query arrays (redirect[]=x) must never reach esc_url_raw()
+		// (ltrim() TypeError on PHP 8 = HTTP 500 on the login form).
+		$redirect_to = ( isset( $_REQUEST['redirect_to'] ) && is_string( $_REQUEST['redirect_to'] ) ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+		if ( '' === $redirect_to && isset( $_REQUEST['redirect'] ) && is_string( $_REQUEST['redirect'] ) ) {
+			$redirect_to = esc_url_raw( wp_unslash( $_REQUEST['redirect'] ) );
+		}
+		$cancel_url = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
+		// Rebuild the current URL from scheme + host + REQUEST_URI instead of
+		// home_url( $uri ): home_url() prepends its own path, duplicating it in
+		// subdirectory installs (https://site/blog + /blog/my-account/ => /blog/blog/...).
+		$current_request_uri = ( isset( $_SERVER['REQUEST_URI'] ) && is_string( $_SERVER['REQUEST_URI'] ) ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
 		$current_login_url   = '';
-		if ( is_string( $current_request_uri ) && '' !== $current_request_uri ) {
-			$current_login_url = home_url( $current_request_uri );
+		if ( '' !== $current_request_uri ) {
+			$home_url_parts = wp_parse_url( home_url() );
+			$home_scheme    = ( is_array( $home_url_parts ) && ! empty( $home_url_parts['scheme'] ) ) ? $home_url_parts['scheme'] : 'http';
+			$request_host   = ( isset( $_SERVER['HTTP_HOST'] ) && is_string( $_SERVER['HTTP_HOST'] ) ) ? preg_replace( '/[^a-zA-Z0-9.\-:\[\]]/', '', wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
+			$current_host   = ( '' !== $request_host ) ? $request_host : ( ( is_array( $home_url_parts ) && ! empty( $home_url_parts['host'] ) ) ? $home_url_parts['host'] : '' );
+			if ( '' !== $current_host ) {
+				$current_login_url = esc_url_raw( $home_scheme . '://' . $current_host . $current_request_uri );
+			}
+		}
+		// Classic /my-account/ form often has no redirect field; WC then uses referer.
+		// After MFA the referer is the MFA app, so persist the login page as destination.
+		// WooCommerce contexts only: wp_authenticate_user fires for every wp_signon()
+		// call, so capturing the current page for xmlrpc/admin-ajax/REST/custom
+		// endpoints would send the user to a dead page after a successful MFA.
+		if ( '' === $redirect_to && '' !== $current_login_url && $this->is_woocommerce_login_request() ) {
+			$redirect_to = $current_login_url;
 		}
 		$login_url = ( '' !== $current_login_url ) ? $current_login_url : wp_login_url();
 		$login_url = add_query_arg( 'llar_mfa', '1', $login_url );
@@ -221,5 +244,22 @@ class MfaFlowLoginHandler {
 
 		$rate['c'] = (int) $rate['c'] + 1;
 		set_transient( $rate_key, $rate, $period );
+	}
+
+	/**
+	 * Whether the current request is a WooCommerce login form submission.
+	 *
+	 * WC calls wp_signon() only after verifying the woocommerce-login-nonce
+	 * field (WC_Form_Handler::process_login), and every WC login form template
+	 * posts it — so its presence is a necessary and sufficient marker of a WC
+	 * login context. wp_authenticate_user also fires for non-HTML channels
+	 * (xmlrpc/admin-ajax/REST/custom endpoints) that must not be captured as
+	 * MFA destinations. Marker check only: the nonce itself was already
+	 * verified by WC before wp_signon().
+	 *
+	 * @return bool
+	 */
+	private function is_woocommerce_login_request() {
+		return isset( $_REQUEST['woocommerce-login-nonce'] );
 	}
 }
