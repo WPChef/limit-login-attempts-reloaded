@@ -186,10 +186,7 @@ class MfaFlowLoginHandler {
 		// call, so capturing the current page for xmlrpc/admin-ajax/REST/custom
 		// endpoints would send the user to a dead page after a successful MFA.
 		if ( '' === $redirect_to && '' !== $current_login_url && $this->is_woocommerce_login_request() ) {
-			$path = (string) wp_parse_url( $current_login_url, PHP_URL_PATH );
-			if ( '' !== $path && false === strpos( $path, 'wp-login.php' ) ) {
-				$redirect_to = $current_login_url;
-			}
+			$redirect_to = $current_login_url;
 		}
 		$login_url = ( '' !== $current_login_url ) ? $current_login_url : wp_login_url();
 		$login_url = add_query_arg( 'llar_mfa', '1', $login_url );
@@ -252,40 +249,17 @@ class MfaFlowLoginHandler {
 	/**
 	 * Whether the current request is a WooCommerce login form submission.
 	 *
-	 * All WC login forms (my-account page, checkout, global/block form) post the
-	 * woocommerce-login-nonce field; custom templates without it still post to a
-	 * WC page, so the request path is checked against my-account/checkout too.
-	 * Marker checks only — the nonce itself was already verified by WC before
-	 * wp_signon(), and wp_authenticate_user also fires for non-HTML channels
-	 * (xmlrpc/admin-ajax/REST) that must not be captured as MFA destinations.
+	 * WC calls wp_signon() only after verifying the woocommerce-login-nonce
+	 * field (WC_Form_Handler::process_login), and every WC login form template
+	 * posts it — so its presence is a necessary and sufficient marker of a WC
+	 * login context. wp_authenticate_user also fires for non-HTML channels
+	 * (xmlrpc/admin-ajax/REST/custom endpoints) that must not be captured as
+	 * MFA destinations. Marker check only: the nonce itself was already
+	 * verified by WC before wp_signon().
 	 *
 	 * @return bool
 	 */
 	private function is_woocommerce_login_request() {
-		if ( isset( $_REQUEST['woocommerce-login-nonce'] ) ) {
-			return true;
-		}
-		if ( ! function_exists( 'wc_get_page_id' ) ) {
-			return false;
-		}
-		$uri = ( isset( $_SERVER['REQUEST_URI'] ) && is_string( $_SERVER['REQUEST_URI'] ) ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
-		if ( '' === $uri ) {
-			return false;
-		}
-		foreach ( array( 'myaccount', 'checkout' ) as $page ) {
-			$page_id = (int) wc_get_page_id( $page );
-			if ( $page_id <= 0 ) {
-				continue;
-			}
-			$permalink = get_permalink( $page_id );
-			if ( ! is_string( $permalink ) || '' === $permalink ) {
-				continue;
-			}
-			$page_path = (string) wp_parse_url( $permalink, PHP_URL_PATH );
-			if ( '' !== $page_path && untrailingslashit( $uri ) === untrailingslashit( $page_path ) ) {
-				return true;
-			}
-		}
-		return false;
+		return isset( $_REQUEST['woocommerce-login-nonce'] );
 	}
 }
