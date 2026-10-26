@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-if ( 'empty' === $mode ) {
+if ( 'empty' === $mode && empty( $rows ) ) {
 	?>
 	<tr class="empty-row">
 		<td colspan="4"
