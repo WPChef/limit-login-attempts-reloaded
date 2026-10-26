@@ -755,28 +755,12 @@ class Ajax {
 
 		if ( $lockouts ) {
 
+			$view = ActiveLockoutsPresenter::get_view_vars( $lockouts, $offset );
+			$mode = $view['mode'];
+			$rows = $view['rows'];
+
 			ob_start();
-			?>
-
-			<?php if ( $lockouts['items'] ) : ?>
-				<?php foreach ( $lockouts['items'] as $item ) : ?>
-					<tr>
-						<td><?php echo esc_html( $item['ip'] ); ?></td>
-						<td><?php echo ( is_null( $item['login'] ) ) ? '-' : esc_html( implode( ',', $item['login'] ) ); ?></td>
-						<td><?php echo ( is_null( $item['count'] ) ) ? '-' : esc_html( $item['count'] ); ?></td>
-						<td><?php echo ( is_null( $item['ttl'] ) ) ? '-' : esc_html( round( ( $item['ttl'] - time() ) / 60 ) ); ?></td>
-					</tr>
-				<?php endforeach; ?>
-
-			<?php else : ?>
-				<?php if ( empty( $offset ) ) : ?>
-					<tr class="empty-row">
-						<td colspan="4"
-							style="text-align: center"><?php _e( 'No lockouts yet.', 'limit-login-attempts-reloaded' ); ?></td>
-					</tr>
-				<?php endif; ?>
-			<?php endif; ?>
-			<?php
+			include LLA_PLUGIN_DIR . 'views/app-widgets/active-lockouts-rows.php';
 
 			wp_send_json_success(
 				array(
