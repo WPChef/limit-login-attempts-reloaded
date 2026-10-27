@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.3.11 =
+* Added a red dot to the admin menu and admin bar when Micro Cloud requests are exhausted.
+
 = 3.3.10 =
 * Added detection of a cached or optimizer-stripped login page and an admin notice warning that it can break the email code (MFA) login flow.
 * Fixed the onboarding Micro Cloud step silently completing on activation errors; it now shows the server error message so users learn when the program is closed or trial is unavailable.
