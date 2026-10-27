@@ -209,7 +209,9 @@ class Helpers {
 	public static function cloud_app_update_config( $new_app_config, $update_created_at = false ) {
 		if( !$new_app_config ) return false;
 
-		if( $active_app_config = Config::get( 'app_config' ) ) {
+		$previous_app_config = Config::get( 'app_config' );
+
+		if( $active_app_config = $previous_app_config ) {
 
 			foreach ( $active_app_config['settings'] as $key => $info ) {
 
@@ -231,6 +233,11 @@ class Helpers {
 			$new_app_config['created_at'] = time();
 
 		Config::update( 'app_config', $new_app_config );
+
+		// The /info payload may change with the app config — drop the cached
+		// exhausted flag for both the previous and the new app id.
+		LimitLoginAttempts::clear_mc_exhausted_cache( $previous_app_config );
+		LimitLoginAttempts::clear_mc_exhausted_cache( $new_app_config );
 	}
 
 	/**

@@ -4,6 +4,8 @@ namespace LLAR\Core\Http;
 
 class HttpTransportFopen implements HttpTransportInterface {
 
+	use HttpTimeoutTrait;
+
 	/**
 	 * @param $url
 	 * @param array $options
@@ -19,7 +21,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
 
-		return $this->request( $url, 'GET', $headers );
+		return $this->request( $url, 'GET', $headers, array(), $this->resolve_timeout( $options ) );
 	}
 
 	/**
@@ -33,7 +35,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
 		$data = !empty( $options['data'] ) ? $options['data'] : array();
 
-		return $this->request( $url, 'POST', $headers, $data );
+		return $this->request( $url, 'POST', $headers, $data, $this->resolve_timeout( $options ) );
 	}
 
 	/**
@@ -41,10 +43,11 @@ class HttpTransportFopen implements HttpTransportInterface {
 	 * @param $method
 	 * @param array $headers
 	 * @param array $data
+	 * @param int $timeout
 	 *
 	 * @return array
 	 */
-	private function request( $url, $method, $headers = array(), $data = array() ) {
+	private function request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT ) {
 
 		$method = strtoupper( trim( $method ) );
 
@@ -59,6 +62,7 @@ class HttpTransportFopen implements HttpTransportInterface {
                 'header'        => implode( "\r\n", $headers ),
                 'content'       => $request_data,
                 'ignore_errors' => true,
+                'timeout'       => $timeout,
             )
 		));
 

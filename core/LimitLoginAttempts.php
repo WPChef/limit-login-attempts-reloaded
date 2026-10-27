@@ -82,6 +82,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	private $integration_manager = null;
 
 	private $info_data = array();
+	private $info_attempted = false;
 
 	/**
 	 * MFA manager instance (MfaManager: MfaBackupCodes, MfaEndpoint, MfaSettings, MfaValidator).
@@ -212,6 +213,10 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public static function reset_request_guards() {
 		LocalLockoutManager::reset_failed_login_recorded_in_request();
 		MfaFlowLoginHandler::reset_handshake_guard();
+
+		if ( self::$instance ) {
+			self::$instance->reset_info_cache();
+		}
 	}
 
 
@@ -642,6 +647,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
 
+			add_action( 'network_admin_menu', array( $this, 'network_setting_menu_mc_exhausted_icon' ), 11 );
+
 			if ( Config::get( 'show_warning_badge' ) ) {
 				add_action( 'network_admin_menu', array( $this, 'network_setting_menu_alert_icon' ) );
 			}
@@ -649,6 +656,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 		if ( Helpers::allow_local_options() ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+
+			add_action( 'admin_menu', array( $this, 'setting_menu_mc_exhausted_icon' ), 11 );
 
 			if ( Config::get( 'show_top_bar_menu_item' ) ) {
 				add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 999 );
@@ -1108,6 +1117,14 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public function network_setting_menu_alert_icon() {
 		$this->admin_ui->network_setting_menu_alert_icon();
 	}
+	public function setting_menu_mc_exhausted_icon()
+	{
+		$this->admin_ui->setting_menu_mc_exhausted_icon();
+	}
+	public function network_setting_menu_mc_exhausted_icon()
+	{
+		$this->admin_ui->network_setting_menu_mc_exhausted_icon();
+	}
 	/**
 	 * Get the correct options page URI
 	 *
@@ -1473,20 +1490,101 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	private function info() {
+		if ( $this->info_attempted ) {
+			return $this->info_data;
+		}
+
 		if ( self::$cloud_app ) {
-			$this->info_data = self::$cloud_app->info();
+			$this->info_attempted = true;
+			$this->info_data      = self::$cloud_app->info();
 		}
 
 		return $this->info_data;
 	}
 
-	public function info_is_exhausted() {
-		if ( empty( $this->info_data ) ) {
+	/**
+	 * Drop the per-request /info memo so the next call reflects updated config.
+	 */
+	public function reset_info_cache() {
+		$this->info_data      = array();
+		$this->info_attempted = false;
+	}
 
-			$this->info_data = $this->info();
+	public function info_is_exhausted() {
+		if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'custom' || ! self::$cloud_app ) {
+			return false;
 		}
 
-		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		if ( is_array( $this->info_data ) && ! empty( $this->info_data ) ) {
+			return $this->parse_mc_exhausted( $this->info_data );
+		}
+
+		$cached = $this->is_plugin_ui_request() ? false : get_transient( self::mc_exhausted_cache_key() );
+
+		if ( false !== $cached ) {
+			return '1' === $cached;
+		}
+
+		$info = $this->info();
+
+		if ( is_array( $info ) && ! empty( $info ) ) {
+			return $this->parse_mc_exhausted( $info );
+		}
+
+		return false;
+	}
+
+	private function parse_mc_exhausted( $info ) {
+		$exhausted = isset( $info['requests']['exhausted'] )
+			? filter_var( $info['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE )
+			: false;
+
+		$exhausted = null === $exhausted ? false : (bool) $exhausted;
+
+		$this->cache_mc_exhausted( $exhausted );
+
+		return $exhausted;
+	}
+
+	private function cache_mc_exhausted( $exhausted ) {
+		$key   = self::mc_exhausted_cache_key();
+		$value = $exhausted ? '1' : '0';
+
+		if ( get_transient( $key ) === $value ) {
+			return;
+		}
+
+		set_transient( $key, $value, $exhausted ? 12 * HOUR_IN_SECONDS : 15 * MINUTE_IN_SECONDS );
+	}
+
+	/**
+	 * Drop the cached MC-exhausted flag (e.g. after the cloud app config changed).
+	 *
+	 * @param array|null $app_config Config to build the key for; the current one by default.
+	 */
+	public static function clear_mc_exhausted_cache( $app_config = null ) {
+		delete_transient( self::mc_exhausted_cache_key( $app_config ) );
+	}
+
+	private static function mc_exhausted_cache_key( $app_config = null ) {
+		$app_config = is_array( $app_config ) ? $app_config : Config::get( 'app_config' );
+		$app_id     = is_array( $app_config ) && ! empty( $app_config['id'] ) ? (string) $app_config['id'] : 'unknown';
+
+		return 'limit_login_mc_exhausted_' . md5( $app_id . '|' . get_current_blog_id() );
+	}
+
+	private function is_plugin_ui_request() {
+		if ( ! is_admin() || ! $this->has_capability ) {
+			return false;
+		}
+
+		if ( ! empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_options_page_slug ) {
+			return true;
+		}
+
+		global $pagenow;
+
+		return 'index.php' === $pagenow && ! Config::get( 'hide_dashboard_widget' );
 	}
 
 	/**
@@ -1496,12 +1594,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 */
 	public function info_is_almost_exhausted()
 	{
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return isset( $this->info_data['requests']['almost_exhausted'] ) ? filter_var( $this->info_data['requests']['almost_exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		return isset( $info['requests']['almost_exhausted'] ) ? filter_var( $info['requests']['almost_exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
 	}
 
 	/**
@@ -1510,20 +1605,18 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * @return bool
 	 */
 	public function info_has_valid_data() {
-		if ( empty( $this->info_data ) ) {
-			$this->info_data = $this->info();
-		}
+		$info = $this->info();
 
-		if ( empty( $this->info_data ) || ! is_array( $this->info_data ) ) {
+		if ( empty( $info ) || ! is_array( $info ) ) {
 			return false;
 		}
 
-		if ( empty( $this->info_data['requests'] ) || ! is_array( $this->info_data['requests'] ) ) {
+		if ( empty( $info['requests'] ) || ! is_array( $info['requests'] ) ) {
 			return false;
 		}
 
-		return array_key_exists( 'quota', $this->info_data['requests'] )
-			&& '' !== (string) $this->info_data['requests']['quota'];
+		return array_key_exists( 'quota', $info['requests'] )
+			&& '' !== (string) $info['requests']['quota'];
 	}
 
 	/**
@@ -1545,44 +1638,31 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 
 	public function info_requests() {
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['requests'] ) ) ? $this->info_data['requests'] : '';
+		return ( ! empty( $info ) && ! empty( $info['requests'] ) ) ? $info['requests'] : '';
 	}
 
 
 	public function info_sub_group() {
-		if ( empty( $this->info_data ) ) {
-
-			$this->info_data = $this->info();
-		}
-
-		$data = ( ! empty( $this->info_data ) && ! empty( $this->info_data['sub_group'] ) ) ? $this->info_data['sub_group'] : '';
+		$info = $this->info();
+		$data = ( ! empty( $info ) && ! empty( $info['sub_group'] ) ) ? $info['sub_group'] : '';
 
 		return $this->plan_name_match( $data );
 	}
 
 
 	public function info_upgrade_url() {
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['upgrade_url'] ) ) ? $this->info_data['upgrade_url'] : '';
+		return ( ! empty( $info ) && ! empty( $info['upgrade_url'] ) ) ? $info['upgrade_url'] : '';
 	}
 
 
 	public function info_block_by_country() {
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['block_by_country'] ) ) ? $this->info_data['block_by_country'] : '';
+		return ( ! empty( $info ) && ! empty( $info['block_by_country'] ) ) ? $info['block_by_country'] : '';
 	}
 
 

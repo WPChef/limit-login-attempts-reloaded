@@ -2581,6 +2581,20 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: -3px;
 }
 
+/* Red dot when Micro Cloud requests are exhausted. Explicit color:
+   WP core paints .update-plugins with the admin color scheme (blue in
+   "modern") and has no marker styling for the admin bar. */
+#adminmenu li a span.llar-mc-exhausted-icon,
+#wpadminbar li span.llar-mc-exhausted-icon {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background-color: #d63638;
+  vertical-align: middle;
+}
+
 .llar-options-notice {
   display: block !important;
 }
