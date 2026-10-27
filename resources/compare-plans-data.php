@@ -88,15 +88,20 @@ $full_row['Premium']  = $lock;
 $top_row                = $full_row;
 $top_row['Premium +']   = $lock;
 
+$plan_quota_300k = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+
 $performance_optimizer_row = $paid_row;
 /* translators: %s: line break. */
 $performance_optimizer_row['Micro Cloud']    = $yes . '<span class="description">' . sprintf( esc_html__( '1k for first month%s(100 per month after)', 'limit-login-attempts-reloaded' ), '<br>' ) . '</span>';
 $performance_optimizer_row['Personal']       = $yes . '<span class="description">' . esc_html__( '50k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
 $performance_optimizer_row['Premium']        = $yes . '<span class="description">' . esc_html__( '100k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
 $performance_optimizer_row['Premium +']      = $yes . '<span class="description">' . esc_html__( '200k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Professional']   = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Business']       = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Agency']         = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Professional']   = $plan_quota_300k;
+$performance_optimizer_row['Business']       = $plan_quota_300k;
+$performance_optimizer_row['Agency']         = $plan_quota_300k;
+// The trial mirrors the Business plan for every feature row (that is the
+// spec), so it shares the Business request quota too.
+$performance_optimizer_row[ $trial_plan_name ] = $plan_quota_300k;
 
 $compare_list = array(
 	'buttons_header' => $buttons_row,
@@ -139,15 +144,5 @@ $compare_list = array(
 	) + $paid_row,
 	'buttons_footer' => $buttons_row,
 );
-
-// The trial column mirrors the Business column for every feature row
-// (no pricing card and no plan description — those stay Business-only).
-foreach ( $compare_list as $category => $row ) {
-	if ( in_array( $category, array( 'buttons_header', 'buttons_footer', 'pricing' ), true ) || ! isset( $row['Business'] ) ) {
-		continue;
-	}
-
-	$compare_list[ $category ][ $trial_plan_name ] = $row['Business'];
-}
 
 return $compare_list;

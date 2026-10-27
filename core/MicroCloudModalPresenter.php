@@ -38,9 +38,6 @@ class MicroCloudModalPresenter {
 			return self::$view_vars_by_tab[ $tab ];
 		}
 
-		$admin_email = TrialLanding::resolve_email();
-		$url_site    = parse_url( ( is_multisite() ) ? network_site_url() : site_url(), PHP_URL_HOST );
-
 		$trial_return = TrialLanding::parse_return_request();
 		$can_activate = ! empty( $trial_return['can_activate'] )
 			&& 'dashboard' === $trial_return['context']
@@ -52,13 +49,11 @@ class MicroCloudModalPresenter {
 			$landing_token = TrialLanding::create_token( 'dashboard' );
 			// Fallback href only — the trial start popup collects the email and
 			// consent before leaving, so no email ever sits in the markup.
-			$landing_url = TrialLanding::dashboard_landing_url( $tab, $landing_token, false );
+			$landing_url = TrialLanding::dashboard_landing_url( $tab, $landing_token );
 		}
 
 		self::$view_vars_by_tab[ $tab ] = array(
 			'should_show'       => empty( Config::get( 'app_setup_code' ) ),
-			'admin_email'       => $admin_email,
-			'url_site'          => $url_site,
 			'landing_url'       => $landing_url,
 			'auto_activate'     => array(
 				'enabled'    => $can_activate,
@@ -77,21 +72,10 @@ class MicroCloudModalPresenter {
 			),
 			'card_title'        => __( 'How To Activate Your Free Trial', 'limit-login-attempts-reloaded' ),
 			'activating_text'   => __( 'Activating your free trial…', 'limit-login-attempts-reloaded' ),
-			'email_desc'        => __( 'Please enter the email that will receive activation confirmation', 'limit-login-attempts-reloaded' ),
-			'email_placeholder' => __( 'Your email', 'limit-login-attempts-reloaded' ),
-			'consent'           => sprintf(
-				__( 'I consent to registering my domain name <b>%s</b> with the Limit Login Attempts Reloaded cloud service.', 'limit-login-attempts-reloaded' ),
-				$url_site
-			),
-			'continue_label'    => __( 'Continue', 'limit-login-attempts-reloaded' ),
-			'terms'             => sprintf(
-				__( 'By signing up you agree to our <a href="%s" class="llar_turquoise">terms of service</a> and <a href="%s" class="llar_turquoise">privacy policy.</a>', 'limit-login-attempts-reloaded' ),
-				'https://www.limitloginattempts.com/terms/',
-				'https://www.limitloginattempts.com/privacy-policy/'
-			),
 			'error_message'     => __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
 			'success_text'      => __( 'Your free trial has been activated!', 'limit-login-attempts-reloaded' ),
 			'dashboard_label'   => __( 'Great!', 'limit-login-attempts-reloaded' ),
+			'retry_label'       => __( 'Try again', 'limit-login-attempts-reloaded' ),
 		);
 
 		return self::$view_vars_by_tab[ $tab ];

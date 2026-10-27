@@ -152,7 +152,7 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
                 <thead>
                 <tr>
                     <?php foreach ($features as $item) : ?>
-                        <td scope="col"><?php echo $item ?></td>
+                        <td scope="col"><?php echo esc_html( $trial_plan_name === $item ? \LLAR\Core\LimitLoginAttempts::trial_label() : $item ); ?></td>
                     <?php endforeach; ?>
                 </tr>
                 </thead>

@@ -16,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) exit();
 
 $dashboard = $this->get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
 
-$setup_code        = $dashboard['setup_code'];
 $api_stats         = $dashboard['api_stats'];
 $chart_circle_data = $dashboard['chart_circle_data'];
 $trial_modal       = $dashboard['show_trial_block']
@@ -134,7 +133,7 @@ if ( $dashboard['show_onboarding'] ) {
             <div class="section-content">
                 <?php foreach ( $dashboard['checklist']['items'] as $item ) : ?>
                 <div class="list">
-                    <input type="checkbox" name="<?php echo $item['name']; ?>"<?php echo $item['checked']; ?><?php echo $item['disabled_attr']; ?> />
+                    <input type="checkbox" name="<?php echo $item['name']; ?>"<?php echo $item['is_checked'] ? ' checked' : ''; ?><?php echo $item['is_disabled'] ? ' disabled' : ''; ?> />
                     <span>
                         <?php echo $item['label']; ?>
                     </span>

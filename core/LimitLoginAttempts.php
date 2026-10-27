@@ -890,11 +890,11 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 				// No email in the fallback href — the trial start popup collects
 				// the email + consent right before leaving the site.
-				$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '', false );
+				$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '' );
 
 				$actions = array_merge(
 					array(
-						'<a href="' . esc_url( $landing_url ) . '" class="llar-trial-start-cta" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+						'<a href="' . esc_url( $landing_url ) . '" data-llar-info-id="' . esc_attr( TrialLanding::INFO_ID_DASHBOARD ) . '" class="llar-trial-start-cta" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
 					),
 					$actions
 				);

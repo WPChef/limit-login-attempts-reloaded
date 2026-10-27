@@ -96,7 +96,7 @@ class TrialStartPopup {
 			'landing'     => array(
 				'base_url'   => TrialLanding::LANDING_BASE,
 				'info_id'    => TrialLanding::INFO_ID_DASHBOARD,
-				'return_url' => TrialLanding::dashboard_return_url( $tab ) . '&llar_trial_token=' . rawurlencode( $token ),
+				'return_url' => TrialLanding::dashboard_return_url( $tab, $token ),
 			),
 			'admin_email' => TrialLanding::resolve_email(),
 			'i18n'        => array(

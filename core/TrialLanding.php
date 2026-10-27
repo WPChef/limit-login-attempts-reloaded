@@ -27,6 +27,10 @@ class TrialLanding {
 	const INFO_ID_UPGRADE_LOCAL   = 46;
 	const INFO_ID_UPGRADE_CLOUD   = 47;
 	const TOKEN_QUERY_ARG    = 'llar_trial_token';
+	// Tabs where views/micro-cloud-modal.php is included and can consume a
+	// return token. dashboard_return_url() bounces everything else to the
+	// dashboard, so a return to a modal-less tab never burns a token.
+	const MODAL_TABS         = array( 'dashboard', 'premium', 'settings' );
 	const TRANSIENT_PREFIX   = 'llar_trial_land_';
 	const TOKEN_TTL          = 1800;
 	const LANDING_BASE       = 'https://www.limitloginattempts.com/info.php';
@@ -116,37 +120,31 @@ class TrialLanding {
 	}
 
 	/**
-	 * Build the outbound info.php URL with separate url and email params.
+	 * Build the outbound info.php URL.
 	 *
 	 * The one-time nonce is embedded into the url= parameter (not passed
 	 * separately), so the landing only has to send the user back to that
 	 * url verbatim for the nonce to survive the round trip.
 	 *
+	 * The admin email is never put here: the landing asks for it on its own
+	 * consent form, so an outbound link can not leak it.
+	 *
 	 * @param int    $info_id    Landing id (37 onboarding, 38 dashboard).
-	 * @param string $email      Notification / admin email. Empty when the user
-	 *                            has not consented to sharing it — the landing
-	 *                            asks for the email on its own form instead.
 	 * @param string $return_url Absolute URL the landing should send the user back to.
 	 * @param string $context    onboarding|dashboard
 	 * @param string $token      Optional pre-created token; created when empty.
 	 * @return string
 	 */
-	public static function build_url( $info_id, $email, $return_url, $context, $token = '' ) {
+	public static function build_url( $info_id, $return_url, $context, $token = '' ) {
 		if ( '' === $token ) {
 			$token = self::create_token( $context );
 		}
 
 		$return_url = self::with_token( $return_url, $token );
 
-		$url = self::LANDING_BASE
+		return self::LANDING_BASE
 			. '?id=' . (int) $info_id
 			. '&url=' . rawurlencode( $return_url );
-
-		if ( '' !== $email ) {
-			$url .= '&email=' . rawurlencode( $email );
-		}
-
-		return $url;
 	}
 
 	/**
@@ -183,42 +181,38 @@ class TrialLanding {
 	/**
 	 * Return URL for dashboard / settings outbound hop (no onboarding=trial).
 	 *
-	 * @param string $tab Plugin tab slug.
+	 * @param string $tab   Plugin tab slug; tabs without the activation modal
+	 *                      (see MODAL_TABS) are bounced to the dashboard.
+	 * @param string $token Optional nonce embedded into the URL.
 	 * @return string
 	 */
-	public static function dashboard_return_url( $tab = 'dashboard' ) {
+	public static function dashboard_return_url( $tab = 'dashboard', $token = '' ) {
 		$tab = sanitize_key( $tab );
 		if ( '' === $tab ) {
 			$tab = 'dashboard';
 		}
 
-		// Auto-activation on return is rendered by the micro cloud modal,
-		// which is included only on these tabs. A return to any other tab
-		// (e.g. logs-local) would burn the token with nothing to activate,
-		// so bounce those to the dashboard.
-		if ( ! in_array( $tab, array( 'dashboard', 'premium', 'settings' ), true ) ) {
+		if ( ! in_array( $tab, self::MODAL_TABS, true ) ) {
 			$tab = 'dashboard';
 		}
 
-		return admin_url( 'admin.php?page=limit-login-attempts&tab=' . $tab );
+		return self::with_token( admin_url( 'admin.php?page=limit-login-attempts&tab=' . $tab ), $token );
 	}
 
 	/**
 	 * Ready-made outbound dashboard landing URL.
 	 *
 	 * Keeps every "start the free trial" link on the same contract
-	 * (info id, return tab, context). The email is only pre-filled for
-	 * consent-gated CTAs; everywhere else the landing asks for it.
+	 * (info id, return tab, context). The email is never pre-filled here:
+	 * the trial start popup collects it after the consent click.
 	 *
-	 * @param string $tab        Plugin tab slug to return to.
-	 * @param string $token      Optional pre-created token.
-	 * @param bool   $with_email Whether the admin email may be shared (consent given).
+	 * @param string $tab   Plugin tab slug to return to.
+	 * @param string $token Optional pre-created token.
 	 * @return string
 	 */
-	public static function dashboard_landing_url( $tab = 'dashboard', $token = '', $with_email = true ) {
+	public static function dashboard_landing_url( $tab = 'dashboard', $token = '' ) {
 		return self::build_url(
 			self::INFO_ID_DASHBOARD,
-			$with_email ? self::resolve_email() : '',
 			self::dashboard_return_url( $tab ),
 			'dashboard',
 			$token
@@ -232,15 +226,13 @@ class TrialLanding {
 	 * popup, so the admin email is never pre-filled here — the landing
 	 * asks for it after the consent click.
 	 *
-	 * @param int    $info_id    Marketing info id of the CTA.
-	 * @param string $tab        Plugin tab slug to return to.
-	 * @param bool   $with_email Whether the admin email may be shared (consent given).
+	 * @param int    $info_id Marketing info id of the CTA.
+	 * @param string $tab     Plugin tab slug to return to.
 	 * @return string
 	 */
-	public static function cta_landing_url( $info_id, $tab = 'dashboard', $with_email = false ) {
+	public static function cta_landing_url( $info_id, $tab = 'dashboard' ) {
 		return self::build_url(
 			(int) $info_id,
-			$with_email ? self::resolve_email() : '',
 			self::dashboard_return_url( $tab ),
 			'dashboard',
 			''

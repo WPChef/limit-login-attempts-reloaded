@@ -79,7 +79,7 @@ ob_start();
                     </div>
                     <div class="button_block-single">
                         <button class="button next_step menu__item button__orange" id="llar-button_dashboard">
-                            <?php echo $modal['dashboard_label']; echo $spinner; ?>
+                            <span class="llar-button-label"><?php echo $modal['dashboard_label']; ?></span><?php echo $spinner; ?>
                         </button>
                     </div>
                 </div>
@@ -98,6 +98,8 @@ $micro_cloud_popup_content = ob_get_clean();
             const $body = $( 'body' );
             const autoActivate = <?php echo $auto ? 'true' : 'false'; ?>;
             const autoSetupCode = <?php echo wp_json_encode( $auto ? $modal['auto_activate']['setup_code'] : '' ); ?>;
+            const dashboardLabel = <?php echo wp_json_encode( $modal['dashboard_label'] ); ?>;
+            const retryLabel = <?php echo wp_json_encode( $modal['retry_label'] ); ?>;
 
             const redirectToDashboard = function () {
                 let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
@@ -158,6 +160,7 @@ $micro_cloud_popup_content = ob_get_clean();
                     const $subscribe_notification = $( '.llar-upgrade-subscribe_notification' ).not( '.llar-upgrade-subscribe_notification__error' );
                     const $subscribe_notification_error = $( '.llar-upgrade-subscribe_notification__error' );
                     const $spinner_dashboard = $button_dashboard.find( '.preloader-wrapper .spinner' );
+                    const $button_label = $button_dashboard.find( '.llar-button-label' );
                     const disabled = 'llar-disabled';
                     const visibility = 'llar-visibility';
 
@@ -167,42 +170,57 @@ $micro_cloud_popup_content = ob_get_clean();
                         if ( ok ) {
                             $subscribe_notification_error.addClass( 'llar-display-none' );
                             $subscribe_notification.removeClass( 'llar-display-none' );
+                            $button_label.text( dashboardLabel );
                             microCloudActivationCompleted = true;
+                            // Only scrub on success: a failed attempt keeps the
+                            // setup_code in the URL so the user can retry.
+                            scrubReturnParams();
+                            $button_dashboard.off( 'click.llarDashboardRedirect' ).on( 'click.llarDashboardRedirect', function () {
+                                $button_dashboard.addClass( disabled );
+                                $spinner_dashboard.addClass( visibility );
+                                redirectToDashboard();
+                            } );
                         } else {
                             $subscribe_notification.addClass( 'llar-display-none' );
                             $subscribe_notification_error.find( '.llar-micro-cloud-error-message' ).text( message || '' );
                             $subscribe_notification_error.removeClass( 'llar-display-none' );
+                            $button_label.text( retryLabel );
                             microCloudActivationCompleted = false;
+                            $button_dashboard.off( 'click.llarDashboardRedirect' ).on( 'click.llarDashboardRedirect', function () {
+                                runActivation();
+                            } );
                         }
                         $( '.jconfirm-closeIcon' ).remove();
-                        $button_dashboard.off( 'click.llarDashboardRedirect' ).on( 'click.llarDashboardRedirect', function () {
-                            $button_dashboard.addClass( disabled );
-                            $spinner_dashboard.addClass( visibility );
-                            redirectToDashboard();
-                        } );
+                    };
+
+                    const runActivation = function () {
+                        if ( microCloudActivationInProgress ) {
+                            return;
+                        }
+
+                        microCloudActivationInProgress = true;
+                        $body.addClass( disabled );
+                        $card_body_loading.removeClass( 'llar-display-none' );
+                        $card_body_second.addClass( 'llar-display-none' );
+
+                        llar_activate_license_key( autoSetupCode )
+                            .then( function() {
+                                showResult( true );
+                            } )
+                            .catch( function( response ) {
+                                showResult( false, llar_micro_cloud_error_message( response ) );
+                            } )
+                            .finally( function() {
+                                $body.removeClass( disabled );
+                                microCloudActivationInProgress = false;
+                            } );
                     };
 
                     if ( ! autoActivate || ! autoSetupCode ) {
                         return;
                     }
 
-                    microCloudActivationInProgress = true;
-                    $body.addClass( disabled );
-                    $card_body_loading.removeClass( 'llar-display-none' );
-                    $card_body_second.addClass( 'llar-display-none' );
-
-                    llar_activate_license_key( autoSetupCode )
-                        .then( function() {
-                            showResult( true );
-                        } )
-                        .catch( function( response ) {
-                            showResult( false, llar_micro_cloud_error_message( response ) );
-                        } )
-                        .finally( function() {
-                            $body.removeClass( disabled );
-                            microCloudActivationInProgress = false;
-                            scrubReturnParams();
-                        } );
+                    runActivation();
                 },
                 onClose: function() {
                     if ( microCloudActivationInProgress ) {

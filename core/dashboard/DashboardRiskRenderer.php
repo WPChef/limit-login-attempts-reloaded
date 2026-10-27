@@ -171,7 +171,7 @@ class DashboardRiskRenderer {
 		// No email in the fallback href (this also renders inside the WP
 		// dashboard widget) — the trial start popup collects the email and
 		// consent right before leaving the site.
-		$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '', false );
+		$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '' );
 
 		return sprintf(
 			__(
@@ -341,25 +341,23 @@ class DashboardRiskRenderer {
 
 		$url_site = is_multisite() ? network_site_url() : site_url();
 
-		// --- Login Security Checklist state ---
-		$lockout_notify = explode( ',', Config::get( 'lockout_notify' ) );
-		$email_checked  = in_array( 'email', $lockout_notify ) ? ' checked disabled' : '';
-		$email_checked  = $is_active_app_custom ? ' checked disabled' : $email_checked;
-
-		$is_checklist = Config::get( 'checklist' ) === 'true' ? ' checked disabled' : '';
+		// --- Login Security Checklist state (booleans; the template renders
+		// the checked/disabled attributes from them) ---
+		$lockout_notify = explode( ',', (string) Config::get( 'lockout_notify' ) );
+		$email_notify_on = in_array( 'email', $lockout_notify, true ) || $is_active_app_custom;
+		$strong_policies_on = Config::get( 'checklist' ) === 'true';
 
 		$min_paid_plan     = 'Personal';
 		$min_plan          = 'Premium';
 		$plans             = $this->plugin->array_name_plans();
 		$current_plan_rate = isset( $plans[ $block_sub_group ] ) ? $plans[ $block_sub_group ] : 0;
-		$upgrade_premium   = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_paid_plan ] ) ? ' checked' : '';
+		$upgrade_premium_on = $is_active_app_custom && ( $current_plan_rate >= $plans[ $min_paid_plan ] );
 
-		$checked_block_by_country = Config::get( 'block_by_country' ) === 'true' ? ' checked disabled' : '';
-		$block_by_country         = $block_sub_group ? $this->plugin->info_block_by_country() : false;
-		$block_by_country_disabled = $block_sub_group ? '' : ' disabled';
-		$is_by_country            = $block_by_country ? $checked_block_by_country : $block_by_country_disabled;
+		$block_by_country      = $block_sub_group ? $this->plugin->info_block_by_country() : false;
+		$by_country_checked    = $block_by_country && Config::get( 'block_by_country' ) === 'true';
+		$by_country_disabled   = $by_country_checked || ! $block_sub_group;
 
-		$is_auto_update_choice = ( Helpers::is_auto_update_enabled() && ! Helpers::is_block_automatic_update_disabled() ) ? ' checked' : '';
+		$auto_update_on = Helpers::is_auto_update_enabled() && ! Helpers::is_block_automatic_update_disabled();
 
 		$app_config   = Config::get( 'app_config' );
 		$full_log_url = ! empty( $app_config['key'] ) ? 'https://my.limitloginattempts.com/logs?key=' . esc_attr( $app_config['key'] ) : false;
@@ -376,8 +374,8 @@ class DashboardRiskRenderer {
 			'items'   => array(
 				array(
 					'name'    => 'lockout_notify_email',
-					'checked' => $email_checked,
-					'disabled_attr' => '',
+					'is_checked' => $email_notify_on,
+					'is_disabled' => $email_notify_on,
 					'label'   => __( 'Enable Email Notifications', 'limit-login-attempts-reloaded' ),
 					'list_add' => '',
 					'desc'     => sprintf(
@@ -387,8 +385,8 @@ class DashboardRiskRenderer {
 				),
 				array(
 					'name'    => 'strong_account_policies',
-					'checked' => $is_checklist,
-					'disabled_attr' => '',
+					'is_checked' => $strong_policies_on,
+					'is_disabled' => $strong_policies_on,
 					'label'   => __( 'Implement strong account policies', 'limit-login-attempts-reloaded' ),
 					'list_add' => __( 'Check when done.', 'limit-login-attempts-reloaded' ),
 					'desc'     => sprintf(
@@ -398,8 +396,8 @@ class DashboardRiskRenderer {
 				),
 				array(
 					'name'    => 'block_by_country',
-					'checked' => $is_by_country . $block_by_country_disabled,
-					'disabled_attr' => '',
+					'is_checked' => $by_country_checked,
+					'is_disabled' => $by_country_disabled,
 					'label'   => $list_name,
 					'list_add' => __( 'Check when done.', 'limit-login-attempts-reloaded' ),
 					'desc'     => sprintf(
@@ -411,21 +409,21 @@ class DashboardRiskRenderer {
 				),
 				array(
 					'name'    => 'auto_update_choice',
-					'checked' => $is_auto_update_choice,
-					'disabled_attr' => ' disabled',
+					'is_checked' => $auto_update_on,
+					'is_disabled' => true,
 					'label'   => __( 'Turn on plugin auto-updates', 'limit-login-attempts-reloaded' ),
 					'list_add' => '',
-					'desc'     => ! empty( $is_auto_update_choice )
+					'desc'     => $auto_update_on
 						? __( 'Enable automatic updates to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' )
 						: __( '<a class="link__style_unlink llar_turquoise" href="#llar_auto_update_choice">Enable automatic updates</a> to ensure that the plugin stays current with the latest software patches and features.', 'limit-login-attempts-reloaded' ),
 				),
 				array(
 					'name'    => 'upgrade_premium',
-					'checked' => ' ' . $upgrade_premium,
-					'disabled_attr' => ' disabled',
+					'is_checked' => $upgrade_premium_on,
+					'is_disabled' => true,
 					'label'   => __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ),
 					'list_add' => '',
-					'desc'     => ( $is_active_app_custom && ( $current_plan_rate >= $plans[ $min_paid_plan ] ) )
+					'desc'     => $upgrade_premium_on
 						? __( 'Upgrade to our premium version for advanced protection.', 'limit-login-attempts-reloaded' )
 						: sprintf(
 							__( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Upgrade to our premium</a> version for advanced protection.', 'limit-login-attempts-reloaded' ),
@@ -438,7 +436,6 @@ class DashboardRiskRenderer {
 		);
 
 		return array(
-			'setup_code'           => $setup_code,
 			'api_stats'            => $api_stats,
 			'upgrade_premium_url'  => $upgrade_premium_url,
 			'show_onboarding'      => ! $is_active_app_custom && empty( $setup_code ),
