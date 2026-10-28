@@ -164,6 +164,13 @@ class Ajax {
 
 			if ( $key_result['success'] ) {
 
+				// A successful activation is the only thing that burns the
+				// return token — a failed attempt leaves the link reusable,
+				// so reloading the page retries the activation.
+				if ( ! empty( $_POST['llar_trial_token'] ) ) {
+					TrialLanding::consume_token( sanitize_text_field( wp_unslash( $_POST['llar_trial_token'] ) ) );
+				}
+
 				wp_send_json_success(
 					array(
 						'msg' => ( $key_result['app_config']['messages']['setup_success'] ),

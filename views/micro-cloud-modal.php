@@ -172,8 +172,10 @@ $micro_cloud_popup_content = ob_get_clean();
                             $subscribe_notification.removeClass( 'llar-display-none' );
                             $button_label.text( dashboardLabel );
                             microCloudActivationCompleted = true;
-                            // Only scrub on success: a failed attempt keeps the
-                            // setup_code in the URL so the user can retry.
+                            // Scrub only on success. A failed attempt keeps
+                            // setup_code + token in the URL, and the token is
+                            // only consumed server-side after a successful
+                            // activation — so reloading the page retries.
                             scrubReturnParams();
                             $button_dashboard.off( 'click.llarDashboardRedirect' ).on( 'click.llarDashboardRedirect', function () {
                                 $button_dashboard.addClass( disabled );

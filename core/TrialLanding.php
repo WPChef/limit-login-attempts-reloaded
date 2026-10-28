@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Optional trial registration landing redirects (Wordfence-style outbound hop).
  *
  * Before leaving for info.php the plugin stores a one-time nonce in a transient
- * (30 min) and embeds it into the url= parameter of the outbound landing link, so
+ * (24 h) and embeds it into the url= parameter of the outbound landing link, so
  * only a return from a user-initiated outbound click can auto-activate a
  * setup_code. The active token is reused (not regenerated) while it is still
  * fresh, so page views no longer grow wp_options.
@@ -32,7 +32,7 @@ class TrialLanding {
 	// dashboard, so a return to a modal-less tab never burns a token.
 	const MODAL_TABS         = array( 'dashboard', 'premium', 'settings' );
 	const TRANSIENT_PREFIX   = 'llar_trial_land_';
-	const TOKEN_TTL          = 1800;
+	const TOKEN_TTL          = 86400;
 	const LANDING_BASE       = 'https://www.limitloginattempts.com/info.php';
 	// Reversed "api.limitloginattempts.com/" marker every cloud setup code ends with.
 	const SETUP_CODE_SUFFIX  = '/moc.stpmettanigoltimil.ipa';
@@ -76,29 +76,51 @@ class TrialLanding {
 	}
 
 	/**
-	 * Verify and consume a return token.
+	 * Validate a return token without consuming it.
+	 *
+	 * The page render only decides whether to open the activation modal.
+	 * The token is consumed by the app_setup AJAX handler after a
+	 * successful activation, so reloading the page after a failed attempt
+	 * retries instead of hitting "invalid or expired".
 	 *
 	 * @param string $token Token from the return URL.
 	 * @return array|false Stored payload or false.
 	 */
-	public static function consume_token( $token ) {
+	public static function verify_token( $token ) {
 		$token = sanitize_text_field( $token );
 		if ( '' === $token ) {
 			return false;
 		}
 
-		$key  = self::TRANSIENT_PREFIX . $token;
-		$data = get_transient( $key );
-		delete_transient( $key );
-
+		$data = get_transient( self::TRANSIENT_PREFIX . $token );
 		if ( empty( $data ) || ! is_array( $data ) ) {
 			return false;
 		}
 
+		// Ownership is checked before any delete, so another admin merely
+		// opening the link can not burn the token.
 		$user_id = get_current_user_id();
 		if ( ! $user_id || (int) $data['user_id'] !== (int) $user_id ) {
 			return false;
 		}
+
+		return $data;
+	}
+
+	/**
+	 * Validate and consume a return token (single use).
+	 *
+	 * @param string $token Token from the return URL.
+	 * @return array|false Stored payload or false.
+	 */
+	public static function consume_token( $token ) {
+		$data = self::verify_token( $token );
+		if ( ! $data ) {
+			return false;
+		}
+
+		$token = sanitize_text_field( $token );
+		delete_transient( self::TRANSIENT_PREFIX . $token );
 
 		$active_key = self::active_token_key( (int) $data['user_id'], self::normalize_context( $data['context'] ) );
 		if ( get_transient( $active_key ) === $token ) {
@@ -263,7 +285,7 @@ class TrialLanding {
 	 * @return string
 	 */
 	public static function invalid_return_message() {
-		return __( 'The link you\'re using to activate your trial period is invalid or has expired.', 'limit-login-attempts-reloaded' );
+		return __( 'The link you\'re using to activate your trial period is invalid or has expired. You can still start the trial manually: copy the setup code from the email and enter it in Settings → App → Setup Code.', 'limit-login-attempts-reloaded' );
 	}
 
 	/**
@@ -282,7 +304,9 @@ class TrialLanding {
 	}
 
 	/**
-	 * Cached parse of the current request (token consumed at most once).
+	 * Cached parse of the current request (token verified, not consumed —
+	 * it is burned by the app_setup AJAX handler after a successful
+	 * activation, so a failed attempt leaves the link retryable).
 	 *
 	 * @var array|null
 	 */
@@ -345,7 +369,7 @@ class TrialLanding {
 			return self::$parsed_return;
 		}
 
-		$token_data = self::consume_token( $token );
+		$token_data = self::verify_token( $token );
 		if ( empty( $token_data ) ) {
 			$result['return_error'] = true;
 			self::$parsed_return = $result;

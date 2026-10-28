@@ -6,6 +6,15 @@ function llar_activate_license_key( $setup_code ) {
         sec: llar_vars.nonce_app_setup,
     }
 
+    // The return token rides along so the server can burn it after a
+    // successful activation; a failed attempt leaves the link reusable.
+    try {
+        const trialToken = new URL( window.location.href ).searchParams.get( 'llar_trial_token' );
+        if ( trialToken ) {
+            data.llar_trial_token = trialToken;
+        }
+    } catch ( e ) {}
+
     return llar_ajax_callback_post( ajaxurl, data )
 }
 
