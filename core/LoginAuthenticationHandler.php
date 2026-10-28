@@ -102,7 +102,7 @@ class LoginAuthenticationHandler {
 		}
 
 		if (
-			( ! $this->local_lockout->is_username_whitelisted( $username ) && ! $this->ip_resolver->is_ip_whitelisted( $ip ) )
+			( ! $this->local_lockout->is_local_allowlisted_username( $username ) && ! $this->ip_resolver->is_ip_whitelisted( $ip ) )
 			&& ( $this->local_lockout->is_local_blacklisted_username( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
 		) {
 			$error_message = $this->error_presenter->build_lockout_error_message();
@@ -277,7 +277,7 @@ class LoginAuthenticationHandler {
 
 				// Check if username is blacklisted
 				if (
-					( ! $this->local_lockout->is_username_whitelisted( $username ) && ! $this->ip_resolver->is_ip_whitelisted( $ip ) )
+					( ! $this->local_lockout->is_local_allowlisted_username( $username ) && ! $this->ip_resolver->is_ip_whitelisted( $ip ) )
 					&& ( $this->local_lockout->is_local_blacklisted_username( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
 				) {
 
@@ -307,7 +307,7 @@ class LoginAuthenticationHandler {
 						exit;
 					}
 
-				} elseif ( $this->local_lockout->is_username_whitelisted( $username ) || $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
+				} elseif ( $this->local_lockout->is_local_allowlisted_username( $username ) || $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
 					LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => true ) );
 					// Do not run limit_login_failed for whitelist: no lockout, but lockout_check / retries would still run and hit the API.
 					remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
@@ -400,7 +400,7 @@ class LoginAuthenticationHandler {
 		$ip = $this->ip_resolver->get_address();
 		if (
 			! $this->ip_resolver->is_ip_whitelisted( $ip )
-			&& ! $this->local_lockout->is_username_whitelisted( $username )
+			&& ! $this->local_lockout->is_local_allowlisted_username( $username, $user )
 			&& ! $this->local_lockout->is_limit_login_ok( $username )
 		) {
 			global $limit_login_my_error_shown;

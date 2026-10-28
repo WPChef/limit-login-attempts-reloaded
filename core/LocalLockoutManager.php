@@ -284,6 +284,14 @@ class LocalLockoutManager {
 	 * @return void
 	 */
 	public function record_failed_login_attempt( $username ) {
+
+		// Allowlisted logins (exact string or the account email of an
+		// allowlisted user) never count retries — mirrors the early
+		// authenticate hook that skips limit_login_failed for them.
+		if ( $this->is_local_allowlisted_username( $username ) ) {
+			return;
+		}
+
 		self::$failed_login_recorded_in_request = true;
 
 		LoginFlowTransientStore::ensure_token();
