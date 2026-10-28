@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.3.11 =
+* Security: fixed the email two-factor authentication being bypassed through XML-RPC. The 2FA decision is now made from the authenticated user object instead of the login-form field, so a protected account authenticating over XML-RPC is refused unless it completes the second factor (reported by Qi Qin).
+* Security: fixed the email two-factor authentication failing open when a malformed X-Forwarded-For header broke the verification request. The header value is sanitized before entering any payload, unserializable payloads fail the request, and a login with 2FA required no longer completes unless the verification step positively succeeds (reported by Naoki Kawahigashi).
+
 = 3.3.10 =
 * Added detection of a cached or optimizer-stripped login page and an admin notice warning that it can break the email code (MFA) login flow.
 * Fixed the onboarding Micro Cloud step silently completing on activation errors; it now shows the server error message so users learn when the program is closed or trial is unavailable.

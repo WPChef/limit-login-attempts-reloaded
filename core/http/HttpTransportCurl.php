@@ -51,8 +51,20 @@ class HttpTransportCurl implements HttpTransportInterface {
 		curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
 
 		if( $method === 'POST' ) {
+			$request_data = ! empty( $data ) ? json_encode( $data, JSON_FORCE_OBJECT ) : null;
+
+			// Unserialisable payload (e.g. invalid UTF-8 from request headers):
+			// fail the request instead of sending it out with an empty body.
+			if ( ! empty( $data ) && false === $request_data ) {
+				return array(
+					'data'   => null,
+					'status' => 0,
+					'error'  => 'Request payload encoding failed',
+				);
+			}
+
 			curl_setopt($handle, CURLOPT_POST, true);
-			curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode( $data, JSON_FORCE_OBJECT ) );
+			curl_setopt($handle, CURLOPT_POSTFIELDS, $request_data );
 		}
 
 		if ( !empty( $headers ) ) {

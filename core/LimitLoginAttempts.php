@@ -1151,7 +1151,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 				'user_id' => $user->ID,
 				'gateway' => Helpers::detect_gateway(),
 				'roles'   => $user->roles,
-				'agent'   => $_SERVER['HTTP_USER_AGENT'],
+				'agent'   => isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '',
 				'url'     => $clean_url,
 			);
 

@@ -52,7 +52,7 @@ class CallbackHandler {
 			'user_id'   => (int) $user->ID,
 			'gateway'   => $gateway,
 			'roles'     => isset( $user->roles ) ? $user->roles : array(),
-			'agent'     => isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '',
+			'agent'     => isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '',
 			'url'       => $clean_url,
 		);
 
