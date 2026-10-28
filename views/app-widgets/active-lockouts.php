@@ -98,6 +98,13 @@ if ( !defined( 'ABSPATH' ) ) exit();
                         return;
                     }
 
+                    // A previous empty batch may have rendered the
+                    // empty-state row — data rows must replace it, not
+                    // stack under it (mirrors acl-rules refresh behavior).
+                    if (response.data.total_items > 0) {
+                        $log_table_body.find('tr.empty-row').remove();
+                    }
+
                     $log_table_body.append(response.data.html);
 
                     total_loaded += response.data.total_items;
