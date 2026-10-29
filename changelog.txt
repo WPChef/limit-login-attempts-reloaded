@@ -1,7 +1,8 @@
 == Changelog ==
 
-= 3.3.11 =
+= 3.4.0 =
 * Added a red dot to the admin menu and admin bar when Micro Cloud requests are exhausted.
+* Introduced a 7-day free trial with consent-based activation across the plugin.
 
 = 3.3.10 =
 * Added detection of a cached or optimizer-stripped login page and an admin notice warning that it can break the email code (MFA) login flow.

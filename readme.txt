@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 3.3.11
+Stable tag: 3.4.0
 
 Limit login attempts and stop brute force attacks. WordPress security with 2FA, firewall, bot protection, IP blocking, and secure login monitoring.
 
@@ -152,8 +152,9 @@ On the free version, copy the lists to each site manually. With <a href="https:/
 
 == Changelog ==
 
-= 3.3.11 =
+= 3.4.0 =
 * Added a red dot to the admin menu and admin bar when Micro Cloud requests are exhausted.
+* Introduced a 7-day free trial with consent-based activation across the plugin.
 
 = 3.3.10 =
 * Added detection of a cached or optimizer-stripped login page and an admin notice warning that it can break the email code (MFA) login flow.
