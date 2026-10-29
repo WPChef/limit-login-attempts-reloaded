@@ -63,7 +63,53 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 
 <div class="header_massage">
 	<?php
-	if ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && $is_almost_exhausted && $info_has_valid_data ) :
+	$is_trial_group = ( LimitLoginAttempts::trial_plan_name() === $block_sub_group );
+
+	if ( $is_active_app_custom && $is_trial_group && $is_almost_exhausted && $info_has_valid_data ) :
+
+	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
+
+		if ( time() > $notifications_message_shown ) : ?>
+			<div id="llar-header-upgrade-premium-message" class="exhausted">
+				<p>
+					<span class="dashicons dashicons-superhero"></span>
+				<?php
+				printf(
+					/* translators: 1: trial label, 2: requests used, 3: monthly quota */
+					esc_html__( '%1$s: %2$s of %3$s requests used - cloud protection pauses at %3$s.', 'limit-login-attempts-reloaded' ),
+					esc_html( LimitLoginAttempts::trial_label() ),
+					esc_html( $request_usage ),
+					esc_html( $request_quota )
+				);
+				?>
+				<a class="button menu__item button__orange" href="<?php echo esc_url( add_query_arg( 'id', '41', $upgrade_premium_url ) ); ?>" target="_blank">
+					<?php esc_html_e( 'Upgrade', 'limit-login-attempts-reloaded' ); ?>
+				</a>
+				</p>
+				<div class="close">
+					<span class="dashicons dashicons-no-alt"></span>
+				</div>
+			</div>
+		<?php endif; ?>
+
+	<?php elseif ( $is_active_app_custom && $is_trial_group && $info_has_valid_data ) : ?>
+		<div id="llar-header-upgrade-mc-message">
+			<p>
+				<span class="dashicons dashicons-superhero"></span>
+			<?php
+			printf(
+				/* translators: 1: trial label, 2: requests used, 3: monthly quota, 4: upgrade URL */
+				__( '%1$s: %2$s of %3$s requests used this month. <a href="%4$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $1.25/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
+				esc_html( LimitLoginAttempts::trial_label() ),
+				esc_html( $request_usage ),
+				esc_html( $request_quota ),
+				esc_url( add_query_arg( 'id', '41', $upgrade_premium_url ) )
+			);
+			?>
+			</p>
+		</div>
+
+	<?php elseif ( $is_active_app_custom && $block_sub_group === 'Micro Cloud' && $is_almost_exhausted && $info_has_valid_data ) :
 
 	$notifications_message_shown = (int) Config::get( 'notifications_message_shown' );
 
@@ -99,7 +145,7 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 					<?php
 					printf(
 						__( 'You have exhausted your monthly quota of free Micro Cloud requests. The plugin has now reverted to the free version. <a href="%s" class="link__style_color_inherit" target="_blank">Upgrade to the premium</a> version today to maintain cloud protection and advanced features.', 'limit-login-attempts-reloaded' ),
-						add_query_arg( 'id', '4', $upgrade_premium_url )
+						esc_url( add_query_arg( 'id', '4', $upgrade_premium_url ) )
 					);
 					?>
 				</p>
@@ -137,6 +183,12 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 if ( ! empty( $this->pending_admin_message ) ) {
 	$this->render_admin_notice( 'flash', $this->pending_admin_message );
 	$this->pending_admin_message = null;
+}
+$trial_return = \LLAR\Core\TrialLanding::parse_return_request();
+if ( ! empty( $trial_return['return_error'] ) ) {
+	echo '<div class="notice notice-error" style="display: block;"><p>'
+		. esc_html( \LLAR\Core\TrialLanding::invalid_return_message() )
+		. '</p></div>';
 }
 if ( $this->should_show_mfa_recovery_links_expired_notice() ) {
 	$this->render_admin_notice(

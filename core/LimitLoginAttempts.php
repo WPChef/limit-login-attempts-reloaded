@@ -267,6 +267,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			'name' => 'Micro Cloud',
 			'rate' => 20,
 		),
+		'trial'      => array(
+			'rate' => 20,
+		),
 		'personal'  => array(
 			'name' => 'Personal',
 			'rate' => 25,
@@ -295,6 +298,10 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 	public function __construct() {
 		self::$instance = $this;
+
+		// The trial plan name derives from TRIAL_DAYS (property initializers
+		// cannot call methods, so it is set here).
+		$this->plans['trial']['name'] = self::trial_plan_name();
 
 		Config::init();
 		Http::init();
@@ -550,11 +557,26 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * @param string      $setup_code           App setup code.
 	 * @param string      $upgrade_premium_url  Premium upgrade URL.
 	 * @param bool|array  $api_stats            Cloud API stats.
+	 * @param bool        $info_has_valid_data  Whether cloud plan data is valid.
 	 *
 	 * @return array
 	 */
-	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
-		return $this->dashboard_renderer->get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats );
+	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats, $info_has_valid_data = false ) {
+		return $this->dashboard_renderer->get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats, $info_has_valid_data );
+	}
+
+	/**
+	 * View data for the dashboard tab template (views/tab-dashboard.php).
+	 *
+	 * @param string $active_app           Active app slug ('local'|'custom').
+	 * @param bool   $is_active_app_custom Whether the cloud app is active.
+	 * @param string $block_sub_group      Cloud plan name.
+	 * @param bool   $is_exhausted         Cloud quota exhausted flag.
+	 *
+	 * @return array
+	 */
+	public function get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
+		return $this->dashboard_renderer->build_dashboard_tab_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
 	}
 	/**
 	 * Redirect to dashboard page after installed
@@ -692,6 +714,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		}
 
 		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
+
+		// "Start Your 7-Day Free Trial" popup behind every non-onboarding CTA.
+		TrialStartPopup::init();
 
 		// MFA flow callback: llar_mfa=1&token=...&code=...
 		add_action( 'init', array( $this, 'mfa_flow_callback' ), 1 );
@@ -872,11 +897,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 			if ( empty( Config::get( 'app_setup_code' ) ) ) {
 
-				$slug = $this->get_options_page_uri( 'dashboard#modal_micro_cloud' );
+				// No email in the fallback href — the trial start popup collects
+				// the email + consent right before leaving the site.
+				$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '' );
 
 				$actions = array_merge(
 					array(
-						'<a href="' . esc_html( $slug ) . '" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+						'<a href="' . esc_url( $landing_url ) . '" data-llar-info-id="' . esc_attr( TrialLanding::INFO_ID_DASHBOARD ) . '" class="llar-trial-start-cta" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
 					),
 					$actions
 				);
@@ -1487,6 +1514,32 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		}
 
 		return $plans;
+	}
+
+	/**
+	 * Free trial length in days — the single source of truth for every
+	 * trial string in the plugin (titles, buttons, banners, plan name).
+	 */
+	const TRIAL_DAYS = 7;
+
+	/**
+	 * Canonical (untranslated) trial plan name. Doubles as the logic key
+	 * compared against plan_name_match() output, so it must stay literal.
+	 *
+	 * @return string
+	 */
+	public static function trial_plan_name() {
+		return sprintf( '%d Day Trial', self::TRIAL_DAYS );
+	}
+
+	/**
+	 * Translated trial label for display (buttons, badges, banners).
+	 *
+	 * @return string
+	 */
+	public static function trial_label() {
+		/* translators: %d: trial length in days. */
+		return sprintf( __( '%d Day Trial', 'limit-login-attempts-reloaded' ), self::TRIAL_DAYS );
 	}
 
 	private function info() {

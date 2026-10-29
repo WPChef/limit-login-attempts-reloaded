@@ -37,7 +37,6 @@ class AdminUiController {
 			$block_country              = wp_create_nonce( 'llar-block_by_country' );
 			$onboarding_reset           = wp_create_nonce( 'llar-action-onboarding-reset' );
 			$dismiss_onboarding_popup   = wp_create_nonce( 'llar-dismiss-onboarding-popup' );
-			$activate_micro_cloud       = wp_create_nonce( 'llar-activate-micro-cloud' );
 			$subscribe_email            = wp_create_nonce( 'llar-subscribe-email' );
 			$close_premium_message      = wp_create_nonce( 'llar-close-premium-message' );
 			wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array('jquery'), $plugin_data['Version'], false );
@@ -48,7 +47,6 @@ class AdminUiController {
 				'nonce_block_by_country'          => $block_country,
 				'nonce_onboarding_reset'          => $onboarding_reset,
 				'nonce_dismiss_onboarding_popup'  => $dismiss_onboarding_popup,
-				'nonce_activate_micro_cloud'      => $activate_micro_cloud,
 				'nonce_subscribe_email'           => $subscribe_email,
 				'nonce_close_premium_message'     => $close_premium_message,
 			));
@@ -105,10 +103,8 @@ class AdminUiController {
 
 	private function get_submenu_items()
 	{
-		$active_app        = Config::get( Config::OPTION_ACTIVE_APP );
-		$app_setup_code    = Config::get( 'app_setup_code' );
+		$active_app           = Config::get( Config::OPTION_ACTIVE_APP );
 		$is_cloud_app_enabled = $active_app === 'custom';
-		$is_local_empty_setup_code = ( $active_app === 'local' && empty( $app_setup_code ) );
 
 		$submenu_items = array(
 			array(
@@ -151,14 +147,12 @@ class AdminUiController {
 
 		if ( ! $is_cloud_app_enabled ) {
 
-			$slug       = '&tab=dashboard#modal_micro_cloud';
-			$name_item  = $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' );
-			$url_item   = $is_local_empty_setup_code ? $slug : '&tab=premium';
+			$is_local_empty_setup_code = empty( Config::get( 'app_setup_code' ) );
 
 			$submenu_items[] = array(
 				'id'    => 'premium',
-				'name'  => __( $name_item, 'limit-login-attempts-reloaded' ),
-				'url'   => $url_item,
+				'name'  => $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' ),
+				'url'   => $is_local_empty_setup_code ? '&tab=dashboard' : '&tab=premium',
 			);
 		}
 
@@ -914,6 +908,50 @@ class AdminUiController {
 
 		// MFA tab data comes from get_settings_for_view() (single source in MfaSettingsManager)
 		include_once LLA_PLUGIN_DIR . 'views/options-page.php';
+	}
+
+	/**
+	 * View data for views/tab-dashboard.php. Delegates to DashboardRiskRenderer.
+	 *
+	 * @param string $active_app          Active app slug ('local'|'custom').
+	 * @param bool   $is_active_app_custom Whether the cloud app is active.
+	 * @param string $block_sub_group     Cloud plan name.
+	 * @param bool   $is_exhausted        Cloud quota exhausted flag.
+	 *
+	 * @return array
+	 */
+	public function get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
+		return $this->plugin->get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
+	}
+
+	/**
+	 * View data for views/onboarding-popup.php.
+	 *
+	 * @return array
+	 */
+	public function get_onboarding_popup_view_vars() {
+		return ( new OnboardingPopupPresenter() )->get_view_vars();
+	}
+
+	/**
+	 * View data for views/micro-cloud-modal.php.
+	 *
+	 * @param string $tab Current plugin tab.
+	 * @return array
+	 */
+	public function get_micro_cloud_modal_view_vars( $tab = 'dashboard' ) {
+		return ( new MicroCloudModalPresenter() )->get_view_vars( $tab );
+	}
+
+	/**
+	 * View data for views/app-widgets/login-attempts.php.
+	 *
+	 * @param bool $is_tab_dashboard Whether the widget renders on the dashboard tab.
+	 *
+	 * @return array
+	 */
+	public function get_login_attempts_widget_view_vars( $is_tab_dashboard ) {
+		return ( new LoginAttemptsWidgetPresenter( $this->plugin ) )->get_view_vars( $is_tab_dashboard );
 	}
 
 	/**
