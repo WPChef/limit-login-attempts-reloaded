@@ -85,7 +85,7 @@ class LoginAuthenticationHandler {
 					exit;
 				}
 
-				remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
+				$this->detach_error_message_fixup();
 				remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
 				remove_filter( 'wp_authenticate_user', array( $this->plugin, 'wp_authenticate_user' ), 99999 );
 
@@ -116,7 +116,7 @@ class LoginAuthenticationHandler {
 			);
 			$this->plugin->all_errors_array['early_hook_errors'] = $error_message;
 
-			remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
+			$this->detach_error_message_fixup();
 			remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
 			remove_filter( 'wp_authenticate_user', array( $this->plugin, 'wp_authenticate_user' ), 99999 );
 
@@ -140,6 +140,26 @@ class LoginAuthenticationHandler {
 	private function create_username_blacklisted_error( $error_message ) {
 		return new WP_Error( 'username_blacklisted', $error_message );
 	}
+
+	/**
+	 * Detach the fixup_error_messages() filter for the rest of this request.
+	 *
+	 * fixup_error_messages() (hooked on login_errors) replaces the rendered
+	 * error with the generic "Incorrect username or password" message and
+	 * overrides whatever an LLAR error handler already produced. Whenever LLAR
+	 * returns a definitive verdict — denylist block, allowlist pass-through or
+	 * recorded lockout — the filter must be removed so the specific message
+	 * survives rendering. Call sites are one-liners at every such verdict;
+	 * the policy lives here only.
+	 *
+	 * remove_filter() is idempotent: calling it redundantly is harmless.
+	 *
+	 * @return void
+	 */
+	private function detach_error_message_fixup() {
+		remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
+	}
+
 	private function log_security_event( $event_type, $username, $ip, $details = array() ) {
 		if ( ! defined( 'WP_DEBUG_LOG' ) || ! WP_DEBUG_LOG ) {
 			return;
@@ -258,7 +278,7 @@ class LoginAuthenticationHandler {
 
 			if ( LimitLoginAttempts::$cloud_app && $response = $this->cloud_acl->get_auth_acl_response( $username ) ) {
 				if ( 'pass' === $response['result'] ) {
-					remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
+					$this->detach_error_message_fixup();
 
 					// @temporary WP 7.0 compat — on WP 7.0+ keep all hooks active; late safety net handles recording and lockout.
 					// TODO: Remove after WP 7.1 release or when auth flow is stable.
@@ -283,7 +303,7 @@ class LoginAuthenticationHandler {
 
 					LoginFlowTransientStore::merge( array( 'login_attempts_left' => null ) );
 
-					remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
+					$this->detach_error_message_fixup();
 					remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
 					remove_filter( 'wp_authenticate_user', array( $this->plugin, 'wp_authenticate_user' ), 99999 );
 
@@ -308,14 +328,20 @@ class LoginAuthenticationHandler {
 					}
 
 				} elseif ( $this->local_lockout->is_username_whitelisted( $username ) || $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
-					LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => true ) );
+					// Trusted IP mutes the whole request; username allowlist binds
+					// the guard to the submitted login string.
+					if ( $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
+						LocalLockoutManager::mark_allowlisted_ip_in_request();
+					} else {
+						LocalLockoutManager::mark_allowlisted_login_in_request( $username );
+					}
 					// Do not run limit_login_failed for whitelist: no lockout, but lockout_check / retries would still run and hit the API.
 					remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
 					$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
 					if ( ! $mfa_effectively_enabled ) {
 						remove_filter( 'wp_authenticate_user', array( $this->plugin, 'wp_authenticate_user' ), 99999 );
 					}
-					remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
+					$this->detach_error_message_fixup();
 
 				} elseif ( LimitLoginAttempts::$cloud_app && LimitLoginAttempts::$cloud_app->last_response_code === 403 ) {
 					add_action('wp_login', array( $this->plugin, 'cloud_app_null' ), 999);
@@ -399,7 +425,8 @@ class LoginAuthenticationHandler {
 
 		$ip = $this->ip_resolver->get_address();
 		if (
-			! $this->ip_resolver->is_ip_whitelisted( $ip )
+			! LocalLockoutManager::is_allowlisted_in_request( $username )
+			&& ! $this->ip_resolver->is_ip_whitelisted( $ip )
 			&& ! $this->local_lockout->is_username_whitelisted( $username )
 			&& ! $this->local_lockout->is_limit_login_ok( $username )
 		) {
@@ -502,19 +529,36 @@ class LoginAuthenticationHandler {
 
 			// Prevent fixup_error_messages() from masking the deny-list error with a
 			// generic "incorrect" message when the IP is not yet locked out.
-			remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
+			$this->detach_error_message_fixup();
 
 			LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 
 			return $error;
 		}
 
-		if (
-			$this->local_lockout->check_whitelist_ips( false, $ip )
-			|| $this->local_lockout->is_local_allowlisted_username( $username, $user )
-			|| $this->local_lockout->check_whitelist_usernames( false, $user_login )
-			|| $this->local_lockout->is_limit_login_ok( $username )
-		) {
+		// Username/email allowlist only. IP allowlist is handled by the early
+		// hook, which sets the request-scoped flag before this code runs.
+		$allowlisted_via_user = $this->local_lockout->is_local_allowlisted_username( $username, $user )
+			|| $this->local_lockout->check_whitelist_usernames( false, $user_login );
+
+		$is_allowlisted = $this->local_lockout->check_whitelist_ips( false, $ip )
+			|| $allowlisted_via_user;
+
+		if ( $is_allowlisted || $this->local_lockout->is_limit_login_ok( $username ) ) {
+			// Mirror the early authenticate allowlist path: do not record failed
+			// attempts for allowlisted users who log in via account email (no
+			// get_user_by in the early hook). The guard is request-scoped and
+			// bound to the allowlisted identity so it cannot mute recording for
+			// other users later in the same request (system.multicall).
+			if ( $allowlisted_via_user ) {
+				if ( is_a( $user, 'WP_User' ) && ! empty( $user->ID ) ) {
+					LocalLockoutManager::mark_allowlisted_user_in_request( $user->ID );
+				} else {
+					LocalLockoutManager::mark_allowlisted_login_in_request( '' !== $user_login ? $user_login : $username );
+				}
+				remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
+				$this->detach_error_message_fixup();
+			}
 			return $user;
 		}
 

@@ -212,6 +212,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 */
 	public static function reset_request_guards() {
 		LocalLockoutManager::reset_failed_login_recorded_in_request();
+		LocalLockoutManager::reset_allowlisted_in_request();
 		MfaFlowLoginHandler::reset_handshake_guard();
 
 		if ( self::$instance ) {
@@ -743,8 +744,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	public function login_page_render_js() {
-		if ( true === LoginFlowTransientStore::get( 'llar_user_is_whitelisted', false ) ) {
-			LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => null ) );
+		if ( LocalLockoutManager::is_allowlisted_in_request() ) {
 			return;
 		}
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $um_limit_login_failed;
