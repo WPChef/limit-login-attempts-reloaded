@@ -385,11 +385,27 @@ class Helpers {
 		}
 
 		$clean = sanitize_text_field( $value );
-		if ( strlen( $clean ) > 253 ) {
-			$clean = substr( $clean, 0, 253 );
+		if ( mb_strlen( $clean ) > 253 ) {
+			$clean = mb_substr( $clean, 0, 253 );
 		}
 
 		return $clean;
+	}
+
+	/**
+	 * Sanitize the current request's User-Agent for outbound payloads.
+	 *
+	 * The header is attacker-controlled and may carry invalid UTF-8; it must
+	 * never be embedded verbatim in a serialised payload.
+	 *
+	 * @return string
+	 */
+	public static function sanitize_user_agent() {
+		if ( empty( $_SERVER['HTTP_USER_AGENT'] ) || ! is_string( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			return '';
+		}
+
+		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
 	}
 
 	public static function is_ip_valid( $ip ) {

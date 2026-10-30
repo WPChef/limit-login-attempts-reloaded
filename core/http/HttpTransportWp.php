@@ -26,7 +26,7 @@ class HttpTransportWp implements HttpTransportInterface {
 	 * @return array
 	 */
 	public function post( $url, $options = array() ) {
-		$body = ! empty( $options['data'] ) ? json_encode( $options['data'], JSON_FORCE_OBJECT ) : null;
+		$body = ! empty( $options['data'] ) ? Http::encode_payload( $options['data'] ) : null;
 
 		// Unserialisable payload (e.g. invalid UTF-8 from request headers):
 		// fail the request instead of sending it out with an empty body.

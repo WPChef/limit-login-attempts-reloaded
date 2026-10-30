@@ -56,6 +56,9 @@ class MfaApiClient {
 
 		$result = $this->parse_response( $response, $url );
 		if ( ! $result['success'] && 0 === $status ) {
+			// Informational only: the login handler no longer distinguishes
+			// "server unreachable" from other handshake failures — every
+			// non-success outcome fails the login closed.
 			$result['server_unreachable'] = true;
 		}
 		return $result;
