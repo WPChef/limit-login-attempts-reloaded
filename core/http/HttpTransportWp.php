@@ -4,6 +4,8 @@ namespace LLAR\Core\Http;
 
 class HttpTransportWp implements HttpTransportInterface {
 
+	use HttpTimeoutTrait;
+
 	/**
 	 * @param $url
 	 * @param array $options
@@ -13,7 +15,8 @@ class HttpTransportWp implements HttpTransportInterface {
 	public function get( $url, $options = array() ) {
 		$response = wp_remote_get( $url, array(
 			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
-			'body' 		=> !empty( $options['data'] ) ? $options['data'] : array()
+			'body' 		=> !empty( $options['data'] ) ? $options['data'] : array(),
+			'timeout' 	=> $this->resolve_timeout( $options ),
 		) );
 
 		return $this->prepare_response( $response );
@@ -40,7 +43,8 @@ class HttpTransportWp implements HttpTransportInterface {
 
 		$response = wp_remote_post( $url, array(
 			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
-			'body' 		=> $body
+			'body' 		=> $body,
+			'timeout' 	=> $this->resolve_timeout( $options ),
 		) );
 
 		return $this->prepare_response( $response );

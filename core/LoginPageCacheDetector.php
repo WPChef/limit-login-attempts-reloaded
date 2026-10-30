@@ -238,6 +238,19 @@ class LoginPageCacheDetector {
 	}
 
 	/**
+	 * Convert a header value (string or array) to string.
+	 *
+	 * @param string|string[] $value Header value(s).
+	 * @return string
+	 */
+	private function header_to_string( $value ) {
+		if ( is_array( $value ) ) {
+			return implode( ', ', $value );
+		}
+		return (string) $value;
+	}
+
+	/**
 	 * When a referer is present, its host must match the site host.
 	 *
 	 * @return bool
@@ -280,9 +293,9 @@ class LoginPageCacheDetector {
 
 		$html    = (string) wp_remote_retrieve_body( $response );
 		$headers = array(
-			'x-cache'       => (string) wp_remote_retrieve_header( $response, 'x-cache' ),
-			'age'           => (string) wp_remote_retrieve_header( $response, 'age' ),
-			'cache-control' => (string) wp_remote_retrieve_header( $response, 'cache-control' ),
+			'x-cache'       => $this->header_to_string( wp_remote_retrieve_header( $response, 'x-cache' ) ),
+			'age'           => $this->header_to_string( wp_remote_retrieve_header( $response, 'age' ) ),
+			'cache-control' => $this->header_to_string( wp_remote_retrieve_header( $response, 'cache-control' ) ),
 		);
 
 		$render_time = $this->extract_token_time( $html );

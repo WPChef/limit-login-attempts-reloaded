@@ -25,8 +25,6 @@ $black_list_ips = ( is_array( $black_list_ips ) && !empty( $black_list_ips ) ) ?
 
 $black_list_usernames = Config::get( 'blacklist_usernames' );
 $black_list_usernames = ( is_array( $black_list_usernames ) && ! empty( $black_list_usernames ) ) ? implode( "\n", $black_list_usernames ) : '';
-
-$url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
 ?>
 
 <div id="llar-setting-page-logs">
@@ -150,8 +148,10 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                 <div class="description mt-1_5">
                     <?php _e( 'Upgrade To Premium For Our Login Firewall', 'limit-login-attempts-reloaded' ); ?>
                 </div>
-                <a href="https://www.limitloginattempts.com/info.php?id=20" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
-                    <?php _e( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+                <a href="<?php echo esc_url( \LLAR\Core\TrialLanding::cta_landing_url( \LLAR\Core\TrialLanding::INFO_ID_LOGS, 'logs-local' ) ); ?>"
+                   data-llar-info-id="<?php echo esc_attr( \LLAR\Core\TrialLanding::INFO_ID_LOGS ); ?>"
+                   class="button menu__item button__transparent_orange mt-1_5 llar-trial-start-cta">
+                    <?php echo esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ); ?>
                 </a>
             </div>
             <div class="add_block__list">
@@ -258,8 +258,10 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                     <div class="description mt-1_5">
                         <?php _e( 'Upgrade Today For Enhanced Logs & IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
                     </div>
-                    <a href="<?php echo $url_try_for_free . 'logs-log' ?>" class="button menu__item button__transparent_orange mt-1_5" target="_blank">
-                        <?php _e( 'Try For FREE', 'limit-login-attempts-reloaded' ); ?>
+                    <a href="<?php echo esc_url( \LLAR\Core\TrialLanding::cta_landing_url( \LLAR\Core\TrialLanding::INFO_ID_LOGS, 'logs-local' ) ); ?>"
+                   data-llar-info-id="<?php echo esc_attr( \LLAR\Core\TrialLanding::INFO_ID_LOGS ); ?>"
+                   class="button menu__item button__transparent_orange mt-1_5 llar-trial-start-cta">
+                        <?php echo esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ); ?>
                     </a>
                 </div>
                 <div class="add_block__list">

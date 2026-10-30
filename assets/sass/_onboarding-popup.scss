@@ -44,12 +44,55 @@
         &-horizon {
           display: flex;
           justify-content: center;
+          align-items: center;
           margin-top: 20px;
           gap: 10px;
 
           .button {
             font-size: 18px;
             padding: 11px 60px;
+          }
+
+          &--trial {
+            gap: 20px;
+
+            .button--fit {
+              width: auto;
+              min-width: 0;
+              padding: 11px 22px;
+
+              .dashicons {
+                margin-left: 8px;
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                line-height: 1;
+                vertical-align: middle;
+              }
+            }
+
+            .llar-onboarding-skip {
+              width: auto;
+              min-width: 0;
+              padding: 0;
+              margin: 0;
+              border: none !important;
+              background: transparent !important;
+              box-shadow: none !important;
+              color: $typography-additional !important;
+              font-size: 16px;
+              font-weight: 700;
+              text-decoration: none;
+              cursor: pointer;
+
+              &:hover,
+              &:focus {
+                background: transparent !important;
+                box-shadow: none !important;
+                color: $typography-secondary !important;
+                outline: none;
+              }
+            }
           }
         }
 
@@ -245,6 +288,11 @@
             color: $state-color__error;
             background-color: $state-color__error_back;
           }
+
+          // PR #322: trial step-3 email input under the "Would you like..." caption.
+          .llar-trial-email {
+            margin-top: 12px;
+          }
         }
 
         .field {
@@ -310,6 +358,28 @@
 
             .input_border {
               min-width: 100%;
+            }
+
+            &--inline {
+              display: flex;
+              align-items: center;
+              column-gap: 16px;
+              width: 100%;
+              text-align: left;
+
+              .field-email__label {
+                flex: 0 0 auto;
+                color: $typography-primary;
+                font-size: 16px;
+                font-weight: 600;
+                white-space: nowrap;
+              }
+
+              .input_border {
+                flex: 1 1 auto;
+                min-width: 0;
+                width: 100%;
+              }
             }
           }
 
@@ -420,9 +490,13 @@
             margin-top: 10px;
             margin-left: 25px;
             text-align: left;
+            // The whole consent text toggles the checkbox.
+            cursor: pointer;
 
             input {
-              margin-top: 15px;
+              // Center the 18px checkbox against the first text line
+              // (line box ~21px, offset by the span's 10px top margin).
+              margin-top: 11px;
               margin-left: -25px;
               vertical-align: top;
             }
