@@ -53,7 +53,17 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 		$request_data = null;
 		if( !empty( $data ) ) {
-			$request_data = json_encode( $data, JSON_FORCE_OBJECT );
+			$request_data = Http::encode_payload( $data );
+
+			// Unserialisable payload (e.g. invalid UTF-8 from request headers):
+			// fail the request instead of sending it out with an empty body.
+			if ( false === $request_data ) {
+				return array(
+					'data'   => null,
+					'status' => 0,
+					'error'  => 'Request payload encoding failed',
+				);
+			}
 		}
 
 		$context = stream_context_create( array(

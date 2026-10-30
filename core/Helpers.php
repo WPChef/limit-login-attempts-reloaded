@@ -358,10 +358,61 @@ class Helpers {
 
 		if( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) && !array_key_exists( 'HTTP_X_FORWARDED_FOR', $ips ) ) {
 
-			$ips['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			$sanitized_xff = self::sanitize_forwarded_for( $_SERVER['HTTP_X_FORWARDED_FOR'] );
+
+			if ( '' !== $sanitized_xff ) {
+				$ips['HTTP_X_FORWARDED_FOR'] = $sanitized_xff;
+			}
 		}
 
 		return $ips;
+	}
+
+	/**
+	 * Sanitize a raw X-Forwarded-For header for outbound payloads.
+	 *
+	 * The header is attacker-controlled: it must never be embedded verbatim.
+	 * Keep the first valid IP of the chain; otherwise keep a sanitized,
+	 * UTF-8-safe, length-capped copy so the value can always be serialised.
+	 *
+	 * @param mixed $value Raw header value.
+	 * @return string
+	 */
+	public static function sanitize_forwarded_for( $value ) {
+		if ( ! is_string( $value ) || '' === $value ) {
+			return '';
+		}
+
+		foreach ( explode( ',', $value ) as $part ) {
+			$part  = trim( $part );
+			$valid = self::is_ip_valid( $part );
+			if ( $valid ) {
+				return $valid;
+			}
+		}
+
+		$clean = sanitize_text_field( $value );
+		if ( mb_strlen( $clean ) > 253 ) {
+			$clean = mb_substr( $clean, 0, 253 );
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * Sanitize the current request's User-Agent for outbound payloads.
+	 *
+	 * The header is attacker-controlled and may carry invalid UTF-8; it must
+	 * never be embedded verbatim in a serialised payload.
+	 *
+	 * @return string
+	 */
+	public static function sanitize_user_agent() {
+		if ( empty( $_SERVER['HTTP_USER_AGENT'] ) || ! is_string( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			return '';
+		}
+
+		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
 	}
 
 	public static function is_ip_valid( $ip ) {

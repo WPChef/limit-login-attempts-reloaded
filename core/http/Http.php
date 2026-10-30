@@ -38,6 +38,22 @@ class Http {
 	}
 
 	/**
+	 * Serialise an outbound payload.
+	 *
+	 * Returns false when the data cannot be encoded (e.g. invalid UTF-8 from
+	 * request headers) so transports can fail the request instead of sending
+	 * an empty body. Deliberately json_encode() rather than wp_json_encode():
+	 * the wp wrapper sanitises and retries, which would hide the failure.
+	 *
+	 * @param mixed $data Payload.
+	 * @return string|false
+	 */
+	public static function encode_payload( $data ) {
+
+		return json_encode( $data, JSON_FORCE_OBJECT );
+	}
+
+	/**
 	 * @param $url
 	 * @param array $options
 	 *

@@ -8,6 +8,7 @@ use LLAR\Core\IpAddressResolver;
 use LLAR\Core\LimitLoginAttempts;
 use LLAR\Core\LocalLockoutManager;
 use LLAR\Core\MfaConstants;
+use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,6 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * MFA login handshake redirect after password verification (wp-login flow).
+ *
+ * Fail-closed contract: when MFA is required for the authenticated user, the
+ * login may proceed ONLY after the verification step positively succeeds
+ * (redirect to the MFA app). Every other outcome — non-browser auth route
+ * (XML-RPC), rate limit, provider missing, payload build/send failure or a
+ * non-success API response — returns a WP_Error so the caller refuses the
+ * login instead of granting a password-only session.
  */
 class MfaFlowLoginHandler {
 
@@ -79,26 +87,42 @@ class MfaFlowLoginHandler {
 	}
 
 	/**
+	 * Error for a login that must be refused because the second factor could
+	 * not be positively completed.
+	 *
+	 * @param string $code WP_Error code.
+	 * @return WP_Error
+	 */
+	private function mfa_refusal_error( $code ) {
+		return new WP_Error(
+			$code,
+			__( '<strong>ERROR</strong>: Two-factor verification is required for this account and could not be completed. Please try again.', 'limit-login-attempts-reloaded' )
+		);
+	}
+
+	/**
 	 * @param string       $username             Login username.
 	 * @param bool         $is_pre_authenticated Password verified.
 	 * @param \WP_User|null $authenticated_user  Authenticated user when known.
-	 * @return void
+	 * @return WP_Error|null WP_Error when the login must be refused (MFA required
+	 *                       but the verification step did not positively succeed);
+	 *                       null when MFA is not required for this login.
 	 */
 	public function try_mfa_flow_redirect( $username, $is_pre_authenticated = false, $authenticated_user = null ) {
 		// CRITICAL: never fetch or disclose any user info unless password was verified.
 		if ( ! $is_pre_authenticated ) {
-			return;
+			return null;
 		}
 		$ip = $this->ip_resolver->get_address();
 
 		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->local_lockout->is_local_allowlisted_username( $username, $authenticated_user ) ) {
-			return;
+			return null;
 		}
 
 		if ( LimitLoginAttempts::$cloud_app ) {
 			$acl_response = $this->cloud_acl->get_auth_acl_response( $username );
 			if ( is_array( $acl_response ) && ! empty( $acl_response['result'] ) && 'pass' === $acl_response['result'] ) {
-				return;
+				return null;
 			}
 		}
 
@@ -120,17 +144,27 @@ class MfaFlowLoginHandler {
 		$should_trigger_mfa = $mfa_enabled && $has_mfa_groups && ! $user_excluded;
 
 		if ( ! $should_trigger_mfa ) {
-			return;
+			return null;
+		}
+
+		// The verification flow is interactive (redirect to the MFA app): it can
+		// never complete on a non-browser authentication route such as XML-RPC.
+		// A protected account must be refused there, not granted a session.
+		if ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
+			return new WP_Error(
+				'llar_mfa_xmlrpc_required',
+				__( '<strong>ERROR</strong>: Two-factor verification is required for this account and cannot be completed over XML-RPC.', 'limit-login-attempts-reloaded' )
+			);
 		}
 
 		if ( self::$mfa_flow_handshake_attempted ) {
-			return;
+			return $this->mfa_refusal_error( 'llar_mfa_unavailable' );
 		}
 
 		$provider_id = defined( 'LLA_MFA_PROVIDER' ) ? LLA_MFA_PROVIDER : 'llar';
 		$provider    = MfaProviderRegistry::get( $provider_id );
 		if ( ! $provider ) {
-			return;
+			return $this->mfa_refusal_error( 'llar_mfa_unavailable' );
 		}
 
 		$rate_key = 'llar_mfa_flow_handshake_' . md5( $ip . ( defined( 'AUTH_SALT' ) ? AUTH_SALT : 'llar' ) );
@@ -150,7 +184,7 @@ class MfaFlowLoginHandler {
 		if ( ! $rate_ok ) {
 			$rate['c'] = (int) $rate['c'] + 1;
 			set_transient( $rate_key, $rate, $period );
-			return;
+			return $this->mfa_refusal_error( 'llar_mfa_rate_limited' );
 		}
 
 		self::$mfa_flow_handshake_attempted = true;
@@ -160,7 +194,7 @@ class MfaFlowLoginHandler {
 		}
 		$redirect_to         = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 		$cancel_url          = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		$current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		$current_login_url   = '';
 		if ( is_string( $current_request_uri ) && '' !== $current_request_uri ) {
 			$current_login_url = home_url( $current_request_uri );
@@ -214,12 +248,12 @@ class MfaFlowLoginHandler {
 			}
 		}
 
-		if ( ! $result['success'] && ! empty( $result['server_unreachable'] ) ) {
-			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, 'api_unreachable', 60 );
-			return;
-		}
-
 		$rate['c'] = (int) $rate['c'] + 1;
 		set_transient( $rate_key, $rate, $period );
+
+		// Fail closed: a required second factor that was not positively completed
+		// (payload build/send failure, API error, unreachable server, malformed
+		// response) must never fall back to a password-only session.
+		return $this->mfa_refusal_error( 'llar_mfa_unavailable' );
 	}
 }
