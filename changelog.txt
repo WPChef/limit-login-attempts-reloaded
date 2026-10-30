@@ -1,9 +1,5 @@
 == Changelog ==
 
-= 3.4.1 =
-* Security: fixed the email two-factor authentication being bypassed through XML-RPC. The 2FA decision is now made from the authenticated user object instead of the login-form field, so a protected account authenticating over XML-RPC is refused unless it completes the second factor.
-* Security: fixed the email two-factor authentication failing open when a malformed X-Forwarded-For header broke the verification request. The header value is sanitized before entering any payload, unserializable payloads fail the request, and a login with 2FA required no longer completes unless the verification step positively succeeds.
-
 = 3.4.0 =
 * Added a red dot to the admin menu and admin bar when Micro Cloud requests are exhausted.
 * Introduced a 7-day free trial with consent-based activation across the plugin.
