@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.4.1 =
+* Security: blocked a server-side request forgery (SSRF) in the app setup feature, reported by Viktor Heiduck. The setup destination is now validated before fetching: loopback, private and reserved IP ranges, non-HTTP(S) schemes and non-standard ports are rejected, and redirect hops are re-validated. Same-host requests remain allowed, matching the WordPress wp_safe_remote_* policy. Self-hosted or internal app/MFA endpoints can be opted back in with the core filters http_request_host_is_external and http_allowed_safe_ports. Note: destinations that resolve only to IPv6 or use non-standard ports will now be rejected unless allowed via those filters.
+
 = 3.4.0 =
 * Added a red dot to the admin menu and admin bar when Micro Cloud requests are exhausted.
 * Introduced a 7-day free trial with consent-based activation across the plugin.

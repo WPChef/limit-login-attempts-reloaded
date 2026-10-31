@@ -154,6 +154,15 @@ class CloudApp
 		// Provisioning is slower than regular API calls — allow more time.
 		$setup_response = Http::get( $link, array( 'timeout' => 20 ) );
 
+		// The outbound URL policy blocked the destination (the setup code is
+		// user input): report a clear reason without fetching — and without
+		// logging the attacker-influenced URL.
+		if ( ! empty( $setup_response['blocked'] ) ) {
+			$return['error'] = __( 'The Setup Code points to a destination this site cannot contact. Setup codes are issued by your app provider and always point to a public HTTPS address.', 'limit-login-attempts-reloaded' );
+
+			return $return;
+		}
+
 		$response_data = isset( $setup_response['data'] ) ? $setup_response['data'] : '{}';
 		$setup_response_body = json_decode( $response_data, true );
 
