@@ -53,6 +53,12 @@ class HttpTransportWp implements HttpTransportInterface {
 
 		if( is_wp_error( $response ) ) {
 			$return['error'] = $response->get_error_message();
+
+			// wp_safe_remote_* rejects a redirect hop that fails validation —
+			// surface it as a policy block, not a transport failure.
+			if ( 'wp_http.redirect_failed_validation' === $response->get_error_code() ) {
+				$return['blocked'] = true;
+			}
 		} else {
 			$return['data'] = wp_remote_retrieve_body( $response );
 			$return['status'] = intval( wp_remote_retrieve_response_code( $response ) );
