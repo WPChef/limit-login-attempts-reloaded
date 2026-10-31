@@ -145,6 +145,16 @@ class CloudApp
 
 		$link = 'https://' . $link;
 
+		// SSRF guard: the setup destination comes from user input (the setup
+		// code is the reversed URL), so it must be validated before any
+		// transport fetches it — loopback and private/reserved addresses are
+		// rejected, turning the site into an unreachable internal probe.
+		if ( function_exists( 'wp_http_validate_url' ) && ! wp_http_validate_url( $link ) ) {
+			$return['error'] = __( 'The Setup Code points to a destination this site cannot contact. Setup codes are issued by your app provider and always point to a public HTTPS address.', 'limit-login-attempts-reloaded' );
+
+			return $return;
+		}
+
 		$domain = parse_url( home_url( '/' ) );
 		$link = add_query_arg( 'domain', $domain['host'], $link );
 

@@ -63,6 +63,11 @@ class HttpTransportFopen implements HttpTransportInterface {
                 'content'       => $request_data,
                 'ignore_errors' => true,
                 'timeout'       => $timeout,
+                // Do not follow redirects: the destination was validated at
+                // the Http facade, but a redirect hop is not. Same policy as
+                // the curl transport (no CURLOPT_FOLLOWLOCATION).
+                'follow_location' => 0,
+                'max_redirects'   => 0,
             )
 		));
 

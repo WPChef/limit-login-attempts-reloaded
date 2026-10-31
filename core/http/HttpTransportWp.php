@@ -13,7 +13,7 @@ class HttpTransportWp implements HttpTransportInterface {
 	 * @return array
 	 */
 	public function get( $url, $options = array() ) {
-		$response = wp_remote_get( $url, array(
+		$response = wp_safe_remote_get( $url, array(
 			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
 			'body' 		=> !empty( $options['data'] ) ? $options['data'] : array(),
 			'timeout' 	=> $this->resolve_timeout( $options ),
@@ -29,7 +29,7 @@ class HttpTransportWp implements HttpTransportInterface {
 	 * @return array
 	 */
 	public function post( $url, $options = array() ) {
-		$response = wp_remote_post( $url, array(
+		$response = wp_safe_remote_post( $url, array(
 			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
 			'body' 		=> !empty( $options['data'] ) ? json_encode( $options['data'], JSON_FORCE_OBJECT ) : null,
 			'timeout' 	=> $this->resolve_timeout( $options ),
