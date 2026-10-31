@@ -708,4 +708,46 @@ class Helpers {
 		return require LLA_PLUGIN_DIR . 'resources/compatibility-data.php';
 	}
 
+	/**
+	 * Whether the runtime PHP version is below a patched PHP2Shell release.
+	 *
+	 * Hardcoded minima (PHP 8.5.12 / 8.4.27 / 8.3.36 / 8.2.35). Branches older
+	 * than 8.2 are treated as vulnerable (EOL / no upstream fix). Future 8.6+
+	 * is assumed safe until thresholds are updated.
+	 *
+	 * @param string|null $php_version Optional. Defaults to PHP_VERSION.
+	 * @return bool
+	 */
+	public static function is_php_critically_vulnerable( $php_version = null ) {
+		$version = null === $php_version ? PHP_VERSION : (string) $php_version;
+		if ( '' === $version ) {
+			return false;
+		}
+
+		// Future minor branches: no known threshold yet.
+		if ( version_compare( $version, '8.6.0', '>=' ) ) {
+			return false;
+		}
+
+		// EOL branches no longer receive upstream security fixes.
+		if ( version_compare( $version, '8.2.0', '<' ) ) {
+			return true;
+		}
+
+		$minima = array(
+			'8.5' => '8.5.12',
+			'8.4' => '8.4.27',
+			'8.3' => '8.3.36',
+			'8.2' => '8.2.35',
+		);
+
+		foreach ( $minima as $branch => $minimum ) {
+			if ( version_compare( $version, $branch . '.0', '>=' ) ) {
+				return version_compare( $version, $minimum, '<' );
+			}
+		}
+
+		return true;
+	}
+
 }

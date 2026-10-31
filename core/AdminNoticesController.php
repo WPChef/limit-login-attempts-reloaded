@@ -17,7 +17,7 @@ class AdminNoticesController {
 	 *
 	 * @var array
 	 */
-	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired', 'leave-review', 'login-page-cache' );
+	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired', 'leave-review', 'login-page-cache', 'php-vulnerable' );
 
 	/**
 	 * Get type, CSS class and HTML content for a notice key.
@@ -162,6 +162,20 @@ class AdminNoticesController {
 						__( '⚠️ Action required: Your existing 2FA recovery links are no longer valid. On the <a href="%s">2FA settings page</a>, turn 2FA off and then back on, then follow the prompts to download the new recovery links.', 'limit-login-attempts-reloaded' ),
 						\esc_url( $mfa_url )
 					),
+				);
+			case 'php-vulnerable':
+				$learn_more_url = 'https://www.limitloginattempts.com/blogs/cyber-security/php2shell-critical-php-vulnerabilities-wordpress/';
+				$content        = \__(
+					'Warning! Your server is running a critically vulnerable PHP version. Please contact your hosting provider immediately to update PHP. This is a server-level PHP issue, not a WordPress or plugin vulnerability.',
+					$text_domain
+				);
+				$content       .= ' <a href="' . \esc_url( $learn_more_url ) . '" target="_blank" rel="noopener noreferrer">';
+				$content       .= \__( 'Learn more', $text_domain );
+				$content       .= '</a>.';
+				return array(
+					'type'    => 'notice-error',
+					'class'   => 'llar-options-notice llar-php-vulnerable-notice',
+					'content' => $content,
 				);
 			default:
 				return null;
