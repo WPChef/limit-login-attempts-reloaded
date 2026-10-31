@@ -39,17 +39,84 @@ class HttpTransportFopen implements HttpTransportInterface {
 	}
 
 	/**
-	 * @param $url
-	 * @param $method
-	 * @param array $headers
-	 * @param array $data
-	 * @param int $timeout
+	 * Perform the request, following up to 3 redirects manually.
+	 *
+	 * The HTTP stream wrapper cannot validate redirect targets, so
+	 * follow_location stays off and every Location hop is resolved and
+	 * re-checked against Http::is_url_allowed() — a public endpoint
+	 * answering 3xx must not drag the request into a private network.
+	 * This mirrors what WP_Http_Streams does and what the WP transport
+	 * gets for free from wp_safe_remote_get().
+	 *
+	 * @param string $url
+	 * @param string $method
+	 * @param array  $headers
+	 * @param array  $data
+	 * @param int    $timeout
 	 *
 	 * @return array
 	 */
 	private function request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT ) {
 
 		$method = strtoupper( trim( $method ) );
+
+		for ( $redirects = 0; $redirects <= 3; $redirects++ ) {
+
+			$response = $this->single_request( $url, $method, $headers, $data, $timeout );
+			$status   = (int) $response['status'];
+
+			$is_redirect = in_array( $status, array( 301, 302, 303, 307, 308 ), true );
+			$location    = $is_redirect ? $this->find_header( $response['raw_headers'], 'location' ) : null;
+
+			if ( ! $location || ! class_exists( 'WP_Http' ) ) {
+				unset( $response['raw_headers'] );
+
+				return $response;
+			}
+
+			$next = WP_Http::make_absolute_url( $location, $url );
+
+			if ( ! $next || $next === $url || ! Http::is_url_allowed( $next ) ) {
+				return array(
+					'data'    => null,
+					'status'  => 0,
+					'error'   => 'Redirect target rejected by the outbound URL policy.',
+					'blocked' => true,
+				);
+			}
+
+			// 301/302/303 downgrade POST to GET (browser and WP semantics);
+			// 307/308 preserve the method and the body.
+			if ( 'POST' === $method && in_array( $status, array( 301, 302, 303 ), true ) ) {
+				$method = 'GET';
+				$data   = array();
+				$headers = array_values( array_filter( $headers, function ( $header ) {
+					return 0 !== stripos( $header, 'Content-Type' );
+				} ) );
+			}
+
+			$url = $next;
+		}
+
+		return array(
+			'data'   => null,
+			'status' => 0,
+			'error'  => 'Too many redirects.',
+		);
+	}
+
+	/**
+	 * Single stream request, no redirect following.
+	 *
+	 * @param string $url
+	 * @param string $method
+	 * @param array  $headers
+	 * @param array  $data
+	 * @param int    $timeout
+	 *
+	 * @return array
+	 */
+	private function single_request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT ) {
 
 		$request_data = null;
 		if( !empty( $data ) ) {
@@ -63,11 +130,9 @@ class HttpTransportFopen implements HttpTransportInterface {
                 'content'       => $request_data,
                 'ignore_errors' => true,
                 'timeout'       => $timeout,
-                // Do not follow redirects: the destination was validated at
-                // the Http facade, but a redirect hop is not. Same policy as
-                // the curl transport (no CURLOPT_FOLLOWLOCATION).
+                // Redirects are followed manually in request() so that each
+                // hop can be validated — never let the wrapper follow them.
                 'follow_location' => 0,
-                'max_redirects'   => 0,
             )
 		));
 
@@ -97,9 +162,31 @@ class HttpTransportFopen implements HttpTransportInterface {
 		}
 
 		return array(
-			'data'      => $response,
-			'status'    => intval( $status ),
-			'error'     => $error
+			'data'        => $response,
+			'status'      => intval( $status ),
+			'error'       => $error,
+			'raw_headers' => isset( $http_response_header ) ? $http_response_header : array(),
 		);
+	}
+
+	/**
+	 * Case-insensitive lookup of a response header value.
+	 *
+	 * @param array  $raw_headers
+	 * @param string $name
+	 *
+	 * @return string|null
+	 */
+	private function find_header( $raw_headers, $name ) {
+
+		foreach ( (array) $raw_headers as $header ) {
+			$pos = strpos( $header, ':' );
+
+			if ( false !== $pos && strtolower( trim( substr( $header, 0, $pos ) ) ) === $name ) {
+				return trim( substr( $header, $pos + 1 ) );
+			}
+		}
+
+		return null;
 	}
 }
