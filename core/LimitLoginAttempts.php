@@ -414,6 +414,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
 
 		add_action( 'admin_notices', array( $this, 'render_leave_review_admin_notice' ) );
+		add_action( 'admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
+		add_action( 'network_admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -1792,5 +1794,22 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			return;
 		}
 		$this->admin_notices_controller->render( 'leave-review' );
+	}
+
+	/**
+	 * Site-wide admin notice when the server PHP version is critically vulnerable.
+	 *
+	 * Self-dismisses when PHP is patched (WP.org guideline 11). Admins only.
+	 *
+	 * @return void
+	 */
+	public function render_php_vulnerable_admin_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		if ( ! Helpers::is_php_critically_vulnerable() ) {
+			return;
+		}
+		$this->admin_notices_controller->render( 'php-vulnerable' );
 	}
 }
