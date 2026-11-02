@@ -59,9 +59,10 @@ class HttpTransportFopen implements HttpTransportInterface {
 			// fail the request instead of sending it out with an empty body.
 			if ( false === $request_data ) {
 				return array(
-					'data'   => null,
-					'status' => 0,
-					'error'  => 'Request payload encoding failed',
+					'data'       => null,
+					'status'     => 0,
+					'error'      => 'Request payload encoding failed',
+					'error_code' => Http::ERROR_PAYLOAD_ENCODING,
 				);
 			}
 		}

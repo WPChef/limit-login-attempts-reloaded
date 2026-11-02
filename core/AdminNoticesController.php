@@ -17,7 +17,7 @@ class AdminNoticesController {
 	 *
 	 * @var array
 	 */
-	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired', 'leave-review', 'login-page-cache' );
+	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'mfa-api-not-configured', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired', 'leave-review', 'login-page-cache' );
 
 	/**
 	 * Get type, CSS class and HTML content for a notice key.
@@ -51,6 +51,12 @@ class AdminNoticesController {
 					'type'    => 'notice-warning',
 					'class'   => 'llar-options-notice',
 					'content' => \__( 'Before enabling 2FA/MFA, we strongly recommend ensuring your website is accessible only via HTTPS.', $text_domain ),
+				);
+			case 'mfa-api-not-configured':
+				return array(
+					'type'    => 'notice-error',
+					'class'   => 'llar-options-notice',
+					'content' => \__( 'Two-factor authentication is enabled, but the MFA API endpoint (LLA_MFA_API_BASE_URL) is missing or not an absolute http(s) URL. Logins for 2FA-protected accounts will be refused until this is fixed.', $text_domain ),
 				);
 			case 'debug-foreign-auth-hooks':
 				$hooks = isset( $args['hooks'] ) && is_array( $args['hooks'] ) ? $args['hooks'] : array();

@@ -180,10 +180,18 @@ class LocalLockoutManager {
 	/**
 	 * Action when login attempt failed.
 	 *
-	 * @param string $username Login username.
+	 * @param string         $username Login username.
+	 * @param \WP_Error|null $error    Authentication error, when core provides it.
 	 * @return void
 	 */
-	public function limit_login_failed( $username ) {
+	public function limit_login_failed( $username, $error = null ) {
+		// A refusal caused by the second factor is not an authentication
+		// failure (the password was correct): counting it would burn the retry
+		// budget and lock the IP out — e.g. while the MFA service is down.
+		if ( self::is_mfa_refusal_error( $error ) ) {
+			return;
+		}
+
 		// @temporary WP 7.0 compat — prevent double-recording when late authenticate fallback already fired.
 		// TODO: Remove after WP 7.1 release or when auth flow is stable.
 		if ( self::$failed_login_recorded_in_request ) {
@@ -191,6 +199,27 @@ class LocalLockoutManager {
 		}
 
 		$this->record_failed_login_attempt( $username );
+	}
+
+	/**
+	 * Whether an authentication error was raised by the MFA flow (correct
+	 * password, second factor could not be completed).
+	 *
+	 * @param mixed $error Error passed by core to wp_login_failed.
+	 * @return bool
+	 */
+	private static function is_mfa_refusal_error( $error ) {
+		if ( ! is_wp_error( $error ) ) {
+			return false;
+		}
+
+		foreach ( $error->get_error_codes() as $code ) {
+			if ( 0 === strpos( $code, 'llar_mfa_' ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

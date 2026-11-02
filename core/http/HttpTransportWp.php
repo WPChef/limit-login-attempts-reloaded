@@ -35,9 +35,10 @@ class HttpTransportWp implements HttpTransportInterface {
 		// fail the request instead of sending it out with an empty body.
 		if ( ! empty( $options['data'] ) && false === $body ) {
 			return array(
-				'data'   => null,
-				'status' => 0,
-				'error'  => 'Request payload encoding failed',
+				'data'       => null,
+				'status'     => 0,
+				'error'      => 'Request payload encoding failed',
+				'error_code' => Http::ERROR_PAYLOAD_ENCODING,
 			);
 		}
 

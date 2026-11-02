@@ -17,12 +17,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * MFA login handshake redirect after password verification (wp-login flow).
  *
- * Fail-closed contract: when MFA is required for the authenticated user, the
- * login may proceed ONLY after the verification step positively succeeds
- * (redirect to the MFA app). Every other outcome — non-browser auth route
- * (XML-RPC), rate limit, provider missing, payload build/send failure or a
- * non-success API response — returns a WP_Error so the caller refuses the
- * login instead of granting a password-only session.
+ * Contract: when MFA is required for the authenticated user, the login may
+ * proceed ONLY after the verification step positively succeeds (redirect to
+ * the MFA app), except for one deliberate trade-off: while the MFA service
+ * itself is unavailable (transport error, 429/5xx, unusable 2xx body) 2FA is
+ * disabled for a short window instead of locking every protected account out
+ * of the site. Refusals: non-browser auth route (XML-RPC), rate limit,
+ * provider missing, a payload that cannot be serialised (attacker-influenced)
+ * and a request rejected by the service (4xx) return a WP_Error.
  */
 class MfaFlowLoginHandler {
 
@@ -105,8 +107,12 @@ class MfaFlowLoginHandler {
 	 * @param bool         $is_pre_authenticated Password verified.
 	 * @param \WP_User|null $authenticated_user  Authenticated user when known.
 	 * @return WP_Error|null WP_Error when the login must be refused (MFA required
-	 *                       but the verification step did not positively succeed);
-	 *                       null when MFA is not required for this login.
+	 *                       but the verification step did not positively succeed,
+	 *                       or a protected account authenticating over a
+	 *                       non-interactive route such as XML-RPC — also during
+	 *                       a provider outage); null when MFA is not required,
+	 *                       or when it was temporarily disabled (rescue, or the
+	 *                       service being down on interactive routes).
 	 */
 	public function try_mfa_flow_redirect( $username, $is_pre_authenticated = false, $authenticated_user = null ) {
 		// CRITICAL: never fetch or disclose any user info unless password was verified.
@@ -126,7 +132,9 @@ class MfaFlowLoginHandler {
 			}
 		}
 
-		$mfa_temporarily_disabled = false !== get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
+		$disable_transient        = get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
+		$mfa_outage_window        = is_string( $disable_transient ) && 'api_unreachable' === $disable_transient;
+		$mfa_temporarily_disabled = false !== $disable_transient;
 		$mfa_enabled              = (bool) Config::get( 'mfa_enabled' ) && ! $mfa_temporarily_disabled;
 		$user                     = null;
 		if ( is_a( $authenticated_user, 'WP_User' ) ) {
@@ -137,24 +145,30 @@ class MfaFlowLoginHandler {
 				$user = get_user_by( 'email', $username );
 			}
 		}
-		$mfa_roles          = Config::get( 'mfa_roles', array() );
-		$mfa_roles          = is_array( $mfa_roles ) ? $mfa_roles : array();
-		$has_mfa_groups     = ! empty( $mfa_roles );
-		$user_excluded      = $user && $has_mfa_groups && ! array_intersect( (array) $user->roles, $mfa_roles );
-		$should_trigger_mfa = $mfa_enabled && $has_mfa_groups && ! $user_excluded;
-
-		if ( ! $should_trigger_mfa ) {
-			return null;
-		}
+		$mfa_roles              = Config::get( 'mfa_roles', array() );
+		$mfa_roles              = is_array( $mfa_roles ) ? $mfa_roles : array();
+		$has_mfa_groups         = ! empty( $mfa_roles );
+		$user_excluded          = $user && $has_mfa_groups && ! array_intersect( (array) $user->roles, $mfa_roles );
+		$mfa_required_by_config = ( (bool) Config::get( 'mfa_enabled' ) ) && $has_mfa_groups && ! $user_excluded;
+		$should_trigger_mfa     = $mfa_enabled && $has_mfa_groups && ! $user_excluded;
 
 		// The verification flow is interactive (redirect to the MFA app): it can
 		// never complete on a non-browser authentication route such as XML-RPC.
-		// A protected account must be refused there, not granted a session.
-		if ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
+		// A protected account must be refused there, not granted a session. The
+		// refusal must also hold during a provider outage: the 60s availability
+		// window applies to interactive routes only and must not reopen
+		// password-only XML-RPC sessions. A deliberate rescue disable stores a
+		// different transient value, so it still lifts the refusal.
+		if ( $mfa_required_by_config && ( ! $mfa_temporarily_disabled || $mfa_outage_window )
+			&& defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
 			return new WP_Error(
 				'llar_mfa_xmlrpc_required',
 				__( '<strong>ERROR</strong>: Two-factor verification is required for this account and cannot be completed over XML-RPC.', 'limit-login-attempts-reloaded' )
 			);
+		}
+
+		if ( ! $should_trigger_mfa ) {
+			return null;
 		}
 
 		if ( self::$mfa_flow_handshake_attempted ) {
@@ -251,9 +265,33 @@ class MfaFlowLoginHandler {
 		$rate['c'] = (int) $rate['c'] + 1;
 		set_transient( $rate_key, $rate, $period );
 
-		// Fail closed: a required second factor that was not positively completed
-		// (payload build/send failure, API error, unreachable server, malformed
-		// response) must never fall back to a password-only session.
+		// A payload that cannot be serialised is reachable through request-derived
+		// fields, so this path must never fall back to a password-only session:
+		// it is the #342 bypass. A missing or non-absolute API base URL is a
+		// misconfiguration: refusing (and showing the settings notice) is safer
+		// than silently disabling 2FA through repeated availability windows.
+		$error_code = isset( $result['error_code'] ) ? (string) $result['error_code'] : '';
+		if ( \LLAR\Core\Http\Http::ERROR_PAYLOAD_ENCODING === $error_code
+			|| MfaApiClient::ERROR_NOT_CONFIGURED === $error_code ) {
+			return $this->mfa_refusal_error( 'llar_mfa_unavailable' );
+		}
+
+		$status = isset( $result['status'] ) ? (int) $result['status'] : 0;
+
+		// Service unavailable: transport error (0), rate limited by the provider
+		// (429) or provider error (5xx). Disabling 2FA for a short window is the
+		// pre-existing availability trade-off — an MFA provider outage must not
+		// lock protected accounts out of the site. A 200 that reaches this point
+		// carries no usable handshake (invalid body or incomplete payload): it
+		// is refused below instead of opening an availability window.
+		if ( 0 === $status || 429 === $status || $status >= 500 ) {
+			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, 'api_unreachable', 60 );
+			return null;
+		}
+
+		// The service answered but did not complete the handshake (200 with an
+		// unusable body or an incomplete payload, any other 4xx): treat as a
+		// hard failure rather than a reason to let the login through.
 		return $this->mfa_refusal_error( 'llar_mfa_unavailable' );
 	}
 }

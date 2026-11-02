@@ -5,6 +5,15 @@ namespace LLAR\Core\Http;
 class Http {
 
 	/**
+	 * error_code of a transport result whose payload could not be serialised.
+	 *
+	 * Request-derived payload fields can be attacker-influenced, so a failed
+	 * encode must be distinguished from a genuine outage: it has to fail the
+	 * caller closed instead of being treated as "service unavailable".
+	 */
+	const ERROR_PAYLOAD_ENCODING = 'payload_encoding_failed';
+
+	/**
 	 * @var HttpTransportInterface
 	 */
 	private static $transport;

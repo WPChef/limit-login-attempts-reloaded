@@ -15,6 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class MfaApiClient {
 
+	/** error_code: the API base URL is missing or not an absolute http(s) URL. */
+	const ERROR_NOT_CONFIGURED = 'mfa_api_not_configured';
+
+	/** error_code: HTTP 200 whose body cannot be parsed into a usable response. */
+	const ERROR_INVALID_RESPONSE_BODY = 'mfa_invalid_response_body';
+
 	/**
 	 * Default MFA API base URL (base + path from constants).
 	 *
@@ -30,19 +36,46 @@ class MfaApiClient {
 	}
 
 	/**
+	 * A base URL must be an absolute http(s) URL. An empty value or a
+	 * path-only value (e.g. from an empty LLA_MFA_API_BASE_URL constant) is a
+	 * misconfiguration and must not silently disable 2FA through the
+	 * availability window.
+	 *
+	 * @param string $base Base URL.
+	 * @return bool
+	 */
+	private static function is_base_url_usable( $base ) {
+		if ( ! is_string( $base ) || '' === $base ) {
+			return false;
+		}
+		return ( 0 === strpos( $base, 'http://' ) ) || ( 0 === strpos( $base, 'https://' ) );
+	}
+
+	/**
+	 * Whether the default (constants-derived) API base URL is usable. Used for
+	 * the settings-page misconfiguration notice.
+	 *
+	 * @return bool
+	 */
+	public static function default_base_url_is_usable() {
+		return self::is_base_url_usable( self::get_default_base_url() );
+	}
+
+	/**
 	 * Call POST /wp/handshake.
 	 *
 	 * @param array $payload  user_ip, login_url, send_email_url (required per API), user_group, is_pre_authenticated.
 	 * @param array $options Optional. base_url (override constants).
-	 * @return array { success: bool, data: array|null, error: string|null, server_unreachable?: bool }
+	 * @return array { success: bool, data: array|null, error: string|null, error_code?: string, server_unreachable?: bool }
 	 */
 	public function handshake( array $payload, $options = array() ) {
-		$base = isset( $options['base_url'] ) && (string) $options['base_url'] !== '' ? rtrim( (string) $options['base_url'], '/' ) : self::get_default_base_url();
-		if ( '' === $base ) {
+		$base = isset( $options['base_url'] ) ? rtrim( (string) $options['base_url'], '/' ) : self::get_default_base_url();
+		if ( ! self::is_base_url_usable( $base ) ) {
 			return array(
-				'success' => false,
-				'data'    => null,
-				'error'   => 'MFA API endpoint not configured',
+				'success'    => false,
+				'data'       => null,
+				'error'      => 'MFA API endpoint not configured',
+				'error_code' => self::ERROR_NOT_CONFIGURED,
 			);
 		}
 
@@ -56,9 +89,6 @@ class MfaApiClient {
 
 		$result = $this->parse_response( $response, $url );
 		if ( ! $result['success'] && 0 === $status ) {
-			// Informational only: the login handler no longer distinguishes
-			// "server unreachable" from other handshake failures — every
-			// non-success outcome fails the login closed.
 			$result['server_unreachable'] = true;
 		}
 		return $result;
@@ -73,12 +103,13 @@ class MfaApiClient {
 	 * @return array { success: bool, data: array|null, error: string|null }
 	 */
 	public function verify( $token, $secret, $options = array() ) {
-		$base = isset( $options['base_url'] ) && (string) $options['base_url'] !== '' ? rtrim( (string) $options['base_url'], '/' ) : self::get_default_base_url();
-		if ( '' === $base ) {
+		$base = isset( $options['base_url'] ) ? rtrim( (string) $options['base_url'], '/' ) : self::get_default_base_url();
+		if ( ! self::is_base_url_usable( $base ) ) {
 			return array(
-				'success' => false,
-				'data'    => null,
-				'error'   => 'MFA API endpoint not configured',
+				'success'    => false,
+				'data'       => null,
+				'error'      => 'MFA API endpoint not configured',
+				'error_code' => self::ERROR_NOT_CONFIGURED,
 			);
 		}
 
@@ -115,26 +146,32 @@ class MfaApiClient {
 			$decoded = is_string( $body ) ? json_decode( $body, true ) : null;
 			$message = ( is_array( $decoded ) && ! empty( $decoded['message'] ) ) ? $decoded['message'] : $err;
 			return array(
-				'success' => false,
-				'data'    => null,
-				'error'   => $message ? $message : 'Request failed',
+				'success'    => false,
+				'data'       => null,
+				'error'      => $message ? $message : 'Request failed',
+				'status'     => $status,
+				'error_code' => isset( $response['error_code'] ) ? $response['error_code'] : null,
 			);
 		}
 
 		$data = is_string( $body ) ? json_decode( $body, true ) : null;
 		if ( ! is_array( $data ) ) {
 			return array(
-				'success' => false,
-				'data'    => null,
-				'error'   => 'Invalid response',
+				'success'    => false,
+				'data'       => null,
+				'error'      => 'Invalid response',
+				'status'     => $status,
+				'error_code' => self::ERROR_INVALID_RESPONSE_BODY,
 			);
 		}
 
 		$data = Helpers::sanitize_stripslashes_deep( $data );
 		return array(
-			'success' => true,
-			'data'    => $data,
-			'error'   => null,
+			'success'    => true,
+			'data'       => $data,
+			'error'      => null,
+			'status'     => $status,
+			'error_code' => null,
 		);
 	}
 }

@@ -656,7 +656,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		// Setup default plugin options
 		//$this->sanitize_options();
 
-		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ), 10, 2 );
 		add_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999, 2 );
 		add_action( 'wp_login', array( $this, 'limit_login_success' ), 10, 2 );
 
@@ -1276,13 +1276,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * Run MFA flow on login: handshake, save session, redirect to MFA app.
-	 * Exits on successful redirect. Call only after password verification.
+	 * Handle a failed login from the wp_login_failed hook.
 	 *
-	 * @param string $username Login username.
+	 * @param string        $username Login username.
+	 * @param \WP_Error|null $error    Authentication error, when core provides it.
 	 */
-	public function limit_login_failed( $username ) {
-		$this->local_lockout->limit_login_failed( $username );
+	public function limit_login_failed( $username, $error = null ) {
+		$this->local_lockout->limit_login_failed( $username, $error );
 	}
 
 	/**
