@@ -39,6 +39,11 @@ class HttpTransportWp implements HttpTransportInterface {
 	}
 
 	/**
+	 * Note: wp_safe_remote_* validates the URL and every redirect hop itself,
+	 * but WordPress resolves the hostname internally, so the plugin cannot
+	 * pin the validated address for this transport (it can for fopen/curl).
+	 * The DNS-rebinding window here is exactly the one core itself has.
+	 *
 	 * @param $response
 	 *
 	 * @return array

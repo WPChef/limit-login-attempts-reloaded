@@ -21,7 +21,9 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
 
-		return $this->request( $url, 'GET', $headers, array(), $this->resolve_timeout( $options ) );
+		$destination = !empty( $options['destination'] ) ? $options['destination'] : null;
+
+		return $this->request( $url, 'GET', $headers, array(), $this->resolve_timeout( $options ), $destination );
 	}
 
 	/**
@@ -35,7 +37,9 @@ class HttpTransportFopen implements HttpTransportInterface {
 		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
 		$data = !empty( $options['data'] ) ? $options['data'] : array();
 
-		return $this->request( $url, 'POST', $headers, $data, $this->resolve_timeout( $options ) );
+		$destination = !empty( $options['destination'] ) ? $options['destination'] : null;
+
+		return $this->request( $url, 'POST', $headers, $data, $this->resolve_timeout( $options ), $destination );
 	}
 
 	/**
@@ -53,17 +57,31 @@ class HttpTransportFopen implements HttpTransportInterface {
 	 * @param array  $headers
 	 * @param array  $data
 	 * @param int    $timeout
+	 * @param array|null $destination validated destination from Http::resolve_destination()
 	 *
 	 * @return array
 	 */
-	private function request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT ) {
+	private function request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT, $destination = null ) {
 
 		$method = strtoupper( trim( $method ) );
+
+		if ( empty( $destination ) ) {
+			$destination = Http::resolve_destination( $url );
+
+			if ( ! $destination ) {
+				return array(
+					'data'    => null,
+					'status'  => 0,
+					'error'   => 'Destination rejected by the outbound URL policy.',
+					'blocked' => true,
+				);
+			}
+		}
 
 		// Core parity: WP_Http follows up to 5 redirects by default.
 		for ( $redirects = 0; $redirects <= 5; $redirects++ ) {
 
-			$response = $this->single_request( $url, $method, $headers, $data, $timeout );
+			$response = $this->single_request( $url, $method, $headers, $data, $timeout, $destination );
 			$status   = (int) $response['status'];
 
 			$is_redirect = in_array( $status, array( 301, 302, 303, 307, 308 ), true );
@@ -77,7 +95,12 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 			$next = WP_Http::make_absolute_url( $location, $url );
 
-			if ( ! $next || $next === $url || ! Http::is_url_allowed( $next ) ) {
+			// Re-resolve (not just re-validate): every hop is pinned to its
+			// own validated IPs, so a redirect cannot be used to re-resolve
+			// the name into a private address either.
+			$next_destination = ( $next && $next !== $url ) ? Http::resolve_destination( $next ) : false;
+
+			if ( ! $next_destination ) {
 				return array(
 					'data'    => null,
 					'status'  => 0,
@@ -101,7 +124,8 @@ class HttpTransportFopen implements HttpTransportInterface {
 				} ) );
 			}
 
-			$url = $next;
+			$url          = $next;
+			$destination  = $next_destination;
 		}
 
 		return array(
@@ -151,14 +175,35 @@ class HttpTransportFopen implements HttpTransportInterface {
 	 * @param array  $headers
 	 * @param array  $data
 	 * @param int    $timeout
+	 * @param array|null $destination validated destination to pin the connection to
 	 *
 	 * @return array
 	 */
-	private function single_request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT ) {
+	private function single_request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT, $destination = null ) {
 
 		$request_data = null;
 		if( !empty( $data ) ) {
 			$request_data = json_encode( $data, JSON_FORCE_OBJECT );
+		}
+
+		$request_url = $url;
+		$ssl_options = array();
+
+		// Pin the connection to an address that was validated above instead
+		// of letting the wrapper resolve the name a second time (DNS
+		// rebinding: public answer during validation, loopback during the
+		// actual connect). The Host header and the TLS peer name keep the
+		// request logically addressed to the real host name.
+		if ( ! empty( $destination['ips'] ) ) {
+			$ip   = $this->preferred_ip( $destination['ips'] );
+			$host = false !== strpos( $ip, ':' ) ? '[' . $ip . ']' : $ip;
+
+			$request_url = preg_replace( '#^(https?)://[^/?\#]+#i', '$1://' . $host, $url, 1 );
+
+			$port_header = in_array( $destination['port'], array( 80, 443 ), true ) ? '' : ':' . $destination['port'];
+			$headers[]   = 'Host: ' . $destination['host'] . $port_header;
+
+			$ssl_options['peer_name'] = $destination['host'];
 		}
 
 		$context = stream_context_create( array(
@@ -171,10 +216,11 @@ class HttpTransportFopen implements HttpTransportInterface {
                 // Redirects are followed manually in request() so that each
                 // hop can be validated — never let the wrapper follow them.
                 'follow_location' => 0,
-            )
+            ),
+			'ssl' => $ssl_options,
 		));
 
-		$fp = @fopen( $url, 'rb', false, $context );
+		$fp = @fopen( $request_url, 'rb', false, $context );
 
 		$error = null;
 		$status = null;
@@ -205,6 +251,25 @@ class HttpTransportFopen implements HttpTransportInterface {
 			'error'       => $error,
 			'raw_headers' => isset( $http_response_header ) ? $http_response_header : array(),
 		);
+	}
+
+	/**
+	 * Pick the address to connect to: IPv4 first (fewer TLS/routing
+	 * surprises), any validated address otherwise.
+	 *
+	 * @param array $ips
+	 *
+	 * @return string
+	 */
+	private function preferred_ip( $ips ) {
+
+		foreach ( $ips as $ip ) {
+			if ( false === strpos( $ip, ':' ) ) {
+				return $ip;
+			}
+		}
+
+		return reset( $ips );
 	}
 
 	/**

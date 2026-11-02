@@ -21,7 +21,9 @@ class HttpTransportCurl implements HttpTransportInterface {
 
 		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
 
-		return $this->request( $url, 'GET', $headers, array(), $this->resolve_timeout( $options ) );
+		$destination = !empty( $options['destination'] ) ? $options['destination'] : null;
+
+		return $this->request( $url, 'GET', $headers, array(), $this->resolve_timeout( $options ), $destination );
 	}
 
 	/**
@@ -35,7 +37,9 @@ class HttpTransportCurl implements HttpTransportInterface {
 		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
 		$data = !empty( $options['data'] ) ? $options['data'] : array();
 
-		return $this->request( $url, 'POST', $headers, $data, $this->resolve_timeout( $options ) );
+		$destination = !empty( $options['destination'] ) ? $options['destination'] : null;
+
+		return $this->request( $url, 'POST', $headers, $data, $this->resolve_timeout( $options ), $destination );
 	}
 
 	/**
@@ -44,16 +48,29 @@ class HttpTransportCurl implements HttpTransportInterface {
 	 * @param array $headers
 	 * @param array $data
 	 * @param int $timeout
+	 * @param array|null $destination validated destination from Http::resolve_destination()
 	 *
 	 * @return array
 	 */
-	private function request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT ) {
+	private function request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT, $destination = null ) {
 
 		$handle = curl_init( $url );
 		
 		curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $handle, CURLOPT_CONNECTTIMEOUT, $timeout );
 		curl_setopt( $handle, CURLOPT_TIMEOUT, $timeout );
+
+		// Pin the connection to an address that was validated above instead
+		// of letting curl resolve the name again (DNS rebinding).
+		if ( ! empty( $destination['ips'] ) && ! empty( $destination['host'] ) ) {
+			$resolve = array();
+
+			foreach ( $destination['ips'] as $ip ) {
+				$resolve[] = $destination['host'] . ':' . $destination['port'] . ':' . $ip;
+			}
+
+			curl_setopt( $handle, CURLOPT_RESOLVE, $resolve );
+		}
 
 		if( $method === 'POST' ) {
 			curl_setopt($handle, CURLOPT_POST, true);
