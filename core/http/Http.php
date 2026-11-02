@@ -106,6 +106,57 @@ class Http {
 	}
 
 	/**
+	 * Normalize a hostname: strip brackets, trailing dots, lowercase.
+	 *
+	 * @param string $host
+	 *
+	 * @return string
+	 */
+	public static function normalize_host( $host ) {
+
+		if ( ! is_string( $host ) || '' === $host ) {
+			return '';
+		}
+
+		return strtolower( rtrim( trim( $host, '[]' ), '.' ) );
+	}
+
+	/**
+	 * Whether $host is the site's own host (core same-host policy).
+	 *
+	 * @param string $host already-normalized or raw
+	 *
+	 * @return bool
+	 */
+	public static function is_same_host( $host ) {
+
+		$host = self::normalize_host( $host );
+		$home = self::normalize_host( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
+
+		return '' !== $host && '' !== $home && $host === $home;
+	}
+
+	/**
+	 * Transport-shaped policy rejection. Shared by the facade and transports
+	 * so callers always see `blocked => true` with a stable error string.
+	 *
+	 * @param string|null $error
+	 *
+	 * @return array
+	 */
+	public static function policy_rejection( $error = null ) {
+
+		return array(
+			'data'    => null,
+			'status'  => 0,
+			'error'   => $error
+				? $error
+				: 'Destination rejected by the outbound URL policy (loopback, private networks and non-standard ports are not fetchable).',
+			'blocked' => true,
+		);
+	}
+
+	/**
 	 * Validate an outbound destination and resolve it to the exact IPs the
 	 * transport should connect to.
 	 *
@@ -153,15 +204,14 @@ class Http {
 		}
 
 		$scheme = isset( $parsed['scheme'] ) ? strtolower( $parsed['scheme'] ) : 'http';
-		$host   = strtolower( rtrim( trim( $parsed['host'], '[]' ), '.' ) );
+		$host   = self::normalize_host( $parsed['host'] );
 		$port   = isset( $parsed['port'] ) ? (int) $parsed['port'] : ( 'https' === $scheme ? 443 : 80 );
 
 		if ( '' === $host ) {
 			return false;
 		}
 
-		$home_host = strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
-		$same_host = ( '' !== $home_host && $host === $home_host );
+		$same_host = self::is_same_host( $host );
 
 		if ( $same_host ) {
 			return array(
@@ -262,7 +312,7 @@ class Http {
 
 		$bin = @inet_pton( $ip );
 
-		if ( false === $bin ) {
+		if ( false === $bin || 16 !== strlen( $bin ) ) {
 			return true;
 		}
 
@@ -280,6 +330,22 @@ class Http {
 			return true;
 		}
 
+		// Prefix blocks (IANA special-purpose / documentation / discard / Teredo /
+		// local-use NAT64). Checked before IPv4-embedded unwraps so a special
+		// prefix cannot slip through as "public wrapper + public v4".
+		$prefixes = array(
+			array( '100::', 64 ),          // discard-only
+			array( '2001:db8::', 32 ),     // documentation
+			array( '2001::', 32 ),         // Teredo
+			array( '64:ff9b:1::', 48 ),    // local-use NAT64
+		);
+
+		foreach ( $prefixes as $prefix ) {
+			if ( self::ipv6_has_prefix( $bin, $prefix[0], $prefix[1] ) ) {
+				return true;
+			}
+		}
+
 		// ::/96 — "this host", loopback and the deprecated IPv4-compatible space.
 		if ( substr( $bin, 0, 12 ) === str_repeat( "\0", 12 ) ) {
 			return true;
@@ -290,7 +356,7 @@ class Http {
 			return self::is_non_public_ip( inet_ntop( substr( $bin, 12, 4 ) ) );
 		}
 
-		// NAT64 64:ff9b::/96 wraps an IPv4 address in the last 4 bytes.
+		// NAT64 well-known prefix 64:ff9b::/96 wraps an IPv4 address in the last 4 bytes.
 		if ( "\x00\x64\xff\x9b" === substr( $bin, 0, 4 )
 			&& substr( $bin, 4, 8 ) === str_repeat( "\0", 8 ) ) {
 			return self::is_non_public_ip( inet_ntop( substr( $bin, 12, 4 ) ) );
@@ -302,6 +368,39 @@ class Http {
 		}
 
 		return false;
+	}
+
+	/**
+	 * True when $bin (16-byte IPv6) falls under $prefix/$bits.
+	 *
+	 * @param string $bin
+	 * @param string $prefix IPv6 textual prefix
+	 * @param int    $bits
+	 *
+	 * @return bool
+	 */
+	private static function ipv6_has_prefix( $bin, $prefix, $bits ) {
+
+		$prefix_bin = @inet_pton( $prefix );
+
+		if ( false === $prefix_bin || 16 !== strlen( $bin ) || $bits < 1 || $bits > 128 ) {
+			return false;
+		}
+
+		$bytes = (int) floor( $bits / 8 );
+		$rest  = $bits % 8;
+
+		if ( $bytes > 0 && substr( $bin, 0, $bytes ) !== substr( $prefix_bin, 0, $bytes ) ) {
+			return false;
+		}
+
+		if ( 0 === $rest ) {
+			return true;
+		}
+
+		$mask = ( 0xff << ( 8 - $rest ) ) & 0xff;
+
+		return ( ord( $bin[ $bytes ] ) & $mask ) === ( ord( $prefix_bin[ $bytes ] ) & $mask );
 	}
 
 	/**
@@ -344,15 +443,13 @@ class Http {
 			return false;
 		}
 
-		$host = strtolower( rtrim( trim( $parsed['host'], '[]' ), '.' ) );
+		$host = self::normalize_host( $parsed['host'] );
 
 		if ( '' === $host || filter_var( $host, FILTER_VALIDATE_IP ) ) {
 			return false;
 		}
 
-		$home_host = strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
-
-		if ( '' !== $home_host && $host === $home_host ) {
+		if ( self::is_same_host( $host ) ) {
 			return false;
 		}
 
@@ -360,20 +457,10 @@ class Http {
 	}
 
 	/**
-	 * Transport-shaped response for a destination the site must not contact.
-	 * Carries a `blocked` flag so callers can tell a policy rejection from
-	 * a transport failure. The error string deliberately repeats no URL:
-	 * it may flow into error_log, and the URL is attacker-influenced input.
-	 *
 	 * @return array
 	 */
 	private static function blocked_url_response() {
 
-		return array(
-			'data'    => null,
-			'status'  => 0,
-			'error'   => 'Destination rejected by the outbound URL policy (loopback, private networks and non-standard ports are not fetchable).',
-			'blocked' => true,
-		);
+		return self::policy_rejection();
 	}
 }

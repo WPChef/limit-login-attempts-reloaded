@@ -69,17 +69,26 @@ class HttpTransportFopen implements HttpTransportInterface {
 			$destination = Http::resolve_destination( $url );
 
 			if ( ! $destination ) {
-				return array(
-					'data'    => null,
-					'status'  => 0,
-					'error'   => 'Destination rejected by the outbound URL policy.',
-					'blocked' => true,
-				);
+				return Http::policy_rejection( 'Destination rejected by the outbound URL policy.' );
 			}
 		}
 
+		$visited = array();
+
 		// Core parity: WP_Http follows up to 5 redirects by default.
 		for ( $redirects = 0; $redirects <= 5; $redirects++ ) {
+
+			$key = $this->redirect_key( $url );
+
+			if ( isset( $visited[ $key ] ) ) {
+				return array(
+					'data'   => null,
+					'status' => 0,
+					'error'  => 'Redirect loop detected.',
+				);
+			}
+
+			$visited[ $key ] = true;
 
 			$response = $this->single_request( $url, $method, $headers, $data, $timeout, $destination );
 			$status   = (int) $response['status'];
@@ -95,18 +104,27 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 			$next = WP_Http::make_absolute_url( $location, $url );
 
+			if ( ! $next ) {
+				return Http::policy_rejection( 'Redirect target rejected by the outbound URL policy.' );
+			}
+
+			$next_key = $this->redirect_key( $next );
+
+			if ( isset( $visited[ $next_key ] ) ) {
+				return array(
+					'data'   => null,
+					'status' => 0,
+					'error'  => 'Redirect loop detected.',
+				);
+			}
+
 			// Re-resolve (not just re-validate): every hop is pinned to its
 			// own validated IPs, so a redirect cannot be used to re-resolve
 			// the name into a private address either.
-			$next_destination = ( $next && $next !== $url ) ? Http::resolve_destination( $next ) : false;
+			$next_destination = Http::resolve_destination( $next );
 
 			if ( ! $next_destination ) {
-				return array(
-					'data'    => null,
-					'status'  => 0,
-					'error'   => 'Redirect target rejected by the outbound URL policy.',
-					'blocked' => true,
-				);
+				return Http::policy_rejection( 'Redirect target rejected by the outbound URL policy.' );
 			}
 
 			// Never leak credentials across host boundaries on a redirect.
@@ -136,7 +154,31 @@ class HttpTransportFopen implements HttpTransportInterface {
 	}
 
 	/**
-	 * Hostname of a URL, lowercased.
+	 * Normalized redirect identity: scheme/host/port/path/query, no fragment.
+	 *
+	 * @param string $url
+	 *
+	 * @return string
+	 */
+	private function redirect_key( $url ) {
+
+		$parsed = wp_parse_url( $url );
+
+		if ( ! is_array( $parsed ) || empty( $parsed['host'] ) ) {
+			return (string) $url;
+		}
+
+		$scheme = isset( $parsed['scheme'] ) ? strtolower( $parsed['scheme'] ) : 'http';
+		$host   = Http::normalize_host( $parsed['host'] );
+		$port   = isset( $parsed['port'] ) ? (int) $parsed['port'] : ( 'https' === $scheme ? 443 : 80 );
+		$path   = isset( $parsed['path'] ) ? $parsed['path'] : '';
+		$query  = isset( $parsed['query'] ) ? $parsed['query'] : '';
+
+		return $scheme . '://' . $host . ':' . $port . $path . ( '' !== $query ? '?' . $query : '' );
+	}
+
+	/**
+	 * Hostname of a URL, normalized.
 	 *
 	 * @param string $url
 	 *
@@ -146,7 +188,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 		$host = wp_parse_url( $url, PHP_URL_HOST );
 
-		return is_string( $host ) ? strtolower( $host ) : '';
+		return is_string( $host ) ? Http::normalize_host( $host ) : '';
 	}
 
 	/**
@@ -259,13 +301,12 @@ class HttpTransportFopen implements HttpTransportInterface {
 			return array( $url, $headers, array() );
 		}
 
-		$ip   = $this->preferred_ip( $destination['ips'] );
-		$host = false !== strpos( $ip, ':' ) ? '[' . $ip . ']' : $ip;
+		$ip       = $this->preferred_ip( $destination['ips'] );
+		$ip_host  = false !== strpos( $ip, ':' ) ? '[' . $ip . ']' : $ip;
+		$request_url = $this->build_pinned_url( $url, $destination, $ip_host );
 
 		$default_port = ( 'https' === $destination['scheme'] ) ? 443 : 80;
 		$port_suffix  = ( (int) $destination['port'] === $default_port ) ? '' : ':' . $destination['port'];
-
-		$request_url = preg_replace( '#^(https?)://[^/?\#]+#i', '$1://' . $host . $port_suffix, $url, 1 );
 
 		// Replace any prior Host — never stack across redirect hops.
 		$headers = array_values( array_filter( $headers, function ( $header ) {
@@ -274,6 +315,44 @@ class HttpTransportFopen implements HttpTransportInterface {
 		$headers[] = 'Host: ' . $destination['host'] . $port_suffix;
 
 		return array( $request_url, $headers, array( 'peer_name' => $destination['host'] ) );
+	}
+
+	/**
+	 * Rebuild the request URL with the pinned IP as authority, keeping
+	 * path/query/fragment from the logical URL. No regex on authority.
+	 *
+	 * @param string $url
+	 * @param array  $destination
+	 * @param string $ip_host IPv4 or bracketed IPv6 literal
+	 *
+	 * @return string
+	 */
+	private function build_pinned_url( $url, $destination, $ip_host ) {
+
+		$parsed = wp_parse_url( $url );
+		$scheme = $destination['scheme'];
+		$default_port = ( 'https' === $scheme ) ? 443 : 80;
+		$authority = $ip_host;
+
+		if ( (int) $destination['port'] !== $default_port ) {
+			$authority .= ':' . $destination['port'];
+		}
+
+		$out = $scheme . '://' . $authority;
+
+		if ( is_array( $parsed ) ) {
+			if ( ! empty( $parsed['path'] ) ) {
+				$out .= $parsed['path'];
+			}
+			if ( isset( $parsed['query'] ) ) {
+				$out .= '?' . $parsed['query'];
+			}
+			if ( isset( $parsed['fragment'] ) ) {
+				$out .= '#' . $parsed['fragment'];
+			}
+		}
+
+		return $out;
 	}
 
 	/**
