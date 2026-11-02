@@ -3,7 +3,10 @@
     <!-- AI: Keep PHPCS output deterministic and scoped for public CI logs. -->
     <description>WordPress coding standards for the LLAR plugin.</description>
 
-    <rule ref="WordPress-Extra"/>
+    <rule ref="WordPress-Extra">
+        <!-- Project uses CamelCase class filenames (Http.php), not class-http.php. -->
+        <exclude name="WordPress.Files.FileName"/>
+    </rule>
 
     <arg name="extensions" value="php"/>
     <arg name="report" value="full"/>

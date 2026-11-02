@@ -39,16 +39,15 @@ class Http {
 	 */
 	public static function init() {
 
-		if( function_exists( 'fopen' ) && ini_get( 'allow_url_fopen' ) === '1' ) {
+		if ( function_exists( 'fopen' ) && ini_get( 'allow_url_fopen' ) === '1' ) {
 			self::$transport = new HttpTransportFopen();
-		} else if( function_exists( 'wp_remote_get' ) ) {
+		} elseif ( function_exists( 'wp_remote_get' ) ) {
 			self::$transport = new HttpTransportWp();
-		} else if( function_exists( 'curl_version' ) ) {
+		} elseif ( function_exists( 'curl_version' ) ) {
 			self::$transport = new HttpTransportCurl();
 		} else {
 			throw new \Exception( 'Unable to determine HTTP transport.' );
 		}
-
 	}
 
 	/**
@@ -61,8 +60,12 @@ class Http {
 
 		$destination = self::resolve_destination( $url );
 
-		if ( ! $destination ) {
-			return self::rejection_response( $url );
+		if ( null === $destination ) {
+			return self::unresolvable_response();
+		}
+
+		if ( false === $destination ) {
+			return self::policy_rejection();
 		}
 
 		$options['destination'] = $destination;
@@ -80,14 +83,18 @@ class Http {
 
 		$destination = self::resolve_destination( $url );
 
-		if ( ! $destination ) {
-			return self::rejection_response( $url );
+		if ( null === $destination ) {
+			return self::unresolvable_response();
+		}
+
+		if ( false === $destination ) {
+			return self::policy_rejection();
 		}
 
 		$options['destination'] = $destination;
-		$options['headers'] = array_merge(
+		$options['headers']     = array_merge(
 			array( 'Content-Type: application/json; charset=utf-8' ),
-			!empty( $options['headers'] ) ? $options['headers'] : array()
+			! empty( $options['headers'] ) ? $options['headers'] : array()
 		);
 
 		return self::$transport->post( $url, $options );
@@ -102,7 +109,7 @@ class Http {
 	 */
 	public static function is_url_allowed( $url ) {
 
-		return false !== self::resolve_destination( $url );
+		return is_array( self::resolve_destination( $url ) );
 	}
 
 	/**
@@ -185,7 +192,7 @@ class Http {
 	 *
 	 * @param string $url
 	 *
-	 * @return array|false array( 'scheme', 'host', 'port', 'ips', 'same_host' )
+	 * @return array|false|null array on allow, false on policy/invalid, null on NXDOMAIN
 	 */
 	public static function resolve_destination( $url ) {
 
@@ -193,7 +200,7 @@ class Http {
 			return false;
 		}
 
-		if ( ! function_exists( 'wp_http_validate_url' ) || ! wp_http_validate_url( $url ) ) {
+		if ( ! function_exists( 'wp_http_validate_url' ) ) {
 			return false;
 		}
 
@@ -211,9 +218,13 @@ class Http {
 			return false;
 		}
 
-		$same_host = self::is_same_host( $host );
+		$core_ok = (bool) wp_http_validate_url( $url );
 
-		if ( $same_host ) {
+		if ( self::is_same_host( $host ) ) {
+			if ( ! $core_ok ) {
+				return false;
+			}
+
 			return array(
 				'scheme'    => $scheme,
 				'host'      => $host,
@@ -223,9 +234,15 @@ class Http {
 			);
 		}
 
+		// One plugin-side resolution for both classification and pinning.
+		// null vs false is decided here — callers must not re-resolve.
 		$ips = self::resolve_host( $host );
 
 		if ( empty( $ips ) ) {
+			return null;
+		}
+
+		if ( ! $core_ok ) {
 			return false;
 		}
 
@@ -316,7 +333,7 @@ class Http {
 			return true;
 		}
 
-		if ( $bin === inet_pton( '::1' ) || $bin === inet_pton( '::' ) ) {
+		if ( inet_pton( '::1' ) === $bin || inet_pton( '::' ) === $bin ) {
 			return true;
 		}
 
@@ -404,63 +421,18 @@ class Http {
 	}
 
 	/**
-	 * Map a failed resolve_destination() to the right transport-shaped
-	 * response. NXDOMAIN / empty resolution is a transport failure (no
-	 * `blocked` flag) so CloudApp::setup() shows the "endpoint is not
-	 * responding" path instead of blaming the setup code's destination
-	 * policy. Policy rejections stay `blocked => true`.
-	 *
-	 * @param string $url
+	 * Transport-shaped response for NXDOMAIN / empty resolution.
+	 * No `blocked` flag — CloudApp::setup() treats this as "endpoint is not
+	 * responding", not as a destination-policy violation.
 	 *
 	 * @return array
 	 */
-	private static function rejection_response( $url ) {
+	private static function unresolvable_response() {
 
-		if ( self::host_is_unresolvable( $url ) ) {
-			return array(
-				'data'   => null,
-				'status' => 0,
-				'error'  => 'Could not resolve host.',
-			);
-		}
-
-		return self::blocked_url_response();
-	}
-
-	/**
-	 * True when the URL's host is a name that does not resolve to any A/AAAA.
-	 * IP literals and same-host names are never "unresolvable" here.
-	 *
-	 * @param string $url
-	 *
-	 * @return bool
-	 */
-	private static function host_is_unresolvable( $url ) {
-
-		$parsed = is_string( $url ) ? wp_parse_url( $url ) : false;
-
-		if ( empty( $parsed['host'] ) ) {
-			return false;
-		}
-
-		$host = self::normalize_host( $parsed['host'] );
-
-		if ( '' === $host || filter_var( $host, FILTER_VALIDATE_IP ) ) {
-			return false;
-		}
-
-		if ( self::is_same_host( $host ) ) {
-			return false;
-		}
-
-		return empty( self::resolve_host( $host ) );
-	}
-
-	/**
-	 * @return array
-	 */
-	private static function blocked_url_response() {
-
-		return self::policy_rejection();
+		return array(
+			'data'   => null,
+			'status' => 0,
+			'error'  => 'Could not resolve host.',
+		);
 	}
 }

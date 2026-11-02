@@ -13,11 +13,14 @@ class HttpTransportWp implements HttpTransportInterface {
 	 * @return array
 	 */
 	public function get( $url, $options = array() ) {
-		$response = wp_safe_remote_get( $url, array(
-			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
-			'body' 		=> !empty( $options['data'] ) ? $options['data'] : array(),
-			'timeout' 	=> $this->resolve_timeout( $options ),
-		) );
+		$response = wp_safe_remote_get(
+			$url,
+			array(
+				'headers' => ! empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
+				'body'    => ! empty( $options['data'] ) ? $options['data'] : array(),
+				'timeout' => $this->resolve_timeout( $options ),
+			)
+		);
 
 		return $this->prepare_response( $response );
 	}
@@ -29,11 +32,14 @@ class HttpTransportWp implements HttpTransportInterface {
 	 * @return array
 	 */
 	public function post( $url, $options = array() ) {
-		$response = wp_safe_remote_post( $url, array(
-			'headers' 	=> !empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
-			'body' 		=> !empty( $options['data'] ) ? json_encode( $options['data'], JSON_FORCE_OBJECT ) : null,
-			'timeout' 	=> $this->resolve_timeout( $options ),
-		) );
+		$response = wp_safe_remote_post(
+			$url,
+			array(
+				'headers' => ! empty( $options['headers'] ) ? $this->format_headers( $options['headers'] ) : array(),
+				'body'    => ! empty( $options['data'] ) ? json_encode( $options['data'], JSON_FORCE_OBJECT ) : null,
+				'timeout' => $this->resolve_timeout( $options ),
+			)
+		);
 
 		return $this->prepare_response( $response );
 	}
@@ -51,12 +57,12 @@ class HttpTransportWp implements HttpTransportInterface {
 	private function prepare_response( $response ) {
 
 		$return = array(
-			'data'      => null,
-			'status'    => 0,
-			'error'     => null
+			'data'   => null,
+			'status' => 0,
+			'error'  => null,
 		);
 
-		if( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) ) {
 			$return['error'] = $response->get_error_message();
 
 			// wp_safe_remote_* rejects a redirect hop that fails validation —
@@ -65,7 +71,7 @@ class HttpTransportWp implements HttpTransportInterface {
 				$return['blocked'] = true;
 			}
 		} else {
-			$return['data'] = wp_remote_retrieve_body( $response );
+			$return['data']   = wp_remote_retrieve_body( $response );
 			$return['status'] = intval( wp_remote_retrieve_response_code( $response ) );
 		}
 
@@ -81,7 +87,7 @@ class HttpTransportWp implements HttpTransportInterface {
 
 		$formatted_headers = array();
 
-		if( !empty( $headers ) ) {
+		if ( ! empty( $headers ) ) {
 			foreach ( $headers as $header ) {
 				list( $name, $value ) = explode( ':', $header );
 

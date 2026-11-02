@@ -14,14 +14,14 @@ class HttpTransportFopen implements HttpTransportInterface {
 	 */
 	public function get( $url, $options = array() ) {
 
-		if( !empty( $options['data'] ) ) {
+		if ( ! empty( $options['data'] ) ) {
 			$query_str = http_build_query( $options['data'] );
-			$url .= "?{$query_str}";
+			$url      .= "?{$query_str}";
 		}
 
-		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
+		$headers = ! empty( $options['headers'] ) ? $options['headers'] : array();
 
-		$destination = !empty( $options['destination'] ) ? $options['destination'] : null;
+		$destination = ! empty( $options['destination'] ) ? $options['destination'] : null;
 
 		return $this->request( $url, 'GET', $headers, array(), $this->resolve_timeout( $options ), $destination );
 	}
@@ -34,10 +34,10 @@ class HttpTransportFopen implements HttpTransportInterface {
 	 */
 	public function post( $url, $options = array() ) {
 
-		$headers = !empty( $options['headers'] ) ? $options['headers'] : array();
-		$data = !empty( $options['data'] ) ? $options['data'] : array();
+		$headers = ! empty( $options['headers'] ) ? $options['headers'] : array();
+		$data    = ! empty( $options['data'] ) ? $options['data'] : array();
 
-		$destination = !empty( $options['destination'] ) ? $options['destination'] : null;
+		$destination = ! empty( $options['destination'] ) ? $options['destination'] : null;
 
 		return $this->request( $url, 'POST', $headers, $data, $this->resolve_timeout( $options ), $destination );
 	}
@@ -68,7 +68,15 @@ class HttpTransportFopen implements HttpTransportInterface {
 		if ( empty( $destination ) ) {
 			$destination = Http::resolve_destination( $url );
 
-			if ( ! $destination ) {
+			if ( null === $destination ) {
+				return array(
+					'data'   => null,
+					'status' => 0,
+					'error'  => 'Could not resolve host.',
+				);
+			}
+
+			if ( false === $destination ) {
 				return Http::policy_rejection( 'Destination rejected by the outbound URL policy.' );
 			}
 		}
@@ -123,7 +131,15 @@ class HttpTransportFopen implements HttpTransportInterface {
 			// the name into a private address either.
 			$next_destination = Http::resolve_destination( $next );
 
-			if ( ! $next_destination ) {
+			if ( null === $next_destination ) {
+				return array(
+					'data'   => null,
+					'status' => 0,
+					'error'  => 'Could not resolve host.',
+				);
+			}
+
+			if ( false === $next_destination ) {
 				return Http::policy_rejection( 'Redirect target rejected by the outbound URL policy.' );
 			}
 
@@ -135,15 +151,20 @@ class HttpTransportFopen implements HttpTransportInterface {
 			// 301/302/303 downgrade POST to GET (browser and WP semantics);
 			// 307/308 preserve the method and the body.
 			if ( 'POST' === $method && in_array( $status, array( 301, 302, 303 ), true ) ) {
-				$method = 'GET';
-				$data   = array();
-				$headers = array_values( array_filter( $headers, function ( $header ) {
-					return 0 !== stripos( $header, 'Content-Type' );
-				} ) );
+				$method  = 'GET';
+				$data    = array();
+				$headers = array_values(
+					array_filter(
+						$headers,
+						function ( $header ) {
+							return 0 !== stripos( $header, 'Content-Type' );
+						}
+					)
+				);
 			}
 
-			$url          = $next;
-			$destination  = $next_destination;
+			$url         = $next;
+			$destination = $next_destination;
 		}
 
 		return array(
@@ -202,11 +223,16 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 		$sensitive = array( 'Authorization', 'Cookie' );
 
-		return array_values( array_filter( $headers, function ( $header ) use ( $sensitive ) {
-			$name = strtolower( trim( strtok( $header, ':' ) ) );
+		return array_values(
+			array_filter(
+				$headers,
+				function ( $header ) use ( $sensitive ) {
+					$name = strtolower( trim( strtok( $header, ':' ) ) );
 
-			return ! in_array( $name, array_map( 'strtolower', $sensitive ), true );
-		} ) );
+					return ! in_array( $name, array_map( 'strtolower', $sensitive ), true );
+				}
+			)
+		);
 	}
 
 	/**
@@ -224,47 +250,48 @@ class HttpTransportFopen implements HttpTransportInterface {
 	private function single_request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT, $destination = null ) {
 
 		$request_data = null;
-		if( !empty( $data ) ) {
+		if ( ! empty( $data ) ) {
 			$request_data = json_encode( $data, JSON_FORCE_OBJECT );
 		}
 
 		list( $request_url, $headers, $ssl_options ) = $this->apply_destination_pin( $url, $headers, $destination );
 
-		$context = stream_context_create( array(
-			'http' => array(
-                'method'        => $method,
-                'header'        => implode( "\r\n", $headers ),
-                'content'       => $request_data,
-                'ignore_errors' => true,
-                'timeout'       => $timeout,
-                // Redirects are followed manually in request() so that each
-                // hop can be validated — never let the wrapper follow them.
-                'follow_location' => 0,
-            ),
-			'ssl' => $ssl_options,
-		));
+		$context = stream_context_create(
+			array(
+				'http' => array(
+					'method'          => $method,
+					'header'          => implode( "\r\n", $headers ),
+					'content'         => $request_data,
+					'ignore_errors'   => true,
+					'timeout'         => $timeout,
+					// Redirects are followed manually in request() so that each
+					// hop can be validated — never let the wrapper follow them.
+					'follow_location' => 0,
+				),
+				'ssl'  => $ssl_options,
+			)
+		);
 
 		$fp = @fopen( $request_url, 'rb', false, $context );
 
-		$error = null;
-		$status = null;
+		$error    = null;
+		$status   = null;
 		$response = null;
 
-		if ( !$fp ) {
+		if ( ! $fp ) {
 
-			if( !empty( $http_response_header[0] ) ) {
+			if ( ! empty( $http_response_header[0] ) ) {
 				list(, $code, $message ) = explode( ' ', $http_response_header[0], 3 );
-				$error = $message;
-				$status = $code;
+				$error                   = $message;
+				$status                  = $code;
 
 			} else {
 				$last_err = error_get_last();
-				$error = !empty( $last_err['message'] ) ? $last_err['message'] : 'Unknown error!';
+				$error    = ! empty( $last_err['message'] ) ? $last_err['message'] : 'Unknown error!';
 			}
-
 		} else {
 			list(, $code ) = explode( ' ', $http_response_header[0], 3 );
-			$status = $code;
+			$status        = $code;
 
 			$response = stream_get_contents( $fp );
 		}
@@ -301,17 +328,22 @@ class HttpTransportFopen implements HttpTransportInterface {
 			return array( $url, $headers, array() );
 		}
 
-		$ip       = $this->preferred_ip( $destination['ips'] );
-		$ip_host  = false !== strpos( $ip, ':' ) ? '[' . $ip . ']' : $ip;
+		$ip          = $this->preferred_ip( $destination['ips'] );
+		$ip_host     = false !== strpos( $ip, ':' ) ? '[' . $ip . ']' : $ip;
 		$request_url = $this->build_pinned_url( $url, $destination, $ip_host );
 
 		$default_port = ( 'https' === $destination['scheme'] ) ? 443 : 80;
 		$port_suffix  = ( (int) $destination['port'] === $default_port ) ? '' : ':' . $destination['port'];
 
 		// Replace any prior Host — never stack across redirect hops.
-		$headers = array_values( array_filter( $headers, function ( $header ) {
-			return 0 !== stripos( ltrim( $header ), 'Host:' );
-		} ) );
+		$headers   = array_values(
+			array_filter(
+				$headers,
+				function ( $header ) {
+					return 0 !== stripos( ltrim( $header ), 'Host:' );
+				}
+			)
+		);
 		$headers[] = 'Host: ' . $destination['host'] . $port_suffix;
 
 		return array( $request_url, $headers, array( 'peer_name' => $destination['host'] ) );
@@ -329,10 +361,10 @@ class HttpTransportFopen implements HttpTransportInterface {
 	 */
 	private function build_pinned_url( $url, $destination, $ip_host ) {
 
-		$parsed = wp_parse_url( $url );
-		$scheme = $destination['scheme'];
+		$parsed       = wp_parse_url( $url );
+		$scheme       = $destination['scheme'];
 		$default_port = ( 'https' === $scheme ) ? 443 : 80;
-		$authority = $ip_host;
+		$authority    = $ip_host;
 
 		if ( (int) $destination['port'] !== $default_port ) {
 			$authority .= ':' . $destination['port'];
