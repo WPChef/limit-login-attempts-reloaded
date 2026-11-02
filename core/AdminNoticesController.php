@@ -165,9 +165,13 @@ class AdminNoticesController {
 				);
 			case 'php-vulnerable':
 				$learn_more_url = 'https://www.limitloginattempts.com/blogs/cyber-security/php2shell-critical-php-vulnerabilities-wordpress/';
-				$content        = \__(
-					'Warning! Your server is running a critically vulnerable PHP version. Please contact your hosting provider immediately to update PHP. This is a server-level PHP issue, not a WordPress or plugin vulnerability.',
-					$text_domain
+				$content        = sprintf(
+					/* translators: %s: current PHP version, e.g. 8.2.29 */
+					\__(
+						'Warning! Your server is running a critically vulnerable PHP version %s. Please contact your hosting provider immediately to update PHP. This is a server-level PHP issue, not a WordPress or plugin vulnerability.',
+						$text_domain
+					),
+					\esc_html( PHP_VERSION )
 				);
 				$content       .= ' <a href="' . \esc_url( $learn_more_url ) . '" target="_blank" rel="noopener noreferrer">';
 				$content       .= \__( 'Learn more', $text_domain );
