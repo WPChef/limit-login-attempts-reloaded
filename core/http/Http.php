@@ -220,11 +220,14 @@ class Http {
 
 		$core_ok = (bool) wp_http_validate_url( $url );
 
-		if ( self::is_same_host( $host ) ) {
-			if ( ! $core_ok ) {
-				return false;
-			}
+		if ( ! $core_ok ) {
+			// Reject before our DNS lookup: bad port/scheme/credentials must
+			// not trigger attacker-controlled resolution. NXDOMAIN also fails
+			// core validation first — callers see policy rejection, not null.
+			return false;
+		}
 
+		if ( self::is_same_host( $host ) ) {
 			return array(
 				'scheme'    => $scheme,
 				'host'      => $host,
@@ -234,16 +237,12 @@ class Http {
 			);
 		}
 
-		// One plugin-side resolution for both classification and pinning.
-		// null vs false is decided here — callers must not re-resolve.
+		// One plugin-side resolution for pinning + our range check.
+		// null = resolved empty despite core OK (rare resolver mismatch).
 		$ips = self::resolve_host( $host );
 
 		if ( empty( $ips ) ) {
 			return null;
-		}
-
-		if ( ! $core_ok ) {
-			return false;
 		}
 
 		// Core's escape hatch for self-hosted/internal endpoints. Core only
