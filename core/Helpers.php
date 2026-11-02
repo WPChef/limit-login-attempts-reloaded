@@ -392,6 +392,9 @@ class Helpers {
 		}
 
 		$clean = sanitize_text_field( $value );
+		// sanitize_text_field does not guarantee valid UTF-8: strip invalid
+		// sequences so the value can always be serialised into the payload.
+		$clean = wp_check_invalid_utf8( $clean, true );
 		if ( mb_strlen( $clean ) > 253 ) {
 			$clean = mb_substr( $clean, 0, 253 );
 		}
@@ -412,7 +415,9 @@ class Helpers {
 			return '';
 		}
 
-		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
+		// sanitize_text_field does not guarantee valid UTF-8: strip invalid
+		// sequences so the value can always be serialised into the payload.
+		return wp_check_invalid_utf8( sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ), true );
 	}
 
 	public static function is_ip_valid( $ip ) {

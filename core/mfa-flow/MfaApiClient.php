@@ -36,8 +36,8 @@ class MfaApiClient {
 	}
 
 	/**
-	 * A base URL must be an absolute http(s) URL. An empty value or a
-	 * path-only value (e.g. from an empty LLA_MFA_API_BASE_URL constant) is a
+	 * A base URL must be an absolute http(s) URL with a host. An empty value or
+	 * a path-only value (e.g. from an empty LLA_MFA_API_BASE_URL constant) is a
 	 * misconfiguration and must not silently disable 2FA through the
 	 * availability window.
 	 *
@@ -48,7 +48,10 @@ class MfaApiClient {
 		if ( ! is_string( $base ) || '' === $base ) {
 			return false;
 		}
-		return ( 0 === strpos( $base, 'http://' ) ) || ( 0 === strpos( $base, 'https://' ) );
+		$scheme = wp_parse_url( $base, PHP_URL_SCHEME );
+		$host   = wp_parse_url( $base, PHP_URL_HOST );
+
+		return ( 'http' === $scheme || 'https' === $scheme ) && is_string( $host ) && '' !== $host;
 	}
 
 	/**
@@ -66,7 +69,7 @@ class MfaApiClient {
 	 *
 	 * @param array $payload  user_ip, login_url, send_email_url (required per API), user_group, is_pre_authenticated.
 	 * @param array $options Optional. base_url (override constants).
-	 * @return array { success: bool, data: array|null, error: string|null, error_code?: string, server_unreachable?: bool }
+	 * @return array { success: bool, data: array|null, error: string|null, error_code?: string }
 	 */
 	public function handshake( array $payload, $options = array() ) {
 		$base = isset( $options['base_url'] ) ? rtrim( (string) $options['base_url'], '/' ) : self::get_default_base_url();
@@ -85,13 +88,8 @@ class MfaApiClient {
 			$request_options['headers'] = array( 'Authorization: Bearer ' . (string) LLA_MFA_API_TOKEN );
 		}
 		$response = Http::post( $url, $request_options );
-		$status   = isset( $response['status'] ) ? (int) $response['status'] : 0;
 
-		$result = $this->parse_response( $response, $url );
-		if ( ! $result['success'] && 0 === $status ) {
-			$result['server_unreachable'] = true;
-		}
-		return $result;
+		return $this->parse_response( $response, $url );
 	}
 
 	/**

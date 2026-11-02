@@ -63,6 +63,24 @@ class Http {
 	}
 
 	/**
+	 * The single shape every transport must return when the request payload
+	 * cannot be encoded. Callers treat this as a hard failure, never as
+	 * "service unavailable", so keep transports on this factory instead of
+	 * hand-rolling the array.
+	 *
+	 * @return array
+	 */
+	public static function encoding_failure_response() {
+
+		return array(
+			'data'       => null,
+			'status'     => 0,
+			'error'      => 'Request payload encoding failed',
+			'error_code' => self::ERROR_PAYLOAD_ENCODING,
+		);
+	}
+
+	/**
 	 * @param $url
 	 * @param array $options
 	 *

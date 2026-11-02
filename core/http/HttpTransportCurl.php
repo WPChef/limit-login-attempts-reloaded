@@ -61,12 +61,7 @@ class HttpTransportCurl implements HttpTransportInterface {
 			// Unserialisable payload (e.g. invalid UTF-8 from request headers):
 			// fail the request instead of sending it out with an empty body.
 			if ( ! empty( $data ) && false === $request_data ) {
-				return array(
-					'data'       => null,
-					'status'     => 0,
-					'error'      => 'Request payload encoding failed',
-					'error_code' => Http::ERROR_PAYLOAD_ENCODING,
-				);
+				return Http::encoding_failure_response();
 			}
 
 			curl_setopt($handle, CURLOPT_POST, true);

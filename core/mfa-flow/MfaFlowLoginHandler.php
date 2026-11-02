@@ -133,7 +133,7 @@ class MfaFlowLoginHandler {
 		}
 
 		$disable_transient        = get_transient( MfaConstants::TRANSIENT_MFA_DISABLED );
-		$mfa_outage_window        = is_string( $disable_transient ) && 'api_unreachable' === $disable_transient;
+		$mfa_outage_window        = is_string( $disable_transient ) && MfaConstants::TRANSIENT_VALUE_API_UNREACHABLE === $disable_transient;
 		$mfa_temporarily_disabled = false !== $disable_transient;
 		$mfa_enabled              = (bool) Config::get( 'mfa_enabled' ) && ! $mfa_temporarily_disabled;
 		$user                     = null;
@@ -281,11 +281,24 @@ class MfaFlowLoginHandler {
 		// Service unavailable: transport error (0), rate limited by the provider
 		// (429) or provider error (5xx). Disabling 2FA for a short window is the
 		// pre-existing availability trade-off — an MFA provider outage must not
-		// lock protected accounts out of the site. A 200 that reaches this point
-		// carries no usable handshake (invalid body or incomplete payload): it
-		// is refused below instead of opening an availability window.
+		// lock protected accounts out of the site; XML-RPC stays refused inside
+		// the window (see the guard above), and sites that need strict 2FA can
+		// opt into fail-closed below. A 200 that reaches this point carries no
+		// usable handshake (invalid body or incomplete payload): it is refused
+		// below instead of opening an availability window.
 		if ( 0 === $status || 429 === $status || $status >= 500 ) {
-			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, 'api_unreachable', 60 );
+			// Sites that must never trade 2FA for availability can opt in via
+			// define( 'LLA_MFA_OUTAGE_FAIL_CLOSED', true ) or the filter below.
+			$fail_closed = defined( 'LLA_MFA_OUTAGE_FAIL_CLOSED' ) && LLA_MFA_OUTAGE_FAIL_CLOSED;
+			if ( (bool) apply_filters( 'llar_mfa_outage_fail_closed', $fail_closed ) ) {
+				return $this->mfa_refusal_error( 'llar_mfa_unavailable' );
+			}
+
+			if ( false === $disable_transient ) {
+				// Log the window opening once, not on every TTL refresh.
+				error_log( 'LLAR: MFA provider handshake failed (status ' . $status . ') - 2FA temporarily disabled for 60 seconds' );
+			}
+			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, MfaConstants::TRANSIENT_VALUE_API_UNREACHABLE, 60 );
 			return null;
 		}
 
