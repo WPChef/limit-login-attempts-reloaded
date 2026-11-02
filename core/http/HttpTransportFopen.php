@@ -198,7 +198,10 @@ class HttpTransportFopen implements HttpTransportInterface {
 			$ip   = $this->preferred_ip( $destination['ips'] );
 			$host = false !== strpos( $ip, ':' ) ? '[' . $ip . ']' : $ip;
 
-			$request_url = preg_replace( '#^(https?)://[^/?\#]+#i', '$1://' . $host, $url, 1 );
+			$default_port = ( 'https' === $destination['scheme'] ) ? 443 : 80;
+			$port_suffix  = ( (int) $destination['port'] === $default_port ) ? '' : ':' . $destination['port'];
+
+			$request_url = preg_replace( '#^(https?)://[^/?\#]+#i', '$1://' . $host . $port_suffix, $url, 1 );
 
 			$port_header = in_array( $destination['port'], array( 80, 443 ), true ) ? '' : ':' . $destination['port'];
 			$headers[]   = 'Host: ' . $destination['host'] . $port_header;

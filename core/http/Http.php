@@ -179,8 +179,15 @@ class Http {
 			return false;
 		}
 
+		// Core's escape hatch for self-hosted/internal endpoints. Core only
+		// consults it for its own short private list; our range check is
+		// wider, so it has to honour the same filter — otherwise a site that
+		// deliberately points an internal app/MFA endpoint at a container
+		// name or a link-local address would be locked out with no way back.
+		$host_is_external = (bool) apply_filters( 'http_request_host_is_external', false, $host, $url );
+
 		foreach ( $ips as $ip ) {
-			if ( self::is_non_public_ip( $ip ) ) {
+			if ( self::is_non_public_ip( $ip ) && ! $host_is_external ) {
 				return false;
 			}
 		}
