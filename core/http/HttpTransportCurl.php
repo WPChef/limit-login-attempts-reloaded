@@ -62,13 +62,8 @@ class HttpTransportCurl implements HttpTransportInterface {
 
 		// Pin the connection to an address that was validated above instead
 		// of letting curl resolve the name again (DNS rebinding).
-		if ( ! empty( $destination['ips'] ) && ! empty( $destination['host'] ) ) {
-			$resolve = array();
-
-			foreach ( $destination['ips'] as $ip ) {
-				$resolve[] = $destination['host'] . ':' . $destination['port'] . ':' . $ip;
-			}
-
+		$resolve = $this->build_curl_resolve( $destination );
+		if ( ! empty( $resolve ) ) {
 			curl_setopt( $handle, CURLOPT_RESOLVE, $resolve );
 		}
 
@@ -92,5 +87,30 @@ class HttpTransportCurl implements HttpTransportInterface {
 			'status'    => intval( $response_status ),
 			'error'     => $response_error,
 		);
+	}
+
+	/**
+	 * CURLOPT_RESOLVE entries for a validated destination.
+	 * IPv6 addresses must be bracketed (host:port:[addr]), otherwise curl
+	 * misparses the address and the pin is ineffective.
+	 *
+	 * @param array|null $destination
+	 *
+	 * @return array
+	 */
+	private function build_curl_resolve( $destination ) {
+
+		if ( empty( $destination['ips'] ) || empty( $destination['host'] ) ) {
+			return array();
+		}
+
+		$resolve = array();
+
+		foreach ( $destination['ips'] as $ip ) {
+			$pinned    = ( false !== strpos( $ip, ':' ) ) ? '[' . $ip . ']' : $ip;
+			$resolve[] = $destination['host'] . ':' . $destination['port'] . ':' . $pinned;
+		}
+
+		return $resolve;
 	}
 }

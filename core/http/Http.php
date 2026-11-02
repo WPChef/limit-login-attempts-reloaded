@@ -62,7 +62,7 @@ class Http {
 		$destination = self::resolve_destination( $url );
 
 		if ( ! $destination ) {
-			return self::blocked_url_response();
+			return self::rejection_response( $url );
 		}
 
 		$options['destination'] = $destination;
@@ -81,7 +81,7 @@ class Http {
 		$destination = self::resolve_destination( $url );
 
 		if ( ! $destination ) {
-			return self::blocked_url_response();
+			return self::rejection_response( $url );
 		}
 
 		$options['destination'] = $destination;
@@ -302,6 +302,61 @@ class Http {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Map a failed resolve_destination() to the right transport-shaped
+	 * response. NXDOMAIN / empty resolution is a transport failure (no
+	 * `blocked` flag) so CloudApp::setup() shows the "endpoint is not
+	 * responding" path instead of blaming the setup code's destination
+	 * policy. Policy rejections stay `blocked => true`.
+	 *
+	 * @param string $url
+	 *
+	 * @return array
+	 */
+	private static function rejection_response( $url ) {
+
+		if ( self::host_is_unresolvable( $url ) ) {
+			return array(
+				'data'   => null,
+				'status' => 0,
+				'error'  => 'Could not resolve host.',
+			);
+		}
+
+		return self::blocked_url_response();
+	}
+
+	/**
+	 * True when the URL's host is a name that does not resolve to any A/AAAA.
+	 * IP literals and same-host names are never "unresolvable" here.
+	 *
+	 * @param string $url
+	 *
+	 * @return bool
+	 */
+	private static function host_is_unresolvable( $url ) {
+
+		$parsed = is_string( $url ) ? wp_parse_url( $url ) : false;
+
+		if ( empty( $parsed['host'] ) ) {
+			return false;
+		}
+
+		$host = strtolower( rtrim( trim( $parsed['host'], '[]' ), '.' ) );
+
+		if ( '' === $host || filter_var( $host, FILTER_VALIDATE_IP ) ) {
+			return false;
+		}
+
+		$home_host = strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
+
+		if ( '' !== $home_host && $host === $home_host ) {
+			return false;
+		}
+
+		return empty( self::resolve_host( $host ) );
 	}
 
 	/**

@@ -43,7 +43,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 	}
 
 	/**
-	 * Perform the request, following up to 3 redirects manually.
+	 * Perform the request, following up to 5 redirects manually (core parity).
 	 *
 	 * The HTTP stream wrapper cannot validate redirect targets, so
 	 * follow_location stays off and every Location hop is resolved and
@@ -186,28 +186,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 			$request_data = json_encode( $data, JSON_FORCE_OBJECT );
 		}
 
-		$request_url = $url;
-		$ssl_options = array();
-
-		// Pin the connection to an address that was validated above instead
-		// of letting the wrapper resolve the name a second time (DNS
-		// rebinding: public answer during validation, loopback during the
-		// actual connect). The Host header and the TLS peer name keep the
-		// request logically addressed to the real host name.
-		if ( ! empty( $destination['ips'] ) ) {
-			$ip   = $this->preferred_ip( $destination['ips'] );
-			$host = false !== strpos( $ip, ':' ) ? '[' . $ip . ']' : $ip;
-
-			$default_port = ( 'https' === $destination['scheme'] ) ? 443 : 80;
-			$port_suffix  = ( (int) $destination['port'] === $default_port ) ? '' : ':' . $destination['port'];
-
-			$request_url = preg_replace( '#^(https?)://[^/?\#]+#i', '$1://' . $host . $port_suffix, $url, 1 );
-
-			$port_header = in_array( $destination['port'], array( 80, 443 ), true ) ? '' : ':' . $destination['port'];
-			$headers[]   = 'Host: ' . $destination['host'] . $port_header;
-
-			$ssl_options['peer_name'] = $destination['host'];
-		}
+		list( $request_url, $headers, $ssl_options ) = $this->apply_destination_pin( $url, $headers, $destination );
 
 		$context = stream_context_create( array(
 			'http' => array(
@@ -254,6 +233,47 @@ class HttpTransportFopen implements HttpTransportInterface {
 			'error'       => $error,
 			'raw_headers' => isset( $http_response_header ) ? $http_response_header : array(),
 		);
+	}
+
+	/**
+	 * Pin the connection to a validated address instead of letting the
+	 * stream wrapper resolve the name again (DNS rebinding). Rewrites the
+	 * URL host to the IP, sets Host + TLS peer_name to the logical hostname.
+	 *
+	 * Prior Host headers are replaced, not appended — redirect hops must
+	 * not stack Host (RFC 7230: more than one Host → 400).
+	 *
+	 * Port in the rewritten URL and in Host use the same scheme-default
+	 * rule (omit only the scheme's default port), so https:80 / http:443
+	 * stay consistent.
+	 *
+	 * @param string     $url
+	 * @param array      $headers
+	 * @param array|null $destination
+	 *
+	 * @return array{0:string,1:array,2:array} request_url, headers, ssl_options
+	 */
+	private function apply_destination_pin( $url, $headers, $destination ) {
+
+		if ( empty( $destination['ips'] ) ) {
+			return array( $url, $headers, array() );
+		}
+
+		$ip   = $this->preferred_ip( $destination['ips'] );
+		$host = false !== strpos( $ip, ':' ) ? '[' . $ip . ']' : $ip;
+
+		$default_port = ( 'https' === $destination['scheme'] ) ? 443 : 80;
+		$port_suffix  = ( (int) $destination['port'] === $default_port ) ? '' : ':' . $destination['port'];
+
+		$request_url = preg_replace( '#^(https?)://[^/?\#]+#i', '$1://' . $host . $port_suffix, $url, 1 );
+
+		// Replace any prior Host — never stack across redirect hops.
+		$headers = array_values( array_filter( $headers, function ( $header ) {
+			return 0 !== stripos( ltrim( $header ), 'Host:' );
+		} ) );
+		$headers[] = 'Host: ' . $destination['host'] . $port_suffix;
+
+		return array( $request_url, $headers, array( 'peer_name' => $destination['host'] ) );
 	}
 
 	/**
