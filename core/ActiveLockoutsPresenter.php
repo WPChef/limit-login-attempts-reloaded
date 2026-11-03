@@ -22,9 +22,12 @@ class ActiveLockoutsPresenter {
 	/**
 	 * Build view variables for the lockouts table body fragment.
 	 *
-	 * Empty mode only when the API returned no items and no continuation
-	 * offset — a partial empty page with a cursor must not emit empty-row HTML
-	 * (fill-up would otherwise leave "No lockouts yet." next to data rows).
+	 * Empty mode only on the first request (empty POST offset) when the API
+	 * returned no items and no continuation offset. A later page with
+	 * items=[] and offset null/'' is a normal end-of-list and must not emit
+	 * empty-row HTML under already rendered lockouts. A first page with
+	 * items=[] but a non-empty response offset is a fill-up cursor and also
+	 * must not emit empty-row HTML.
 	 *
 	 * @param array  $lockouts {
 	 *     Cloud API lockout list payload.
@@ -32,16 +35,17 @@ class ActiveLockoutsPresenter {
 	 *     @type array       $items  Lockout items.
 	 *     @type string|null $offset Continuation cursor (empty when exhausted).
 	 * }
-	 * @param string $request_offset POST offset of the current request (unused in v1; reserved).
+	 * @param string $request_offset POST offset of the current request.
 	 * @return array{mode: string, rows: array<int, array{ip: string, login: string, count: string, expires_minutes: string}>}
 	 */
 	public static function get_view_vars( array $lockouts, $request_offset = '' ) {
-		unset( $request_offset );
-
 		$items           = isset( $lockouts['items'] ) && is_array( $lockouts['items'] ) ? $lockouts['items'] : array();
-		$response_offset = isset( $lockouts['offset'] ) ? (string) $lockouts['offset'] : '';
+		$request_offset  = is_null( $request_offset ) ? '' : (string) $request_offset;
+		$response_offset = array_key_exists( 'offset', $lockouts ) && ! is_null( $lockouts['offset'] )
+			? (string) $lockouts['offset']
+			: '';
 
-		if ( empty( $items ) && '' === $response_offset ) {
+		if ( empty( $items ) && '' === $request_offset && '' === $response_offset ) {
 			return array(
 				'mode' => 'empty',
 				'rows' => array(),
