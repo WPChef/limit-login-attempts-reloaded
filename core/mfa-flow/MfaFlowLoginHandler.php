@@ -294,8 +294,10 @@ class MfaFlowLoginHandler {
 				return $this->mfa_refusal_error( 'llar_mfa_unavailable' );
 			}
 
-			if ( false === $disable_transient ) {
-				// Log the window opening once, not on every TTL refresh.
+			if ( false === $disable_transient && defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+				// Audit trail for the availability trade-off. Written once per
+				// window opening, not on every TTL refresh, and only when the
+				// site enabled debug logging.
 				error_log( 'LLAR: MFA provider handshake failed (status ' . $status . ') - 2FA temporarily disabled for 60 seconds' );
 			}
 			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, MfaConstants::TRANSIENT_VALUE_API_UNREACHABLE, 60 );

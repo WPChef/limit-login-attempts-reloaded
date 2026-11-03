@@ -22,6 +22,14 @@ class MfaApiClient {
 	const ERROR_INVALID_RESPONSE_BODY = 'mfa_invalid_response_body';
 
 	/**
+	 * Seconds the login-blocking handshake/verify calls wait for the provider.
+	 * Deliberately above the transport default (5): a slow-but-alive provider
+	 * must not be declared unreachable — every such timeout would open a 60s
+	 * password-only availability window.
+	 */
+	const REQUEST_TIMEOUT = 10;
+
+	/**
 	 * Default MFA API base URL (base + path from constants).
 	 *
 	 * @return string
@@ -83,7 +91,10 @@ class MfaApiClient {
 		}
 
 		$url = $base . '/wp/handshake';
-		$request_options = array( 'data' => $payload );
+		$request_options = array(
+			'data'    => $payload,
+			'timeout' => self::REQUEST_TIMEOUT,
+		);
 		if ( defined( 'LLA_MFA_API_TOKEN' ) && LLA_MFA_API_TOKEN !== '' ) {
 			$request_options['headers'] = array( 'Authorization: Bearer ' . (string) LLA_MFA_API_TOKEN );
 		}
@@ -113,10 +124,11 @@ class MfaApiClient {
 
 		$url             = $base . '/wp/verify';
 		$request_options = array(
-			'data' => array(
+			'data'    => array(
 				'token'  => $token,
 				'secret' => $secret,
 			),
+			'timeout' => self::REQUEST_TIMEOUT,
 		);
 		if ( defined( 'LLA_MFA_API_TOKEN' ) && LLA_MFA_API_TOKEN !== '' ) {
 			$request_options['headers'] = array( 'Authorization: Bearer ' . (string) LLA_MFA_API_TOKEN );
