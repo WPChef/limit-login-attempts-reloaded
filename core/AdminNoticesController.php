@@ -168,7 +168,7 @@ class AdminNoticesController {
 				$notice_content = sprintf(
 					/* translators: %s: current PHP version, e.g. 8.2.29 */
 					\__(
-						'Warning! Your server reports PHP version %s, which is below a known patched upstream release. Please contact your hosting provider immediately to update PHP. This check uses the upstream PHP_VERSION (distribution security backports may keep that number unchanged). This is a server-level PHP issue, not a WordPress or plugin vulnerability.',
+						'Warning! Your server reports PHP %s, which is below the upstream release that fixes critical PHP vulnerabilities (remote code execution). This is a server-level PHP issue, not a WordPress or plugin vulnerability. The check only sees the version number PHP reports. Hosting providers and Linux distributions often install that fix without changing the number, so this notice can appear on an already patched server. If your host has been applying PHP security updates, dismiss this notice. Do not open a support ticket because of the version number alone. Contact your host only if you know PHP security updates are not installed.',
 						$text_domain
 					),
 					\esc_html( PHP_VERSION )
