@@ -467,7 +467,16 @@ class LoginAuthenticationHandler {
 			if ( is_wp_error( $mfa_error ) ) {
 				global $limit_login_my_error_shown;
 				$limit_login_my_error_shown = true;
-				LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
+				// The refusal reaches a user whose password was already
+				// verified: publish the two-factor message through the
+				// early-hook channel so fixup_error_messages() cannot
+				// rewrite it into "incorrect username or password".
+				LoginFlowTransientStore::merge(
+					array(
+						'errors_in_early_hook'          => false,
+						'llar_early_hook_error_message' => $mfa_error->get_error_message(),
+					)
+				);
 
 				return $mfa_error;
 			}

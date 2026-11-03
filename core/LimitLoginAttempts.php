@@ -787,7 +787,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		$is_wp_login_page     = isset( $_POST['log'] );
 		$is_custom_login_page = $this->integration_manager->is_custom_login_page();
 
-		$mfa_return_message = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
+		// Only shown for llar_mfa_error returns: the visitor already passed the
+		// password step, so the two-factor copy must not claim a wrong password.
+		$mfa_return_message = MfaFlowLoginHandler::refusal_message();
 		if ( ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_custom_login_page || $um_limit_login_failed ) ) || $show_mfa_return_error ) :
 			ob_start();
 			?>

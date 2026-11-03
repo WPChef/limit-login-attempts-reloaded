@@ -95,11 +95,19 @@ class MfaFlowLoginHandler {
 	 * @param string $code WP_Error code.
 	 * @return WP_Error
 	 */
+	/**
+	 * Neutral user-facing copy for a refused second factor. It only ever
+	 * reaches a user whose password was already verified, so it must not be
+	 * rewritten into a password error by the login error presenter.
+	 *
+	 * @return string
+	 */
+	public static function refusal_message() {
+		return __( '<strong>ERROR</strong>: Two-factor verification is required for this account and could not be completed. Please try again.', 'limit-login-attempts-reloaded' );
+	}
+
 	private function mfa_refusal_error( $code ) {
-		return new WP_Error(
-			$code,
-			__( '<strong>ERROR</strong>: Two-factor verification is required for this account and could not be completed. Please try again.', 'limit-login-attempts-reloaded' )
-		);
+		return new WP_Error( $code, self::refusal_message() );
 	}
 
 	/**
