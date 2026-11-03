@@ -213,8 +213,17 @@ class LocalLockoutManager {
 			return false;
 		}
 
+		// Explicit codes only: a future llar_mfa_* error code must not
+		// silently exempt its logins from lockout counting unless it is
+		// deliberately added here.
+		$refusal_codes = array(
+			'llar_mfa_unavailable',
+			'llar_mfa_rate_limited',
+			'llar_mfa_xmlrpc_required',
+		);
+
 		foreach ( $error->get_error_codes() as $code ) {
-			if ( 0 === strpos( $code, 'llar_mfa_' ) ) {
+			if ( in_array( $code, $refusal_codes, true ) ) {
 				return true;
 			}
 		}

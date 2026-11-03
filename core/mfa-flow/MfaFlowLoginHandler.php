@@ -289,15 +289,21 @@ class MfaFlowLoginHandler {
 		if ( 0 === $status || 429 === $status || $status >= 500 ) {
 			// Sites that must never trade 2FA for availability can opt in via
 			// define( 'LLA_MFA_OUTAGE_FAIL_CLOSED', true ) or the filter below.
-			$fail_closed = defined( 'LLA_MFA_OUTAGE_FAIL_CLOSED' ) && LLA_MFA_OUTAGE_FAIL_CLOSED;
-			if ( (bool) apply_filters( 'llar_mfa_outage_fail_closed', $fail_closed ) ) {
+			// FILTER_VALIDATE_BOOLEAN on both: a literal 'false'/'0'/'off'
+			// string must not enable the strict mode.
+			$fail_closed = defined( 'LLA_MFA_OUTAGE_FAIL_CLOSED' )
+				? filter_var( LLA_MFA_OUTAGE_FAIL_CLOSED, FILTER_VALIDATE_BOOLEAN )
+				: false;
+			$fail_closed = filter_var( apply_filters( 'llar_mfa_outage_fail_closed', $fail_closed ), FILTER_VALIDATE_BOOLEAN );
+			if ( $fail_closed ) {
 				return $this->mfa_refusal_error( 'llar_mfa_unavailable' );
 			}
 
 			if ( false === $disable_transient && defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
-				// Audit trail for the availability trade-off. Written once per
-				// window opening, not on every TTL refresh, and only when the
-				// site enabled debug logging.
+				// Audit trail for the availability trade-off: logged when the
+				// window opens, not on TTL refreshes (concurrent first requests
+				// may each log it once), and only when the site enabled debug
+				// logging.
 				error_log( 'LLAR: MFA provider handshake failed (status ' . $status . ') - 2FA temporarily disabled for 60 seconds' );
 			}
 			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, MfaConstants::TRANSIENT_VALUE_API_UNREACHABLE, 60 );

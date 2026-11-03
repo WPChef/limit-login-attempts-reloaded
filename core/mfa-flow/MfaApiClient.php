@@ -93,7 +93,7 @@ class MfaApiClient {
 		$url = $base . '/wp/handshake';
 		$request_options = array(
 			'data'    => $payload,
-			'timeout' => self::REQUEST_TIMEOUT,
+			'timeout' => $this->request_timeout(),
 		);
 		if ( defined( 'LLA_MFA_API_TOKEN' ) && LLA_MFA_API_TOKEN !== '' ) {
 			$request_options['headers'] = array( 'Authorization: Bearer ' . (string) LLA_MFA_API_TOKEN );
@@ -128,7 +128,7 @@ class MfaApiClient {
 				'token'  => $token,
 				'secret' => $secret,
 			),
-			'timeout' => self::REQUEST_TIMEOUT,
+			'timeout' => $this->request_timeout(),
 		);
 		if ( defined( 'LLA_MFA_API_TOKEN' ) && LLA_MFA_API_TOKEN !== '' ) {
 			$request_options['headers'] = array( 'Authorization: Bearer ' . (string) LLA_MFA_API_TOKEN );
@@ -138,6 +138,25 @@ class MfaApiClient {
 		$result = $this->parse_response( $response, $url );
 		$status = isset( $response['status'] ) ? (int) $response['status'] : 0;
 		return $result;
+	}
+
+	/**
+	 * Timeout for the login-blocking MFA API calls (handshake, verify).
+	 *
+	 * Filterable for site-specific tuning, clamped to 1-30 seconds so a
+	 * misconfigured filter cannot stall the login flow.
+	 *
+	 * @return int
+	 */
+	private function request_timeout() {
+		/**
+		 * Filters the timeout for login-blocking MFA API requests.
+		 *
+		 * @param int $timeout Seconds. Default 10; clamped to 1-30 after filtering.
+		 */
+		$timeout = (int) apply_filters( 'llar_mfa_request_timeout', self::REQUEST_TIMEOUT );
+
+		return max( 1, min( $timeout, 30 ) );
 	}
 
 	/**
