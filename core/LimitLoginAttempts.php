@@ -1797,9 +1797,11 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * Site-wide admin notice when the server PHP version is critically vulnerable.
+	 * Site-wide admin notice when the server PHP build is critically vulnerable.
 	 *
-	 * Self-dismisses when PHP is patched (WP.org guideline 11). Admins only.
+	 * Uses upstream PHP_VERSION minima, or Debian/Ubuntu package revisions when
+	 * a matching php*.deb is installed (avoids false positives on LTS backports).
+	 * Self-dismisses when the runtime is patched (WP.org guideline 11). Admins only.
 	 *
 	 * @return void
 	 */
