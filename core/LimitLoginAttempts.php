@@ -1797,11 +1797,10 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * Site-wide admin notice when the server PHP build is critically vulnerable.
+	 * Site-wide admin notice when PHP_VERSION is below a known PHP2Shell fix.
 	 *
-	 * Uses upstream PHP_VERSION minima, or Debian/Ubuntu package revisions when
-	 * a matching php*.deb is installed (avoids false positives on LTS backports).
-	 * Self-dismisses when the runtime is patched (WP.org guideline 11). Admins only.
+	 * Upstream version compare only (see PhpVulnerabilityChecker). Self-dismisses
+	 * when PHP_VERSION reaches the branch minimum (WP.org guideline 11). Admins only.
 	 *
 	 * @return void
 	 */
@@ -1809,7 +1808,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
-		if ( ! Helpers::is_php_critically_vulnerable() ) {
+		if ( ! PhpVulnerabilityChecker::is_vulnerable() ) {
 			return;
 		}
 		$this->admin_notices_controller->render( 'php-vulnerable' );

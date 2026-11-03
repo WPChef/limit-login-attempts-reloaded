@@ -164,7 +164,7 @@ class AdminNoticesController {
 					),
 				);
 			case 'php-vulnerable':
-				$learn_more_url = 'https://www.limitloginattempts.com/blogs/cyber-security/php2shell-critical-php-vulnerabilities-wordpress/';
+				$learn_more_url = PhpVulnerabilityChecker::get_learn_more_url();
 				$content        = sprintf(
 					/* translators: %s: current PHP version, e.g. 8.2.29 */
 					\__(
