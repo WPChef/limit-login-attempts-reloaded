@@ -104,13 +104,15 @@ class HttpTransportFopen implements HttpTransportInterface {
 			$is_redirect = in_array( $status, array( 301, 302, 303, 307, 308 ), true );
 			$location    = $is_redirect ? $this->find_header( $response['raw_headers'], 'Location' ) : null;
 
-			if ( ! $location || ! class_exists( 'WP_Http' ) ) {
+			// Leading backslash: this file is in LLAR\Core\Http — bare WP_Http
+			// would resolve to LLAR\Core\Http\WP_Http and fatal.
+			if ( ! $location || ! class_exists( '\WP_Http' ) ) {
 				unset( $response['raw_headers'] );
 
 				return $response;
 			}
 
-			$next = WP_Http::make_absolute_url( $location, $url );
+			$next = \WP_Http::make_absolute_url( $location, $url );
 
 			if ( ! $next ) {
 				return Http::policy_rejection( 'Redirect target rejected by the outbound URL policy.' );

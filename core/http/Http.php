@@ -221,10 +221,30 @@ class Http {
 		$core_ok = (bool) wp_http_validate_url( $url );
 
 		if ( ! $core_ok ) {
-			// Reject before our DNS lookup: bad port/scheme/credentials must
-			// not trigger attacker-controlled resolution. NXDOMAIN also fails
-			// core validation first — callers see policy rejection, not null.
-			return false;
+			// WordPress rejects IPv6 literals (strpbrk on ':'). Validate those
+			// ourselves so public AAAA destinations stay reachable; everything
+			// else that fails core is rejected before our DNS lookup.
+			if ( ! filter_var( $host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+				return false;
+			}
+
+			$safe_ports = apply_filters( 'http_allowed_safe_ports', array( 80, 443, 8080 ), $host, $url );
+			if ( ! is_array( $safe_ports ) || ! in_array( $port, $safe_ports, true ) ) {
+				return false;
+			}
+
+			$host_is_external = (bool) apply_filters( 'http_request_host_is_external', false, $host, $url );
+			if ( self::is_non_public_ip( $host ) && ! $host_is_external ) {
+				return false;
+			}
+
+			return array(
+				'scheme'    => $scheme,
+				'host'      => $host,
+				'port'      => $port,
+				'ips'       => array( $host ),
+				'same_host' => false,
+			);
 		}
 
 		if ( self::is_same_host( $host ) ) {
