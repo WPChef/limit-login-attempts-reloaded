@@ -17,7 +17,7 @@ class AdminNoticesController {
 	 *
 	 * @var array
 	 */
-	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired', 'leave-review' );
+	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired', 'leave-review', 'login-page-cache', 'php-vulnerable' );
 
 	/**
 	 * Get type, CSS class and HTML content for a notice key.
@@ -30,7 +30,7 @@ class AdminNoticesController {
 		$text_domain = 'limit-login-attempts-reloaded';
 		switch ( $notice_key ) {
 			case 'auto-update':
-				$content = \__( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', $text_domain );
+				$content  = \__( 'Do you want Limit Login Attempts Reloaded to provide the latest version automatically?', $text_domain );
 				$content .= ' <a href="#" class="auto-enable-update-option" data-val="yes">';
 				$content .= \__( 'Yes, enable auto-update', $text_domain ) . '</a> | ';
 				$content .= '<a href="#" class="auto-enable-update-option" data-val="no">';
@@ -58,18 +58,18 @@ class AdminNoticesController {
 					return null;
 				}
 
-				$content = \__( 'These plugins register additional callbacks on the authenticate filter and may affect LLAR login protection.', $text_domain );
+				$content       = \__( 'These plugins register additional callbacks on the authenticate filter and may affect LLAR login protection.', $text_domain );
 				$grouped_hooks = array();
 				foreach ( $hooks as $hook ) {
-					$plugin_slug = 'unknown';
-					$plugin_label = 'Unknown plugin';
+					$plugin_slug        = 'unknown';
+					$plugin_label       = 'Unknown plugin';
 					$plugin_details_url = '';
 
 					if ( ! empty( $hook['plugin'] ) && is_array( $hook['plugin'] ) ) {
-						$plugin_name = isset( $hook['plugin']['name'] ) ? (string) $hook['plugin']['name'] : '';
+						$plugin_name     = isset( $hook['plugin']['name'] ) ? (string) $hook['plugin']['name'] : '';
 						$plugin_slug_raw = isset( $hook['plugin']['slug'] ) ? (string) $hook['plugin']['slug'] : '';
-						$plugin_slug = '' !== $plugin_slug_raw ? \sanitize_key( $plugin_slug_raw ) : 'unknown';
-						$plugin_version = isset( $hook['plugin']['version'] ) ? (string) $hook['plugin']['version'] : '';
+						$plugin_slug     = '' !== $plugin_slug_raw ? \sanitize_key( $plugin_slug_raw ) : 'unknown';
+						$plugin_version  = isset( $hook['plugin']['version'] ) ? (string) $hook['plugin']['version'] : '';
 
 						if ( '' !== $plugin_name ) {
 							$plugin_label = $plugin_name;
@@ -136,6 +136,20 @@ class AdminNoticesController {
 					// The view is a fully rendered trusted notice (own wrapper markup, inline JS).
 					'raw'     => true,
 				);
+			case 'login-page-cache':
+				ob_start();
+				$path_login_cache = LLA_PLUGIN_DIR . 'views/admin-notice-login-cache.php';
+				if ( is_readable( $path_login_cache ) ) {
+					include $path_login_cache;
+				}
+				$content = ob_get_clean();
+				return array(
+					'type'    => 'notice-warning',
+					'class'   => 'llar-options-notice llar-login-cache-notice',
+					'content' => $content,
+					// The view is a fully rendered trusted notice (own wrapper markup, inline JS).
+					'raw'     => true,
+				);
 			case 'mfa-recovery-links-expired':
 				$mfa_url = isset( $args['mfa_url'] ) ? (string) $args['mfa_url'] : '';
 				if ( '' === $mfa_url ) {
@@ -148,6 +162,34 @@ class AdminNoticesController {
 						__( '⚠️ Action required: Your existing 2FA recovery links are no longer valid. On the <a href="%s">2FA settings page</a>, turn 2FA off and then back on, then follow the prompts to download the new recovery links.', 'limit-login-attempts-reloaded' ),
 						\esc_url( $mfa_url )
 					),
+				);
+			case 'php-vulnerable':
+				$learn_more_url = PhpVulnerabilityChecker::get_learn_more_url();
+				$notice_content = sprintf(
+					/* translators: %s: current PHP version, e.g. 8.2.29 */
+					\__(
+						'Warning! Your server reports PHP %s, which is below the upstream release that fixes critical PHP vulnerabilities (remote code execution). This is a server-level PHP issue, not a WordPress or plugin vulnerability. The check only sees the version number PHP reports. Hosting providers and Linux distributions often install that fix without changing the number, so this notice can appear on an already patched server. If your host has been applying PHP security updates, dismiss this notice. Do not open a support ticket because of the version number alone. Contact your host only if you know PHP security updates are not installed.',
+						$text_domain
+					),
+					\esc_html( PHP_VERSION )
+				);
+				$notice_content .= ' <a href="' . \esc_url( $learn_more_url ) . '" target="_blank" rel="noopener noreferrer">';
+				$notice_content .= \__( 'Learn more', $text_domain );
+				$notice_content .= '</a>.';
+
+				ob_start();
+				$path_php_vuln = LLA_PLUGIN_DIR . 'views/admin-notice-php-vulnerable.php';
+				if ( is_readable( $path_php_vuln ) ) {
+					include $path_php_vuln;
+				}
+				$content = ob_get_clean();
+
+				return array(
+					'type'    => 'notice-error',
+					'class'   => 'llar-options-notice llar-php-vulnerable-notice',
+					'content' => $content,
+					// Trusted view with dismiss cookie script (wp_kses_post would strip <script>).
+					'raw'     => true,
 				);
 			default:
 				return null;

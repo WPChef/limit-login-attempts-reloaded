@@ -19,10 +19,12 @@ use LLAR\Core\Interfaces\OptionsPageUriProvider;
 use WP_Error;
 use WP_User;
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-class LimitLoginAttempts implements OptionsPageUriProvider
-{
+class LimitLoginAttempts implements OptionsPageUriProvider {
+
 
 	/**
 	 * Admin options page slug
@@ -50,7 +52,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @var boolean
 	 */
 	public $user_blocking = false;
-	public $user_empty = false;
+	public $user_empty    = false;
 
 	/**
 	 * Registration error messages
@@ -80,6 +82,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	private $integration_manager = null;
 
 	private $info_data = array();
+	private $info_attempted = false;
 
 	/**
 	 * MFA manager instance (MfaManager: MfaBackupCodes, MfaEndpoint, MfaSettings, MfaValidator).
@@ -94,6 +97,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @var \LLAR\Core\AdminNoticesController
 	 */
 	private $admin_notices_controller = null;
+
+	/**
+	 * Detects a page-cached / optimizer-stripped login page (probe + AJAX + self-check).
+	 *
+	 * @var LoginPageCacheDetector
+	 */
+	private $login_page_cache_detector = null;
 
 	/** @var IpAddressResolver */
 	private $ip_resolver = null;
@@ -157,7 +167,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @var string
 	 */
 	public static $capabilities = 'llar_admin';
-	public $has_capability = false;
+	public $has_capability      = false;
 
 
 	/**
@@ -190,7 +200,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 */
 	public static function is_wp_at_least( $version ) {
 		if ( ! isset( self::$wp_version_cache[ $version ] ) ) {
-			$current = preg_replace( '/[^0-9.].*/', '', Helpers::get_wordpress_version() );
+			$current                            = preg_replace( '/[^0-9.].*/', '', Helpers::get_wordpress_version() );
 			self::$wp_version_cache[ $version ] = version_compare( $current, $version, '>=' );
 		}
 		return self::$wp_version_cache[ $version ];
@@ -203,6 +213,10 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	public static function reset_request_guards() {
 		LocalLockoutManager::reset_failed_login_recorded_in_request();
 		MfaFlowLoginHandler::reset_handshake_guard();
+
+		if ( self::$instance ) {
+			self::$instance->reset_info_cache();
+		}
 	}
 
 
@@ -245,43 +259,49 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	}
 
 	private $plans = array(
-		'default'       => array(
-			'name'          => 'Free',
-			'rate'          => 10,
+		'default'    => array(
+			'name' => 'Free',
+			'rate' => 10,
 		),
-		'free'          => array(
-			'name'          => 'Micro Cloud',
-			'rate'          => 20,
+		'free'       => array(
+			'name' => 'Micro Cloud',
+			'rate' => 20,
 		),
-		'personal'      => array(
-			'name'          => 'Personal',
-			'rate'          => 25,
+		'trial'      => array(
+			'rate' => 20,
 		),
-		'premium'       => array(
-			'name'          => 'Premium',
-			'rate'          => 30,
+		'personal'  => array(
+			'name' => 'Personal',
+			'rate' => 25,
 		),
-		'plus'          => array(
-			'name'          => 'Premium +',
-			'rate'          => 40,
+		'premium'   => array(
+			'name' => 'Premium',
+			'rate' => 30,
 		),
-		'pro'           => array(
-			'name'          => 'Professional',
-			'rate'          => 50,
+		'plus'       => array(
+			'name' => 'Premium +',
+			'rate' => 40,
 		),
-		'business'      => array(
-			'name'          => 'Business',
-			'rate'          => 55,
+		'pro'        => array(
+			'name' => 'Professional',
+			'rate' => 50,
 		),
-		'agency_pro'    => array(
-			'name'          => 'Agency',
-			'rate'          => 60,
+		'business'    => array(
+			'name' => 'Business',
+			'rate' => 55,
+		),
+		'agency_pro' => array(
+			'name' => 'Agency',
+			'rate' => 60,
 		),
 	);
 
-	public function __construct()
-	{
+	public function __construct() {
 		self::$instance = $this;
+
+		// The trial plan name derives from TRIAL_DAYS (property initializers
+		// cannot call methods, so it is set here).
+		$this->plans['trial']['name'] = self::trial_plan_name();
 
 		Config::init();
 		Http::init();
@@ -292,9 +312,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		$this->admin_notices_controller = new AdminNoticesController();
 		$this->ip_resolver              = new IpAddressResolver();
 		$this->cloud_acl                = new CloudAclService();
-		$whitelist_checker             = new WhitelistBlacklistChecker( $this->ip_resolver );
-		$notification_service          = new LockoutNotificationService( $this->ip_resolver, $this );
-		$cleanup_service               = new LockoutCleanupService();
+		$whitelist_checker              = new WhitelistBlacklistChecker( $this->ip_resolver );
+		$notification_service           = new LockoutNotificationService( $this->ip_resolver, $this );
+		$cleanup_service                = new LockoutCleanupService();
 		$this->local_lockout            = new LocalLockoutManager(
 			$this->ip_resolver,
 			$this->cloud_acl,
@@ -316,21 +336,24 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		$this->dashboard_renderer       = new DashboardRiskRenderer( $this, $this->local_lockout );
 		$this->registration_limiter     = new RegistrationLimiter( $this );
 		$this->admin_ui                 = new AdminUiController( $this );
-	
+
 		$this->hooks_init();
 		$this->setup();
 		$this->cloud_app_init();
 
 		// Initialize MFA (dependency injection: MfaBackupCodes, MfaEndpoint, MfaSettings)
-		$payload_storage = \LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector::get_storage();
-		$mfa_backup_codes = new \LLAR\Core\Mfa\MfaBackupCodes( $payload_storage );
-		$mfa_endpoint     = new \LLAR\Core\Mfa\MfaEndpoint( $mfa_backup_codes, $payload_storage );
-		$mfa_settings    = new \LLAR\Core\Mfa\MfaSettings();
+		$payload_storage      = \LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector::get_storage();
+		$mfa_backup_codes     = new \LLAR\Core\Mfa\MfaBackupCodes( $payload_storage );
+		$mfa_endpoint         = new \LLAR\Core\Mfa\MfaEndpoint( $mfa_backup_codes, $payload_storage );
+		$mfa_settings         = new \LLAR\Core\Mfa\MfaSettings();
 		$this->mfa_controller = new \LLAR\Core\Mfa\MfaManager( $mfa_backup_codes, $mfa_endpoint, $mfa_settings, $payload_storage );
 		$this->mfa_controller->register();
 
 		( new Shortcodes() )->register();
 		( new Ajax() )->register();
+
+		$this->login_page_cache_detector = new LoginPageCacheDetector();
+		$this->login_page_cache_detector->register();
 	}
 
 	/**
@@ -360,6 +383,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	}
 
 	/**
+	 * @return LoginPageCacheDetector
+	 */
+	public function get_login_page_cache_detector() {
+		return $this->login_page_cache_detector;
+	}
+
+	/**
 	 * @return LocalLockoutManager
 	 */
 	public function get_local_lockout() {
@@ -369,9 +399,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	/**
 	 * Register wp hooks and filters
 	 */
-	public function hooks_init()
-	{
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) ,999);
+	public function hooks_init() {
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ), 999 );
 		add_action( 'login_enqueue_scripts', array( $this, 'login_page_enqueue' ) );
 		add_filter( 'limit_login_whitelist_ip', array( $this, 'check_whitelist_ips' ), 10, 2 );
 		add_filter( 'limit_login_whitelist_usernames', array( $this, 'check_whitelist_usernames' ), 10, 2 );
@@ -385,6 +414,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
 
 		add_action( 'admin_notices', array( $this, 'render_leave_review_admin_notice' ) );
+		add_action( 'admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
+		add_action( 'network_admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -399,8 +430,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		add_action( 'login_footer', array( $this, 'login_page_render_js' ), 9999 );
 		add_action( 'wp_footer', array( $this, 'login_page_render_js' ), 9999 );
 
-		if( !Config::get( 'hide_dashboard_widget' ) )
+		if ( ! Config::get( 'hide_dashboard_widget' ) ) {
 			add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
+		}
 
 		add_action( 'login_form_register', array( $this, 'llar_submit_login_form_register' ), 10 );
 		add_filter( 'registration_errors', array( $this, 'llar_submit_registration_errors' ), 10, 3 );
@@ -413,8 +445,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	/**
 	 * Runs when the plugin is activated
 	 */
-	public function activation()
-	{
+	public function activation() {
 		Helpers::persist_stored_plugin_version();
 
 		if ( ! Config::exists( 'activation_timestamp' ) ) {
@@ -462,8 +493,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	}
 
 
-	public function setup_cookie()
-	{
+	public function setup_cookie() {
 		if ( empty( $_GET['page'] ) || $_GET['page'] !== $this->_options_page_slug ) {
 
 			return;
@@ -471,14 +501,16 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 
 		$cookie_name = 'llar_menu_alert_icon_shown';
 
-		if ( empty( $_COOKIE[$cookie_name] ) ) {
+		if ( empty( $_COOKIE[ $cookie_name ] ) ) {
 			setcookie( $cookie_name, '1', strtotime( 'tomorrow' ) );
 		}
 	}
 
 	public function register_dashboard_widgets() {
 
-		if ( ! $this->has_capability ) return;
+		if ( ! $this->has_capability ) {
+			return;
+		}
 
 		wp_add_dashboard_widget(
 			'llar_stats_widget',
@@ -491,8 +523,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		);
 	}
 
-	public function dashboard_widgets_content()
-	{
+	public function dashboard_widgets_content() {
 		$vars = $this->dashboard_renderer->build_dashboard_widget_vars();
 		extract( $vars, EXTR_SKIP );
 		include LLA_PLUGIN_DIR . 'views/admin-dashboard-widgets.php';
@@ -528,17 +559,31 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @param string      $setup_code           App setup code.
 	 * @param string      $upgrade_premium_url  Premium upgrade URL.
 	 * @param bool|array  $api_stats            Cloud API stats.
+	 * @param bool        $info_has_valid_data  Whether cloud plan data is valid.
 	 *
 	 * @return array
 	 */
-	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
-		return $this->dashboard_renderer->get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats );
+	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats, $info_has_valid_data = false ) {
+		return $this->dashboard_renderer->get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats, $info_has_valid_data );
+	}
+
+	/**
+	 * View data for the dashboard tab template (views/tab-dashboard.php).
+	 *
+	 * @param string $active_app           Active app slug ('local'|'custom').
+	 * @param bool   $is_active_app_custom Whether the cloud app is active.
+	 * @param string $block_sub_group      Cloud plan name.
+	 * @param bool   $is_exhausted         Cloud quota exhausted flag.
+	 *
+	 * @return array
+	 */
+	public function get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
+		return $this->dashboard_renderer->build_dashboard_tab_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
 	}
 	/**
 	 * Redirect to dashboard page after installed
 	 */
-	public function dashboard_page_redirect()
-	{
+	public function dashboard_page_redirect() {
 		if (
 			! get_transient( 'llar_dashboard_redirect' )
 			|| isset( $_GET['activate-multi'] ) || is_network_admin()
@@ -556,8 +601,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * Redirect to dashboard when onboarding is not completed yet (so onboarding can start on any plugin page).
 	 * Runs on admin_init before any output to avoid "headers already sent" when using wp_safe_redirect().
 	 */
-	public function onboarding_redirect_to_dashboard()
-	{
+	public function onboarding_redirect_to_dashboard() {
 		if ( empty( $_GET['page'] ) || $this->_options_page_slug !== $_GET['page'] ) {
 			return;
 		}
@@ -581,8 +625,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	/**
 	 * Hook 'plugins_loaded'
 	 */
-	public function setup()
-	{
+	public function setup() {
 		if ( ! ( $activation_timestamp = Config::get( 'activation_timestamp' ) ) ) {
 
 			// Write time when the plugin is activated
@@ -630,8 +673,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 
 			add_action( 'network_admin_menu', array( $this, 'network_setting_menu_mc_exhausted_icon' ), 11 );
 
-			if ( Config::get( 'show_warning_badge' ) )
+			if ( Config::get( 'show_warning_badge' ) ) {
 				add_action( 'network_admin_menu', array( $this, 'network_setting_menu_alert_icon' ) );
+			}
 		}
 
 		if ( Helpers::allow_local_options() ) {
@@ -639,11 +683,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 
 			add_action( 'admin_menu', array( $this, 'setting_menu_mc_exhausted_icon' ), 11 );
 
-			if ( Config::get( 'show_top_bar_menu_item' ) )
+			if ( Config::get( 'show_top_bar_menu_item' ) ) {
 				add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 999 );
+			}
 
-			if ( Config::get( 'show_warning_badge' ) )
+			if ( Config::get( 'show_warning_badge' ) ) {
 				add_action( 'admin_menu', array( $this, 'setting_menu_alert_icon' ) );
+			}
 		}
 
 		// Add notices for XMLRPC request
@@ -671,6 +717,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 
 		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
 
+		// "Start Your 7-Day Free Trial" popup behind every non-onboarding CTA.
+		TrialStartPopup::init();
+
 		// MFA flow callback: llar_mfa=1&token=...&code=...
 		add_action( 'init', array( $this, 'mfa_flow_callback' ), 1 );
 		add_action( 'init', array( DigestStorage::class, 'register_post_type' ) );
@@ -684,8 +733,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 			$role->add_cap( self::$capabilities );
 		}
 
-		$this->has_capability = ( current_user_can('manage_options' ) || current_user_can( self::$capabilities ) );
-
+		$this->has_capability = ( current_user_can( 'manage_options' ) || current_user_can( self::$capabilities ) );
 	}
 
 
@@ -697,8 +745,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @return void
 	 */
-	public function load_plugin_textdomain_in_time()
-	{
+	public function load_plugin_textdomain_in_time() {
 		if ( ! self::is_wp_at_least( '6.9' ) ) {
 			load_plugin_textdomain( 'limit-login-attempts-reloaded', false, basename( LLA_PLUGIN_DIR ) . '/languages' );
 		}
@@ -706,23 +753,23 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		Config::init_defaults();
 	}
 
-	public function login_page_gdpr_message()
-	{
+	public function login_page_gdpr_message() {
 
-		if ( ! Config::get( 'gdpr' ) || isset( $_REQUEST['interim-login'] ) ) return;
+		if ( ! Config::get( 'gdpr' ) || isset( $_REQUEST['interim-login'] ) ) {
+			return;
+		}
 
 		?>
-        <div id="llar-login-page-gdpr">
-            <div class="llar-login-page-gdpr__message"><?php echo do_shortcode( stripslashes( Config::get( 'gdpr_message' ) ) ); ?></div>
-            <div class="llar-login-page-gdpr__close" onclick="document.getElementById('llar-login-page-gdpr').style.display = 'none';">
-                &times;
-            </div>
-        </div>
+		<div id="llar-login-page-gdpr">
+			<div class="llar-login-page-gdpr__message"><?php echo do_shortcode( stripslashes( Config::get( 'gdpr_message' ) ) ); ?></div>
+			<div class="llar-login-page-gdpr__close" onclick="document.getElementById('llar-login-page-gdpr').style.display = 'none';">
+				&times;
+			</div>
+		</div>
 		<?php
 	}
 
-	public function login_page_render_js()
-	{
+	public function login_page_render_js() {
 		if ( true === LoginFlowTransientStore::get( 'llar_user_is_whitelisted', false ) ) {
 			LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => null ) );
 			return;
@@ -737,99 +784,99 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 			return;
 		}
 
-		$custom_error = Config::get( 'custom_error_message' );
-		$late_hook_errors = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
-		$is_wp_login_page = isset( $_POST['log'] );
+		$custom_error         = Config::get( 'custom_error_message' );
+		$late_hook_errors     = ! empty( $this->all_errors_array['late_hook_errors'] ) ? $this->all_errors_array['late_hook_errors'] : false;
+		$is_wp_login_page     = isset( $_POST['log'] );
 		$is_custom_login_page = $this->integration_manager->is_custom_login_page();
 
 		$mfa_return_message = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
 		if ( ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_custom_login_page || $um_limit_login_failed ) ) || $show_mfa_return_error ) :
 			ob_start();
 			?>
-                ;( function( $ ) {
-                    let ajaxUrlObj = new URL( `<?php echo admin_url( 'admin-ajax.php' ); ?>` );
-                    let um_limit_login_failed = `<?php echo esc_js( isset( $um_limit_login_failed ) ? $um_limit_login_failed : '' ); ?>`;
-                    let late_hook_errors = <?php echo wp_json_encode( wp_kses_post( ( $late_hook_errors ) ) ) ?>;
-                    let custom_error = <?php echo wp_json_encode( nl2br( esc_html( $custom_error ) ) ) ?>;
-                    let llar_mfa_return_error = <?php echo $show_mfa_return_error ? 'true' : 'false'; ?>;
-                    let llar_mfa_return_message = <?php echo wp_json_encode( wp_kses_post( $mfa_return_message ) ); ?>;
+				;( function( $ ) {
+					let ajaxUrlObj = new URL( `<?php echo admin_url( 'admin-ajax.php' ); ?>` );
+					let um_limit_login_failed = `<?php echo esc_js( isset( $um_limit_login_failed ) ? $um_limit_login_failed : '' ); ?>`;
+					let late_hook_errors = <?php echo wp_json_encode( wp_kses_post( ( $late_hook_errors ) ) ); ?>;
+					let custom_error = <?php echo wp_json_encode( nl2br( esc_html( $custom_error ) ) ); ?>;
+					let llar_mfa_return_error = <?php echo $show_mfa_return_error ? 'true' : 'false'; ?>;
+					let llar_mfa_return_message = <?php echo wp_json_encode( wp_kses_post( $mfa_return_message ) ); ?>;
 
-                    ajaxUrlObj.protocol = location.protocol;
+					ajaxUrlObj.protocol = location.protocol;
 
-                    $.post( ajaxUrlObj.toString(), {
-                        action: 'get_remaining_attempts_message',
-                        sec: '<?php echo wp_create_nonce( "llar-get-remaining-attempts-message" ); ?>'
-                    }, function( response ) {
-                        if ( llar_mfa_return_error ) {
-                            if ( response.success && response.data ) {
-                                notification_login_page( response.data + ( custom_error.length ? '<br /><br />' + custom_error : '' ) );
-                            } else {
-                                notification_login_page( llar_mfa_return_message + ( custom_error.length ? '<br /><br />' + custom_error : '' ) );
-                            }
-                            return;
-                        }
-                        if ( response.success && response.data ) {
+					$.post( ajaxUrlObj.toString(), {
+						action: 'get_remaining_attempts_message',
+						sec: '<?php echo wp_create_nonce( 'llar-get-remaining-attempts-message' ); ?>'
+					}, function( response ) {
+						if ( llar_mfa_return_error ) {
+							if ( response.success && response.data ) {
+								notification_login_page( response.data + ( custom_error.length ? '<br /><br />' + custom_error : '' ) );
+							} else {
+								notification_login_page( llar_mfa_return_message + ( custom_error.length ? '<br /><br />' + custom_error : '' ) );
+							}
+							return;
+						}
+						if ( response.success && response.data ) {
 
-                            if ( custom_error.length ) {
+							if ( custom_error.length ) {
 
-                                custom_error = '<br /><br />' + custom_error;
-                            }
-                             notification_login_page( response.data + custom_error );
+								custom_error = '<br /><br />' + custom_error;
+							}
+							notification_login_page( response.data + custom_error );
 
-                        } else if ( um_limit_login_failed ) {
+						} else if ( um_limit_login_failed ) {
 
-                            if ( late_hook_errors === false || late_hook_errors === '' ) {
+							if ( late_hook_errors === false || late_hook_errors === '' ) {
 
-                                notification_login_page( custom_error );
-                            } else {
+								notification_login_page( custom_error );
+							} else {
 
-                                if ( custom_error.length ) {
-                                    custom_error = '<br /><br />' + custom_error;
-                                }
+								if ( custom_error.length ) {
+									custom_error = '<br /><br />' + custom_error;
+								}
 
-                                notification_login_page( late_hook_errors + custom_error );
-                            }
+								notification_login_page( late_hook_errors + custom_error );
+							}
 
-                        } else {
+						} else {
 
-                            if ( custom_error.length ) {
-                                notification_login_page(custom_error);
-                            }
-                        }
-                    } ).fail( function() {
-                        if ( llar_mfa_return_error ) {
-                            notification_login_page( llar_mfa_return_message + ( custom_error.length ? '<br /><br />' + custom_error : '' ) );
-                        }
-                    } );
+							if ( custom_error.length ) {
+								notification_login_page(custom_error);
+							}
+						}
+					} ).fail( function() {
+						if ( llar_mfa_return_error ) {
+							notification_login_page( llar_mfa_return_message + ( custom_error.length ? '<br /><br />' + custom_error : '' ) );
+						}
+					} );
 
-                    function notification_login_page( message ) {
+					function notification_login_page( message ) {
 
-                        if ( ! message.length ) {
-                            return false;
-                        }
-                        let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; font-size: 120%; line-height: 1.5; width: 365px; z-index: 999999; background: #fffbe0; padding: 20px; color: rgb(121, 121, 121); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); box-shadow: 10px 10px 14px 0 #72757B99;} .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; } .llar_notification_login_page .close-button {position: absolute; top: 0; right: 5px; cursor: pointer; line-height: 1;}';
-                        let style = document.createElement('style');
-                        style.appendChild(document.createTextNode(css));
-                        document.head.appendChild(style);
+						if ( ! message.length ) {
+							return false;
+						}
+						let css = '.llar_notification_login_page { position: fixed; top: 50%; left: 50%; font-size: 120%; line-height: 1.5; width: 365px; z-index: 999999; background: #fffbe0; padding: 20px; color: rgb(121, 121, 121); text-align: center; border-radius: 10px; transform: translate(-50%, -50%); box-shadow: 10px 10px 14px 0 #72757B99;} .llar_notification_login_page h4 { color: rgb(255, 255, 255); margin-bottom: 1.5rem; } .llar_notification_login_page .close-button {position: absolute; top: 0; right: 5px; cursor: pointer; line-height: 1;}';
+						let style = document.createElement('style');
+						style.appendChild(document.createTextNode(css));
+						document.head.appendChild(style);
 
-                        $( 'body' ).prepend( '<div class="llar_notification_login_page"><div class="close-button">&times;</div>' + message + '</div>' );
+						$( 'body' ).prepend( '<div class="llar_notification_login_page"><div class="close-button">&times;</div>' + message + '</div>' );
 
-                        setTimeout(function () {
-                            $('.llar_notification_login_page').hide();
-                        }, 10000);
+						setTimeout(function () {
+							$('.llar_notification_login_page').hide();
+						}, 10000);
 
-                        $('.llar_notification_login_page').on( 'click', '.close-button', function () {
-                            $('.llar_notification_login_page').hide();
-                        });
+						$('.llar_notification_login_page').on( 'click', '.close-button', function () {
+							$('.llar_notification_login_page').hide();
+						});
 
-                        $( 'body' ).on('click', function(event) {
-                            if (!$(event.target).closest('.llar_notification_login_page').length) {
-                                $('.llar_notification_login_page').hide();
-                            }
-                        });
-                    }
+						$( 'body' ).on('click', function(event) {
+							if (!$(event.target).closest('.llar_notification_login_page').length) {
+								$('.llar_notification_login_page').hide();
+							}
+						});
+					}
 
-                } )(jQuery)
+				} )(jQuery)
 			<?php
 			$script = ob_get_clean();
 
@@ -839,29 +886,39 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		endif;
 	}
 
-	public function add_action_links( $actions )
-	{
-		$actions = array_merge( array(
-			'<a href="' . $this->get_options_page_uri() . '">' . __( 'Dashboard', 'limit-login-attempts-reloaded' ) . '</a>',
-			'<a href="' . $this->get_options_page_uri( 'settings' ) . '">' . __( 'Settings', 'limit-login-attempts-reloaded' ) . '</a>',
-		), $actions );
+	public function add_action_links( $actions ) {
+		$actions = array_merge(
+			array(
+				'<a href="' . $this->get_options_page_uri() . '">' . __( 'Dashboard', 'limit-login-attempts-reloaded' ) . '</a>',
+				'<a href="' . $this->get_options_page_uri( 'settings' ) . '">' . __( 'Settings', 'limit-login-attempts-reloaded' ) . '</a>',
+			),
+			$actions
+		);
 
 		if ( Config::get( Config::OPTION_ACTIVE_APP ) === 'local' ) {
 
 			if ( empty( Config::get( 'app_setup_code' ) ) ) {
 
-				$slug = $this->get_options_page_uri('dashboard#modal_micro_cloud');
+				// No email in the fallback href — the trial start popup collects
+				// the email + consent right before leaving the site.
+				$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '' );
 
-				$actions = array_merge( array(
-					'<a href="' . esc_html( $slug ) . '" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
-				), $actions );
+				$actions = array_merge(
+					array(
+						'<a href="' . esc_url( $landing_url ) . '" data-llar-info-id="' . esc_attr( TrialLanding::INFO_ID_DASHBOARD ) . '" class="llar-trial-start-cta" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+					),
+					$actions
+				);
 			} else {
 
 				$url_site = 'https://www.limitloginattempts.com/info.php?from=plugin-plugins';
 
-				$actions = array_merge( array(
-					'<a href="' . esc_html( $url_site ) . '" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
-				), $actions );
+				$actions = array_merge(
+					array(
+						'<a href="' . esc_html( $url_site ) . '" target="_blank" style="font-weight: bold;">' . __( 'Upgrade to Premium', 'limit-login-attempts-reloaded' ) . '</a>',
+					),
+					$actions
+				);
 			}
 		}
 
@@ -886,43 +943,37 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		\LLAR\Core\MfaFlow\CallbackHandler::maybe_handle();
 	}
 
-	public function cloud_app_init()
-	{
+	public function cloud_app_init() {
 		if ( Config::get( Config::OPTION_ACTIVE_APP ) === 'custom' && $config = Config::get( 'app_config' ) ) {
 
 			self::$cloud_app = new CloudApp( $config );
 		}
 	}
 
-	public function load_admin_scripts()
-	{
+	public function load_admin_scripts() {
 		if ( ! empty( $_REQUEST['page'] ) && $_REQUEST['page'] !== $this->_options_page_slug ) {
 			return;
 		}
 
-		wp_enqueue_script('jquery-ui-accordion');
-		wp_enqueue_style('llar-jquery-ui', LLA_PLUGIN_URL.'assets/css/jquery-ui.css');
+		wp_enqueue_script( 'jquery-ui-accordion' );
+		wp_enqueue_style( 'llar-jquery-ui', LLA_PLUGIN_URL . 'assets/css/jquery-ui.css' );
 
 		wp_enqueue_script( 'llar-charts', LLA_PLUGIN_URL . 'assets/js/chart.umd.js' );
 	}
 
-	public function check_whitelist_ips( $allow, $ip )
-	{
+	public function check_whitelist_ips( $allow, $ip ) {
 		return $this->local_lockout->check_whitelist_ips( $allow, $ip );
 	}
 
-	public function check_whitelist_usernames( $allow, $username )
-	{
+	public function check_whitelist_usernames( $allow, $username ) {
 		return $this->local_lockout->check_whitelist_usernames( $allow, $username );
 	}
 
-	public function check_blacklist_ips( $allow, $ip )
-	{
+	public function check_blacklist_ips( $allow, $ip ) {
 		return $this->local_lockout->check_blacklist_ips( $allow, $ip );
 	}
 
-	public function check_blacklist_usernames( $allow, $username )
-	{
+	public function check_blacklist_usernames( $allow, $username ) {
 		return $this->local_lockout->check_blacklist_usernames( $allow, $username );
 	}
 
@@ -930,8 +981,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @param $blacklist
 	 * @return array|null
 	 */
-	public function register_user_blacklist($blacklist)
-	{
+	public function register_user_blacklist( $blacklist ) {
 
 		$black_list_usernames = Config::get( 'blacklist_usernames' );
 
@@ -947,8 +997,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @return IXR_Error
 	 */
-	public function xmlrpc_error_messages( $error )
-	{
+	public function xmlrpc_error_messages( $error ) {
 		if ( ! class_exists( 'IXR_Error' ) ) {
 			return $error;
 		}
@@ -970,8 +1019,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @return WP_Error | WP_User
 	 * @throws Exception
 	 */
-	public function authenticate_filter( $user, $username, $password )
-	{
+	public function authenticate_filter( $user, $username, $password ) {
 		return $this->auth_handler->authenticate_filter( $user, $username, $password );
 	}
 
@@ -990,9 +1038,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	/**
 	 * Delete the CloudApp object
 	 */
-	public function cloud_app_null()
-	{
-		LimitLoginAttempts::$cloud_app = null;
+	public function cloud_app_null() {
+		self::$cloud_app = null;
 	}
 
 	/**
@@ -1003,8 +1050,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @param $password
 	 * @return mixed
 	 */
-	public function authenticate_filter_errors_fix( $user, $username, $password )
-	{
+	public function authenticate_filter_errors_fix( $user, $username, $password ) {
 		return $this->auth_handler->authenticate_filter_errors_fix( $user, $username, $password );
 	}
 
@@ -1028,8 +1074,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		return $this->auth_handler->authenticate_late_lockout_check( $user, $username, $password );
 	}
 
-	public function ultimate_member_register_error_codes( $codes )
-	{
+	public function ultimate_member_register_error_codes( $codes ) {
 		if ( ! is_array( $codes ) ) {
 			return $codes;
 		}
@@ -1050,10 +1095,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	/**
 	 * Check if the original plugin is installed
 	 */
-	private function check_original_installed()
-	{
-		require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
-		if ( is_plugin_active('limit-login-attempts/limit-login-attempts.php') ) {
+	private function check_original_installed() {
+		require_once ABSPATH . '/wp-admin/includes/plugin.php';
+		if ( is_plugin_active( 'limit-login-attempts/limit-login-attempts.php' ) ) {
 
 			deactivate_plugins( 'limit-login-attempts/limit-login-attempts.php', true );
 			remove_action( 'plugins_loaded', 'limit_login_setup', 99999 );
@@ -1063,24 +1107,21 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	/**
 	 * Enqueue js and css
 	 */
-	public function enqueue()
-	{
+	public function enqueue() {
 		return $this->admin_ui->enqueue();
 	}
 
 	/**
 	 * Enqueue scripts on login page
 	 */
-	public function login_page_enqueue()
-	{
+	public function login_page_enqueue() {
 		return $this->admin_ui->login_page_enqueue();
 	}
 
 	/**
 	 * Add admin options page
 	 */
-	public function admin_menu()
-	{
+	public function admin_menu() {
 		return $this->admin_ui->admin_menu();
 	}
 
@@ -1089,24 +1130,20 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @param WP_Admin_Bar $bar WordPress admin bar object.
 	 */
-	public function admin_bar_menu( $bar )
-	{
+	public function admin_bar_menu( $bar ) {
 		return $this->admin_ui->admin_bar_menu( $bar );
 	}
 
 	/**
 	 * Add network admin options page
 	 */
-	public function network_admin_menu()
-	{
+	public function network_admin_menu() {
 		return $this->admin_ui->network_admin_menu();
 	}
-	public function setting_menu_alert_icon()
-	{
+	public function setting_menu_alert_icon() {
 		$this->admin_ui->setting_menu_alert_icon();
 	}
-	public function network_setting_menu_alert_icon()
-	{
+	public function network_setting_menu_alert_icon() {
 		$this->admin_ui->network_setting_menu_alert_icon();
 	}
 	public function setting_menu_mc_exhausted_icon()
@@ -1123,8 +1160,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @param bool $tab
 	 * @return mixed
 	 */
-	public function get_options_page_uri( $tab = false )
-	{
+	public function get_options_page_uri( $tab = false ) {
 		return $this->admin_ui->get_options_page_uri( $tab );
 	}
 
@@ -1146,23 +1182,23 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 			$clean_url = '';
 			if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
 
-				$referer_url = $_SERVER['HTTP_REFERER'];
+				$referer_url    = $_SERVER['HTTP_REFERER'];
 				$referer_parsed = parse_url( $referer_url );
 
-				$clean_url = isset( $referer_parsed['path']) ? $referer_parsed['path'] : '';
+				$clean_url = isset( $referer_parsed['path'] ) ? $referer_parsed['path'] : '';
 				$clean_url = trim( $clean_url, '/' );
 			}
 
-			$user = get_user_by('login', $username);
+			$user = get_user_by( 'login', $username );
 
 			$data = array(
-				'ip'        => Helpers::get_all_ips(),
-				'login'     => $username,
-				'user_id'   => $user->ID,
-				'gateway'   => Helpers::detect_gateway(),
-				'roles'     => $user->roles,
-				'agent'     => $_SERVER['HTTP_USER_AGENT'],
-				'url'       => $clean_url,
+				'ip'      => Helpers::get_all_ips(),
+				'login'   => $username,
+				'user_id' => $user->ID,
+				'gateway' => Helpers::detect_gateway(),
+				'roles'   => $user->roles,
+				'agent'   => $_SERVER['HTTP_USER_AGENT'],
+				'url'     => $clean_url,
 			);
 
 			self::$cloud_app->request( 'login', 'post', $data );
@@ -1179,8 +1215,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function is_limit_login_ok( $username = '' )
-	{
+	public function is_limit_login_ok( $username = '' ) {
 		return $this->local_lockout->is_limit_login_ok( $username );
 	}
 
@@ -1197,8 +1232,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	/**
 	 * For plugin UM
 	 */
-	public function um_limit_login_failed ()
-	{
+	public function um_limit_login_failed() {
 		global $um_limit_login_failed;
 
 		do_action( 'login_errors', '' );
@@ -1215,8 +1249,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @param array $params Login parameters (log, pwd)
 	 * @return array Errors for MemberPress; when LLAR blocks login, returns that message as first error.
 	 */
-	public function mepr_validate_login_handler( $errors, $params = array() )
-	{
+	public function mepr_validate_login_handler( $errors, $params = array() ) {
 		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
 			return $errors;
 		}
@@ -1269,8 +1302,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @param $user
 	 */
-	public function notify_email( $user )
-	{
+	public function notify_email( $user ) {
 		$this->local_lockout->notify_email( $user );
 	}
 
@@ -1281,8 +1313,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @internal param $user
 	 */
-	public function notify_log( $user_login )
-	{
+	public function notify_log( $user_login ) {
 		$this->local_lockout->notify_log( $user_login );
 	}
 
@@ -1305,23 +1336,19 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @return bool
 	 */
-	public function is_ip_whitelisted( $ip = null )
-	{
+	public function is_ip_whitelisted( $ip = null ) {
 		return $this->ip_resolver->is_ip_whitelisted( $ip );
 	}
 
-	public function is_username_whitelisted( $username )
-	{
+	public function is_username_whitelisted( $username ) {
 		return $this->local_lockout->is_username_whitelisted( $username );
 	}
 
-	public function is_ip_blacklisted( $ip = null )
-	{
+	public function is_ip_blacklisted( $ip = null ) {
 		return $this->ip_resolver->is_ip_blacklisted( $ip );
 	}
 
-	public function is_username_blacklisted( $username )
-	{
+	public function is_username_blacklisted( $username ) {
 		return $this->local_lockout->is_username_blacklisted( $username );
 	}
 
@@ -1333,8 +1360,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @return WP_Error|WP_User
 	 */
-	public function wp_authenticate_user( $user, $password )
-	{
+	public function wp_authenticate_user( $user, $password ) {
 		return $this->auth_handler->wp_authenticate_user( $user, $password );
 	}
 
@@ -1345,8 +1371,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @return array
 	 */
-	public function failure_shake( $error_codes )
-	{
+	public function failure_shake( $error_codes ) {
 		$error_codes[] = 'too_many_retries';
 		$error_codes[] = 'username_blacklisted';
 
@@ -1360,8 +1385,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @param $username
 	 * @param $password
 	 */
-	public function track_credentials( $user, $username, $password )
-	{
+	public function track_credentials( $user, $username, $password ) {
 		return $this->auth_handler->track_credentials( $user, $username, $password );
 	}
 
@@ -1372,8 +1396,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @return string
 	 * @throws Exception
 	 */
-	public function error_msg( $username = '' )
-	{
+	public function error_msg( $username = '' ) {
 		return $this->error_presenter->error_msg( $username );
 	}
 
@@ -1395,13 +1418,11 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @return string
 	 */
-	public function fixup_error_messages( $content )
-	{
+	public function fixup_error_messages( $content ) {
 		return $this->error_presenter->fixup_error_messages( $content );
 	}
 
-	public function fixup_error_messages_wc( \WP_Error $error )
-	{
+	public function fixup_error_messages_wc( \WP_Error $error ) {
 		return $this->error_presenter->fixup_error_messages_wc( $error );
 	}
 
@@ -1412,8 +1433,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @return string
 	 *
 	 */
-	public function get_address()
-	{
+	public function get_address() {
 		return $this->ip_resolver->get_address();
 	}
 
@@ -1425,16 +1445,14 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 * @param null $lockouts
 	 * @param null $valid
 	 */
-	public function cleanup( $retries = null, $lockouts = null, $valid = null )
-	{
+	public function cleanup( $retries = null, $lockouts = null, $valid = null ) {
 		$this->local_lockout->cleanup( $retries, $lockouts, $valid );
 	}
 
 	/**
 	 * Render admin options page
 	 */
-	public function options_page()
-	{
+	public function options_page() {
 		$this->admin_ui->options_page();
 	}
 	/**
@@ -1480,8 +1498,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 
 
 
-	private function plan_name_match( $plan = 'default' )
-	{
+	private function plan_name_match( $plan = 'default' ) {
 		if ( ! array_key_exists( $plan, $this->plans ) ) {
 			$plan = 'default';
 		}
@@ -1490,9 +1507,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	}
 
 
-	public function array_name_plans()
-	{
-		$plans = [];
+	public function array_name_plans() {
+		$plans = array();
 
 		foreach ( $this->plans as $plan ) {
 
@@ -1502,23 +1518,128 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 		return $plans;
 	}
 
-	private function info()
-	{
+	/**
+	 * Free trial length in days — the single source of truth for every
+	 * trial string in the plugin (titles, buttons, banners, plan name).
+	 */
+	const TRIAL_DAYS = 7;
+
+	/**
+	 * Canonical (untranslated) trial plan name. Doubles as the logic key
+	 * compared against plan_name_match() output, so it must stay literal.
+	 *
+	 * @return string
+	 */
+	public static function trial_plan_name() {
+		return sprintf( '%d Day Trial', self::TRIAL_DAYS );
+	}
+
+	/**
+	 * Translated trial label for display (buttons, badges, banners).
+	 *
+	 * @return string
+	 */
+	public static function trial_label() {
+		/* translators: %d: trial length in days. */
+		return sprintf( __( '%d Day Trial', 'limit-login-attempts-reloaded' ), self::TRIAL_DAYS );
+	}
+
+	private function info() {
+		if ( $this->info_attempted ) {
+			return $this->info_data;
+		}
+
 		if ( self::$cloud_app ) {
-			$this->info_data = self::$cloud_app->info();
+			$this->info_attempted = true;
+			$this->info_data      = self::$cloud_app->info();
 		}
 
 		return $this->info_data;
 	}
 
-	public function info_is_exhausted()
-	{
-		if ( empty( $this->info_data ) ) {
+	/**
+	 * Drop the per-request /info memo so the next call reflects updated config.
+	 */
+	public function reset_info_cache() {
+		$this->info_data      = array();
+		$this->info_attempted = false;
+	}
 
-			$this->info_data = $this->info();
+	public function info_is_exhausted() {
+		if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'custom' || ! self::$cloud_app ) {
+			return false;
 		}
 
-		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		if ( is_array( $this->info_data ) && ! empty( $this->info_data ) ) {
+			return $this->parse_mc_exhausted( $this->info_data );
+		}
+
+		$cached = $this->is_plugin_ui_request() ? false : get_transient( self::mc_exhausted_cache_key() );
+
+		if ( false !== $cached ) {
+			return '1' === $cached;
+		}
+
+		$info = $this->info();
+
+		if ( is_array( $info ) && ! empty( $info ) ) {
+			return $this->parse_mc_exhausted( $info );
+		}
+
+		return false;
+	}
+
+	private function parse_mc_exhausted( $info ) {
+		$exhausted = isset( $info['requests']['exhausted'] )
+			? filter_var( $info['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE )
+			: false;
+
+		$exhausted = null === $exhausted ? false : (bool) $exhausted;
+
+		$this->cache_mc_exhausted( $exhausted );
+
+		return $exhausted;
+	}
+
+	private function cache_mc_exhausted( $exhausted ) {
+		$key   = self::mc_exhausted_cache_key();
+		$value = $exhausted ? '1' : '0';
+
+		if ( get_transient( $key ) === $value ) {
+			return;
+		}
+
+		set_transient( $key, $value, $exhausted ? 12 * HOUR_IN_SECONDS : 15 * MINUTE_IN_SECONDS );
+	}
+
+	/**
+	 * Drop the cached MC-exhausted flag (e.g. after the cloud app config changed).
+	 *
+	 * @param array|null $app_config Config to build the key for; the current one by default.
+	 */
+	public static function clear_mc_exhausted_cache( $app_config = null ) {
+		delete_transient( self::mc_exhausted_cache_key( $app_config ) );
+	}
+
+	private static function mc_exhausted_cache_key( $app_config = null ) {
+		$app_config = is_array( $app_config ) ? $app_config : Config::get( 'app_config' );
+		$app_id     = is_array( $app_config ) && ! empty( $app_config['id'] ) ? (string) $app_config['id'] : 'unknown';
+
+		return 'limit_login_mc_exhausted_' . md5( $app_id . '|' . get_current_blog_id() );
+	}
+
+	private function is_plugin_ui_request() {
+		if ( ! is_admin() || ! $this->has_capability ) {
+			return false;
+		}
+
+		if ( ! empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_options_page_slug ) {
+			return true;
+		}
+
+		global $pagenow;
+
+		return 'index.php' === $pagenow && ! Config::get( 'hide_dashboard_widget' );
 	}
 
 	/**
@@ -1528,12 +1649,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 */
 	public function info_is_almost_exhausted()
 	{
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return isset( $this->info_data['requests']['almost_exhausted'] ) ? filter_var( $this->info_data['requests']['almost_exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		return isset( $info['requests']['almost_exhausted'] ) ? filter_var( $info['requests']['almost_exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
 	}
 
 	/**
@@ -1541,22 +1659,19 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @return bool
 	 */
-	public function info_has_valid_data()
-	{
-		if ( empty( $this->info_data ) ) {
-			$this->info_data = $this->info();
-		}
+	public function info_has_valid_data() {
+		$info = $this->info();
 
-		if ( empty( $this->info_data ) || ! is_array( $this->info_data ) ) {
+		if ( empty( $info ) || ! is_array( $info ) ) {
 			return false;
 		}
 
-		if ( empty( $this->info_data['requests'] ) || ! is_array( $this->info_data['requests'] ) ) {
+		if ( empty( $info['requests'] ) || ! is_array( $info['requests'] ) ) {
 			return false;
 		}
 
-		return array_key_exists( 'quota', $this->info_data['requests'] )
-			&& '' !== (string) $this->info_data['requests']['quota'];
+		return array_key_exists( 'quota', $info['requests'] )
+			&& '' !== (string) $info['requests']['quota'];
 	}
 
 	/**
@@ -1564,8 +1679,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @return bool
 	 */
-	public function info_is_cloud_unavailable()
-	{
+	public function info_is_cloud_unavailable() {
 		if ( ! self::$cloud_app ) {
 			return false;
 		}
@@ -1578,49 +1692,32 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	}
 
 
-	public function info_requests()
-	{
-		if ( empty( $this->info_data ) ) {
+	public function info_requests() {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['requests'] ) ) ? $this->info_data['requests'] : '';
+		return ( ! empty( $info ) && ! empty( $info['requests'] ) ) ? $info['requests'] : '';
 	}
 
 
-	public function info_sub_group()
-	{
-		if ( empty( $this->info_data ) ) {
-
-			$this->info_data = $this->info();
-		}
-
-		$data = ( ! empty( $this->info_data ) && ! empty( $this->info_data['sub_group'] ) ) ? $this->info_data['sub_group'] : '';
+	public function info_sub_group() {
+		$info = $this->info();
+		$data = ( ! empty( $info ) && ! empty( $info['sub_group'] ) ) ? $info['sub_group'] : '';
 
 		return $this->plan_name_match( $data );
 	}
 
 
-	public function info_upgrade_url()
-	{
-		if ( empty( $this->info_data ) ) {
+	public function info_upgrade_url() {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['upgrade_url'] ) ) ? $this->info_data['upgrade_url'] : '';
+		return ( ! empty( $info ) && ! empty( $info['upgrade_url'] ) ) ? $info['upgrade_url'] : '';
 	}
 
 
-	public function info_block_by_country()
-	{
-		if ( empty( $this->info_data ) ) {
+	public function info_block_by_country() {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['block_by_country'] ) ) ? $this->info_data['block_by_country'] : '';
+		return ( ! empty( $info ) && ! empty( $info['block_by_country'] ) ) ? $info['block_by_country'] : '';
 	}
 
 
@@ -1647,8 +1744,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	/**
 	 * Register new user standard WP
 	 */
-	public function llar_submit_login_form_register()
-	{
+	public function llar_submit_login_form_register() {
 		$this->registration_limiter->llar_submit_login_form_register();
 	}
 
@@ -1661,8 +1757,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 	 *
 	 * @return mixed
 	 */
-	public function llar_submit_registration_errors( $errors, $sanitized_user_login, $user_email )
-	{
+	public function llar_submit_registration_errors( $errors, $sanitized_user_login, $user_email ) {
 		return $this->registration_limiter->llar_submit_registration_errors( $errors, $sanitized_user_login, $user_email );
 	}
 
@@ -1699,5 +1794,28 @@ class LimitLoginAttempts implements OptionsPageUriProvider
 			return;
 		}
 		$this->admin_notices_controller->render( 'leave-review' );
+	}
+
+	/**
+	 * Site-wide admin notice when PHP_VERSION is below a known PHP2Shell fix.
+	 *
+	 * Upstream version compare only (see PhpVulnerabilityChecker). Hidden when the
+	 * current browser has dismissed it (cookie, no user meta) or when PHP_VERSION
+	 * reaches the branch minimum. Admins only.
+	 *
+	 * @return void
+	 */
+	public function render_php_vulnerable_admin_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		if ( ! PhpVulnerabilityChecker::is_vulnerable() ) {
+			return;
+		}
+		$cookie = 'llar_php_vuln_dismissed_' . (int) get_current_user_id();
+		if ( isset( $_COOKIE[ $cookie ] ) && '1' === sanitize_text_field( wp_unslash( $_COOKIE[ $cookie ] ) ) ) {
+			return;
+		}
+		$this->admin_notices_controller->render( 'php-vulnerable' );
 	}
 }

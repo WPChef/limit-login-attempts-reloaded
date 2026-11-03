@@ -151,7 +151,8 @@ class CloudApp
 		$plugin_data = get_plugin_data( LLA_PLUGIN_DIR . 'limit-login-attempts-reloaded.php' );
 		$link = add_query_arg( 'version', $plugin_data['Version'], $link );
 
-		$setup_response = Http::get( $link );
+		// Provisioning is slower than regular API calls — allow more time.
+		$setup_response = Http::get( $link, array( 'timeout' => 20 ) );
 
 		$response_data = isset( $setup_response['data'] ) ? $setup_response['data'] : '{}';
 		$setup_response_body = json_decode( $response_data, true );
@@ -189,8 +190,21 @@ class CloudApp
 
 	public static function activate_license_key( $setup_code )
 	{
-		$link         = strrev( $setup_code );
-		$setup_result = self::setup( $link );
+		$link = strrev( $setup_code );
+
+		/**
+		 * Short-circuit remote setup() (e.g. e2e stubs) before any HTTP call.
+		 *
+		 * Return an array shaped like setup()'s result to skip the network request.
+		 * Return null/false to proceed with the normal setup() call.
+		 *
+		 * @param array|null $pre_result Null to continue; array to short-circuit.
+		 * @param string     $setup_code Original setup code.
+		 */
+		$setup_result = apply_filters( 'llar_pre_app_setup', null, $setup_code );
+		if ( ! is_array( $setup_result ) ) {
+			$setup_result = self::setup( $link );
+		}
 
 		/**
 		 * Filters the result of the remote setup() call.
@@ -366,6 +380,8 @@ class CloudApp
 
         $this->last_response_code = ! empty( $response['status'] ) ? $response['status'] : 0;
         $this->last_error_message = ! empty( $response['error'] ) ? $response['error'] : null;
+
+        $this->maybe_fallback_to_local_on_trial_expired( $response );
 
         $info = false;
         if ( ! empty( $response['data'] ) ) {
@@ -619,6 +635,8 @@ class CloudApp
 		$this->last_response_code = !empty( $response['status'] ) ? $response['status'] : 0;
 		$this->last_error_message = ! empty( $response['error'] ) ? $response['error'] : null;
 
+		$this->maybe_fallback_to_local_on_trial_expired( $response );
+
 		if ( 200 !== $response['status'] ) {
 			error_log( 'LLAR: CloudApp request failed: ' . $this->api . '/' . $method . ' ' . $this->last_response_code );
 			return false;
@@ -627,6 +645,40 @@ class CloudApp
 		$decoded = json_decode( $response['data'], true );
 
 		return Helpers::sanitize_stripslashes_deep( $decoded );
+	}
+
+	/**
+	 * Cloud 403 with context=trial_expired → switch active app to local.
+	 *
+	 * Covers POST /acl (via request()) and GET /info (via request_info()).
+	 *
+	 * @param array $response Raw Http response (status / data / error).
+	 *
+	 * @return void
+	 */
+	private function maybe_fallback_to_local_on_trial_expired( $response ) {
+		if ( ! is_array( $response ) ) {
+			return;
+		}
+
+		$status = ! empty( $response['status'] ) ? (int) $response['status'] : 0;
+		if ( 403 !== $status ) {
+			return;
+		}
+
+		if ( empty( $response['data'] ) ) {
+			return;
+		}
+
+		$decoded = json_decode( $response['data'], true );
+		if ( ! is_array( $decoded )
+			|| empty( $decoded['context'] )
+			|| 'trial_expired' !== $decoded['context']
+		) {
+			return;
+		}
+
+		Config::update( Config::OPTION_ACTIVE_APP, 'local' );
 	}
 
 	/**

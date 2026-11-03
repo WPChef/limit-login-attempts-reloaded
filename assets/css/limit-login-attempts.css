@@ -100,14 +100,14 @@
   color: #F07200;
 }
 
-.llar_turquoise, #llar-setting-page-logs .description-page .description-secondary a.unlink, #llar-setting-page-logs__active .description-page .description-secondary a.unlink, #llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink {
+.llar_turquoise, #llar-setting-page-logs .description-page .description-secondary a.unlink, #llar-setting-page-logs__active .description-page .description-secondary a.unlink, #llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink {
   color: #4ACAD8;
 }
 
-a.llar_turquoise, #llar-setting-page-logs .description-page .description-secondary a.unlink, #llar-setting-page-logs__active .description-page .description-secondary a.unlink, #llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink {
+a.llar_turquoise, #llar-setting-page-logs .description-page .description-secondary a.unlink, #llar-setting-page-logs__active .description-page .description-secondary a.unlink, #llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink {
   text-decoration: none;
 }
-a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-secondary a.unlink:hover, #llar-setting-page-logs__active .description-page .description-secondary a.unlink:hover, #llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink:hover {
+a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-secondary a.unlink:hover, #llar-setting-page-logs__active .description-page .description-secondary a.unlink:hover, #llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink:hover {
   text-decoration: none;
   color: #4ACAD8;
   border-bottom: 1px solid currentColor;
@@ -149,7 +149,7 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   pointer-events: none;
 }
 
-.dashicons-secondary, #llar-dashboard-page .section-title__new .llar-label .dashicons, #llar-setting-page .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .dashicons {
+.dashicons-secondary, #llar-dashboard-page .section-title__new .llar-label .dashicons, #llar-setting-page .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .dashicons {
   margin-left: 8px;
   font-size: 170%;
   line-height: 1;
@@ -163,11 +163,11 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   background: #666D84;
 }
 @media screen and (max-width: 767.5px) {
-  .dashicons-secondary, #llar-dashboard-page .section-title__new .llar-label .dashicons, #llar-setting-page .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .dashicons {
+  .dashicons-secondary, #llar-dashboard-page .section-title__new .llar-label .dashicons, #llar-setting-page .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .dashicons {
     font-size: 1.4rem;
   }
 }
-.dashicons-secondary:before, #llar-dashboard-page .section-title__new .llar-label .dashicons:before, #llar-setting-page .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .dashicons:before {
+.dashicons-secondary:before, #llar-dashboard-page .section-title__new .llar-label .dashicons:before, #llar-setting-page .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .dashicons:before, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .dashicons:before {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -184,7 +184,7 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   margin-left: 10px;
 }
 
-.llar_input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode select.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td input.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td select.input_border, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border {
+.llar_input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode select.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td input.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td select.input_border, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border {
   font-family: inherit;
   font-size: 16px;
   line-height: inherit;
@@ -195,31 +195,31 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   width: fit-content;
 }
 @media screen and (max-width: 1599.5px) {
-  .llar_input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode select.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td input.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td select.input_border, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border {
+  .llar_input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .input_border, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode select.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td input.input_border, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td select.input_border, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border {
     padding: 6px 8px 6px 12px;
     font-size: 14px;
   }
 }
-.llar_input_border:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .input_border:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .input_border:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border:focus, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode select.input_border:focus, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td input.input_border:focus, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td select.input_border:focus, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border:focus {
+.llar_input_border:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .input_border:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .input_border:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border:focus, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode select.input_border:focus, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td input.input_border:focus, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td select.input_border:focus, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border:focus, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border:focus {
   box-shadow: unset;
   outline: none;
 }
-.llar_input_border::placeholder, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .input_border::placeholder, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .input_border::placeholder, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border::placeholder, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode select.input_border::placeholder, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td input.input_border::placeholder, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td select.input_border::placeholder, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border::placeholder {
+.llar_input_border::placeholder, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .input_border::placeholder, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-key .input_border::placeholder, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border::placeholder, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-mode select.input_border::placeholder, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td input.input_border::placeholder, #llar-setting-page-logs__active .llar-table-scroll-wrap .llar-form-table tbody tr td select.input_border::placeholder, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border::placeholder, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border::placeholder, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border::placeholder {
   color: inherit;
   opacity: 0.5;
 }
 
-.llar_input_checkbox, .toplevel_page_limit-login-attempts input[type=checkbox], #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox], #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox] {
+.llar_input_checkbox, .toplevel_page_limit-login-attempts input[type=checkbox], #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox], #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox], #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox] {
   background-color: #FDFDFD;
   border: 1.5px solid #ABBFC1;
   box-sizing: content-box;
   margin: -0.25rem 0.25rem 0 0;
 }
-.llar_input_checkbox:checked, .toplevel_page_limit-login-attempts input[type=checkbox]:checked, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked {
+.llar_input_checkbox:checked, .toplevel_page_limit-login-attempts input[type=checkbox]:checked, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked {
   background-color: #FF7C06;
   border: 1.5px solid #FF7C06;
 }
-.llar_input_checkbox:checked::before, .toplevel_page_limit-login-attempts input[type=checkbox]:checked::before, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked::before, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before {
+.llar_input_checkbox:checked::before, .toplevel_page_limit-login-attempts input[type=checkbox]:checked::before, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:checked::before, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:checked::before {
   content: "✔";
   font-size: 14px;
   line-height: 1.1;
@@ -228,7 +228,7 @@ a.llar_turquoise:hover, #llar-setting-page-logs .description-page .description-s
   margin: 0;
   color: #FDFDFD;
 }
-.llar_input_checkbox:focus, .toplevel_page_limit-login-attempts input[type=checkbox]:focus, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:focus, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus {
+.llar_input_checkbox:focus, .toplevel_page_limit-login-attempts input[type=checkbox]:focus, #llar-setting-page-logs__active.limit-login-app-dashboard .llar-block-country-section .llar-block-country-list.llar-all-countries-selected .llar-country input[type=checkbox]:focus, #llar-setting-page .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td input[type=checkbox]:focus {
   box-shadow: unset;
 }
 
@@ -251,7 +251,7 @@ ul.llar_list li::before, .toplevel_page_limit-login-attempts .jconfirm .jconfirm
   transform: translateY(-50%);
 }
 
-button.llar_button, #llar-setting-page button.button, .llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
+button.llar_button, #llar-setting-page button.button, .llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-extensions .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
   font-family: inherit;
   background: #FDFDFD;
   border: 1px solid #2A2F40;
@@ -259,7 +259,7 @@ button.llar_button, #llar-setting-page button.button, .llar_button, .toplevel_pa
   white-space: nowrap;
   vertical-align: baseline;
 }
-button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
+button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-extensions .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
   border-radius: 10px;
   font-size: 16px;
   line-height: 1.45;
@@ -267,84 +267,84 @@ button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .lla
   text-align: center;
 }
 @media screen and (max-width: 1599.5px) {
-  button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
+  button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-extensions .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
     font-size: 14px;
   }
 }
 @media screen and (max-width: 991.5px) {
-  button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
+  button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-extensions .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
     padding: 6px 15px;
   }
 }
 @media screen and (max-width: 428px) {
-  button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
+  button.llar_button.menu__item, #llar-setting-page button.menu__item.button, .llar_button.menu__item, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .menu__item.button, #llar-setting-page .menu__item.button, #llar-setting-page-logs .menu__item.button, #llar-setting-page-logs__active .menu__item.button, #llar-setting-page-debug .menu__item.button, #llar-setting-page-extensions .menu__item.button, #llar-setting-page-premium .menu__item.button, #llar-setting-page-help .menu__item.button {
     padding: 6px 14px;
   }
 }
-button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
+button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-extensions .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
   outline: none !important;
   box-shadow: unset !important;
 }
 
-.llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
+.llar_button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, #llar-setting-page .button, #llar-setting-page-logs .button, #llar-setting-page-logs__active .button, #llar-setting-page-debug .button, #llar-setting-page-extensions .button, #llar-setting-page-premium .button, #llar-setting-page-help .button {
   position: relative;
   min-width: 175px;
   text-transform: inherit;
   text-decoration: none;
 }
-.llar_button.button__orange, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button, #llar-setting-page .button__orange.button, #llar-setting-page-logs .button__orange.button, #llar-setting-page-logs__active .button__orange.button, #llar-setting-page-debug .button__orange.button, #llar-setting-page-premium .button__orange.button, #llar-setting-page-help .button__orange.button, #llar-setting-page-extensions .button__orange.button {
+.llar_button.button__orange, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button, #llar-setting-page .button__orange.button, #llar-setting-page-logs .button__orange.button, #llar-setting-page-logs__active .button__orange.button, #llar-setting-page-debug .button__orange.button, #llar-setting-page-extensions .button__orange.button, #llar-setting-page-premium .button__orange.button, #llar-setting-page-help .button__orange.button {
   color: white !important;
   background: #FF7C06 !important;
   border: 1px solid #FF7C06 !important;
   box-shadow: 0 6px 12px 0 rgba(255, 124, 6, 0.4980392157) !important;
 }
-.llar_button.button__orange:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button:hover, #llar-setting-page .button__orange.button:hover, #llar-setting-page-logs .button__orange.button:hover, #llar-setting-page-logs__active .button__orange.button:hover, #llar-setting-page-debug .button__orange.button:hover, #llar-setting-page-premium .button__orange.button:hover, #llar-setting-page-help .button__orange.button:hover, #llar-setting-page-extensions .button__orange.button:hover {
+.llar_button.button__orange:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button:hover, #llar-setting-page .button__orange.button:hover, #llar-setting-page-logs .button__orange.button:hover, #llar-setting-page-logs__active .button__orange.button:hover, #llar-setting-page-debug .button__orange.button:hover, #llar-setting-page-extensions .button__orange.button:hover, #llar-setting-page-premium .button__orange.button:hover, #llar-setting-page-help .button__orange.button:hover {
   background: #F07200 !important;
 }
-.llar_button.button__orange:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button:disabled, #llar-setting-page .button__orange.button:disabled, #llar-setting-page-logs .button__orange.button:disabled, #llar-setting-page-logs__active .button__orange.button:disabled, #llar-setting-page-debug .button__orange.button:disabled, #llar-setting-page-premium .button__orange.button:disabled, #llar-setting-page-help .button__orange.button:disabled, #llar-setting-page-extensions .button__orange.button:disabled {
+.llar_button.button__orange:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__orange.button:disabled, #llar-setting-page .button__orange.button:disabled, #llar-setting-page-logs .button__orange.button:disabled, #llar-setting-page-logs__active .button__orange.button:disabled, #llar-setting-page-debug .button__orange.button:disabled, #llar-setting-page-extensions .button__orange.button:disabled, #llar-setting-page-premium .button__orange.button:disabled, #llar-setting-page-help .button__orange.button:disabled {
   border: 1px solid rgba(255, 124, 6, 0.4980392157) !important;
   background: rgba(255, 124, 6, 0.4980392157) !important;
   cursor: auto;
 }
-.llar_button.button__blue, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__blue.button, #llar-setting-page .button__blue.button, #llar-setting-page-logs .button__blue.button, #llar-setting-page-logs__active .button__blue.button, #llar-setting-page-debug .button__blue.button, #llar-setting-page-premium .button__blue.button, #llar-setting-page-help .button__blue.button {
+.llar_button.button__blue, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__blue.button, #llar-setting-page .button__blue.button, #llar-setting-page-logs .button__blue.button, #llar-setting-page-logs__active .button__blue.button, #llar-setting-page-debug .button__blue.button, #llar-setting-page-extensions .button__blue.button, #llar-setting-page-premium .button__blue.button, #llar-setting-page-help .button__blue.button {
   color: white !important;
   background: linear-gradient(339.52deg, #007BB6 13.79%, #138AC4 49.78%, #1F93CA 88.26%);
   border: unset !important;
   box-shadow: 0 6px 12px 0 rgba(164, 168, 183, 0.2980392157) !important;
 }
-.llar_button.button__blue:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__blue.button:hover, #llar-setting-page .button__blue.button:hover, #llar-setting-page-logs .button__blue.button:hover, #llar-setting-page-logs__active .button__blue.button:hover, #llar-setting-page-debug .button__blue.button:hover, #llar-setting-page-premium .button__blue.button:hover, #llar-setting-page-help .button__blue.button:hover {
+.llar_button.button__blue:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__blue.button:hover, #llar-setting-page .button__blue.button:hover, #llar-setting-page-logs .button__blue.button:hover, #llar-setting-page-logs__active .button__blue.button:hover, #llar-setting-page-debug .button__blue.button:hover, #llar-setting-page-extensions .button__blue.button:hover, #llar-setting-page-premium .button__blue.button:hover, #llar-setting-page-help .button__blue.button:hover {
   background: linear-gradient(339.52deg, #1F93CA 13.79%, #138AC4 49.78%, #007BB6 88.26%) !important;
 }
-.llar_button.button__transparent_orange, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.button, #llar-setting-page .button__transparent_orange.button, #llar-setting-page-logs .button__transparent_orange.button, #llar-setting-page-logs__active .button__transparent_orange.button, #llar-setting-page-debug .button__transparent_orange.button, #llar-setting-page-premium .button__transparent_orange.button, #llar-setting-page-help .button__transparent_orange.button, .llar_button.button__transparent_grey, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button, #llar-setting-page .button__transparent_grey.button, #llar-setting-page-logs .button__transparent_grey.button, #llar-setting-page-logs__active .button__transparent_grey.button, #llar-setting-page-debug .button__transparent_grey.button, #llar-setting-page-premium .button__transparent_grey.button, #llar-setting-page-help .button__transparent_grey.button {
+.llar_button.button__transparent_orange, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.button, #llar-setting-page .button__transparent_orange.button, #llar-setting-page-logs .button__transparent_orange.button, #llar-setting-page-logs__active .button__transparent_orange.button, #llar-setting-page-debug .button__transparent_orange.button, #llar-setting-page-extensions .button__transparent_orange.button, #llar-setting-page-premium .button__transparent_orange.button, #llar-setting-page-help .button__transparent_orange.button, .llar_button.button__transparent_grey, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button, #llar-setting-page .button__transparent_grey.button, #llar-setting-page-logs .button__transparent_grey.button, #llar-setting-page-logs__active .button__transparent_grey.button, #llar-setting-page-debug .button__transparent_grey.button, #llar-setting-page-extensions .button__transparent_grey.button, #llar-setting-page-premium .button__transparent_grey.button, #llar-setting-page-help .button__transparent_grey.button {
   color: #FF7C06 !important;
   border: 1px solid currentColor !important;
   background: transparent !important;
 }
-.llar_button.button__transparent_orange.orange-back, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.orange-back.button, #llar-setting-page .button__transparent_orange.orange-back.button, #llar-setting-page-logs .button__transparent_orange.orange-back.button, #llar-setting-page-logs__active .button__transparent_orange.orange-back.button, #llar-setting-page-debug .button__transparent_orange.orange-back.button, #llar-setting-page-premium .button__transparent_orange.orange-back.button, #llar-setting-page-help .button__transparent_orange.orange-back.button, .llar_button.button__transparent_grey.orange-back, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.orange-back.button, #llar-setting-page .button__transparent_grey.orange-back.button, #llar-setting-page-logs .button__transparent_grey.orange-back.button, #llar-setting-page-logs__active .button__transparent_grey.orange-back.button, #llar-setting-page-debug .button__transparent_grey.orange-back.button, #llar-setting-page-premium .button__transparent_grey.orange-back.button, #llar-setting-page-help .button__transparent_grey.orange-back.button {
+.llar_button.button__transparent_orange.orange-back, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.orange-back.button, #llar-setting-page .button__transparent_orange.orange-back.button, #llar-setting-page-logs .button__transparent_orange.orange-back.button, #llar-setting-page-logs__active .button__transparent_orange.orange-back.button, #llar-setting-page-debug .button__transparent_orange.orange-back.button, #llar-setting-page-extensions .button__transparent_orange.orange-back.button, #llar-setting-page-premium .button__transparent_orange.orange-back.button, #llar-setting-page-help .button__transparent_orange.orange-back.button, .llar_button.button__transparent_grey.orange-back, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.orange-back.button, #llar-setting-page .button__transparent_grey.orange-back.button, #llar-setting-page-logs .button__transparent_grey.orange-back.button, #llar-setting-page-logs__active .button__transparent_grey.orange-back.button, #llar-setting-page-debug .button__transparent_grey.orange-back.button, #llar-setting-page-extensions .button__transparent_grey.orange-back.button, #llar-setting-page-premium .button__transparent_grey.orange-back.button, #llar-setting-page-help .button__transparent_grey.orange-back.button {
   background: rgba(255, 124, 6, 0.0980392157) !important;
 }
-.llar_button.button__transparent_orange:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.button:hover, #llar-setting-page .button__transparent_orange.button:hover, #llar-setting-page-logs .button__transparent_orange.button:hover, #llar-setting-page-logs__active .button__transparent_orange.button:hover, #llar-setting-page-debug .button__transparent_orange.button:hover, #llar-setting-page-premium .button__transparent_orange.button:hover, #llar-setting-page-help .button__transparent_orange.button:hover, .llar_button.button__transparent_grey:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button:hover, #llar-setting-page .button__transparent_grey.button:hover, #llar-setting-page-logs .button__transparent_grey.button:hover, #llar-setting-page-logs__active .button__transparent_grey.button:hover, #llar-setting-page-debug .button__transparent_grey.button:hover, #llar-setting-page-premium .button__transparent_grey.button:hover, #llar-setting-page-help .button__transparent_grey.button:hover {
+.llar_button.button__transparent_orange:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.button:hover, #llar-setting-page .button__transparent_orange.button:hover, #llar-setting-page-logs .button__transparent_orange.button:hover, #llar-setting-page-logs__active .button__transparent_orange.button:hover, #llar-setting-page-debug .button__transparent_orange.button:hover, #llar-setting-page-extensions .button__transparent_orange.button:hover, #llar-setting-page-premium .button__transparent_orange.button:hover, #llar-setting-page-help .button__transparent_orange.button:hover, .llar_button.button__transparent_grey:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button:hover, #llar-setting-page .button__transparent_grey.button:hover, #llar-setting-page-logs .button__transparent_grey.button:hover, #llar-setting-page-logs__active .button__transparent_grey.button:hover, #llar-setting-page-debug .button__transparent_grey.button:hover, #llar-setting-page-extensions .button__transparent_grey.button:hover, #llar-setting-page-premium .button__transparent_grey.button:hover, #llar-setting-page-help .button__transparent_grey.button:hover {
   background: rgba(255, 124, 6, 0.0980392157) !important;
   border: 1px solid currentColor !important;
 }
-.llar_button.button__transparent_orange:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.button:disabled, #llar-setting-page .button__transparent_orange.button:disabled, #llar-setting-page-logs .button__transparent_orange.button:disabled, #llar-setting-page-logs__active .button__transparent_orange.button:disabled, #llar-setting-page-debug .button__transparent_orange.button:disabled, #llar-setting-page-premium .button__transparent_orange.button:disabled, #llar-setting-page-help .button__transparent_orange.button:disabled, .llar_button.button__transparent_grey:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button:disabled, #llar-setting-page .button__transparent_grey.button:disabled, #llar-setting-page-logs .button__transparent_grey.button:disabled, #llar-setting-page-logs__active .button__transparent_grey.button:disabled, #llar-setting-page-debug .button__transparent_grey.button:disabled, #llar-setting-page-premium .button__transparent_grey.button:disabled, #llar-setting-page-help .button__transparent_grey.button:disabled {
+.llar_button.button__transparent_orange:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_orange.button:disabled, #llar-setting-page .button__transparent_orange.button:disabled, #llar-setting-page-logs .button__transparent_orange.button:disabled, #llar-setting-page-logs__active .button__transparent_orange.button:disabled, #llar-setting-page-debug .button__transparent_orange.button:disabled, #llar-setting-page-extensions .button__transparent_orange.button:disabled, #llar-setting-page-premium .button__transparent_orange.button:disabled, #llar-setting-page-help .button__transparent_orange.button:disabled, .llar_button.button__transparent_grey:disabled, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button:disabled, #llar-setting-page .button__transparent_grey.button:disabled, #llar-setting-page-logs .button__transparent_grey.button:disabled, #llar-setting-page-logs__active .button__transparent_grey.button:disabled, #llar-setting-page-debug .button__transparent_grey.button:disabled, #llar-setting-page-extensions .button__transparent_grey.button:disabled, #llar-setting-page-premium .button__transparent_grey.button:disabled, #llar-setting-page-help .button__transparent_grey.button:disabled {
   background: transparent;
   cursor: auto;
 }
-.llar_button.button__transparent_grey, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button, #llar-setting-page .button__transparent_grey.button, #llar-setting-page-logs .button__transparent_grey.button, #llar-setting-page-logs__active .button__transparent_grey.button, #llar-setting-page-debug .button__transparent_grey.button, #llar-setting-page-premium .button__transparent_grey.button, #llar-setting-page-help .button__transparent_grey.button {
+.llar_button.button__transparent_grey, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button, #llar-setting-page .button__transparent_grey.button, #llar-setting-page-logs .button__transparent_grey.button, #llar-setting-page-logs__active .button__transparent_grey.button, #llar-setting-page-debug .button__transparent_grey.button, #llar-setting-page-extensions .button__transparent_grey.button, #llar-setting-page-premium .button__transparent_grey.button, #llar-setting-page-help .button__transparent_grey.button {
   color: #A4A8B7 !important;
 }
-.llar_button.button__transparent_grey.gray-back, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.gray-back.button, #llar-setting-page .button__transparent_grey.gray-back.button, #llar-setting-page-logs .button__transparent_grey.gray-back.button, #llar-setting-page-logs__active .button__transparent_grey.gray-back.button, #llar-setting-page-debug .button__transparent_grey.gray-back.button, #llar-setting-page-premium .button__transparent_grey.gray-back.button, #llar-setting-page-help .button__transparent_grey.gray-back.button {
+.llar_button.button__transparent_grey.gray-back, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.gray-back.button, #llar-setting-page .button__transparent_grey.gray-back.button, #llar-setting-page-logs .button__transparent_grey.gray-back.button, #llar-setting-page-logs__active .button__transparent_grey.gray-back.button, #llar-setting-page-debug .button__transparent_grey.gray-back.button, #llar-setting-page-extensions .button__transparent_grey.gray-back.button, #llar-setting-page-premium .button__transparent_grey.gray-back.button, #llar-setting-page-help .button__transparent_grey.gray-back.button {
   background: rgba(164, 168, 183, 0.2980392157) !important;
 }
-.llar_button.button__transparent_grey:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button:hover, #llar-setting-page .button__transparent_grey.button:hover, #llar-setting-page-logs .button__transparent_grey.button:hover, #llar-setting-page-logs__active .button__transparent_grey.button:hover, #llar-setting-page-debug .button__transparent_grey.button:hover, #llar-setting-page-premium .button__transparent_grey.button:hover, #llar-setting-page-help .button__transparent_grey.button:hover {
+.llar_button.button__transparent_grey:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button__transparent_grey.button:hover, #llar-setting-page .button__transparent_grey.button:hover, #llar-setting-page-logs .button__transparent_grey.button:hover, #llar-setting-page-logs__active .button__transparent_grey.button:hover, #llar-setting-page-debug .button__transparent_grey.button:hover, #llar-setting-page-extensions .button__transparent_grey.button:hover, #llar-setting-page-premium .button__transparent_grey.button:hover, #llar-setting-page-help .button__transparent_grey.button:hover {
   background: rgba(164, 168, 183, 0.2980392157) !important;
 }
-.llar_button.button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
+.llar_button.button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-extensions .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
   outline: none !important;
   box-shadow: unset !important;
 }
-.llar_button.tags, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags.button, #llar-setting-page .tags.button, #llar-setting-page-logs .tags.button, #llar-setting-page-logs__active .tags.button, #llar-setting-page-debug .tags.button, #llar-setting-page-premium .tags.button, #llar-setting-page-help .tags.button {
+.llar_button.tags, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags.button, #llar-setting-page .tags.button, #llar-setting-page-logs .tags.button, #llar-setting-page-logs__active .tags.button, #llar-setting-page-debug .tags.button, #llar-setting-page-extensions .tags.button, #llar-setting-page-premium .tags.button, #llar-setting-page-help .tags.button {
   font-size: 16px;
   font-weight: 400;
   line-height: 1.7;
@@ -354,38 +354,38 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 0 20px;
   z-index: 50;
 }
-.llar_button.tags_basic, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic.button, #llar-setting-page .tags_basic.button, #llar-setting-page-logs .tags_basic.button, #llar-setting-page-logs__active .tags_basic.button, #llar-setting-page-debug .tags_basic.button, #llar-setting-page-premium .tags_basic.button, #llar-setting-page-help .tags_basic.button {
+.llar_button.tags_basic, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic.button, #llar-setting-page .tags_basic.button, #llar-setting-page-logs .tags_basic.button, #llar-setting-page-logs__active .tags_basic.button, #llar-setting-page-debug .tags_basic.button, #llar-setting-page-extensions .tags_basic.button, #llar-setting-page-premium .tags_basic.button, #llar-setting-page-help .tags_basic.button {
   color: #FF7C06;
   background: rgba(255, 124, 6, 0.0980392157);
 }
-.llar_button.tags_basic.active, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic.active.button, #llar-setting-page .tags_basic.active.button, #llar-setting-page-logs .tags_basic.active.button, #llar-setting-page-logs__active .tags_basic.active.button, #llar-setting-page-debug .tags_basic.active.button, #llar-setting-page-premium .tags_basic.active.button, #llar-setting-page-help .tags_basic.active.button, .llar_button.tags_basic:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic.button:hover, #llar-setting-page .tags_basic.button:hover, #llar-setting-page-logs .tags_basic.button:hover, #llar-setting-page-logs__active .tags_basic.button:hover, #llar-setting-page-debug .tags_basic.button:hover, #llar-setting-page-premium .tags_basic.button:hover, #llar-setting-page-help .tags_basic.button:hover {
+.llar_button.tags_basic.active, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic.active.button, #llar-setting-page .tags_basic.active.button, #llar-setting-page-logs .tags_basic.active.button, #llar-setting-page-logs__active .tags_basic.active.button, #llar-setting-page-debug .tags_basic.active.button, #llar-setting-page-extensions .tags_basic.active.button, #llar-setting-page-premium .tags_basic.active.button, #llar-setting-page-help .tags_basic.active.button, .llar_button.tags_basic:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic.button:hover, #llar-setting-page .tags_basic.button:hover, #llar-setting-page-logs .tags_basic.button:hover, #llar-setting-page-logs__active .tags_basic.button:hover, #llar-setting-page-debug .tags_basic.button:hover, #llar-setting-page-extensions .tags_basic.button:hover, #llar-setting-page-premium .tags_basic.button:hover, #llar-setting-page-help .tags_basic.button:hover {
   color: #FDFDFD;
   background: #FF7C06;
 }
-.llar_button.tags_basic_add, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic_add.button, #llar-setting-page .tags_basic_add.button, #llar-setting-page-logs .tags_basic_add.button, #llar-setting-page-logs__active .tags_basic_add.button, #llar-setting-page-debug .tags_basic_add.button, #llar-setting-page-premium .tags_basic_add.button, #llar-setting-page-help .tags_basic_add.button {
+.llar_button.tags_basic_add, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic_add.button, #llar-setting-page .tags_basic_add.button, #llar-setting-page-logs .tags_basic_add.button, #llar-setting-page-logs__active .tags_basic_add.button, #llar-setting-page-debug .tags_basic_add.button, #llar-setting-page-extensions .tags_basic_add.button, #llar-setting-page-premium .tags_basic_add.button, #llar-setting-page-help .tags_basic_add.button {
   color: #4ACAD8;
   min-width: fit-content;
   border: 1px solid currentColor;
   background: rgba(74, 202, 216, 0.0980392157);
 }
-.llar_button.tags_basic_add a, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic_add.button a, #llar-setting-page .tags_basic_add.button a, #llar-setting-page-logs .tags_basic_add.button a, #llar-setting-page-logs__active .tags_basic_add.button a, #llar-setting-page-debug .tags_basic_add.button a, #llar-setting-page-premium .tags_basic_add.button a, #llar-setting-page-help .tags_basic_add.button a {
+.llar_button.tags_basic_add a, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic_add.button a, #llar-setting-page .tags_basic_add.button a, #llar-setting-page-logs .tags_basic_add.button a, #llar-setting-page-logs__active .tags_basic_add.button a, #llar-setting-page-debug .tags_basic_add.button a, #llar-setting-page-extensions .tags_basic_add.button a, #llar-setting-page-premium .tags_basic_add.button a, #llar-setting-page-help .tags_basic_add.button a {
   vertical-align: middle;
 }
-.llar_button.tags_basic_add:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic_add.button:hover, #llar-setting-page .tags_basic_add.button:hover, #llar-setting-page-logs .tags_basic_add.button:hover, #llar-setting-page-logs__active .tags_basic_add.button:hover, #llar-setting-page-debug .tags_basic_add.button:hover, #llar-setting-page-premium .tags_basic_add.button:hover, #llar-setting-page-help .tags_basic_add.button:hover {
+.llar_button.tags_basic_add:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_basic_add.button:hover, #llar-setting-page .tags_basic_add.button:hover, #llar-setting-page-logs .tags_basic_add.button:hover, #llar-setting-page-logs__active .tags_basic_add.button:hover, #llar-setting-page-debug .tags_basic_add.button:hover, #llar-setting-page-extensions .tags_basic_add.button:hover, #llar-setting-page-premium .tags_basic_add.button:hover, #llar-setting-page-help .tags_basic_add.button:hover {
   background: rgba(255, 124, 6, 0.0980392157);
 }
-.llar_button.tags_add, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_add.button, #llar-setting-page .tags_add.button, #llar-setting-page-logs .tags_add.button, #llar-setting-page-logs__active .tags_add.button, #llar-setting-page-debug .tags_add.button, #llar-setting-page-premium .tags_add.button, #llar-setting-page-help .tags_add.button {
+.llar_button.tags_add, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_add.button, #llar-setting-page .tags_add.button, #llar-setting-page-logs .tags_add.button, #llar-setting-page-logs__active .tags_add.button, #llar-setting-page-debug .tags_add.button, #llar-setting-page-extensions .tags_add.button, #llar-setting-page-premium .tags_add.button, #llar-setting-page-help .tags_add.button {
   color: #A4A8B7;
   border: 1px solid #A4A8B7;
   background: rgba(164, 168, 183, 0.0784313725);
 }
-.llar_button.tags_add a, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_add.button a, #llar-setting-page .tags_add.button a, #llar-setting-page-logs .tags_add.button a, #llar-setting-page-logs__active .tags_add.button a, #llar-setting-page-debug .tags_add.button a, #llar-setting-page-premium .tags_add.button a, #llar-setting-page-help .tags_add.button a {
+.llar_button.tags_add a, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_add.button a, #llar-setting-page .tags_add.button a, #llar-setting-page-logs .tags_add.button a, #llar-setting-page-logs__active .tags_add.button a, #llar-setting-page-debug .tags_add.button a, #llar-setting-page-extensions .tags_add.button a, #llar-setting-page-premium .tags_add.button a, #llar-setting-page-help .tags_add.button a {
   vertical-align: middle;
 }
-.llar_button.tags_add:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_add.button:hover, #llar-setting-page .tags_add.button:hover, #llar-setting-page-logs .tags_add.button:hover, #llar-setting-page-logs__active .tags_add.button:hover, #llar-setting-page-debug .tags_add.button:hover, #llar-setting-page-premium .tags_add.button:hover, #llar-setting-page-help .tags_add.button:hover {
+.llar_button.tags_add:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .tags_add.button:hover, #llar-setting-page .tags_add.button:hover, #llar-setting-page-logs .tags_add.button:hover, #llar-setting-page-logs__active .tags_add.button:hover, #llar-setting-page-debug .tags_add.button:hover, #llar-setting-page-extensions .tags_add.button:hover, #llar-setting-page-premium .tags_add.button:hover, #llar-setting-page-help .tags_add.button:hover {
   background: rgba(255, 124, 6, 0.0980392157);
 }
-.llar_button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
+.llar_button:focus, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button:focus, #llar-setting-page .button:focus, #llar-setting-page-logs .button:focus, #llar-setting-page-logs__active .button:focus, #llar-setting-page-debug .button:focus, #llar-setting-page-extensions .button:focus, #llar-setting-page-premium .button:focus, #llar-setting-page-help .button:focus {
   outline: none !important;
   box-shadow: unset !important;
 }
@@ -654,16 +654,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .limit-login-page-settings .llar-test-email-notification-loader .msg.success {
   color: #71c21b;
 }
-.limit-login-page-settings .llar-protect-notice {
-  font-size: 15px;
-  color: #848484;
-  margin-left: 10px;
-}
-.limit-login-page-settings .llar-protect-notice a {
-  color: #222222;
-  text-decoration: none;
-  border-bottom: 1px dashed;
-}
 .limit-login-page-settings .llar-toggle-setup-field {
   color: #2271b1;
   text-decoration-style: dashed;
@@ -679,12 +669,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: block;
 }
 @media screen and (max-width: 1199.5px) {
-  .limit-login-page-settings .setup-code-wrap button.button, .limit-login-page-settings .setup-code-wrap .button.llar_button, .limit-login-page-settings .setup-code-wrap .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .limit-login-page-settings .setup-code-wrap .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs__active .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-debug .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-premium .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-help .button, #llar-setting-page .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs__active .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-debug .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-premium .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-help .limit-login-page-settings .setup-code-wrap .button {
+  .limit-login-page-settings .setup-code-wrap button.button, .limit-login-page-settings .setup-code-wrap .button.llar_button, .limit-login-page-settings .setup-code-wrap .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .limit-login-page-settings .setup-code-wrap .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs__active .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-debug .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-extensions .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-premium .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-help .button, #llar-setting-page .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs__active .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-debug .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-extensions .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-premium .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-help .limit-login-page-settings .setup-code-wrap .button {
     min-width: 120px !important;
   }
 }
 @media screen and (max-width: 991.5px) {
-  .limit-login-page-settings .setup-code-wrap button.button, .limit-login-page-settings .setup-code-wrap .button.llar_button, .limit-login-page-settings .setup-code-wrap .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .limit-login-page-settings .setup-code-wrap .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs__active .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-debug .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-premium .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-help .button, #llar-setting-page .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs__active .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-debug .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-premium .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-help .limit-login-page-settings .setup-code-wrap .button {
+  .limit-login-page-settings .setup-code-wrap button.button, .limit-login-page-settings .setup-code-wrap .button.llar_button, .limit-login-page-settings .setup-code-wrap .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .limit-login-page-settings .setup-code-wrap .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-logs__active .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-debug .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-extensions .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-premium .button, .limit-login-page-settings .setup-code-wrap #llar-setting-page-help .button, #llar-setting-page .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-logs__active .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-debug .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-extensions .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-premium .limit-login-page-settings .setup-code-wrap .button, #llar-setting-page-help .limit-login-page-settings .setup-code-wrap .button {
     min-width: 90px !important;
   }
 }
@@ -701,12 +691,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: table-row;
 }
 
-#llar-setting-page, #llar-setting-page-logs, #llar-setting-page-logs__active, #llar-setting-page-debug, #llar-setting-page-premium, #llar-setting-page-help {
+#llar-setting-page, #llar-setting-page-logs, #llar-setting-page-logs__active, #llar-setting-page-debug, #llar-setting-page-extensions, #llar-setting-page-premium, #llar-setting-page-help {
   color: #2A2F40;
   margin-top: 40px;
   line-height: 1.5;
 }
-#llar-setting-page .title_page, #llar-setting-page-logs .title_page, #llar-setting-page-logs__active .title_page, #llar-setting-page-debug .title_page, #llar-setting-page-premium .title_page, #llar-setting-page-help .title_page {
+#llar-setting-page .title_page, #llar-setting-page-logs .title_page, #llar-setting-page-logs__active .title_page, #llar-setting-page-debug .title_page, #llar-setting-page-extensions .title_page, #llar-setting-page-premium .title_page, #llar-setting-page-help .title_page {
   margin-top: 40px;
   margin-bottom: 15px;
   color: inherit;
@@ -714,17 +704,17 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-weight: 500;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .title_page, #llar-setting-page-logs .title_page, #llar-setting-page-logs__active .title_page, #llar-setting-page-debug .title_page, #llar-setting-page-premium .title_page, #llar-setting-page-help .title_page {
+  #llar-setting-page .title_page, #llar-setting-page-logs .title_page, #llar-setting-page-logs__active .title_page, #llar-setting-page-debug .title_page, #llar-setting-page-extensions .title_page, #llar-setting-page-premium .title_page, #llar-setting-page-help .title_page {
     font-size: 18px;
   }
 }
-#llar-setting-page .title_page img, #llar-setting-page-logs .title_page img, #llar-setting-page-logs__active .title_page img, #llar-setting-page-debug .title_page img, #llar-setting-page-premium .title_page img, #llar-setting-page-help .title_page img {
+#llar-setting-page .title_page img, #llar-setting-page-logs .title_page img, #llar-setting-page-logs__active .title_page img, #llar-setting-page-debug .title_page img, #llar-setting-page-extensions .title_page img, #llar-setting-page-premium .title_page img, #llar-setting-page-help .title_page img {
   width: 36px;
   height: 36px;
   vertical-align: middle;
   margin-right: 8px;
 }
-#llar-setting-page .description-page, #llar-setting-page-logs .description-page, #llar-setting-page-logs__active .description-page, #llar-setting-page-debug .description-page, #llar-setting-page-premium .description-page, #llar-setting-page-help .description-page {
+#llar-setting-page .description-page, #llar-setting-page-logs .description-page, #llar-setting-page-logs__active .description-page, #llar-setting-page-debug .description-page, #llar-setting-page-extensions .description-page, #llar-setting-page-premium .description-page, #llar-setting-page-help .description-page {
   position: relative;
   font-size: 18px;
   color: #666D84;
@@ -734,14 +724,14 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .description-page, #llar-setting-page-logs .description-page, #llar-setting-page-logs__active .description-page, #llar-setting-page-debug .description-page, #llar-setting-page-premium .description-page, #llar-setting-page-help .description-page {
+  #llar-setting-page .description-page, #llar-setting-page-logs .description-page, #llar-setting-page-logs__active .description-page, #llar-setting-page-debug .description-page, #llar-setting-page-extensions .description-page, #llar-setting-page-premium .description-page, #llar-setting-page-help .description-page {
     font-size: 16px;
   }
 }
-#llar-setting-page .llar-settings-wrap, #llar-setting-page-logs .llar-settings-wrap, #llar-setting-page-logs__active .llar-settings-wrap, #llar-setting-page-debug .llar-settings-wrap, #llar-setting-page-premium .llar-settings-wrap, #llar-setting-page-help .llar-settings-wrap {
+#llar-setting-page .llar-settings-wrap, #llar-setting-page-logs .llar-settings-wrap, #llar-setting-page-logs__active .llar-settings-wrap, #llar-setting-page-debug .llar-settings-wrap, #llar-setting-page-extensions .llar-settings-wrap, #llar-setting-page-premium .llar-settings-wrap, #llar-setting-page-help .llar-settings-wrap {
   margin-top: 20px;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table, #llar-setting-page-logs .llar-settings-wrap .llar-form-table, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table, #llar-setting-page-debug .llar-settings-wrap .llar-form-table, #llar-setting-page-premium .llar-settings-wrap .llar-form-table, #llar-setting-page-help .llar-settings-wrap .llar-form-table {
+#llar-setting-page .llar-settings-wrap .llar-form-table, #llar-setting-page-logs .llar-settings-wrap .llar-form-table, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table, #llar-setting-page-debug .llar-settings-wrap .llar-form-table, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table, #llar-setting-page-premium .llar-settings-wrap .llar-form-table, #llar-setting-page-help .llar-settings-wrap .llar-form-table {
   color: #2A2F40;
   font-size: 18px;
   border-collapse: separate;
@@ -750,7 +740,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: -18px;
   margin-bottom: -18px;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr {
   position: relative;
   font-size: 18px;
   border-radius: 20px;
@@ -759,11 +749,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr {
     font-size: 16px;
   }
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th, #llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th, #llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
   font-size: inherit;
   line-height: inherit;
   border-radius: 20px;
@@ -771,16 +761,16 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 29px 5px 32px 35px;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th, #llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th, #llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
     padding: 12px 5px 12px 25px;
   }
 }
 @media screen and (max-width: 1399.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th, #llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th, #llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
     padding-left: 15px;
   }
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th {
   color: #2A2F40;
   font-weight: 400;
   border-top-right-radius: unset;
@@ -789,30 +779,30 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   text-align: left;
 }
 @media screen and (max-width: 1399.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th {
     width: 260px;
   }
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .dashicons {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .dashicons {
   font-size: 140%;
   width: 12px;
   height: 12px;
   margin-left: 2px;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .dashicons {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .dashicons, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .dashicons {
     font-size: 20px;
   }
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .hint_tooltip {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .hint_tooltip, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .hint_tooltip {
   right: -140px;
   top: 30px;
   width: 200px;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr th .hint_tooltip:before {
   right: 142px;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
   color: #666D84;
   font-size: 16px;
   line-height: 1.5;
@@ -820,19 +810,19 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   border-bottom-left-radius: unset;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td {
     font-size: 14px;
   }
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border.full_area {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border.full_area {
   min-width: 720px;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border.full_area {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border.full_area, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border.full_area, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border.full_area {
     min-width: 70%;
   }
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea {
   font-family: inherit;
   font-size: 16px;
   color: #666D84;
@@ -842,54 +832,54 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   scrollbar-width: thin;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea {
     padding-right: 18px;
     font-size: 14px;
   }
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar {
   width: 8px;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-track, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-track {
   background-color: #A4A8B7;
   border-radius: 8px;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea::-webkit-scrollbar-thumb, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea::-webkit-scrollbar-thumb {
   background-color: #666D84;
   border-radius: 8px;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:hover, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .textarea_border textarea:focus, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea:hover, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border textarea:focus {
   border: unset;
   box-shadow: unset;
   outline: unset;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td select {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td select, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td select {
   font-family: inherit;
   background: #FDFDFD url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234ACAD8FF'%3e%3cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") no-repeat right 5px top 55%;
   background-size: 16px 16px;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td select.input_border {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td select.input_border {
   padding: 6px 64px 6px 16px;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td select.input_border {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td select.input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td select.input_border {
     padding-right: 35px;
   }
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border {
   border-radius: 8px;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border:focus {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border:hover, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .input_border:focus, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .input_border:focus {
   box-shadow: unset;
   outline: unset;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink {
   font-weight: 500;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink:hover {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td a.unlink:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td a.unlink:hover {
   border-bottom: unset;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary {
   font-size: 16px;
   line-height: inherit;
   color: #A4A8B7;
@@ -897,47 +887,41 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   max-width: 740px;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice {
+  #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-additional, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary {
     font-size: 14px;
   }
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice {
+#llar-setting-page .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .description-secondary, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .description-secondary {
   color: #666D84;
 }
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice {
-  font-size: inherit;
-  color: inherit;
-}
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a {
-  text-decoration: none;
-  border-bottom: unset;
-}
-#llar-setting-page .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td .llar-protect-notice a:hover {
-  border-bottom: 1px solid currentColor;
-}
-#llar-setting-page .add_block__under_table, #llar-setting-page-logs .add_block__under_table, #llar-setting-page-logs__active .add_block__under_table, #llar-setting-page-debug .add_block__under_table, #llar-setting-page-premium .add_block__under_table, #llar-setting-page-help .add_block__under_table {
+#llar-setting-page .add_block__under_table, #llar-setting-page-logs .add_block__under_table, #llar-setting-page-logs__active .add_block__under_table, #llar-setting-page-debug .add_block__under_table, #llar-setting-page-extensions .add_block__under_table, #llar-setting-page-premium .add_block__under_table, #llar-setting-page-help .add_block__under_table {
   margin: 8px 0;
   padding: 24px 48px;
   background-color: #F6FBFF;
   border-radius: 20px;
 }
+#llar-setting-page .add_block__under_table .button.menu__item, #llar-setting-page-logs .add_block__under_table .button.menu__item, #llar-setting-page-logs__active .add_block__under_table .button.menu__item, #llar-setting-page-debug .add_block__under_table .button.menu__item, #llar-setting-page-extensions .add_block__under_table .button.menu__item, #llar-setting-page-premium .add_block__under_table .button.menu__item, #llar-setting-page-help .add_block__under_table .button.menu__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 @media screen and (max-width: 1199.5px) {
-  #llar-setting-page .add_block__under_table, #llar-setting-page-logs .add_block__under_table, #llar-setting-page-logs__active .add_block__under_table, #llar-setting-page-debug .add_block__under_table, #llar-setting-page-premium .add_block__under_table, #llar-setting-page-help .add_block__under_table {
+  #llar-setting-page .add_block__under_table, #llar-setting-page-logs .add_block__under_table, #llar-setting-page-logs__active .add_block__under_table, #llar-setting-page-debug .add_block__under_table, #llar-setting-page-extensions .add_block__under_table, #llar-setting-page-premium .add_block__under_table, #llar-setting-page-help .add_block__under_table {
     padding: 16px;
   }
 }
-#llar-setting-page .add_block__under_table .description, #llar-setting-page-logs .add_block__under_table .description, #llar-setting-page-logs__active .add_block__under_table .description, #llar-setting-page-debug .add_block__under_table .description, #llar-setting-page-premium .add_block__under_table .description, #llar-setting-page-help .add_block__under_table .description {
+#llar-setting-page .add_block__under_table .description, #llar-setting-page-logs .add_block__under_table .description, #llar-setting-page-logs__active .add_block__under_table .description, #llar-setting-page-debug .add_block__under_table .description, #llar-setting-page-extensions .add_block__under_table .description, #llar-setting-page-premium .add_block__under_table .description, #llar-setting-page-help .add_block__under_table .description {
   color: #2A2F40;
   font-size: 18px;
   line-height: 1.5;
   font-weight: 500;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .add_block__under_table .description, #llar-setting-page-logs .add_block__under_table .description, #llar-setting-page-logs__active .add_block__under_table .description, #llar-setting-page-debug .add_block__under_table .description, #llar-setting-page-premium .add_block__under_table .description, #llar-setting-page-help .add_block__under_table .description {
+  #llar-setting-page .add_block__under_table .description, #llar-setting-page-logs .add_block__under_table .description, #llar-setting-page-logs__active .add_block__under_table .description, #llar-setting-page-debug .add_block__under_table .description, #llar-setting-page-extensions .add_block__under_table .description, #llar-setting-page-premium .add_block__under_table .description, #llar-setting-page-help .add_block__under_table .description {
     font-size: 16px;
   }
 }
-#llar-setting-page .add_block__under_table .add_block__list, #llar-setting-page-logs .add_block__under_table .add_block__list, #llar-setting-page-logs__active .add_block__under_table .add_block__list, #llar-setting-page-debug .add_block__under_table .add_block__list, #llar-setting-page-premium .add_block__under_table .add_block__list, #llar-setting-page-help .add_block__under_table .add_block__list {
+#llar-setting-page .add_block__under_table .add_block__list, #llar-setting-page-logs .add_block__under_table .add_block__list, #llar-setting-page-logs__active .add_block__under_table .add_block__list, #llar-setting-page-debug .add_block__under_table .add_block__list, #llar-setting-page-extensions .add_block__under_table .add_block__list, #llar-setting-page-premium .add_block__under_table .add_block__list, #llar-setting-page-help .add_block__under_table .add_block__list {
   display: flex;
   margin-top: 16px;
   margin-bottom: 8px;
@@ -947,11 +931,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   justify-content: space-between;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .add_block__under_table .add_block__list, #llar-setting-page-logs .add_block__under_table .add_block__list, #llar-setting-page-logs__active .add_block__under_table .add_block__list, #llar-setting-page-debug .add_block__under_table .add_block__list, #llar-setting-page-premium .add_block__under_table .add_block__list, #llar-setting-page-help .add_block__under_table .add_block__list {
+  #llar-setting-page .add_block__under_table .add_block__list, #llar-setting-page-logs .add_block__under_table .add_block__list, #llar-setting-page-logs__active .add_block__under_table .add_block__list, #llar-setting-page-debug .add_block__under_table .add_block__list, #llar-setting-page-extensions .add_block__under_table .add_block__list, #llar-setting-page-premium .add_block__under_table .add_block__list, #llar-setting-page-help .add_block__under_table .add_block__list {
     flex-wrap: wrap;
   }
 }
-#llar-setting-page .add_block__under_table .add_block__list .item, #llar-setting-page-logs .add_block__under_table .add_block__list .item, #llar-setting-page-logs__active .add_block__under_table .add_block__list .item, #llar-setting-page-debug .add_block__under_table .add_block__list .item, #llar-setting-page-premium .add_block__under_table .add_block__list .item, #llar-setting-page-help .add_block__under_table .add_block__list .item {
+#llar-setting-page .add_block__under_table .add_block__list .item, #llar-setting-page-logs .add_block__under_table .add_block__list .item, #llar-setting-page-logs__active .add_block__under_table .add_block__list .item, #llar-setting-page-debug .add_block__under_table .add_block__list .item, #llar-setting-page-extensions .add_block__under_table .add_block__list .item, #llar-setting-page-premium .add_block__under_table .add_block__list .item, #llar-setting-page-help .add_block__under_table .add_block__list .item {
   flex: 0 0 16%;
   display: flex;
   flex-direction: row;
@@ -959,36 +943,36 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   align-items: flex-start;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .add_block__under_table .add_block__list .item, #llar-setting-page-logs .add_block__under_table .add_block__list .item, #llar-setting-page-logs__active .add_block__under_table .add_block__list .item, #llar-setting-page-debug .add_block__under_table .add_block__list .item, #llar-setting-page-premium .add_block__under_table .add_block__list .item, #llar-setting-page-help .add_block__under_table .add_block__list .item {
+  #llar-setting-page .add_block__under_table .add_block__list .item, #llar-setting-page-logs .add_block__under_table .add_block__list .item, #llar-setting-page-logs__active .add_block__under_table .add_block__list .item, #llar-setting-page-debug .add_block__under_table .add_block__list .item, #llar-setting-page-extensions .add_block__under_table .add_block__list .item, #llar-setting-page-premium .add_block__under_table .add_block__list .item, #llar-setting-page-help .add_block__under_table .add_block__list .item {
     flex: 0 0 32%;
   }
 }
-#llar-setting-page .add_block__under_table .add_block__list .item .icon, #llar-setting-page-logs .add_block__under_table .add_block__list .item .icon, #llar-setting-page-logs__active .add_block__under_table .add_block__list .item .icon, #llar-setting-page-debug .add_block__under_table .add_block__list .item .icon, #llar-setting-page-premium .add_block__under_table .add_block__list .item .icon, #llar-setting-page-help .add_block__under_table .add_block__list .item .icon {
+#llar-setting-page .add_block__under_table .add_block__list .item .icon, #llar-setting-page-logs .add_block__under_table .add_block__list .item .icon, #llar-setting-page-logs__active .add_block__under_table .add_block__list .item .icon, #llar-setting-page-debug .add_block__under_table .add_block__list .item .icon, #llar-setting-page-extensions .add_block__under_table .add_block__list .item .icon, #llar-setting-page-premium .add_block__under_table .add_block__list .item .icon, #llar-setting-page-help .add_block__under_table .add_block__list .item .icon {
   width: 50px;
   height: 50px;
   vertical-align: middle;
   margin-right: 8px;
 }
-#llar-setting-page .add_block__under_table .add_block__list .item .name, #llar-setting-page-logs .add_block__under_table .add_block__list .item .name, #llar-setting-page-logs__active .add_block__under_table .add_block__list .item .name, #llar-setting-page-debug .add_block__under_table .add_block__list .item .name, #llar-setting-page-premium .add_block__under_table .add_block__list .item .name, #llar-setting-page-help .add_block__under_table .add_block__list .item .name {
+#llar-setting-page .add_block__under_table .add_block__list .item .name, #llar-setting-page-logs .add_block__under_table .add_block__list .item .name, #llar-setting-page-logs__active .add_block__under_table .add_block__list .item .name, #llar-setting-page-debug .add_block__under_table .add_block__list .item .name, #llar-setting-page-extensions .add_block__under_table .add_block__list .item .name, #llar-setting-page-premium .add_block__under_table .add_block__list .item .name, #llar-setting-page-help .add_block__under_table .add_block__list .item .name {
   width: 80%;
   padding-bottom: 17px;
 }
-#llar-setting-page .add_block__under_table.image_plus .row__list, #llar-setting-page-logs .add_block__under_table.image_plus .row__list, #llar-setting-page-logs__active .add_block__under_table.image_plus .row__list, #llar-setting-page-debug .add_block__under_table.image_plus .row__list, #llar-setting-page-premium .add_block__under_table.image_plus .row__list, #llar-setting-page-help .add_block__under_table.image_plus .row__list {
+#llar-setting-page .add_block__under_table.image_plus .row__list, #llar-setting-page-logs .add_block__under_table.image_plus .row__list, #llar-setting-page-logs__active .add_block__under_table.image_plus .row__list, #llar-setting-page-debug .add_block__under_table.image_plus .row__list, #llar-setting-page-extensions .add_block__under_table.image_plus .row__list, #llar-setting-page-premium .add_block__under_table.image_plus .row__list, #llar-setting-page-help .add_block__under_table.image_plus .row__list {
   display: flex;
 }
-#llar-setting-page .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-logs .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-logs__active .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-debug .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-premium .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-help .add_block__under_table.image_plus .row__list .add_block__title {
+#llar-setting-page .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-logs .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-logs__active .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-debug .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-extensions .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-premium .add_block__under_table.image_plus .row__list .add_block__title, #llar-setting-page-help .add_block__under_table.image_plus .row__list .add_block__title {
   flex: 0 0 14%;
   margin-right: 20px;
 }
-#llar-setting-page .add_block__under_table.image_plus .add_block__list, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list {
+#llar-setting-page .add_block__under_table.image_plus .add_block__list, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list, #llar-setting-page-extensions .add_block__under_table.image_plus .add_block__list, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list {
   gap: 16px;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .add_block__under_table.image_plus .add_block__list, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list {
+  #llar-setting-page .add_block__under_table.image_plus .add_block__list, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list, #llar-setting-page-extensions .add_block__under_table.image_plus .add_block__list, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list {
     column-gap: 10px;
   }
 }
-#llar-setting-page .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item {
+#llar-setting-page .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-extensions .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item {
   flex: 0 0 15%;
   flex-direction: column;
   align-items: start;
@@ -996,24 +980,24 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   border: 1px solid #4ACAD8;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item {
+  #llar-setting-page .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-extensions .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item {
     flex: 1 0 30%;
   }
 }
-#llar-setting-page .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item .name {
+#llar-setting-page .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-extensions .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item .name, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item .name {
   width: unset;
   margin: 10px 23px 17px;
 }
-#llar-setting-page .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item img {
+#llar-setting-page .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-logs .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-logs__active .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-debug .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-extensions .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-premium .add_block__under_table.image_plus .add_block__list .item img, #llar-setting-page-help .add_block__under_table.image_plus .add_block__list .item img {
   width: 120px;
   align-self: center;
 }
-#llar-setting-page .gdpr-information-link, #llar-setting-page-logs .gdpr-information-link, #llar-setting-page-logs__active .gdpr-information-link, #llar-setting-page-debug .gdpr-information-link, #llar-setting-page-premium .gdpr-information-link, #llar-setting-page-help .gdpr-information-link {
+#llar-setting-page .gdpr-information-link, #llar-setting-page-logs .gdpr-information-link, #llar-setting-page-logs__active .gdpr-information-link, #llar-setting-page-debug .gdpr-information-link, #llar-setting-page-extensions .gdpr-information-link, #llar-setting-page-premium .gdpr-information-link, #llar-setting-page-help .gdpr-information-link {
   display: block;
   text-decoration: none;
   position: relative;
 }
-#llar-setting-page .gdpr-information-link:after, #llar-setting-page-logs .gdpr-information-link:after, #llar-setting-page-logs__active .gdpr-information-link:after, #llar-setting-page-debug .gdpr-information-link:after, #llar-setting-page-premium .gdpr-information-link:after, #llar-setting-page-help .gdpr-information-link:after {
+#llar-setting-page .gdpr-information-link:after, #llar-setting-page-logs .gdpr-information-link:after, #llar-setting-page-logs__active .gdpr-information-link:after, #llar-setting-page-debug .gdpr-information-link:after, #llar-setting-page-extensions .gdpr-information-link:after, #llar-setting-page-premium .gdpr-information-link:after, #llar-setting-page-help .gdpr-information-link:after {
   content: "\f345";
   font-family: dashicons;
   line-height: 1;
@@ -1029,16 +1013,16 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #2A2F40;
   transform: translateY(-50%);
 }
-#llar-setting-page .button_block, #llar-setting-page-logs .button_block, #llar-setting-page-logs__active .button_block, #llar-setting-page-debug .button_block, #llar-setting-page-premium .button_block, #llar-setting-page-help .button_block {
+#llar-setting-page .button_block, #llar-setting-page-logs .button_block, #llar-setting-page-logs__active .button_block, #llar-setting-page-debug .button_block, #llar-setting-page-extensions .button_block, #llar-setting-page-premium .button_block, #llar-setting-page-help .button_block {
   margin-top: 24px;
   display: flex;
   flex-wrap: nowrap;
   column-gap: 16px;
 }
-#llar-setting-page .button_block a.button.menu__item, #llar-setting-page-logs .button_block a.button.menu__item, #llar-setting-page-logs__active .button_block a.button.menu__item, #llar-setting-page-debug .button_block a.button.menu__item, #llar-setting-page-premium .button_block a.button.menu__item, #llar-setting-page-help .button_block a.button.menu__item {
+#llar-setting-page .button_block a.button.menu__item, #llar-setting-page-logs .button_block a.button.menu__item, #llar-setting-page-logs__active .button_block a.button.menu__item, #llar-setting-page-debug .button_block a.button.menu__item, #llar-setting-page-extensions .button_block a.button.menu__item, #llar-setting-page-premium .button_block a.button.menu__item, #llar-setting-page-help .button_block a.button.menu__item {
   text-align: center;
 }
-#llar-setting-page .llar-accordion, #llar-setting-page-logs .llar-accordion, #llar-setting-page-logs__active .llar-accordion, #llar-setting-page-debug .llar-accordion, #llar-setting-page-premium .llar-accordion, #llar-setting-page-help .llar-accordion {
+#llar-setting-page .llar-accordion, #llar-setting-page-logs .llar-accordion, #llar-setting-page-logs__active .llar-accordion, #llar-setting-page-debug .llar-accordion, #llar-setting-page-extensions .llar-accordion, #llar-setting-page-premium .llar-accordion, #llar-setting-page-help .llar-accordion {
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
@@ -1046,7 +1030,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   border-radius: 20px;
   background-color: #F6FBFF;
 }
-#llar-setting-page .llar-accordion .ui-accordion-header, #llar-setting-page-logs .llar-accordion .ui-accordion-header, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header, #llar-setting-page-debug .llar-accordion .ui-accordion-header, #llar-setting-page-premium .llar-accordion .ui-accordion-header, #llar-setting-page-help .llar-accordion .ui-accordion-header {
+#llar-setting-page .llar-accordion .ui-accordion-header, #llar-setting-page-logs .llar-accordion .ui-accordion-header, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header, #llar-setting-page-debug .llar-accordion .ui-accordion-header, #llar-setting-page-extensions .llar-accordion .ui-accordion-header, #llar-setting-page-premium .llar-accordion .ui-accordion-header, #llar-setting-page-help .llar-accordion .ui-accordion-header {
   color: #2A2F40;
   font-weight: 500;
   font-size: 18px;
@@ -1059,29 +1043,29 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: #FDFDFD;
 }
 @media screen and (max-width: 1599.5px) {
-  #llar-setting-page .llar-accordion .ui-accordion-header, #llar-setting-page-logs .llar-accordion .ui-accordion-header, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header, #llar-setting-page-debug .llar-accordion .ui-accordion-header, #llar-setting-page-premium .llar-accordion .ui-accordion-header, #llar-setting-page-help .llar-accordion .ui-accordion-header {
+  #llar-setting-page .llar-accordion .ui-accordion-header, #llar-setting-page-logs .llar-accordion .ui-accordion-header, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header, #llar-setting-page-debug .llar-accordion .ui-accordion-header, #llar-setting-page-extensions .llar-accordion .ui-accordion-header, #llar-setting-page-premium .llar-accordion .ui-accordion-header, #llar-setting-page-help .llar-accordion .ui-accordion-header {
     font-size: 16px;
   }
 }
-#llar-setting-page .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-logs .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-debug .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-premium .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-help .llar-accordion .ui-accordion-header-collapsed {
+#llar-setting-page .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-logs .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-debug .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-extensions .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-premium .llar-accordion .ui-accordion-header-collapsed, #llar-setting-page-help .llar-accordion .ui-accordion-header-collapsed {
   border: 0;
   border-radius: 20px;
   background: unset;
   box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
 }
-#llar-setting-page .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-logs .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-debug .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-premium .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-help .llar-accordion .ui-accordion-header.ui-accordion-header-active {
+#llar-setting-page .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-logs .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-debug .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-extensions .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-premium .llar-accordion .ui-accordion-header.ui-accordion-header-active, #llar-setting-page-help .llar-accordion .ui-accordion-header.ui-accordion-header-active {
   background: white;
 }
-#llar-setting-page .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-logs .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-debug .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-premium .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-help .llar-accordion .ui-accordion-header .llar_setup_code {
+#llar-setting-page .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-logs .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-debug .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-extensions .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-premium .llar-accordion .ui-accordion-header .llar_setup_code, #llar-setting-page-help .llar-accordion .ui-accordion-header .llar_setup_code {
   position: absolute;
   top: 50%;
   right: 2%;
   transform: translateY(-50%);
 }
-#llar-setting-page .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-logs .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-debug .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-premium .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-help .llar-accordion .ui-accordion-header-active .llar_setup_code {
+#llar-setting-page .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-logs .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-logs__active .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-debug .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-extensions .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-premium .llar-accordion .ui-accordion-header-active .llar_setup_code, #llar-setting-page-help .llar-accordion .ui-accordion-header-active .llar_setup_code {
   visibility: hidden;
 }
-#llar-setting-page .llar-accordion .ui-accordion-content, #llar-setting-page-logs .llar-accordion .ui-accordion-content, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content, #llar-setting-page-debug .llar-accordion .ui-accordion-content, #llar-setting-page-premium .llar-accordion .ui-accordion-content, #llar-setting-page-help .llar-accordion .ui-accordion-content {
+#llar-setting-page .llar-accordion .ui-accordion-content, #llar-setting-page-logs .llar-accordion .ui-accordion-content, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content, #llar-setting-page-debug .llar-accordion .ui-accordion-content, #llar-setting-page-extensions .llar-accordion .ui-accordion-content, #llar-setting-page-premium .llar-accordion .ui-accordion-content, #llar-setting-page-help .llar-accordion .ui-accordion-content {
   padding-top: 0;
   margin-bottom: 16px;
   color: #2A2F40;
@@ -1092,21 +1076,21 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: #FDFDFD;
   overflow: hidden;
 }
-#llar-setting-page .llar-accordion .ui-accordion-content a, #llar-setting-page-logs .llar-accordion .ui-accordion-content a, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content a, #llar-setting-page-debug .llar-accordion .ui-accordion-content a, #llar-setting-page-premium .llar-accordion .ui-accordion-content a, #llar-setting-page-help .llar-accordion .ui-accordion-content a {
+#llar-setting-page .llar-accordion .ui-accordion-content a, #llar-setting-page-logs .llar-accordion .ui-accordion-content a, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content a, #llar-setting-page-debug .llar-accordion .ui-accordion-content a, #llar-setting-page-extensions .llar-accordion .ui-accordion-content a, #llar-setting-page-premium .llar-accordion .ui-accordion-content a, #llar-setting-page-help .llar-accordion .ui-accordion-content a {
   color: inherit;
 }
-#llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table {
+#llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-extensions .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table {
   margin-top: 0;
   border-spacing: 0;
   font-weight: 400;
 }
-#llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table tr {
+#llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-extensions .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table tr, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table tr {
   box-shadow: unset;
 }
-#llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table tr td {
+#llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-extensions .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-extensions .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table tr td, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table tr td {
   padding-top: 0;
 }
-#llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table tr th {
+#llar-setting-page .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-logs .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-logs__active .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-debug .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-extensions .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-premium .llar-accordion .ui-accordion-content .llar-form-table tr th, #llar-setting-page-help .llar-accordion .ui-accordion-content .llar-form-table tr th {
   padding-left: 0;
 }
 
@@ -2890,6 +2874,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 14px;
   line-height: 1.5;
 }
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .section-content .list-unstyled li.star::before {
+  top: 0;
+  transform: none;
+}
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .desc {
   color: #666D84;
   font-size: 16px;
@@ -2902,7 +2890,8 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions {
   position: relative;
-  width: fit-content;
+  width: 100%;
+  max-width: 320px;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -2910,6 +2899,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: flex;
   flex-direction: row;
   column-gap: 16px;
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons--centered {
+  justify-content: center;
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons a {
   text-transform: uppercase;
@@ -2932,6 +2924,23 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item {
     min-width: 160px;
   }
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button_trial_cta {
+  min-width: 134px;
+  max-width: 160px;
+  padding: 5px 10px;
+  font-size: 14px;
+  line-height: 1.35;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button_trial_cta {
+    min-width: 110px;
+  }
+}
+#llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button_trial_cta:not(.llar-disabled):hover {
+  background: #F07200 !important;
+  box-shadow: 0 5px 10px 0 rgba(255, 124, 6, 0.4980392157);
 }
 #llar-dashboard-page .dashboard-section-1 .info-box-3 .actions__buttons .menu__item.button__transparent_orange {
   color: #FF7C06 !important;
@@ -3503,12 +3512,49 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-top: 20px;
   gap: 10px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon .button {
   font-size: 18px;
   padding: 11px 60px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial {
+  gap: 20px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .button--fit {
+  width: auto;
+  min-width: 0;
+  padding: 11px 22px;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .button--fit .dashicons {
+  margin-left: 8px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  line-height: 1;
+  vertical-align: middle;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-onboarding-skip {
+  width: auto;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #A4A8B7 !important;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-onboarding-skip:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-onboarding-skip:focus {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #666D84 !important;
+  outline: none;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-single {
   margin-top: 20px;
@@ -3672,6 +3718,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #EC4652;
   background-color: rgba(236, 70, 82, 0.1019607843);
 }
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .llar-trial-email {
+  margin-top: 12px;
+}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-wrap {
   margin-top: 23px;
 }
@@ -3721,6 +3770,25 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email .input_border {
   min-width: 100%;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline {
+  display: flex;
+  align-items: center;
+  column-gap: 16px;
+  width: 100%;
+  text-align: left;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline .field-email__label {
+  flex: 0 0 auto;
+  color: #2A2F40;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline .input_border {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-add {
   color: #666D84;
@@ -3801,9 +3869,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: 10px;
   margin-left: 25px;
   text-align: left;
+  cursor: pointer;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-checkbox input {
-  margin-top: 15px;
+  margin-top: 11px;
   margin-left: -25px;
   vertical-align: top;
 }
@@ -3969,6 +4038,11 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .action {
   margin-left: auto;
   text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
 }
 #llar-setting-page-premium .llar-premium-page-promo .section-1 .action a.button {
   font-size: 16px;
@@ -3993,7 +4067,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   background-color: #F6FBFF;
   padding: 27px 0;
 }
-#llar-setting-page-premium .llar-premium-page-promo .section-1__internal .llar_turquoise, #llar-setting-page .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-premium .llar-premium-page-promo .section-1__internal .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-premium .llar-premium-page-promo .section-1__internal #llar-setting-page-logs .description-page .description-secondary a.unlink, #llar-setting-page-logs .description-page .description-secondary #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-premium .llar-premium-page-promo .section-1__internal #llar-setting-page-logs__active .description-page .description-secondary a.unlink, #llar-setting-page-logs__active .description-page .description-secondary #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink {
+#llar-setting-page-premium .llar-premium-page-promo .section-1__internal .llar_turquoise, #llar-setting-page .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-help .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-premium .llar-premium-page-promo .section-1__internal .llar-settings-wrap .llar-form-table tr td a.unlink, #llar-setting-page-premium .llar-settings-wrap .llar-form-table tr td .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-extensions .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-debug .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-logs .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-premium .llar-premium-page-promo .section-1__internal #llar-setting-page-logs .description-page .description-secondary a.unlink, #llar-setting-page-logs .description-page .description-secondary #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-logs__active .llar-settings-wrap .llar-form-table tr td #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink, #llar-setting-page-premium .llar-premium-page-promo .section-1__internal #llar-setting-page-logs__active .description-page .description-secondary a.unlink, #llar-setting-page-logs__active .description-page .description-secondary #llar-setting-page-premium .llar-premium-page-promo .section-1__internal a.unlink {
   display: block;
 }
 #llar-setting-page-premium .text-block-1 {
@@ -4190,6 +4264,73 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 #llar-setting-page-premium .llar-premium-plans-table .content .table_background tbody tr td.inner_fields .llar-plan-pricing__list li + li {
   margin-top: 6px;
+}
+
+#llar-setting-page-extensions .llar-extensions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin: 20px 0;
+}
+@media screen and (max-width: 1599.5px) {
+  #llar-setting-page-extensions .llar-extensions-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media screen and (max-width: 1199.5px) {
+  #llar-setting-page-extensions .llar-extensions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media screen and (max-width: 767.5px) {
+  #llar-setting-page-extensions .llar-extensions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+#llar-setting-page-extensions .llar-extension-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background: #FFFFFF;
+  border: 1px solid #E4E6EB;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px 0 rgba(164, 168, 183, 0.2980392157);
+}
+#llar-setting-page-extensions .llar-extension-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#llar-setting-page-extensions .llar-extension-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+#llar-setting-page-extensions .llar-extension-card__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1D2327;
+  text-decoration: none;
+}
+#llar-setting-page-extensions .llar-extension-card__name:hover {
+  color: #2271B1;
+}
+#llar-setting-page-extensions .llar-extension-card__description {
+  flex: 1 1 auto;
+  margin: 14px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #50575E;
+}
+#llar-setting-page-extensions .llar-extension-card__footer {
+  text-align: right;
+}
+#llar-setting-page-extensions .llar-extension-card__footer .button {
+  min-width: 100px;
+}
+#llar-setting-page-extensions .llar-extension-install--active {
+  opacity: 0.9;
 }
 
 #llar-setting-page-help.llar-help-page {
@@ -5009,70 +5150,73 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   padding: 15px !important;
 }
 
-/* Extensions tab */
-#llar-setting-page-extensions .llar-extensions-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin: 20px 0;
-}
-#llar-setting-page-extensions .llar-extension-card {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  background: #FFFFFF;
-  border: 1px solid #E4E6EB;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px 0 rgba(164, 168, 183, 0.2980392157);
-}
-#llar-setting-page-extensions .llar-extension-card__header {
-  display: flex;
+.llar-trial-start-cta.llar-trial-start-cta,
+.add_block__title .button__transparent_orange {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  vertical-align: middle;
 }
-#llar-setting-page-extensions .llar-extension-card__icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  flex: 0 0 auto;
+
+.llar-compat-wrap .llar-compat-card {
+  background: #FDFDFD;
+  border-radius: 20px;
+  box-shadow: 4px 4px 18px 0 rgba(162, 180, 189, 0.2);
+  padding: 6px 24px;
+  margin-top: 15px;
+  overflow-x: auto;
 }
-#llar-setting-page-extensions .llar-extension-card__name {
-  font-size: 15px;
+.llar-compat-wrap .llar-compat-table {
+  width: 100%;
+  min-width: 660px;
+  border-collapse: collapse;
+  margin: 0;
+}
+.llar-compat-wrap .llar-compat-table th,
+.llar-compat-wrap .llar-compat-table td {
+  padding: 14px 10px;
+  text-align: left;
+  border-bottom: 1px solid #E9EDF2;
+  font-size: 14px;
+  color: #2A2F40;
+  vertical-align: middle;
+}
+.llar-compat-wrap .llar-compat-table thead th {
   font-weight: 600;
-  color: #1D2327;
-  text-decoration: none;
+  white-space: nowrap;
 }
-#llar-setting-page-extensions .llar-extension-card__name:hover {
-  color: #2271B1;
+.llar-compat-wrap .llar-compat-table tbody tr:last-child th,
+.llar-compat-wrap .llar-compat-table tbody tr:last-child td {
+  border-bottom: none;
 }
-#llar-setting-page-extensions .llar-extension-card__description {
-  flex: 1 1 auto;
-  margin: 14px 0;
-  font-size: 13px;
-  line-height: 1.6;
-  color: #50575E;
+.llar-compat-wrap .llar-compat-table th.llar-compat-plugin {
+  font-weight: 600;
+  white-space: nowrap;
 }
-#llar-setting-page-extensions .llar-extension-card__footer {
-  text-align: right;
+.llar-compat-wrap .llar-compat-table td.llar-compat-cell {
+  text-align: center;
+  width: 90px;
 }
-#llar-setting-page-extensions .llar-extension-card__footer .button {
-  min-width: 100px;
+.llar-compat-wrap .llar-compat-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  cursor: help;
 }
-#llar-setting-page-extensions .llar-extension-install--active {
-  opacity: 0.9;
+.llar-compat-wrap .llar-compat-icon.llar-compat-icon--both {
+  background: url(../img/icon-compat-both.svg) no-repeat center/contain;
 }
-@media screen and (max-width: 1599.5px) {
-  #llar-setting-page-extensions .llar-extensions-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.llar-compat-wrap .llar-compat-icon.llar-compat-icon--cloud {
+  background: url(../img/icon-compat-cloud.svg) no-repeat center/contain;
 }
-@media screen and (max-width: 1199.5px) {
-  #llar-setting-page-extensions .llar-extensions-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.llar-compat-wrap .llar-compat-legend {
+  margin-top: 12px;
 }
-@media screen and (max-width: 767.5px) {
-  #llar-setting-page-extensions .llar-extensions-grid {
-    grid-template-columns: 1fr;
-  }
+.llar-compat-wrap .llar-compat-legend .llar-compat-icon {
+  margin: 0 6px 0 0;
+  cursor: default;
+}
+.llar-compat-wrap .llar-compat-legend .llar-compat-icon.llar-compat-icon--cloud {
+  margin-left: 18px;
 }

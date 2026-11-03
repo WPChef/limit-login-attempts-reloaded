@@ -209,7 +209,9 @@ class Helpers {
 	public static function cloud_app_update_config( $new_app_config, $update_created_at = false ) {
 		if( !$new_app_config ) return false;
 
-		if( $active_app_config = Config::get( 'app_config' ) ) {
+		$previous_app_config = Config::get( 'app_config' );
+
+		if( $active_app_config = $previous_app_config ) {
 
 			foreach ( $active_app_config['settings'] as $key => $info ) {
 
@@ -231,6 +233,11 @@ class Helpers {
 			$new_app_config['created_at'] = time();
 
 		Config::update( 'app_config', $new_app_config );
+
+		// The /info payload may change with the app config — drop the cached
+		// exhausted flag for both the previous and the new app id.
+		LimitLoginAttempts::clear_mc_exhausted_cache( $previous_app_config );
+		LimitLoginAttempts::clear_mc_exhausted_cache( $new_app_config );
 	}
 
 	/**
@@ -686,6 +693,19 @@ class Helpers {
 			? sanitize_text_field( $plugin_data['Version'] )
 			: '';
 		Config::update( 'plugin_version', $version );
+	}
+
+
+	/**
+	 * Returns compatibility data for the Debug tab.
+	 *
+	 * Shows which LLAR features work with which third-party plugins.
+	 * Values reflect integration code and the readme "Compatible With" list.
+	 *
+	 * @return array
+	 */
+	public static function get_compatibility_data() {
+		return require LLA_PLUGIN_DIR . 'resources/compatibility-data.php';
 	}
 
 }

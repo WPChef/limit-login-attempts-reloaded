@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$email_title    = __( 'Failed login attempt detected', 'limit-login-attempts-reloaded' );
+$email_title    = __( 'Login blocked', 'limit-login-attempts-reloaded' );
 $email_logo_cid = 'logo';
 
 include LLA_PLUGIN_DIR . 'views/emails/header.php';

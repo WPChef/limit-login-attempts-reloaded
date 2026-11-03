@@ -1,75 +1,94 @@
 <?php
 /**
- * Lockout email body. All copy and URLs come from the controller.
+ * Lockout email body — abstract template.
  *
- * Expected variables (set by LockoutNotificationService):
- * @var string $greeting
- * @var string $auto_notice
- * @var string $installed_on_html
- * @var string $details_heading
- * @var string $attempts_line_html
- * @var string $username_line_html
- * @var string $blocked_duration_line
- * @var string $login_address_line_html
- * @var string $dashboard_prompt
- * @var string $dashboard_url
- * @var string $dashboard_button_label
- * @var string $premium_cta_html
- * @var string $site_domain
- * @var string $llar_url
- * @var bool   $show_mu_notice
- * @var string $mu_notice
- * @var string $unsubscribe_footer_text
+ * This file defines markup structure only. Every string, URL and inline
+ * style is provided by LockoutEmailPresenter (built from business facts
+ * resolved by LockoutNotificationService) as the $view array.
+ *
+ * @var array $view {
+ *     Render values.
+ *
+ *     @type array  $styles                       Inline style strings keyed by usage.
+ *     @var   array $kses_strong                  Allowed kses tags for body HTML strings.
+ *     @type string $greeting
+ *     @type string $intro_html
+ *     @type string $login_activity_heading
+ *     @type string $failed_attempts_line_html
+ *     @type string $ip_address_line_html
+ *     @type string $username_attempted_line_html
+ *     @type string $action_taken_line_html
+ *     @type string $login_page_line_html
+ *     @type string $no_action_required
+ *     @type string $dashboard_url
+ *     @type string $dashboard_button_label
+ *     @type string $dashboard_helper_text
+ *     @type string $additional_protection_heading
+ *     @type string $additional_protection_text
+ *     @type string $additional_protection_url
+ *     @type string $additional_protection_label
+ *     @type string $about_notification_heading
+ *     @type string $about_notification_html
+ *     @type bool   $show_mu_notice
+ *     @type string $mu_notice
+ *     @type string $unsubscribe_footer_text
+ * }
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-$kses_strong = array( 'strong' => array() );
-$kses_link   = array(
-	'a' => array(
-		'href'   => array(),
-		'target' => array(),
-		'rel'    => array(),
-		'style'  => array(),
-	),
-);
-$kses_strong_link = array_merge( $kses_strong, $kses_link );
+$styles                 = $view['styles'];
+$unsubscribe_footer_text = $view['unsubscribe_footer_text'];
 ?>
-<p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php echo esc_html( $greeting ); ?>
+<p style="<?php echo esc_attr( $styles['paragraph_14'] ); ?>">
+	<?php echo esc_html( $view['greeting'] ); ?>
 </p>
-<p style="margin:0 0 10px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php echo esc_html( $auto_notice ); ?>
+<p style="<?php echo esc_attr( $styles['paragraph_14'] ); ?>">
+	<?php echo wp_kses( $view['intro_html'], $view['kses_strong'] ); ?>
 </p>
-<p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php echo wp_kses( $installed_on_html, $kses_strong ); ?>
+<p style="<?php echo esc_attr( $styles['paragraph_subhead'] ); ?>">
+	<strong><?php echo esc_html( $view['login_activity_heading'] ); ?></strong>
 </p>
-<p style="margin:0 0 8px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php echo esc_html( $details_heading ); ?>
-</p>
-<ul style="margin:0 0 16px;padding-left:18px;font-size:14px;line-height:1.5;color:#333333;">
-	<li style="margin-bottom:8px;"><?php echo wp_kses( $attempts_line_html, $kses_strong_link ); ?></li>
-	<li style="margin-bottom:8px;"><?php echo wp_kses( $username_line_html, $kses_strong ); ?></li>
-	<li style="margin-bottom:8px;"><?php echo esc_html( $blocked_duration_line ); ?></li>
-	<li style="margin-bottom:8px;"><?php echo wp_kses( $login_address_line_html, $kses_strong_link ); ?></li>
+<ul style="<?php echo esc_attr( $styles['activity_list'] ); ?>">
+	<li style="<?php echo esc_attr( $styles['activity_list_item'] ); ?>"><?php echo wp_kses( $view['failed_attempts_line_html'], $view['kses_strong'] ); ?></li>
+	<li style="<?php echo esc_attr( $styles['activity_list_item'] ); ?>"><?php echo wp_kses( $view['ip_address_line_html'], $view['kses_strong'] ); ?></li>
+	<li style="<?php echo esc_attr( $styles['activity_list_item'] ); ?>"><?php echo wp_kses( $view['username_attempted_line_html'], $view['kses_strong'] ); ?></li>
+	<li style="<?php echo esc_attr( $styles['activity_list_item'] ); ?>"><?php echo wp_kses( $view['action_taken_line_html'], $view['kses_strong'] ); ?></li>
+	<li style="<?php echo esc_attr( $styles['activity_list_item'] ); ?>"><?php echo wp_kses( $view['login_page_line_html'], $view['kses_strong'] ); ?></li>
 </ul>
-<p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php echo esc_html( $dashboard_prompt ); ?>
+<p style="<?php echo esc_attr( $styles['paragraph_16'] ); ?>">
+	<?php echo esc_html( $view['no_action_required'] ); ?>
 </p>
-<p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:#333333;text-align:center;">
-	<a href="<?php echo esc_url( $dashboard_url ); ?>" target="_blank" rel="noopener" style="display:inline-block;background:#50c1cd;color:#ffffff;border-radius:30px;padding:10px 20px;text-decoration:none;">
-		<?php echo esc_html( $dashboard_button_label ); ?>
+<p style="<?php echo esc_attr( $styles['cta_paragraph'] ); ?>">
+	<a href="<?php echo esc_url( $view['dashboard_url'] ); ?>" target="_blank" rel="noopener" style="<?php echo esc_attr( $styles['button_primary'] ); ?>">
+		<?php echo esc_html( $view['dashboard_button_label'] ); ?>
 	</a>
 </p>
-<p style="margin:0 0 12px;font-size:14px;line-height:1.5;color:#333333;">
-	<?php echo wp_kses( $premium_cta_html, $kses_link ); ?>
+<p style="<?php echo esc_attr( $styles['paragraph_16'] ); ?>">
+	<?php echo esc_html( $view['dashboard_helper_text'] ); ?>
 </p>
-<?php include LLA_PLUGIN_DIR . 'views/emails/failed-login-faq.php'; ?>
-<?php if ( ! empty( $show_mu_notice ) ) : ?>
-<p style="margin:0 0 12px;font-size:13px;line-height:1.5;color:#4b5563;">
-	<em><?php echo esc_html( $mu_notice ); ?></em>
+<h3 style="<?php echo esc_attr( $styles['heading'] ); ?>">
+	<strong><?php echo esc_html( $view['additional_protection_heading'] ); ?></strong>
+</h3>
+<p style="<?php echo esc_attr( $styles['paragraph_12'] ); ?>">
+	<?php echo esc_html( $view['additional_protection_text'] ); ?>
+</p>
+<p style="<?php echo esc_attr( $styles['cta_paragraph'] ); ?>">
+	<a href="<?php echo esc_url( $view['additional_protection_url'] ); ?>" target="_blank" rel="noopener" style="<?php echo esc_attr( $styles['button_premium'] ); ?>">
+		<?php echo esc_html( $view['additional_protection_label'] ); ?>
+	</a>
+</p>
+<h3 style="<?php echo esc_attr( $styles['heading'] ); ?>">
+	<strong><?php echo esc_html( $view['about_notification_heading'] ); ?></strong>
+</h3>
+<p style="<?php echo esc_attr( $styles['paragraph_12'] ); ?>">
+	<?php echo wp_kses( $view['about_notification_html'], $view['kses_strong'] ); ?>
+</p>
+<?php if ( ! empty( $view['show_mu_notice'] ) ) : ?>
+<p style="<?php echo esc_attr( $styles['mu_notice'] ); ?>">
+	<em><?php echo esc_html( $view['mu_notice'] ); ?></em>
 </p>
 <?php endif; ?>
-<?php include LLA_PLUGIN_DIR . 'views/emails/footer-unsubscribe-text.php'; ?>
+<?php require LLA_PLUGIN_DIR . 'views/emails/footer-unsubscribe-text.php'; ?>
