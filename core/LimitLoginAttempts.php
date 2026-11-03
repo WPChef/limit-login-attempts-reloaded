@@ -414,6 +414,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
 
 		add_action( 'admin_notices', array( $this, 'render_leave_review_admin_notice' ) );
+		add_action( 'admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
+		add_action( 'network_admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -1794,5 +1796,28 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			return;
 		}
 		$this->admin_notices_controller->render( 'leave-review' );
+	}
+
+	/**
+	 * Site-wide admin notice when PHP_VERSION is below a known PHP2Shell fix.
+	 *
+	 * Upstream version compare only (see PhpVulnerabilityChecker). Hidden when the
+	 * current browser has dismissed it (cookie, no user meta) or when PHP_VERSION
+	 * reaches the branch minimum. Admins only.
+	 *
+	 * @return void
+	 */
+	public function render_php_vulnerable_admin_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		if ( ! PhpVulnerabilityChecker::is_vulnerable() ) {
+			return;
+		}
+		$cookie = 'llar_php_vuln_dismissed_' . (int) get_current_user_id();
+		if ( isset( $_COOKIE[ $cookie ] ) && '1' === sanitize_text_field( wp_unslash( $_COOKIE[ $cookie ] ) ) ) {
+			return;
+		}
+		$this->admin_notices_controller->render( 'php-vulnerable' );
 	}
 }
