@@ -168,7 +168,7 @@ class AdminNoticesController {
 				$content        = sprintf(
 					/* translators: %s: current PHP version, e.g. 8.2.29 */
 					\__(
-						'Warning! Your server is running a critically vulnerable PHP version %s. Please contact your hosting provider immediately to update PHP. This is a server-level PHP issue, not a WordPress or plugin vulnerability.',
+						'Warning! Your server reports PHP version %s, which is below a known patched upstream release. Please contact your hosting provider immediately to update PHP. This check uses the upstream PHP_VERSION (distribution security backports may keep that number unchanged). This is a server-level PHP issue, not a WordPress or plugin vulnerability.',
 						$text_domain
 					),
 					\esc_html( PHP_VERSION )
