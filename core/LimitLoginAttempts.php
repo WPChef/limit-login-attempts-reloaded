@@ -1799,8 +1799,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	/**
 	 * Site-wide admin notice when PHP_VERSION is below a known PHP2Shell fix.
 	 *
-	 * Upstream version compare only (see PhpVulnerabilityChecker). Self-dismisses
-	 * when PHP_VERSION reaches the branch minimum (WP.org guideline 11). Admins only.
+	 * Upstream version compare only (see PhpVulnerabilityChecker). Hidden when the
+	 * current browser has dismissed it (cookie, no user meta) or when PHP_VERSION
+	 * reaches the branch minimum. Admins only.
 	 *
 	 * @return void
 	 */
@@ -1809,6 +1810,10 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			return;
 		}
 		if ( ! PhpVulnerabilityChecker::is_vulnerable() ) {
+			return;
+		}
+		$cookie = 'llar_php_vuln_dismissed_' . (int) get_current_user_id();
+		if ( isset( $_COOKIE[ $cookie ] ) && '1' === sanitize_text_field( wp_unslash( $_COOKIE[ $cookie ] ) ) ) {
 			return;
 		}
 		$this->admin_notices_controller->render( 'php-vulnerable' );

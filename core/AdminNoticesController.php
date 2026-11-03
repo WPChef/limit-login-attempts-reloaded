@@ -165,7 +165,7 @@ class AdminNoticesController {
 				);
 			case 'php-vulnerable':
 				$learn_more_url = PhpVulnerabilityChecker::get_learn_more_url();
-				$content        = sprintf(
+				$notice_content = sprintf(
 					/* translators: %s: current PHP version, e.g. 8.2.29 */
 					\__(
 						'Warning! Your server reports PHP version %s, which is below a known patched upstream release. Please contact your hosting provider immediately to update PHP. This check uses the upstream PHP_VERSION (distribution security backports may keep that number unchanged). This is a server-level PHP issue, not a WordPress or plugin vulnerability.',
@@ -173,13 +173,23 @@ class AdminNoticesController {
 					),
 					\esc_html( PHP_VERSION )
 				);
-				$content       .= ' <a href="' . \esc_url( $learn_more_url ) . '" target="_blank" rel="noopener noreferrer">';
-				$content       .= \__( 'Learn more', $text_domain );
-				$content       .= '</a>.';
+				$notice_content .= ' <a href="' . \esc_url( $learn_more_url ) . '" target="_blank" rel="noopener noreferrer">';
+				$notice_content .= \__( 'Learn more', $text_domain );
+				$notice_content .= '</a>.';
+
+				ob_start();
+				$path_php_vuln = LLA_PLUGIN_DIR . 'views/admin-notice-php-vulnerable.php';
+				if ( is_readable( $path_php_vuln ) ) {
+					include $path_php_vuln;
+				}
+				$content = ob_get_clean();
+
 				return array(
 					'type'    => 'notice-error',
 					'class'   => 'llar-options-notice llar-php-vulnerable-notice',
 					'content' => $content,
+					// Trusted view with dismiss cookie script (wp_kses_post would strip <script>).
+					'raw'     => true,
 				);
 			default:
 				return null;
