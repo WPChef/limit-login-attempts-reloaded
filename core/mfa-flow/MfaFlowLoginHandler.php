@@ -91,12 +91,20 @@ class MfaFlowLoginHandler {
 		}
 		$ip = $this->ip_resolver->get_address();
 
-		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->local_lockout->is_local_allowlisted_username( $username, $authenticated_user ) ) {
+		// The MFA skip decision must be made for the account that gets the
+		// session, not for whatever identifier string the request carried.
+		// A spoofed username param on a third-party login form must not be
+		// able to match the allow list or a cloud ACL pass entry.
+		$identity_username = ( is_a( $authenticated_user, 'WP_User' ) && ! empty( $authenticated_user->user_login ) )
+			? $authenticated_user->user_login
+			: $username;
+
+		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->local_lockout->is_local_allowlisted_username( $identity_username, $authenticated_user ) ) {
 			return;
 		}
 
 		if ( LimitLoginAttempts::$cloud_app ) {
-			$acl_response = $this->cloud_acl->get_auth_acl_response( $username );
+			$acl_response = $this->cloud_acl->get_auth_acl_response( $identity_username );
 			if ( is_array( $acl_response ) && ! empty( $acl_response['result'] ) && 'pass' === $acl_response['result'] ) {
 				return;
 			}
