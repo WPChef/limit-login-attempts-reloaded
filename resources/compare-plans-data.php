@@ -8,7 +8,8 @@
  *
  */
 
-$min_plan = 'custom' === $active_app ? 'Micro Cloud' : 'Free';
+$min_plan         = 'custom' === $active_app ? 'Micro Cloud' : 'Free';
+$trial_plan_name  = $this->trial_plan_name();
 
 $plans       = $this->array_name_plans();
 $actual_plan = 'custom' === $active_app ? $this->info_sub_group() : $min_plan;
@@ -19,6 +20,11 @@ if ( 'local' === $active_app ) {
 	$upgrade_urls = array(
 		'Personal' => 'https://www.limitloginattempts.com/info.php?id=29',
 		'Business' => 'https://www.limitloginattempts.com/info.php?id=30',
+	);
+} elseif ( $trial_plan_name === $actual_plan ) {
+	$upgrade_urls = array(
+		'Personal' => add_query_arg( 'id', '39', $this->info_upgrade_url() ),
+		'Business' => add_query_arg( 'id', '40', $this->info_upgrade_url() ),
 	);
 } elseif ( 'Micro Cloud' === $actual_plan ) {
 	$upgrade_urls = array(
@@ -34,6 +40,21 @@ if ( 'local' === $active_app ) {
 
 $buttons_row = array();
 foreach ( $display_plans as $plan ) {
+
+	if ( $trial_plan_name === $plan ) {
+		// Trial column: "Active" for trial users, a start CTA for eligible
+		// first-time users, and empty otherwise. It is never installable or
+		// upgradable from other plans.
+		if ( $trial_plan_name === $actual_plan ) {
+			$buttons_row[ $plan ] = '<a class="button menu__item button__transparent_orange llar-disabled">' . esc_html__( 'Active', 'limit-login-attempts-reloaded' ) . '</a>';
+		} elseif ( empty( \LLAR\Core\Config::get( 'app_setup_code' ) ) ) {
+			$buttons_row[ $plan ] = '<a href="' . esc_url( \LLAR\Core\TrialLanding::cta_landing_url( \LLAR\Core\TrialLanding::INFO_ID_PREMIUM, 'premium' ) ) . '" data-llar-info-id="' . esc_attr( \LLAR\Core\TrialLanding::INFO_ID_PREMIUM ) . '" class="button menu__item button__transparent_orange llar-trial-start-cta">' . esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ) . '</a>';
+		} else {
+			$buttons_row[ $plan ] = '';
+		}
+		continue;
+	}
+
 	$plan_rate = isset( $plans[ $plan ] ) ? $plans[ $plan ] : $plans['Free'];
 
 	if ( $plan_rate < $actual_rate ) {
@@ -67,15 +88,20 @@ $full_row['Premium']  = $lock;
 $top_row                = $full_row;
 $top_row['Premium +']   = $lock;
 
+$plan_quota_300k = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+
 $performance_optimizer_row = $paid_row;
 /* translators: %s: line break. */
 $performance_optimizer_row['Micro Cloud']    = $yes . '<span class="description">' . sprintf( esc_html__( '1k for first month%s(100 per month after)', 'limit-login-attempts-reloaded' ), '<br>' ) . '</span>';
 $performance_optimizer_row['Personal']       = $yes . '<span class="description">' . esc_html__( '50k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
 $performance_optimizer_row['Premium']        = $yes . '<span class="description">' . esc_html__( '100k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
 $performance_optimizer_row['Premium +']      = $yes . '<span class="description">' . esc_html__( '200k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Professional']   = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Business']       = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
-$performance_optimizer_row['Agency']         = $yes . '<span class="description">' . esc_html__( '300k requests per month', 'limit-login-attempts-reloaded' ) . '</span>';
+$performance_optimizer_row['Professional']   = $plan_quota_300k;
+$performance_optimizer_row['Business']       = $plan_quota_300k;
+$performance_optimizer_row['Agency']         = $plan_quota_300k;
+// The trial mirrors the Business plan for every feature row (that is the
+// spec), so it shares the Business request quota too.
+$performance_optimizer_row[ $trial_plan_name ] = $plan_quota_300k;
 
 $compare_list = array(
 	'buttons_header' => $buttons_row,
