@@ -5,6 +5,15 @@ namespace LLAR\Core\Http;
 class Http {
 
 	/**
+	 * error_code of a transport result whose payload could not be serialised.
+	 *
+	 * Request-derived payload fields can be attacker-influenced, so a failed
+	 * encode must be distinguished from a genuine outage: it has to fail the
+	 * caller closed instead of being treated as "service unavailable".
+	 */
+	const ERROR_PAYLOAD_ENCODING = 'payload_encoding_failed';
+
+	/**
 	 * @var HttpTransportInterface
 	 */
 	private static $transport;
@@ -35,6 +44,40 @@ class Http {
 	public static function get( $url, $options = array() ) {
 
 		return self::$transport->get( $url, $options );
+	}
+
+	/**
+	 * Serialise an outbound payload.
+	 *
+	 * Returns false when the data cannot be encoded (e.g. invalid UTF-8 from
+	 * request headers) so transports can fail the request instead of sending
+	 * an empty body. Deliberately json_encode() rather than wp_json_encode():
+	 * the wp wrapper sanitises and retries, which would hide the failure.
+	 *
+	 * @param mixed $data Payload.
+	 * @return string|false
+	 */
+	public static function encode_payload( $data ) {
+
+		return json_encode( $data, JSON_FORCE_OBJECT );
+	}
+
+	/**
+	 * The single shape every transport must return when the request payload
+	 * cannot be encoded. Callers treat this as a hard failure, never as
+	 * "service unavailable", so keep transports on this factory instead of
+	 * hand-rolling the array.
+	 *
+	 * @return array
+	 */
+	public static function encoding_failure_response() {
+
+		return array(
+			'data'       => null,
+			'status'     => 0,
+			'error'      => 'Request payload encoding failed',
+			'error_code' => self::ERROR_PAYLOAD_ENCODING,
+		);
 	}
 
 	/**

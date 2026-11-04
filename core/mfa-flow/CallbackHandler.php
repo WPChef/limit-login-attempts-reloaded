@@ -52,7 +52,7 @@ class CallbackHandler {
 			'user_id'   => (int) $user->ID,
 			'gateway'   => $gateway,
 			'roles'     => isset( $user->roles ) ? $user->roles : array(),
-			'agent'     => isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '',
+			'agent'     => Helpers::sanitize_user_agent(),
 			'url'       => $clean_url,
 		);
 

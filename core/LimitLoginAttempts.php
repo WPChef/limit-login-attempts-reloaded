@@ -658,7 +658,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		// Setup default plugin options
 		//$this->sanitize_options();
 
-		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ), 10, 2 );
 		add_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999, 2 );
 		add_action( 'wp_login', array( $this, 'limit_login_success' ), 10, 2 );
 
@@ -789,7 +789,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		$is_wp_login_page     = isset( $_POST['log'] );
 		$is_custom_login_page = $this->integration_manager->is_custom_login_page();
 
-		$mfa_return_message = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
+		// Only shown for llar_mfa_error returns: the visitor already passed the
+		// password step, so the two-factor copy must not claim a wrong password.
+		$mfa_return_message = MfaFlowLoginHandler::refusal_message();
 		if ( ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_custom_login_page || $um_limit_login_failed ) ) || $show_mfa_return_error ) :
 			ob_start();
 			?>
@@ -1197,7 +1199,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 				'user_id' => $user->ID,
 				'gateway' => Helpers::detect_gateway(),
 				'roles'   => $user->roles,
-				'agent'   => $_SERVER['HTTP_USER_AGENT'],
+				'agent'   => Helpers::sanitize_user_agent(),
 				'url'     => $clean_url,
 			);
 
@@ -1278,13 +1280,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * Run MFA flow on login: handshake, save session, redirect to MFA app.
-	 * Exits on successful redirect. Call only after password verification.
+	 * Handle a failed login from the wp_login_failed hook.
 	 *
-	 * @param string $username Login username.
+	 * @param string        $username Login username.
+	 * @param \WP_Error|null $error    Authentication error, when core provides it.
 	 */
-	public function limit_login_failed( $username ) {
-		$this->local_lockout->limit_login_failed( $username );
+	public function limit_login_failed( $username, $error = null ) {
+		$this->local_lockout->limit_login_failed( $username, $error );
 	}
 
 	/**

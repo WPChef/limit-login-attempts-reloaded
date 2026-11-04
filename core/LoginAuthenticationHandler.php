@@ -453,9 +453,33 @@ class LoginAuthenticationHandler {
 		}
 
 		// Trigger MFA flow (for selected roles). Only treat as pre-authenticated if password was verified.
-		if ( $username !== '' ) {
+		// The 2FA decision must be made from the authenticated user object, not
+		// from a login-form field: form-less password-auth routes (e.g. XML-RPC)
+		// never supply the log parameter, and keying the trigger on it let them
+		// skip the second factor entirely.
+		$mfa_username = $username;
+		if ( $password_ok && is_a( $user, 'WP_User' ) ) {
+			$mfa_username = $user->user_login;
+		}
+		if ( $mfa_username !== '' ) {
 			$auth_user_for_mfa = ( $password_ok && is_a( $user, 'WP_User' ) ) ? $user : null;
-			$this->mfa_flow->try_mfa_flow_redirect( $username, $password_ok, $auth_user_for_mfa );
+			$mfa_error         = $this->mfa_flow->try_mfa_flow_redirect( $mfa_username, $password_ok, $auth_user_for_mfa );
+			if ( is_wp_error( $mfa_error ) ) {
+				global $limit_login_my_error_shown;
+				$limit_login_my_error_shown = true;
+				// The refusal reaches a user whose password was already
+				// verified: publish the two-factor message through the
+				// early-hook channel so fixup_error_messages() cannot
+				// rewrite it into "incorrect username or password".
+				LoginFlowTransientStore::merge(
+					array(
+						'errors_in_early_hook'          => false,
+						'llar_early_hook_error_message' => $mfa_error->get_error_message(),
+					)
+				);
+
+				return $mfa_error;
+			}
 		}
 
 		$user_login = '';
