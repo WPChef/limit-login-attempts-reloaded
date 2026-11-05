@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 3.4.1 =
+* Two-factor authentication now applies to XML-RPC logins as well as the login form. Thanks to Qi Qin for the report.
+* An invalid X-Forwarded-For header no longer stops the two-factor check. Thanks to Naoki Kawahigashi for the report.
+* Added an admin notice when the reported PHP version is below the upstream release that fixes critical PHP vulnerabilities. The notice explains that a host or distribution may already have patched PHP without changing the version number, and tells admins to dismiss it instead of opening a support ticket in that case.
+
 = 3.4.0 =
 * Added a red dot to the admin menu and admin bar when Micro Cloud requests are exhausted.
 * Introduced a 7-day free trial with consent-based activation across the plugin.

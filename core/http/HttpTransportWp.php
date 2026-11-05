@@ -202,6 +202,11 @@ class HttpTransportWp implements HttpTransportInterface {
 		$pin     = null;
 
 		if ( ! empty( $resolve ) ) {
+			// Scoped to this wp_remote_request only (added/removed around the
+			// call). Nested WP HTTP from filters during the same request would
+			// inherit the pin — keep resolve host-specific so foreign URLs are
+			// unaffected. Pin applies when WP selects Curl; Streams fallback
+			// has no CURLOPT_RESOLVE (redirect SSRF still blocked above).
 			$pin = function ( $handle ) use ( $resolve ) {
 				if ( is_resource( $handle ) || ( is_object( $handle ) && 'CurlHandle' === get_class( $handle ) ) ) {
 					curl_setopt( $handle, CURLOPT_RESOLVE, $resolve );

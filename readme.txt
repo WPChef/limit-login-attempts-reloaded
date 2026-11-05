@@ -3,9 +3,9 @@ Contributors: wpchefgadget, nikitaglobal
 Donate link: https://www.paypal.com/donate?hosted_button_id=FKD4MYFCMNVQQ
 Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
-Requires at least: 5.0
+Requires at least: 5.4
 Tested up to: 7.1
-Stable tag: 3.4.0
+Stable tag: 3.4.1
 
 Limit login attempts and stop brute force attacks. WordPress security with 2FA, firewall, bot protection, IP blocking, and secure login monitoring.
 
@@ -151,6 +151,11 @@ Premium plans start at 100,000 requests per month, enough for almost any heavy b
 On the free version, copy the lists to each site manually. With <a href="https://www.limitloginattempts.com/plans/?from=wp-details">Premium</a>, sites in the same cloud account can share lockouts and access lists.
 
 == Changelog ==
+
+= 3.4.1 =
+* Two-factor authentication now applies to XML-RPC logins as well as the login form. Thanks to Qi Qin for the report.
+* An invalid X-Forwarded-For header no longer stops the two-factor check. Thanks to Naoki Kawahigashi for the report.
+* Added an admin notice when the reported PHP version is below the upstream release that fixes critical PHP vulnerabilities. The notice explains that a host or distribution may already have patched PHP without changing the version number, and tells admins to dismiss it instead of opening a support ticket in that case.
 
 = 3.4.0 =
 * Added a red dot to the admin menu and admin bar when Micro Cloud requests are exhausted.
