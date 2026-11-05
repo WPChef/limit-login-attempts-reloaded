@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.4.2 =
+* Security: blocked a server-side request forgery (SSRF) in the app setup feature. The setup destination is validated before fetching, and redirects are checked again. Thanks to Viktor Heiduck for the report.
+
 = 3.4.1 =
 * Two-factor authentication now applies to XML-RPC logins as well as the login form. Thanks to Qi Qin for the report.
 * An invalid X-Forwarded-For header no longer stops the two-factor check. Thanks to Naoki Kawahigashi for the report.

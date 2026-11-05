@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 5.4
 Tested up to: 7.1
-Stable tag: 3.4.1
+Stable tag: 3.4.2
 
 Limit login attempts and stop brute force attacks. WordPress security with 2FA, firewall, bot protection, IP blocking, and secure login monitoring.
 
@@ -151,6 +151,9 @@ Premium plans start at 100,000 requests per month, enough for almost any heavy b
 On the free version, copy the lists to each site manually. With <a href="https://www.limitloginattempts.com/plans/?from=wp-details">Premium</a>, sites in the same cloud account can share lockouts and access lists.
 
 == Changelog ==
+
+= 3.4.2 =
+* Security: blocked a server-side request forgery (SSRF) in the app setup feature. The setup destination is validated before fetching, and redirects are checked again. Thanks to Viktor Heiduck for the report.
 
 = 3.4.1 =
 * Two-factor authentication now applies to XML-RPC logins as well as the login form. Thanks to Qi Qin for the report.
