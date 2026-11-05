@@ -414,6 +414,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
 
 		add_action( 'admin_notices', array( $this, 'render_leave_review_admin_notice' ) );
+		add_action( 'admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
+		add_action( 'network_admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -656,7 +658,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		// Setup default plugin options
 		//$this->sanitize_options();
 
-		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ), 10, 2 );
 		add_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999, 2 );
 		add_action( 'wp_login', array( $this, 'limit_login_success' ), 10, 2 );
 
@@ -787,7 +789,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		$is_wp_login_page     = isset( $_POST['log'] );
 		$is_custom_login_page = $this->integration_manager->is_custom_login_page();
 
-		$mfa_return_message = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
+		// Only shown for llar_mfa_error returns: the visitor already passed the
+		// password step, so the two-factor copy must not claim a wrong password.
+		$mfa_return_message = MfaFlowLoginHandler::refusal_message();
 		if ( ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_custom_login_page || $um_limit_login_failed ) ) || $show_mfa_return_error ) :
 			ob_start();
 			?>
@@ -1195,7 +1199,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 				'user_id' => $user->ID,
 				'gateway' => Helpers::detect_gateway(),
 				'roles'   => $user->roles,
-				'agent'   => $_SERVER['HTTP_USER_AGENT'],
+				'agent'   => Helpers::sanitize_user_agent(),
 				'url'     => $clean_url,
 			);
 
@@ -1276,13 +1280,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * Run MFA flow on login: handshake, save session, redirect to MFA app.
-	 * Exits on successful redirect. Call only after password verification.
+	 * Handle a failed login from the wp_login_failed hook.
 	 *
-	 * @param string $username Login username.
+	 * @param string        $username Login username.
+	 * @param \WP_Error|null $error    Authentication error, when core provides it.
 	 */
-	public function limit_login_failed( $username ) {
-		$this->local_lockout->limit_login_failed( $username );
+	public function limit_login_failed( $username, $error = null ) {
+		$this->local_lockout->limit_login_failed( $username, $error );
 	}
 
 	/**
@@ -1792,5 +1796,28 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			return;
 		}
 		$this->admin_notices_controller->render( 'leave-review' );
+	}
+
+	/**
+	 * Site-wide admin notice when PHP_VERSION is below a known PHP2Shell fix.
+	 *
+	 * Upstream version compare only (see PhpVulnerabilityChecker). Hidden when the
+	 * current browser has dismissed it (cookie, no user meta) or when PHP_VERSION
+	 * reaches the branch minimum. Admins only.
+	 *
+	 * @return void
+	 */
+	public function render_php_vulnerable_admin_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		if ( ! PhpVulnerabilityChecker::is_vulnerable() ) {
+			return;
+		}
+		$cookie = 'llar_php_vuln_dismissed_' . (int) get_current_user_id();
+		if ( isset( $_COOKIE[ $cookie ] ) && '1' === sanitize_text_field( wp_unslash( $_COOKIE[ $cookie ] ) ) ) {
+			return;
+		}
+		$this->admin_notices_controller->render( 'php-vulnerable' );
 	}
 }

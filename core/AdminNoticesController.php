@@ -17,7 +17,7 @@ class AdminNoticesController {
 	 *
 	 * @var array
 	 */
-	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired', 'leave-review', 'login-page-cache' );
+	private static $allowed = array( 'auto-update', 'https-recommended', 'https-recommended-mfa', 'mfa-api-not-configured', 'debug-foreign-auth-hooks', 'flash', 'mfa-recovery-links-expired', 'leave-review', 'login-page-cache', 'php-vulnerable' );
 
 	/**
 	 * Get type, CSS class and HTML content for a notice key.
@@ -51,6 +51,12 @@ class AdminNoticesController {
 					'type'    => 'notice-warning',
 					'class'   => 'llar-options-notice',
 					'content' => \__( 'Before enabling 2FA/MFA, we strongly recommend ensuring your website is accessible only via HTTPS.', $text_domain ),
+				);
+			case 'mfa-api-not-configured':
+				return array(
+					'type'    => 'notice-error',
+					'class'   => 'llar-options-notice',
+					'content' => \__( 'Two-factor authentication is enabled, but the MFA API endpoint (LLA_MFA_API_BASE_URL) is missing or not an absolute http(s) URL. Logins for 2FA-protected accounts will be refused until this is fixed.', $text_domain ),
 				);
 			case 'debug-foreign-auth-hooks':
 				$hooks = isset( $args['hooks'] ) && is_array( $args['hooks'] ) ? $args['hooks'] : array();
@@ -162,6 +168,34 @@ class AdminNoticesController {
 						__( '⚠️ Action required: Your existing 2FA recovery links are no longer valid. On the <a href="%s">2FA settings page</a>, turn 2FA off and then back on, then follow the prompts to download the new recovery links.', 'limit-login-attempts-reloaded' ),
 						\esc_url( $mfa_url )
 					),
+				);
+			case 'php-vulnerable':
+				$learn_more_url = PhpVulnerabilityChecker::get_learn_more_url();
+				$notice_content = sprintf(
+					/* translators: %s: current PHP version, e.g. 8.2.29 */
+					\__(
+						'Warning! Your server reports PHP %s, which is below the upstream release that fixes critical PHP vulnerabilities (remote code execution). This is a server-level PHP issue, not a WordPress or plugin vulnerability. The check only sees the version number PHP reports. Hosting providers and Linux distributions often install that fix without changing the number, so this notice can appear on an already patched server. If your host has been applying PHP security updates, dismiss this notice. Do not open a support ticket because of the version number alone. Contact your host only if you know PHP security updates are not installed.',
+						$text_domain
+					),
+					\esc_html( PHP_VERSION )
+				);
+				$notice_content .= ' <a href="' . \esc_url( $learn_more_url ) . '" target="_blank" rel="noopener noreferrer">';
+				$notice_content .= \__( 'Learn more', $text_domain );
+				$notice_content .= '</a>.';
+
+				ob_start();
+				$path_php_vuln = LLA_PLUGIN_DIR . 'views/admin-notice-php-vulnerable.php';
+				if ( is_readable( $path_php_vuln ) ) {
+					include $path_php_vuln;
+				}
+				$content = ob_get_clean();
+
+				return array(
+					'type'    => 'notice-error',
+					'class'   => 'llar-options-notice llar-php-vulnerable-notice',
+					'content' => $content,
+					// Trusted view with dismiss cookie script (wp_kses_post would strip <script>).
+					'raw'     => true,
 				);
 			default:
 				return null;
