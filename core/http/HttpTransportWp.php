@@ -6,6 +6,7 @@ class HttpTransportWp implements HttpTransportInterface {
 
 	use HttpTimeoutTrait;
 	use HttpRedirectFollowerTrait;
+	use HttpDestinationPinTrait;
 
 	/**
 	 * @param $url
@@ -37,11 +38,14 @@ class HttpTransportWp implements HttpTransportInterface {
 	}
 
 	/**
-	 * Single WP HTTP request, no redirect following. Pins via CURLOPT_RESOLVE
-	 * when WP's Curl transport runs (the usual path with allow_url_fopen=0).
+	 * Single WP HTTP request, no redirect following.
 	 *
-	 * Manual redirect policy lives in HttpRedirectFollowerTrait — WP must not
-	 * auto-follow via wp_safe_remote_* (core still allows 169.254 on older WP).
+	 * Pinning matches fopen: connect to the validated IP, send Host for the
+	 * logical name. That closes DNS rebinding on Streams/fsockopen as well as
+	 * Curl. When Curl is available we also force it (avoids Streams) and set
+	 * CURLOPT_SSLOPT_PEERNAME so TLS still verifies the logical hostname.
+	 *
+	 * Manual redirect policy lives in HttpRedirectFollowerTrait.
 	 *
 	 * @param string     $url
 	 * @param string     $method
@@ -67,6 +71,8 @@ class HttpTransportWp implements HttpTransportInterface {
 			$url  .= ( false === strpos( $url, '?' ) ? '?' : '&' ) . $query;
 		}
 
+		list( $request_url, $headers, $ssl_options ) = $this->apply_destination_pin( $url, $headers, $destination );
+
 		$args = array(
 			'method'      => $method,
 			'headers'     => $this->format_headers( $headers ),
@@ -77,28 +83,47 @@ class HttpTransportWp implements HttpTransportInterface {
 			'redirection' => 0,
 		);
 
-		$resolve = $this->build_curl_resolve( $destination );
-		$pin     = null;
+		$peer_name       = ! empty( $ssl_options['peer_name'] ) ? $ssl_options['peer_name'] : null;
+		$pinning         = ! empty( $destination['ips'] );
+		$curl_hook       = null;
+		$transports_hook = null;
 
-		if ( ! empty( $resolve ) ) {
-			// Scoped to this wp_remote_request only (added/removed around the
-			// call). Nested WP HTTP from filters during the same request would
-			// inherit the pin — keep resolve host-specific so foreign URLs are
-			// unaffected. Pin applies when WP selects Curl; Streams fallback
-			// has no CURLOPT_RESOLVE (redirect SSRF still blocked above).
-			$pin = function ( $handle ) use ( $resolve ) {
-				if ( is_resource( $handle ) || ( is_object( $handle ) && 'CurlHandle' === get_class( $handle ) ) ) {
-					curl_setopt( $handle, CURLOPT_RESOLVE, $resolve );
+		if ( $pinning ) {
+			// Prefer Curl when present so Streams is not the path that
+			// reconnects; IP+Host pin still applies if only Streams remains.
+			$transports_hook = function ( $transports ) {
+				$transports = (array) $transports;
+				if ( in_array( 'curl', $transports, true ) ) {
+					return array( 'curl' );
 				}
+
+				return $transports;
 			};
-			add_action( 'http_api_curl', $pin, 10, 1 );
+			add_filter( 'http_api_transports', $transports_hook, 999 );
+
+			if ( $peer_name ) {
+				// URL authority is an IP after pin — tell Curl which name to
+				// verify on the certificate (PHP 7.0.7+ / libcurl peername).
+				$curl_hook = function ( $handle ) use ( $peer_name ) {
+					if ( ! is_resource( $handle ) && ! ( is_object( $handle ) && 'CurlHandle' === get_class( $handle ) ) ) {
+						return;
+					}
+					if ( defined( 'CURLOPT_SSLOPT_PEERNAME' ) ) {
+						curl_setopt( $handle, CURLOPT_SSLOPT_PEERNAME, $peer_name );
+					}
+				};
+				add_action( 'http_api_curl', $curl_hook, 10, 1 );
+			}
 		}
 
 		try {
-			$response = wp_remote_request( $url, $args );
+			$response = wp_remote_request( $request_url, $args );
 		} finally {
-			if ( null !== $pin ) {
-				remove_action( 'http_api_curl', $pin, 10 );
+			if ( null !== $curl_hook ) {
+				remove_action( 'http_api_curl', $curl_hook, 10 );
+			}
+			if ( null !== $transports_hook ) {
+				remove_filter( 'http_api_transports', $transports_hook, 999 );
 			}
 		}
 
@@ -138,29 +163,6 @@ class HttpTransportWp implements HttpTransportInterface {
 			: null;
 
 		return $return;
-	}
-
-	/**
-	 * CURLOPT_RESOLVE entries for a validated destination.
-	 *
-	 * @param array|null $destination
-	 *
-	 * @return array
-	 */
-	private function build_curl_resolve( $destination ) {
-
-		if ( empty( $destination['ips'] ) || empty( $destination['host'] ) ) {
-			return array();
-		}
-
-		$resolve = array();
-
-		foreach ( $destination['ips'] as $ip ) {
-			$pinned    = ( false !== strpos( $ip, ':' ) ) ? '[' . $ip . ']' : $ip;
-			$resolve[] = $destination['host'] . ':' . $destination['port'] . ':' . $pinned;
-		}
-
-		return $resolve;
 	}
 
 	/**

@@ -6,6 +6,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 
 	use HttpTimeoutTrait;
 	use HttpRedirectFollowerTrait;
+	use HttpDestinationPinTrait;
 
 	/**
 	 * @param $url
@@ -116,107 +117,5 @@ class HttpTransportFopen implements HttpTransportInterface {
 			'error'       => $error,
 			'raw_headers' => isset( $http_response_header ) ? $http_response_header : array(),
 		);
-	}
-
-	/**
-	 * Pin the connection to a validated address instead of letting the
-	 * stream wrapper resolve the name again (DNS rebinding). Rewrites the
-	 * URL host to the IP, sets Host + TLS peer_name to the logical hostname.
-	 *
-	 * Prior Host headers are replaced, not appended — redirect hops must
-	 * not stack Host (RFC 7230: more than one Host → 400).
-	 *
-	 * Port in the rewritten URL and in Host use the same scheme-default
-	 * rule (omit only the scheme's default port), so https:80 / http:443
-	 * stay consistent.
-	 *
-	 * @param string     $url
-	 * @param array      $headers
-	 * @param array|null $destination
-	 *
-	 * @return array{0:string,1:array,2:array} request_url, headers, ssl_options
-	 */
-	private function apply_destination_pin( $url, $headers, $destination ) {
-
-		if ( empty( $destination['ips'] ) ) {
-			return array( $url, $headers, array() );
-		}
-
-		$ip          = $this->preferred_ip( $destination['ips'] );
-		$ip_host     = false !== strpos( $ip, ':' ) ? '[' . $ip . ']' : $ip;
-		$request_url = $this->build_pinned_url( $url, $destination, $ip_host );
-
-		$default_port = ( 'https' === $destination['scheme'] ) ? 443 : 80;
-		$port_suffix  = ( (int) $destination['port'] === $default_port ) ? '' : ':' . $destination['port'];
-
-		// Replace any prior Host — never stack across redirect hops.
-		$headers   = array_values(
-			array_filter(
-				$headers,
-				function ( $header ) {
-					return 0 !== stripos( ltrim( $header ), 'Host:' );
-				}
-			)
-		);
-		$headers[] = 'Host: ' . $destination['host'] . $port_suffix;
-
-		return array( $request_url, $headers, array( 'peer_name' => $destination['host'] ) );
-	}
-
-	/**
-	 * Rebuild the request URL with the pinned IP as authority, keeping
-	 * path/query/fragment from the logical URL. No regex on authority.
-	 *
-	 * @param string $url
-	 * @param array  $destination
-	 * @param string $ip_host IPv4 or bracketed IPv6 literal
-	 *
-	 * @return string
-	 */
-	private function build_pinned_url( $url, $destination, $ip_host ) {
-
-		$parsed       = wp_parse_url( $url );
-		$scheme       = $destination['scheme'];
-		$default_port = ( 'https' === $scheme ) ? 443 : 80;
-		$authority    = $ip_host;
-
-		if ( (int) $destination['port'] !== $default_port ) {
-			$authority .= ':' . $destination['port'];
-		}
-
-		$out = $scheme . '://' . $authority;
-
-		if ( is_array( $parsed ) ) {
-			if ( ! empty( $parsed['path'] ) ) {
-				$out .= $parsed['path'];
-			}
-			if ( isset( $parsed['query'] ) ) {
-				$out .= '?' . $parsed['query'];
-			}
-			if ( isset( $parsed['fragment'] ) ) {
-				$out .= '#' . $parsed['fragment'];
-			}
-		}
-
-		return $out;
-	}
-
-	/**
-	 * Pick the address to connect to: IPv4 first (fewer TLS/routing
-	 * surprises), any validated address otherwise.
-	 *
-	 * @param array $ips
-	 *
-	 * @return string
-	 */
-	private function preferred_ip( $ips ) {
-
-		foreach ( $ips as $ip ) {
-			if ( false === strpos( $ip, ':' ) ) {
-				return $ip;
-			}
-		}
-
-		return reset( $ips );
 	}
 }
