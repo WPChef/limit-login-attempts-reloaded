@@ -5,6 +5,7 @@ namespace LLAR\Core\Http;
 class HttpTransportCurl implements HttpTransportInterface {
 
 	use HttpTimeoutTrait;
+	use HttpDestinationPinTrait;
 
 	/**
 	 * @param $url
@@ -100,30 +101,5 @@ class HttpTransportCurl implements HttpTransportInterface {
 			'status' => intval( $response_status ),
 			'error'  => $response_error,
 		);
-	}
-
-	/**
-	 * CURLOPT_RESOLVE entries for a validated destination.
-	 * IPv6 addresses must be bracketed (host:port:[addr]), otherwise curl
-	 * misparses the address and the pin is ineffective.
-	 *
-	 * @param array|null $destination
-	 *
-	 * @return array
-	 */
-	private function build_curl_resolve( $destination ) {
-
-		if ( empty( $destination['ips'] ) || empty( $destination['host'] ) ) {
-			return array();
-		}
-
-		$resolve = array();
-
-		foreach ( $destination['ips'] as $ip ) {
-			$pinned    = ( false !== strpos( $ip, ':' ) ) ? '[' . $ip . ']' : $ip;
-			$resolve[] = $destination['host'] . ':' . $destination['port'] . ':' . $pinned;
-		}
-
-		return $resolve;
 	}
 }

@@ -274,6 +274,10 @@ class Http {
 			// WordPress rejects IPv6 literals (strpbrk on ':'). Validate those
 			// ourselves so public AAAA destinations stay reachable; everything
 			// else that fails core is rejected before our DNS lookup.
+			// Caveat: some WP HTTP transports may still refuse a bracketed
+			// IPv6 authority URL — that fails closed as a transport error,
+			// not a security bypass. Prefer Curl (CURLOPT_RESOLVE) for
+			// hostname→AAAA pins.
 			if ( ! filter_var( $host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
 				return false;
 			}

@@ -40,10 +40,13 @@ class HttpTransportWp implements HttpTransportInterface {
 	/**
 	 * Single WP HTTP request, no redirect following.
 	 *
-	 * Pinning matches fopen: connect to the validated IP, send Host for the
-	 * logical name. That closes DNS rebinding on Streams/fsockopen as well as
-	 * Curl. When Curl is available we also force it (avoids Streams) and set
-	 * CURLOPT_SSLOPT_PEERNAME so TLS still verifies the logical hostname.
+	 * Pinning strategy (must preserve TLS identity on HTTPS):
+	 * - Hostname destination + Curl available → keep hostname URL, pin via
+	 *   CURLOPT_RESOLVE, force Curl transport for this request only.
+	 * - Hostname destination + HTTPS + no Curl (Streams-only) → fail closed;
+	 *   Streams cannot set a TLS peer name for an IP-rewritten URL.
+	 * - Hostname destination + HTTP + no Curl → IP URL + Host (fopen-style).
+	 * - Literal IP destination → URL as-is (no DNS rebinding window).
 	 *
 	 * Manual redirect policy lives in HttpRedirectFollowerTrait.
 	 *
@@ -71,7 +74,59 @@ class HttpTransportWp implements HttpTransportInterface {
 			$url  .= ( false === strpos( $url, '?' ) ? '?' : '&' ) . $query;
 		}
 
-		list( $request_url, $headers, $ssl_options ) = $this->apply_destination_pin( $url, $headers, $destination );
+		$request_url     = $url;
+		$curl_hook       = null;
+		$transports_hook = null;
+		$pinning         = ! empty( $destination['ips'] );
+		$host_is_literal = $pinning && filter_var( $destination['host'], FILTER_VALIDATE_IP );
+		$curl_available  = function_exists( 'curl_init' );
+		$is_https        = ( is_array( $destination ) && ! empty( $destination['scheme'] ) )
+			? ( 'https' === $destination['scheme'] )
+			: ( 0 === stripos( (string) $url, 'https://' ) );
+
+		if ( $pinning && ! $host_is_literal ) {
+			if ( $curl_available ) {
+				// Keep the logical hostname in the URL so Curl verifies the
+				// certificate against it; pin the dial address with RESOLVE.
+				$resolve = $this->build_curl_resolve( $destination );
+
+				// Force Curl for this pinned request only. Streams would
+				// re-resolve the hostname and reopen a DNS-rebinding window;
+				// the filter is removed in finally below, so site-wide
+				// transport order is otherwise untouched.
+				$transports_hook = function ( $transports ) {
+					$transports = (array) $transports;
+					if ( in_array( 'curl', $transports, true ) ) {
+						return array( 'curl' );
+					}
+
+					return $transports;
+				};
+				add_filter( 'http_api_transports', $transports_hook, 999 );
+
+				if ( ! empty( $resolve ) ) {
+					$curl_hook = function ( $handle ) use ( $resolve ) {
+						if ( is_resource( $handle ) || ( is_object( $handle ) && 'CurlHandle' === get_class( $handle ) ) ) {
+							curl_setopt( $handle, CURLOPT_RESOLVE, $resolve );
+						}
+					};
+					add_action( 'http_api_curl', $curl_hook, 10, 1 );
+				}
+			} elseif ( $is_https ) {
+				// Streams/fsockopen cannot pin HTTPS safely (no peer_name for
+				// an IP-rewritten URL). Fail closed rather than TOCTOU or
+				// certificate-mismatch against the IP.
+				return array(
+					'data'    => null,
+					'status'  => 0,
+					'error'   => 'Cannot pin HTTPS destination without the Curl transport.',
+					'blocked' => true,
+				);
+			} else {
+				// Plain HTTP over Streams: IP authority + Host is safe (no TLS).
+				list( $request_url, $headers ) = $this->apply_destination_pin( $url, $headers, $destination );
+			}
+		}
 
 		$args = array(
 			'method'      => $method,
@@ -82,39 +137,6 @@ class HttpTransportWp implements HttpTransportInterface {
 			// link-local metadata on older WordPress.
 			'redirection' => 0,
 		);
-
-		$peer_name       = ! empty( $ssl_options['peer_name'] ) ? $ssl_options['peer_name'] : null;
-		$pinning         = ! empty( $destination['ips'] );
-		$curl_hook       = null;
-		$transports_hook = null;
-
-		if ( $pinning ) {
-			// Prefer Curl when present so Streams is not the path that
-			// reconnects; IP+Host pin still applies if only Streams remains.
-			$transports_hook = function ( $transports ) {
-				$transports = (array) $transports;
-				if ( in_array( 'curl', $transports, true ) ) {
-					return array( 'curl' );
-				}
-
-				return $transports;
-			};
-			add_filter( 'http_api_transports', $transports_hook, 999 );
-
-			if ( $peer_name ) {
-				// URL authority is an IP after pin — tell Curl which name to
-				// verify on the certificate (PHP 7.0.7+ / libcurl peername).
-				$curl_hook = function ( $handle ) use ( $peer_name ) {
-					if ( ! is_resource( $handle ) && ! ( is_object( $handle ) && 'CurlHandle' === get_class( $handle ) ) ) {
-						return;
-					}
-					if ( defined( 'CURLOPT_SSLOPT_PEERNAME' ) ) {
-						curl_setopt( $handle, CURLOPT_SSLOPT_PEERNAME, $peer_name );
-					}
-				};
-				add_action( 'http_api_curl', $curl_hook, 10, 1 );
-			}
-		}
 
 		try {
 			$response = wp_remote_request( $request_url, $args );

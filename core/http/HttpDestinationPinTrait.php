@@ -5,8 +5,11 @@ namespace LLAR\Core\Http;
 /**
  * Pin an outbound connection to IPs already validated by
  * Http::resolve_destination() — closes DNS rebinding between check and
- * connect. Used by fopen (stream context) and the WP transport (IP URL +
- * Host; Curl also gets CURLOPT_SSLOPT_PEERNAME for TLS).
+ * connect.
+ *
+ * - fopen / WP Streams (plain HTTP): IP authority + Host + peer_name.
+ * - Curl / WP+Curl (HTTPS or HTTP): keep hostname URL, pin via
+ *   CURLOPT_RESOLVE (TLS verifies the logical name, not the dial IP).
  */
 trait HttpDestinationPinTrait {
 
@@ -97,5 +100,39 @@ trait HttpDestinationPinTrait {
 		}
 
 		return reset( $ips );
+	}
+
+	/**
+	 * CURLOPT_RESOLVE entries for a validated destination.
+	 * IPv6 addresses must be bracketed (host:port:[addr]), otherwise curl
+	 * misparses the address and the pin is ineffective. Hostname stays in the
+	 * request URL so TLS verifies the certificate against the logical name.
+	 *
+	 * @param array|null $destination
+	 *
+	 * @return array
+	 */
+	private function build_curl_resolve( $destination ) {
+
+		if ( empty( $destination['ips'] ) || empty( $destination['host'] ) ) {
+			return array();
+		}
+
+		// Literal IP hosts need no RESOLVE — the URL already targets that address.
+		if ( filter_var( $destination['host'], FILTER_VALIDATE_IP ) ) {
+			return array();
+		}
+
+		$resolve = array();
+		$host    = $destination['host'];
+
+		// Curl expects bracketed host labels for IPv6-looking names in RESOLVE
+		// when the URL host is bracketed; our normalize_host strips brackets.
+		foreach ( $destination['ips'] as $ip ) {
+			$pinned    = ( false !== strpos( $ip, ':' ) ) ? '[' . $ip . ']' : $ip;
+			$resolve[] = $host . ':' . $destination['port'] . ':' . $pinned;
+		}
+
+		return $resolve;
 	}
 }
