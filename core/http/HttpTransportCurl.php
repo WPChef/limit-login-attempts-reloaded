@@ -55,6 +55,12 @@ class HttpTransportCurl implements HttpTransportInterface {
 	 */
 	private function request( $url, $method, $headers = array(), $data = array(), $timeout = self::DEFAULT_TIMEOUT, $destination = null ) {
 
+		// Align URL host to the validated/normalized destination host so
+		// CURLOPT_RESOLVE cannot miss on trailing-dot FQDNs (evil.com.).
+		if ( ! empty( $destination['host'] ) ) {
+			$url = $this->align_url_host_with_destination( $url, $destination );
+		}
+
 		$handle = curl_init( $url );
 
 		curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );

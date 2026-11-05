@@ -86,14 +86,19 @@ class HttpTransportWp implements HttpTransportInterface {
 
 		if ( $pinning && ! $host_is_literal ) {
 			if ( $curl_available ) {
-				// Keep the logical hostname in the URL so Curl verifies the
-				// certificate against it; pin the dial address with RESOLVE.
-				$resolve = $this->build_curl_resolve( $destination );
+				// Hostname URL (normalized) + CURLOPT_RESOLVE. Align the URL
+				// host to destination['host'] so a trailing-dot FQDN cannot
+				// miss the pin and trigger a fresh DNS lookup.
+				$request_url = $this->align_url_host_with_destination( $url, $destination );
+				$resolve     = $this->build_curl_resolve( $destination );
 
 				// Force Curl for this pinned request only. Streams would
 				// re-resolve the hostname and reopen a DNS-rebinding window;
 				// the filter is removed in finally below, so site-wide
 				// transport order is otherwise untouched.
+				// Note: on WP 6.4+ http_api_transports is deprecated and may
+				// not select the transport; Requests still prefers Curl when
+				// the extension exists, and http_api_curl still fires then.
 				$transports_hook = function ( $transports ) {
 					$transports = (array) $transports;
 					if ( in_array( 'curl', $transports, true ) ) {

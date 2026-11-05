@@ -50,9 +50,37 @@ trait HttpDestinationPinTrait {
 	}
 
 	/**
+	 * Rebuild the URL authority to the validated destination host/port.
+	 *
+	 * CURLOPT_RESOLVE matches the URL host literally. normalize_host() strips
+	 * trailing dots / case / brackets into destination['host'], so leaving a
+	 * raw FQDN like `evil.com.` in the request URL makes the pin miss and Curl
+	 * re-resolves (DNS rebinding). Aligning the URL host closes that gap while
+	 * keeping a hostname authority for TLS.
+	 *
+	 * @param string     $url
+	 * @param array|null $destination
+	 *
+	 * @return string
+	 */
+	private function align_url_host_with_destination( $url, $destination ) {
+
+		if ( empty( $destination['host'] ) || empty( $destination['scheme'] ) ) {
+			return $url;
+		}
+
+		$host = $destination['host'];
+		if ( filter_var( $host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+			$host = '[' . $host . ']';
+		}
+
+		return $this->build_pinned_url( $url, $destination, $host );
+	}
+
+	/**
 	 * @param string $url
 	 * @param array  $destination
-	 * @param string $ip_host IPv4 or bracketed IPv6 literal
+	 * @param string $ip_host IPv4, bracketed IPv6, or hostname authority
 	 *
 	 * @return string
 	 */
