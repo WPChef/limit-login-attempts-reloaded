@@ -96,6 +96,22 @@ class HttpTransportCurl implements HttpTransportInterface {
 			curl_setopt( $handle, CURLOPT_HTTPHEADER, $headers );
 		}
 
+		// Capture Location without CURLOPT_HEADER (keeps body clean). Needed
+		// when HttpTransportWp delegates pinned hops into this transport and
+		// still follows redirects via HttpRedirectFollowerTrait.
+		$location = null;
+		curl_setopt(
+			$handle,
+			CURLOPT_HEADERFUNCTION,
+			function ( $ch, $line ) use ( &$location ) {
+				if ( 0 === stripos( $line, 'Location:' ) ) {
+					$location = trim( substr( $line, strlen( 'Location:' ) ) );
+				}
+
+				return strlen( $line );
+			}
+		);
+
 		$response        = curl_exec( $handle );
 		$response_status = curl_getinfo( $handle, CURLINFO_HTTP_CODE );
 		$response_error  = ( false === $response ) ? curl_error( $handle ) : null;
@@ -103,9 +119,10 @@ class HttpTransportCurl implements HttpTransportInterface {
 		curl_close( $handle );
 
 		return array(
-			'data'   => $response,
-			'status' => intval( $response_status ),
-			'error'  => $response_error,
+			'data'     => $response,
+			'status'   => intval( $response_status ),
+			'error'    => $response_error,
+			'location' => ( is_string( $location ) && '' !== $location ) ? $location : null,
 		);
 	}
 }
