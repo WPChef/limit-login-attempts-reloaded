@@ -47,7 +47,6 @@ class Ajax {
 		add_action( 'wp_ajax_onboarding_reset', array( $this, 'onboarding_reset_callback' ) );
 		add_action( 'wp_ajax_close_premium_message', array( $this, 'close_premium_message' ) );
 		add_action( 'wp_ajax_toggle_auto_update', array( $this, 'toggle_auto_update_callback' ) );
-		add_action( 'wp_ajax_activate_micro_cloud', array( $this, 'activate_micro_cloud_callback' ) );
 		add_action( 'wp_ajax_test_email_notifications', array( $this, 'test_email_notifications_callback' ) );
 		add_action( 'wp_ajax_nopriv_llar_mfa_flow_send_code', array( $this, 'mfa_flow_send_code_callback' ) );
 		add_action( 'wp_ajax_llar_mfa_flow_send_code', array( $this, 'mfa_flow_send_code_callback' ) );
@@ -164,6 +163,13 @@ class Ajax {
 			$key_result = CloudApp::activate_license_key( $setup_code );
 
 			if ( $key_result['success'] ) {
+
+				// A successful activation is the only thing that burns the
+				// return token — a failed attempt leaves the link reusable,
+				// so reloading the page retries the activation.
+				if ( ! empty( $_POST['llar_trial_token'] ) ) {
+					TrialLanding::consume_token( sanitize_text_field( wp_unslash( $_POST['llar_trial_token'] ) ) );
+				}
 
 				wp_send_json_success(
 					array(
@@ -1137,90 +1143,6 @@ class Ajax {
 		Config::update( 'notifications_message_shown', strtotime( '+1 day' ) );
 
 		wp_send_json_success();
-	}
-
-
-	public function activate_micro_cloud_callback() {
-
-		if ( ! LimitLoginAttempts::$instance->has_capability ) {
-
-			wp_send_json_error( array( 'msg' => 'Wrong country code.' ) );
-		}
-
-		check_ajax_referer( 'llar-activate-micro-cloud', 'sec' );
-		$email = sanitize_text_field( trim( $_POST['email'] ) );
-
-		if ( ! empty( $email ) && is_email( $email ) ) {
-
-			$url_api = defined( 'LLAR_MC_URL' ) ? LLAR_MC_URL : 'https://api.limitloginattempts.com/checkout/network';
-
-			$data = array(
-				'group' => 'free',
-				'email' => $email,
-			);
-
-			$response = Http::post(
-				$url_api,
-				array(
-					'data' => $data,
-				)
-			);
-
-			if ( ! empty( $response['error'] ) ) {
-
-				wp_send_json_error(
-					array(
-						'message' => is_string( $response['error'] ) ? $response['error'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
-					)
-				);
-
-			} else {
-
-				$response_body = json_decode( $response['data'], true );
-
-				if ( ! empty( $response_body['setup_code'] ) ) {
-
-					if ( $key_result = CloudApp::activate_license_key( $response_body['setup_code'] ) ) {
-
-						if ( $key_result['success'] ) {
-
-							wp_send_json_success(
-								array(
-									'msg' => ( $key_result ),
-								)
-							);
-						} else {
-
-							wp_send_json_error(
-								array(
-									'message' => ! empty( $key_result['error'] ) ? $key_result['error'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
-								)
-							);
-						}
-					} else {
-
-						wp_send_json_error(
-							array(
-								'message' => __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
-							)
-						);
-					}
-				} else {
-
-					wp_send_json_error(
-						array(
-							'message' => ! empty( $response_body['message'] ) ? $response_body['message'] : __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
-						)
-					);
-				}
-			}
-		}
-
-		wp_send_json_error(
-			array(
-				'message' => __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
-			)
-		);
 	}
 
 
