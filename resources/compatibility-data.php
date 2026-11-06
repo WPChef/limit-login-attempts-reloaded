@@ -42,7 +42,7 @@ return array(
 		'login'    => 'both',
 		'register' => '',
 		'password' => '',
-		'2fa'      => '',
+		'2fa'      => 'both',
 		'gdpr'     => '',
 		'error'    => 'both',
 	),
