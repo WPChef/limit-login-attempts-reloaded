@@ -98,6 +98,7 @@ if ( !defined( 'ABSPATH' ) ) exit();
                         return;
                     }
 
+                    $log_table_body.find('tr.empty-row').remove();
                     $log_table_body.append(response.data.html);
 
                     total_loaded += response.data.total_items;
