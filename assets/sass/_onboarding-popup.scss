@@ -71,28 +71,6 @@
               }
             }
 
-            .llar-onboarding-skip {
-              width: auto;
-              min-width: 0;
-              padding: 0;
-              margin: 0;
-              border: none !important;
-              background: transparent !important;
-              box-shadow: none !important;
-              color: $typography-additional !important;
-              font-size: 16px;
-              font-weight: 700;
-              text-decoration: none;
-              cursor: pointer;
-
-              &:hover,
-              &:focus {
-                background: transparent !important;
-                box-shadow: none !important;
-                color: $typography-secondary !important;
-                outline: none;
-              }
-            }
           }
         }
 
