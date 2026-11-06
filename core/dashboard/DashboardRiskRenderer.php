@@ -339,8 +339,6 @@ class DashboardRiskRenderer {
 			$info_has_valid_data
 		);
 
-		$url_site = is_multisite() ? network_site_url() : site_url();
-
 		// --- Login Security Checklist state (booleans; the template renders
 		// the checked/disabled attributes from them) ---
 		$lockout_notify = explode( ',', (string) Config::get( 'lockout_notify' ) );
@@ -380,7 +378,7 @@ class DashboardRiskRenderer {
 					'list_add' => '',
 					'desc'     => sprintf(
 						__( '<a class="link__style_unlink llar_turquoise" href="%s">Enable email notifications</a> to receive timely alerts and updates via email.', 'limit-login-attempts-reloaded' ),
-						'/wp-admin/admin.php?page=limit-login-attempts&tab=settings#llar_lockout_notify'
+						$this->plugin->get_options_page_uri( 'settings#llar_lockout_notify' )
 					),
 				),
 				array(
@@ -403,7 +401,7 @@ class DashboardRiskRenderer {
 					'desc'     => sprintf(
 						__( '<a class="link__style_unlink llar_turquoise" href="%s" target="_blank">Allow or Deny countries</a> to ensure only legitimate users login.', 'limit-login-attempts-reloaded' ),
 						$block_by_country
-							? $url_site . '/wp-admin/admin.php?page=limit-login-attempts&tab=logs-custom'
+							? $this->plugin->get_options_page_uri( 'logs-custom' )
 							: 'https://www.limitloginattempts.com/info.php?id=2'
 					),
 				),
