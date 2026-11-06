@@ -223,7 +223,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	/**
 	 * Allowed tabs for options page
 	 */
-	public static $allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'help' );
+	public static $allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'extensions', 'help' );
 
 	/**
 	 * Check if a role is an admin role
