@@ -3536,26 +3536,6 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   line-height: 1;
   vertical-align: middle;
 }
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-onboarding-skip {
-  width: auto;
-  min-width: 0;
-  padding: 0;
-  margin: 0;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  color: #A4A8B7 !important;
-  font-size: 16px;
-  font-weight: 700;
-  text-decoration: none;
-  cursor: pointer;
-}
-.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-onboarding-skip:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-onboarding-skip:focus {
-  background: transparent !important;
-  box-shadow: none !important;
-  color: #666D84 !important;
-  outline: none;
-}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-single {
   margin-top: 20px;
 }

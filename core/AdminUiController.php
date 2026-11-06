@@ -145,14 +145,13 @@ class AdminUiController {
 			)
 		);
 
-		if ( ! $is_cloud_app_enabled ) {
-
-			$is_local_empty_setup_code = empty( Config::get( 'app_setup_code' ) );
-
+		// Local + empty setup code used to inject a "Free Upgrade" item that
+		// only bounced to the dashboard — hide it until the trial CTA works.
+		if ( ! $is_cloud_app_enabled && ! empty( Config::get( 'app_setup_code' ) ) ) {
 			$submenu_items[] = array(
 				'id'    => 'premium',
-				'name'  => $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' ),
-				'url'   => $is_local_empty_setup_code ? '&tab=dashboard' : '&tab=premium',
+				'name'  => __( 'Premium', 'limit-login-attempts-reloaded' ),
+				'url'   => '&tab=premium',
 			);
 		}
 
@@ -199,7 +198,7 @@ class AdminUiController {
 
 			remove_submenu_page( $this->options_page_slug, $this->options_page_slug );
 
-			if ( ! $is_cloud_app_enabled && isset( $submenu[$this->options_page_slug] ) ) {
+			if ( ! $is_cloud_app_enabled && ! empty( Config::get( 'app_setup_code' ) ) && isset( $submenu[$this->options_page_slug] ) ) {
 				// Premium is the last submenu item (Dashboard, Settings, 2FA, Logs, Debug, Help, Premium).
 				$submenu_keys = array_keys( $submenu[$this->options_page_slug] );
 				$premium_key  = end( $submenu_keys );
