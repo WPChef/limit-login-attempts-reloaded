@@ -86,10 +86,11 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
             var networkMsg = ( typeof llar_vars !== 'undefined' && llar_vars.msg_network_error )
                 ? llar_vars.msg_network_error
                 : 'Network error';
+            // Prefer the localized fallback over raw jqXHR textStatus ("error").
             reject( {
                 success: false,
                 data: {
-                    msg: ( errorThrown && String( errorThrown ) ) || textStatus || networkMsg
+                    msg: networkMsg
                 }
             } );
         } );
