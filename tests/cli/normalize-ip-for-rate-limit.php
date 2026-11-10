@@ -52,5 +52,14 @@ assert_same_value(
 	is_string( $a ) && substr( $a, -3 ) === '/64'
 );
 
+// PoC-scale: 20 IIDs inside one /64 must collapse to a single rate-limit key
+// (report used ::3e8 through ::3fb).
+$keys = array();
+for ( $i = 0x3e8; $i <= 0x3fb; $i++ ) {
+	$keys[ Helpers::normalize_ip_for_rate_limit( sprintf( 'fd00:dead:beef::%x', $i ) ) ] = true;
+}
+assert_same_value( '20 rotated IIDs share one key', 1, count( $keys ) );
+assert_same_value( '20 rotated IIDs key is /64 network', 'fd00:dead:beef::', array_key_first( $keys ) );
+
 echo "OK\n";
 exit( 0 );
