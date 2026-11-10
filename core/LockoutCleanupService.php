@@ -37,13 +37,25 @@ class LockoutCleanupService {
 				if ( $lockout < $now ) {
 					unset( $lockouts[ $ip ] );
 
-					if ( is_array( $log ) && isset( $log[ $ip ] ) ) {
-						foreach ( $log[ $ip ] as $user_login => &$data ) {
-							if ( ! is_array( $data ) ) {
-								$data = array();
+					// Log rows are keyed by the raw client IP; lockout keys may
+					// be the /64 network. Mark matching raw rows unlocked.
+					if ( is_array( $log ) ) {
+						foreach ( $log as $log_ip => &$users ) {
+							if ( ! is_array( $users ) ) {
+								continue;
 							}
-							$data['unlocked'] = true;
+							if ( $log_ip !== $ip && Helpers::normalize_ip_for_rate_limit( $log_ip ) !== $ip ) {
+								continue;
+							}
+							foreach ( $users as $user_login => &$data ) {
+								if ( ! is_array( $data ) ) {
+									$data = array();
+								}
+								$data['unlocked'] = true;
+							}
+							unset( $data );
 						}
+						unset( $users );
 					}
 				}
 			}

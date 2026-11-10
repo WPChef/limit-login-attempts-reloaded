@@ -64,13 +64,16 @@ class Ajax {
 		$ip = (string) @$_POST['ip'];
 
 		$lockouts = (array) Config::get( Config::OPTION_LOCKOUTS );
-		// Clear both the posted key and its /64 rate-limit form (IPv6 subnet keys).
+		// Clear both the posted key and its rate-limit form (IPv6 subnet keys).
 		$unlock_keys = array_unique(
 			array_filter(
 				array(
 					$ip,
 					Helpers::normalize_ip_for_rate_limit( $ip ),
-				)
+				),
+				static function ( $value ) {
+					return is_string( $value ) && '' !== $value;
+				}
 			)
 		);
 		$changed = false;

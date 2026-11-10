@@ -18,4 +18,6 @@
     <exclude-pattern>*/svn/*</exclude-pattern>
     <exclude-pattern>*/assets/*</exclude-pattern>
     <exclude-pattern>*/languages/*</exclude-pattern>
+    <!-- CLI harness scripts are not plugin runtime code. -->
+    <exclude-pattern>*/tests/*</exclude-pattern>
 </ruleset>

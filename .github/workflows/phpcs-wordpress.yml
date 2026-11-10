@@ -41,7 +41,9 @@ jobs:
           # AI: Explicitly allow the installer plugin required by Composer 2.2+.
           composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
           # AI: Keep tooling local to CI and avoid changing project dependencies.
-          composer global require --no-interaction --no-progress squizlabs/php_codesniffer:^3.10 wp-coding-standards/wpcs:^3.1 dealerdirect/phpcodesniffer-composer-installer:^1.1
+          # phpcs-changed: fail only on violations introduced by the PR diff
+          # (legacy WordPress-Extra debt in touched files must not block security fixes).
+          composer global require --no-interaction --no-progress squizlabs/php_codesniffer:^3.10 wp-coding-standards/wpcs:^3.1 dealerdirect/phpcodesniffer-composer-installer:^1.1 sirbrillig/phpcs-changed:^2.11
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
           echo "$HOME/.config/composer/vendor/bin" >> "$GITHUB_PATH"
 
@@ -49,21 +51,19 @@ jobs:
         run: |
           # AI: Fail early if WordPress standards were not registered.
           phpcs -i
+          phpcs-changed --help >/dev/null
 
-      - name: Get modified PHP files
-        id: modified_files
-        # AI: Pin action to a commit SHA to reduce supply-chain drift risk.
-        uses: tj-actions/changed-files@48566bbcc22ceb7c5809ebdd27377309f2c3de8c
-        with:
-          # AI: Restrict file matching to PHP only.
-          files: "**/*.php"
-
-      - name: Run PHPCS
+      - name: Run PHPCS on changed lines
         run: |
-          # AI: Exclude deleted files to avoid PHPCS "file not found" failures.
-          modified_files="$(printf '%s\n%s\n' "${{ steps.modified_files.outputs.added_files }}" "${{ steps.modified_files.outputs.modified_files }}" | sed '/^$/d')"
-          if [ -n "$modified_files" ]; then
-            echo "$modified_files" | tr '\n' ' ' | xargs -r phpcs --standard=phpcs.xml.dist --report=full
+          # AI: Compare against the PR base (or the previous commit on push).
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base_ref="${{ github.event.pull_request.base.sha }}"
           else
-            echo "No modified PHP files in plugin to check."
+            base_ref="${{ github.event.before }}"
           fi
+          if [ -z "$base_ref" ] || [ "$base_ref" = "0000000000000000000000000000000000000000" ]; then
+            echo "No usable base ref; skipping phpcs-changed."
+            exit 0
+          fi
+          git fetch --no-tags --depth=1 origin "$base_ref" 2>/dev/null || true
+          phpcs-changed --git --git-base="$base_ref" --standard=phpcs.xml.dist --report=full
