@@ -218,18 +218,23 @@ class LoginAuthenticationHandler {
 			return '';
 		}
 
-		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
-			return preg_replace( '/\.\d+$/', '.0', $ip );
+		// Same unmapping as rate-limit keys (::ffff:/compatible → IPv4).
+		$normalized = Helpers::normalize_ip_for_rate_limit( $ip );
+
+		if ( filter_var( $normalized, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return preg_replace( '/\.\d+$/', '.0', $normalized );
 		}
 
-		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
-			$masked_ip = Helpers::ipv6_network_address( $ip, 64 );
-			if ( false !== $masked_ip ) {
-				return $masked_ip . '/64';
+		if ( filter_var( $normalized, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+			if ( '::1' === $normalized ) {
+				return '::1';
 			}
-			if ( function_exists( 'wp_hash' ) ) {
-				return wp_hash( $ip );
-			}
+			$prefix = Helpers::ipv6_rate_limit_prefix();
+			return $normalized . '/' . $prefix;
+		}
+
+		if ( function_exists( 'wp_hash' ) ) {
+			return wp_hash( $ip );
 		}
 
 		return '***';

@@ -418,6 +418,9 @@ class Helpers {
 	 * that threat model should lower the prefix (e.g. 56) via the filter.
 	 * Trade-off: clients sharing one prefix share the retry budget.
 	 *
+	 * Prefix values are clamped to 32–128. Returning 0 from the filter would
+	 * otherwise collapse every IPv6 client into the key "::".
+	 *
 	 * @param string $ip Client IP.
 	 * @return string
 	 */
@@ -466,12 +469,25 @@ class Helpers {
 			}
 		}
 
-		$prefix  = \function_exists( 'apply_filters' )
-			? (int) \apply_filters( 'llar_ipv6_rate_limit_prefix', 64 )
-			: 64;
-		$network = self::ipv6_network_address( $ip, $prefix );
+		$network = self::ipv6_network_address( $ip, self::ipv6_rate_limit_prefix() );
 
 		return false !== $network ? $network : $ip;
+	}
+
+	/**
+	 * Effective IPv6 rate-limit prefix length.
+	 *
+	 * Filter: llar_ipv6_rate_limit_prefix (default 64). Clamped to 32–128 so a
+	 * filter returning 0 cannot collapse all clients into "::".
+	 *
+	 * @return int
+	 */
+	public static function ipv6_rate_limit_prefix() {
+		$prefix = \function_exists( 'apply_filters' )
+			? (int) \apply_filters( 'llar_ipv6_rate_limit_prefix', 64 )
+			: 64;
+
+		return max( 32, min( 128, $prefix ) );
 	}
 
 	/**
