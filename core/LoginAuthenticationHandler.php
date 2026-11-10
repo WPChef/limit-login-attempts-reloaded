@@ -320,7 +320,7 @@ class LoginAuthenticationHandler {
 					}
 					remove_filter( 'login_errors', array( $this->plugin, 'fixup_error_messages' ) );
 
-				} elseif ( LimitLoginAttempts::$cloud_app && LimitLoginAttempts::$cloud_app->last_response_code === 403 ) {
+				} elseif ( LimitLoginAttempts::$cloud_app && 403 === LimitLoginAttempts::$cloud_app->last_response_code ) {
 					add_action('wp_login', array( $this->plugin, 'cloud_app_null' ), 999);
 				}
 			}
@@ -456,7 +456,7 @@ class LoginAuthenticationHandler {
 		}
 
 		// Trigger MFA flow (for selected roles). Only treat as pre-authenticated if password was verified.
-		if ( $username !== '' ) {
+		if ( '' !== $username ) {
 			$auth_user_for_mfa = ( $password_ok && is_a( $user, 'WP_User' ) ) ? $user : null;
 			$this->mfa_flow->try_mfa_flow_redirect( $username, $password_ok, $auth_user_for_mfa );
 		}

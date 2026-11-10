@@ -136,7 +136,7 @@ class LoginErrorPresenter {
 	 */
 	public function inject_mfa_return_login_error( $errors, $redirect_to ) {
 		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : '';
-		if ( $llar_mfa_error !== '' ) {
+		if ( '' !== $llar_mfa_error ) {
 			if ( ! is_wp_error( $errors ) ) {
 				$errors = new \WP_Error();
 			}
@@ -159,7 +159,7 @@ class LoginErrorPresenter {
 		$error_msg = $this->get_message();
 
 		$early_hook_msg = LoginFlowTransientStore::get( 'llar_early_hook_error_message', '' );
-		if ( $early_hook_msg !== '' && is_string( $early_hook_msg ) ) {
+		if ( '' !== $early_hook_msg && is_string( $early_hook_msg ) ) {
 			$content = $early_hook_msg;
 			LoginFlowTransientStore::merge(
 				array(
@@ -169,7 +169,7 @@ class LoginErrorPresenter {
 			);
 		} else {
 		$llar_mfa_error = isset( $_GET['llar_mfa_error'] ) ? sanitize_text_field( wp_unslash( $_GET['llar_mfa_error'] ) ) : '';
-		$show_mfa_return_error = ( $llar_mfa_error !== '' );
+		$show_mfa_return_error = ( '' !== $llar_mfa_error );
 
 		if ( $limit_login_nonempty_credentials ) {
 

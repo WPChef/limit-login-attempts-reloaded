@@ -247,10 +247,10 @@ class Helpers {
 		foreach ( $list as $range ) {
 
 			$range = array_map('trim', explode('-', $range) );
-			if ( count( $range ) == 1 ) {
+			if ( 1 == count( $range ) ) {
 
 				// CIDR
-				if( strpos( $range[0], '/' ) !== false && self::check_ip_cidr( $ip, $range[0] ) ) {
+				if( false !== strpos( $range[0], '/' ) && self::check_ip_cidr( $ip, $range[0] ) ) {
 
 					return true;
 				}
@@ -266,7 +266,7 @@ class Helpers {
 				$high = ip2long( $range[1] );
 				$needle = ip2long( $ip );
 
-				if ( $low === false || $high === false || $needle === false )
+				if ( false === $low || false === $high || false === $needle )
 					continue;
 
 				$low = (float)sprintf("%u",$low);
@@ -297,7 +297,7 @@ class Helpers {
 
 			if( isset( $_SERVER[$origin] ) && !empty( $_SERVER[$origin] ) ) {
 
-				if( strpos( $_SERVER[$origin], ',' ) !== false ) {
+				if( false !== strpos( $_SERVER[$origin], ',' ) ) {
 
 					$origin_ips = explode( ',', $_SERVER[$origin] );
 					$origin_ips = array_map( 'trim', $origin_ips );
@@ -337,7 +337,7 @@ class Helpers {
 			if( in_array( $key, array( 'SERVER_ADDR' ) ) ) continue;
 
 			// If REMOTE_ADDR contains multiple values (comma-separated), keep only the first before validation
-			if ( $key === 'REMOTE_ADDR' && strpos( $value, ',' ) !== false ) {
+			if ( 'REMOTE_ADDR' === $key && false !== strpos( $value, ',' ) ) {
 
 				$parts = explode( ',', $value );
 				$value = trim( $parts[0] );
@@ -457,7 +457,7 @@ class Helpers {
 
 		// Loopback must not collapse to "::" under a /64 mask.
 		$loopback = inet_pton( '::1' );
-		if ( false !== $loopback && $binary === $loopback ) {
+		if ( false !== $loopback && $loopback === $binary ) {
 			return '::1';
 		}
 
@@ -772,7 +772,7 @@ class Helpers {
 	 */
 	public static function obfuscate_email( $email ) {
 		$email = trim( (string) $email );
-		if ( $email === '' ) {
+		if ( '' === $email ) {
 			return '';
 		}
 		if ( ! preg_match( LLA_EMAIL_OBFUSCATE_REGEX, $email ) ) {
