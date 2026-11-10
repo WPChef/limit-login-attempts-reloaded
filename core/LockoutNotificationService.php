@@ -96,11 +96,13 @@ class LockoutNotificationService {
 			$count            = $allowed_retries * $allowed_lockouts;
 			$lockouts         = $allowed_lockouts;
 			$time             = round( Config::get( 'long_duration' ) / 3600 );
-			$when             = sprintf( _n( '%d hour', '%d hours', $time, 'limit-login-attempts-reloaded' ), $time );
+			/* translators: %d: number of hours */
+			$when = sprintf( _n( '%d hour', '%d hours', $time, 'limit-login-attempts-reloaded' ), $time );
 		} else {
 			$lockouts = (int) floor( (int) $count / $allowed_retries );
 			$time     = round( Config::get( 'lockout_duration' ) / 60 );
-			$when     = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
+			/* translators: %d: number of minutes */
+			$when = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
 		}
 
 		if ( $custom_admin_email = Config::get( 'admin_notify_email' ) ) {
