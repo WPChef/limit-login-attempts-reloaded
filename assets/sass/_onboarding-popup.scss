@@ -54,21 +54,22 @@
           }
 
           &--trial {
-            gap: 20px;
+            flex-direction: column;
+            gap: 12px;
 
             .button--fit {
               width: auto;
               min-width: 0;
-              padding: 11px 22px;
+              padding: 11px 28px;
+            }
 
-              .dashicons {
-                margin-left: 8px;
-                font-size: 18px;
-                width: 18px;
-                height: 18px;
-                line-height: 1;
-                vertical-align: middle;
-              }
+            .llar-trial-after-note {
+              max-width: 420px;
+              text-align: center;
+              font-size: 14px;
+              font-weight: 500;
+              color: $typography-additional;
+              line-height: 1.4;
             }
 
             .llar-onboarding-skip {
@@ -183,16 +184,6 @@
             }
 
             &[data-step="2"] {
-              left: 100% / 3 * 1;
-              transform: translateX(-50%);
-            }
-
-            &[data-step="3"] {
-              left: 100% / 3 * 2;
-              transform: translateX(-50%);
-            }
-
-            &[data-step="4"] {
               left: 100%;
               transform: translateX(-50%);
             }
@@ -561,5 +552,69 @@
 
   input[type="checkbox"] {
     @extend .llar_input_checkbox;
+  }
+}
+
+.llar-onboarding-toast {
+  position: fixed;
+  top: 48px;
+  left: 50%;
+  z-index: 100100;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: min(640px, calc(100vw - 32px));
+  padding: 14px 16px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 8px 28px rgba(42, 47, 64, 0.18);
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  &--hide {
+    opacity: 0;
+    transform: translate(-50%, -12px);
+  }
+
+  &__icon {
+    flex: 0 0 auto;
+    color: #1f9d55;
+    line-height: 1;
+
+    .dashicons {
+      width: 28px;
+      height: 28px;
+      font-size: 28px;
+    }
+  }
+
+  &__text {
+    flex: 1 1 auto;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: #2A2F40;
+  }
+
+  &__close {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #A4A8B7;
+    cursor: pointer;
+
+    .dashicons {
+      width: 18px;
+      height: 18px;
+      font-size: 18px;
+    }
+
+    &:hover,
+    &:focus {
+      color: #666D84;
+      outline: none;
+    }
   }
 }

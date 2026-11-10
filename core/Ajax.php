@@ -1094,6 +1094,11 @@ class Ajax {
 
 		Config::update( 'onboarding_popup_shown', true );
 
+		$outcome = isset( $_POST['outcome'] ) ? sanitize_text_field( wp_unslash( $_POST['outcome'] ) ) : '';
+		if ( in_array( $outcome, array( 'trial', 'basic' ), true ) ) {
+			Config::update( 'onboarding_complete_toast', $outcome );
+		}
+
 		wp_send_json_success();
 	}
 
@@ -1129,6 +1134,7 @@ class Ajax {
 		}
 
 		Config::update( 'onboarding_popup_shown', 0 );
+		Config::update( 'onboarding_complete_toast', '' );
 
 		wp_send_json_success();
 	}
