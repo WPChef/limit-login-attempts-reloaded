@@ -171,6 +171,9 @@ class Ajax {
 					TrialLanding::consume_token( sanitize_text_field( wp_unslash( $_POST['llar_trial_token'] ) ) );
 				}
 
+				// Mark onboarding done even if a later dismiss AJAX fails after reload.
+				Config::update( 'onboarding_popup_shown', true );
+
 				wp_send_json_success(
 					array(
 						'msg' => ( $key_result['app_config']['messages']['setup_success'] ),
@@ -1095,7 +1098,7 @@ class Ajax {
 		Config::update( 'onboarding_popup_shown', true );
 
 		$outcome = isset( $_POST['outcome'] ) ? sanitize_text_field( wp_unslash( $_POST['outcome'] ) ) : '';
-		if ( in_array( $outcome, array( 'trial', 'basic' ), true ) ) {
+		if ( in_array( $outcome, array( Config::ONBOARDING_TOAST_TRIAL, Config::ONBOARDING_TOAST_BASIC ), true ) ) {
 			Config::update( 'onboarding_complete_toast', $outcome );
 		}
 

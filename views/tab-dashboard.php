@@ -34,7 +34,6 @@ $toast_message = ! empty( $dashboard['onboarding_toast'] ) ? $dashboard['onboard
 
 <?php if ( $toast_message ) : ?>
 	<?php require LLA_PLUGIN_DIR . 'views/onboarding-complete-toast.php'; ?>
-	<?php $this->clear_onboarding_complete_toast(); ?>
 <?php endif; ?>
 
 <div id="llar-dashboard-page">

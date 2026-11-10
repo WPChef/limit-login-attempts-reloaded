@@ -499,11 +499,11 @@ class DashboardRiskRenderer {
 	 * @return string Empty when there is nothing to show.
 	 */
 	public function get_onboarding_toast_message( $outcome ) {
-		if ( 'trial' === $outcome ) {
+		if ( Config::ONBOARDING_TOAST_TRIAL === $outcome ) {
 			return __( 'You\'re All Set! Congratulations! Your free trial is now active, and your site is protected by our global threat intelligence network. You\'re ready to go!', 'limit-login-attempts-reloaded' );
 		}
 
-		if ( 'basic' === $outcome ) {
+		if ( Config::ONBOARDING_TOAST_BASIC === $outcome ) {
 			return __( 'You\'re All Set! Congratulations! You\'ve completed the setup, and your site is now protected against brute-force attacks. You\'re ready to go!', 'limit-login-attempts-reloaded' );
 		}
 

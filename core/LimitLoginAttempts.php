@@ -587,6 +587,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public function clear_onboarding_complete_toast() {
 		$this->dashboard_renderer->clear_onboarding_complete_toast();
 	}
+
 	/**
 	 * Redirect to dashboard page after installed
 	 */

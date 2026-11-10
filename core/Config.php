@@ -12,6 +12,10 @@ class Config {
 	const OPTION_LOGGED     = 'logged';
 	const OPTION_ACTIVE_APP = 'active_app';
 
+	/** One-shot dashboard toast after onboarding completion. */
+	const ONBOARDING_TOAST_TRIAL = 'trial';
+	const ONBOARDING_TOAST_BASIC = 'basic';
+
 	private static $default_options = array(
 		'gdpr'                          => 0,
 		'gdpr_message'                  => '',

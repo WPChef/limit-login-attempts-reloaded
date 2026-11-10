@@ -471,7 +471,7 @@ add_filter(
 
 			$.dialog( {
 				title: false,
-				content: <?php echo wp_json_encode( wp_kses_post( trim( $popup_complete_install_content ) ) ); ?>,
+				content: <?php echo wp_json_encode( wp_kses_post( trim( $popup_complete_install_content ) ), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ); ?>,
 				type: 'default',
 				typeAnimated: true,
 				draggable: false,

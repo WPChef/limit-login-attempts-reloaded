@@ -83,10 +83,13 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
                 reject( payload );
                 return;
             }
+            var networkMsg = ( typeof llar_vars !== 'undefined' && llar_vars.msg_network_error )
+                ? llar_vars.msg_network_error
+                : 'Network error';
             reject( {
                 success: false,
                 data: {
-                    msg: ( errorThrown && String( errorThrown ) ) || textStatus || 'Network error'
+                    msg: ( errorThrown && String( errorThrown ) ) || textStatus || networkMsg
                 }
             } );
         } );
