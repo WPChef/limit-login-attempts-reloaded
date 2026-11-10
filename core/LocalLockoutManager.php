@@ -23,16 +23,6 @@ class LocalLockoutManager {
 	private static $failed_login_recorded_in_request = false;
 
 	/**
-	 * Guard: login allowlisted in this request only. Literal submitted string
-	 * that matched the allowlist, or true when a whitelisted IP trusts the
-	 * whole request. Username and email are independent list entities: the
-	 * guard never maps one to the other.
-	 *
-	 * @var string|true|null
-	 */
-	private static $allowlisted_in_request = null;
-
-	/**
 	 * @var IpAddressResolver
 	 */
 	private $ip_resolver;
@@ -102,60 +92,6 @@ class LocalLockoutManager {
 	 */
 	public static function is_failed_login_recorded_in_request() {
 		return self::$failed_login_recorded_in_request;
-	}
-
-	/**
-	 * Reset per-request allowlist guard (persistent runtimes).
-	 *
-	 * @return void
-	 */
-	public static function reset_allowlisted_in_request() {
-		self::$allowlisted_in_request = null;
-	}
-
-	/**
-	 * Bind the request allowlist guard to the literal submitted login string.
-	 *
-	 * @param string $username Login username or email.
-	 * @return void
-	 */
-	public static function mark_allowlisted_login_in_request( $username ) {
-		self::$allowlisted_in_request = strtolower( trim( (string) $username ) );
-	}
-
-	/**
-	 * Mark the whole request as trusted by the IP allowlist.
-	 *
-	 * @return void
-	 */
-	public static function mark_allowlisted_ip_in_request() {
-		self::$allowlisted_in_request = true;
-	}
-
-	/**
-	 * Whether the current request is allowlisted for the given login string.
-	 *
-	 * Request-scoped and literal on purpose: only the exact submitted string
-	 * that matched the allowlist is muted, so an allowlisted attempt cannot
-	 * mute failed-attempt recording for any other identity in the same request
-	 * (XML-RPC system.multicall brute force). Username and email are
-	 * independent list entities — no username↔email mapping is performed.
-	 *
-	 * @param string|null $username Failed login identifier; null = any allowlisted activity.
-	 * @return bool
-	 */
-	public static function is_allowlisted_in_request( $username = null ) {
-		if ( null === self::$allowlisted_in_request ) {
-			return false;
-		}
-
-		if ( true === self::$allowlisted_in_request || null === $username ) {
-			return true;
-		}
-
-		$username = strtolower( trim( (string) $username ) );
-
-		return '' !== $username && $username === self::$allowlisted_in_request;
 	}
 
 	/**
@@ -348,12 +284,14 @@ class LocalLockoutManager {
 	 * @return void
 	 */
 	public function record_failed_login_attempt( $username ) {
-		// Allowlisted by a literal list match on the submitted login string.
-		// Request-scoped and string-bound: an allowlisted attempt mutes only
-		// its own recording, never other identities in the same request
-		// (XML-RPC system.multicall). Username and email are independent
-		// list entities — no username↔email mapping is performed.
-		if ( self::is_allowlisted_in_request( $username ) ) {
+		$ip = $this->ip_resolver->get_address();
+
+		// Allowlisted logins are never recorded: a whitelisted IP or a literal
+		// allowlist match on the submitted string. Username and email are
+		// independent list entities — no username↔email mapping is performed.
+		// The list is re-checked per attempt, so other identities in the same
+		// request (XML-RPC system.multicall) are never muted.
+		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->is_username_whitelisted( $username ) ) {
 			return;
 		}
 
@@ -395,7 +333,6 @@ class LocalLockoutManager {
 				LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 			}
 		} else {
-			$ip       = $this->ip_resolver->get_address();
 			$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 
 			if ( ! is_array( $lockouts ) ) {

@@ -327,15 +327,10 @@ class LoginAuthenticationHandler {
 						exit;
 					}
 
-				} elseif ( $this->local_lockout->is_username_whitelisted( $username ) || $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
-					// Trusted IP mutes the whole request; username allowlist binds
-					// the guard to the submitted login string.
-					if ( $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
-						LocalLockoutManager::mark_allowlisted_ip_in_request();
-					} else {
-						LocalLockoutManager::mark_allowlisted_login_in_request( $username );
-					}
-					// Do not run limit_login_failed for whitelist: no lockout, but lockout_check / retries would still run and hit the API.
+				} elseif ( $this->local_lockout->is_local_allowlisted_username( $username ) || $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
+					// Recording self-mutes for allowlisted logins in
+					// record_failed_login_attempt(); dropping wp_login_failed here
+					// just avoids a needless cloud lockout_check call.
 					remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
 					$mfa_effectively_enabled = Config::get( 'mfa_enabled' ) && ( false === get_transient( MfaConstants::TRANSIENT_MFA_DISABLED ) );
 					if ( ! $mfa_effectively_enabled ) {
@@ -425,8 +420,7 @@ class LoginAuthenticationHandler {
 
 		$ip = $this->ip_resolver->get_address();
 		if (
-			! LocalLockoutManager::is_allowlisted_in_request( $username )
-			&& ! $this->ip_resolver->is_ip_whitelisted( $ip )
+			! $this->ip_resolver->is_ip_whitelisted( $ip )
 			&& ! $this->local_lockout->is_username_whitelisted( $username )
 			&& ! $this->local_lockout->is_limit_login_ok( $username )
 		) {
@@ -456,7 +450,7 @@ class LoginAuthenticationHandler {
 			}
 		}
 		$ip       = $this->ip_resolver->get_address();
-		$not_locked_out = $this->local_lockout->check_whitelist_ips( false, $ip ) || $this->local_lockout->is_local_allowlisted_username( $username ) || $this->local_lockout->check_whitelist_usernames( false, $username ) || $this->local_lockout->is_limit_login_ok( $username );
+		$not_locked_out = $this->local_lockout->check_whitelist_ips( false, $ip ) || $this->local_lockout->is_local_allowlisted_username( $username ) || $this->local_lockout->is_limit_login_ok( $username );
 
 		if ( is_wp_error( $user ) ) {
 			return $user;
@@ -502,7 +496,6 @@ class LoginAuthenticationHandler {
 			! $cloud_acl_allowed
 			&& ! $this->local_lockout->check_whitelist_ips( false, $ip )
 			&& ! $this->local_lockout->is_local_allowlisted_username( $username )
-			&& ! $this->local_lockout->check_whitelist_usernames( false, $username )
 			&& ( $this->local_lockout->is_local_blacklisted_username( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
 		) {
 
@@ -526,20 +519,16 @@ class LoginAuthenticationHandler {
 		}
 
 		// Literal allowlist match on the submitted login string only. IP
-		// allowlist is handled by the early hook, which sets the
-		// request-scoped flag before this code runs.
-		$allowlisted_via_user = $this->local_lockout->is_local_allowlisted_username( $username )
-			|| $this->local_lockout->check_whitelist_usernames( false, $username );
+		// allowlist is handled by the early hook; recording self-mutes for
+		// allowlisted logins in record_failed_login_attempt(), dropping
+		// wp_login_failed here just avoids a needless cloud API call.
+		$allowlisted_via_user = $this->local_lockout->is_local_allowlisted_username( $username );
 
 		$is_allowlisted = $this->local_lockout->check_whitelist_ips( false, $ip )
 			|| $allowlisted_via_user;
 
 		if ( $is_allowlisted || $this->local_lockout->is_limit_login_ok( $username ) ) {
-			// Do not record failed attempts for allowlisted logins. The guard
-			// binds the literal submitted string and is request-scoped, so it
-			// can never mute recording for other identities (system.multicall).
 			if ( $allowlisted_via_user ) {
-				LocalLockoutManager::mark_allowlisted_login_in_request( $username );
 				remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
 				$this->detach_error_message_fixup();
 			}
