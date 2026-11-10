@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- legacy CamelCase filename kept for BC; autoload/includes map it explicitly.
 
 namespace LLAR\Core;
 
