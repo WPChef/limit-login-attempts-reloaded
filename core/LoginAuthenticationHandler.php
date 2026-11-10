@@ -229,8 +229,12 @@ class LoginAuthenticationHandler {
 			if ( '::1' === $normalized ) {
 				return '::1';
 			}
-			$prefix = Helpers::ipv6_rate_limit_prefix();
-			return $normalized . '/' . $prefix;
+			// Privacy: never log finer than /64, even if rate-limit prefix is larger.
+			$prefix    = min( 64, Helpers::ipv6_rate_limit_prefix() );
+			$masked_ip = Helpers::ipv6_network_address( $normalized, $prefix );
+			if ( false !== $masked_ip ) {
+				return $masked_ip . '/' . $prefix;
+			}
 		}
 
 		if ( function_exists( 'wp_hash' ) ) {
