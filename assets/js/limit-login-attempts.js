@@ -21,9 +21,13 @@ function llar_activate_license_key( $setup_code ) {
 
 function llar_is_valid_email( email ) {
 
-    // Allow empty email
-    if ( email === null || email === '' ) {
-        return true;
+    if ( email === null || typeof email === 'undefined' ) {
+        return false;
+    }
+
+    email = String( email ).trim();
+    if ( email === '' ) {
+        return false;
     }
 
     let email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -72,7 +76,20 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
             else  {
                 resolve( response );
             }
-        } ).fail( reject );
+        } ).fail( function ( jqXHR, textStatus, errorThrown ) {
+            // Keep the same shape as application rejects so callers can read response.data.msg.
+            var payload = ( jqXHR && jqXHR.responseJSON ) ? jqXHR.responseJSON : null;
+            if ( payload && typeof payload === 'object' ) {
+                reject( payload );
+                return;
+            }
+            reject( {
+                success: false,
+                data: {
+                    msg: ( errorThrown && String( errorThrown ) ) || textStatus || 'Network error'
+                }
+            } );
+        } );
     });
 }
 
@@ -183,7 +200,7 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
                } )
                .catch( function ( response ) {
                    notice_popup_error_update.content = content;
-                   notice_popup_error_update.msg = response.data.msg;
+                   notice_popup_error_update.msg = llar_micro_cloud_error_message( response );
                    notice_popup_error_update.open();
                } )
 
@@ -240,6 +257,9 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
                 .then( function () {
                     let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.location = clear_url + '?page=limit-login-attempts&tab=dashboard';
+                } )
+                .catch( function () {
+                    // Keep current page; reset is best-effort.
                 } )
 
         } )

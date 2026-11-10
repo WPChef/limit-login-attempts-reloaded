@@ -227,14 +227,22 @@ add_filter(
 			const showAjaxError = function ( message ) {
 				$.alert( {
 					title: false,
-					content: $( '<div/>' ).text( message || errors.complete_failed ).html(),
+					content: $( '<div/>' ).text( message ).html(),
 					type: 'red',
 				} );
 			};
 
-			const completeOnboarding = function ( outcome ) {
+			const unlockBodyAndCloseIcon = function ( $closeIcon ) {
+				$body.removeClass( disabled );
+				if ( $closeIcon && $closeIcon.length ) {
+					$closeIcon.removeClass( hidden );
+				}
+			};
+
+			const completeOnboarding = function ( outcome, options ) {
+				options = options || {};
 				if ( isCompleting ) {
-					return Promise.resolve();
+					return Promise.reject( new Error( 'completing' ) );
 				}
 
 				isCompleting = true;
@@ -252,10 +260,19 @@ add_filter(
 					window.location.reload();
 				} ).catch( function ( err ) {
 					isCompleting = false;
-					$body.removeClass( disabled );
-					$closeIcon.removeClass( hidden );
-					showAjaxError( errors.complete_failed );
+					if ( ! options.quiet ) {
+						unlockBodyAndCloseIcon( $closeIcon );
+						showAjaxError( errors.complete_failed );
+					}
 					return Promise.reject( err );
+				} );
+			};
+
+			const finishAfterSuccessfulActivation = function ( outcome ) {
+				return completeOnboarding( outcome, { quiet: true } ).catch( function () {
+					// License/setup already applied; leave the trial/setup pitch.
+					onboardingCompleted = true;
+					window.location.reload();
 				} );
 			};
 
@@ -334,8 +351,7 @@ add_filter(
 					$( '.llar-onboarding__body .card' ).append( $loadinfo );
 
 					const restoreTrialStepUi = function () {
-						$body.removeClass( disabled );
-						$( '.jconfirm-closeIcon' ).removeClass( hidden );
+						unlockBodyAndCloseIcon( $( '.jconfirm-closeIcon' ) );
 						$loadinfo.remove();
 						$description.removeClass( 'llar-display-none' );
 						$block_upgrade_subscribe.removeClass( 'llar-display-none' );
@@ -345,10 +361,7 @@ add_filter(
 					llar_activate_license_key( trialReturn.setup_code )
 						.then( function () {
 							scrubOnboardingReturnParams();
-							// Activation already succeeded; completion failure must not look like a license error.
-							return completeOnboarding( 'trial' ).catch( function () {
-								restoreTrialStepUi();
-							} );
+							return finishAfterSuccessfulActivation( 'trial' );
 						} )
 						.catch( function ( response ) {
 							restoreTrialStepUi();
@@ -401,11 +414,10 @@ add_filter(
 					$closeIcon.addClass( hidden );
 					llar_activate_license_key( $setup_code )
 						.then( function () {
-							return completeOnboarding( 'completed' );
+							return finishAfterSuccessfulActivation( 'basic' );
 						} )
 						.catch( function ( response ) {
-							$body.removeClass( disabled );
-							$closeIcon.removeClass( hidden );
+							unlockBodyAndCloseIcon( $closeIcon );
 							$spinner.removeClass( visibility );
 							$activate_button.removeClass( disabled );
 							if ( response && ! response.success && response.data && response.data.msg ) {
@@ -459,7 +471,7 @@ add_filter(
 
 			$.dialog( {
 				title: false,
-				content: `<?php echo wp_kses_post( trim( $popup_complete_install_content ) ); ?>`,
+				content: <?php echo wp_json_encode( wp_kses_post( trim( $popup_complete_install_content ) ) ); ?>,
 				type: 'default',
 				typeAnimated: true,
 				draggable: false,
@@ -493,18 +505,16 @@ add_filter(
 					return true;
 				},
 				onClose: function () {
-					$body.removeClass( disabled );
 					if ( ! onboardingCompleted && ! isCompleting ) {
 						llar_ajax_callback_post( ajaxurl, {
 							action: 'dismiss_onboarding_popup',
 							sec: llar_vars.nonce_dismiss_onboarding_popup
 						} ).catch( function () {
-							$body.removeClass( disabled );
-						} ).finally( function () {
-							$body.removeClass( disabled );
+							// Dismiss without toast is best-effort.
 						} );
 					}
 
+					$body.removeClass( disabled );
 					$body.css( 'overflow', '' );
 				},
 				buttons: {},

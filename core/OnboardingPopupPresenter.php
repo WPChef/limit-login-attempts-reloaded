@@ -51,7 +51,7 @@ class OnboardingPopupPresenter {
 			),
 			'steps'         => array(
 				__( 'Welcome', 'limit-login-attempts-reloaded' ),
-				__( 'Completion', 'limit-login-attempts-reloaded' ),
+				__( 'Trial', 'limit-login-attempts-reloaded' ),
 			),
 			'step1'         => array(
 				'title'             => __( 'Welcome to Limit Login Attempts Reloaded!', 'limit-login-attempts-reloaded' ),

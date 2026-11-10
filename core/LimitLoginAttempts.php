@@ -580,6 +580,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public function get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
 		return $this->dashboard_renderer->build_dashboard_tab_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
 	}
+
+	/**
+	 * Clear the one-shot onboarding toast after the dashboard has rendered it.
+	 */
+	public function clear_onboarding_complete_toast() {
+		$this->dashboard_renderer->clear_onboarding_complete_toast();
+	}
 	/**
 	 * Redirect to dashboard page after installed
 	 */

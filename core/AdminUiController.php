@@ -925,6 +925,13 @@ class AdminUiController {
 	}
 
 	/**
+	 * Clear the one-shot onboarding toast after the dashboard has rendered it.
+	 */
+	public function clear_onboarding_complete_toast() {
+		$this->plugin->clear_onboarding_complete_toast();
+	}
+
+	/**
 	 * View data for views/onboarding-popup.php.
 	 *
 	 * @return array
