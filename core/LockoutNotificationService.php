@@ -70,7 +70,6 @@ class LockoutNotificationService {
 	 */
 	public function notify_email( $user ) {
 		$raw_ip  = $this->ip_resolver->get_address();
-		$ip      = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 		$retries = Config::get( 'retries' );
 
 		if ( ! is_array( $retries ) ) {
@@ -80,22 +79,23 @@ class LockoutNotificationService {
 		$notify_email_after = (int) Config::get( 'notify_email_after' );
 		$notify_email_after = max( 1, $notify_email_after );
 
+		$count = Helpers::get_retries_count( $retries, $raw_ip );
+
 		/* check if we are at the right nr to do notification */
 		if (
-			isset( $retries[ $ip ] )
-			&& 0 != ( (int) floor( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % $notify_email_after )
+			$count > 0
+			&& 0 != ( (int) floor( (int) $count / Config::get( 'allowed_retries' ) ) % $notify_email_after )
 		) {
 			return;
 		}
 
 		/* Format message. First current lockout duration */
-		if ( ! isset( $retries[ $ip ] ) ) {
+		if ( $count <= 0 ) {
 			$count    = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
 			$lockouts = Config::get( 'allowed_lockouts' );
 			$time     = round( Config::get( 'long_duration' ) / 3600 );
 			$when     = sprintf( _n( '%d hour', '%d hours', $time, 'limit-login-attempts-reloaded' ), $time );
 		} else {
-			$count    = $retries[ $ip ];
 			$lockouts = floor( ( $count ) / Config::get( 'allowed_retries' ) );
 			$time     = round( Config::get( 'lockout_duration' ) / 60 );
 			$when     = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );

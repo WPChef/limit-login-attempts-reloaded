@@ -363,7 +363,8 @@ class LocalLockoutManager {
 			}
 			$retries_stats = RiskLevelMath::prune_retries_stats_old_buckets( $retries_stats );
 			Config::update( 'retries_stats', $retries_stats );
-			DigestRetriesController::save_failed_attempt( $ip, $username );
+			// Digest keeps the raw client IP for forensics; rate-limit tables use $ip.
+			DigestRetriesController::save_failed_attempt( $raw_ip, $username );
 
 			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ] ) {
 				$retries[ $ip ]++;
@@ -405,7 +406,7 @@ class LocalLockoutManager {
 					$lockouts[ $ip ] = time() + Config::get( 'lockout_duration' );
 				}
 
-				DigestRetriesController::save_lockout( $ip );
+				DigestRetriesController::save_lockout( $raw_ip );
 			}
 
 			$this->cleanup( $retries, $lockouts, $valid );
@@ -473,32 +474,33 @@ class LocalLockoutManager {
 	private function calculate_retries_remaining() {
 		$remaining = 0;
 
-		$ip      = $this->ip_resolver->get_rate_limit_key();
+		$raw_ip  = $this->ip_resolver->get_address();
+		$ip      = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 		$retries = Config::get( 'retries' );
 		$valid   = Config::get( 'retries_valid' );
-		$a       = $this->check_key( $retries, $ip );
-		$b       = $this->check_key( $retries, $this->get_hash( $ip ) );
-		$c       = $this->check_key( $valid, $ip );
-		$d       = $this->check_key( $valid, $this->get_hash( $ip ) );
+		$a       = max(
+			Helpers::get_retries_count( $retries, $raw_ip ),
+			$this->check_key( $retries, $this->get_hash( $ip ) ),
+			$this->check_key( $retries, $this->get_hash( $raw_ip ) )
+		);
+		$c       = max(
+			$this->check_key( $valid, $ip ),
+			$this->check_key( $valid, $raw_ip ),
+			$this->check_key( $valid, $this->get_hash( $ip ) ),
+			$this->check_key( $valid, $this->get_hash( $raw_ip ) )
+		);
 
 		if ( ! is_array( $retries ) || ! is_array( $valid ) ) {
 			return $remaining;
 		}
-		if (
-			( ! isset( $retries[ $ip ] ) && ! isset( $retries[ $this->get_hash( $ip ) ] ) )
-			|| ( ! isset( $valid[ $ip ] ) && ! isset( $valid[ $this->get_hash( $ip ) ] ) )
-			|| ( time() > $c && time() > $d )
-		) {
+		if ( $a <= 0 || $c <= time() ) {
 			return $remaining;
 		}
-		if (
-			( $a % Config::get( 'allowed_retries' ) ) == 0
-			&& ( $b % Config::get( 'allowed_retries' ) ) == 0
-		) {
+		if ( 0 === ( $a % Config::get( 'allowed_retries' ) ) ) {
 			return $remaining;
 		}
 
-		$remaining = max( ( Config::get( 'allowed_retries' ) - ( ( $a + $b ) % Config::get( 'allowed_retries' ) ) ), 0 );
+		$remaining = max( ( Config::get( 'allowed_retries' ) - ( $a % Config::get( 'allowed_retries' ) ) ), 0 );
 
 		return (int) $remaining;
 	}

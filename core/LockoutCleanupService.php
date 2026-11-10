@@ -33,33 +33,36 @@ class LockoutCleanupService {
 		$log      = Config::get( Config::OPTION_LOGGED );
 
 		if ( is_array( $lockouts ) ) {
+			$expired_keys = array();
 			foreach ( $lockouts as $ip => $lockout ) {
 				if ( $lockout < $now ) {
 					unset( $lockouts[ $ip ] );
-
-					// Log rows are keyed by the raw client IP; lockout keys may
-					// be the /64 network. Mark matching raw rows unlocked.
-					if ( is_array( $log ) ) {
-						foreach ( $log as $log_ip => &$users ) {
-							if ( ! is_array( $users ) ) {
-								continue;
-							}
-							if ( $log_ip !== $ip && Helpers::normalize_ip_for_rate_limit( $log_ip ) !== $ip ) {
-								continue;
-							}
-							foreach ( $users as $user_login => &$data ) {
-								if ( ! is_array( $data ) ) {
-									$data = array();
-								}
-								$data['unlocked'] = true;
-							}
-							unset( $data );
-						}
-						unset( $users );
-					}
+					$expired_keys[ $ip ] = true;
 				}
 			}
 			Config::update( Config::OPTION_LOCKOUTS, $lockouts );
+
+			// Log rows are keyed by the raw client IP; lockout keys may be the
+			// /64 network. One pass over the log (not O(expired × log)).
+			if ( ! empty( $expired_keys ) && is_array( $log ) ) {
+				foreach ( $log as $log_ip => &$users ) {
+					if ( ! is_array( $users ) ) {
+						continue;
+					}
+					$norm = Helpers::normalize_ip_for_rate_limit( $log_ip );
+					if ( ! isset( $expired_keys[ $log_ip ] ) && ! isset( $expired_keys[ $norm ] ) ) {
+						continue;
+					}
+					foreach ( $users as $user_login => &$data ) {
+						if ( ! is_array( $data ) ) {
+							$data = array();
+						}
+						$data['unlocked'] = true;
+					}
+					unset( $data );
+				}
+				unset( $users );
+			}
 		}
 
 		Config::update( Config::OPTION_LOGGED, $log );

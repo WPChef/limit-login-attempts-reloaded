@@ -387,7 +387,8 @@ class Helpers {
 		$masked     = substr( $binary, 0, $full_bytes );
 
 		if ( $rem_bits > 0 && $full_bytes < 16 ) {
-			$masked .= chr( ord( $binary[ $full_bytes ] ) & ( 0xFF << ( 8 - $rem_bits ) ) );
+			$mask_byte = ( 0xFF << ( 8 - $rem_bits ) ) & 0xFF;
+			$masked   .= chr( ord( $binary[ $full_bytes ] ) & $mask_byte );
 			$full_bytes++;
 		}
 
@@ -407,10 +408,14 @@ class Helpers {
 	 * the lockout. Collapse global IPv6 to the network prefix (default /64,
 	 * filterable via llar_ipv6_rate_limit_prefix) without a "/64" suffix.
 	 *
-	 * IPv4 is unchanged. IPv4-mapped IPv6 (::ffff:a.b.c.d) is unmapped to the
-	 * embedded IPv4 so dual-stack listeners do not collapse all v4 clients
-	 * into the key "::". Loopback ::1 stays ::1.
+	 * IPv4 is unchanged. IPv4-mapped (::ffff:a.b.c.d) and deprecated
+	 * IPv4-compatible (::a.b.c.d) forms are unmapped to the embedded IPv4 so
+	 * dual-stack listeners do not collapse clients into the key "::".
+	 * Loopback ::1 stays ::1.
 	 *
+	 * Default prefix is /64 (filter: llar_ipv6_rate_limit_prefix). Owners of
+	 * larger delegations (/56, /48) can still rotate /64s — sites expecting
+	 * that threat model should lower the prefix (e.g. 56) via the filter.
 	 * Trade-off: clients sharing one prefix share the retry budget.
 	 *
 	 * @param string $ip Client IP.
@@ -453,6 +458,14 @@ class Helpers {
 			return '::1';
 		}
 
+		// Deprecated IPv4-compatible IPv6 (::a.b.c.d, first 96 bits zero).
+		if ( "\0\0\0\0\0\0\0\0\0\0\0\0" === substr( $binary, 0, 12 ) ) {
+			$v4 = inet_ntop( substr( $binary, 12 ) );
+			if ( false !== $v4 && '0.0.0.0' !== $v4 ) {
+				return $v4;
+			}
+		}
+
 		$prefix  = \function_exists( 'apply_filters' )
 			? (int) \apply_filters( 'llar_ipv6_rate_limit_prefix', 64 )
 			: 64;
@@ -476,6 +489,26 @@ class Helpers {
 		$key = self::normalize_ip_for_rate_limit( $raw_ip );
 		$a   = isset( $lockouts[ $key ] ) ? (int) $lockouts[ $key ] : 0;
 		$b   = ( $key !== $raw_ip && isset( $lockouts[ $raw_ip ] ) ) ? (int) $lockouts[ $raw_ip ] : 0;
+
+		return max( $a, $b );
+	}
+
+	/**
+	 * Retries counter for an IP, honouring both the rate-limit key and a legacy
+	 * full-address key (pre-normalization installs).
+	 *
+	 * @param array  $retries Retries option map.
+	 * @param string $raw_ip  Client IP as observed.
+	 * @return int
+	 */
+	public static function get_retries_count( $retries, $raw_ip ) {
+		if ( ! is_array( $retries ) ) {
+			return 0;
+		}
+
+		$key = self::normalize_ip_for_rate_limit( $raw_ip );
+		$a   = isset( $retries[ $key ] ) ? (int) $retries[ $key ] : 0;
+		$b   = ( $key !== $raw_ip && isset( $retries[ $raw_ip ] ) ) ? (int) $retries[ $raw_ip ] : 0;
 
 		return max( $a, $b );
 	}

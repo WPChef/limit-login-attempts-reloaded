@@ -238,7 +238,7 @@ $url_try_for_free = 'https://www.limitloginattempts.com/upgrade/?from=plugin-';
                             <td>
                                 <?php
                                 // Log rows keep the raw IP; lockouts may be keyed by /64.
-                                $lockout_until = \LLAR\Core\Helpers::get_active_lockout_until( $lockouts, $user_info['ip'] );
+                                $lockout_until = Helpers::get_active_lockout_until( $lockouts, $user_info['ip'] );
                                 if ( $lockout_until > time() ) :
                                     ?>
                                     <a href="#" class="button limit-login-unlock" data-ip="<?php esc_attr_e( $user_info['ip'] )?>"
