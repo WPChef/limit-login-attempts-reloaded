@@ -360,8 +360,9 @@ class AdminUiController {
 	/**
 	 * Get the correct options page URI
 	 *
-	 * @param bool $tab
-	 * @return mixed
+	 * @param string|bool $tab Optional tab slug; may carry a "#fragment" suffix
+	 *                         that is appended unencoded.
+	 * @return string
 	 */
 	public function get_options_page_uri( $tab = false )
 	{
@@ -375,7 +376,21 @@ class AdminUiController {
 		}
 
 		if ( ! empty( $tab ) ) {
-			$uri = add_query_arg( 'tab', $tab, $uri );
+			$fragment = '';
+			$parts    = explode( '#', $tab, 2 );
+
+			if ( isset( $parts[1] ) ) {
+				$tab      = $parts[0];
+				$fragment = $parts[1];
+			}
+
+			if ( '' !== $tab ) {
+				$uri = add_query_arg( 'tab', $tab, $uri );
+			}
+
+			if ( '' !== $fragment ) {
+				$uri .= '#' . $fragment;
+			}
 		}
 
 		return $uri;
