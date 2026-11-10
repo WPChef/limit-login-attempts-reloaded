@@ -364,6 +364,45 @@ class Helpers {
 			filter_var( preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ip ), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 );
 	}
 
+	/**
+	 * Normalize an IP for local retries / lockout table keys.
+	 *
+	 * IPv6 end sites are typically allocated a /64. Keying retries on the full
+	 * address lets an attacker rotate interface IDs inside one /64 and bypass
+	 * the lockout. Collapse IPv6 to the /64 network address (same binary mask
+	 * as login log masking) without appending a "/64" suffix. IPv4 is unchanged.
+	 *
+	 * @param string $ip Client IP.
+	 * @return string
+	 */
+	public static function normalize_ip_for_rate_limit( $ip ) {
+		$ip = is_string( $ip ) ? trim( $ip ) : '';
+		if ( '' === $ip ) {
+			return '';
+		}
+
+		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return $ip;
+		}
+
+		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+			if ( function_exists( 'inet_pton' ) && function_exists( 'inet_ntop' ) ) {
+				$binary = inet_pton( $ip );
+				if ( false !== $binary && 16 === strlen( $binary ) ) {
+					$masked = substr( $binary, 0, 8 ) . str_repeat( "\0", 8 );
+					$network = inet_ntop( $masked );
+					if ( false !== $network ) {
+						return $network;
+					}
+				}
+			}
+
+			return $ip;
+		}
+
+		return $ip;
+	}
+
 	public static function detect_gateway() {
 
 		$gateway = 'wp_login';
