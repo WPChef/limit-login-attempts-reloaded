@@ -414,7 +414,6 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
 
 		add_action( 'admin_notices', array( $this, 'render_leave_review_admin_notice' ) );
-		add_action( 'admin_notices', array( $this, 'render_leave_review_admin_notice' ) );
 		add_action( 'admin_init', array( $this, 'consume_review_notice_cookie' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_leave_review_notice_script' ) );
 		add_action( 'admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
