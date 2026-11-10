@@ -23,11 +23,12 @@ class LocalLockoutManager {
 	private static $failed_login_recorded_in_request = false;
 
 	/**
-	 * Guard: login allowlisted in this request only. Identity-bound: int user
-	 * ID, string login (user not resolved yet), or true for a whitelisted IP
-	 * (whole request is trusted).
+	 * Guard: login allowlisted in this request only. Literal submitted string
+	 * that matched the allowlist, or true when a whitelisted IP trusts the
+	 * whole request. Username and email are independent list entities: the
+	 * guard never maps one to the other.
 	 *
-	 * @var int|string|true|null
+	 * @var string|true|null
 	 */
 	private static $allowlisted_in_request = null;
 
@@ -113,36 +114,13 @@ class LocalLockoutManager {
 	}
 
 	/**
-	 * Bind the request allowlist guard to a resolved user.
-	 *
-	 * @param int $user_id User ID.
-	 * @return void
-	 */
-	public static function mark_allowlisted_user_in_request( $user_id ) {
-		self::$allowlisted_in_request = (int) $user_id;
-	}
-
-	/**
-	 * Bind the request allowlist guard to a login string (user not resolved yet).
-	 *
-	 * An allowlisted literal email is canonicalized to the account user_login
-	 * when a user exists: later recordings in the same request carry the
-	 * identity as it was submitted (which may be the same email), and the
-	 * guard compares canonically — a raw email bound to user_login would never
-	 * match and the allowlisted user's own attempt would be recorded.
+	 * Bind the request allowlist guard to the literal submitted login string.
 	 *
 	 * @param string $username Login username or email.
 	 * @return void
 	 */
 	public static function mark_allowlisted_login_in_request( $username ) {
-		$canonical = trim( (string) $username );
-		if ( '' !== $canonical && is_email( $canonical ) ) {
-			$user = get_user_by( 'email', $canonical );
-			if ( $user instanceof \WP_User && '' !== $user->user_login ) {
-				$canonical = $user->user_login;
-			}
-		}
-		self::$allowlisted_in_request = $canonical;
+		self::$allowlisted_in_request = strtolower( trim( (string) $username ) );
 	}
 
 	/**
@@ -155,11 +133,13 @@ class LocalLockoutManager {
 	}
 
 	/**
-	 * Whether the current request is allowlisted.
+	 * Whether the current request is allowlisted for the given login string.
 	 *
-	 * Request-scoped and identity-bound on purpose: an allowlisted attempt for
-	 * user A (even with a wrong password) must not mute failed-attempt recording
-	 * for user B in the same request (XML-RPC system.multicall brute force).
+	 * Request-scoped and literal on purpose: only the exact submitted string
+	 * that matched the allowlist is muted, so an allowlisted attempt cannot
+	 * mute failed-attempt recording for any other identity in the same request
+	 * (XML-RPC system.multicall brute force). Username and email are
+	 * independent list entities — no username↔email mapping is performed.
 	 *
 	 * @param string|null $username Failed login identifier; null = any allowlisted activity.
 	 * @return bool
@@ -173,40 +153,9 @@ class LocalLockoutManager {
 			return true;
 		}
 
-		$username = trim( (string) $username );
-		if ( '' === $username ) {
-			return false;
-		}
+		$username = strtolower( trim( (string) $username ) );
 
-		$user = self::resolve_user_by_login( $username );
-
-		if ( is_int( self::$allowlisted_in_request ) ) {
-			return ( $user && (int) $user->ID === self::$allowlisted_in_request );
-		}
-
-		// Guard bound to a login string: match canonically when the identifier
-		// resolves, otherwise compare the raw submitted value.
-		$bound = strtolower( (string) self::$allowlisted_in_request );
-		if ( $user ) {
-			return strtolower( (string) $user->user_login ) === $bound;
-		}
-
-		return strtolower( $username ) === $bound;
-	}
-
-	/**
-	 * Resolve a submitted login identifier (username or email) to a user.
-	 *
-	 * @param string $username Login username or email.
-	 * @return \WP_User|null
-	 */
-	private static function resolve_user_by_login( $username ) {
-		$user = get_user_by( 'login', $username );
-		if ( ! $user instanceof \WP_User ) {
-			$user = get_user_by( 'email', $username );
-		}
-
-		return ( $user instanceof \WP_User ) ? $user : null;
+		return '' !== $username && $username === self::$allowlisted_in_request;
 	}
 
 	/**
@@ -359,10 +308,10 @@ class LocalLockoutManager {
 	}
 
 	/**
-	 * Check submitted identifier (username or email) against the local allowlist.
+	 * Check submitted identifier against the local allowlist (literal match only).
 	 *
-	 * @param string   $username Submitted login value.
-	 * @param \WP_User $user     Optional authenticated user object.
+	 * @param string        $username Submitted login value.
+	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
 	 * @return bool
 	 */
 	public function is_local_allowlisted_username( $username, $user = null ) {
@@ -399,10 +348,11 @@ class LocalLockoutManager {
 	 * @return void
 	 */
 	public function record_failed_login_attempt( $username ) {
-		// Allowlisted via early string match or late $user->user_login (email
-		// login). Request-scoped AND bound to the allowlisted identity: an
-		// allowlisted attempt must not mute failed-attempt recording for other
-		// users in the same request (XML-RPC system.multicall brute force).
+		// Allowlisted by a literal list match on the submitted login string.
+		// Request-scoped and string-bound: an allowlisted attempt mutes only
+		// its own recording, never other identities in the same request
+		// (XML-RPC system.multicall). Username and email are independent
+		// list entities — no username↔email mapping is performed.
 		if ( self::is_allowlisted_in_request( $username ) ) {
 			return;
 		}

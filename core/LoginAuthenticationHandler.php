@@ -456,8 +456,7 @@ class LoginAuthenticationHandler {
 			}
 		}
 		$ip       = $this->ip_resolver->get_address();
-		$user_login = is_a( $user, 'WP_User' ) ? $user->user_login : ( ( ! empty( $user ) && ! is_wp_error( $user ) ) ? $user : '' );
-		$not_locked_out = $this->local_lockout->check_whitelist_ips( false, $ip ) || $this->local_lockout->is_local_allowlisted_username( $username, $user ) || $this->local_lockout->check_whitelist_usernames( false, $user_login ) || $this->local_lockout->is_limit_login_ok( $username );
+		$not_locked_out = $this->local_lockout->check_whitelist_ips( false, $ip ) || $this->local_lockout->is_local_allowlisted_username( $username ) || $this->local_lockout->check_whitelist_usernames( false, $username ) || $this->local_lockout->is_limit_login_ok( $username );
 
 		if ( is_wp_error( $user ) ) {
 			return $user;
@@ -485,16 +484,6 @@ class LoginAuthenticationHandler {
 			$this->mfa_flow->try_mfa_flow_redirect( $username, $password_ok, $auth_user_for_mfa );
 		}
 
-		$user_login = '';
-
-		if ( is_a( $user, 'WP_User' ) ) {
-
-			$user_login = $user->user_login;
-		} elseif( ! empty( $user ) && !is_wp_error( $user ) ) {
-
-			$user_login = $user;
-		}
-
 		// In cloud mode the local deny list is failover only: when the cloud ACL
 		// answered with a non-deny result, the late hook must not enforce it
 		// (mirrors the early hook in check_login_blocked()).
@@ -507,14 +496,14 @@ class LoginAuthenticationHandler {
 		}
 
 		// Enforce the deny list BEFORE the not-locked-out early return.
-		// Allowlist always wins: skip the denylist for allowlisted users/IPs,
+		// Allowlist always wins: skip the denylist for allowlisted logins/IPs,
 		// mirroring the early authenticate hook logic.
 		if (
 			! $cloud_acl_allowed
 			&& ! $this->local_lockout->check_whitelist_ips( false, $ip )
-			&& ! $this->local_lockout->is_local_allowlisted_username( $username, $user )
-			&& ! $this->local_lockout->check_whitelist_usernames( false, $user_login )
-			&& ( $this->local_lockout->is_local_blacklisted_username( $username, $user ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
+			&& ! $this->local_lockout->is_local_allowlisted_username( $username )
+			&& ! $this->local_lockout->check_whitelist_usernames( false, $username )
+			&& ( $this->local_lockout->is_local_blacklisted_username( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
 		) {
 
 			$error = new WP_Error();
@@ -536,26 +525,21 @@ class LoginAuthenticationHandler {
 			return $error;
 		}
 
-		// Username/email allowlist only. IP allowlist is handled by the early
-		// hook, which sets the request-scoped flag before this code runs.
-		$allowlisted_via_user = $this->local_lockout->is_local_allowlisted_username( $username, $user )
-			|| $this->local_lockout->check_whitelist_usernames( false, $user_login );
+		// Literal allowlist match on the submitted login string only. IP
+		// allowlist is handled by the early hook, which sets the
+		// request-scoped flag before this code runs.
+		$allowlisted_via_user = $this->local_lockout->is_local_allowlisted_username( $username )
+			|| $this->local_lockout->check_whitelist_usernames( false, $username );
 
 		$is_allowlisted = $this->local_lockout->check_whitelist_ips( false, $ip )
 			|| $allowlisted_via_user;
 
 		if ( $is_allowlisted || $this->local_lockout->is_limit_login_ok( $username ) ) {
-			// Mirror the early authenticate allowlist path: do not record failed
-			// attempts for allowlisted users who log in via account email (no
-			// get_user_by in the early hook). The guard is request-scoped and
-			// bound to the allowlisted identity so it cannot mute recording for
-			// other users later in the same request (system.multicall).
+			// Do not record failed attempts for allowlisted logins. The guard
+			// binds the literal submitted string and is request-scoped, so it
+			// can never mute recording for other identities (system.multicall).
 			if ( $allowlisted_via_user ) {
-				if ( is_a( $user, 'WP_User' ) && ! empty( $user->ID ) ) {
-					LocalLockoutManager::mark_allowlisted_user_in_request( $user->ID );
-				} else {
-					LocalLockoutManager::mark_allowlisted_login_in_request( '' !== $user_login ? $user_login : $username );
-				}
+				LocalLockoutManager::mark_allowlisted_login_in_request( $username );
 				remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
 				$this->detach_error_message_fixup();
 			}
