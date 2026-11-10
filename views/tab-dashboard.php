@@ -29,15 +29,7 @@ if ( $dashboard['show_onboarding'] ) {
     require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php');
 }
 
-$onboarding_toast_outcome = \LLAR\Core\Config::get( 'onboarding_complete_toast' );
-$toast_message            = '';
-if ( 'trial' === $onboarding_toast_outcome ) {
-	$toast_message = __( 'You\'re All Set! Congratulations! Your free trial is now active, and your site is protected by our global threat intelligence network. You\'re ready to go!', 'limit-login-attempts-reloaded' );
-	\LLAR\Core\Config::update( 'onboarding_complete_toast', '' );
-} elseif ( 'basic' === $onboarding_toast_outcome ) {
-	$toast_message = __( 'You\'re All Set! Congratulations! You\'ve completed the setup, and your site is now protected against brute-force attacks. You\'re ready to go!', 'limit-login-attempts-reloaded' );
-	\LLAR\Core\Config::update( 'onboarding_complete_toast', '' );
-}
+$toast_message = ! empty( $dashboard['onboarding_toast'] ) ? $dashboard['onboarding_toast'] : '';
 ?>
 
 <?php if ( $toast_message ) : ?>

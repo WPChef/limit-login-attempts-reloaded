@@ -435,10 +435,21 @@ class DashboardRiskRenderer {
 			),
 		);
 
+		$toast_outcome = Config::get( 'onboarding_complete_toast' );
+		$toast_message = '';
+		if ( 'trial' === $toast_outcome ) {
+			$toast_message = __( 'You\'re All Set! Congratulations! Your free trial is now active, and your site is protected by our global threat intelligence network. You\'re ready to go!', 'limit-login-attempts-reloaded' );
+			Config::update( 'onboarding_complete_toast', '' );
+		} elseif ( in_array( $toast_outcome, array( 'basic', 'completed' ), true ) ) {
+			$toast_message = __( 'You\'re All Set! Congratulations! You\'ve completed the setup, and your site is now protected against brute-force attacks. You\'re ready to go!', 'limit-login-attempts-reloaded' );
+			Config::update( 'onboarding_complete_toast', '' );
+		}
+
 		return array(
 			'api_stats'            => $api_stats,
 			'upgrade_premium_url'  => $upgrade_premium_url,
 			'show_onboarding'      => ! $is_active_app_custom && empty( $setup_code ),
+			'onboarding_toast'     => $toast_message,
 			'chart_circle_data'    => $chart_circle_data,
 			'show_trial_block'           => ! $is_active_app_custom && empty( $setup_code ),
 			'show_premium_disabled_block' => ! $is_active_app_custom && ! empty( $setup_code ),

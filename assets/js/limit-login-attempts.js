@@ -72,7 +72,7 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
             else  {
                 resolve( response );
             }
-        });
+        } ).fail( reject );
     });
 }
 

@@ -94,9 +94,9 @@ class OnboardingPopupPresenter {
 					'</a>'
 				),
 			),
-			'toast'         => array(
-				'trial' => __( 'You\'re All Set! Congratulations! Your free trial is now active, and your site is protected by our global threat intelligence network. You\'re ready to go!', 'limit-login-attempts-reloaded' ),
-				'basic' => __( 'You\'re All Set! Congratulations! You\'ve completed the setup, and your site is now protected against brute-force attacks. You\'re ready to go!', 'limit-login-attempts-reloaded' ),
+			'errors'        => array(
+				'complete_failed'  => __( 'Could not finish onboarding. Please try again.', 'limit-login-attempts-reloaded' ),
+				'subscribe_failed' => __( 'Could not save notification settings. Please try again.', 'limit-login-attempts-reloaded' ),
 			),
 		);
 	}
