@@ -488,7 +488,7 @@ class LocalLockoutManager {
 			return 0;
 		}
 
-		$attempts = Helpers::get_effective_retries_count( $retries, $raw_ip );
+		$attempts    = Helpers::get_effective_retries_count( $retries, $raw_ip );
 		$valid_until = max(
 			$this->check_key( $valid, $ip ),
 			$this->check_key( $valid, $raw_ip ),

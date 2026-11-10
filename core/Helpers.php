@@ -381,7 +381,7 @@ class Helpers {
 			return false;
 		}
 
-		$prefix = max( 0, min( 128, (int) $prefix ) );
+		$prefix     = max( 0, min( 128, (int) $prefix ) );
 		$full_bytes = (int) floor( $prefix / 8 );
 		$rem_bits   = $prefix % 8;
 		$masked     = substr( $binary, 0, $full_bytes );
@@ -389,7 +389,7 @@ class Helpers {
 		if ( $rem_bits > 0 && $full_bytes < 16 ) {
 			$mask_byte = ( 0xFF << ( 8 - $rem_bits ) ) & 0xFF;
 			$masked   .= chr( ord( $binary[ $full_bytes ] ) & $mask_byte );
-			$full_bytes++;
+			++$full_bytes;
 		}
 
 		if ( $full_bytes < 16 ) {
@@ -470,6 +470,7 @@ class Helpers {
 			? (int) \apply_filters( 'llar_ipv6_rate_limit_prefix', 64 )
 			: 64;
 		$network = self::ipv6_network_address( $ip, $prefix );
+
 		return false !== $network ? $network : $ip;
 	}
 

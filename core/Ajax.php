@@ -76,7 +76,7 @@ class Ajax {
 				}
 			)
 		);
-		$changed = false;
+		$changed     = false;
 		foreach ( $unlock_keys as $key ) {
 			if ( isset( $lockouts[ $key ] ) ) {
 				unset( $lockouts[ $key ] );

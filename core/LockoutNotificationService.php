@@ -84,7 +84,7 @@ class LockoutNotificationService {
 		/* check if we are at the right nr to do notification */
 		if (
 			$count > 0
-			&& 0 != ( (int) floor( (int) $count / Config::get( 'allowed_retries' ) ) % $notify_email_after )
+			&& 0 !== ( (int) floor( (int) $count / Config::get( 'allowed_retries' ) ) % $notify_email_after )
 		) {
 			return;
 		}
