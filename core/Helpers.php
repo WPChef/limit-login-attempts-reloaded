@@ -513,6 +513,59 @@ class Helpers {
 		return max( $a, $b );
 	}
 
+	/**
+	 * Effective attempt count for remaining-retries display.
+	 *
+	 * Takes max across the rate-limit key, legacy raw IP, and md5-hashed forms
+	 * of both. Intentionally max — not the legacy ($plain + $hashed) sum, which
+	 * double-counted when the same logical counter existed under both keys.
+	 *
+	 * @param array  $retries Retries option map.
+	 * @param string $raw_ip  Client IP as observed.
+	 * @return int
+	 */
+	public static function get_effective_retries_count( $retries, $raw_ip ) {
+		if ( ! is_array( $retries ) ) {
+			return 0;
+		}
+
+		$key = self::normalize_ip_for_rate_limit( $raw_ip );
+
+		return (int) max(
+			self::get_retries_count( $retries, $raw_ip ),
+			isset( $retries[ md5( $key ) ] ) ? (int) $retries[ md5( $key ) ] : 0,
+			isset( $retries[ md5( $raw_ip ) ] ) ? (int) $retries[ md5( $raw_ip ) ] : 0
+		);
+	}
+
+	/**
+	 * Attempts left in the current allowed_retries window.
+	 *
+	 * Hashed retries participate only via the effective attempt count (max),
+	 * not as a separate addend in the remainder arithmetic.
+	 *
+	 * @param int $attempt_count   Effective failed attempts (see get_effective_retries_count).
+	 * @param int $valid_until     Unix expiry of the retries window.
+	 * @param int $allowed_retries Configured attempts per window.
+	 * @param int $now             Optional clock override for tests.
+	 * @return int
+	 */
+	public static function retries_remaining( $attempt_count, $valid_until, $allowed_retries, $now = null ) {
+		$attempt_count   = (int) $attempt_count;
+		$valid_until     = (int) $valid_until;
+		$allowed_retries = (int) $allowed_retries;
+		$now             = null === $now ? time() : (int) $now;
+
+		if ( $attempt_count <= 0 || $allowed_retries <= 0 || $valid_until <= $now ) {
+			return 0;
+		}
+		if ( 0 === ( $attempt_count % $allowed_retries ) ) {
+			return 0;
+		}
+
+		return (int) max( $allowed_retries - ( $attempt_count % $allowed_retries ), 0 );
+	}
+
 	public static function detect_gateway() {
 
 		$gateway = 'wp_login';

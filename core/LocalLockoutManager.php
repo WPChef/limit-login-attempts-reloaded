@@ -469,40 +469,38 @@ class LocalLockoutManager {
 	}
 
 	/**
+	 * Attempts left in the current window for UI / email copy.
+	 *
+	 * Effective count is max(plain legacy, plain /64, hashed legacy, hashed /64).
+	 * Deliberately not the pre-IPv6 ($plain + $hashed) sum — that double-counted
+	 * when both keys held the same logical counter. Hashed entries still count
+	 * when they are the only source of the attempt total.
+	 *
 	 * @return int
 	 */
 	private function calculate_retries_remaining() {
-		$remaining = 0;
-
 		$raw_ip  = $this->ip_resolver->get_address();
 		$ip      = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 		$retries = Config::get( 'retries' );
 		$valid   = Config::get( 'retries_valid' );
-		$a       = max(
-			Helpers::get_retries_count( $retries, $raw_ip ),
-			$this->check_key( $retries, $this->get_hash( $ip ) ),
-			$this->check_key( $retries, $this->get_hash( $raw_ip ) )
-		);
-		$c       = max(
+
+		if ( ! is_array( $retries ) || ! is_array( $valid ) ) {
+			return 0;
+		}
+
+		$attempts = Helpers::get_effective_retries_count( $retries, $raw_ip );
+		$valid_until = max(
 			$this->check_key( $valid, $ip ),
 			$this->check_key( $valid, $raw_ip ),
 			$this->check_key( $valid, $this->get_hash( $ip ) ),
 			$this->check_key( $valid, $this->get_hash( $raw_ip ) )
 		);
 
-		if ( ! is_array( $retries ) || ! is_array( $valid ) ) {
-			return $remaining;
-		}
-		if ( $a <= 0 || $c <= time() ) {
-			return $remaining;
-		}
-		if ( 0 === ( $a % Config::get( 'allowed_retries' ) ) ) {
-			return $remaining;
-		}
-
-		$remaining = max( ( Config::get( 'allowed_retries' ) - ( $a % Config::get( 'allowed_retries' ) ) ), 0 );
-
-		return (int) $remaining;
+		return Helpers::retries_remaining(
+			$attempts,
+			$valid_until,
+			(int) Config::get( 'allowed_retries' )
+		);
 	}
 
 	/**
