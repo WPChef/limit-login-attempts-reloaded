@@ -1,9 +1,13 @@
-function llar_activate_license_key( $setup_code ) {
+function llar_activate_license_key( $setup_code, extra ) {
 
     let data = {
         action: 'app_setup',
         code:   $setup_code,
         sec: llar_vars.nonce_app_setup,
+    }
+
+    if ( extra && typeof extra === 'object' ) {
+        Object.assign( data, extra );
     }
 
     // The return token rides along so the server can burn it after a

@@ -167,12 +167,25 @@ class Ajax {
 				// A successful activation is the only thing that burns the
 				// return token — a failed attempt leaves the link reusable,
 				// so reloading the page retries the activation.
+				$onboarding_outcome = '';
 				if ( ! empty( $_POST['llar_trial_token'] ) ) {
-					TrialLanding::consume_token( sanitize_text_field( wp_unslash( $_POST['llar_trial_token'] ) ) );
+					$token      = sanitize_text_field( wp_unslash( $_POST['llar_trial_token'] ) );
+					$token_data = TrialLanding::verify_token( $token );
+					TrialLanding::consume_token( $token );
+
+					if ( ! empty( $token_data['context'] ) && 'onboarding' === $token_data['context'] ) {
+						$onboarding_outcome = Config::ONBOARDING_TOAST_TRIAL;
+					}
+				} elseif ( isset( $_POST['llar_onboarding_context'] ) && 'welcome' === sanitize_text_field( wp_unslash( $_POST['llar_onboarding_context'] ) ) ) {
+					$onboarding_outcome = Config::ONBOARDING_TOAST_BASIC;
 				}
 
-				// Mark onboarding done even if a later dismiss AJAX fails after reload.
+				// Persist completion state here so a failed dismiss request
+				// after reload can not lose the dashboard toast.
 				Config::update( 'onboarding_popup_shown', true );
+				if ( '' !== $onboarding_outcome ) {
+					Config::update( 'onboarding_complete_toast', $onboarding_outcome );
+				}
 
 				wp_send_json_success(
 					array(

@@ -194,7 +194,9 @@
 					} )
 					.catch( function ( response ) {
 						restoreTrialStepUi();
-						scrubOnboardingReturnParams();
+						// Keep setup_code/llar_trial_token in the URL: the
+						// server only burns the token on success, so a page
+						// reload must be able to retry the activation.
 						$.alert( {
 							title: false,
 							content: $( '<div/>' ).text( llar_micro_cloud_error_message( response ) ).html(),
@@ -241,7 +243,7 @@
 				$spinner.addClass( visibility );
 				$body.addClass( disabled );
 				$closeIcon.addClass( hidden );
-				llar_activate_license_key( $setup_code )
+				llar_activate_license_key( $setup_code, { llar_onboarding_context: 'welcome' } )
 					.then( function () {
 						return finishAfterSuccessfulActivation( 'basic' );
 					} )
