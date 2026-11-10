@@ -91,7 +91,7 @@ class MfaFlowLoginHandler {
 		}
 		$ip = $this->ip_resolver->get_address();
 
-		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->local_lockout->is_local_allowlisted_username( $username, $authenticated_user ) ) {
+		if ( $this->local_lockout->is_login_allowlisted( $username ) ) {
 			return;
 		}
 

@@ -97,14 +97,11 @@ class LoginAuthenticationHandler {
 		}
 
 		$ip = $this->ip_resolver->get_address();
-		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->local_lockout->is_local_allowlisted_username( $username ) ) {
+		if ( $this->local_lockout->is_login_allowlisted( $username ) ) {
 			return false;
 		}
 
-		if (
-			( ! $this->local_lockout->is_username_whitelisted( $username ) && ! $this->ip_resolver->is_ip_whitelisted( $ip ) )
-			&& ( $this->local_lockout->is_local_blacklisted_username( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
-		) {
+		if ( $this->local_lockout->is_local_blacklisted_username( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) ) {
 			$error_message = $this->error_presenter->build_lockout_error_message();
 				$this->log_security_event( 'local_blacklist_block', $username, $ip );
 			LoginFlowTransientStore::ensure_token();
@@ -142,17 +139,11 @@ class LoginAuthenticationHandler {
 	}
 
 	/**
-	 * Detach the fixup_error_messages() filter for the rest of this request.
+	 * Detach fixup_error_messages() for the rest of the request.
 	 *
-	 * fixup_error_messages() (hooked on login_errors) replaces the rendered
-	 * error with the generic "Incorrect username or password" message and
-	 * overrides whatever an LLAR error handler already produced. Whenever LLAR
-	 * returns a definitive verdict — denylist block, allowlist pass-through or
-	 * recorded lockout — the filter must be removed so the specific message
-	 * survives rendering. Call sites are one-liners at every such verdict;
-	 * the policy lives here only.
-	 *
-	 * remove_filter() is idempotent: calling it redundantly is harmless.
+	 * It (hooked on login_errors) masks whatever LLAR already produced, so every
+	 * definitive verdict — denylist block, allowlist pass, recorded lockout —
+	 * detaches it. remove_filter() is idempotent.
 	 *
 	 * @return void
 	 */
@@ -327,7 +318,7 @@ class LoginAuthenticationHandler {
 						exit;
 					}
 
-				} elseif ( $this->local_lockout->is_local_allowlisted_username( $username ) || $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
+				} elseif ( $this->local_lockout->is_login_allowlisted( $username ) ) {
 					// Recording self-mutes for allowlisted logins in
 					// record_failed_login_attempt(); dropping wp_login_failed here
 					// just avoids a needless cloud lockout_check call.
@@ -450,7 +441,7 @@ class LoginAuthenticationHandler {
 			}
 		}
 		$ip       = $this->ip_resolver->get_address();
-		$not_locked_out = $this->local_lockout->check_whitelist_ips( false, $ip ) || $this->local_lockout->is_local_allowlisted_username( $username ) || $this->local_lockout->is_limit_login_ok( $username );
+		$not_locked_out = $this->local_lockout->is_login_allowlisted( $username ) || $this->local_lockout->is_limit_login_ok( $username );
 
 		if ( is_wp_error( $user ) ) {
 			return $user;
@@ -494,8 +485,7 @@ class LoginAuthenticationHandler {
 		// mirroring the early authenticate hook logic.
 		if (
 			! $cloud_acl_allowed
-			&& ! $this->local_lockout->check_whitelist_ips( false, $ip )
-			&& ! $this->local_lockout->is_local_allowlisted_username( $username )
+			&& ! $this->local_lockout->is_login_allowlisted( $username )
 			&& ( $this->local_lockout->is_local_blacklisted_username( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
 		) {
 
@@ -518,34 +508,17 @@ class LoginAuthenticationHandler {
 			return $error;
 		}
 
-		// Literal allowlist match on the submitted login string only. IP
-		// allowlist is handled by the early hook; recording self-mutes for
-		// allowlisted logins in record_failed_login_attempt(), dropping
-		// wp_login_failed here just avoids a needless cloud API call.
-		$allowlisted_via_user = $this->local_lockout->is_local_allowlisted_username( $username );
-
-		$is_allowlisted = $this->local_lockout->check_whitelist_ips( false, $ip )
-			|| $allowlisted_via_user;
-
-		if ( $is_allowlisted || $this->local_lockout->is_limit_login_ok( $username ) ) {
-			if ( $allowlisted_via_user ) {
-				remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
-				$this->detach_error_message_fixup();
-			}
-			return $user;
+		// Reaching this point means the user is neither locked out nor deny-listed
+		// ($not_locked_out above, denylist block above), so there is nothing left
+		// to enforce. Allowlisted logins only need the recording hooks detached:
+		// record_failed_login_attempt() would skip them anyway, but wp_login_failed
+		// would make a needless cloud lockout_check call.
+		if ( $this->local_lockout->is_login_allowlisted( $username ) ) {
+			remove_filter( 'wp_login_failed', array( $this->plugin, 'limit_login_failed' ) );
+			$this->detach_error_message_fixup();
 		}
 
-		$error = new WP_Error();
-
-		global $limit_login_my_error_shown;
-		$limit_login_my_error_shown = true;
-
-		// This error should be the same as in "shake it" filter below
-		$error->add( 'too_many_retries', $this->error_presenter->error_msg( $username ) );
-
-		LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
-
-		return $error;
+		return $user;
 	}
 	public function track_credentials( $user, $username, $password )
 	{

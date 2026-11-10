@@ -246,23 +246,35 @@ class LocalLockoutManager {
 	/**
 	 * Check submitted identifier against the local allowlist (literal match only).
 	 *
-	 * @param string        $username Submitted login value.
-	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
+	 * @param string $username Submitted login value.
 	 * @return bool
 	 */
-	public function is_local_allowlisted_username( $username, $user = null ) {
-		return $this->whitelist_checker->is_local_allowlisted_username( $username, $user );
+	public function is_local_allowlisted_username( $username ) {
+		return $this->whitelist_checker->is_local_allowlisted_username( $username );
+	}
+
+	/**
+	 * Whether the current request's login is allowlisted.
+	 *
+	 * Single policy question for every call site: a whitelisted IP trusts the
+	 * whole request, otherwise the submitted login string is matched literally
+	 * against the allowlist. Never maps username to email.
+	 *
+	 * @param string $username Submitted login value.
+	 * @return bool
+	 */
+	public function is_login_allowlisted( $username ) {
+		return $this->ip_resolver->is_ip_whitelisted() || $this->is_local_allowlisted_username( $username );
 	}
 
 	/**
 	 * Check submitted identifier against the local denylist (literal match only).
 	 *
-	 * @param string        $username Submitted login value.
-	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
+	 * @param string $username Submitted login value.
 	 * @return bool
 	 */
-	public function is_local_blacklisted_username( $username, $user = null ) {
-		return $this->whitelist_checker->is_local_blacklisted_username( $username, $user );
+	public function is_local_blacklisted_username( $username ) {
+		return $this->whitelist_checker->is_local_blacklisted_username( $username );
 	}
 
 	/**
@@ -286,12 +298,10 @@ class LocalLockoutManager {
 	public function record_failed_login_attempt( $username ) {
 		$ip = $this->ip_resolver->get_address();
 
-		// Allowlisted logins are never recorded: a whitelisted IP or a literal
-		// allowlist match on the submitted string. Username and email are
-		// independent list entities — no username↔email mapping is performed.
-		// The list is re-checked per attempt, so other identities in the same
-		// request (XML-RPC system.multicall) are never muted.
-		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->is_username_whitelisted( $username ) ) {
+		// Allowlisted logins are never recorded. The list is re-checked per
+		// attempt, so other identities in the same request (XML-RPC
+		// system.multicall) are never muted.
+		if ( $this->is_login_allowlisted( $username ) ) {
 			return;
 		}
 
