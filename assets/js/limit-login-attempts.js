@@ -65,10 +65,26 @@ function llar_micro_cloud_error_message( response ) {
 
 function llar_ajax_callback_post( ajaxurl = null, data ) {
 
+    var networkErrorMessage = function () {
+        return ( typeof llar_vars !== 'undefined' && llar_vars.msg_network_error )
+            ? llar_vars.msg_network_error
+            : 'Network error';
+    };
+
     return new Promise(function( resolve, reject ) {
         jQuery.post( ajaxurl, data, function ( response ) {
 
-            if ( ( response && ( 'success' in response ) && response.success === false ) ) {
+            // Malformed payloads (0, null, plain strings) must not resolve
+            // as success nor throw inside this callback.
+            if ( response === null || typeof response !== 'object' ) {
+                reject( {
+                    success: false,
+                    data: { msg: networkErrorMessage() }
+                } );
+                return;
+            }
+
+            if ( response.success === false ) {
                 reject( response );
             } else if ( response.error ) {
                 reject( response );
@@ -76,21 +92,18 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
             else  {
                 resolve( response );
             }
-        } ).fail( function ( jqXHR, textStatus, errorThrown ) {
+        } ).fail( function ( jqXHR ) {
             // Keep the same shape as application rejects so callers can read response.data.msg.
             var payload = ( jqXHR && jqXHR.responseJSON ) ? jqXHR.responseJSON : null;
             if ( payload && typeof payload === 'object' ) {
                 reject( payload );
                 return;
             }
-            var networkMsg = ( typeof llar_vars !== 'undefined' && llar_vars.msg_network_error )
-                ? llar_vars.msg_network_error
-                : 'Network error';
             // Prefer the localized fallback over raw jqXHR textStatus ("error").
             reject( {
                 success: false,
                 data: {
-                    msg: networkMsg
+                    msg: networkErrorMessage()
                 }
             } );
         } );
