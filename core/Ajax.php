@@ -180,10 +180,11 @@ class Ajax {
 					$onboarding_outcome = Config::ONBOARDING_TOAST_BASIC;
 				}
 
-				// Persist completion state here so a failed dismiss request
-				// after reload can not lose the dashboard toast.
-				Config::update( 'onboarding_popup_shown', true );
+				// Persist completion only for onboarding-scoped activations so
+				// a later failed dismiss cannot lose the dashboard toast, and
+				// non-onboarding setup does not mutate onboarding flags.
 				if ( '' !== $onboarding_outcome ) {
+					Config::update( 'onboarding_popup_shown', true );
 					Config::update( 'onboarding_complete_toast', $onboarding_outcome );
 				}
 

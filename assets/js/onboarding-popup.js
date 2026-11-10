@@ -2,7 +2,7 @@
  * Onboarding popup (Welcome → Trial).
  *
  * Expects window.llar_onboarding config and depends on lla-main helpers:
- * llar_ajax_callback_post, llar_activate_license_key, llar_is_valid_email,
+ * llar_ajax_callback_post_wp, llar_activate_license_key, llar_is_valid_email,
  * llar_micro_cloud_error_message.
  */
 ( function ( $ ) {
@@ -68,8 +68,7 @@
 			}
 		};
 
-		const completeOnboarding = function ( outcome, options ) {
-			options = options || {};
+		const completeOnboarding = function ( outcome ) {
 			if ( isCompleting ) {
 				return Promise.reject( new Error( 'completing' ) );
 			}
@@ -79,7 +78,7 @@
 			$closeIcon.addClass( hidden );
 			$body.addClass( disabled );
 
-			return llar_ajax_callback_post( ajaxurl, {
+			return llar_ajax_callback_post_wp( ajaxurl, {
 				action: 'dismiss_onboarding_popup',
 				sec: llar_vars.nonce_dismiss_onboarding_popup,
 				outcome: outcome || 'basic'
@@ -89,20 +88,17 @@
 				window.location.reload();
 			} ).catch( function ( err ) {
 				isCompleting = false;
-				if ( ! options.quiet ) {
-					unlockBodyAndCloseIcon( $closeIcon );
-					showAjaxError( errors.complete_failed );
-				}
+				unlockBodyAndCloseIcon( $closeIcon );
+				showAjaxError( errors.complete_failed );
 				return Promise.reject( err );
 			} );
 		};
 
-		const finishAfterSuccessfulActivation = function ( outcome ) {
-			return completeOnboarding( outcome, { quiet: true } ).catch( function () {
-				// License/setup already applied; leave the trial/setup pitch.
-				onboardingCompleted = true;
-				window.location.reload();
-			} );
+		// Server already persisted toast + onboarding_popup_shown in app_setup.
+		const finishAfterSuccessfulActivation = function () {
+			onboardingCompleted = true;
+			$( '.jconfirm-closeIcon' ).remove();
+			window.location.reload();
 		};
 
 		const bindStep2Handlers = function ( email ) {
@@ -190,7 +186,7 @@
 				llar_activate_license_key( trialReturn.setup_code )
 					.then( function () {
 						scrubOnboardingReturnParams();
-						return finishAfterSuccessfulActivation( 'trial' );
+						finishAfterSuccessfulActivation();
 					} )
 					.catch( function ( response ) {
 						restoreTrialStepUi();
@@ -245,7 +241,7 @@
 				$closeIcon.addClass( hidden );
 				llar_activate_license_key( $setup_code, { llar_onboarding_context: 'welcome' } )
 					.then( function () {
-						return finishAfterSuccessfulActivation( 'basic' );
+						finishAfterSuccessfulActivation();
 					} )
 					.catch( function ( response ) {
 						unlockBodyAndCloseIcon( $closeIcon );
@@ -279,7 +275,7 @@
 				$subscribe_spinner.addClass( visibility );
 				$body.addClass( disabled );
 
-				llar_ajax_callback_post( ajaxurl, {
+				llar_ajax_callback_post_wp( ajaxurl, {
 					action: 'subscribe_email',
 					email: email,
 					is_subscribe_yes: $is_subscribe,
@@ -337,7 +333,7 @@
 			},
 			onClose: function () {
 				if ( ! onboardingCompleted && ! isCompleting ) {
-					llar_ajax_callback_post( ajaxurl, {
+					llar_ajax_callback_post_wp( ajaxurl, {
 						action: 'dismiss_onboarding_popup',
 						sec: llar_vars.nonce_dismiss_onboarding_popup
 					} ).catch( function () {

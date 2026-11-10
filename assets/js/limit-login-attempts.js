@@ -19,7 +19,7 @@ function llar_activate_license_key( $setup_code, extra ) {
         }
     } catch ( e ) {}
 
-    return llar_ajax_callback_post( ajaxurl, data )
+    return llar_ajax_callback_post_wp( ajaxurl, data )
 }
 
 
@@ -67,13 +67,13 @@ function llar_micro_cloud_error_message( response ) {
 }
 
 
-function llar_ajax_callback_post( ajaxurl = null, data ) {
+function llar_ajax_network_error_message() {
+    return ( typeof llar_vars !== 'undefined' && llar_vars.msg_network_error )
+        ? llar_vars.msg_network_error
+        : 'Network error';
+}
 
-    var networkErrorMessage = function () {
-        return ( typeof llar_vars !== 'undefined' && llar_vars.msg_network_error )
-            ? llar_vars.msg_network_error
-            : 'Network error';
-    };
+function llar_ajax_callback_post( ajaxurl = null, data ) {
 
     return new Promise(function( resolve, reject ) {
         jQuery.post( ajaxurl, data, function ( response ) {
@@ -83,7 +83,7 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
             if ( response === null || typeof response !== 'object' ) {
                 reject( {
                     success: false,
-                    data: { msg: networkErrorMessage() }
+                    data: { msg: llar_ajax_network_error_message() }
                 } );
                 return;
             }
@@ -107,11 +107,40 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
             reject( {
                 success: false,
                 data: {
-                    msg: networkErrorMessage()
+                    msg: llar_ajax_network_error_message()
                 }
             } );
         } );
     });
+}
+
+/**
+ * Strict WordPress admin-ajax helper: only { success: true } resolves.
+ * Use for endpoints that always return wp_send_json_success/error.
+ */
+function llar_ajax_callback_post_wp( ajaxurl, data ) {
+    return llar_ajax_callback_post( ajaxurl, data ).then( function ( response ) {
+        if (
+            ! response ||
+            typeof response !== 'object' ||
+            Array.isArray( response ) ||
+            response.success !== true
+        ) {
+            if (
+                response &&
+                typeof response === 'object' &&
+                ! Array.isArray( response ) &&
+                response.success === false
+            ) {
+                return Promise.reject( response );
+            }
+            return Promise.reject( {
+                success: false,
+                data: { msg: llar_ajax_network_error_message() }
+            } );
+        }
+        return response;
+    } );
 }
 
 ( function( $ ) {

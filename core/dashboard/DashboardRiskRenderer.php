@@ -493,27 +493,40 @@ class DashboardRiskRenderer {
 
 	/**
 	 * Map a stored onboarding completion outcome to the dashboard toast text.
-	 * Read-only: does not clear the one-shot config flag.
+	 * Does not clear the flag here — clear runs on admin_footer after output.
 	 *
 	 * @param string $outcome Outcome key from Config::onboarding_complete_toast.
 	 * @return string Empty when there is nothing to show.
 	 */
 	public function get_onboarding_toast_message( $outcome ) {
+		$message = '';
 		if ( Config::ONBOARDING_TOAST_TRIAL === $outcome ) {
-			return __( 'You\'re All Set! Congratulations! Your free trial is now active, and your site is protected by our global threat intelligence network. You\'re ready to go!', 'limit-login-attempts-reloaded' );
+			$message = __( 'You\'re All Set! Congratulations! Your free trial is now active, and your site is protected by our global threat intelligence network. You\'re ready to go!', 'limit-login-attempts-reloaded' );
+		} elseif ( Config::ONBOARDING_TOAST_BASIC === $outcome ) {
+			$message = __( 'You\'re All Set! Congratulations! You\'ve completed the setup, and your site is now protected against brute-force attacks. You\'re ready to go!', 'limit-login-attempts-reloaded' );
 		}
 
-		if ( Config::ONBOARDING_TOAST_BASIC === $outcome ) {
-			return __( 'You\'re All Set! Congratulations! You\'ve completed the setup, and your site is now protected against brute-force attacks. You\'re ready to go!', 'limit-login-attempts-reloaded' );
+		if ( '' !== $message ) {
+			$this->schedule_onboarding_toast_clear();
 		}
 
-		return '';
+		return $message;
 	}
 
 	/**
-	 * Consume the one-shot onboarding toast after it has been rendered.
+	 * Clear the one-shot toast after the admin page (including the toast) has rendered.
 	 */
 	public function clear_onboarding_complete_toast() {
 		Config::update( 'onboarding_complete_toast', '' );
+	}
+
+	/**
+	 * Schedule a single clear on admin_footer so buffered/truncated output still had the toast.
+	 */
+	private function schedule_onboarding_toast_clear() {
+		if ( has_action( 'admin_footer', array( $this, 'clear_onboarding_complete_toast' ) ) ) {
+			return;
+		}
+		add_action( 'admin_footer', array( $this, 'clear_onboarding_complete_toast' ), 999 );
 	}
 }

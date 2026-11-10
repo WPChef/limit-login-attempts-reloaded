@@ -19,13 +19,6 @@ class AdminUiController {
 	/** @var string */
 	private $options_page_slug = 'limit-login-attempts';
 
-	/**
-	 * When true, clear the one-shot onboarding toast after the options page has rendered.
-	 *
-	 * @var bool
-	 */
-	private $should_clear_onboarding_toast = false;
-
 	public function __construct( LimitLoginAttempts $plugin ) {
 		$this->plugin = $plugin;
 	}
@@ -916,11 +909,6 @@ class AdminUiController {
 
 		// MFA tab data comes from get_settings_for_view() (single source in MfaSettingsManager)
 		include_once LLA_PLUGIN_DIR . 'views/options-page.php';
-
-		if ( $this->should_clear_onboarding_toast ) {
-			$this->plugin->clear_onboarding_complete_toast();
-			$this->should_clear_onboarding_toast = false;
-		}
 	}
 
 	/**
@@ -934,11 +922,7 @@ class AdminUiController {
 	 * @return array
 	 */
 	public function get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
-		$vars = $this->plugin->get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
-		if ( ! empty( $vars['onboarding_toast'] ) ) {
-			$this->should_clear_onboarding_toast = true;
-		}
-		return $vars;
+		return $this->plugin->get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
 	}
 
 	/**
