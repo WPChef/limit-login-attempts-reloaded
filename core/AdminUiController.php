@@ -360,19 +360,37 @@ class AdminUiController {
 	/**
 	 * Get the correct options page URI
 	 *
-	 * @param bool $tab
-	 * @return mixed
+	 * @param string|bool $tab Optional tab slug; may carry a "#fragment" suffix
+	 *                         that is appended unencoded.
+	 * @return string
 	 */
 	public function get_options_page_uri( $tab = false )
 	{
 		if ( is_network_admin() ) {
 			$uri = network_admin_url( 'settings.php?page=' . $this->options_page_slug );
-		} else {
+		} elseif ( Config::get( 'show_top_level_menu_item' ) ) {
 			$uri = admin_url( 'admin.php?page=' . $this->options_page_slug );
+		} else {
+			// add_options_page registers under Settings → options-general.php
+			$uri = admin_url( 'options-general.php?page=' . $this->options_page_slug );
 		}
 
 		if ( ! empty( $tab ) ) {
-			$uri = add_query_arg( 'tab', $tab, $uri );
+			$fragment = '';
+			$parts    = explode( '#', $tab, 2 );
+
+			if ( isset( $parts[1] ) ) {
+				$tab      = $parts[0];
+				$fragment = $parts[1];
+			}
+
+			if ( '' !== $tab ) {
+				$uri = add_query_arg( 'tab', $tab, $uri );
+			}
+
+			if ( '' !== $fragment ) {
+				$uri .= '#' . $fragment;
+			}
 		}
 
 		return $uri;
