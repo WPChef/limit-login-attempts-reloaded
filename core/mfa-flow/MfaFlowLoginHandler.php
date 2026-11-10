@@ -111,9 +111,10 @@ class MfaFlowLoginHandler {
 	}
 
 	/**
-	 * @param string       $username             Login username.
-	 * @param bool         $is_pre_authenticated Password verified.
-	 * @param \WP_User|null $authenticated_user  Authenticated user when known.
+	 * @param string        $username             Login identifier for the 2FA decision (canonical user_login when the password was verified).
+	 * @param bool          $is_pre_authenticated Password verified.
+	 * @param \WP_User|null $authenticated_user   Authenticated user when known.
+	 * @param string|null   $submitted_login      Submitted login string for the literal allowlist check; falls back to $username on form-less routes (XML-RPC).
 	 * @return WP_Error|null WP_Error when the login must be refused (MFA required
 	 *                       but the verification step did not positively succeed,
 	 *                       or a protected account authenticating over a
@@ -122,14 +123,20 @@ class MfaFlowLoginHandler {
 	 *                       or when it was temporarily disabled (rescue, or the
 	 *                       service being down on interactive routes).
 	 */
-	public function try_mfa_flow_redirect( $username, $is_pre_authenticated = false, $authenticated_user = null ) {
+	public function try_mfa_flow_redirect( $username, $is_pre_authenticated = false, $authenticated_user = null, $submitted_login = null ) {
 		// CRITICAL: never fetch or disclose any user info unless password was verified.
 		if ( ! $is_pre_authenticated ) {
 			return null;
 		}
 		$ip = $this->ip_resolver->get_address();
 
-		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->local_lockout->is_local_allowlisted_username( $username, $authenticated_user ) ) {
+		// Literal allowlist on the submitted login string: a username entry must
+		// not become an account-wide MFA bypass when logging in with the account
+		// email. Form-less routes (XML-RPC) never supply the submitted string;
+		// there the canonical login is the best available identifier.
+		$allowlist_login = ( null === $submitted_login || '' === $submitted_login ) ? $username : $submitted_login;
+
+		if ( $this->local_lockout->is_login_allowlisted( $allowlist_login ) ) {
 			return null;
 		}
 
