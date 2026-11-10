@@ -88,7 +88,7 @@ class LoginErrorPresenter {
 
 		// Cloud is off or unreachable — fall back to the local lockouts timer so failover messages match the lockout state.
 
-		$ip       = $this->ip_resolver->get_address();
+		$ip       = Helpers::normalize_ip_for_rate_limit( $this->ip_resolver->get_address() );
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 		$a        = $this->local_lockout->check_key($lockouts, $ip);
 		$b        = $this->local_lockout->check_key($lockouts, $this->local_lockout->get_hash($ip));

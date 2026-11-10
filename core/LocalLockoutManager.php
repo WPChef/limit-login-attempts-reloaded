@@ -161,9 +161,9 @@ class LocalLockoutManager {
 	 * @throws Exception
 	 */
 	public function is_limit_login_ok( $username = '' ) {
-		$ip = $this->ip_resolver->get_address();
+		$raw_ip = $this->ip_resolver->get_address();
 
-		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
+		if ( $this->ip_resolver->is_ip_whitelisted( $raw_ip ) ) {
 			return true;
 		}
 
@@ -172,6 +172,7 @@ class LocalLockoutManager {
 			return $cloud_allowed;
 		}
 
+		$ip       = Helpers::normalize_ip_for_rate_limit( $raw_ip );
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 
 		return ( ! is_array( $lockouts ) || ! isset( $lockouts[ $ip ] ) || time() >= $lockouts[ $ip ] );
@@ -322,7 +323,8 @@ class LocalLockoutManager {
 				LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 			}
 		} else {
-			$ip       = $this->ip_resolver->get_address();
+			$raw_ip   = $this->ip_resolver->get_address();
+			$ip       = Helpers::normalize_ip_for_rate_limit( $raw_ip );
 			$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 
 			if ( ! is_array( $lockouts ) ) {
@@ -381,7 +383,8 @@ class LocalLockoutManager {
 				return;
 			}
 
-			$whitelisted  = $this->ip_resolver->is_ip_whitelisted( $ip );
+			// Whitelist matches the real client address, not the /64 rate-limit key.
+			$whitelisted  = $this->ip_resolver->is_ip_whitelisted( $raw_ip );
 			$retries_long = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
 
 			if ( $whitelisted ) {
@@ -469,7 +472,7 @@ class LocalLockoutManager {
 	private function calculate_retries_remaining() {
 		$remaining = 0;
 
-		$ip      = $this->ip_resolver->get_address();
+		$ip      = Helpers::normalize_ip_for_rate_limit( $this->ip_resolver->get_address() );
 		$retries = Config::get( 'retries' );
 		$valid   = Config::get( 'retries_valid' );
 		$a       = $this->check_key( $retries, $ip );

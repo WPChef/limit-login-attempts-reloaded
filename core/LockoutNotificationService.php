@@ -69,7 +69,8 @@ class LockoutNotificationService {
 	 * @return void
 	 */
 	public function notify_email( $user ) {
-		$ip      = $this->ip_resolver->get_address();
+		$raw_ip  = $this->ip_resolver->get_address();
+		$ip      = Helpers::normalize_ip_for_rate_limit( $raw_ip );
 		$retries = Config::get( 'retries' );
 
 		if ( ! is_array( $retries ) ) {
@@ -112,14 +113,14 @@ class LockoutNotificationService {
 			/* translators: 1: site domain, 2: IP address */
 			__( '%1$s - Login blocked from %2$s', 'limit-login-attempts-reloaded' ),
 			esc_html( $site_domain ),
-			esc_html( $ip )
+			esc_html( $raw_ip )
 		);
 
 		/* All copy, URLs and inline styles come from the presenter; this
 		 * method only resolves the business facts and sends. */
 		$view = LockoutEmailPresenter::get_view_vars(
 			array(
-				'ip'                  => $ip,
+				'ip'                  => $raw_ip,
 				'user'                => $user,
 				'count'               => $count,
 				'when'                => $when,
