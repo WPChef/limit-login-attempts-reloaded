@@ -39,8 +39,10 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
         <div class="section-1">
             <div class="text">
                 <div class="title">
-                    <?php if ( $block_sub_group && $block_sub_group === 'Micro Cloud' ) : ?>
+                    <?php if ( 'Micro Cloud' === $block_sub_group ) : ?>
                         <?php _e( 'Limit Login Attempts Reloaded <strong>Micro Cloud</strong>', 'limit-login-attempts-reloaded' ); ?>
+                    <?php elseif ( \LLAR\Core\LimitLoginAttempts::trial_plan_name() === $block_sub_group ) : ?>
+                        <?php _e( 'Limit Login Attempts Reloaded <strong>Free Trial</strong>', 'limit-login-attempts-reloaded' ); ?>
                     <?php else : ?>
 	                    <?php _e( 'Limit Login Attempts Reloaded <strong>Premium</strong>', 'limit-login-attempts-reloaded' ); ?>
                     <?php endif; ?>
@@ -48,9 +50,20 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
             </div>
             <?php if ( ! $is_premium ) : ?>
                 <div class="action">
-                    <a class="button menu__item button__orange" href="<?php echo esc_url( ( $block_sub_group === 'Micro Cloud' )
-                        ? add_query_arg( 'id', '31', $this->info_upgrade_url() )
-                        : 'https://www.limitloginattempts.com/info.php?id=29' ); ?>" target="_blank">
+                    <?php if ( \LLAR\Core\LimitLoginAttempts::trial_plan_name() !== $block_sub_group
+                        && 'Micro Cloud' !== $block_sub_group
+                        && empty( \LLAR\Core\Config::get( 'app_setup_code' ) ) ) : ?>
+                        <a href="<?php echo esc_url( \LLAR\Core\TrialLanding::cta_landing_url( \LLAR\Core\TrialLanding::INFO_ID_PREMIUM, 'premium' ) ); ?>"
+                           data-llar-info-id="<?php echo esc_attr( \LLAR\Core\TrialLanding::INFO_ID_PREMIUM ); ?>"
+                           class="button menu__item button__transparent_orange llar-trial-start-cta">
+		                    <?php echo esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ); ?>
+                        </a>
+                    <?php endif; ?>
+                    <a class="button menu__item button__orange" href="<?php echo esc_url( ( \LLAR\Core\LimitLoginAttempts::trial_plan_name() === $block_sub_group )
+                        ? add_query_arg( 'id', '41', $this->info_upgrade_url() )
+                        : ( ( $block_sub_group === 'Micro Cloud' )
+                            ? add_query_arg( 'id', '31', $this->info_upgrade_url() )
+                            : 'https://www.limitloginattempts.com/info.php?id=29' ) ); ?>" target="_blank">
                         <?php _e( 'Upgrade to Personal – $1.25/mo', 'limit-login-attempts-reloaded' ); ?>
                     </a>
                 </div>
@@ -63,8 +76,13 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
                     <?php _e( 'If you purchased a premium plan, check your email for setup instructions (Setup Code included)', 'limit-login-attempts-reloaded' ); ?>
                 </span>
             <?php elseif( $block_sub_group ) : ?>
-                <?php if( $block_sub_group === 'Micro Cloud' ) : ?>
+                <?php if( 'Micro Cloud' === $block_sub_group ) : ?>
                     <?php _e( 'You are currently using Micro Cloud, which provides access to premium cloud app on a limited basis. To prevent interruption, upgrade to one of our paid plans below.', 'limit-login-attempts-reloaded' ); ?>
+                <?php elseif( \LLAR\Core\LimitLoginAttempts::trial_plan_name() === $block_sub_group ) : ?>
+                    <?php
+                    /* translators: %d: trial length in days. */
+                    printf( esc_html__( 'You are currently using the %d day free trial, which provides access to the premium cloud app on a limited basis. To prevent interruption, upgrade to one of our paid plans below.', 'limit-login-attempts-reloaded' ), \LLAR\Core\LimitLoginAttempts::TRIAL_DAYS );
+                    ?>
                 <?php else : ?>
                     <?php
                     /* translators: %s: current plan name. */
@@ -94,9 +112,10 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
     </h3>
 
     <?php
-        $plans_order  = array( 'Free', 'Micro Cloud', 'Personal', 'Premium', 'Premium +', 'Professional', 'Business', 'Agency' );
-        $base_plans   = array( 'Free', 'Personal', 'Business' );
-        $extra_plans  = array( 'Micro Cloud', 'Premium', 'Premium +', 'Professional', 'Agency' );
+        $trial_plan_name = \LLAR\Core\LimitLoginAttempts::trial_plan_name();
+        $plans_order     = array( 'Free', $trial_plan_name, 'Micro Cloud', 'Personal', 'Premium', 'Premium +', 'Professional', 'Business', 'Agency' );
+        $base_plans      = array( 'Free', $trial_plan_name, 'Personal', 'Business' );
+        $extra_plans     = array( 'Micro Cloud', 'Premium', 'Premium +', 'Professional', 'Agency' );
 
         $actual_plan = ( 'custom' === $active_app ) ? $block_sub_group : 'Free';
 
@@ -104,6 +123,11 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
         foreach ( $plans_order as $plan ) {
             // Professional (Pro) users do not see Business as an upgrade path.
             if ( 'Business' === $plan && 'Professional' === $actual_plan ) {
+                continue;
+            }
+
+            // Trial column is only for Free users and active trial accounts.
+            if ( $trial_plan_name === $plan && 'Free' !== $actual_plan && $trial_plan_name !== $actual_plan ) {
                 continue;
             }
 
@@ -128,7 +152,7 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
                 <thead>
                 <tr>
                     <?php foreach ($features as $item) : ?>
-                        <td scope="col"><?php echo $item ?></td>
+                        <td scope="col"><?php echo esc_html( $trial_plan_name === $item ? \LLAR\Core\LimitLoginAttempts::trial_label() : $item ); ?></td>
                     <?php endforeach; ?>
                 </tr>
                 </thead>

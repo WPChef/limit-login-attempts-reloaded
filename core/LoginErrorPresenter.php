@@ -138,7 +138,9 @@ class LoginErrorPresenter {
 			if ( ! is_wp_error( $errors ) ) {
 				$errors = new \WP_Error();
 			}
-			$errors->add( 'llar_mfa_return', __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' ) );
+			// The visitor already passed the password step and was sent to
+			// the MFA app: a password error copy would be misleading here.
+			$errors->add( 'llar_mfa_return', \LLAR\Core\MfaFlow\MfaFlowLoginHandler::refusal_message() );
 		}
 		return $errors;
 	}
@@ -191,8 +193,8 @@ class LoginErrorPresenter {
 				}
 			}
 		} elseif ( $show_mfa_return_error ) {
-			/* Same red error as failed login when returning from MFA (e.g. pre_auth_required). */
-			$content = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
+			/* Returning from the MFA app: the password step already succeeded, keep the two-factor copy. */
+			$content = \LLAR\Core\MfaFlow\MfaFlowLoginHandler::refusal_message();
 		}
 
 		if ( ! empty( $error_msg ) ) {
