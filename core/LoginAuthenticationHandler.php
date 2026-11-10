@@ -223,15 +223,9 @@ class LoginAuthenticationHandler {
 		}
 
 		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
-			if ( function_exists( 'inet_pton' ) && function_exists( 'inet_ntop' ) ) {
-				$binary = inet_pton( $ip );
-				if ( false !== $binary && 16 === strlen( $binary ) ) {
-					$masked = substr( $binary, 0, 8 ) . str_repeat( "\0", 8 );
-					$masked_ip = inet_ntop( $masked );
-					if ( false !== $masked_ip ) {
-						return $masked_ip . '/64';
-					}
-				}
+			$masked_ip = Helpers::ipv6_network_address( $ip, 64 );
+			if ( false !== $masked_ip ) {
+				return $masked_ip . '/64';
 			}
 			if ( function_exists( 'wp_hash' ) ) {
 				return wp_hash( $ip );

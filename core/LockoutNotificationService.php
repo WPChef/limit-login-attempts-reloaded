@@ -70,7 +70,7 @@ class LockoutNotificationService {
 	 */
 	public function notify_email( $user ) {
 		$raw_ip  = $this->ip_resolver->get_address();
-		$ip      = Helpers::normalize_ip_for_rate_limit( $raw_ip );
+		$ip      = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 		$retries = Config::get( 'retries' );
 
 		if ( ! is_array( $retries ) ) {

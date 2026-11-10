@@ -172,10 +172,10 @@ class LocalLockoutManager {
 			return $cloud_allowed;
 		}
 
-		$ip       = Helpers::normalize_ip_for_rate_limit( $raw_ip );
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
+		$until    = Helpers::get_active_lockout_until( $lockouts, $raw_ip );
 
-		return ( ! is_array( $lockouts ) || ! isset( $lockouts[ $ip ] ) || time() >= $lockouts[ $ip ] );
+		return $until <= time();
 	}
 
 	/**
@@ -324,14 +324,15 @@ class LocalLockoutManager {
 			}
 		} else {
 			$raw_ip   = $this->ip_resolver->get_address();
-			$ip       = Helpers::normalize_ip_for_rate_limit( $raw_ip );
+			$ip       = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 			$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 
 			if ( ! is_array( $lockouts ) ) {
 				$lockouts = array();
 			}
 
-			if ( isset( $lockouts[ $ip ] ) && time() < $lockouts[ $ip ] ) {
+			// Honour both the /64 key and a legacy full-address lockout.
+			if ( Helpers::get_active_lockout_until( $lockouts, $raw_ip ) > time() ) {
 				return;
 			}
 
@@ -472,7 +473,7 @@ class LocalLockoutManager {
 	private function calculate_retries_remaining() {
 		$remaining = 0;
 
-		$ip      = Helpers::normalize_ip_for_rate_limit( $this->ip_resolver->get_address() );
+		$ip      = $this->ip_resolver->get_rate_limit_key();
 		$retries = Config::get( 'retries' );
 		$valid   = Config::get( 'retries_valid' );
 		$a       = $this->check_key( $retries, $ip );

@@ -365,12 +365,53 @@ class Helpers {
 	}
 
 	/**
+	 * Mask an IPv6 address to a network prefix (leftmost bits kept).
+	 *
+	 * @param string $ip     IPv6 address.
+	 * @param int    $prefix Prefix length (0–128). Default 64.
+	 * @return string|false Network address, or false on failure.
+	 */
+	public static function ipv6_network_address( $ip, $prefix = 64 ) {
+		if ( ! function_exists( 'inet_pton' ) || ! function_exists( 'inet_ntop' ) ) {
+			return false;
+		}
+
+		$binary = inet_pton( $ip );
+		if ( false === $binary || 16 !== strlen( $binary ) ) {
+			return false;
+		}
+
+		$prefix = max( 0, min( 128, (int) $prefix ) );
+		$full_bytes = (int) floor( $prefix / 8 );
+		$rem_bits   = $prefix % 8;
+		$masked     = substr( $binary, 0, $full_bytes );
+
+		if ( $rem_bits > 0 && $full_bytes < 16 ) {
+			$masked .= chr( ord( $binary[ $full_bytes ] ) & ( 0xFF << ( 8 - $rem_bits ) ) );
+			$full_bytes++;
+		}
+
+		if ( $full_bytes < 16 ) {
+			$masked .= str_repeat( "\0", 16 - $full_bytes );
+		}
+
+		$network = inet_ntop( $masked );
+		return false !== $network ? $network : false;
+	}
+
+	/**
 	 * Normalize an IP for local retries / lockout table keys.
 	 *
 	 * IPv6 end sites are typically allocated a /64. Keying retries on the full
 	 * address lets an attacker rotate interface IDs inside one /64 and bypass
-	 * the lockout. Collapse IPv6 to the /64 network address (same binary mask
-	 * as login log masking) without appending a "/64" suffix. IPv4 is unchanged.
+	 * the lockout. Collapse global IPv6 to the network prefix (default /64,
+	 * filterable via llar_ipv6_rate_limit_prefix) without a "/64" suffix.
+	 *
+	 * IPv4 is unchanged. IPv4-mapped IPv6 (::ffff:a.b.c.d) is unmapped to the
+	 * embedded IPv4 so dual-stack listeners do not collapse all v4 clients
+	 * into the key "::". Loopback ::1 stays ::1.
+	 *
+	 * Trade-off: clients sharing one prefix share the retry budget.
 	 *
 	 * @param string $ip Client IP.
 	 * @return string
@@ -385,22 +426,58 @@ class Helpers {
 			return $ip;
 		}
 
-		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
-			if ( function_exists( 'inet_pton' ) && function_exists( 'inet_ntop' ) ) {
-				$binary = inet_pton( $ip );
-				if ( false !== $binary && 16 === strlen( $binary ) ) {
-					$masked = substr( $binary, 0, 8 ) . str_repeat( "\0", 8 );
-					$network = inet_ntop( $masked );
-					if ( false !== $network ) {
-						return $network;
-					}
-				}
-			}
-
+		if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
 			return $ip;
 		}
 
-		return $ip;
+		if ( ! function_exists( 'inet_pton' ) || ! function_exists( 'inet_ntop' ) ) {
+			return $ip;
+		}
+
+		$binary = inet_pton( $ip );
+		if ( false === $binary || 16 !== strlen( $binary ) ) {
+			return $ip;
+		}
+
+		// IPv4-mapped IPv6 (::ffff:0:0/96) — use the embedded IPv4 as the key.
+		if ( "\0\0\0\0\0\0\0\0\0\0\xff\xff" === substr( $binary, 0, 12 ) ) {
+			$v4 = inet_ntop( substr( $binary, 12 ) );
+			if ( false !== $v4 ) {
+				return $v4;
+			}
+		}
+
+		// Loopback must not collapse to "::" under a /64 mask.
+		$loopback = inet_pton( '::1' );
+		if ( false !== $loopback && $binary === $loopback ) {
+			return '::1';
+		}
+
+		$prefix  = \function_exists( 'apply_filters' )
+			? (int) \apply_filters( 'llar_ipv6_rate_limit_prefix', 64 )
+			: 64;
+		$network = self::ipv6_network_address( $ip, $prefix );
+		return false !== $network ? $network : $ip;
+	}
+
+	/**
+	 * Active lockout expiry for an IP, honouring both the rate-limit key and a
+	 * legacy full-address key (pre-normalization installs).
+	 *
+	 * @param array  $lockouts Lockouts option map.
+	 * @param string $raw_ip   Client IP as observed.
+	 * @return int Unix timestamp, or 0 when not locked.
+	 */
+	public static function get_active_lockout_until( $lockouts, $raw_ip ) {
+		if ( ! is_array( $lockouts ) ) {
+			return 0;
+		}
+
+		$key = self::normalize_ip_for_rate_limit( $raw_ip );
+		$a   = isset( $lockouts[ $key ] ) ? (int) $lockouts[ $key ] : 0;
+		$b   = ( $key !== $raw_ip && isset( $lockouts[ $raw_ip ] ) ) ? (int) $lockouts[ $raw_ip ] : 0;
+
+		return max( $a, $b );
 	}
 
 	public static function detect_gateway() {
