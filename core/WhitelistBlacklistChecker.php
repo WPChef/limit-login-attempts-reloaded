@@ -137,13 +137,15 @@ class WhitelistBlacklistChecker {
 	 * independent list entities (mirrors the denylist semantics of 85e61dd).
 	 * Add both entries when both login forms must be trusted.
 	 *
-	 * This is the single source of truth for the allowlist policy; call sites
-	 * should use this instead of is_username_whitelisted() directly.
+	 * This is the single source of truth for the allowlist username match; call
+	 * sites that also need the IP check should use
+	 * LocalLockoutManager::is_login_allowlisted().
 	 *
-	 * @param string $username Submitted login value (username or email).
+	 * @param string        $username Submitted login value (username or email).
+	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
 	 * @return bool
 	 */
-	public function is_local_allowlisted_username( $username ) {
+	public function is_local_allowlisted_username( $username, $user = null ) {
 		$username = trim( (string) $username );
 
 		return '' !== $username && $this->is_username_whitelisted( $username );
@@ -158,10 +160,11 @@ class WhitelistBlacklistChecker {
 	 * unless the email itself is on the denylist. Case variants of a deny-listed
 	 * username are still blocked.
 	 *
-	 * @param string $username Submitted login value (username or email).
+	 * @param string        $username Submitted login value (username or email).
+	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
 	 * @return bool
 	 */
-	public function is_local_blacklisted_username( $username ) {
+	public function is_local_blacklisted_username( $username, $user = null ) {
 		$username = trim( (string) $username );
 		if ( '' === $username ) {
 			return false;

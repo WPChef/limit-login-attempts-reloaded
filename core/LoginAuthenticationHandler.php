@@ -288,7 +288,7 @@ class LoginAuthenticationHandler {
 
 				// Check if username is blacklisted
 				if (
-					( ! $this->local_lockout->is_username_whitelisted( $username ) && ! $this->ip_resolver->is_ip_whitelisted( $ip ) )
+					! $this->local_lockout->is_login_allowlisted( $username )
 					&& ( $this->local_lockout->is_local_blacklisted_username( $username ) || $this->ip_resolver->is_ip_blacklisted( $ip ) )
 				) {
 
@@ -409,10 +409,8 @@ class LoginAuthenticationHandler {
 			}
 		}
 
-		$ip = $this->ip_resolver->get_address();
 		if (
-			! $this->ip_resolver->is_ip_whitelisted( $ip )
-			&& ! $this->local_lockout->is_username_whitelisted( $username )
+			! $this->local_lockout->is_login_allowlisted( $username )
 			&& ! $this->local_lockout->is_limit_login_ok( $username )
 		) {
 			global $limit_login_my_error_shown;

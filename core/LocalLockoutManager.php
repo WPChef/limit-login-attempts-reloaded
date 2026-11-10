@@ -246,11 +246,12 @@ class LocalLockoutManager {
 	/**
 	 * Check submitted identifier against the local allowlist (literal match only).
 	 *
-	 * @param string $username Submitted login value.
+	 * @param string        $username Submitted login value.
+	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
 	 * @return bool
 	 */
-	public function is_local_allowlisted_username( $username ) {
-		return $this->whitelist_checker->is_local_allowlisted_username( $username );
+	public function is_local_allowlisted_username( $username, $user = null ) {
+		return $this->whitelist_checker->is_local_allowlisted_username( $username, $user );
 	}
 
 	/**
@@ -270,11 +271,12 @@ class LocalLockoutManager {
 	/**
 	 * Check submitted identifier against the local denylist (literal match only).
 	 *
-	 * @param string $username Submitted login value.
+	 * @param string        $username Submitted login value.
+	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
 	 * @return bool
 	 */
-	public function is_local_blacklisted_username( $username ) {
-		return $this->whitelist_checker->is_local_blacklisted_username( $username );
+	public function is_local_blacklisted_username( $username, $user = null ) {
+		return $this->whitelist_checker->is_local_blacklisted_username( $username, $user );
 	}
 
 	/**
