@@ -66,10 +66,11 @@
             .llar-trial-after-note {
               max-width: 420px;
               text-align: center;
+              // Match .explanations (terms line) weight/size/color.
               font-size: 14px;
-              font-weight: 500;
-              color: $typography-additional;
-              line-height: 1.4;
+              font-weight: 400;
+              color: $typography-secondary;
+              line-height: 1.5;
             }
 
             .llar-onboarding-skip {
@@ -80,7 +81,7 @@
               border: none !important;
               background: transparent !important;
               box-shadow: none !important;
-              color: $typography-additional !important;
+              color: $typography-secondary !important;
               font-size: 16px;
               font-weight: 700;
               text-decoration: none;
@@ -90,7 +91,7 @@
               &:focus {
                 background: transparent !important;
                 box-shadow: none !important;
-                color: $typography-secondary !important;
+                color: $typography-primary !important;
                 outline: none;
               }
             }
@@ -280,7 +281,13 @@
             background-color: $state-color__error_back;
           }
 
-          // PR #322: trial step-3 email input under the "Would you like..." caption.
+          // Trial pitch: slightly larger than default field-desc-add, extra gap below.
+          #llar-description-step-2 > .field-desc-add {
+            font-size: 20px;
+            margin-bottom: 28px;
+          }
+
+          // PR #322: trial email input under the pitch line.
           .llar-trial-email {
             margin-top: 12px;
           }

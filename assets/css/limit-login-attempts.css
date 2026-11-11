@@ -3533,9 +3533,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   max-width: 420px;
   text-align: center;
   font-size: 14px;
-  font-weight: 500;
-  color: #A4A8B7;
-  line-height: 1.4;
+  font-weight: 400;
+  color: #666D84;
+  line-height: 1.5;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-onboarding-skip {
   width: auto;
@@ -3545,7 +3545,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
-  color: #A4A8B7 !important;
+  color: #666D84 !important;
   font-size: 16px;
   font-weight: 700;
   text-decoration: none;
@@ -3554,7 +3554,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-onboarding-skip:hover, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-onboarding-skip:focus {
   background: transparent !important;
   box-shadow: none !important;
-  color: #666D84 !important;
+  color: #2A2F40 !important;
   outline: none;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-single {
@@ -3710,6 +3710,10 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .llar-upgrade-subscribe_notification__error {
   color: #EC4652;
   background-color: rgba(236, 70, 82, 0.1019607843);
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card #llar-description-step-2 > .field-desc-add {
+  font-size: 20px;
+  margin-bottom: 28px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .llar-trial-email {
   margin-top: 12px;

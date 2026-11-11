@@ -42,8 +42,15 @@ ob_start();
 			<img src="<?php echo esc_url( LLA_PLUGIN_URL ); ?>assets/css/images/welcome.png">
 			<?php echo esc_html( $popup['step1']['title'] ); ?>
 		</div>
-		<div class="title_description">
-			<?php echo nl2br( esc_html( $popup['step1']['subtitle'] ) ); ?>
+		<div class="card mx-auto">
+			<div class="field-wrap">
+				<div class="field-title">
+					<?php echo esc_html( $popup['step1']['intro_title'] ); ?>
+				</div>
+				<div class="field-desc-add">
+					<?php echo nl2br( esc_html( $popup['step1']['intro_body'] ) ); ?>
+				</div>
+			</div>
 		</div>
 		<div class="card mx-auto">
 			<div class="field-wrap">

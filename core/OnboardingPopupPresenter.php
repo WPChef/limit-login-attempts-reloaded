@@ -54,8 +54,11 @@ class OnboardingPopupPresenter {
 				__( 'Completion', 'limit-login-attempts-reloaded' ),
 			),
 			'step1'         => array(
-				'title'             => __( 'Welcome to Limit Login Attempts Reloaded!', 'limit-login-attempts-reloaded' ),
-				'subtitle'          => __( 'Great choice! You\'re joining millions of WordPress sites that rely on Limit Login Attempts Reloaded to protect against brute-force attacks.', 'limit-login-attempts-reloaded' )
+				// Marker 1 on the mockup: orange header next to the wave icon.
+				'title'             => __( 'Welcome', 'limit-login-attempts-reloaded' ),
+				// Markers 2–3: intro card that replaces the old premium pitch block.
+				'intro_title'       => __( 'Welcome to Limit Login Attempts Reloaded!', 'limit-login-attempts-reloaded' ),
+				'intro_body'        => __( 'Great choice! You\'re joining millions of WordPress sites that rely on Limit Login Attempts Reloaded to protect against brute-force attacks.', 'limit-login-attempts-reloaded' )
 					. "\n\n"
 					. __( 'Let\'s get your site protected!', 'limit-login-attempts-reloaded' ),
 				'notify_title'      => __( 'Notification Settings', 'limit-login-attempts-reloaded' ),
