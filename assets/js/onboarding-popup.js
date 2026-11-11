@@ -1,5 +1,5 @@
 /**
- * Onboarding popup (Welcome → Trial).
+ * Onboarding popup (Welcome → Completion).
  *
  * Expects window.llar_onboarding config and depends on lla-main helpers:
  * llar_ajax_callback_post_wp, llar_activate_license_key, llar_is_valid_email,
