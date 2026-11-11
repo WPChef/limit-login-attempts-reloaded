@@ -58,9 +58,8 @@ class OnboardingPopupPresenter {
 				'title'             => __( 'Welcome', 'limit-login-attempts-reloaded' ),
 				// Markers 2–3: intro card that replaces the old premium pitch block.
 				'intro_title'       => __( 'Welcome to Limit Login Attempts Reloaded!', 'limit-login-attempts-reloaded' ),
-				'intro_body'        => __( 'Great choice! You\'re joining millions of WordPress sites that rely on Limit Login Attempts Reloaded to protect against brute-force attacks.', 'limit-login-attempts-reloaded' )
-					. "\n\n"
-					. __( 'Let\'s get your site protected!', 'limit-login-attempts-reloaded' ),
+				'intro_body'        => __( 'Great choice! You\'re joining millions of WordPress sites that rely on Limit Login Attempts Reloaded to protect against brute-force attacks.', 'limit-login-attempts-reloaded' ),
+				'intro_tagline'     => __( 'Let\'s get your site protected!', 'limit-login-attempts-reloaded' ),
 				'notify_title'      => __( 'Notification Settings', 'limit-login-attempts-reloaded' ),
 				'email_label'       => __( 'Your Email', 'limit-login-attempts-reloaded' ),
 				'email_placeholder' => __( 'Your email', 'limit-login-attempts-reloaded' ),

@@ -48,7 +48,9 @@ ob_start();
 					<?php echo esc_html( $popup['step1']['intro_title'] ); ?>
 				</div>
 				<div class="field-desc-add">
-					<?php echo nl2br( esc_html( $popup['step1']['intro_body'] ) ); ?>
+					<?php echo esc_html( $popup['step1']['intro_body'] ); ?>
+					<br><br>
+					<strong><?php echo esc_html( $popup['step1']['intro_tagline'] ); ?></strong>
 				</div>
 			</div>
 		</div>

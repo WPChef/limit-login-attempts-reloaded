@@ -212,6 +212,11 @@
           }
         }
 
+        // Welcome: Continue is outside cards — ~3x air below the button.
+        .llar-onboarding__body > .button_block-horizon {
+          margin-bottom: 60px;
+        }
+
         .preloader-wrapper {
           display: none;
           position: absolute;

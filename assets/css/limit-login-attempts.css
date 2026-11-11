@@ -3652,6 +3652,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: 10px;
   text-align: center;
 }
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .llar-onboarding__body > .button_block-horizon {
+  margin-bottom: 60px;
+}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .preloader-wrapper {
   display: none;
   position: absolute;
