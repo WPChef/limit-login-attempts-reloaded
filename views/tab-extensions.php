@@ -45,11 +45,32 @@ $extensions = require LLA_PLUGIN_DIR . '/resources/extensions-list.php';
 		<?php esc_html_e( 'Extensions', 'limit-login-attempts-reloaded' ); ?>
 	</h3>
 
+	<div class="llar-extensions-intro">
+		<p>
+			<?php
+			esc_html_e(
+				'Discover more plugins developed or handpicked by our team. From security enhancements to other useful tools, these are solutions we trust and recommend to make your WordPress experience even better.',
+				'limit-login-attempts-reloaded'
+			);
+			?>
+		</p>
+	</div>
+
 	<div class="llar-extensions-grid">
 		<?php foreach ( $extensions as $extension ) : ?>
 			<?php
 			$extension_status = llar_get_extension_status( $extension['file'] );
 			$is_active        = ( 'active' === $extension_status );
+			$info_url         = add_query_arg(
+				array(
+					'tab'       => 'plugin-information',
+					'plugin'    => $extension['slug'],
+					'TB_iframe' => 'true',
+					'width'     => '600',
+					'height'    => '550',
+				),
+				admin_url( 'plugin-install.php' )
+			);
 			?>
 			<div class="llar-extension-card" data-slug="<?php echo esc_attr( $extension['slug'] ); ?>">
 
@@ -69,6 +90,10 @@ $extensions = require LLA_PLUGIN_DIR . '/resources/extensions-list.php';
 				</div>
 
 				<div class="llar-extension-card__footer">
+					<a class="llar-extension-info thickbox open-plugin-details-modal"
+						href="<?php echo esc_url( $info_url ); ?>">
+						<?php esc_html_e( 'Info', 'limit-login-attempts-reloaded' ); ?>
+					</a>
 					<button type="button"
 						class="button button__orange llar-extension-install<?php echo $is_active ? ' llar-extension-install--active' : ''; ?>"
 						data-slug="<?php echo esc_attr( $extension['slug'] ); ?>"

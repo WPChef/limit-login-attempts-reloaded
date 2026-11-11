@@ -14,7 +14,8 @@ return array(
 		'slug'        => 'disable-ai-for-security',
 		'file'        => 'disable-ai-for-security/disable-ai-for-security.php',
 		'name'        => 'Disable AI for Security',
-		'description' => __( 'Switches off the AI features introduced in WordPress 7.0 — quickly, cleanly, and without a single setting to configure. Just activate it and AI is disabled site-wide.', 'limit-login-attempts-reloaded' ),
+		// Short description copied from the plugin / wordpress.org directory.
+		'description' => __( 'Turns off the WordPress AI connectors for security. Works instantly with no settings — AI is fully disabled for every user role.', 'limit-login-attempts-reloaded' ),
 		'icon'        => 'https://ps.w.org/disable-ai-for-security/assets/icon-256x256.png',
 		'url'         => 'https://wordpress.org/plugins/disable-ai-for-security/',
 	),

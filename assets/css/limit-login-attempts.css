@@ -4266,6 +4266,20 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin-top: 6px;
 }
 
+#llar-setting-page-extensions .llar-extensions-intro {
+  margin: 8px 0 24px;
+  padding: 18px 22px;
+  background: #FFFFFF;
+  border: 1px solid #E4E6EB;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px 0 rgba(164, 168, 183, 0.2980392157);
+}
+#llar-setting-page-extensions .llar-extensions-intro p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #50575E;
+}
 #llar-setting-page-extensions .llar-extensions-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -4324,10 +4338,23 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #50575E;
 }
 #llar-setting-page-extensions .llar-extension-card__footer {
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 #llar-setting-page-extensions .llar-extension-card__footer .button {
   min-width: 100px;
+}
+#llar-setting-page-extensions .llar-extension-info {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #2271B1;
+  text-decoration: none;
+}
+#llar-setting-page-extensions .llar-extension-info:hover {
+  color: #135E96;
+  text-decoration: underline;
 }
 #llar-setting-page-extensions .llar-extension-install--active {
   opacity: 0.9;

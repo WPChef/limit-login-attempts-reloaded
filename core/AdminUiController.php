@@ -75,6 +75,12 @@ class AdminUiController {
 
 			wp_enqueue_style( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/css/jquery-confirm.min.css' );
 			wp_enqueue_script( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/js/jquery-confirm.min.js' );
+
+			// Thickbox + plugin-install for the Extensions tab "Info" modal
+			// (same pattern as Plugins → Add New details popup).
+			wp_enqueue_script( 'plugin-install' );
+			wp_enqueue_style( 'thickbox' );
+			add_thickbox();
 		}
 
 	}
