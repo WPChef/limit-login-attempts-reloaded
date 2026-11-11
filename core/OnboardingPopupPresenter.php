@@ -58,10 +58,6 @@ class OnboardingPopupPresenter {
 				'subtitle'          => __( 'Great choice! You\'re joining millions of WordPress sites that rely on Limit Login Attempts Reloaded to protect against brute-force attacks.', 'limit-login-attempts-reloaded' )
 					. "\n\n"
 					. __( 'Let\'s get your site protected!', 'limit-login-attempts-reloaded' ),
-				'setup_title'       => __( 'Already using Premium? Add your Setup Code', 'limit-login-attempts-reloaded' ),
-				'setup_placeholder' => __( 'Your Setup Code', 'limit-login-attempts-reloaded' ),
-				'setup_button'      => __( 'Activate', 'limit-login-attempts-reloaded' ),
-				'setup_desc'        => __( 'The Setup Code can be found in your email confirmation.', 'limit-login-attempts-reloaded' ),
 				'notify_title'      => __( 'Notification Settings', 'limit-login-attempts-reloaded' ),
 				'email_label'       => __( 'Your Email', 'limit-login-attempts-reloaded' ),
 				'email_placeholder' => __( 'Your email', 'limit-login-attempts-reloaded' ),

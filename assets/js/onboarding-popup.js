@@ -209,49 +209,9 @@
 		};
 
 		const bindWelcomeHandlers = function () {
-			const $setup_code_key = $( '#llar-setup-code-field' );
-			const $activate_button = $( '#llar-app-install-btn' );
-			const $spinner = $activate_button.find( '.preloader-wrapper .spinner' );
 			const $subscribe_email = $( '#llar-subscribe-email' );
 			const $subscribe_email_button = $( '#llar-subscribe-email-button' );
 			const $subscribe_spinner = $subscribe_email_button.find( '.preloader-wrapper .spinner' );
-
-			$setup_code_key.on( 'input', function () {
-				if ( $( this ).val().trim() !== '' ) {
-					$activate_button.removeClass( disabled );
-				} else {
-					$activate_button.addClass( disabled );
-				}
-			} );
-
-			$activate_button.on( 'click', function ( e ) {
-				e.preventDefault();
-
-				if ( $activate_button.hasClass( disabled ) || isCompleting ) {
-					return;
-				}
-
-				const $error = $( '.field-error' );
-				const $setup_code = $setup_code_key.val();
-				const $closeIcon = $( '.jconfirm-closeIcon' );
-				$error.text( '' ).hide();
-				$activate_button.addClass( disabled );
-				$spinner.addClass( visibility );
-				$body.addClass( disabled );
-				$closeIcon.addClass( hidden );
-				llar_activate_license_key( $setup_code, { llar_onboarding_context: 'welcome' } )
-					.then( function () {
-						finishAfterSuccessfulActivation();
-					} )
-					.catch( function ( response ) {
-						unlockBodyAndCloseIcon( $closeIcon );
-						$spinner.removeClass( visibility );
-						$activate_button.removeClass( disabled );
-						if ( response && ! response.success && response.data && response.data.msg ) {
-							$error.text( response.data.msg ).show();
-						}
-					} );
-			} );
 
 			$subscribe_email.on( 'blur', function () {
 				const email = $( this ).val().trim();

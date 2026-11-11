@@ -48,25 +48,6 @@ ob_start();
 		<div class="card mx-auto">
 			<div class="field-wrap">
 				<div class="field-title">
-					<?php echo esc_html( $popup['step1']['setup_title'] ); ?>
-				</div>
-				<div class="field-key">
-					<input type="text" class="input_border" id="llar-setup-code-field" placeholder="<?php echo esc_attr( $popup['step1']['setup_placeholder'] ); ?>" value="">
-					<button class="button menu__item button__orange llar-disabled" id="llar-app-install-btn">
-						<?php echo esc_html( $popup['step1']['setup_button'] ); ?>
-						<span class="dashicons dashicons-arrow-right-alt"></span>
-						<?php echo $spinner; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Trusted spinner markup. ?>
-					</button>
-				</div>
-				<div class="field-error"></div>
-				<div class="field-desc">
-					<?php echo esc_html( $popup['step1']['setup_desc'] ); ?>
-				</div>
-			</div>
-		</div>
-		<div class="card mx-auto">
-			<div class="field-wrap">
-				<div class="field-title">
 					<?php echo esc_html( $popup['step1']['notify_title'] ); ?>
 				</div>
 				<div class="field-email field-email--inline">
