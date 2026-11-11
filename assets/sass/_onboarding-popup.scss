@@ -245,11 +245,17 @@
           min-width: 768px;
           text-align: center;
           margin-top: 37px;
-          padding: 23px 63px 60px;
+          // Equal top/bottom strip — was 23/60 and looked bottom-heavy.
+          padding: 23px 63px;
           border: unset;
           background-color: $background__sky-blue;
           border-radius: $border-radius;
           box-shadow: 2px 2px 9px 0 $box-shadow__light-transparent-gray;
+
+          // field-wrap default margin-top would inflate only the top strip.
+          > .field-wrap {
+            margin-top: 0;
+          }
 
           .explanations {
             font-size: 14px;
