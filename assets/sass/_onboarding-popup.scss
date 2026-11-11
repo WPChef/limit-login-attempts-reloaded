@@ -252,9 +252,13 @@
           border-radius: $border-radius;
           box-shadow: 2px 2px 9px 0 $box-shadow__light-transparent-gray;
 
-          // field-wrap default margin-top would inflate only the top strip.
+          // field-wrap / first desc margins would inflate only the top strip.
           > .field-wrap {
             margin-top: 0;
+
+            > .field-desc-add:first-child {
+              margin-top: 0;
+            }
           }
 
           .explanations {

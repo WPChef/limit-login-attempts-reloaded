@@ -3688,6 +3688,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card > .field-wrap {
   margin-top: 0;
 }
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card > .field-wrap > .field-desc-add:first-child {
+  margin-top: 0;
+}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card .explanations {
   font-size: 14px;
   color: #666D84;
