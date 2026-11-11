@@ -1275,9 +1275,10 @@ class Ajax {
 	/**
 	 * Install (if needed) and activate an extension plugin from the Extensions tab.
 	 *
-	 * Requires WordPress install/activate caps (not only LLAR has_capability),
+	 * Requires WordPress install/activate/delete caps (not only LLAR has_capability),
 	 * so multisite site-admins and DISALLOW_FILE_MODS hosts cannot bypass core.
-	 * Existing files are verified against wordpress.org (or reinstalled) before activate.
+	 * Existing trees are verified against wordpress.org; mismatches are deleted
+	 * then reinstalled from .org (never activated in place).
 	 */
 	public function extension_install_callback() {
 
@@ -1330,27 +1331,27 @@ class Ajax {
 			) );
 		}
 
-		$plugin_path = WP_PLUGIN_DIR . '/' . $extension_file;
+		$plugin_path   = WP_PLUGIN_DIR . '/' . $extension_file;
 		$needs_install = ! file_exists( $plugin_path );
 
 		if ( $needs_install ) {
-			if ( ! current_user_can( 'install_plugins' ) ) {
-				wp_send_json_error( array(
-					'message' => __( 'You do not have permission to install plugins.', 'limit-login-attempts-reloaded' ),
-				) );
-			}
-
+			$this->assert_extension_install_allowed();
 			$this->install_extension_from_wordpress_org( $slug );
 		} else {
-			// File already on disk: confirm it matches the wordpress.org package before activate.
-			if ( ! $this->extension_matches_wordpress_org( $slug, $extension_file, $extension_meta ) ) {
-				if ( ! current_user_can( 'install_plugins' ) ) {
+			$org_api = $this->get_extension_wordpress_org_api( $slug );
+
+			if ( ! $this->extension_matches_wordpress_org( $slug, $extension_file, $extension_meta, $org_api ) ) {
+				// Never activate a mismatched tree. Delete it, then install a fresh .org package.
+				$this->assert_extension_install_allowed();
+
+				if ( ! current_user_can( 'delete_plugins' ) ) {
 					wp_send_json_error( array(
-						'message' => __( 'The installed files do not match the WordPress.org extension. Reinstall requires plugin install permissions.', 'limit-login-attempts-reloaded' ),
+						'message' => __( 'The installed files do not match the WordPress.org extension. Remove them manually, then try again.', 'limit-login-attempts-reloaded' ),
 					) );
 				}
 
-				$this->install_extension_from_wordpress_org( $slug, true );
+				$this->remove_extension_files( $extension_file );
+				$this->install_extension_from_wordpress_org( $slug );
 			}
 		}
 
@@ -1374,40 +1375,68 @@ class Ajax {
 	}
 
 	/**
-	 * Download and install an extension zip from wordpress.org.
-	 *
-	 * @param string $slug             Plugin slug.
-	 * @param bool   $overwrite_package Replace existing files when reinstalling.
+	 * Caps + environment gate for downloading / replacing plugin files.
 	 */
-	private function install_extension_from_wordpress_org( $slug, $overwrite_package = false ) {
+	private function assert_extension_install_allowed() {
+
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			wp_send_json_error( array(
+				'message' => __( 'You do not have permission to install plugins.', 'limit-login-attempts-reloaded' ),
+			) );
+		}
+
+		if ( ! wp_is_file_mod_allowed( 'install_plugin' ) ) {
+			wp_send_json_error( array(
+				'message' => __( 'Plugin installation is disabled on this site.', 'limit-login-attempts-reloaded' ),
+			) );
+		}
+	}
+
+	/**
+	 * Fetch plugin_information from wordpress.org for an extension slug.
+	 *
+	 * @param string $slug Plugin slug.
+	 * @return object
+	 */
+	private function get_extension_wordpress_org_api( $slug ) {
 
 		if ( ! function_exists( 'plugins_api' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 		}
 
-		include_once ABSPATH . 'wp-admin/includes/file.php';
-		include_once ABSPATH . 'wp-admin/includes/misc.php';
-		include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-
 		$api = plugins_api( 'plugin_information', array(
 			'slug'   => $slug,
-			'fields' => array( 'sections' => false ),
+			'fields' => array(
+				'sections'  => false,
+				'versions'  => true,
+			),
 		) );
 
-		if ( is_wp_error( $api ) || empty( $api->download_link ) ) {
+		if ( is_wp_error( $api ) || empty( $api->name ) || empty( $api->download_link ) ) {
 			wp_send_json_error( array(
 				'message' => __( 'Could not connect to the WordPress.org plugin directory. Please try again later.', 'limit-login-attempts-reloaded' ),
 			) );
 		}
 
+		return $api;
+	}
+
+	/**
+	 * Download and install an extension zip from wordpress.org into an empty target.
+	 *
+	 * @param string $slug Plugin slug.
+	 */
+	private function install_extension_from_wordpress_org( $slug ) {
+
+		$api = $this->get_extension_wordpress_org_api( $slug );
+
+		include_once ABSPATH . 'wp-admin/includes/file.php';
+		include_once ABSPATH . 'wp-admin/includes/misc.php';
+		include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+
 		$skin     = new \WP_Ajax_Upgrader_Skin();
 		$upgrader = new \Plugin_Upgrader( $skin );
-		$result   = $upgrader->install(
-			$api->download_link,
-			array(
-				'overwrite_package' => (bool) $overwrite_package,
-			)
-		);
+		$result   = $upgrader->install( $api->download_link );
 
 		if ( is_wp_error( $result ) || true !== $result ) {
 			wp_send_json_error( array(
@@ -1417,14 +1446,47 @@ class Ajax {
 	}
 
 	/**
+	 * Safely remove an existing extension directory via WordPress delete_plugins().
+	 *
+	 * @param string $extension_file Plugin basename.
+	 */
+	private function remove_extension_files( $extension_file ) {
+
+		if ( ! function_exists( 'delete_plugins' ) ) {
+			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		include_once ABSPATH . 'wp-admin/includes/file.php';
+
+		$result = delete_plugins( array( $extension_file ) );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array(
+				'message' => __( 'Could not remove the existing extension files. Remove them manually, then try again.', 'limit-login-attempts-reloaded' ),
+			) );
+		}
+
+		// delete_plugins() may return null/void/true depending on WP version.
+		if ( false === $result ) {
+			wp_send_json_error( array(
+				'message' => __( 'Could not remove the existing extension files. Remove them manually, then try again.', 'limit-login-attempts-reloaded' ),
+			) );
+		}
+	}
+
+	/**
 	 * Whether on-disk plugin headers match the curated extension and wordpress.org.
+	 *
+	 * Checks Name, TextDomain, Version and PluginURI (when present). Header-only
+	 * checks cannot prove file integrity; mismatches are never activated in place.
 	 *
 	 * @param string $slug           Plugin slug.
 	 * @param string $extension_file Plugin basename.
 	 * @param array  $extension_meta Registry row.
+	 * @param object $api            plugins_api result.
 	 * @return bool
 	 */
-	private function extension_matches_wordpress_org( $slug, $extension_file, $extension_meta ) {
+	private function extension_matches_wordpress_org( $slug, $extension_file, $extension_meta, $api ) {
 
 		$plugin_path = WP_PLUGIN_DIR . '/' . $extension_file;
 		if ( ! file_exists( $plugin_path ) ) {
@@ -1435,27 +1497,44 @@ class Ajax {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$plugin_data = get_plugin_data( $plugin_path, false, false );
-		$local_name  = isset( $plugin_data['Name'] ) ? (string) $plugin_data['Name'] : '';
+		$plugin_data   = get_plugin_data( $plugin_path, false, false );
+		$local_name    = isset( $plugin_data['Name'] ) ? (string) $plugin_data['Name'] : '';
+		$local_domain  = isset( $plugin_data['TextDomain'] ) ? (string) $plugin_data['TextDomain'] : '';
+		$local_version = isset( $plugin_data['Version'] ) ? (string) $plugin_data['Version'] : '';
+		$local_uri     = isset( $plugin_data['PluginURI'] ) ? (string) $plugin_data['PluginURI'] : '';
+		$expected_name = (string) $extension_meta['name'];
+		$api_name      = isset( $api->name ) ? (string) $api->name : '';
 
-		if ( '' === $local_name || $local_name !== (string) $extension_meta['name'] ) {
+		if ( '' === $local_name || $local_name !== $expected_name || $local_name !== $api_name ) {
 			return false;
 		}
 
-		if ( ! function_exists( 'plugins_api' ) ) {
-			include_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-		}
-
-		$api = plugins_api( 'plugin_information', array(
-			'slug'   => $slug,
-			'fields' => array( 'sections' => false ),
-		) );
-
-		if ( is_wp_error( $api ) || empty( $api->name ) ) {
+		if ( $local_domain !== $slug ) {
 			return false;
 		}
 
-		return (string) $api->name === $local_name;
+		$known_versions = array();
+		if ( ! empty( $api->versions ) && is_array( $api->versions ) ) {
+			$known_versions = array_map( 'strval', array_keys( $api->versions ) );
+		}
+		if ( ! empty( $api->version ) ) {
+			$known_versions[] = (string) $api->version;
+		}
+		$known_versions = array_unique( $known_versions );
+
+		if ( '' === $local_version || ! in_array( $local_version, $known_versions, true ) ) {
+			return false;
+		}
+
+		if ( '' !== $local_uri ) {
+			$needle_pages = 'wordpress.org/plugins/' . $slug;
+			$needle_svn   = 'plugins.svn.wordpress.org/' . $slug;
+			if ( false === strpos( $local_uri, $needle_pages ) && false === strpos( $local_uri, $needle_svn ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

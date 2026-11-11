@@ -266,13 +266,16 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
 
             llar_ajax_callback_post( ajaxurl, data )
                 .then( function () {
-                    $button.addClass( 'llar-extension-install--active' )
+                    $button
+                        .addClass( 'llar-extension-install--active' )
+                        .prop( 'disabled', true )
                         .text( llar_vars.extension_active_text );
                 } )
                 .catch( function ( response ) {
                     $button.prop( 'disabled', false ).text( original_text );
 
-                    notice_popup_error_update.content = content_html;
+                    const error_content = $( '#llar_popup_error_content' ).html() || content_html || '';
+                    notice_popup_error_update.content = error_content;
                     notice_popup_error_update.msg = llar_micro_cloud_error_message( response );
                     notice_popup_error_update.open();
                 } )
