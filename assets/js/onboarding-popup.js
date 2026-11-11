@@ -321,17 +321,11 @@
 				return true;
 			},
 			backgroundDismiss: false,
-			escapeKey: function () {
-				if ( onboardingCompleted ) {
-					window.location.reload();
-					return false;
-				}
-				if ( isCompleting ) {
-					return false;
-				}
-				return true;
-			},
+			// jConfirm treats escapeKey function as a button-name resolver, not a
+			// boolean gate — handle Escape explicitly below.
+			escapeKey: false,
 			onClose: function () {
+				$( document ).off( 'keydown.llarOnboardingEsc' );
 				if ( ! onboardingCompleted && ! isCompleting ) {
 					llar_ajax_callback_post_wp( ajaxurl, {
 						action: 'dismiss_onboarding_popup',
@@ -346,7 +340,22 @@
 			},
 			buttons: {},
 			onContentReady: function () {
+				const jc = this;
 				this.$contentPane.attr( 'tabindex', '-1' ).focus();
+				$( document ).off( 'keydown.llarOnboardingEsc' ).on( 'keydown.llarOnboardingEsc', function ( e ) {
+					if ( e.key !== 'Escape' && e.which !== 27 ) {
+						return;
+					}
+					e.preventDefault();
+					if ( isCompleting ) {
+						return;
+					}
+					if ( onboardingCompleted ) {
+						window.location.reload();
+						return;
+					}
+					jc.close();
+				} );
 			},
 			onOpenBefore: function () {
 				$body.css( 'overflow', 'hidden' );
