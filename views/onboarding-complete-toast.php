@@ -40,6 +40,6 @@ if ( empty( $toast_message ) ) {
 	if ( closeBtn ) {
 		closeBtn.addEventListener( 'click', hide );
 	}
-	window.setTimeout( hide, 10000 );
+	// No auto-dismiss — long copy needs a manual close (or page reload).
 } )();
 </script>

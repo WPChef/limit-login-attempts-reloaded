@@ -3926,8 +3926,8 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   align-items: flex-start;
   gap: 12px;
   max-width: min(640px, 100vw - 32px);
-  padding: 14px 16px;
-  border-radius: 999px;
+  padding: 16px 18px;
+  border-radius: 12px;
   background: #ffffff;
   box-shadow: 0 8px 28px rgba(42, 47, 64, 0.18);
   transform: translateX(-50%);
@@ -3949,9 +3949,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .llar-onboarding-toast__text {
   flex: 1 1 auto;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.45;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
   color: #2A2F40;
 }
 .llar-onboarding-toast__close {
