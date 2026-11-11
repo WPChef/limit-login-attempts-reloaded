@@ -192,6 +192,14 @@ class LocalLockoutManager {
 			return;
 		}
 
+		// The wp_login_failed contract passes a username string, but off-spec
+		// do_action callers forward their WP_Error instead (support topic
+		// error-1978): treat anything non-string as an empty username instead
+		// of fataling digest tracking on the (string) cast (PHP 8).
+		if ( ! is_string( $username ) ) {
+			$username = '';
+		}
+
 		// @temporary WP 7.0 compat — prevent double-recording when late authenticate fallback already fired.
 		// TODO: Remove after WP 7.1 release or when auth flow is stable.
 		if ( self::$failed_login_recorded_in_request ) {
