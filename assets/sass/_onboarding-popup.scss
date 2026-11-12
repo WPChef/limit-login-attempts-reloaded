@@ -250,8 +250,8 @@
           min-width: 768px;
           text-align: center;
           margin-top: 37px;
-          // Equal top/bottom strip — was 23/60 and looked bottom-heavy.
-          padding: 23px 63px;
+          // Extra bottom air so terms are not flush with the card edge.
+          padding: 23px 63px 40px;
           border: unset;
           background-color: $background__sky-blue;
           border-radius: $border-radius;

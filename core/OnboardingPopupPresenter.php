@@ -26,8 +26,11 @@ class OnboardingPopupPresenter {
 
 		$trial_return = TrialLanding::parse_return_request();
 		$open_trial   = ! empty( $trial_return['open_trial_step'] );
-		$should_show  = ( ! Config::get( 'onboarding_popup_shown' ) && ! Config::get( 'app_setup_code' ) )
-			|| ( $open_trial && empty( Config::get( 'app_setup_code' ) ) );
+		$popup_shown  = (bool) Config::get( 'onboarding_popup_shown' );
+		// onboarding=trial re-opens Trial only while the popup is still unfinished.
+		// After Basic / dismiss (shown=true), keep the dashboard + toast visible.
+		$should_show  = ( ! $popup_shown && ! Config::get( 'app_setup_code' ) )
+			|| ( $open_trial && empty( Config::get( 'app_setup_code' ) ) && ! $popup_shown );
 
 		$trial_token = '';
 		if ( $should_show ) {

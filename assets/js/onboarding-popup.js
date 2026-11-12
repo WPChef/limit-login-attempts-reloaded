@@ -40,10 +40,18 @@
 		const scrubOnboardingReturnParams = function () {
 			try {
 				const url = new URL( window.location.href );
+				// Drop return-flow flags so Basic / activation reload lands on a
+				// clean dashboard URL and does not reopen Trial over the toast.
+				url.searchParams.delete( 'onboarding' );
 				url.searchParams.delete( 'setup_code' );
 				url.searchParams.delete( 'llar_trial_token' );
 				window.history.replaceState( {}, document.title, url.toString() );
 			} catch ( e ) {}
+		};
+
+		const reloadAfterOnboardingComplete = function () {
+			scrubOnboardingReturnParams();
+			window.location.reload();
 		};
 
 		const jumpToStep2 = function () {
@@ -85,7 +93,7 @@
 			} ).then( function () {
 				onboardingCompleted = true;
 				$closeIcon.remove();
-				window.location.reload();
+				reloadAfterOnboardingComplete();
 			} ).catch( function ( err ) {
 				isCompleting = false;
 				unlockBodyAndCloseIcon( $closeIcon );
@@ -98,7 +106,7 @@
 		const finishAfterSuccessfulActivation = function () {
 			onboardingCompleted = true;
 			$( '.jconfirm-closeIcon' ).remove();
-			window.location.reload();
+			reloadAfterOnboardingComplete();
 		};
 
 		const bindStep2Handlers = function ( email ) {
@@ -272,7 +280,7 @@
 			useBootstrap: false,
 			closeIcon: function () {
 				if ( onboardingCompleted ) {
-					window.location.reload();
+					reloadAfterOnboardingComplete();
 					return false;
 				}
 				if ( isCompleting ) {
@@ -281,11 +289,9 @@
 				return true;
 			},
 			backgroundDismiss: false,
-			// jConfirm treats escapeKey function as a button-name resolver, not a
-			// boolean gate — handle Escape explicitly below.
+			// Mouse-driven UI only; Escape would also dismiss nested $.alert dialogs.
 			escapeKey: false,
 			onClose: function () {
-				$( document ).off( 'keydown.llarOnboardingEsc' );
 				if ( ! onboardingCompleted && ! isCompleting ) {
 					llar_ajax_callback_post_wp( ajaxurl, {
 						action: 'dismiss_onboarding_popup',
@@ -300,22 +306,7 @@
 			},
 			buttons: {},
 			onContentReady: function () {
-				const jc = this;
 				this.$contentPane.attr( 'tabindex', '-1' ).focus();
-				$( document ).off( 'keydown.llarOnboardingEsc' ).on( 'keydown.llarOnboardingEsc', function ( e ) {
-					if ( e.key !== 'Escape' && e.which !== 27 ) {
-						return;
-					}
-					e.preventDefault();
-					if ( isCompleting ) {
-						return;
-					}
-					if ( onboardingCompleted ) {
-						window.location.reload();
-						return;
-					}
-					jc.close();
-				} );
 			},
 			onOpenBefore: function () {
 				$body.css( 'overflow', 'hidden' );
