@@ -421,7 +421,7 @@ class LocalLockoutManager {
 			}
 			$valid[ $ip ] = time() + Config::get( 'valid_duration' );
 
-			if ( $retries[ $ip ] % Config::get( 'allowed_retries' ) != 0 ) {
+			if ( 0 != $retries[ $ip ] % Config::get( 'allowed_retries' ) ) {
 				$this->cleanup( $retries, null, $valid );
 
 				LoginFlowTransientStore::merge(

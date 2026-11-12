@@ -520,7 +520,7 @@ class Helpers {
 
 		// Loopback must not collapse to "::" under a /64 mask.
 		$loopback = inet_pton( '::1' );
-		if ( false !== $loopback && $binary === $loopback ) {
+		if ( false !== $loopback && $loopback === $binary ) {
 			return '::1';
 		}
 
