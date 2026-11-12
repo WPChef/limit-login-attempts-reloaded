@@ -129,6 +129,11 @@
       .action {
         margin-left: auto;
         text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 9px;
 
         a.button {
           font-size: 16px;

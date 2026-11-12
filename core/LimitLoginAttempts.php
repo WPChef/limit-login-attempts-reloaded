@@ -82,6 +82,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	private $integration_manager = null;
 
 	private $info_data = array();
+	private $info_attempted = false;
 
 	/**
 	 * MFA manager instance (MfaManager: MfaBackupCodes, MfaEndpoint, MfaSettings, MfaValidator).
@@ -212,6 +213,10 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public static function reset_request_guards() {
 		LocalLockoutManager::reset_failed_login_recorded_in_request();
 		MfaFlowLoginHandler::reset_handshake_guard();
+
+		if ( self::$instance ) {
+			self::$instance->reset_info_cache();
+		}
 	}
 
 
@@ -262,6 +267,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			'name' => 'Micro Cloud',
 			'rate' => 20,
 		),
+		'trial'      => array(
+			'rate' => 20,
+		),
 		'personal'  => array(
 			'name' => 'Personal',
 			'rate' => 25,
@@ -290,6 +298,10 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 	public function __construct() {
 		self::$instance = $this;
+
+		// The trial plan name derives from TRIAL_DAYS (property initializers
+		// cannot call methods, so it is set here).
+		$this->plans['trial']['name'] = self::trial_plan_name();
 
 		Config::init();
 		Http::init();
@@ -402,6 +414,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		//add_action( 'admin_notices', array( $this, 'show_enable_notify_notice' ) );
 
 		add_action( 'admin_notices', array( $this, 'render_leave_review_admin_notice' ) );
+		add_action( 'admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
+		add_action( 'network_admin_notices', array( $this, 'render_php_vulnerable_admin_notice' ) );
 
 		add_action( 'admin_print_scripts-toplevel_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
 		add_action( 'admin_print_scripts-settings_page_limit-login-attempts', array( $this, 'load_admin_scripts' ) );
@@ -545,11 +559,26 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * @param string      $setup_code           App setup code.
 	 * @param string      $upgrade_premium_url  Premium upgrade URL.
 	 * @param bool|array  $api_stats            Cloud API stats.
+	 * @param bool        $info_has_valid_data  Whether cloud plan data is valid.
 	 *
 	 * @return array
 	 */
-	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats ) {
-		return $this->dashboard_renderer->get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats );
+	public function get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats, $info_has_valid_data = false ) {
+		return $this->dashboard_renderer->get_failed_attempts_circle_data( $is_active_app_custom, $is_exhausted, $block_sub_group, $setup_code, $upgrade_premium_url, $api_stats, $info_has_valid_data );
+	}
+
+	/**
+	 * View data for the dashboard tab template (views/tab-dashboard.php).
+	 *
+	 * @param string $active_app           Active app slug ('local'|'custom').
+	 * @param bool   $is_active_app_custom Whether the cloud app is active.
+	 * @param string $block_sub_group      Cloud plan name.
+	 * @param bool   $is_exhausted         Cloud quota exhausted flag.
+	 *
+	 * @return array
+	 */
+	public function get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
+		return $this->dashboard_renderer->build_dashboard_tab_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
 	}
 	/**
 	 * Redirect to dashboard page after installed
@@ -629,7 +658,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		// Setup default plugin options
 		//$this->sanitize_options();
 
-		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ) );
+		add_action( 'wp_login_failed', array( $this, 'limit_login_failed' ), 10, 2 );
 		add_filter( 'wp_authenticate_user', array( $this, 'wp_authenticate_user' ), 99999, 2 );
 		add_action( 'wp_login', array( $this, 'limit_login_success' ), 10, 2 );
 
@@ -642,6 +671,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		if ( Helpers::is_network_mode() ) {
 			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
 
+			add_action( 'network_admin_menu', array( $this, 'network_setting_menu_mc_exhausted_icon' ), 11 );
+
 			if ( Config::get( 'show_warning_badge' ) ) {
 				add_action( 'network_admin_menu', array( $this, 'network_setting_menu_alert_icon' ) );
 			}
@@ -649,6 +680,8 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 		if ( Helpers::allow_local_options() ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+
+			add_action( 'admin_menu', array( $this, 'setting_menu_mc_exhausted_icon' ), 11 );
 
 			if ( Config::get( 'show_top_bar_menu_item' ) ) {
 				add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 999 );
@@ -683,6 +716,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		}
 
 		add_filter( 'plugin_action_links_' . LLA_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
+
+		// "Start Your 7-Day Free Trial" popup behind every non-onboarding CTA.
+		TrialStartPopup::init();
 
 		// MFA flow callback: llar_mfa=1&token=...&code=...
 		add_action( 'init', array( $this, 'mfa_flow_callback' ), 1 );
@@ -753,7 +789,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		$is_wp_login_page     = isset( $_POST['log'] );
 		$is_custom_login_page = $this->integration_manager->is_custom_login_page();
 
-		$mfa_return_message = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
+		// Only shown for llar_mfa_error returns: the visitor already passed the
+		// password step, so the two-factor copy must not claim a wrong password.
+		$mfa_return_message = MfaFlowLoginHandler::refusal_message();
 		if ( ( $limit_login_nonempty_credentials && ( $is_wp_login_page || $is_custom_login_page || $um_limit_login_failed ) ) || $show_mfa_return_error ) :
 			ob_start();
 			?>
@@ -863,11 +901,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 			if ( empty( Config::get( 'app_setup_code' ) ) ) {
 
-				$slug = $this->get_options_page_uri( 'dashboard#modal_micro_cloud' );
+				// No email in the fallback href — the trial start popup collects
+				// the email + consent right before leaving the site.
+				$landing_url = TrialLanding::dashboard_landing_url( 'dashboard', '' );
 
 				$actions = array_merge(
 					array(
-						'<a href="' . esc_html( $slug ) . '" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
+						'<a href="' . esc_url( $landing_url ) . '" data-llar-info-id="' . esc_attr( TrialLanding::INFO_ID_DASHBOARD ) . '" class="llar-trial-start-cta" style="font-weight: bold;">' . __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) . '</a>',
 					),
 					$actions
 				);
@@ -1108,6 +1148,14 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public function network_setting_menu_alert_icon() {
 		$this->admin_ui->network_setting_menu_alert_icon();
 	}
+	public function setting_menu_mc_exhausted_icon()
+	{
+		$this->admin_ui->setting_menu_mc_exhausted_icon();
+	}
+	public function network_setting_menu_mc_exhausted_icon()
+	{
+		$this->admin_ui->network_setting_menu_mc_exhausted_icon();
+	}
 	/**
 	 * Get the correct options page URI
 	 *
@@ -1151,7 +1199,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 				'user_id' => $user->ID,
 				'gateway' => Helpers::detect_gateway(),
 				'roles'   => $user->roles,
-				'agent'   => $_SERVER['HTTP_USER_AGENT'],
+				'agent'   => Helpers::sanitize_user_agent(),
 				'url'     => $clean_url,
 			);
 
@@ -1232,13 +1280,13 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * Run MFA flow on login: handshake, save session, redirect to MFA app.
-	 * Exits on successful redirect. Call only after password verification.
+	 * Handle a failed login from the wp_login_failed hook.
 	 *
-	 * @param string $username Login username.
+	 * @param string        $username Login username.
+	 * @param \WP_Error|null $error    Authentication error, when core provides it.
 	 */
-	public function limit_login_failed( $username ) {
-		$this->local_lockout->limit_login_failed( $username );
+	public function limit_login_failed( $username, $error = null ) {
+		$this->local_lockout->limit_login_failed( $username, $error );
 	}
 
 	/**
@@ -1472,21 +1520,128 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		return $plans;
 	}
 
+	/**
+	 * Free trial length in days — the single source of truth for every
+	 * trial string in the plugin (titles, buttons, banners, plan name).
+	 */
+	const TRIAL_DAYS = 7;
+
+	/**
+	 * Canonical (untranslated) trial plan name. Doubles as the logic key
+	 * compared against plan_name_match() output, so it must stay literal.
+	 *
+	 * @return string
+	 */
+	public static function trial_plan_name() {
+		return sprintf( '%d Day Trial', self::TRIAL_DAYS );
+	}
+
+	/**
+	 * Translated trial label for display (buttons, badges, banners).
+	 *
+	 * @return string
+	 */
+	public static function trial_label() {
+		/* translators: %d: trial length in days. */
+		return sprintf( __( '%d Day Trial', 'limit-login-attempts-reloaded' ), self::TRIAL_DAYS );
+	}
+
 	private function info() {
+		if ( $this->info_attempted ) {
+			return $this->info_data;
+		}
+
 		if ( self::$cloud_app ) {
-			$this->info_data = self::$cloud_app->info();
+			$this->info_attempted = true;
+			$this->info_data      = self::$cloud_app->info();
 		}
 
 		return $this->info_data;
 	}
 
-	public function info_is_exhausted() {
-		if ( empty( $this->info_data ) ) {
+	/**
+	 * Drop the per-request /info memo so the next call reflects updated config.
+	 */
+	public function reset_info_cache() {
+		$this->info_data      = array();
+		$this->info_attempted = false;
+	}
 
-			$this->info_data = $this->info();
+	public function info_is_exhausted() {
+		if ( Config::get( Config::OPTION_ACTIVE_APP ) !== 'custom' || ! self::$cloud_app ) {
+			return false;
 		}
 
-		return isset( $this->info_data['requests']['exhausted'] ) ? filter_var( $this->info_data['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		if ( is_array( $this->info_data ) && ! empty( $this->info_data ) ) {
+			return $this->parse_mc_exhausted( $this->info_data );
+		}
+
+		$cached = $this->is_plugin_ui_request() ? false : get_transient( self::mc_exhausted_cache_key() );
+
+		if ( false !== $cached ) {
+			return '1' === $cached;
+		}
+
+		$info = $this->info();
+
+		if ( is_array( $info ) && ! empty( $info ) ) {
+			return $this->parse_mc_exhausted( $info );
+		}
+
+		return false;
+	}
+
+	private function parse_mc_exhausted( $info ) {
+		$exhausted = isset( $info['requests']['exhausted'] )
+			? filter_var( $info['requests']['exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE )
+			: false;
+
+		$exhausted = null === $exhausted ? false : (bool) $exhausted;
+
+		$this->cache_mc_exhausted( $exhausted );
+
+		return $exhausted;
+	}
+
+	private function cache_mc_exhausted( $exhausted ) {
+		$key   = self::mc_exhausted_cache_key();
+		$value = $exhausted ? '1' : '0';
+
+		if ( get_transient( $key ) === $value ) {
+			return;
+		}
+
+		set_transient( $key, $value, $exhausted ? 12 * HOUR_IN_SECONDS : 15 * MINUTE_IN_SECONDS );
+	}
+
+	/**
+	 * Drop the cached MC-exhausted flag (e.g. after the cloud app config changed).
+	 *
+	 * @param array|null $app_config Config to build the key for; the current one by default.
+	 */
+	public static function clear_mc_exhausted_cache( $app_config = null ) {
+		delete_transient( self::mc_exhausted_cache_key( $app_config ) );
+	}
+
+	private static function mc_exhausted_cache_key( $app_config = null ) {
+		$app_config = is_array( $app_config ) ? $app_config : Config::get( 'app_config' );
+		$app_id     = is_array( $app_config ) && ! empty( $app_config['id'] ) ? (string) $app_config['id'] : 'unknown';
+
+		return 'limit_login_mc_exhausted_' . md5( $app_id . '|' . get_current_blog_id() );
+	}
+
+	private function is_plugin_ui_request() {
+		if ( ! is_admin() || ! $this->has_capability ) {
+			return false;
+		}
+
+		if ( ! empty( $_REQUEST['page'] ) && $_REQUEST['page'] === $this->_options_page_slug ) {
+			return true;
+		}
+
+		global $pagenow;
+
+		return 'index.php' === $pagenow && ! Config::get( 'hide_dashboard_widget' );
 	}
 
 	/**
@@ -1496,12 +1651,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 */
 	public function info_is_almost_exhausted()
 	{
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return isset( $this->info_data['requests']['almost_exhausted'] ) ? filter_var( $this->info_data['requests']['almost_exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
+		return isset( $info['requests']['almost_exhausted'] ) ? filter_var( $info['requests']['almost_exhausted'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) : false;
 	}
 
 	/**
@@ -1510,20 +1662,18 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * @return bool
 	 */
 	public function info_has_valid_data() {
-		if ( empty( $this->info_data ) ) {
-			$this->info_data = $this->info();
-		}
+		$info = $this->info();
 
-		if ( empty( $this->info_data ) || ! is_array( $this->info_data ) ) {
+		if ( empty( $info ) || ! is_array( $info ) ) {
 			return false;
 		}
 
-		if ( empty( $this->info_data['requests'] ) || ! is_array( $this->info_data['requests'] ) ) {
+		if ( empty( $info['requests'] ) || ! is_array( $info['requests'] ) ) {
 			return false;
 		}
 
-		return array_key_exists( 'quota', $this->info_data['requests'] )
-			&& '' !== (string) $this->info_data['requests']['quota'];
+		return array_key_exists( 'quota', $info['requests'] )
+			&& '' !== (string) $info['requests']['quota'];
 	}
 
 	/**
@@ -1545,44 +1695,31 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 
 
 	public function info_requests() {
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['requests'] ) ) ? $this->info_data['requests'] : '';
+		return ( ! empty( $info ) && ! empty( $info['requests'] ) ) ? $info['requests'] : '';
 	}
 
 
 	public function info_sub_group() {
-		if ( empty( $this->info_data ) ) {
-
-			$this->info_data = $this->info();
-		}
-
-		$data = ( ! empty( $this->info_data ) && ! empty( $this->info_data['sub_group'] ) ) ? $this->info_data['sub_group'] : '';
+		$info = $this->info();
+		$data = ( ! empty( $info ) && ! empty( $info['sub_group'] ) ) ? $info['sub_group'] : '';
 
 		return $this->plan_name_match( $data );
 	}
 
 
 	public function info_upgrade_url() {
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['upgrade_url'] ) ) ? $this->info_data['upgrade_url'] : '';
+		return ( ! empty( $info ) && ! empty( $info['upgrade_url'] ) ) ? $info['upgrade_url'] : '';
 	}
 
 
 	public function info_block_by_country() {
-		if ( empty( $this->info_data ) ) {
+		$info = $this->info();
 
-			$this->info_data = $this->info();
-		}
-
-		return ( ! empty( $this->info_data ) && ! empty( $this->info_data['block_by_country'] ) ) ? $this->info_data['block_by_country'] : '';
+		return ( ! empty( $info ) && ! empty( $info['block_by_country'] ) ) ? $info['block_by_country'] : '';
 	}
 
 
@@ -1659,5 +1796,28 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 			return;
 		}
 		$this->admin_notices_controller->render( 'leave-review' );
+	}
+
+	/**
+	 * Site-wide admin notice when PHP_VERSION is below a known PHP2Shell fix.
+	 *
+	 * Upstream version compare only (see PhpVulnerabilityChecker). Hidden when the
+	 * current browser has dismissed it (cookie, no user meta) or when PHP_VERSION
+	 * reaches the branch minimum. Admins only.
+	 *
+	 * @return void
+	 */
+	public function render_php_vulnerable_admin_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		if ( ! PhpVulnerabilityChecker::is_vulnerable() ) {
+			return;
+		}
+		$cookie = 'llar_php_vuln_dismissed_' . (int) get_current_user_id();
+		if ( isset( $_COOKIE[ $cookie ] ) && '1' === sanitize_text_field( wp_unslash( $_COOKIE[ $cookie ] ) ) ) {
+			return;
+		}
+		$this->admin_notices_controller->render( 'php-vulnerable' );
 	}
 }
