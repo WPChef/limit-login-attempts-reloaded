@@ -482,7 +482,9 @@ class Helpers {
 	 * Trade-off: clients sharing one prefix share the retry budget.
 	 *
 	 * Prefix values are clamped to 32–128. Returning 0 from the filter would
-	 * otherwise collapse every IPv6 client into the key "::".
+	 * otherwise collapse every IPv6 client into the key "::". The floor /32 is
+	 * a safety bound, not a recommendation: it pools an enormous address
+	 * space into one shared retry budget.
 	 *
 	 * @param string $ip Client IP.
 	 * @return string
@@ -541,7 +543,8 @@ class Helpers {
 	 * Effective IPv6 rate-limit prefix length.
 	 *
 	 * Filter: llar_ipv6_rate_limit_prefix (default 64). Clamped to 32–128 so a
-	 * filter returning 0 cannot collapse all clients into "::".
+	 * filter returning 0 cannot collapse all clients into "::". /32 is only
+	 * the clamp floor — it creates a very wide shared budget; prefer 64 or 56.
 	 *
 	 * @return int
 	 */

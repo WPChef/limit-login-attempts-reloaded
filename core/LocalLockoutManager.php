@@ -407,15 +407,18 @@ class LocalLockoutManager {
 			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ] ) {
 				$retries[ $ip ]++;
 			} else {
-				// After upgrade: seed /64 from a still-valid legacy full-IP counter
-				// so display (max) and enforcement do not diverge for valid_duration.
+				// After upgrade: seed /64 from a still-valid legacy full-IP
+				// counter (plain or hashed) so display (max) and enforcement
+				// do not diverge for valid_duration.
 				$prior = 0;
-				if (
-					$ip !== $raw_ip
-					&& isset( $valid[ $raw_ip ] )
-					&& time() < (int) $valid[ $raw_ip ]
-				) {
-					$prior = Helpers::get_retries_count( $retries, $raw_ip );
+				if ( $ip !== $raw_ip ) {
+					$legacy_window_open = (
+						( isset( $valid[ $raw_ip ] ) && time() < (int) $valid[ $raw_ip ] )
+						|| ( isset( $valid[ md5( $raw_ip ) ] ) && time() < (int) $valid[ md5( $raw_ip ) ] )
+					);
+					if ( $legacy_window_open ) {
+						$prior = Helpers::get_effective_retries_count( $retries, $raw_ip );
+					}
 				}
 				$retries[ $ip ] = $prior > 0 ? $prior + 1 : 1;
 			}
