@@ -325,6 +325,18 @@ class LocalLockoutManager {
 	public function record_failed_login_attempt( $username ) {
 		self::$failed_login_recorded_in_request = true;
 
+		// Whitelisted IP/username must not burn the shared rate-limit budget
+		// (especially the IPv6 /64 key shared with neighbours). Early auth
+		// already removes wp_login_failed for allow-list hits; late WP 7.x
+		// fallbacks still call this method directly.
+		$raw_ip = $this->ip_resolver->get_address();
+		if (
+			$this->ip_resolver->is_ip_whitelisted( $raw_ip )
+			|| $this->is_username_whitelisted( $username )
+		) {
+			return;
+		}
+
 		LoginFlowTransientStore::ensure_token();
 		LoginFlowTransientStore::merge( array( 'login_attempts_left' => 0 ) );
 
@@ -361,8 +373,7 @@ class LocalLockoutManager {
 				LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 			}
 		} else {
-			$raw_ip   = $this->ip_resolver->get_address();
-			$ip       = $this->ip_resolver->get_rate_limit_key( $raw_ip );
+			$ip = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 			$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 
 			if ( ! is_array( $lockouts ) ) {

@@ -544,8 +544,9 @@ class AdminUiController {
 	 * This function allow external ip whitelisting using a filter. Note that it can
 	 * be called multiple times during the login process.
 	 *
-	 * Note that retries and statistics are still counted and notifications
-	 * done as usual for whitelisted ips , but no lockout is done.
+	 * Whitelisted IPs skip local retry increments and lockouts so they cannot
+	 * burn a shared IPv6 /64 budget used by neighbours. Cloud paths likewise
+	 * omit lockout_check when the early auth hook removes wp_login_failed.
 	 *
 	 * Example:
 	 * function my_ip_whitelist($allow, $ip) {
