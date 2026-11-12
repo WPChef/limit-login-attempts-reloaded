@@ -1,6 +1,7 @@
 == Changelog ==
 
 = 3.4.3 =
+* Security: IPv6 addresses in the same /64 now share one lockout, so changing the address ending no longer bypasses the login limit. Thanks to VulnCheck for the report.
 * Shortened onboarding to two steps.
 
 = 3.4.2 =
