@@ -181,7 +181,8 @@ function llar_ajax_callback_post_wp( ajaxurl, data ) {
 
         $checkbox_block_by_country.on( 'change', function () {
 
-            $is_checklist = !! $( this ).prop( 'checked' );
+            const $checkbox = $( this );
+            $is_checklist = !! $checkbox.prop( 'checked' );
 
             let data = {
                 action: 'block_by_country',
@@ -191,7 +192,8 @@ function llar_ajax_callback_post_wp( ajaxurl, data ) {
 
             llar_ajax_callback_post( ajaxurl, data )
                 .catch( function () {
-                    $account_policies.prop( 'checked', false );
+                    // Restore this checkbox, not the unrelated account-policies control.
+                    $checkbox.prop( 'checked', ! $is_checklist );
                 } )
 
         } )

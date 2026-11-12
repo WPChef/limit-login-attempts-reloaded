@@ -289,7 +289,7 @@
 				return true;
 			},
 			backgroundDismiss: false,
-			// Mouse-driven UI only; Escape would also dismiss nested $.alert dialogs.
+			// Disable Escape dismissal for the onboarding dialog.
 			escapeKey: false,
 			onClose: function () {
 				if ( ! onboardingCompleted && ! isCompleting ) {

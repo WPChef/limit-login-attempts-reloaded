@@ -111,7 +111,8 @@
 
       .llar-onboarding-popup__content {
         min-height: 930px;
-        padding: 15px;
+        // Outer bottom air under the last card / Continue (not card-inner padding).
+        padding: 15px 15px 40px;
         background: url("./images/onboarding-bg-big.webp") center top;
         background-size: 100%;
         border-radius: $border-radius__normal;
@@ -250,9 +251,8 @@
           min-width: 768px;
           text-align: center;
           margin-top: 37px;
-          // Extra bottom air so terms are not flush with the card edge
-          // (rebuild CSS with --no-source-map).
-          padding: 23px 63px 40px;
+          // Equal top/bottom strip inside cards.
+          padding: 23px 63px;
           border: unset;
           background-color: $background__sky-blue;
           border-radius: $border-radius;
