@@ -242,13 +242,19 @@ class CallbackHandler {
 	/**
 	 * Read the MFA state cookie value.
 	 *
+	 * State is generated via wp_generate_password( …, false, false ) — alnum only.
+	 *
 	 * @return string
 	 */
 	private static function state_cookie_value() {
 		if ( ! isset( $_COOKIE[ SessionStore::COOKIE_NAME ] ) ) {
 			return '';
 		}
-		return sanitize_text_field( wp_unslash( $_COOKIE[ SessionStore::COOKIE_NAME ] ) );
+		$raw = wp_unslash( $_COOKIE[ SessionStore::COOKIE_NAME ] );
+		if ( ! is_string( $raw ) || '' === $raw ) {
+			return '';
+		}
+		return (string) preg_replace( '/[^a-zA-Z0-9]/', '', $raw );
 	}
 
 	/**

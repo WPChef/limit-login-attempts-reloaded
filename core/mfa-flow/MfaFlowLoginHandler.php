@@ -322,16 +322,19 @@ class MfaFlowLoginHandler {
 	/**
 	 * Build the MFA handshake return URL on the cookie Host when safe.
 	 *
-	 * Prefer the current request host (where setcookie binds) over home_url():
-	 * home may disagree on www / scheme / loopback alias and drop
-	 * SessionStore::COOKIE_NAME on return. Fall back to wp_login_url() (Hide
-	 * Login filters it) when the Host is not home or www.home.
+	 * Prefer the current request host (where setcookie binds) when it matches
+	 * home_url() or site_url() after a single leading-www strip — home alone
+	 * can disagree with the cookie Host (www / scheme / loopback / CDN alias
+	 * vs siteurl). Otherwise fall back to wp_login_url() (Hide Login filters
+	 * it). Exotic aliases that match neither host can override via
+	 * 'llar_mfa_handshake_login_url'.
 	 *
 	 * @return string Absolute login URL without MFA query args.
 	 */
 	private function build_handshake_login_url() {
 		$home_url    = home_url();
 		$home_host   = (string) wp_parse_url( $home_url, PHP_URL_HOST );
+		$site_host   = (string) wp_parse_url( site_url(), PHP_URL_HOST );
 		$home_scheme = (string) wp_parse_url( $home_url, PHP_URL_SCHEME );
 		if ( '' === $home_scheme ) {
 			$home_scheme = is_ssl() ? 'https' : 'http';
@@ -347,33 +350,49 @@ class MfaFlowLoginHandler {
 			$req_host    = is_string( $parsed_host ) ? $parsed_host : '';
 		}
 
-		$uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$uri       = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$login_url = wp_login_url();
 		if (
 			'' !== $req_host_header
 			&& '' !== $req_host
-			&& $this->hosts_match_ignoring_www( $req_host, $home_host )
+			&& (
+				$this->hosts_match_after_www_strip( $req_host, $home_host )
+				|| $this->hosts_match_after_www_strip( $req_host, $site_host )
+			)
 			&& is_string( $uri )
 			&& isset( $uri[0] )
 			&& '/' === $uri[0]
 		) {
-			return $home_scheme . '://' . $req_host_header . $uri;
+			$login_url = $home_scheme . '://' . $req_host_header . $uri;
 		}
 
-		return wp_login_url();
+		/**
+		 * Filter the MFA handshake return URL (before llar_mfa query args).
+		 *
+		 * Use when the site is reached via an alias that is neither home nor
+		 * siteurl (after www strip) — Host header injection is still the
+		 * caller's responsibility when overriding.
+		 *
+		 * @param string $login_url        Absolute login URL.
+		 * @param string $req_host_header  Sanitized HTTP_HOST (may include port).
+		 */
+		return (string) apply_filters( 'llar_mfa_handshake_login_url', $login_url, $req_host_header );
 	}
 
 	/**
-	 * Compare hosts after stripping a leading www. (case-insensitive).
+	 * Compare hosts after stripping one leading www. (case-insensitive).
 	 *
-	 * @param string $left  Host A.
-	 * @param string $right Host B.
+	 * @param string $left  Host A (no port).
+	 * @param string $right Host B (no port).
 	 * @return bool
 	 */
-	private function hosts_match_ignoring_www( $left, $right ) {
+	private function hosts_match_after_www_strip( $left, $right ) {
 		return $this->normalize_host_for_compare( $left ) === $this->normalize_host_for_compare( $right );
 	}
 
 	/**
+	 * Lowercase and strip a single leading www.
+	 *
 	 * @param string $host Hostname without port.
 	 * @return string
 	 */
