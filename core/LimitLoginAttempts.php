@@ -580,6 +580,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public function get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
 		return $this->dashboard_renderer->build_dashboard_tab_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
 	}
+
 	/**
 	 * Redirect to dashboard page after installed
 	 */

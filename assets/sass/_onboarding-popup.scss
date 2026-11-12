@@ -54,21 +54,23 @@
           }
 
           &--trial {
-            gap: 20px;
+            flex-direction: column;
+            gap: 12px;
 
             .button--fit {
               width: auto;
               min-width: 0;
-              padding: 11px 22px;
+              padding: 11px 28px;
+            }
 
-              .dashicons {
-                margin-left: 8px;
-                font-size: 18px;
-                width: 18px;
-                height: 18px;
-                line-height: 1;
-                vertical-align: middle;
-              }
+            .llar-trial-after-note {
+              max-width: 420px;
+              text-align: center;
+              // Match .explanations (terms line) weight/size/color.
+              font-size: 14px;
+              font-weight: 400;
+              color: $typography-secondary;
+              line-height: 1.5;
             }
 
             .llar-onboarding-skip {
@@ -79,7 +81,7 @@
               border: none !important;
               background: transparent !important;
               box-shadow: none !important;
-              color: $typography-additional !important;
+              color: $typography-secondary !important;
               font-size: 16px;
               font-weight: 700;
               text-decoration: none;
@@ -89,7 +91,7 @@
               &:focus {
                 background: transparent !important;
                 box-shadow: none !important;
-                color: $typography-secondary !important;
+                color: $typography-primary !important;
                 outline: none;
               }
             }
@@ -109,7 +111,8 @@
 
       .llar-onboarding-popup__content {
         min-height: 930px;
-        padding: 15px;
+        // Outer bottom air under the last card / Continue (not card-inner padding).
+        padding: 15px 15px 40px;
         background: url("./images/onboarding-bg-big.webp") center top;
         background-size: 100%;
         border-radius: $border-radius__normal;
@@ -183,16 +186,6 @@
             }
 
             &[data-step="2"] {
-              left: 100% / 3 * 1;
-              transform: translateX(-50%);
-            }
-
-            &[data-step="3"] {
-              left: 100% / 3 * 2;
-              transform: translateX(-50%);
-            }
-
-            &[data-step="4"] {
               left: 100%;
               transform: translateX(-50%);
             }
@@ -218,6 +211,11 @@
             margin-top: 10px;
             text-align: center;
           }
+        }
+
+        // Welcome: Continue is outside cards — ~3x air below the button.
+        .llar-onboarding__body > .button_block-horizon {
+          margin-bottom: 60px;
         }
 
         .preloader-wrapper {
@@ -253,11 +251,21 @@
           min-width: 768px;
           text-align: center;
           margin-top: 37px;
-          padding: 23px 63px 60px;
+          // Equal top/bottom strip inside cards.
+          padding: 23px 63px;
           border: unset;
           background-color: $background__sky-blue;
           border-radius: $border-radius;
           box-shadow: 2px 2px 9px 0 $box-shadow__light-transparent-gray;
+
+          // field-wrap / first desc margins would inflate only the top strip.
+          > .field-wrap {
+            margin-top: 0;
+
+            > .field-desc-add:first-child {
+              margin-top: 0;
+            }
+          }
 
           .explanations {
             font-size: 14px;
@@ -289,7 +297,13 @@
             background-color: $state-color__error_back;
           }
 
-          // PR #322: trial step-3 email input under the "Would you like..." caption.
+          // Trial pitch: slightly larger than default field-desc-add, extra gap below.
+          #llar-description-step-2 > .field-desc-add {
+            font-size: 20px;
+            margin-bottom: 28px;
+          }
+
+          // PR #322: trial email input under the pitch line.
           .llar-trial-email {
             margin-top: 12px;
           }
@@ -561,5 +575,69 @@
 
   input[type="checkbox"] {
     @extend .llar_input_checkbox;
+  }
+}
+
+.llar-onboarding-toast {
+  position: fixed;
+  top: 48px;
+  left: 50%;
+  z-index: 100100;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: min(640px, calc(100vw - 32px));
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 8px 28px rgba(42, 47, 64, 0.18);
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  &--hide {
+    opacity: 0;
+    transform: translate(-50%, -12px);
+  }
+
+  &__icon {
+    flex: 0 0 auto;
+    color: #1f9d55;
+    line-height: 1;
+
+    .dashicons {
+      width: 28px;
+      height: 28px;
+      font-size: 28px;
+    }
+  }
+
+  &__text {
+    flex: 1 1 auto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #2A2F40;
+  }
+
+  &__close {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #A4A8B7;
+    cursor: pointer;
+
+    .dashicons {
+      width: 18px;
+      height: 18px;
+      font-size: 18px;
+    }
+
+    &:hover,
+    &:focus {
+      color: #666D84;
+      outline: none;
+    }
   }
 }

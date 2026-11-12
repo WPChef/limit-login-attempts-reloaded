@@ -12,6 +12,10 @@ class Config {
 	const OPTION_LOGGED     = 'logged';
 	const OPTION_ACTIVE_APP = 'active_app';
 
+	/** One-shot dashboard toast after onboarding completion. */
+	const ONBOARDING_TOAST_TRIAL = 'trial';
+	const ONBOARDING_TOAST_BASIC = 'basic';
+
 	private static $default_options = array(
 		'gdpr'                          => 0,
 		'gdpr_message'                  => '',
@@ -61,6 +65,8 @@ class Config {
 		'hide_dashboard_widget'         => false,
 		'show_warning_badge'            => true,
 		'onboarding_popup_shown'        => false,
+		/* One-shot dashboard toast after onboarding: '', 'trial', or 'basic'. */
+		'onboarding_complete_toast'     => '',
 		/* Last known plugin header Version (from file), persisted on activate/update. */
 		'plugin_version'                => '',
 		'custom_error_message'          => '',

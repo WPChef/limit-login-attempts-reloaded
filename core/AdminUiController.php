@@ -49,6 +49,7 @@ class AdminUiController {
 				'nonce_dismiss_onboarding_popup'  => $dismiss_onboarding_popup,
 				'nonce_subscribe_email'           => $subscribe_email,
 				'nonce_close_premium_message'     => $close_premium_message,
+				'msg_network_error'               => __( 'Network error', 'limit-login-attempts-reloaded' ),
 			));
 
 			global $wp_scripts, $wp_styles;

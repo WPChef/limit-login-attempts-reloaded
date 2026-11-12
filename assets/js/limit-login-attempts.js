@@ -1,9 +1,13 @@
-function llar_activate_license_key( $setup_code ) {
+function llar_activate_license_key( $setup_code, extra ) {
 
     let data = {
         action: 'app_setup',
         code:   $setup_code,
         sec: llar_vars.nonce_app_setup,
+    }
+
+    if ( extra && typeof extra === 'object' ) {
+        Object.assign( data, extra );
     }
 
     // The return token rides along so the server can burn it after a
@@ -15,15 +19,19 @@ function llar_activate_license_key( $setup_code ) {
         }
     } catch ( e ) {}
 
-    return llar_ajax_callback_post( ajaxurl, data )
+    return llar_ajax_callback_post_wp( ajaxurl, data )
 }
 
 
 function llar_is_valid_email( email ) {
 
-    // Allow empty email
-    if ( email === null || email === '' ) {
-        return true;
+    if ( email === null || typeof email === 'undefined' ) {
+        return false;
+    }
+
+    email = String( email ).trim();
+    if ( email === '' ) {
+        return false;
     }
 
     let email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,12 +67,28 @@ function llar_micro_cloud_error_message( response ) {
 }
 
 
+function llar_ajax_network_error_message() {
+    return ( typeof llar_vars !== 'undefined' && llar_vars.msg_network_error )
+        ? llar_vars.msg_network_error
+        : 'Network error';
+}
+
 function llar_ajax_callback_post( ajaxurl = null, data ) {
 
     return new Promise(function( resolve, reject ) {
         jQuery.post( ajaxurl, data, function ( response ) {
 
-            if ( ( response && ( 'success' in response ) && response.success === false ) ) {
+            // Malformed payloads (0, null, plain strings) must not resolve
+            // as success nor throw inside this callback.
+            if ( response === null || typeof response !== 'object' ) {
+                reject( {
+                    success: false,
+                    data: { msg: llar_ajax_network_error_message() }
+                } );
+                return;
+            }
+
+            if ( response.success === false ) {
                 reject( response );
             } else if ( response.error ) {
                 reject( response );
@@ -72,8 +96,51 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
             else  {
                 resolve( response );
             }
-        });
+        } ).fail( function ( jqXHR ) {
+            // Keep the same shape as application rejects so callers can read response.data.msg.
+            var payload = ( jqXHR && jqXHR.responseJSON ) ? jqXHR.responseJSON : null;
+            if ( payload && typeof payload === 'object' ) {
+                reject( payload );
+                return;
+            }
+            // Prefer the localized fallback over raw jqXHR textStatus ("error").
+            reject( {
+                success: false,
+                data: {
+                    msg: llar_ajax_network_error_message()
+                }
+            } );
+        } );
     });
+}
+
+/**
+ * Strict WordPress admin-ajax helper: only { success: true } resolves.
+ * Use for endpoints that always return wp_send_json_success/error.
+ */
+function llar_ajax_callback_post_wp( ajaxurl, data ) {
+    return llar_ajax_callback_post( ajaxurl, data ).then( function ( response ) {
+        if (
+            ! response ||
+            typeof response !== 'object' ||
+            Array.isArray( response ) ||
+            response.success !== true
+        ) {
+            if (
+                response &&
+                typeof response === 'object' &&
+                ! Array.isArray( response ) &&
+                response.success === false
+            ) {
+                return Promise.reject( response );
+            }
+            return Promise.reject( {
+                success: false,
+                data: { msg: llar_ajax_network_error_message() }
+            } );
+        }
+        return response;
+    } );
 }
 
 ( function( $ ) {
@@ -114,17 +181,19 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
 
         $checkbox_block_by_country.on( 'change', function () {
 
-            $is_checklist = !! $( this ).prop( 'checked' );
+            const $checkbox = $( this );
+            const isChecked = !! $checkbox.prop( 'checked' );
 
             let data = {
                 action: 'block_by_country',
-                is_checklist: $is_checklist,
+                is_checklist: isChecked,
                 sec: llar_vars.nonce_block_by_country
             }
 
             llar_ajax_callback_post( ajaxurl, data )
                 .catch( function () {
-                    $account_policies.prop( 'checked', false );
+                    // Restore this checkbox from this request's value only.
+                    $checkbox.prop( 'checked', ! isChecked );
                 } )
 
         } )
@@ -183,7 +252,7 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
                } )
                .catch( function ( response ) {
                    notice_popup_error_update.content = content;
-                   notice_popup_error_update.msg = response.data.msg;
+                   notice_popup_error_update.msg = llar_micro_cloud_error_message( response );
                    notice_popup_error_update.open();
                } )
 
@@ -240,6 +309,9 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
                 .then( function () {
                     let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.location = clear_url + '?page=limit-login-attempts&tab=dashboard';
+                } )
+                .catch( function () {
+                    // Keep current page; reset is best-effort.
                 } )
 
         } )

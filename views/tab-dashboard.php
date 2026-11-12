@@ -28,7 +28,13 @@ $is_tab_dashboard = true;
 if ( $dashboard['show_onboarding'] ) {
     require_once( LLA_PLUGIN_DIR . 'views/onboarding-popup.php');
 }
+
+$toast_message = ! empty( $dashboard['onboarding_toast'] ) ? $dashboard['onboarding_toast'] : '';
 ?>
+
+<?php if ( $toast_message ) : ?>
+	<?php require LLA_PLUGIN_DIR . 'views/onboarding-complete-toast.php'; ?>
+<?php endif; ?>
 
 <div id="llar-dashboard-page">
 	<div class="dashboard-section-1 <?php echo esc_attr( $active_app ); ?>">

@@ -167,8 +167,25 @@ class Ajax {
 				// A successful activation is the only thing that burns the
 				// return token — a failed attempt leaves the link reusable,
 				// so reloading the page retries the activation.
+				$onboarding_outcome = '';
 				if ( ! empty( $_POST['llar_trial_token'] ) ) {
-					TrialLanding::consume_token( sanitize_text_field( wp_unslash( $_POST['llar_trial_token'] ) ) );
+					$token      = sanitize_text_field( wp_unslash( $_POST['llar_trial_token'] ) );
+					$token_data = TrialLanding::verify_token( $token );
+					TrialLanding::consume_token( $token );
+
+					if ( ! empty( $token_data['context'] ) && 'onboarding' === $token_data['context'] ) {
+						$onboarding_outcome = Config::ONBOARDING_TOAST_TRIAL;
+					}
+				} elseif ( isset( $_POST['llar_onboarding_context'] ) && 'welcome' === sanitize_text_field( wp_unslash( $_POST['llar_onboarding_context'] ) ) ) {
+					$onboarding_outcome = Config::ONBOARDING_TOAST_BASIC;
+				}
+
+				// Persist completion only for onboarding-scoped activations so
+				// a later failed dismiss cannot lose the dashboard toast, and
+				// non-onboarding setup does not mutate onboarding flags.
+				if ( '' !== $onboarding_outcome ) {
+					Config::update( 'onboarding_popup_shown', true );
+					Config::update( 'onboarding_complete_toast', $onboarding_outcome );
 				}
 
 				wp_send_json_success(
@@ -1094,6 +1111,11 @@ class Ajax {
 
 		Config::update( 'onboarding_popup_shown', true );
 
+		$outcome = isset( $_POST['outcome'] ) ? sanitize_text_field( wp_unslash( $_POST['outcome'] ) ) : '';
+		if ( in_array( $outcome, array( Config::ONBOARDING_TOAST_TRIAL, Config::ONBOARDING_TOAST_BASIC ), true ) ) {
+			Config::update( 'onboarding_complete_toast', $outcome );
+		}
+
 		wp_send_json_success();
 	}
 
@@ -1129,6 +1151,7 @@ class Ajax {
 		}
 
 		Config::update( 'onboarding_popup_shown', 0 );
+		Config::update( 'onboarding_complete_toast', '' );
 
 		wp_send_json_success();
 	}
