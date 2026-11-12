@@ -82,7 +82,7 @@ class CallbackHandler {
 		}
 
 		$has_llar_mfa_param = ( isset( $_GET['llar_mfa'] ) && ( $_GET['llar_mfa'] === '1' || $_GET['llar_mfa'] === 'true' ) );
-		$cookie_state       = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
+		$cookie_state       = self::state_cookie_value();
 		if ( '' === $token && $has_llar_mfa_param && '' !== $cookie_state ) {
 			$store          = new SessionStore();
 			$resolved_token = $store->get_callback_token( $cookie_state );
@@ -121,14 +121,11 @@ class CallbackHandler {
 	private static function try_verify_and_login( $token ) {
 		$store   = new SessionStore();
 		$session = $store->get_session( $token );
-		$cookie  = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
+		$cookie  = self::state_cookie_value();
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			return;
 		}
-		// Missing cookie (prefetch / host hop): keep the transient so a later
-		// request with the cookie can still complete MFA.
-		if ( '' === $cookie ) {
-			self::redirect_login( 'llar_mfa_session_expired' );
+		if ( self::redirect_on_missing_state_cookie( $cookie ) ) {
 			exit;
 		}
 		$verify = $store->consume_callback_state( $cookie, $token );
@@ -176,16 +173,13 @@ class CallbackHandler {
 	public static function handle( $token, $code ) {
 		$store   = new SessionStore();
 		$session = $store->get_session( $token );
-		$cookie  = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
+		$cookie  = self::state_cookie_value();
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			$store->delete_session( $token );
 			self::redirect_login( 'llar_mfa_session_expired' );
 			return;
 		}
-		// Missing cookie (prefetch / host hop): keep the transient so a later
-		// request with the cookie can still complete MFA.
-		if ( '' === $cookie ) {
-			self::redirect_login( 'llar_mfa_session_expired' );
+		if ( self::redirect_on_missing_state_cookie( $cookie ) ) {
 			return;
 		}
 		$verify = $store->consume_callback_state( $cookie, $token );
@@ -246,6 +240,32 @@ class CallbackHandler {
 	}
 
 	/**
+	 * Read the MFA state cookie value.
+	 *
+	 * @return string
+	 */
+	private static function state_cookie_value() {
+		if ( ! isset( $_COOKIE[ SessionStore::COOKIE_NAME ] ) ) {
+			return '';
+		}
+		return sanitize_text_field( wp_unslash( $_COOKIE[ SessionStore::COOKIE_NAME ] ) );
+	}
+
+	/**
+	 * Prefetch / host-hop without the state cookie: redirect and keep the transient.
+	 *
+	 * @param string $cookie Raw state cookie value.
+	 * @return bool True when the caller must stop (redirect already issued).
+	 */
+	private static function redirect_on_missing_state_cookie( $cookie ) {
+		if ( '' !== $cookie ) {
+			return false;
+		}
+		self::redirect_login( 'llar_mfa_session_expired' );
+		return true;
+	}
+
+	/**
 	 * Redirect to login with optional message key.
 	 *
 	 * @param string $msg_key Optional. Query arg for message.
@@ -266,7 +286,6 @@ class CallbackHandler {
 	 */
 	private static function is_safe_redirect( $url ) {
 		$allowed = wp_validate_redirect( $url, false );
-		return ( $allowed !== false );
+		return ( false !== $allowed );
 	}
-
 }

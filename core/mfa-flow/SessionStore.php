@@ -14,10 +14,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SessionStore {
 
 	/**
+	 * HttpOnly cookie mirroring the server-side callback state.
+	 *
+	 * SameSite=Lax is required for a top-level GET return from the external MFA
+	 * app. A future cross-site POST callback would need SameSite=None; Secure.
+	 */
+	const COOKIE_NAME = 'llar_mfa_state';
+
+	/**
 	 * Set or clear the MFA state cookie.
 	 *
-	 * Same attributes as LoginFlowTransientStore: COOKIEPATH / COOKIE_DOMAIN /
-	 * SameSite=Lax so a top-level return from the MFA app keeps the cookie.
+	 * Cookie attributes mirror \LLAR\Core\LoginFlowTransientStore::ensure_token()
+	 * (COOKIEPATH, COOKIE_DOMAIN, SameSite=Lax). Requires PHP 7.3+ for the
+	 * options-array form of setcookie().
 	 *
 	 * @param string $value State value; empty string clears the cookie.
 	 */
@@ -25,22 +34,18 @@ class SessionStore {
 		$expire = ( '' === $value ) ? time() - 3600 : time() + 600;
 		$path   = ( defined( 'COOKIEPATH' ) && COOKIEPATH ) ? COOKIEPATH : '/';
 		$domain = defined( 'COOKIE_DOMAIN' ) ? COOKIE_DOMAIN : '';
-		if ( version_compare( PHP_VERSION, '7.3', '>=' ) ) {
-			setcookie(
-				'llar_mfa_state',
-				$value,
-				array(
-					'expires'  => $expire,
-					'path'     => $path,
-					'domain'   => $domain,
-					'secure'   => is_ssl(),
-					'httponly' => true,
-					'samesite' => 'Lax',
-				)
-			);
-		} else {
-			setcookie( 'llar_mfa_state', $value, $expire, $path . '; SameSite=Lax', $domain, is_ssl(), true );
-		}
+		setcookie(
+			self::COOKIE_NAME,
+			$value,
+			array(
+				'expires'  => $expire,
+				'path'     => $path,
+				'domain'   => $domain,
+				'secure'   => is_ssl(),
+				'httponly' => true,
+				'samesite' => 'Lax',
+			)
+		);
 	}
 
 	/**

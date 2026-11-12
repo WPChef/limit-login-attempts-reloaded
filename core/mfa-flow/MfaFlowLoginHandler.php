@@ -216,27 +216,8 @@ class MfaFlowLoginHandler {
 		}
 		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 		$cancel_url  = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		// Prefer the current request host (cookie Host) over home_url(): home may
-		// disagree on www / scheme / loopback alias and drop llar_mfa_state on return.
-		$home_host       = (string) wp_parse_url( home_url(), PHP_URL_HOST );
-		$req_host_header = isset( $_SERVER['HTTP_HOST'] ) ? wp_unslash( $_SERVER['HTTP_HOST'] ) : '';
-		$req_host_header = is_string( $req_host_header ) ? sanitize_text_field( $req_host_header ) : '';
-		$req_host        = preg_replace( '/:\d+$/', '', $req_host_header );
-		$uri             = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		$same_host       = ( strcasecmp( (string) $req_host, $home_host ) === 0 )
-			|| ( strcasecmp( (string) $req_host, 'www.' . $home_host ) === 0 )
-			|| ( strcasecmp( 'www.' . (string) $req_host, $home_host ) === 0 );
-		$login_url       = wp_login_url();
-		if (
-			$same_host
-			&& is_string( $uri )
-			&& isset( $uri[0] )
-			&& '/' === $uri[0]
-			&& '' !== $req_host_header
-		) {
-			$login_url = ( is_ssl() ? 'https' : 'http' ) . '://' . $req_host_header . $uri;
-		}
-		$login_url = add_query_arg( 'llar_mfa', '1', $login_url );
+		$login_url   = $this->build_handshake_login_url();
+		$login_url   = add_query_arg( 'llar_mfa', '1', $login_url );
 		if ( '' !== $redirect_to ) {
 			$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );
 		}
@@ -336,5 +317,68 @@ class MfaFlowLoginHandler {
 		// unusable body or an incomplete payload, any other 4xx): treat as a
 		// hard failure rather than a reason to let the login through.
 		return $this->mfa_refusal_error( 'llar_mfa_unavailable' );
+	}
+
+	/**
+	 * Build the MFA handshake return URL on the cookie Host when safe.
+	 *
+	 * Prefer the current request host (where setcookie binds) over home_url():
+	 * home may disagree on www / scheme / loopback alias and drop
+	 * SessionStore::COOKIE_NAME on return. Fall back to wp_login_url() (Hide
+	 * Login filters it) when the Host is not home or www.home.
+	 *
+	 * @return string Absolute login URL without MFA query args.
+	 */
+	private function build_handshake_login_url() {
+		$home_url    = home_url();
+		$home_host   = (string) wp_parse_url( $home_url, PHP_URL_HOST );
+		$home_scheme = (string) wp_parse_url( $home_url, PHP_URL_SCHEME );
+		if ( '' === $home_scheme ) {
+			$home_scheme = is_ssl() ? 'https' : 'http';
+		}
+
+		$req_host_header = isset( $_SERVER['HTTP_HOST'] ) ? wp_unslash( $_SERVER['HTTP_HOST'] ) : '';
+		$req_host_header = is_string( $req_host_header )
+			? preg_replace( '/[^a-zA-Z0-9.\-:\[\]]/', '', $req_host_header )
+			: '';
+		$req_host        = '';
+		if ( '' !== $req_host_header ) {
+			$parsed_host = wp_parse_url( 'http://' . $req_host_header, PHP_URL_HOST );
+			$req_host    = is_string( $parsed_host ) ? $parsed_host : '';
+		}
+
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		if (
+			'' !== $req_host_header
+			&& '' !== $req_host
+			&& $this->hosts_match_ignoring_www( $req_host, $home_host )
+			&& is_string( $uri )
+			&& isset( $uri[0] )
+			&& '/' === $uri[0]
+		) {
+			return $home_scheme . '://' . $req_host_header . $uri;
+		}
+
+		return wp_login_url();
+	}
+
+	/**
+	 * Compare hosts after stripping a leading www. (case-insensitive).
+	 *
+	 * @param string $left  Host A.
+	 * @param string $right Host B.
+	 * @return bool
+	 */
+	private function hosts_match_ignoring_www( $left, $right ) {
+		return $this->normalize_host_for_compare( $left ) === $this->normalize_host_for_compare( $right );
+	}
+
+	/**
+	 * @param string $host Hostname without port.
+	 * @return string
+	 */
+	private function normalize_host_for_compare( $host ) {
+		$host = strtolower( trim( (string) $host ) );
+		return (string) preg_replace( '/^www\./i', '', $host );
 	}
 }
