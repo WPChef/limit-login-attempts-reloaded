@@ -28,9 +28,10 @@ class LockoutCleanupService {
 	 * @return void
 	 */
 	public function cleanup( $retries = null, $lockouts = null, $valid = null ) {
-		$now      = time();
-		$lockouts = ! is_null( $lockouts ) ? $lockouts : Config::get( Config::OPTION_LOCKOUTS );
-		$log      = Config::get( Config::OPTION_LOGGED );
+		$now               = time();
+		$lockouts_provided = ! is_null( $lockouts );
+		$lockouts          = $lockouts_provided ? $lockouts : Config::get( Config::OPTION_LOCKOUTS );
+		$log               = Config::get( Config::OPTION_LOGGED );
 
 		if ( is_array( $lockouts ) ) {
 			$expired_keys = array();
@@ -41,30 +42,33 @@ class LockoutCleanupService {
 				}
 			}
 
-			if ( ! empty( $expired_keys ) ) {
+			// New lockouts are persisted only through this path
+			// (record_failed_login_attempt passes the mutated map). Skip the
+			// write only when we loaded lockouts ourselves and nothing expired.
+			if ( $lockouts_provided || ! empty( $expired_keys ) ) {
 				Config::update( Config::OPTION_LOCKOUTS, $lockouts );
+			}
 
-				// Log rows are keyed by the raw client IP; lockout keys may be the
-				// /64 network. One pass over the log (not O(expired × log)).
-				if ( is_array( $log ) ) {
-					foreach ( $log as $log_ip => &$users ) {
-						if ( ! is_array( $users ) ) {
-							continue;
-						}
-						$norm = Helpers::normalize_ip_for_rate_limit( $log_ip );
-						if ( ! isset( $expired_keys[ $log_ip ] ) && ! isset( $expired_keys[ $norm ] ) ) {
-							continue;
-						}
-						foreach ( $users as $user_login => &$data ) {
-							if ( ! is_array( $data ) ) {
-								$data = array();
-							}
-							$data['unlocked'] = true;
-						}
-						unset( $data );
+			// Log rows are keyed by the raw client IP; lockout keys may be the
+			// /64 network. One pass over the log (not O(expired × log)).
+			if ( ! empty( $expired_keys ) && is_array( $log ) ) {
+				foreach ( $log as $log_ip => &$users ) {
+					if ( ! is_array( $users ) ) {
+						continue;
 					}
-					unset( $users );
+					$norm = Helpers::normalize_ip_for_rate_limit( $log_ip );
+					if ( ! isset( $expired_keys[ $log_ip ] ) && ! isset( $expired_keys[ $norm ] ) ) {
+						continue;
+					}
+					foreach ( $users as $user_login => &$data ) {
+						if ( ! is_array( $data ) ) {
+							$data = array();
+						}
+						$data['unlocked'] = true;
+					}
+					unset( $data );
 				}
+				unset( $users );
 			}
 		}
 
