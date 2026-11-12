@@ -125,6 +125,12 @@ class CallbackHandler {
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			return;
 		}
+		// Missing cookie (prefetch / host hop): keep the transient so a later
+		// request with the cookie can still complete MFA.
+		if ( '' === $cookie ) {
+			self::redirect_login( 'llar_mfa_session_expired' );
+			exit;
+		}
 		$verify = $store->consume_callback_state( $cookie, $token );
 		SessionStore::set_state_cookie( '' );
 		if ( ! $verify ) {
@@ -173,6 +179,12 @@ class CallbackHandler {
 		$cookie  = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			$store->delete_session( $token );
+			self::redirect_login( 'llar_mfa_session_expired' );
+			return;
+		}
+		// Missing cookie (prefetch / host hop): keep the transient so a later
+		// request with the cookie can still complete MFA.
+		if ( '' === $cookie ) {
 			self::redirect_login( 'llar_mfa_session_expired' );
 			return;
 		}

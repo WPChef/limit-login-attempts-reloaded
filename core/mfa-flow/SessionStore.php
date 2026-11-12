@@ -16,11 +16,31 @@ class SessionStore {
 	/**
 	 * Set or clear the MFA state cookie.
 	 *
+	 * Same attributes as LoginFlowTransientStore: COOKIEPATH / COOKIE_DOMAIN /
+	 * SameSite=Lax so a top-level return from the MFA app keeps the cookie.
+	 *
 	 * @param string $value State value; empty string clears the cookie.
 	 */
 	public static function set_state_cookie( $value ) {
 		$expire = ( '' === $value ) ? time() - 3600 : time() + 600;
-		setcookie( 'llar_mfa_state', $value, $expire, '/', '', is_ssl(), true );
+		$path   = ( defined( 'COOKIEPATH' ) && COOKIEPATH ) ? COOKIEPATH : '/';
+		$domain = defined( 'COOKIE_DOMAIN' ) ? COOKIE_DOMAIN : '';
+		if ( version_compare( PHP_VERSION, '7.3', '>=' ) ) {
+			setcookie(
+				'llar_mfa_state',
+				$value,
+				array(
+					'expires'  => $expire,
+					'path'     => $path,
+					'domain'   => $domain,
+					'secure'   => is_ssl(),
+					'httponly' => true,
+					'samesite' => 'Lax',
+				)
+			);
+		} else {
+			setcookie( 'llar_mfa_state', $value, $expire, $path . '; SameSite=Lax', $domain, is_ssl(), true );
+		}
 	}
 
 	/**

@@ -214,14 +214,28 @@ class MfaFlowLoginHandler {
 		if ( $user && ! empty( $user->roles ) && is_array( $user->roles ) ) {
 			$user_group = reset( $user->roles );
 		}
-		$redirect_to         = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
-		$cancel_url          = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		$current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		$current_login_url   = '';
-		if ( is_string( $current_request_uri ) && '' !== $current_request_uri ) {
-			$current_login_url = home_url( $current_request_uri );
+		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+		$cancel_url  = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
+		// Prefer the current request host (cookie Host) over home_url(): home may
+		// disagree on www / scheme / loopback alias and drop llar_mfa_state on return.
+		$home_host       = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+		$req_host_header = isset( $_SERVER['HTTP_HOST'] ) ? wp_unslash( $_SERVER['HTTP_HOST'] ) : '';
+		$req_host_header = is_string( $req_host_header ) ? sanitize_text_field( $req_host_header ) : '';
+		$req_host        = preg_replace( '/:\d+$/', '', $req_host_header );
+		$uri             = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$same_host       = ( strcasecmp( (string) $req_host, $home_host ) === 0 )
+			|| ( strcasecmp( (string) $req_host, 'www.' . $home_host ) === 0 )
+			|| ( strcasecmp( 'www.' . (string) $req_host, $home_host ) === 0 );
+		$login_url       = wp_login_url();
+		if (
+			$same_host
+			&& is_string( $uri )
+			&& isset( $uri[0] )
+			&& '/' === $uri[0]
+			&& '' !== $req_host_header
+		) {
+			$login_url = ( is_ssl() ? 'https' : 'http' ) . '://' . $req_host_header . $uri;
 		}
-		$login_url = ( '' !== $current_login_url ) ? $current_login_url : wp_login_url();
 		$login_url = add_query_arg( 'llar_mfa', '1', $login_url );
 		if ( '' !== $redirect_to ) {
 			$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );
