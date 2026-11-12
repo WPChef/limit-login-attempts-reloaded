@@ -545,15 +545,23 @@ class Helpers {
 	 * Filter: llar_ipv6_rate_limit_prefix (default 64). Clamped to 32–128 so a
 	 * filter returning 0 cannot collapse all clients into "::". /32 is only
 	 * the clamp floor — it creates a very wide shared budget; prefer 64 or 56.
+	 * Cached for the request: cleanup / log UI call normalize in tight loops.
 	 *
 	 * @return int
 	 */
 	public static function ipv6_rate_limit_prefix() {
+		static $cached = null;
+		if ( null !== $cached ) {
+			return $cached;
+		}
+
 		$prefix = \function_exists( 'apply_filters' )
 			? (int) \apply_filters( 'llar_ipv6_rate_limit_prefix', 64 )
 			: 64;
 
-		return max( 32, min( 128, $prefix ) );
+		$cached = max( 32, min( 128, $prefix ) );
+
+		return $cached;
 	}
 
 	/**

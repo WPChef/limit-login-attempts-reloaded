@@ -373,7 +373,7 @@ class LocalLockoutManager {
 				LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 			}
 		} else {
-			$ip = $this->ip_resolver->get_rate_limit_key( $raw_ip );
+			$ip       = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 			$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 
 			if ( ! is_array( $lockouts ) ) {
@@ -447,35 +447,26 @@ class LocalLockoutManager {
 				return;
 			}
 
-			// Whitelist matches the real client address, not the /64 rate-limit key.
-			$whitelisted  = $this->ip_resolver->is_ip_whitelisted( $raw_ip );
-			$retries_long = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
+			// Allow-listed callers already returned above; remaining traffic locks.
+			$retries_long               = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
+			global $limit_login_just_lockedout;
+			$limit_login_just_lockedout = true;
 
-			if ( $whitelisted ) {
-				if ( $retries[ $ip ] >= $retries_long ) {
-					unset( $retries[ $ip ] );
-					unset( $valid[ $ip ] );
-				}
+			if ( ( isset( $retries[ $ip ] ) ? $retries[ $ip ] : 0 ) >= $retries_long ) {
+				$lockouts[ $ip ] = time() + Config::get( 'long_duration' );
+				unset( $retries[ $ip ] );
+				unset( $valid[ $ip ] );
 			} else {
-				global $limit_login_just_lockedout;
-				$limit_login_just_lockedout = true;
-
-				if ( ( isset( $retries[ $ip ] ) ? $retries[ $ip ] : 0 ) >= $retries_long ) {
-					$lockouts[ $ip ] = time() + Config::get( 'long_duration' );
-					unset( $retries[ $ip ] );
-					unset( $valid[ $ip ] );
-				} else {
-					$lockouts[ $ip ] = time() + Config::get( 'lockout_duration' );
-				}
-
-				DigestRetriesController::save_lockout( $raw_ip );
+				$lockouts[ $ip ] = time() + Config::get( 'lockout_duration' );
 			}
+
+			DigestRetriesController::save_lockout( $raw_ip );
 
 			$this->cleanup( $retries, $lockouts, $valid );
 			$this->notify( $username );
 
 			$total = Config::get( 'lockouts_total' );
-			if ( $total === false || ! is_numeric( $total ) ) {
+			if ( false === $total || ! is_numeric( $total ) ) {
 				Config::add( 'lockouts_total', 1 );
 			} else {
 				Config::update( 'lockouts_total', $total + 1 );
