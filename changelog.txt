@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.4.3 =
+* Shortened onboarding to two steps.
+
 = 3.4.2 =
 * Security: blocked a server-side request forgery (SSRF) in the app setup feature. The setup destination is validated before fetching, and redirects are checked again. Thanks to Viktor Heiduck for the report.
 
