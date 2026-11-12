@@ -193,7 +193,6 @@
 
 				llar_activate_license_key( trialReturn.setup_code )
 					.then( function () {
-						scrubOnboardingReturnParams();
 						finishAfterSuccessfulActivation();
 					} )
 					.catch( function ( response ) {
@@ -201,11 +200,7 @@
 						// Keep setup_code/llar_trial_token in the URL: the
 						// server only burns the token on success, so a page
 						// reload must be able to retry the activation.
-						$.alert( {
-							title: false,
-							content: $( '<div/>' ).text( llar_micro_cloud_error_message( response ) ).html(),
-							type: 'red',
-						} );
+						showAjaxError( llar_micro_cloud_error_message( response ) );
 					} );
 			}
 		};

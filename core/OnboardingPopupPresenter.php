@@ -27,9 +27,12 @@ class OnboardingPopupPresenter {
 		$trial_return = TrialLanding::parse_return_request();
 		$open_trial   = ! empty( $trial_return['open_trial_step'] );
 		$popup_shown  = (bool) Config::get( 'onboarding_popup_shown' );
-		// Show only while unfinished and still on local (no setup code).
-		// $open_trial only picks step 2 — it must not bypass popup_shown.
-		$should_show  = ! $popup_shown && empty( Config::get( 'app_setup_code' ) );
+		$can_activate_onboarding = ! empty( $trial_return['can_activate'] )
+			&& 'onboarding' === $trial_return['context'];
+		// Empty Trial return stays closed after dismiss/Basic, but a valid
+		// onboarding activation link must still be able to complete setup.
+		$should_show  = empty( Config::get( 'app_setup_code' ) )
+			&& ( ! $popup_shown || $can_activate_onboarding );
 
 		$trial_token = '';
 		if ( $should_show ) {
@@ -40,11 +43,10 @@ class OnboardingPopupPresenter {
 			'should_show'   => $should_show,
 			'admin_email'   => $admin_email,
 			'trial_return'  => array(
-				'open_step_2'  => $open_trial && empty( Config::get( 'app_setup_code' ) ),
-				'can_activate' => ! empty( $trial_return['can_activate'] ) && 'onboarding' === $trial_return['context'],
-				'setup_code'   => ! empty( $trial_return['can_activate'] ) && 'onboarding' === $trial_return['context']
-					? $trial_return['setup_code']
-					: '',
+				'open_step_2'  => ( $open_trial || $can_activate_onboarding )
+					&& empty( Config::get( 'app_setup_code' ) ),
+				'can_activate' => $can_activate_onboarding,
+				'setup_code'   => $can_activate_onboarding ? $trial_return['setup_code'] : '',
 			),
 			'trial_landing' => array(
 				'info_id'    => TrialLanding::INFO_ID_ONBOARDING,
