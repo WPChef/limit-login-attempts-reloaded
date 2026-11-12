@@ -114,12 +114,12 @@ class Ajax {
 
 		$type = isset( $_POST['type'] ) ? sanitize_text_field( $_POST['type'] ) : false;
 
-		if ( 'dismiss' === $type ) {
+		if ( $type === 'dismiss' ) {
 
 			Config::update( 'review_notice_shown', true );
 		}
 
-		if ( 'later' === $type ) {
+		if ( $type === 'later' ) {
 
 			Config::update( 'activation_timestamp', time() );
 		}
@@ -135,12 +135,12 @@ class Ajax {
 
 		$type = isset( $_POST['type'] ) ? sanitize_text_field( $_POST['type'] ) : false;
 
-		if ( 'dismiss' === $type ) {
+		if ( $type === 'dismiss' ) {
 
 			Config::update( 'enable_notify_notice_shown', true );
 		}
 
-		if ( 'later' === $type ) {
+		if ( $type === 'later' ) {
 
 			Config::update( 'notice_enable_notify_timestamp', time() );
 		}
@@ -281,7 +281,7 @@ class Ajax {
 				array(
 					'pattern' => $pattern,
 					'rule'    => $rule,
-					'type'    => ( 'ip' === $type ) ? 'ip' : 'login',
+					'type'    => ( $type === 'ip' ) ? 'ip' : 'login',
 				)
 			) ) {
 
@@ -322,7 +322,7 @@ class Ajax {
 			if ( $response = LimitLoginAttempts::$cloud_app->acl_delete(
 				array(
 					'pattern' => $pattern,
-					'type'    => ( 'ip' === $type ) ? 'ip' : 'login',
+					'type'    => ( $type === 'ip' ) ? 'ip' : 'login',
 				)
 			) ) {
 
@@ -460,7 +460,7 @@ class Ajax {
 		$custom              = sanitize_text_field( $_POST['custom'] );
 		$upgrade_premium_url = sanitize_text_field( $_POST['url_premium'] );
 
-		if ( 'true' === $custom ) {
+		if ( $custom === 'true' ) {
 
 			$data = LimitLoginAttempts::$cloud_app->get_login( $limit, $offset );
 		} else {
@@ -572,7 +572,7 @@ class Ajax {
 								<span class="hint_tooltip-parent">
 									<?php
 									$admin_key = array_search( 'administrator', $item['roles'] );
-									if ( false !== $admin_key ) :
+									if ( $admin_key !== false ) :
 										?>
 										<span><?php echo esc_html( $item['roles'][ $admin_key ] ); ?></span>
 										<?php
@@ -632,7 +632,7 @@ class Ajax {
 								<?php
 								if ( ! empty( $country_name ) ) :
 
-									$country_code = 'ZZ' !== $item['location']['country_code'] ? ' (' . esc_html( $item['location']['country_code'] ) . ')' : '';
+									$country_code = $item['location']['country_code'] !== 'ZZ' ? ' (' . esc_html( $item['location']['country_code'] ) . ')' : '';
 									?>
 									<div>
 										<span><?php _e( 'Country: ', 'limit-login-attempts-reloaded' ); ?></span><?php echo esc_html( $country_name ) . esc_html( $country_code ); ?>
@@ -860,7 +860,7 @@ class Ajax {
 							<?php echo esc_html( $item['pattern'] ); ?>
 						</td>
 						<td scope="col">
-							<?php echo esc_html( $item['rule'] ); ?><?php echo ( 'ip' === $type ) ? '<span class="origin">' . esc_html( $item['origin'] ) . '</span>' : ''; ?>
+							<?php echo esc_html( $item['rule'] ); ?><?php echo ( $type === 'ip' ) ? '<span class="origin">' . esc_html( $item['origin'] ) . '</span>' : ''; ?>
 						</td>
 						<td class="llar-app-acl-action-col" scope="col">
 							<button class="button llar-app-acl-remove" data-type="<?php echo esc_attr( $type ); ?>"
@@ -937,7 +937,7 @@ class Ajax {
 
 		$result = false;
 
-		if ( 'add' === $action_type ) {
+		if ( $action_type === 'add' ) {
 
 			$result = LimitLoginAttempts::$cloud_app->country_add(
 				array(
@@ -945,7 +945,7 @@ class Ajax {
 				)
 			);
 
-		} elseif ( 'remove' === $action_type ) {
+		} elseif ( $action_type === 'remove' ) {
 
 			$result = LimitLoginAttempts::$cloud_app->country_remove(
 				array(
@@ -1011,7 +1011,7 @@ class Ajax {
 		check_ajax_referer( 'llar-subscribe-email', 'sec' );
 
 		$email            = sanitize_text_field( trim( $_POST['email'] ) );
-		$is_subscribe_yes = 'true' === sanitize_text_field( $_POST['is_subscribe_yes'] );
+		$is_subscribe_yes = sanitize_text_field( $_POST['is_subscribe_yes'] ) === 'true';
 		$admin_email      = ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' );
 
 		if ( ! empty( $email ) && is_email( $email ) ) {
@@ -1177,12 +1177,12 @@ class Ajax {
 		$value               = sanitize_text_field( $_POST['value'] );
 		$auto_update_plugins = get_site_option( 'auto_update_plugins', array() );
 
-		if ( 'yes' === $value ) {
+		if ( $value === 'yes' ) {
 			$auto_update_plugins[] = LLA_PLUGIN_BASENAME;
 			Config::update( 'auto_update_choice', 1 );
 
-		} elseif ( 'no' === $value ) {
-			if ( false !== ( $key = array_search( LLA_PLUGIN_BASENAME, $auto_update_plugins ) ) ) {
+		} elseif ( $value === 'no' ) {
+			if ( ( $key = array_search( LLA_PLUGIN_BASENAME, $auto_update_plugins ) ) !== false ) {
 				unset( $auto_update_plugins[ $key ] );
 			}
 			Config::update( 'auto_update_choice', 0 );

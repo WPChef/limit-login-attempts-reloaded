@@ -336,13 +336,13 @@ class LocalLockoutManager {
 			)
 		) ) {
 
-			if ( 'allow' === $response['result'] ) {
+			if ( $response['result'] === 'allow' ) {
 				LoginFlowTransientStore::merge(
 					array(
 						'login_attempts_left' => (int) $response['attempts_left'],
 					)
 				);
-			} elseif ( 'deny' === $response['result'] ) {
+			} elseif ( $response['result'] === 'deny' ) {
 				global $limit_login_just_lockedout;
 				$limit_login_just_lockedout = true;
 
@@ -421,7 +421,7 @@ class LocalLockoutManager {
 			}
 			$valid[ $ip ] = time() + Config::get( 'valid_duration' );
 
-			if ( 0 != $retries[ $ip ] % Config::get( 'allowed_retries' ) ) {
+			if ( $retries[ $ip ] % Config::get( 'allowed_retries' ) != 0 ) {
 				$this->cleanup( $retries, null, $valid );
 
 				LoginFlowTransientStore::merge(
@@ -461,7 +461,7 @@ class LocalLockoutManager {
 			$this->notify( $username );
 
 			$total = Config::get( 'lockouts_total' );
-			if ( false === $total || ! is_numeric( $total ) ) {
+			if ( $total === false || ! is_numeric( $total ) ) {
 				Config::add( 'lockouts_total', 1 );
 			} else {
 				Config::update( 'lockouts_total', $total + 1 );

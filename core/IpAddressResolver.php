@@ -43,7 +43,7 @@ class IpAddressResolver {
 
 		$whitelisted = apply_filters( 'limit_login_whitelist_ip', false, $ip );
 
-		return ( true === $whitelisted );
+		return ( $whitelisted === true );
 	}
 
 	/**
@@ -57,6 +57,6 @@ class IpAddressResolver {
 
 		$blacklisted = apply_filters( 'limit_login_blacklist_ip', false, $ip );
 
-		return ( true === $blacklisted );
+		return ( $blacklisted === true );
 	}
 }

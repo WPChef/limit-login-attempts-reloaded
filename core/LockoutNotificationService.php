@@ -172,7 +172,7 @@ class LockoutNotificationService {
 		$log[ $ip ][ $user_login ]['date']    = time();
 		$log[ $ip ][ $user_login ]['gateway'] = Helpers::detect_gateway();
 
-		if ( false === $option ) {
+		if ( $option === false ) {
 			Config::add( 'logged', $log );
 		} else {
 			Config::update( Config::OPTION_LOGGED, $log );
