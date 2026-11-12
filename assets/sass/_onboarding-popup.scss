@@ -250,7 +250,8 @@
           min-width: 768px;
           text-align: center;
           margin-top: 37px;
-          // Extra bottom air so terms are not flush with the card edge.
+          // Extra bottom air so terms are not flush with the card edge
+          // (rebuild CSS with --no-source-map).
           padding: 23px 63px 40px;
           border: unset;
           background-color: $background__sky-blue;
