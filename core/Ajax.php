@@ -63,9 +63,27 @@ class Ajax {
 		$ip = (string) @$_POST['ip'];
 
 		$lockouts = (array) Config::get( Config::OPTION_LOCKOUTS );
-
-		if ( isset( $lockouts[ $ip ] ) ) {
-			unset( $lockouts[ $ip ] );
+		// Clear the posted key; normalize only when $ip is a real address.
+		$unlock_keys = array( $ip );
+		if ( Helpers::is_ip_valid( $ip ) ) {
+			$unlock_keys[] = Helpers::normalize_ip_for_rate_limit( $ip );
+		}
+		$unlock_keys = array_unique(
+			array_filter(
+				$unlock_keys,
+				static function ( $value ) {
+					return is_string( $value ) && '' !== $value;
+				}
+			)
+		);
+		$changed     = false;
+		foreach ( $unlock_keys as $key ) {
+			if ( isset( $lockouts[ $key ] ) ) {
+				unset( $lockouts[ $key ] );
+				$changed = true;
+			}
+		}
+		if ( $changed ) {
 			Config::update( Config::OPTION_LOCKOUTS, $lockouts );
 		}
 

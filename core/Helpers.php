@@ -427,6 +427,236 @@ class Helpers {
 			filter_var( preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ip ), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 );
 	}
 
+	/**
+	 * Mask an IPv6 address to a network prefix (leftmost bits kept).
+	 *
+	 * @param string $ip     IPv6 address.
+	 * @param int    $prefix Prefix length (0–128). Default 64.
+	 * @return string|false Network address, or false on failure.
+	 */
+	public static function ipv6_network_address( $ip, $prefix = 64 ) {
+		if ( ! function_exists( 'inet_pton' ) || ! function_exists( 'inet_ntop' ) ) {
+			return false;
+		}
+
+		$binary = inet_pton( $ip );
+		if ( false === $binary || 16 !== strlen( $binary ) ) {
+			return false;
+		}
+
+		$prefix     = max( 0, min( 128, (int) $prefix ) );
+		$full_bytes = (int) floor( $prefix / 8 );
+		$rem_bits   = $prefix % 8;
+		$masked     = substr( $binary, 0, $full_bytes );
+
+		if ( $rem_bits > 0 && $full_bytes < 16 ) {
+			$mask_byte = ( 0xFF << ( 8 - $rem_bits ) ) & 0xFF;
+			$masked   .= chr( ord( $binary[ $full_bytes ] ) & $mask_byte );
+			++$full_bytes;
+		}
+
+		if ( $full_bytes < 16 ) {
+			$masked .= str_repeat( "\0", 16 - $full_bytes );
+		}
+
+		$network = inet_ntop( $masked );
+		return false !== $network ? $network : false;
+	}
+
+	/**
+	 * Normalize an IP for local retries / lockout table keys.
+	 *
+	 * IPv6 end sites are typically allocated a /64. Keying retries on the full
+	 * address lets an attacker rotate interface IDs inside one /64 and bypass
+	 * the lockout. Collapse global IPv6 to the network prefix (default /64,
+	 * filterable via llar_ipv6_rate_limit_prefix) without a "/64" suffix.
+	 *
+	 * IPv4 is unchanged. IPv4-mapped (::ffff:a.b.c.d) and deprecated
+	 * IPv4-compatible (::a.b.c.d) forms are unmapped to the embedded IPv4 so
+	 * dual-stack listeners do not collapse clients into the key "::".
+	 * Loopback ::1 stays ::1.
+	 *
+	 * Default prefix is /64 (filter: llar_ipv6_rate_limit_prefix). Owners of
+	 * larger delegations (/56, /48) can still rotate /64s — sites expecting
+	 * that threat model should lower the prefix (e.g. 56) via the filter.
+	 * Trade-off: clients sharing one prefix share the retry budget.
+	 *
+	 * Prefix values are clamped to 32–128. Returning 0 from the filter would
+	 * otherwise collapse every IPv6 client into the key "::". The floor /32 is
+	 * a safety bound, not a recommendation: it pools an enormous address
+	 * space into one shared retry budget.
+	 *
+	 * @param string $ip Client IP.
+	 * @return string
+	 */
+	public static function normalize_ip_for_rate_limit( $ip ) {
+		$ip = is_string( $ip ) ? trim( $ip ) : '';
+		if ( '' === $ip ) {
+			return '';
+		}
+
+		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return $ip;
+		}
+
+		if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+			return $ip;
+		}
+
+		if ( ! function_exists( 'inet_pton' ) || ! function_exists( 'inet_ntop' ) ) {
+			return $ip;
+		}
+
+		$binary = inet_pton( $ip );
+		if ( false === $binary || 16 !== strlen( $binary ) ) {
+			return $ip;
+		}
+
+		// IPv4-mapped IPv6 (::ffff:0:0/96) — use the embedded IPv4 as the key.
+		if ( "\0\0\0\0\0\0\0\0\0\0\xff\xff" === substr( $binary, 0, 12 ) ) {
+			$v4 = inet_ntop( substr( $binary, 12 ) );
+			if ( false !== $v4 ) {
+				return $v4;
+			}
+		}
+
+		// Loopback must not collapse to "::" under a /64 mask.
+		$loopback = inet_pton( '::1' );
+		if ( false !== $loopback && $loopback === $binary ) {
+			return '::1';
+		}
+
+		// Deprecated IPv4-compatible IPv6 (::a.b.c.d, first 96 bits zero).
+		if ( "\0\0\0\0\0\0\0\0\0\0\0\0" === substr( $binary, 0, 12 ) ) {
+			$v4 = inet_ntop( substr( $binary, 12 ) );
+			if ( false !== $v4 && '0.0.0.0' !== $v4 ) {
+				return $v4;
+			}
+		}
+
+		$network = self::ipv6_network_address( $ip, self::ipv6_rate_limit_prefix() );
+
+		return false !== $network ? $network : $ip;
+	}
+
+	/**
+	 * Effective IPv6 rate-limit prefix length.
+	 *
+	 * Filter: llar_ipv6_rate_limit_prefix (default 64). Clamped to 32–128 so a
+	 * filter returning 0 cannot collapse all clients into "::". /32 is only
+	 * the clamp floor — it creates a very wide shared budget; prefer 64 or 56.
+	 * Cached for the request: cleanup / log UI call normalize in tight loops.
+	 *
+	 * @return int
+	 */
+	public static function ipv6_rate_limit_prefix() {
+		static $cached = null;
+		if ( null !== $cached ) {
+			return $cached;
+		}
+
+		$prefix = \function_exists( 'apply_filters' )
+			? (int) \apply_filters( 'llar_ipv6_rate_limit_prefix', 64 )
+			: 64;
+
+		$cached = max( 32, min( 128, $prefix ) );
+
+		return $cached;
+	}
+
+	/**
+	 * Active lockout expiry for an IP, honouring both the rate-limit key and a
+	 * legacy full-address key (pre-normalization installs).
+	 *
+	 * @param array  $lockouts Lockouts option map.
+	 * @param string $raw_ip   Client IP as observed.
+	 * @return int Unix timestamp, or 0 when not locked.
+	 */
+	public static function get_active_lockout_until( $lockouts, $raw_ip ) {
+		if ( ! is_array( $lockouts ) ) {
+			return 0;
+		}
+
+		$key = self::normalize_ip_for_rate_limit( $raw_ip );
+		$a   = isset( $lockouts[ $key ] ) ? (int) $lockouts[ $key ] : 0;
+		$b   = ( $key !== $raw_ip && isset( $lockouts[ $raw_ip ] ) ) ? (int) $lockouts[ $raw_ip ] : 0;
+
+		return max( $a, $b );
+	}
+
+	/**
+	 * Retries counter for an IP, honouring both the rate-limit key and a legacy
+	 * full-address key (pre-normalization installs).
+	 *
+	 * @param array  $retries Retries option map.
+	 * @param string $raw_ip  Client IP as observed.
+	 * @return int
+	 */
+	public static function get_retries_count( $retries, $raw_ip ) {
+		if ( ! is_array( $retries ) ) {
+			return 0;
+		}
+
+		$key = self::normalize_ip_for_rate_limit( $raw_ip );
+		$a   = isset( $retries[ $key ] ) ? (int) $retries[ $key ] : 0;
+		$b   = ( $key !== $raw_ip && isset( $retries[ $raw_ip ] ) ) ? (int) $retries[ $raw_ip ] : 0;
+
+		return max( $a, $b );
+	}
+
+	/**
+	 * Effective attempt count for remaining-retries display.
+	 *
+	 * Takes max across the rate-limit key, legacy raw IP, and md5-hashed forms
+	 * of both. Intentionally max — not the legacy ($plain + $hashed) sum, which
+	 * double-counted when the same logical counter existed under both keys.
+	 *
+	 * @param array  $retries Retries option map.
+	 * @param string $raw_ip  Client IP as observed.
+	 * @return int
+	 */
+	public static function get_effective_retries_count( $retries, $raw_ip ) {
+		if ( ! is_array( $retries ) ) {
+			return 0;
+		}
+
+		$key = self::normalize_ip_for_rate_limit( $raw_ip );
+
+		return (int) max(
+			self::get_retries_count( $retries, $raw_ip ),
+			isset( $retries[ md5( $key ) ] ) ? (int) $retries[ md5( $key ) ] : 0,
+			isset( $retries[ md5( $raw_ip ) ] ) ? (int) $retries[ md5( $raw_ip ) ] : 0
+		);
+	}
+
+	/**
+	 * Attempts left in the current allowed_retries window.
+	 *
+	 * Hashed retries participate only via the effective attempt count (max),
+	 * not as a separate addend in the remainder arithmetic.
+	 *
+	 * @param int $attempt_count   Effective failed attempts (see get_effective_retries_count).
+	 * @param int $valid_until     Unix expiry of the retries window.
+	 * @param int $allowed_retries Configured attempts per window.
+	 * @param int $now             Optional clock override for tests.
+	 * @return int
+	 */
+	public static function retries_remaining( $attempt_count, $valid_until, $allowed_retries, $now = null ) {
+		$attempt_count   = (int) $attempt_count;
+		$valid_until     = (int) $valid_until;
+		$allowed_retries = (int) $allowed_retries;
+		$now             = null === $now ? time() : (int) $now;
+
+		if ( $attempt_count <= 0 || $allowed_retries <= 0 || $valid_until <= $now ) {
+			return 0;
+		}
+		if ( 0 === ( $attempt_count % $allowed_retries ) ) {
+			return 0;
+		}
+
+		return (int) max( $allowed_retries - ( $attempt_count % $allowed_retries ), 0 );
+	}
+
 	public static function detect_gateway() {
 
 		$gateway = 'wp_login';
