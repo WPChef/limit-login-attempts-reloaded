@@ -11,6 +11,9 @@
         <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
     </rule>
 
+    <!-- Fail CI on ERRORS only; WordPress-Extra warnings stay visible in the report. -->
+    <config name="ignore_warnings_on_exit" value="1"/>
+
     <arg name="extensions" value="php"/>
     <arg name="report" value="full"/>
     <arg name="no-colors"/>
