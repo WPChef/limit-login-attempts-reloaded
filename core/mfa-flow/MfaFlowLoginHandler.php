@@ -218,13 +218,9 @@ class MfaFlowLoginHandler {
 		$redirect_to         = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 		$cancel_url          = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
 		$current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		$current_login_url   = '';
-		if ( is_string( $current_request_uri ) && '' !== $current_request_uri ) {
-			// site_url (not home_url): MFA cookie/state lives on the site host;
-			// a drifted home host makes the OTP return path miss the session.
-			$current_login_url = site_url( $current_request_uri );
-		}
-		$login_url = ( '' !== $current_login_url ) ? $current_login_url : wp_login_url();
+		// Prefer request Host+URI when Host is site/home (www / custom login path);
+		// never home_url() alone — drifted home poisons the OTP return cookie host.
+		$login_url = \LLAR\Core\Mfa\MfaUrl::request_login_url( $current_request_uri );
 		$login_url = add_query_arg( 'llar_mfa', '1', $login_url );
 		if ( '' !== $redirect_to ) {
 			$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );

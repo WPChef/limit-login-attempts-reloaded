@@ -43,6 +43,61 @@ class MfaUrl {
 	}
 
 	/**
+	 * Hosts allowed for MFA public redirects / OTP return (site_url + home_url).
+	 *
+	 * @return array<string, true> Lowercase host => true.
+	 */
+	public static function allowed_public_hosts() {
+		$hosts = array();
+		foreach ( array( site_url(), home_url() ) as $base ) {
+			$h = wp_parse_url( $base, PHP_URL_HOST );
+			if ( is_string( $h ) && '' !== $h ) {
+				$hosts[ strtolower( $h ) ] = true;
+			}
+		}
+		return $hosts;
+	}
+
+	/**
+	 * @param string $host Host or host:port.
+	 * @return bool
+	 */
+	public static function is_allowed_public_host( $host ) {
+		if ( ! is_string( $host ) || '' === $host ) {
+			return false;
+		}
+		$key = strtolower( (string) preg_replace( '/:\d+$/', '', $host ) );
+		return isset( self::allowed_public_hosts()[ $key ] );
+	}
+
+	/**
+	 * OTP return URL after MFA: keep the path the user posted to (custom login /
+	 * Woo / UM) on the request Host when that host is site or home; otherwise
+	 * fall back to site_url( $request_uri ). Never trust a drifted home-only host
+	 * that the browser did not actually use (cookie / session miss).
+	 *
+	 * @param string $request_uri Sanitized REQUEST_URI (path + query).
+	 * @return string Absolute URL.
+	 */
+	public static function request_login_url( $request_uri ) {
+		if ( ! is_string( $request_uri ) || '' === $request_uri ) {
+			return wp_login_url();
+		}
+
+		$host_header = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
+		if ( self::is_allowed_public_host( $host_header ) ) {
+			$scheme = is_ssl() ? 'https' : 'http';
+			$site_scheme = wp_parse_url( site_url(), PHP_URL_SCHEME );
+			if ( ! is_ssl() && is_string( $site_scheme ) && in_array( strtolower( $site_scheme ), array( 'http', 'https' ), true ) ) {
+				$scheme = strtolower( $site_scheme );
+			}
+			return $scheme . '://' . $host_header . $request_uri;
+		}
+
+		return site_url( $request_uri );
+	}
+
+	/**
 	 * Accept only absolute http(s) URLs with a host; strip query/fragment.
 	 *
 	 * @param mixed $url Candidate base from filter or default.
