@@ -219,7 +219,9 @@ class MfaFlowLoginHandler {
 		$current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		$current_login_url   = '';
 		if ( is_string( $current_request_uri ) && '' !== $current_request_uri ) {
-			$current_login_url = home_url( $current_request_uri );
+			// site_url (not home_url): MFA cookie/state lives on the site host;
+			// a drifted home host makes the OTP return path miss the session.
+			$current_login_url = site_url( $current_request_uri );
 		}
 		$login_url = ( '' !== $current_login_url ) ? $current_login_url : wp_login_url();
 		$login_url = add_query_arg( 'llar_mfa', '1', $login_url );

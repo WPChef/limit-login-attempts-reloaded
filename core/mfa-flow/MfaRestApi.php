@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile WordPress.Files.FileName -- Autoload maps FQCN to PascalCase filename (autoload.php).
 
 namespace LLAR\Core\MfaFlow;
 

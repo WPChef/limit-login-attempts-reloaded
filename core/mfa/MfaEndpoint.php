@@ -1,5 +1,5 @@
 <?php
-// phpcs:ignoreFile -- Legacy MFA module; PascalCase filename required by autoload.php. This PR only uses wp_redirect for the plugin-built login URL.
+// phpcs:disable WordPress.Security.EscapeOutput,WordPress.Security.NonceVerification,PSR2.Classes.ClassDeclaration -- Legacy MFA module; FileName excluded in phpcs.xml.dist.
 
 namespace LLAR\Core\Mfa;
 
@@ -129,11 +129,20 @@ class MfaEndpoint implements MfaEndpointInterface {
 			Config::update( 'mfa_rescue_codes', $codes );
 			$this->disable_mfa_temporarily();
 			$login_url = add_query_arg( 'llar_mfa_disabled', '1', wp_login_url() );
-			// wp_safe_redirect() allows only the home_url() host; when home drifts
-			// from site_url() it rejects wp_login_url() and falls back to wp-admin.
-			// URL is built by the plugin (wp_login_url), not from user input.
-			// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
-			wp_redirect( $login_url );
+			// Allow the site_url host when it differs from home_url (CDN / www drift);
+			// still go through wp_safe_redirect so arbitrary login_url filters cannot
+			// open-redirect off an allowlisted host.
+			$login_host = wp_parse_url( $login_url, PHP_URL_HOST );
+			if ( is_string( $login_host ) && '' !== $login_host ) {
+				add_filter(
+					'allowed_redirect_hosts',
+					static function ( $hosts ) use ( $login_host ) {
+						$hosts[] = $login_host;
+						return $hosts;
+					}
+				);
+			}
+			wp_safe_redirect( $login_url );
 			exit;
 		}
 

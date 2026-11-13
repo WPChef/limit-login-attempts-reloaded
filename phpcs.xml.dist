@@ -5,6 +5,12 @@
 
     <rule ref="WordPress-Extra"/>
 
+    <!-- Autoload maps FQCN → PascalCase filename (autoload.php); WP FileName sniff does not apply. -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+
     <arg name="extensions" value="php"/>
     <arg name="report" value="full"/>
     <arg name="no-colors"/>

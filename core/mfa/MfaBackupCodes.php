@@ -1,5 +1,5 @@
 <?php
-// phpcs:ignoreFile -- Legacy MFA module; PascalCase filename required by autoload.php. This PR only switches rescue URLs to MfaUrl::base().
+// phpcs:disable WordPress.Security.EscapeOutput,Squiz.PHP.DisallowSizeFunctionsInLoops -- Legacy MFA module; FileName excluded in phpcs.xml.dist.
 
 namespace LLAR\Core\Mfa;
 
@@ -266,7 +266,7 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 	 * @throws \Exception When template path invalid
 	 */
 	public function generate_pdf_html( $rescue_urls ) {
-		$domain        = wp_parse_url( home_url(), PHP_URL_HOST );
+		$domain        = wp_parse_url( MfaUrl::base(), PHP_URL_HOST );
 		$allowed_dir   = realpath( LLA_PLUGIN_DIR . 'views' );
 		$template_path = realpath( LLA_PLUGIN_DIR . 'views/mfa-rescue-pdf.php' );
 		if ( false === $allowed_dir || false === $template_path || 0 !== strpos( $template_path, $allowed_dir ) ) {
