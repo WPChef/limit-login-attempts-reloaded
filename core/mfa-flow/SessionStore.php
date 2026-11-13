@@ -1,4 +1,9 @@
 <?php
+/**
+ * MFA flow session and OTP storage in transients.
+ *
+ * phpcs:disable WordPress.Files.FileName -- PSR-4 class name matches the file.
+ */
 
 namespace LLAR\Core\MfaFlow;
 
@@ -27,7 +32,8 @@ class SessionStore {
 	 * Path stays `/` and domain host-only (empty) — same scope as before this
 	 * fix — so login/callback outside COOKIEPATH still receive the cookie.
 	 * SameSite=Lax matches the login-flow cookie intent for a top-level GET
-	 * return from the MFA app. PHP below 7.3 uses the path-suffix form.
+	 * return from the MFA app. PHP below 7.3 uses the path-suffix form
+	 * (same pattern as LoginFlowTransientStore::ensure_token()).
 	 *
 	 * @param string $value State value; empty string clears the cookie.
 	 */

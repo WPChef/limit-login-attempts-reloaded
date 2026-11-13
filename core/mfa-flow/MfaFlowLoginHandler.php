@@ -1,4 +1,10 @@
 <?php
+/**
+ * MFA login handshake redirect after password verification (wp-login flow).
+ *
+ * phpcs:disable WordPress.Files.FileName -- PSR-4 class name matches the file.
+ * phpcs:disable WordPress.Security.NonceVerification -- login POST has its own WP nonce; MFA reads redirect_to/rememberme only.
+ */
 
 namespace LLAR\Core\MfaFlow;
 
@@ -82,9 +88,7 @@ class MfaFlowLoginHandler {
 			header( 'Location: ' . $url, true, 302 );
 			exit;
 		}
-		$url_attr = esc_attr( $url );
-		$url_js   = esc_js( $url );
-		echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' . $url_attr . '"><title>Redirect</title></head><body><p><a href="' . $url_attr . '">Continue to verification</a></p><script>window.location.replace("' . $url_js . '");</script></body></html>';
+		echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' . esc_attr( $url ) . '"><title>Redirect</title></head><body><p><a href="' . esc_url( $url ) . '">Continue to verification</a></p><script>window.location.replace("' . esc_js( $url ) . '");</script></body></html>';
 		exit;
 	}
 
@@ -196,10 +200,16 @@ class MfaFlowLoginHandler {
 
 		if ( is_array( $rate ) && isset( $rate['t'], $rate['c'] ) ) {
 			if ( time() - (int) $rate['t'] >= $period ) {
-				$rate = array( 'c' => 0, 't' => time() );
+				$rate = array(
+					'c' => 0,
+					't' => time(),
+				);
 			}
 		} else {
-			$rate = array( 'c' => 0, 't' => time() );
+			$rate = array(
+				'c' => 0,
+				't' => time(),
+			);
 		}
 
 		$rate_ok = ( (int) $rate['c'] < $max );
@@ -210,7 +220,7 @@ class MfaFlowLoginHandler {
 		}
 
 		self::$mfa_flow_handshake_attempted = true;
-		$user_group = '';
+		$user_group                         = '';
 		if ( $user && ! empty( $user->roles ) && is_array( $user->roles ) ) {
 			$user_group = reset( $user->roles );
 		}
@@ -307,6 +317,7 @@ class MfaFlowLoginHandler {
 				// window opens, not on TTL refreshes (concurrent first requests
 				// may each log it once), and only when the site enabled debug
 				// logging.
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- gated by WP_DEBUG_LOG.
 				error_log( 'LLAR: MFA provider handshake failed (status ' . $status . ') - 2FA temporarily disabled for 60 seconds' );
 			}
 			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, MfaConstants::TRANSIENT_VALUE_API_UNREACHABLE, 60 );
@@ -332,11 +343,15 @@ class MfaFlowLoginHandler {
 	 * @return string Absolute login URL without MFA query args.
 	 */
 	private function build_handshake_login_url() {
-		$home_host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
-		$site_host = (string) wp_parse_url( site_url(), PHP_URL_HOST );
-		// Scheme must match this request (and the Secure flag on the state cookie).
-		// Preferring home_url() scheme can downgrade an HTTPS login to HTTP.
-		$req_scheme = is_ssl() ? 'https' : 'http';
+		$home_url    = home_url();
+		$home_host   = (string) wp_parse_url( $home_url, PHP_URL_HOST );
+		$site_host   = (string) wp_parse_url( site_url(), PHP_URL_HOST );
+		$home_scheme = (string) wp_parse_url( $home_url, PHP_URL_SCHEME );
+		// Never downgrade https home to http when is_ssl() is false behind a
+		// proxy/CDN (Flexible SSL, missing X-Forwarded-Proto). Prefer https if
+		// either the request or home says so; Secure on the cookie still follows
+		// is_ssl() at setcookie time.
+		$req_scheme = ( is_ssl() || 'https' === $home_scheme ) ? 'https' : 'http';
 
 		$req_host_header = isset( $_SERVER['HTTP_HOST'] ) ? wp_unslash( $_SERVER['HTTP_HOST'] ) : '';
 		$req_host_header = is_string( $req_host_header )
