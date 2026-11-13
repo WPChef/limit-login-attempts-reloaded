@@ -128,22 +128,11 @@ class MfaEndpoint implements MfaEndpointInterface {
 			Config::update( 'mfa_rescue_codes', $codes );
 			$this->disable_mfa_temporarily();
 			$login_url = add_query_arg( 'llar_mfa_disabled', '1', wp_login_url() );
-			// When home_url() host drifts from site_url() (www / CDN / reverse proxy),
-			// wp_safe_redirect() rejects wp_login_url() and falls back to wp-admin —
-			// the ticket's broken rescue experience. Allow the site host for this hop.
-			$site_host = wp_parse_url( site_url(), PHP_URL_HOST );
-			if ( is_string( $site_host ) && '' !== $site_host ) {
-				$allow_site_host = static function ( $hosts ) use ( $site_host ) {
-					$hosts   = is_array( $hosts ) ? $hosts : array();
-					$hosts[] = $site_host;
-					return array_values( array_unique( $hosts ) );
-				};
-				add_filter( 'allowed_redirect_hosts', $allow_site_host );
-				wp_safe_redirect( $login_url );
-				remove_filter( 'allowed_redirect_hosts', $allow_site_host );
-			} else {
-				wp_safe_redirect( $login_url );
-			}
+			// wp_safe_redirect() allows only the home_url() host; when home drifts
+			// from site_url() it rejects wp_login_url() and falls back to wp-admin.
+			// URL is built by the plugin (wp_login_url), not from user input.
+			// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+			wp_redirect( $login_url );
 			exit;
 		}
 

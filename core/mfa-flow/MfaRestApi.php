@@ -113,23 +113,21 @@ class MfaRestApi {
 
 	/**
 	 * Build REST URL for send-code (POST). Used in handshake as primary send_email_url.
-	 * No query args; the MFA app must POST token, secret, and code in the request body.
+	 * MFA app POSTs token, secret, and code in the request body.
 	 *
-	 * Built from site_url() (not rest_url()/home_url()) so a home_url host drift
-	 * cannot point the MFA app at a host that never stored the send-secret
-	 * transient — that path answers 403 Forbidden and sends no email.
+	 * Always uses ?rest_route= on MfaUrl::base() (site_url by default):
+	 * - survives home_url() host drift (www / CDN / language domain);
+	 * - works in a WP subdirectory (no hardcoded /wp-json under siteurl);
+	 * - needs no rewrite rules (hits site index.php).
 	 *
 	 * @return string
 	 */
 	public static function get_send_code_rest_url() {
 		$path = self::REST_NAMESPACE . '/' . self::SEND_CODE_ROUTE;
-		if ( get_option( 'permalink_structure' ) ) {
-			return \LLAR\Core\Helpers::get_mfa_endpoint_url( 'wp-json/' . $path );
-		}
 		return add_query_arg(
 			'rest_route',
 			'/' . $path,
-			\LLAR\Core\Helpers::get_mfa_endpoint_url( '/' )
+			\LLAR\Core\Mfa\MfaUrl::base()
 		);
 	}
 }
