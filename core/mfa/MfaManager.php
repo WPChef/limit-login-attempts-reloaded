@@ -471,7 +471,7 @@ class MfaManager {
 			array(
 				'rescue_urls'  => $rescue_urls,
 				'html_content' => $html_content,
-				'domain'       => wp_parse_url( MfaUrl::base(), PHP_URL_HOST ),
+				'domain'       => wp_parse_url( home_url(), PHP_URL_HOST ),
 			)
 		);
 	}
