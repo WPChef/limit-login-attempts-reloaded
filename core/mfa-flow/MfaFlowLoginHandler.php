@@ -1,9 +1,17 @@
 <?php
+/**
+ * MFA login handshake redirect after password verification (wp-login flow).
+ *
+ * phpcs:disable WordPress.Files.FileName -- PSR-4 class name matches the file.
+ * phpcs:disable WordPress.Security.NonceVerification -- login POST has its own WP nonce; MFA reads redirect_to/rememberme only.
+ */
 
 namespace LLAR\Core\MfaFlow;
 
 use LLAR\Core\CloudAclService;
 use LLAR\Core\Config;
+use LLAR\Core\Helpers;
+use LLAR\Core\Http\Http;
 use LLAR\Core\IpAddressResolver;
 use LLAR\Core\LimitLoginAttempts;
 use LLAR\Core\LocalLockoutManager;
@@ -82,9 +90,7 @@ class MfaFlowLoginHandler {
 			header( 'Location: ' . $url, true, 302 );
 			exit;
 		}
-		$url_attr = esc_attr( $url );
-		$url_js   = esc_js( $url );
-		echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' . $url_attr . '"><title>Redirect</title></head><body><p><a href="' . $url_attr . '">Continue to verification</a></p><script>window.location.replace("' . $url_js . '");</script></body></html>';
+		echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' . esc_attr( $url ) . '"><title>Redirect</title></head><body><p><a href="' . esc_url( $url ) . '">Continue to verification</a></p><script>window.location.replace("' . esc_js( $url ) . '");</script></body></html>';
 		exit;
 	}
 
@@ -196,10 +202,16 @@ class MfaFlowLoginHandler {
 
 		if ( is_array( $rate ) && isset( $rate['t'], $rate['c'] ) ) {
 			if ( time() - (int) $rate['t'] >= $period ) {
-				$rate = array( 'c' => 0, 't' => time() );
+				$rate = array(
+					'c' => 0,
+					't' => time(),
+				);
 			}
 		} else {
-			$rate = array( 'c' => 0, 't' => time() );
+			$rate = array(
+				'c' => 0,
+				't' => time(),
+			);
 		}
 
 		$rate_ok = ( (int) $rate['c'] < $max );
@@ -210,19 +222,14 @@ class MfaFlowLoginHandler {
 		}
 
 		self::$mfa_flow_handshake_attempted = true;
-		$user_group = '';
+		$user_group                         = '';
 		if ( $user && ! empty( $user->roles ) && is_array( $user->roles ) ) {
 			$user_group = reset( $user->roles );
 		}
-		$redirect_to         = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
-		$cancel_url          = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		$current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		$current_login_url   = '';
-		if ( is_string( $current_request_uri ) && '' !== $current_request_uri ) {
-			$current_login_url = home_url( $current_request_uri );
-		}
-		$login_url = ( '' !== $current_login_url ) ? $current_login_url : wp_login_url();
-		$login_url = add_query_arg( 'llar_mfa', '1', $login_url );
+		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+		$cancel_url  = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
+		$login_url   = $this->build_handshake_login_url();
+		$login_url   = add_query_arg( 'llar_mfa', '1', $login_url );
 		if ( '' !== $redirect_to ) {
 			$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );
 		}
@@ -312,6 +319,7 @@ class MfaFlowLoginHandler {
 				// window opens, not on TTL refreshes (concurrent first requests
 				// may each log it once), and only when the site enabled debug
 				// logging.
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- gated by WP_DEBUG_LOG.
 				error_log( 'LLAR: MFA provider handshake failed (status ' . $status . ') - 2FA temporarily disabled for 60 seconds' );
 			}
 			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, MfaConstants::TRANSIENT_VALUE_API_UNREACHABLE, 60 );
@@ -322,5 +330,89 @@ class MfaFlowLoginHandler {
 		// unusable body or an incomplete payload, any other 4xx): treat as a
 		// hard failure rather than a reason to let the login through.
 		return $this->mfa_refusal_error( 'llar_mfa_unavailable' );
+	}
+
+	/**
+	 * Build the MFA handshake return URL on the cookie Host when safe.
+	 *
+	 * Prefer the current request host (where setcookie binds) when it matches
+	 * home_url() or site_url() after a single leading-www strip — home alone
+	 * can disagree with the cookie Host (www / scheme / loopback / CDN alias
+	 * vs siteurl). Otherwise fall back to wp_login_url() (Hide Login filters
+	 * it). Exotic aliases that match neither host can override via
+	 * 'llar_mfa_handshake_login_url'.
+	 *
+	 * @return string Absolute login URL without MFA query args.
+	 */
+	private function build_handshake_login_url() {
+		$home_url    = home_url();
+		$site_url    = site_url();
+		$home_host   = (string) wp_parse_url( $home_url, PHP_URL_HOST );
+		$site_host   = (string) wp_parse_url( $site_url, PHP_URL_HOST );
+		$home_scheme = (string) wp_parse_url( $home_url, PHP_URL_SCHEME );
+		$site_scheme = (string) wp_parse_url( $site_url, PHP_URL_SCHEME );
+		// Never downgrade https home/siteurl to http when is_ssl() is false
+		// behind a proxy/CDN. Secure on the cookie still follows is_ssl().
+		$req_scheme = ( is_ssl() || 'https' === $home_scheme || 'https' === $site_scheme ) ? 'https' : 'http';
+
+		$req_host_header = isset( $_SERVER['HTTP_HOST'] ) ? wp_unslash( $_SERVER['HTTP_HOST'] ) : '';
+		$req_host_header = is_string( $req_host_header )
+			? preg_replace( '/[^a-zA-Z0-9.\-:\[\]]/', '', $req_host_header )
+			: '';
+		$req_host        = '';
+		if ( '' !== $req_host_header ) {
+			$parsed_host = wp_parse_url( 'http://' . $req_host_header, PHP_URL_HOST );
+			$req_host    = is_string( $parsed_host ) ? $parsed_host : '';
+		}
+
+		$uri       = sanitize_text_field( Helpers::get_request_uri() );
+		$login_url = wp_login_url();
+		if (
+			'' !== $req_host_header
+			&& '' !== $req_host
+			&& (
+				$this->hosts_match_after_www_strip( $req_host, $home_host )
+				|| $this->hosts_match_after_www_strip( $req_host, $site_host )
+			)
+			&& isset( $uri[0] )
+			&& '/' === $uri[0]
+		) {
+			$login_url = $req_scheme . '://' . $req_host_header . $uri;
+		}
+
+		/**
+		 * Filter the MFA handshake return URL (before llar_mfa query args).
+		 *
+		 * Use when the site is reached via an alias that is neither home nor
+		 * siteurl (after www strip) — Host header injection is still the
+		 * caller's responsibility when overriding.
+		 *
+		 * @param string $login_url        Absolute login URL.
+		 * @param string $req_host_header  Sanitized HTTP_HOST (may include port).
+		 */
+		return (string) apply_filters( 'llar_mfa_handshake_login_url', $login_url, $req_host_header );
+	}
+
+	/**
+	 * Compare hosts via Http::normalize_host plus a single leading-www strip.
+	 *
+	 * @param string $left  Host A (no port).
+	 * @param string $right Host B (no port).
+	 * @return bool
+	 */
+	private function hosts_match_after_www_strip( $left, $right ) {
+		$left  = $this->strip_leading_www( Http::normalize_host( $left ) );
+		$right = $this->strip_leading_www( Http::normalize_host( $right ) );
+		return '' !== $left && $left === $right;
+	}
+
+	/**
+	 * Strip a single leading www. after host normalization.
+	 *
+	 * @param string $host Already-normalized hostname.
+	 * @return string
+	 */
+	private function strip_leading_www( $host ) {
+		return (string) preg_replace( '/^www\./i', '', (string) $host );
 	}
 }

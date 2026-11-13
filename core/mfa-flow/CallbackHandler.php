@@ -1,4 +1,10 @@
 <?php
+/**
+ * Handles MFA callback: llar_mfa=1&token=...&code=...
+ *
+ * phpcs:disable WordPress.Files.FileName -- PSR-4 class name matches the file.
+ * phpcs:disable WordPress.Security.NonceVerification -- MFA callback/return has no WP nonce.
+ */
 
 namespace LLAR\Core\MfaFlow;
 
@@ -39,21 +45,21 @@ class CallbackHandler {
 
 		$clean_url = '';
 		if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
-			$referer_url    = $_SERVER['HTTP_REFERER'];
-			$referer_parsed = parse_url( $referer_url );
+			$referer_url    = wp_unslash( $_SERVER['HTTP_REFERER'] );
+			$referer_parsed = wp_parse_url( $referer_url );
 			$clean_url      = isset( $referer_parsed['path'] ) ? $referer_parsed['path'] : '';
 			$clean_url      = trim( $clean_url, '/' );
 		}
 
 		$gateway = Helpers::detect_gateway();
 		$data    = array(
-			'ip'        => Helpers::get_all_ips(),
-			'login'     => $username,
-			'user_id'   => (int) $user->ID,
-			'gateway'   => $gateway,
-			'roles'     => isset( $user->roles ) ? $user->roles : array(),
-			'agent'     => Helpers::sanitize_user_agent(),
-			'url'       => $clean_url,
+			'ip'      => Helpers::get_all_ips(),
+			'login'   => $username,
+			'user_id' => (int) $user->ID,
+			'gateway' => $gateway,
+			'roles'   => isset( $user->roles ) ? $user->roles : array(),
+			'agent'   => Helpers::sanitize_user_agent(),
+			'url'     => $clean_url,
 		);
 
 		LimitLoginAttempts::$cloud_app->request( 'login', 'post', $data );
@@ -67,22 +73,22 @@ class CallbackHandler {
 	public static function maybe_handle() {
 		// Do not treat send-code endpoint as MFA callback (it uses token in POST body).
 		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
-		if ( $action === 'llar_mfa_flow_send_code' ) {
+		if ( 'llar_mfa_flow_send_code' === $action ) {
 			return;
 		}
-		if ( function_exists( 'rest_url' ) && isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'rest_route=' ) !== false && strpos( $_SERVER['REQUEST_URI'], 'llar/v1/mfa/send-code' ) !== false ) {
+		if ( function_exists( 'rest_url' ) && isset( $_SERVER['REQUEST_URI'] ) && false !== strpos( $_SERVER['REQUEST_URI'], 'rest_route=' ) && false !== strpos( $_SERVER['REQUEST_URI'], 'llar/v1/mfa/send-code' ) ) {
 			return;
 		}
 
 		$token            = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
 		$token_from_query = $token;
-		$code  = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
+		$code             = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
 		if ( '' === $code && isset( $_POST['code'] ) ) {
 			$code = sanitize_text_field( wp_unslash( $_POST['code'] ) );
 		}
 
-		$has_llar_mfa_param = ( isset( $_GET['llar_mfa'] ) && ( $_GET['llar_mfa'] === '1' || $_GET['llar_mfa'] === 'true' ) );
-		$cookie_state       = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
+		$has_llar_mfa_param = ( isset( $_GET['llar_mfa'] ) && ( '1' === $_GET['llar_mfa'] || 'true' === $_GET['llar_mfa'] ) );
+		$cookie_state       = SessionStore::get_state_cookie();
 		if ( '' === $token && $has_llar_mfa_param && '' !== $cookie_state ) {
 			$store          = new SessionStore();
 			$resolved_token = $store->get_callback_token( $cookie_state );
@@ -90,13 +96,13 @@ class CallbackHandler {
 				$token = $resolved_token;
 			}
 		}
-		$is_mfa_callback    = $token !== '' && $has_llar_mfa_param;
+		$is_mfa_callback = '' !== $token && $has_llar_mfa_param;
 
 		if ( ! $is_mfa_callback ) {
 			return;
 		}
 
-		if ( $code === '' ) {
+		if ( '' === $code ) {
 			// If callback arrived without explicit token in URL, treat it as local MFA screen entry.
 			// Do not consume callback state yet; wait for a code submit.
 			if ( '' === $token_from_query ) {
@@ -121,9 +127,12 @@ class CallbackHandler {
 	private static function try_verify_and_login( $token ) {
 		$store   = new SessionStore();
 		$session = $store->get_session( $token );
-		$cookie  = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
+		$cookie  = SessionStore::get_state_cookie();
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			return;
+		}
+		if ( self::redirect_on_missing_state_cookie( $cookie ) ) {
+			exit;
 		}
 		$verify = $store->consume_callback_state( $cookie, $token );
 		SessionStore::set_state_cookie( '' );
@@ -170,10 +179,13 @@ class CallbackHandler {
 	public static function handle( $token, $code ) {
 		$store   = new SessionStore();
 		$session = $store->get_session( $token );
-		$cookie  = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
+		$cookie  = SessionStore::get_state_cookie();
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			$store->delete_session( $token );
 			self::redirect_login( 'llar_mfa_session_expired' );
+			return;
+		}
+		if ( self::redirect_on_missing_state_cookie( $cookie ) ) {
 			return;
 		}
 		$verify = $store->consume_callback_state( $cookie, $token );
@@ -234,6 +246,20 @@ class CallbackHandler {
 	}
 
 	/**
+	 * Prefetch / host-hop without the state cookie: redirect and keep the transient.
+	 *
+	 * @param string $cookie Raw state cookie value.
+	 * @return bool True when the caller must stop (redirect already issued).
+	 */
+	private static function redirect_on_missing_state_cookie( $cookie ) {
+		if ( '' !== $cookie ) {
+			return false;
+		}
+		self::redirect_login( 'llar_mfa_session_expired' );
+		return true;
+	}
+
+	/**
 	 * Redirect to login with optional message key.
 	 *
 	 * @param string $msg_key Optional. Query arg for message.
@@ -254,7 +280,6 @@ class CallbackHandler {
 	 */
 	private static function is_safe_redirect( $url ) {
 		$allowed = wp_validate_redirect( $url, false );
-		return ( $allowed !== false );
+		return ( false !== $allowed );
 	}
-
 }
