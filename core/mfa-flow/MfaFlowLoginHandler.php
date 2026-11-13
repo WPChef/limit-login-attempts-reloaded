@@ -332,13 +332,11 @@ class MfaFlowLoginHandler {
 	 * @return string Absolute login URL without MFA query args.
 	 */
 	private function build_handshake_login_url() {
-		$home_url    = home_url();
-		$home_host   = (string) wp_parse_url( $home_url, PHP_URL_HOST );
-		$site_host   = (string) wp_parse_url( site_url(), PHP_URL_HOST );
-		$home_scheme = (string) wp_parse_url( $home_url, PHP_URL_SCHEME );
-		if ( '' === $home_scheme ) {
-			$home_scheme = is_ssl() ? 'https' : 'http';
-		}
+		$home_host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+		$site_host = (string) wp_parse_url( site_url(), PHP_URL_HOST );
+		// Scheme must match this request (and the Secure flag on the state cookie).
+		// Preferring home_url() scheme can downgrade an HTTPS login to HTTP.
+		$req_scheme = is_ssl() ? 'https' : 'http';
 
 		$req_host_header = isset( $_SERVER['HTTP_HOST'] ) ? wp_unslash( $_SERVER['HTTP_HOST'] ) : '';
 		$req_host_header = is_string( $req_host_header )
@@ -363,7 +361,7 @@ class MfaFlowLoginHandler {
 			&& isset( $uri[0] )
 			&& '/' === $uri[0]
 		) {
-			$login_url = $home_scheme . '://' . $req_host_header . $uri;
+			$login_url = $req_scheme . '://' . $req_host_header . $uri;
 		}
 
 		/**

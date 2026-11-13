@@ -24,28 +24,33 @@ class SessionStore {
 	/**
 	 * Set or clear the MFA state cookie.
 	 *
-	 * Cookie attributes mirror \LLAR\Core\LoginFlowTransientStore::ensure_token()
-	 * (COOKIEPATH, COOKIE_DOMAIN, SameSite=Lax). Requires PHP 7.3+ for the
-	 * options-array form of setcookie().
+	 * Path stays `/` and domain host-only (empty) — same scope as before this
+	 * fix — so login/callback outside COOKIEPATH still receive the cookie.
+	 * SameSite=Lax matches the login-flow cookie intent for a top-level GET
+	 * return from the MFA app. PHP below 7.3 uses the path-suffix form.
 	 *
 	 * @param string $value State value; empty string clears the cookie.
 	 */
 	public static function set_state_cookie( $value ) {
 		$expire = ( '' === $value ) ? time() - 3600 : time() + 600;
-		$path   = ( defined( 'COOKIEPATH' ) && COOKIEPATH ) ? COOKIEPATH : '/';
-		$domain = defined( 'COOKIE_DOMAIN' ) ? COOKIE_DOMAIN : '';
-		setcookie(
-			self::COOKIE_NAME,
-			$value,
-			array(
-				'expires'  => $expire,
-				'path'     => $path,
-				'domain'   => $domain,
-				'secure'   => is_ssl(),
-				'httponly' => true,
-				'samesite' => 'Lax',
-			)
-		);
+		if ( version_compare( PHP_VERSION, '7.3', '>=' ) ) {
+			setcookie(
+				self::COOKIE_NAME,
+				$value,
+				array(
+					'expires'  => $expire,
+					'path'     => '/',
+					'domain'   => '',
+					'secure'   => is_ssl(),
+					'httponly' => true,
+					'samesite' => 'Lax',
+				)
+			);
+		} else {
+			// Path suffix is the pre-7.3 way to set SameSite; fragile but needed
+			// until the plugin declares a PHP 7.3+ minimum.
+			setcookie( self::COOKIE_NAME, $value, $expire, '/; SameSite=Lax', '', is_ssl(), true );
+		}
 	}
 
 	/**
