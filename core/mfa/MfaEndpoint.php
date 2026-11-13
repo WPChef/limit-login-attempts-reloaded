@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile -- Legacy MFA module; PascalCase filename required by autoload.php. This PR only uses wp_redirect for the plugin-built login URL.
 
 namespace LLAR\Core\Mfa;
 

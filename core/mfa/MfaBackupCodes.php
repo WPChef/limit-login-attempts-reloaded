@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile -- Legacy MFA module; PascalCase filename required by autoload.php. This PR only switches rescue URLs to MfaUrl::base().
 
 namespace LLAR\Core\Mfa;
 
