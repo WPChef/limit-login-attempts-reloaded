@@ -251,7 +251,10 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 		// Store encrypted payload in a dedicated transient per hash_id.
 		// This allows atomic, single-use consumption on the endpoint side.
 		$this->payload_storage->save( $hash_id, $encrypted, MfaConstants::RESCUE_LINK_TTL );
-		return add_query_arg( 'llar_rescue', $hash_id, home_url() );
+		// site_url() — not home_url(): a drifted home host (www / CDN / Polylang
+		// language home cache) makes the rescue link bounce until the browser
+		// reports ERR_TOO_MANY_REDIRECTS.
+		return add_query_arg( 'llar_rescue', $hash_id, \LLAR\Core\Helpers::get_mfa_endpoint_url( '/' ) );
 	}
 
 	/**

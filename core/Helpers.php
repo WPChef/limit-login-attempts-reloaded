@@ -721,6 +721,21 @@ class Helpers {
 	}
 
 	/**
+	 * Absolute site base for MFA endpoints the external MFA app must call
+	 * (send-code REST, rescue links). Prefer site_url() over home_url(): home
+	 * can drift (www / CDN / reverse proxy) while the handshake transient is
+	 * stored on the site that handled the login request. AJAX fallback already
+	 * uses admin_url() → site_url(); keep the primary URL on the same host.
+	 *
+	 * @param string $path Optional path relative to the site root (leading slash optional).
+	 * @return string Absolute URL.
+	 */
+	public static function get_mfa_endpoint_url( $path = '/' ) {
+		$path = is_string( $path ) && '' !== $path ? $path : '/';
+		return site_url( $path );
+	}
+
+	/**
 	 * Get current URL label from request URI.
 	 *
 	 * @return string
