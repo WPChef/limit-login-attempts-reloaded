@@ -250,6 +250,10 @@ By default, you will need to copy and paste the lists to each site manually. For
 
 == Changelog ==
 
+= 3.4.4 =
+* Fixed MFA send-code and rescue links using site_url (?rest_route=) so a drifted home_url host no longer causes 403 Forbidden or redirect loops.
+* MFA send URL no longer goes through rest_url(); use llar_mfa_base_url to override the base if needed.
+
 = 3.4.3 =
 * Security: IPv6 addresses in the same /64 now share one lockout, so changing the address ending no longer bypasses the login limit. Thanks to VulnCheck for the report.
 * Shortened onboarding to two steps.
