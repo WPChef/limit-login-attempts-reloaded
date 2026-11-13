@@ -60,6 +60,25 @@ class SessionStore {
 	}
 
 	/**
+	 * Read the MFA state cookie value.
+	 *
+	 * State is generated via wp_generate_password( …, false, false ) — alnum only.
+	 * Reject the whole value if it does not match; do not strip characters.
+	 *
+	 * @return string
+	 */
+	public static function get_state_cookie() {
+		if ( ! isset( $_COOKIE[ self::COOKIE_NAME ] ) ) {
+			return '';
+		}
+		$raw = wp_unslash( $_COOKIE[ self::COOKIE_NAME ] );
+		if ( ! is_string( $raw ) || '' === $raw ) {
+			return '';
+		}
+		return preg_match( '/\A[a-zA-Z0-9]+\z/', $raw ) ? $raw : '';
+	}
+
+	/**
 	 * Save session after handshake.
 	 *
 	 * @param string $token       From API.

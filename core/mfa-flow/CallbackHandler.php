@@ -88,7 +88,7 @@ class CallbackHandler {
 		}
 
 		$has_llar_mfa_param = ( isset( $_GET['llar_mfa'] ) && ( '1' === $_GET['llar_mfa'] || 'true' === $_GET['llar_mfa'] ) );
-		$cookie_state       = self::state_cookie_value();
+		$cookie_state       = SessionStore::get_state_cookie();
 		if ( '' === $token && $has_llar_mfa_param && '' !== $cookie_state ) {
 			$store          = new SessionStore();
 			$resolved_token = $store->get_callback_token( $cookie_state );
@@ -127,7 +127,7 @@ class CallbackHandler {
 	private static function try_verify_and_login( $token ) {
 		$store   = new SessionStore();
 		$session = $store->get_session( $token );
-		$cookie  = self::state_cookie_value();
+		$cookie  = SessionStore::get_state_cookie();
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			return;
 		}
@@ -179,7 +179,7 @@ class CallbackHandler {
 	public static function handle( $token, $code ) {
 		$store   = new SessionStore();
 		$session = $store->get_session( $token );
-		$cookie  = self::state_cookie_value();
+		$cookie  = SessionStore::get_state_cookie();
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			$store->delete_session( $token );
 			self::redirect_login( 'llar_mfa_session_expired' );
@@ -243,25 +243,6 @@ class CallbackHandler {
 		wp_safe_redirect( $redirect_url );
 		$store->delete_session( $token );
 		exit;
-	}
-
-	/**
-	 * Read the MFA state cookie value.
-	 *
-	 * State is generated via wp_generate_password( …, false, false ) — alnum only.
-	 * Reject the whole value if it does not match; do not strip characters.
-	 *
-	 * @return string
-	 */
-	private static function state_cookie_value() {
-		if ( ! isset( $_COOKIE[ SessionStore::COOKIE_NAME ] ) ) {
-			return '';
-		}
-		$raw = wp_unslash( $_COOKIE[ SessionStore::COOKIE_NAME ] );
-		if ( ! is_string( $raw ) || '' === $raw ) {
-			return '';
-		}
-		return preg_match( '/\A[a-zA-Z0-9]+\z/', $raw ) ? $raw : '';
 	}
 
 	/**

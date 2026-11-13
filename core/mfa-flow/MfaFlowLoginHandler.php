@@ -10,6 +10,8 @@ namespace LLAR\Core\MfaFlow;
 
 use LLAR\Core\CloudAclService;
 use LLAR\Core\Config;
+use LLAR\Core\Helpers;
+use LLAR\Core\Http\Http;
 use LLAR\Core\IpAddressResolver;
 use LLAR\Core\LimitLoginAttempts;
 use LLAR\Core\LocalLockoutManager;
@@ -344,14 +346,14 @@ class MfaFlowLoginHandler {
 	 */
 	private function build_handshake_login_url() {
 		$home_url    = home_url();
+		$site_url    = site_url();
 		$home_host   = (string) wp_parse_url( $home_url, PHP_URL_HOST );
-		$site_host   = (string) wp_parse_url( site_url(), PHP_URL_HOST );
+		$site_host   = (string) wp_parse_url( $site_url, PHP_URL_HOST );
 		$home_scheme = (string) wp_parse_url( $home_url, PHP_URL_SCHEME );
-		// Never downgrade https home to http when is_ssl() is false behind a
-		// proxy/CDN (Flexible SSL, missing X-Forwarded-Proto). Prefer https if
-		// either the request or home says so; Secure on the cookie still follows
-		// is_ssl() at setcookie time.
-		$req_scheme = ( is_ssl() || 'https' === $home_scheme ) ? 'https' : 'http';
+		$site_scheme = (string) wp_parse_url( $site_url, PHP_URL_SCHEME );
+		// Never downgrade https home/siteurl to http when is_ssl() is false
+		// behind a proxy/CDN. Secure on the cookie still follows is_ssl().
+		$req_scheme = ( is_ssl() || 'https' === $home_scheme || 'https' === $site_scheme ) ? 'https' : 'http';
 
 		$req_host_header = isset( $_SERVER['HTTP_HOST'] ) ? wp_unslash( $_SERVER['HTTP_HOST'] ) : '';
 		$req_host_header = is_string( $req_host_header )
@@ -363,7 +365,7 @@ class MfaFlowLoginHandler {
 			$req_host    = is_string( $parsed_host ) ? $parsed_host : '';
 		}
 
-		$uri       = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$uri       = sanitize_text_field( Helpers::get_request_uri() );
 		$login_url = wp_login_url();
 		if (
 			'' !== $req_host_header
@@ -372,7 +374,6 @@ class MfaFlowLoginHandler {
 				$this->hosts_match_after_www_strip( $req_host, $home_host )
 				|| $this->hosts_match_after_www_strip( $req_host, $site_host )
 			)
-			&& is_string( $uri )
 			&& isset( $uri[0] )
 			&& '/' === $uri[0]
 		) {
@@ -393,24 +394,25 @@ class MfaFlowLoginHandler {
 	}
 
 	/**
-	 * Compare hosts after stripping one leading www. (case-insensitive).
+	 * Compare hosts via Http::normalize_host plus a single leading-www strip.
 	 *
 	 * @param string $left  Host A (no port).
 	 * @param string $right Host B (no port).
 	 * @return bool
 	 */
 	private function hosts_match_after_www_strip( $left, $right ) {
-		return $this->normalize_host_for_compare( $left ) === $this->normalize_host_for_compare( $right );
+		$left  = $this->strip_leading_www( Http::normalize_host( $left ) );
+		$right = $this->strip_leading_www( Http::normalize_host( $right ) );
+		return '' !== $left && $left === $right;
 	}
 
 	/**
-	 * Lowercase and strip a single leading www.
+	 * Strip a single leading www. after host normalization.
 	 *
-	 * @param string $host Hostname without port.
+	 * @param string $host Already-normalized hostname.
 	 * @return string
 	 */
-	private function normalize_host_for_compare( $host ) {
-		$host = strtolower( trim( (string) $host ) );
-		return (string) preg_replace( '/^www\./i', '', $host );
+	private function strip_leading_www( $host ) {
+		return (string) preg_replace( '/^www\./i', '', (string) $host );
 	}
 }
