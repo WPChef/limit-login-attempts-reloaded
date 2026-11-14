@@ -1,5 +1,4 @@
 <?php
-// phpcs:disable WordPress.Security.EscapeOutput,WordPress.Security.NonceVerification,PSR2.Classes.ClassDeclaration -- Legacy MFA module; FileName excluded in phpcs.xml.dist.
 
 namespace LLAR\Core\Mfa;
 

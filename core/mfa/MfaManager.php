@@ -1,5 +1,4 @@
 <?php
-// phpcs:disable WordPress.Security.NonceVerification -- Legacy MFA admin AJAX; FileName excluded in phpcs.xml.dist.
 
 namespace LLAR\Core\Mfa;
 

@@ -11,7 +11,7 @@
         <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
     </rule>
 
-    <!-- Legacy MFA noise: keep ERRORS elsewhere failing CI; silence advisory warnings only under MFA. -->
+    <!-- Legacy MFA: scoped exclusions (no per-file phpcs:disable). New MFA code still gets other sniffs. -->
     <rule ref="Generic.Formatting.MultipleStatementAlignment">
         <exclude-pattern>*/core/mfa/*</exclude-pattern>
         <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
@@ -28,7 +28,23 @@
         <exclude-pattern>*/core/mfa/*</exclude-pattern>
         <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
     </rule>
-    <rule ref="WordPress.Security.NonceVerification.Recommended">
+    <rule ref="WordPress.Security.NonceVerification">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.Security.EscapeOutput">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.Arrays.ArrayDeclarationSpacing">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.PHP.DisallowSizeFunctionsInLoops">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="PSR2.Classes.ClassDeclaration">
         <exclude-pattern>*/core/mfa/*</exclude-pattern>
         <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
     </rule>

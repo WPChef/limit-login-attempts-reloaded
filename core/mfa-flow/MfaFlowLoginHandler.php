@@ -1,5 +1,4 @@
 <?php
-// phpcs:disable WordPress.Security.EscapeOutput,WordPress.Arrays.ArrayDeclarationSpacing -- Legacy MFA flow; FileName excluded in phpcs.xml.dist.
 
 namespace LLAR\Core\MfaFlow;
 

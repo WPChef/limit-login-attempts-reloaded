@@ -1,5 +1,4 @@
 <?php
-// phpcs:disable WordPress.Security.EscapeOutput,Squiz.PHP.DisallowSizeFunctionsInLoops -- Legacy MFA module; FileName excluded in phpcs.xml.dist.
 
 namespace LLAR\Core\Mfa;
 
