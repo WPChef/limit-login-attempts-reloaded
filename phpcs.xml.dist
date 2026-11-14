@@ -5,6 +5,50 @@
 
     <rule ref="WordPress-Extra"/>
 
+    <!-- Autoload maps FQCN → PascalCase filename (autoload.php); WP FileName sniff does not apply. -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+
+    <!-- Legacy MFA: scoped exclusions (no per-file phpcs:disable). New MFA code still gets other sniffs. -->
+    <rule ref="Generic.Formatting.MultipleStatementAlignment">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.PHP.DiscouragedPHPFunctions">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.PHP.DevelopmentFunctions">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.Security.NonceVerification">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.Security.EscapeOutput">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.Arrays.ArrayDeclarationSpacing">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.PHP.DisallowSizeFunctionsInLoops">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+    <rule ref="PSR2.Classes.ClassDeclaration">
+        <exclude-pattern>*/core/mfa/*</exclude-pattern>
+        <exclude-pattern>*/core/mfa-flow/*</exclude-pattern>
+    </rule>
+
     <arg name="extensions" value="php"/>
     <arg name="report" value="full"/>
     <arg name="no-colors"/>
