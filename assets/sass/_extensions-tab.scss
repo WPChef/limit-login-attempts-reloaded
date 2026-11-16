@@ -1,17 +1,18 @@
 #llar-setting-page-extensions {
+  // Match Help → Our Mission body text (.section-mission-block .text).
   .llar-extensions-intro {
     margin: 8px 0 24px;
-    padding: 18px 22px;
-    background: #FFFFFF;
-    border: 1px solid #E4E6EB;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px 0 rgba(164, 168, 183, 0.2980392157);
+    padding: 30px 40px;
+    color: $typography-secondary;
+    border-radius: $border-radius;
+    background-color: $background-body;
+    box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
 
     p {
       margin: 0;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #50575E;
+      font-size: 18px;
+      font-weight: $text-font-weight-bold;
+      line-height: 1.5;
     }
   }
 

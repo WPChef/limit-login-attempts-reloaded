@@ -4330,17 +4330,17 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 
 #llar-setting-page-extensions .llar-extensions-intro {
   margin: 8px 0 24px;
-  padding: 18px 22px;
-  background: #FFFFFF;
-  border: 1px solid #E4E6EB;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px 0 rgba(164, 168, 183, 0.2980392157);
+  padding: 30px 40px;
+  color: #666D84;
+  border-radius: 20px;
+  background-color: #FDFDFD;
+  box-shadow: 3px 5px 23px 0 rgba(162, 180, 189, 0.2);
 }
 #llar-setting-page-extensions .llar-extensions-intro p {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #50575E;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.5;
 }
 #llar-setting-page-extensions .llar-extensions-grid {
   display: grid;

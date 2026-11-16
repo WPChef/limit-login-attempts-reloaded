@@ -314,13 +314,13 @@ if ( 'debug' === $active_tab && $this->has_capability ) {
 			class="nav-tab<?php echo $active_tab === 'help' ? $nav_tab_active : ''; ?>">
 			<?php _e( 'Help', 'limit-login-attempts-reloaded' ); ?>
 		</a>
-		<a href="<?php echo $this->get_options_page_uri( 'premium' ); ?>"
-			class="nav-tab<?php echo $active_tab === 'premium' ? $nav_tab_active : ''; ?>">
-			<?php _e( 'Premium', 'limit-login-attempts-reloaded' ); ?>
-		</a>
 		<a href="<?php echo $this->get_options_page_uri( 'extensions' ); ?>"
 			class="nav-tab<?php echo $active_tab === 'extensions' ? $nav_tab_active : ''; ?>">
 			<?php _e( 'Extensions', 'limit-login-attempts-reloaded' ); ?>
+		</a>
+		<a href="<?php echo $this->get_options_page_uri( 'premium' ); ?>"
+			class="nav-tab<?php echo $active_tab === 'premium' ? $nav_tab_active : ''; ?>">
+			<?php _e( 'Premium', 'limit-login-attempts-reloaded' ); ?>
 		</a>
 
 		<?php if ( $active_tab === 'logs-custom' ) : ?>

@@ -156,22 +156,19 @@ class AdminUiController {
 			)
 		);
 
-		if ( ! $is_cloud_app_enabled ) {
-
-			$is_local_empty_setup_code = empty( Config::get( 'app_setup_code' ) );
-
-			$submenu_items[] = array(
-				'id'    => 'premium',
-				'name'  => $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' ),
-				'url'   => $is_local_empty_setup_code ? '&tab=dashboard' : '&tab=premium',
-			);
-		}
-
 		$submenu_items[] = array(
 			'id'    => 'extensions',
 			'name'  => __( 'Extensions', 'limit-login-attempts-reloaded' ),
 			'url'   => '&tab=extensions',
 		);
+
+		if ( ! $is_cloud_app_enabled ) {
+			$submenu_items[] = array(
+				'id'    => 'premium',
+				'name'  => __( 'Premium', 'limit-login-attempts-reloaded' ),
+				'url'   => '&tab=premium',
+			);
+		}
 
 		return $submenu_items;
 	}
@@ -217,11 +214,11 @@ class AdminUiController {
 			remove_submenu_page( $this->options_page_slug, $this->options_page_slug );
 
 			if ( ! $is_cloud_app_enabled && isset( $submenu[$this->options_page_slug] ) ) {
-				// Highlight the Premium submenu item (Dashboard, Settings, 2FA, Logs, Debug, Help, Premium, Extensions).
+				// Highlight the Premium submenu item (… Help, Extensions, Premium).
 				$premium_key = null;
 
 				foreach ( $submenu[$this->options_page_slug] as $key => $item ) {
-					if ( ! empty( $item[2] ) && ( false !== strpos( $item[2], '&tab=premium' ) || false !== strpos( $item[2], '#modal_micro_cloud' ) ) ) {
+					if ( ! empty( $item[2] ) && false !== strpos( $item[2], '&tab=premium' ) ) {
 						$premium_key = $key;
 						break;
 					}
