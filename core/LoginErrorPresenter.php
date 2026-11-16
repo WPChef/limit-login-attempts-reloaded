@@ -88,18 +88,18 @@ class LoginErrorPresenter {
 
 		// Cloud is off or unreachable — fall back to the local lockouts timer so failover messages match the lockout state.
 
-		$ip       = $this->ip_resolver->get_address();
+		$raw_ip   = $this->ip_resolver->get_address();
+		$ip       = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
-		$a        = $this->local_lockout->check_key($lockouts, $ip);
-		$b        = $this->local_lockout->check_key($lockouts, $this->local_lockout->get_hash($ip));
+		$until    = max(
+			Helpers::get_active_lockout_until( $lockouts, $raw_ip ),
+			$this->local_lockout->check_key( $lockouts, $this->local_lockout->get_hash( $ip ) ),
+			$this->local_lockout->check_key( $lockouts, $this->local_lockout->get_hash( $raw_ip ) )
+		);
 
 		$msg = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' ) . ' ';
 
-		if (
-			! is_array( $lockouts )
-			|| ( ! isset( $lockouts[ $ip ] ) && ! isset( $lockouts[ $this->local_lockout->get_hash( $ip ) ] ) )
-			|| ( time() >= $a && time() >= $b )
-		){
+		if ( ! is_array( $lockouts ) || $until <= time() ) {
 			/* Huh? No timeout active? */
 			$msg .= __( 'Please try again later.', 'limit-login-attempts-reloaded' );
 
@@ -109,13 +109,15 @@ class LoginErrorPresenter {
 			return $msg;
 		}
 
-		$when = ceil( ( ($a > $b ? $a : $b) - time() ) / 60 );
+		$when = ceil( ( $until - time() ) / 60 );
 		if ( $when > 60 ) {
 
 			$when = ceil( $when / 60 );
+			/* translators: %d: hours until lockout ends */
 			$msg .= sprintf( _n( 'Please try again in %d hour.', 'Please try again in %d hours.', $when, 'limit-login-attempts-reloaded' ), $when );
 		} else {
 
+			/* translators: %d: minutes until lockout ends */
 			$msg .= sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $when, 'limit-login-attempts-reloaded' ), $when );
 		}
 

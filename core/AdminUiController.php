@@ -49,6 +49,7 @@ class AdminUiController {
 				'nonce_dismiss_onboarding_popup'  => $dismiss_onboarding_popup,
 				'nonce_subscribe_email'           => $subscribe_email,
 				'nonce_close_premium_message'     => $close_premium_message,
+				'msg_network_error'               => __( 'Network error', 'limit-login-attempts-reloaded' ),
 			));
 
 			global $wp_scripts, $wp_styles;
@@ -544,8 +545,9 @@ class AdminUiController {
 	 * This function allow external ip whitelisting using a filter. Note that it can
 	 * be called multiple times during the login process.
 	 *
-	 * Note that retries and statistics are still counted and notifications
-	 * done as usual for whitelisted ips , but no lockout is done.
+	 * Whitelisted IPs skip local retry increments and lockouts so they cannot
+	 * burn a shared IPv6 /64 budget used by neighbours. Cloud paths likewise
+	 * omit lockout_check when the early auth hook removes wp_login_failed.
 	 *
 	 * Example:
 	 * function my_ip_whitelist($allow, $ip) {

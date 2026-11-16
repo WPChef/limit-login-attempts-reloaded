@@ -161,9 +161,9 @@ class LocalLockoutManager {
 	 * @throws Exception
 	 */
 	public function is_limit_login_ok( $username = '' ) {
-		$ip = $this->ip_resolver->get_address();
+		$raw_ip = $this->ip_resolver->get_address();
 
-		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) ) {
+		if ( $this->ip_resolver->is_ip_whitelisted( $raw_ip ) ) {
 			return true;
 		}
 
@@ -173,8 +173,9 @@ class LocalLockoutManager {
 		}
 
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
+		$until    = Helpers::get_active_lockout_until( $lockouts, $raw_ip );
 
-		return ( ! is_array( $lockouts ) || ! isset( $lockouts[ $ip ] ) || time() >= $lockouts[ $ip ] );
+		return $until <= time();
 	}
 
 	/**
@@ -324,6 +325,18 @@ class LocalLockoutManager {
 	public function record_failed_login_attempt( $username ) {
 		self::$failed_login_recorded_in_request = true;
 
+		// Whitelisted IP/username must not burn the shared rate-limit budget
+		// (especially the IPv6 /64 key shared with neighbours). Early auth
+		// already removes wp_login_failed for allow-list hits; late WP 7.x
+		// fallbacks still call this method directly.
+		$raw_ip = $this->ip_resolver->get_address();
+		if (
+			$this->ip_resolver->is_ip_whitelisted( $raw_ip )
+			|| $this->is_username_whitelisted( $username )
+		) {
+			return;
+		}
+
 		LoginFlowTransientStore::ensure_token();
 		LoginFlowTransientStore::merge( array( 'login_attempts_left' => 0 ) );
 
@@ -360,14 +373,15 @@ class LocalLockoutManager {
 				LoginFlowTransientStore::merge( array( 'errors_in_early_hook' => false ) );
 			}
 		} else {
-			$ip       = $this->ip_resolver->get_address();
+			$ip       = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 			$lockouts = Config::get( Config::OPTION_LOCKOUTS );
 
 			if ( ! is_array( $lockouts ) ) {
 				$lockouts = array();
 			}
 
-			if ( isset( $lockouts[ $ip ] ) && time() < $lockouts[ $ip ] ) {
+			// Honour both the /64 key and a legacy full-address lockout.
+			if ( Helpers::get_active_lockout_until( $lockouts, $raw_ip ) > time() ) {
 				return;
 			}
 
@@ -398,16 +412,30 @@ class LocalLockoutManager {
 			}
 			$retries_stats = RiskLevelMath::prune_retries_stats_old_buckets( $retries_stats );
 			Config::update( 'retries_stats', $retries_stats );
-			DigestRetriesController::save_failed_attempt( $ip, $username );
+			// Digest keeps the raw client IP for forensics; rate-limit tables use $ip.
+			DigestRetriesController::save_failed_attempt( $raw_ip, $username );
 
 			if ( isset( $retries[ $ip ] ) && isset( $valid[ $ip ] ) && time() < $valid[ $ip ] ) {
 				$retries[ $ip ]++;
 			} else {
-				$retries[ $ip ] = 1;
+				// After upgrade: seed /64 from a still-valid legacy full-IP
+				// counter (plain or hashed) so display (max) and enforcement
+				// do not diverge for valid_duration.
+				$prior = 0;
+				if ( $ip !== $raw_ip ) {
+					$legacy_window_open = (
+						( isset( $valid[ $raw_ip ] ) && time() < (int) $valid[ $raw_ip ] )
+						|| ( isset( $valid[ md5( $raw_ip ) ] ) && time() < (int) $valid[ md5( $raw_ip ) ] )
+					);
+					if ( $legacy_window_open ) {
+						$prior = Helpers::get_effective_retries_count( $retries, $raw_ip );
+					}
+				}
+				$retries[ $ip ] = $prior > 0 ? $prior + 1 : 1;
 			}
 			$valid[ $ip ] = time() + Config::get( 'valid_duration' );
 
-			if ( $retries[ $ip ] % Config::get( 'allowed_retries' ) != 0 ) {
+			if ( 0 != $retries[ $ip ] % Config::get( 'allowed_retries' ) ) {
 				$this->cleanup( $retries, null, $valid );
 
 				LoginFlowTransientStore::merge(
@@ -419,34 +447,26 @@ class LocalLockoutManager {
 				return;
 			}
 
-			$whitelisted  = $this->ip_resolver->is_ip_whitelisted( $ip );
-			$retries_long = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
+			// Allow-listed callers already returned above; remaining traffic locks.
+			$retries_long               = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
+			global $limit_login_just_lockedout;
+			$limit_login_just_lockedout = true;
 
-			if ( $whitelisted ) {
-				if ( $retries[ $ip ] >= $retries_long ) {
-					unset( $retries[ $ip ] );
-					unset( $valid[ $ip ] );
-				}
+			if ( ( isset( $retries[ $ip ] ) ? $retries[ $ip ] : 0 ) >= $retries_long ) {
+				$lockouts[ $ip ] = time() + Config::get( 'long_duration' );
+				unset( $retries[ $ip ] );
+				unset( $valid[ $ip ] );
 			} else {
-				global $limit_login_just_lockedout;
-				$limit_login_just_lockedout = true;
-
-				if ( ( isset( $retries[ $ip ] ) ? $retries[ $ip ] : 0 ) >= $retries_long ) {
-					$lockouts[ $ip ] = time() + Config::get( 'long_duration' );
-					unset( $retries[ $ip ] );
-					unset( $valid[ $ip ] );
-				} else {
-					$lockouts[ $ip ] = time() + Config::get( 'lockout_duration' );
-				}
-
-				DigestRetriesController::save_lockout( $ip );
+				$lockouts[ $ip ] = time() + Config::get( 'lockout_duration' );
 			}
+
+			DigestRetriesController::save_lockout( $raw_ip );
 
 			$this->cleanup( $retries, $lockouts, $valid );
 			$this->notify( $username );
 
 			$total = Config::get( 'lockouts_total' );
-			if ( $total === false || ! is_numeric( $total ) ) {
+			if ( false === $total || ! is_numeric( $total ) ) {
 				Config::add( 'lockouts_total', 1 );
 			} else {
 				Config::update( 'lockouts_total', $total + 1 );
@@ -502,39 +522,38 @@ class LocalLockoutManager {
 	}
 
 	/**
+	 * Attempts left in the current window for UI / email copy.
+	 *
+	 * Effective count is max(plain legacy, plain /64, hashed legacy, hashed /64).
+	 * Deliberately not the pre-IPv6 ($plain + $hashed) sum — that double-counted
+	 * when both keys held the same logical counter. Hashed entries still count
+	 * when they are the only source of the attempt total.
+	 *
 	 * @return int
 	 */
 	private function calculate_retries_remaining() {
-		$remaining = 0;
-
-		$ip      = $this->ip_resolver->get_address();
+		$raw_ip  = $this->ip_resolver->get_address();
+		$ip      = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 		$retries = Config::get( 'retries' );
 		$valid   = Config::get( 'retries_valid' );
-		$a       = $this->check_key( $retries, $ip );
-		$b       = $this->check_key( $retries, $this->get_hash( $ip ) );
-		$c       = $this->check_key( $valid, $ip );
-		$d       = $this->check_key( $valid, $this->get_hash( $ip ) );
 
 		if ( ! is_array( $retries ) || ! is_array( $valid ) ) {
-			return $remaining;
-		}
-		if (
-			( ! isset( $retries[ $ip ] ) && ! isset( $retries[ $this->get_hash( $ip ) ] ) )
-			|| ( ! isset( $valid[ $ip ] ) && ! isset( $valid[ $this->get_hash( $ip ) ] ) )
-			|| ( time() > $c && time() > $d )
-		) {
-			return $remaining;
-		}
-		if (
-			( $a % Config::get( 'allowed_retries' ) ) == 0
-			&& ( $b % Config::get( 'allowed_retries' ) ) == 0
-		) {
-			return $remaining;
+			return 0;
 		}
 
-		$remaining = max( ( Config::get( 'allowed_retries' ) - ( ( $a + $b ) % Config::get( 'allowed_retries' ) ) ), 0 );
+		$attempts    = Helpers::get_effective_retries_count( $retries, $raw_ip );
+		$valid_until = max(
+			$this->check_key( $valid, $ip ),
+			$this->check_key( $valid, $raw_ip ),
+			$this->check_key( $valid, $this->get_hash( $ip ) ),
+			$this->check_key( $valid, $this->get_hash( $raw_ip ) )
+		);
 
-		return (int) $remaining;
+		return Helpers::retries_remaining(
+			$attempts,
+			$valid_until,
+			(int) Config::get( 'allowed_retries' )
+		);
 	}
 
 	/**
