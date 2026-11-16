@@ -93,10 +93,22 @@ class HttpTransportFopen implements HttpTransportInterface {
 		$status   = null;
 		$response = null;
 
+		// PHP 8.5 deprecates the magic $http_response_header variable.
+		// Prefer http_get_last_response_headers() (PHP ≥ 8.4); on older
+		// runtimes read the magic name via variable-variable so this file
+		// never mentions $http_response_header as an identifier (compile-time
+		// deprecation on 8.5+).
+		$response_headers = function_exists( 'http_get_last_response_headers' )
+			? http_get_last_response_headers()
+			: ( ${'http_response_header'} ?? null );
+		if ( ! is_array( $response_headers ) ) {
+			$response_headers = array();
+		}
+
 		if ( ! $fp ) {
 
-			if ( ! empty( $http_response_header[0] ) ) {
-				list(, $code, $message ) = explode( ' ', $http_response_header[0], 3 );
+			if ( ! empty( $response_headers[0] ) ) {
+				list(, $code, $message ) = explode( ' ', $response_headers[0], 3 );
 				$error                   = $message;
 				$status                  = $code;
 
@@ -105,7 +117,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 				$error    = ! empty( $last_err['message'] ) ? $last_err['message'] : 'Unknown error!';
 			}
 		} else {
-			list(, $code ) = explode( ' ', $http_response_header[0], 3 );
+			list(, $code ) = explode( ' ', $response_headers[0], 3 );
 			$status        = $code;
 
 			$response = stream_get_contents( $fp );
@@ -115,7 +127,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 			'data'        => $response,
 			'status'      => intval( $status ),
 			'error'       => $error,
-			'raw_headers' => isset( $http_response_header ) ? $http_response_header : array(),
+			'raw_headers' => $response_headers,
 		);
 	}
 }
