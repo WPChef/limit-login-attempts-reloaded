@@ -257,7 +257,7 @@ By default, you will need to copy and paste the lists to each site manually. For
 * The PHP vulnerability notice no longer treats a vendor suffix (such as -nts or -ubuntu) on an already patched version as vulnerable. Pre-release builds (dev, alpha, beta, RC) still show the notice.
 
 = 3.4.3 =
-* Security: IPv6 addresses in the same /64 now share one lockout, so changing the address ending no longer bypasses the login limit. Thanks to VulnCheck for the report.
+* Security: IPv6 addresses in the same /64 now share one lockout, so changing the address ending no longer bypasses the login limit. Thanks to Drakon Tech Solutions SLU for the report.
 * Shortened onboarding to two steps.
 
 = 3.4.2 =
