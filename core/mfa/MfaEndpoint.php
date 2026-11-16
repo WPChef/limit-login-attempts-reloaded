@@ -128,6 +128,17 @@ class MfaEndpoint implements MfaEndpointInterface {
 			Config::update( 'mfa_rescue_codes', $codes );
 			$this->disable_mfa_temporarily();
 			$login_url = add_query_arg( 'llar_mfa_disabled', '1', wp_login_url() );
+			// Allow only site_url / home_url hosts (not whatever a login_url filter returns).
+			// Filter is not removed: exit follows immediately (no leak to later redirects).
+			add_filter(
+				'allowed_redirect_hosts',
+				static function ( $hosts ) {
+					foreach ( array_keys( MfaUrl::allowed_public_hosts() ) as $host ) {
+						$hosts[] = $host;
+					}
+					return $hosts;
+				}
+			);
 			wp_safe_redirect( $login_url );
 			exit;
 		}
