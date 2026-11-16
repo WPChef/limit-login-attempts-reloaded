@@ -169,6 +169,18 @@ class DigestStorage {
 	}
 
 	/**
+	 * Cast hook-supplied values to string without fataling on objects:
+	 * wp_login_failed arguments come from third-party do_action callers and
+	 * may be WP_Error instances (support topic error-1978).
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string
+	 */
+	private static function to_safe_string( $value ) {
+		return is_scalar( $value ) ? (string) $value : '';
+	}
+
+	/**
 	 * Track failed attempt dimensions for digest email data.
 	 *
 	 * @param int    $day_ts Start-of-day timestamp.
@@ -184,9 +196,9 @@ class DigestStorage {
 			return;
 		}
 
-		$ip       = sanitize_text_field( (string) $ip );
-		$username = sanitize_user( (string) $username, true );
-		$gateway  = sanitize_key( (string) $gateway );
+		$ip       = sanitize_text_field( self::to_safe_string( $ip ) );
+		$username = sanitize_user( self::to_safe_string( $username ), true );
+		$gateway  = sanitize_key( self::to_safe_string( $gateway ) );
 
 		if ( '' !== $ip ) {
 			$ip_stats = get_post_meta( $post_id, self::META_IP_STATS, true );
@@ -228,8 +240,8 @@ class DigestStorage {
 			return;
 		}
 
-		$ip      = sanitize_text_field( (string) $ip );
-		$gateway = sanitize_key( (string) $gateway );
+		$ip      = sanitize_text_field( self::to_safe_string( $ip ) );
+		$gateway = sanitize_key( self::to_safe_string( $gateway ) );
 		if ( '' === $ip ) {
 			return;
 		}
