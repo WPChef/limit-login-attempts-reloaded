@@ -218,24 +218,27 @@ class LoginAuthenticationHandler {
 			return '';
 		}
 
-		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
-			return preg_replace( '/\.\d+$/', '.0', $ip );
+		// Same unmapping as rate-limit keys (::ffff:/compatible → IPv4).
+		$normalized = Helpers::normalize_ip_for_rate_limit( $ip );
+
+		if ( filter_var( $normalized, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return preg_replace( '/\.\d+$/', '.0', $normalized );
 		}
 
-		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
-			if ( function_exists( 'inet_pton' ) && function_exists( 'inet_ntop' ) ) {
-				$binary = inet_pton( $ip );
-				if ( false !== $binary && 16 === strlen( $binary ) ) {
-					$masked = substr( $binary, 0, 8 ) . str_repeat( "\0", 8 );
-					$masked_ip = inet_ntop( $masked );
-					if ( false !== $masked_ip ) {
-						return $masked_ip . '/64';
-					}
-				}
+		if ( filter_var( $normalized, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+			if ( '::1' === $normalized ) {
+				return '::1';
 			}
-			if ( function_exists( 'wp_hash' ) ) {
-				return wp_hash( $ip );
+			// Privacy: never log finer than /64, even if rate-limit prefix is larger.
+			$prefix    = min( 64, Helpers::ipv6_rate_limit_prefix() );
+			$masked_ip = Helpers::ipv6_network_address( $normalized, $prefix );
+			if ( false !== $masked_ip ) {
+				return $masked_ip . '/' . $prefix;
 			}
+		}
+
+		if ( function_exists( 'wp_hash' ) ) {
+			return wp_hash( $ip );
 		}
 
 		return '***';
@@ -453,9 +456,33 @@ class LoginAuthenticationHandler {
 		}
 
 		// Trigger MFA flow (for selected roles). Only treat as pre-authenticated if password was verified.
-		if ( $username !== '' ) {
+		// The 2FA decision must be made from the authenticated user object, not
+		// from a login-form field: form-less password-auth routes (e.g. XML-RPC)
+		// never supply the log parameter, and keying the trigger on it let them
+		// skip the second factor entirely.
+		$mfa_username = $username;
+		if ( $password_ok && is_a( $user, 'WP_User' ) ) {
+			$mfa_username = $user->user_login;
+		}
+		if ( $mfa_username !== '' ) {
 			$auth_user_for_mfa = ( $password_ok && is_a( $user, 'WP_User' ) ) ? $user : null;
-			$this->mfa_flow->try_mfa_flow_redirect( $username, $password_ok, $auth_user_for_mfa );
+			$mfa_error         = $this->mfa_flow->try_mfa_flow_redirect( $mfa_username, $password_ok, $auth_user_for_mfa );
+			if ( is_wp_error( $mfa_error ) ) {
+				global $limit_login_my_error_shown;
+				$limit_login_my_error_shown = true;
+				// The refusal reaches a user whose password was already
+				// verified: publish the two-factor message through the
+				// early-hook channel so fixup_error_messages() cannot
+				// rewrite it into "incorrect username or password".
+				LoginFlowTransientStore::merge(
+					array(
+						'errors_in_early_hook'          => false,
+						'llar_early_hook_error_message' => $mfa_error->get_error_message(),
+					)
+				);
+
+				return $mfa_error;
+			}
 		}
 
 		$user_login = '';

@@ -53,6 +53,7 @@ class AdminUiController {
 				'nonce_extension_install'         => $extension_install,
 				'extension_installing_text'        => __( 'Installing...', 'limit-login-attempts-reloaded' ),
 				'extension_active_text'            => __( 'Active', 'limit-login-attempts-reloaded' ),
+				'msg_network_error'               => __( 'Network error', 'limit-login-attempts-reloaded' ),
 			));
 
 			global $wp_scripts, $wp_styles;
@@ -437,7 +438,7 @@ class AdminUiController {
 				'user_id'   => $user->ID,
 				'gateway'   => Helpers::detect_gateway(),
 				'roles'     => $user->roles,
-				'agent'     => $_SERVER['HTTP_USER_AGENT'],
+				'agent'     => Helpers::sanitize_user_agent(),
 				'url'       => $clean_url,
 			);
 
@@ -569,8 +570,9 @@ class AdminUiController {
 	 * This function allow external ip whitelisting using a filter. Note that it can
 	 * be called multiple times during the login process.
 	 *
-	 * Note that retries and statistics are still counted and notifications
-	 * done as usual for whitelisted ips , but no lockout is done.
+	 * Whitelisted IPs skip local retry increments and lockouts so they cannot
+	 * burn a shared IPv6 /64 budget used by neighbours. Cloud paths likewise
+	 * omit lockout_check when the early auth hook removes wp_login_failed.
 	 *
 	 * Example:
 	 * function my_ip_whitelist($allow, $ip) {
