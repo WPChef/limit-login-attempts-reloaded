@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.4.4 =
+* A failed two-factor verification email is now written to the error log with the mail error, so the failure is no longer only an HTTP 500.
+* Passing a WP_Error to the failed-login hook no longer crashes PHP 8. The attempt is still counted.
+
 = 3.4.3 =
 * Security: IPv6 addresses in the same /64 now share one lockout, so changing the address ending no longer bypasses the login limit. Thanks to VulnCheck for the report.
 * Shortened onboarding to two steps.
