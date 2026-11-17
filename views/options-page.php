@@ -98,12 +98,13 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 				<span class="dashicons dashicons-superhero"></span>
 			<?php
 			printf(
-				/* translators: 1: trial label, 2: requests used, 3: monthly quota, 4: upgrade URL */
-				__( '%1$s: %2$s of %3$s requests used this month. <a href="%4$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $1.25/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
+				/* translators: 1: trial label, 2: requests used, 3: monthly quota, 4: upgrade URL, 5: plan price */
+				__( '%1$s: %2$s of %3$s requests used this month. <a href="%4$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $%5$s/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
 				esc_html( LimitLoginAttempts::trial_label() ),
 				esc_html( $request_usage ),
 				esc_html( $request_quota ),
-				esc_url( add_query_arg( 'id', '41', $upgrade_premium_url ) )
+				esc_url( add_query_arg( 'id', '41', $upgrade_premium_url ) ),
+				LLAR_MIN_PLAN_PRICE
 			);
 			?>
 			</p>
@@ -119,11 +120,12 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
                     <span class="dashicons dashicons-superhero"></span>
                     <?php
 					echo sprintf(
-						/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL */
-						__( 'Micro Cloud: %1$s of %2$s requests used - cloud protection pauses at %2$s. <a href="%3$s" class="link__style_color_inherit" target="_blank">Keep it running for $1.25/mo →</a>', 'limit-login-attempts-reloaded' ),
-						esc_html( $request_usage ),
-						esc_html( $request_quota ),
-						esc_url( add_query_arg( 'id', '35', $upgrade_premium_url ) )
+					/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL, 4: plan price */
+					__( 'Micro Cloud: %1$s of %2$s requests used - cloud protection pauses at %2$s. <a href="%3$s" class="link__style_color_inherit" target="_blank">Keep it running for $%4$s/mo →</a>', 'limit-login-attempts-reloaded' ),
+					esc_html( $request_usage ),
+					esc_html( $request_quota ),
+					esc_url( add_query_arg( 'id', '35', $upgrade_premium_url ) ),
+					LLAR_MIN_PLAN_PRICE
 					);
                     ?>
                 </p>
@@ -161,11 +163,12 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 				<span class="dashicons dashicons-superhero"></span>
 				<?php
 				echo sprintf(
-					/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL */
-					__( 'Micro Cloud: %1$s of %2$s requests used this month. <a href="%3$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $1.25/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
-					esc_html( $request_usage ),
-					esc_html( $request_quota ),
-					esc_url( add_query_arg( 'id', '34', $upgrade_premium_url ) )
+				/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL, 4: plan price */
+				__( 'Micro Cloud: %1$s of %2$s requests used this month. <a href="%3$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $%4$s/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
+				esc_html( $request_usage ),
+				esc_html( $request_quota ),
+				esc_url( add_query_arg( 'id', '34', $upgrade_premium_url ) ),
+				LLAR_MIN_PLAN_PRICE
 				);
 				?>
 			</p>
