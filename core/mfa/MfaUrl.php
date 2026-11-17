@@ -12,24 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class MfaUrl {
 
 	/**
-	 * Absolute base for send-code / rescue (normalized with a trailing slash).
-	 * Defaults to site_url( '/' ): home_url() can drift (www / CDN / language domain)
-	 * while the handshake transient lives on the siteurl host.
-	 *
-	 * Filter `llar_mfa_base_url` may retarget the base (headless / Bedrock / proxy).
-	 * The result is published into handshake payloads and rescue emails — only
-	 * trust theme / mu-plugin code that returns an absolute http(s) URL with a host.
-	 * Invalid filter results fall back to site_url( '/' ).
-	 *
-	 * Note: send-code uses ?rest_route= on this base, so WordPress rest_url /
-	 * rest_url_prefix filters no longer affect the published MFA send URL.
-	 * Some WAF / security plugins treat ?rest_route= differently than /wp-json/.
+	 * Absolute base for rescue PDF / default MFA public URL (trailing slash).
+	 * Defaults to site_url( '/' ). Filter `llar_mfa_base_url` may retarget it.
+	 * Handshake send-code / login_url use public_base_for_request() instead so
+	 * the cookie Host stays aligned when login is on home ≠ siteurl.
 	 *
 	 * @return string Absolute URL with trailing slash (no query/fragment).
 	 */
 	public static function base() {
 		/**
-		 * Filter the MFA public base URL (send-code REST, rescue links).
+		 * Filter the MFA public base URL (rescue links; handshake fallback).
 		 *
 		 * @param string $base Absolute URL, typically site_url( '/' ).
 		 */
@@ -40,6 +32,38 @@ class MfaUrl {
 		}
 
 		return trailingslashit( $base );
+	}
+
+	/**
+	 * Handshake public base: same host as the login request when that Host is
+	 * siteurl or home (port/scheme from the matching configured URL — never
+	 * from HTTP_HOST). Otherwise fall back to base() (site_url / filter).
+	 *
+	 * login_url and send_email_url must both use this so MFA API hostname
+	 * equality holds and the host-only state cookie is sent on return.
+	 *
+	 * @return string Absolute URL with trailing slash.
+	 */
+	public static function public_base_for_request() {
+		$host_only = self::request_host_without_port();
+		if ( '' !== $host_only ) {
+			foreach ( array( site_url( '/' ), home_url( '/' ) ) as $candidate ) {
+				$h = wp_parse_url( $candidate, PHP_URL_HOST );
+				if ( ! is_string( $h ) || '' === $h ) {
+					continue;
+				}
+				if ( strtolower( $h ) !== $host_only ) {
+					continue;
+				}
+				$clean = self::sanitize_base( $candidate );
+				if ( null === $clean ) {
+					continue;
+				}
+				return trailingslashit( $clean );
+			}
+		}
+
+		return self::base();
 	}
 
 	/**
@@ -61,20 +85,17 @@ class MfaUrl {
 	/**
 	 * Handshake / OTP return login URL.
 	 *
-	 * MFA API requires login_url hostname to equal send_email_url hostname
-	 * exactly. send_email_url is built on self::base() (?rest_route=), so the
-	 * authority here is always origin_from_url( base() ) — never home when it
-	 * differs, never raw HTTP_HOST (request port under forced https).
-	 *
-	 * Path: request URI when Host equals the base host (custom / Hide Login on
-	 * the same host); otherwise path+query from wp_login_url() remounted onto
-	 * the base origin (avoids site_url( $uri ) doubling a subdirectory).
+	 * Authority from public_base_for_request() (same host as send_email_url).
+	 * Path: request URI when Host matches that base; otherwise path+query from
+	 * wp_login_url() remounted onto the base origin (no site_url( $uri )
+	 * subdirectory doubling; never raw HTTP_HOST port).
 	 *
 	 * @param string $request_uri Sanitized REQUEST_URI (path + query).
 	 * @return string Absolute URL.
 	 */
 	public static function request_login_url( $request_uri ) {
-		$origin = self::origin_from_url( self::base() );
+		$base = self::public_base_for_request();
+		$origin = self::origin_from_url( $base );
 		if ( null === $origin ) {
 			$origin = self::origin_from_url( site_url() );
 		}
@@ -83,9 +104,8 @@ class MfaUrl {
 		}
 
 		$base_host   = strtolower( (string) wp_parse_url( $origin, PHP_URL_HOST ) );
-		$base_scheme = strtolower( (string) wp_parse_url( self::base(), PHP_URL_SCHEME ) );
-		$host_header = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
-		$host_only   = strtolower( (string) preg_replace( '/:\d+$/', '', $host_header ) );
+		$base_scheme = strtolower( (string) wp_parse_url( $base, PHP_URL_SCHEME ) );
+		$host_only   = self::request_host_without_port();
 
 		$uri = is_string( $request_uri ) ? $request_uri : '';
 		if (
@@ -103,12 +123,27 @@ class MfaUrl {
 			$login_url = $origin . $path . ( '' !== $query ? '?' . $query : '' );
 		}
 
-		// Never downgrade https base (or TLS request) to http behind a proxy.
 		if ( is_ssl() || 'https' === $base_scheme ) {
 			$login_url = set_url_scheme( $login_url, 'https' );
 		}
 
 		return $login_url;
+	}
+
+	/**
+	 * @return string Lowercase hostname from HTTP_HOST without port (may be empty).
+	 */
+	private static function request_host_without_port() {
+		$host_header = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
+		if ( '' === $host_header ) {
+			return '';
+		}
+		// Strip :port; keep bracketed IPv6 host via parse_url.
+		$parsed = wp_parse_url( 'http://' . $host_header, PHP_URL_HOST );
+		if ( ! is_string( $parsed ) || '' === $parsed ) {
+			return strtolower( (string) preg_replace( '/:\d+$/', '', $host_header ) );
+		}
+		return strtolower( $parsed );
 	}
 
 	/**
@@ -154,7 +189,6 @@ class MfaUrl {
 		}
 		$path = isset( $parts['path'] ) ? (string) $parts['path'] : '/';
 		$port = isset( $parts['port'] ) ? ':' . (int) $parts['port'] : '';
-		// Drop query/fragment so trailingslashit cannot corrupt ?a=1 into ?a=1/.
 		return $scheme . '://' . $host . $port . $path;
 	}
 }

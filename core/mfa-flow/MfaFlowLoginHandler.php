@@ -221,8 +221,7 @@ class MfaFlowLoginHandler {
 		}
 		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 		$cancel_url  = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		// Authority from MfaUrl::base() (same host as send_email_url; override via
-		// llar_mfa_base_url). Path from request URI or remounted wp_login_url.
+		// Same public base as send_email_url (siteurl or home when Host matches).
 		$login_url = \LLAR\Core\Mfa\MfaUrl::request_login_url(
 			sanitize_text_field( Helpers::get_request_uri() )
 		);

@@ -115,10 +115,8 @@ class MfaRestApi {
 	 * Build REST URL for send-code (POST). Used in handshake as primary send_email_url.
 	 * MFA app POSTs token, secret, and code in the request body.
 	 *
-	 * Always uses ?rest_route= on MfaUrl::base() (site_url by default):
-	 * - survives home_url() host drift (www / CDN / language domain);
-	 * - works in a WP subdirectory (no hardcoded /wp-json under siteurl);
-	 * - needs no rewrite rules (hits site index.php).
+	 * Uses ?rest_route= on MfaUrl::public_base_for_request() so the host matches
+	 * login_url / the cookie Host when the request is on siteurl or home.
 	 *
 	 * @return string
 	 */
@@ -127,7 +125,7 @@ class MfaRestApi {
 		return add_query_arg(
 			'rest_route',
 			'/' . $path,
-			\LLAR\Core\Mfa\MfaUrl::base()
+			\LLAR\Core\Mfa\MfaUrl::public_base_for_request()
 		);
 	}
 }
