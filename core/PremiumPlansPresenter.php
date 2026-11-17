@@ -25,8 +25,8 @@ class PremiumPlansPresenter {
 	public function get_upgrade_plan_pricing() {
 		return array(
 			'Personal' => array(
-				'price'             => '$1.25/mo',
-				'price_old'         => '$2.50',
+				'price'             => '$' . LLAR_MIN_PLAN_PRICE . '/mo',
+				'price_old'         => '$6.67',
 				'billing_label'     => __( 'Billed Annually', 'limit-login-attempts-reloaded' ),
 				'save_badge'        => __( 'Save 50%', 'limit-login-attempts-reloaded' ),
 				'description_items' => array(
@@ -36,8 +36,8 @@ class PremiumPlansPresenter {
 				),
 			),
 			'Business' => array(
-				'price'             => '$4.17/mo',
-				'price_old'         => '$8.33',
+				'price'             => '$6.67/mo',
+				'price_old'         => '$13.33',
 				'billing_label'     => __( 'Billed Annually', 'limit-login-attempts-reloaded' ),
 				'save_badge'        => __( 'Save 50%', 'limit-login-attempts-reloaded' ),
 				'description_items' => array(

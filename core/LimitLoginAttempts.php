@@ -224,7 +224,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	/**
 	 * Allowed tabs for options page
 	 */
-	public static $allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'help' );
+	public static $allowed_tabs = array( 'logs-local', 'logs-custom', 'settings', 'mfa', 'debug', 'premium', 'extensions', 'help' );
 
 	/**
 	 * Check if a role is an admin role
@@ -581,6 +581,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	public function get_dashboard_view_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted ) {
 		return $this->dashboard_renderer->build_dashboard_tab_vars( $active_app, $is_active_app_custom, $block_sub_group, $is_exhausted );
 	}
+
 	/**
 	 * Redirect to dashboard page after installed
 	 */
@@ -1244,41 +1245,26 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * For plugin MemberPress
-	 * Triggers authenticate filter to allow Limit Login Attempts Reloaded
-	 * to track credentials and check lockouts before MemberPress validates the password
-	 * This enables the plugin to display remaining attempts messages
+	 * Whether lockout messaging must stay hidden for a whitelisted username.
 	 *
-	 * @param array $errors Array of existing errors (MemberPress passes validate_login output first).
-	 * @param array $params Login parameters (log, pwd)
-	 * @return array Errors for MemberPress; when LLAR blocks login, returns that message as first error.
+	 * Mirrors the username branch of the wp-login.php authenticate chain
+	 * (wp_authenticate_user + authenticate_late_lockout_check): whitelisted
+	 * usernames never see the lockout error even while their IP is locked.
+	 * IP whitelisting is intentionally not checked here: callers only reach this
+	 * method when is_limit_login_ok() is false, and that method already returns
+	 * true for whitelisted IPs.
+	 *
+	 * Used by MemberPress fallback when is_login_allowed() is false (IP lockout only).
+	 *
+	 * @param string $username Submitted login identifier.
+	 * @return bool
 	 */
-	public function mepr_validate_login_handler( $errors, $params = array() ) {
-		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
-			return $errors;
+	public function is_lockout_error_suppressed( $username = '' ) {
+		if ( '' === $username ) {
+			return false;
 		}
 
-		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
-		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
-
-		// Trigger authenticate filter to track credentials and check lockouts.
-		$auth_result = apply_filters( 'authenticate', null, $log, $pwd );
-
-		if ( is_wp_error( $auth_result ) ) {
-			$codes = $auth_result->get_error_codes();
-			if ( in_array( 'too_many_retries', $codes, true ) ) {
-				return array( $auth_result->get_error_message( 'too_many_retries' ) );
-			}
-			if ( in_array( 'username_blacklisted', $codes, true ) ) {
-				return array( $auth_result->get_error_message( 'username_blacklisted' ) );
-			}
-		}
-
-		if ( ! $this->is_limit_login_ok( $log ) ) {
-			return array( $this->error_msg( $log ) );
-		}
-
-		return $errors;
+		return $this->is_username_whitelisted( $username );
 	}
 
 	/**
@@ -1327,8 +1313,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * This function allow external ip whitelisting using a filter. Note that it can
 	 * be called multiple times during the login process.
 	 *
-	 * Note that retries and statistics are still counted and notifications
-	 * done as usual for whitelisted ips , but no lockout is done.
+	 * Whitelisted IPs skip local retry increments and lockouts so they cannot
+	 * burn a shared IPv6 /64 budget used by neighbours. Cloud paths likewise
+	 * omit lockout_check when the early auth hook removes wp_login_failed.
 	 *
 	 * Example:
 	 * function my_ip_whitelist($allow, $ip) {
