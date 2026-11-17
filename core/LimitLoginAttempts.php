@@ -212,6 +212,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 */
 	public static function reset_request_guards() {
 		LocalLockoutManager::reset_failed_login_recorded_in_request();
+		LoginAuthenticationHandler::reset_request_login();
 		MfaFlowLoginHandler::reset_handshake_guard();
 
 		if ( self::$instance ) {
@@ -771,8 +772,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	public function login_page_render_js() {
-		if ( true === LoginFlowTransientStore::get( 'llar_user_is_whitelisted', false ) ) {
-			LoginFlowTransientStore::merge( array( 'llar_user_is_whitelisted' => null ) );
+		// Never render the attempts-left counter for allowlisted logins.
+		$render_login = isset( $_REQUEST['log'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['log'] ) ) : '';
+		if ( $this->local_lockout->is_login_allowlisted( $render_login ) ) {
 			return;
 		}
 		global $limit_login_just_lockedout, $limit_login_nonempty_credentials, $um_limit_login_failed;

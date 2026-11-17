@@ -130,34 +130,25 @@ class WhitelistBlacklistChecker {
 	}
 
 	/**
-	 * Determine if submitted login identifier maps to local allowed usernames.
+	 * Determine if the submitted login identifier is on the local allowlist.
 	 *
-	 * Supports direct username, canonical user_login and email-based login.
+	 * Matches the submitted string only (case-insensitive). No email → user_login
+	 * mapping and no $user->user_login matching: username and email are
+	 * independent list entities (mirrors the denylist semantics of 85e61dd).
+	 * Add both entries when both login forms must be trusted.
 	 *
-	 * @param string   $username Submitted login value (username or email).
-	 * @param \WP_User $user     Optional authenticated user object.
+	 * This is the single source of truth for the allowlist username match; call
+	 * sites that also need the IP check should use
+	 * LocalLockoutManager::is_login_allowlisted().
+	 *
+	 * @param string        $username Submitted login value (username or email).
+	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
 	 * @return bool
 	 */
 	public function is_local_allowlisted_username( $username, $user = null ) {
 		$username = trim( (string) $username );
-		if ( '' !== $username && $this->is_username_whitelisted( $username ) ) {
-			return true;
-		}
 
-		if ( is_a( $user, 'WP_User' ) && ! empty( $user->user_login ) && $this->is_username_whitelisted( $user->user_login ) ) {
-			return true;
-		}
-
-		if ( '' === $username || ! function_exists( 'is_email' ) || ! is_email( $username ) ) {
-			return false;
-		}
-
-		$user_by_email = get_user_by( 'email', $username );
-		if ( ! $user_by_email || ! is_a( $user_by_email, 'WP_User' ) ) {
-			return false;
-		}
-
-		return $this->is_username_whitelisted( $user_by_email->user_login );
+		return '' !== $username && $this->is_username_whitelisted( $username );
 	}
 
 	/**
@@ -167,8 +158,7 @@ class WhitelistBlacklistChecker {
 	 * filter). Does not map email → user_login: a deny-listed username must be
 	 * entered as that username; logging in with the account email is allowed
 	 * unless the email itself is on the denylist. Case variants of a deny-listed
-	 * username are still blocked. The $user argument is kept for call-site
-	 * compatibility and is unused.
+	 * username are still blocked.
 	 *
 	 * @param string        $username Submitted login value (username or email).
 	 * @param \WP_User|null $user     Unused; retained for signature compatibility.

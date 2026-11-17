@@ -290,14 +290,28 @@ class LocalLockoutManager {
 	}
 
 	/**
-	 * Check submitted identifier (username or email) against the local allowlist.
+	 * Check submitted identifier against the local allowlist (literal match only).
 	 *
-	 * @param string   $username Submitted login value.
-	 * @param \WP_User $user     Optional authenticated user object.
+	 * @param string        $username Submitted login value.
+	 * @param \WP_User|null $user     Unused; retained for signature compatibility.
 	 * @return bool
 	 */
 	public function is_local_allowlisted_username( $username, $user = null ) {
 		return $this->whitelist_checker->is_local_allowlisted_username( $username, $user );
+	}
+
+	/**
+	 * Whether the current request's login is allowlisted.
+	 *
+	 * Single policy question for every call site: a whitelisted IP trusts the
+	 * whole request, otherwise the submitted login string is matched literally
+	 * against the allowlist. Never maps username to email.
+	 *
+	 * @param string $username Submitted login value.
+	 * @return bool
+	 */
+	public function is_login_allowlisted( $username ) {
+		return $this->ip_resolver->is_ip_whitelisted() || $this->is_local_allowlisted_username( $username );
 	}
 
 	/**
@@ -330,19 +344,19 @@ class LocalLockoutManager {
 	 * @return void
 	 */
 	public function record_failed_login_attempt( $username ) {
-		self::$failed_login_recorded_in_request = true;
-
-		// Whitelisted IP/username must not burn the shared rate-limit budget
-		// (especially the IPv6 /64 key shared with neighbours). Early auth
-		// already removes wp_login_failed for allow-list hits; late WP 7.x
-		// fallbacks still call this method directly.
 		$raw_ip = $this->ip_resolver->get_address();
-		if (
-			$this->ip_resolver->is_ip_whitelisted( $raw_ip )
-			|| $this->is_username_whitelisted( $username )
-		) {
+
+		// Allowlisted logins are never recorded and must not burn the shared
+		// rate-limit budget (especially the IPv6 /64 key shared with
+		// neighbours). The list is re-checked per attempt, so other identities
+		// in the same request (XML-RPC system.multicall) are never muted.
+		// Early auth already removes wp_login_failed for allow-list hits;
+		// late WP 7.x fallbacks still call this method directly.
+		if ( $this->is_login_allowlisted( $username ) ) {
 			return;
 		}
+
+		self::$failed_login_recorded_in_request = true;
 
 		LoginFlowTransientStore::ensure_token();
 		LoginFlowTransientStore::merge( array( 'login_attempts_left' => 0 ) );
