@@ -64,7 +64,7 @@ $is_premium = ( $is_active_app_custom && $current_plan_rate >= $plans[ $min_plan
                         : ( ( $block_sub_group === 'Micro Cloud' )
                             ? add_query_arg( 'id', '31', $this->info_upgrade_url() )
                             : 'https://www.limitloginattempts.com/info.php?id=29' ) ); ?>" target="_blank">
-                        <?php printf( __( 'Upgrade to Personal – $%s/mo', 'limit-login-attempts-reloaded' ), LLAR_MIN_PLAN_PRICE ); ?>
+                        <?php printf( __( 'Upgrade to Personal – $%s/mo', 'limit-login-attempts-reloaded' ), esc_html( LLAR_MIN_PLAN_PRICE ) ); ?>
                     </a>
                 </div>
 	        <?php endif; ?>

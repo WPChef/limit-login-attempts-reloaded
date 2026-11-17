@@ -104,7 +104,7 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 				esc_html( $request_usage ),
 				esc_html( $request_quota ),
 				esc_url( add_query_arg( 'id', '41', $upgrade_premium_url ) ),
-				LLAR_MIN_PLAN_PRICE
+				esc_html( LLAR_MIN_PLAN_PRICE )
 			);
 			?>
 			</p>
@@ -125,7 +125,7 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 					esc_html( $request_usage ),
 					esc_html( $request_quota ),
 					esc_url( add_query_arg( 'id', '35', $upgrade_premium_url ) ),
-					LLAR_MIN_PLAN_PRICE
+					esc_html( LLAR_MIN_PLAN_PRICE )
 					);
                     ?>
                 </p>
@@ -168,7 +168,7 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 				esc_html( $request_usage ),
 				esc_html( $request_quota ),
 				esc_url( add_query_arg( 'id', '34', $upgrade_premium_url ) ),
-				LLAR_MIN_PLAN_PRICE
+				esc_html( LLAR_MIN_PLAN_PRICE )
 				);
 				?>
 			</p>
