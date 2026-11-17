@@ -132,8 +132,10 @@ class MfaFlowLoginHandler {
 
 		// Literal allowlist on the submitted login string: a username entry must
 		// not become an account-wide MFA bypass when logging in with the account
-		// email. Form-less routes (XML-RPC) never supply the submitted string;
-		// there the canonical login is the best available identifier.
+		// email. The caller passes the raw string captured from the authenticate
+		// filter, which covers form-less routes (XML-RPC, REST) as well; the
+		// canonical $username fallback only fires on routes that never went
+		// through an authenticate filter at all.
 		$allowlist_login = ( null === $submitted_login || '' === $submitted_login ) ? $username : $submitted_login;
 
 		if ( $this->local_lockout->is_login_allowlisted( $allowlist_login ) ) {

@@ -42,6 +42,35 @@ class LoginAuthenticationHandler {
 	/** @var LoginErrorPresenter */
 	private $error_presenter;
 
+	/**
+	 * Raw login string submitted to the authenticate filter. Form-less routes
+	 * (XML-RPC, REST, application passwords) never populate $_REQUEST['log'],
+	 * but the authenticate filter always receives the submitted identifier —
+	 * captured here at priority -9999 so later hooks (wp_authenticate_user)
+	 * can run the literal allowlist check on the real submitted string.
+	 *
+	 * @var string
+	 */
+	private static $request_login = '';
+
+	/**
+	 * The raw login string submitted to the authenticate filter, when known.
+	 *
+	 * @return string
+	 */
+	public static function get_request_login() {
+		return self::$request_login;
+	}
+
+	/**
+	 * Reset per-request captured login (persistent runtimes).
+	 *
+	 * @return void
+	 */
+	public static function reset_request_login() {
+		self::$request_login = '';
+	}
+
 	public function __construct(
 		LimitLoginAttempts $plugin,
 		CloudAclService $cloud_acl,
@@ -340,6 +369,11 @@ class LoginAuthenticationHandler {
 
 	public function authenticate_guard_filter( $user, $username, $password ) {
 
+		// Capture the raw submitted identifier before anything else: form-less
+		// routes never expose it through $_REQUEST, and the literal allowlist
+		// semantics need the submitted string, not the resolved user_login.
+		self::$request_login = (string) $username;
+
 		$error_message = '';
 		if ( $this->check_login_blocked( $username, $password, $error_message ) ) {
 			remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
@@ -472,7 +506,10 @@ class LoginAuthenticationHandler {
 		}
 		if ( $mfa_username !== '' ) {
 			$auth_user_for_mfa = ( $password_ok && is_a( $user, 'WP_User' ) ) ? $user : null;
-			$mfa_error         = $this->mfa_flow->try_mfa_flow_redirect( $mfa_username, $password_ok, $auth_user_for_mfa, $username );
+			// Allowlist runs on the raw submitted string (captured from the
+			// authenticate filter), never on the canonical user_login.
+			$submitted_login = '' !== self::$request_login ? self::$request_login : $username;
+			$mfa_error       = $this->mfa_flow->try_mfa_flow_redirect( $mfa_username, $password_ok, $auth_user_for_mfa, $submitted_login );
 			if ( is_wp_error( $mfa_error ) ) {
 				global $limit_login_my_error_shown;
 				$limit_login_my_error_shown = true;

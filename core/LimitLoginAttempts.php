@@ -212,6 +212,7 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 */
 	public static function reset_request_guards() {
 		LocalLockoutManager::reset_failed_login_recorded_in_request();
+		LoginAuthenticationHandler::reset_request_login();
 		MfaFlowLoginHandler::reset_handshake_guard();
 
 		if ( self::$instance ) {
