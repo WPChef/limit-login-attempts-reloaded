@@ -69,7 +69,7 @@ class LockoutNotificationService {
 	 * @return void
 	 */
 	public function notify_email( $user ) {
-		$ip      = $this->ip_resolver->get_address();
+		$raw_ip  = $this->ip_resolver->get_address();
 		$retries = Config::get( 'retries' );
 
 		if ( ! is_array( $retries ) ) {
@@ -78,26 +78,31 @@ class LockoutNotificationService {
 
 		$notify_email_after = (int) Config::get( 'notify_email_after' );
 		$notify_email_after = max( 1, $notify_email_after );
+		$allowed_retries    = max( 1, (int) Config::get( 'allowed_retries' ) );
+
+		$count = Helpers::get_retries_count( $retries, $raw_ip );
 
 		/* check if we are at the right nr to do notification */
 		if (
-			isset( $retries[ $ip ] )
-			&& 0 != ( (int) floor( (int) $retries[ $ip ] / Config::get( 'allowed_retries' ) ) % $notify_email_after )
+			$count > 0
+			&& 0 !== ( (int) floor( (int) $count / $allowed_retries ) % $notify_email_after )
 		) {
 			return;
 		}
 
 		/* Format message. First current lockout duration */
-		if ( ! isset( $retries[ $ip ] ) ) {
-			$count    = Config::get( 'allowed_retries' ) * Config::get( 'allowed_lockouts' );
-			$lockouts = Config::get( 'allowed_lockouts' );
-			$time     = round( Config::get( 'long_duration' ) / 3600 );
-			$when     = sprintf( _n( '%d hour', '%d hours', $time, 'limit-login-attempts-reloaded' ), $time );
+		if ( $count <= 0 ) {
+			$allowed_lockouts = max( 1, (int) Config::get( 'allowed_lockouts' ) );
+			$count            = $allowed_retries * $allowed_lockouts;
+			$lockouts         = $allowed_lockouts;
+			$time             = round( Config::get( 'long_duration' ) / 3600 );
+			/* translators: %d: number of hours */
+			$when = sprintf( _n( '%d hour', '%d hours', $time, 'limit-login-attempts-reloaded' ), $time );
 		} else {
-			$count    = $retries[ $ip ];
-			$lockouts = floor( ( $count ) / Config::get( 'allowed_retries' ) );
+			$lockouts = (int) floor( (int) $count / $allowed_retries );
 			$time     = round( Config::get( 'lockout_duration' ) / 60 );
-			$when     = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
+			/* translators: %d: number of minutes */
+			$when = sprintf( _n( '%d minute', '%d minutes', $time, 'limit-login-attempts-reloaded' ), $time );
 		}
 
 		if ( $custom_admin_email = Config::get( 'admin_notify_email' ) ) {
@@ -112,14 +117,14 @@ class LockoutNotificationService {
 			/* translators: 1: site domain, 2: IP address */
 			__( '%1$s - Login blocked from %2$s', 'limit-login-attempts-reloaded' ),
 			esc_html( $site_domain ),
-			esc_html( $ip )
+			esc_html( $raw_ip )
 		);
 
 		/* All copy, URLs and inline styles come from the presenter; this
 		 * method only resolves the business facts and sends. */
 		$view = LockoutEmailPresenter::get_view_vars(
 			array(
-				'ip'                  => $ip,
+				'ip'                  => $raw_ip,
 				'user'                => $user,
 				'count'               => $count,
 				'when'                => $when,

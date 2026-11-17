@@ -59,6 +59,9 @@ class MfaConstants {
 	/** @var string Transient key for MFA temporary disable */
 	const TRANSIENT_MFA_DISABLED = LLA_MFA_TRANSIENT_MFA_DISABLED;
 
+	/** @var string Transient value written when the window was opened by a provider outage (a deliberate rescue stores a different value) */
+	const TRANSIENT_VALUE_API_UNREACHABLE = 'api_unreachable';
+
 	/** @var string Transient key for MFA checkbox state */
 	const TRANSIENT_CHECKBOX_STATE = LLA_MFA_TRANSIENT_CHECKBOX_STATE;
 

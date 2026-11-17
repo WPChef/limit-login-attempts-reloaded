@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-$allowed_tabs  = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help', 'mfa' );
+$allowed_tabs = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'extensions', 'help', 'mfa' );
 $requested_tab = isset( $_GET['tab'] ) && is_string( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : '';
 $active_tab    = in_array( $requested_tab, $allowed_tabs, true ) ? $requested_tab : 'dashboard';
 
@@ -214,6 +214,11 @@ if ( ( $auto_update_choice || $auto_update_choice === null ) && ! Helpers::is_au
 if ( $active_tab === 'mfa' && ! is_ssl() ) {
 	$this->render_admin_notice( 'https-recommended-mfa', array() );
 }
+if ( $active_tab === 'mfa'
+	&& \LLAR\Core\Config::get( 'mfa_enabled' )
+	&& ! \LLAR\Core\MfaFlow\MfaApiClient::default_base_url_is_usable() ) {
+	$this->render_admin_notice( 'mfa-api-not-configured', array() );
+}
 if ( 'debug' === $active_tab && $this->has_capability ) {
 	$foreign_authenticate_hooks = LimitLoginAttempts::get_foreign_authenticate_hooks();
 	if ( ! empty( $foreign_authenticate_hooks ) ) {
@@ -309,9 +314,13 @@ if ( 'debug' === $active_tab && $this->has_capability ) {
 			class="nav-tab<?php echo $active_tab === 'help' ? $nav_tab_active : ''; ?>">
 			<?php _e( 'Help', 'limit-login-attempts-reloaded' ); ?>
 		</a>
+		<a href="<?php echo $this->get_options_page_uri( 'extensions' ); ?>"
+			class="nav-tab<?php echo $active_tab === 'extensions' ? $nav_tab_active : ''; ?>">
+			<?php _e( 'Extensions', 'limit-login-attempts-reloaded' ); ?>
+		</a>
 		<a href="<?php echo $this->get_options_page_uri( 'premium' ); ?>"
 			class="nav-tab<?php echo $active_tab === 'premium' ? $nav_tab_active : ''; ?>">
-			<?php _e( 'Premium / Extensions', 'limit-login-attempts-reloaded' ); ?>
+			<?php _e( 'Premium', 'limit-login-attempts-reloaded' ); ?>
 		</a>
 
 		<?php if ( $active_tab === 'logs-custom' ) : ?>

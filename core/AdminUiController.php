@@ -39,6 +39,7 @@ class AdminUiController {
 			$dismiss_onboarding_popup   = wp_create_nonce( 'llar-dismiss-onboarding-popup' );
 			$subscribe_email            = wp_create_nonce( 'llar-subscribe-email' );
 			$close_premium_message      = wp_create_nonce( 'llar-close-premium-message' );
+			$extension_install          = wp_create_nonce( 'llar-extension-install' );
 			wp_enqueue_script( 'lla-main', LLA_PLUGIN_URL . 'assets/js/limit-login-attempts.js', array('jquery'), $plugin_data['Version'], false );
 			wp_localize_script('lla-main', 'llar_vars', array(
 				'nonce_auto_update'               => $auto_update,
@@ -49,6 +50,10 @@ class AdminUiController {
 				'nonce_dismiss_onboarding_popup'  => $dismiss_onboarding_popup,
 				'nonce_subscribe_email'           => $subscribe_email,
 				'nonce_close_premium_message'     => $close_premium_message,
+				'nonce_extension_install'         => $extension_install,
+				'extension_installing_text'        => __( 'Installing...', 'limit-login-attempts-reloaded' ),
+				'extension_active_text'            => __( 'Active', 'limit-login-attempts-reloaded' ),
+				'msg_network_error'               => __( 'Network error', 'limit-login-attempts-reloaded' ),
 			));
 
 			global $wp_scripts, $wp_styles;
@@ -71,6 +76,12 @@ class AdminUiController {
 
 			wp_enqueue_style( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/css/jquery-confirm.min.css' );
 			wp_enqueue_script( 'lla-jquery-confirm', LLA_PLUGIN_URL . 'assets/js/jquery-confirm.min.js' );
+
+			// Thickbox + plugin-install for the Extensions tab "Info" modal
+			// (same pattern as Plugins → Add New details popup).
+			wp_enqueue_script( 'plugin-install' );
+			wp_enqueue_style( 'thickbox' );
+			add_thickbox();
 		}
 
 	}
@@ -145,14 +156,17 @@ class AdminUiController {
 			)
 		);
 
+		$submenu_items[] = array(
+			'id'    => 'extensions',
+			'name'  => __( 'Extensions', 'limit-login-attempts-reloaded' ),
+			'url'   => '&tab=extensions',
+		);
+
 		if ( ! $is_cloud_app_enabled ) {
-
-			$is_local_empty_setup_code = empty( Config::get( 'app_setup_code' ) );
-
 			$submenu_items[] = array(
 				'id'    => 'premium',
-				'name'  => $is_local_empty_setup_code ? __( 'Free Upgrade', 'limit-login-attempts-reloaded' ) : __( 'Premium', 'limit-login-attempts-reloaded' ),
-				'url'   => $is_local_empty_setup_code ? '&tab=dashboard' : '&tab=premium',
+				'name'  => __( 'Premium', 'limit-login-attempts-reloaded' ),
+				'url'   => '&tab=premium',
 			);
 		}
 
@@ -200,13 +214,22 @@ class AdminUiController {
 			remove_submenu_page( $this->options_page_slug, $this->options_page_slug );
 
 			if ( ! $is_cloud_app_enabled && isset( $submenu[$this->options_page_slug] ) ) {
-				// Premium is the last submenu item (Dashboard, Settings, 2FA, Logs, Debug, Help, Premium).
-				$submenu_keys = array_keys( $submenu[$this->options_page_slug] );
-				$premium_key  = end( $submenu_keys );
-				$submenu[$this->options_page_slug][$premium_key][4] =
-					! empty( $submenu[$this->options_page_slug][$premium_key][4] )
-						? $submenu[$this->options_page_slug][$premium_key][4] . ' llar-submenu-premium-item'
-						: 'llar-submenu-premium-item';
+				// Highlight the Premium submenu item (… Help, Extensions, Premium).
+				$premium_key = null;
+
+				foreach ( $submenu[$this->options_page_slug] as $key => $item ) {
+					if ( ! empty( $item[2] ) && false !== strpos( $item[2], '&tab=premium' ) ) {
+						$premium_key = $key;
+						break;
+					}
+				}
+
+				if ( null !== $premium_key ) {
+					$submenu[$this->options_page_slug][$premium_key][4] =
+						! empty( $submenu[$this->options_page_slug][$premium_key][4] )
+							? $submenu[$this->options_page_slug][$premium_key][4] . ' llar-submenu-premium-item'
+							: 'llar-submenu-premium-item';
+				}
 			}
 
 		} else {
@@ -412,7 +435,7 @@ class AdminUiController {
 				'user_id'   => $user->ID,
 				'gateway'   => Helpers::detect_gateway(),
 				'roles'     => $user->roles,
-				'agent'     => $_SERVER['HTTP_USER_AGENT'],
+				'agent'     => Helpers::sanitize_user_agent(),
 				'url'       => $clean_url,
 			);
 
@@ -456,47 +479,6 @@ class AdminUiController {
 		$um_limit_login_failed = true;
 	}
 
-	/**
-	 * For plugin MemberPress
-	 * Triggers authenticate filter to allow Limit Login Attempts Reloaded
-	 * to track credentials and check lockouts before MemberPress validates the password
-	 * This enables the plugin to display remaining attempts messages
-	 *
-	 * @param array $errors Array of existing errors (MemberPress passes validate_login output first).
-	 * @param array $params Login parameters (log, pwd)
-	 * @return array Errors for MemberPress; when LLAR blocks login, returns that message as first error.
-	 */
-	public function mepr_validate_login_handler( $errors, $params = array() )
-	{
-		if ( ! isset( $_POST['log'] ) || ! isset( $_POST['pwd'] ) ) {
-			return $errors;
-		}
-
-		$log = sanitize_text_field( wp_unslash( $_POST['log'] ) );
-		$pwd = isset( $_POST['pwd'] ) ? $_POST['pwd'] : ''; // Password should not be sanitized
-
-		// Trigger authenticate filter to track credentials and check lockouts.
-		$auth_result = apply_filters( 'authenticate', null, $log, $pwd );
-
-		if ( is_wp_error( $auth_result ) ) {
-			$codes = $auth_result->get_error_codes();
-			if ( in_array( 'too_many_retries', $codes, true ) ) {
-				return array( $auth_result->get_error_message( 'too_many_retries' ) );
-			}
-			if ( in_array( 'username_blacklisted', $codes, true ) ) {
-				return array( $auth_result->get_error_message( 'username_blacklisted' ) );
-			}
-		}
-
-		if ( ! $this->is_limit_login_ok( $log ) ) {
-			return array( $this->error_msg( $log ) );
-		}
-
-		return $errors;
-	}
-
-	
-	
 	/**
 	 * Action when login attempt failed
 	 *
@@ -544,8 +526,9 @@ class AdminUiController {
 	 * This function allow external ip whitelisting using a filter. Note that it can
 	 * be called multiple times during the login process.
 	 *
-	 * Note that retries and statistics are still counted and notifications
-	 * done as usual for whitelisted ips , but no lockout is done.
+	 * Whitelisted IPs skip local retry increments and lockouts so they cannot
+	 * burn a shared IPv6 /64 budget used by neighbours. Cloud paths likewise
+	 * omit lockout_check when the early auth hook removes wp_login_failed.
 	 *
 	 * Example:
 	 * function my_ip_whitelist($allow, $ip) {
