@@ -27,7 +27,8 @@ class ActiveLockoutsPresenter {
 	 * items=[] and offset null/'' is a normal end-of-list and must not emit
 	 * empty-row HTML under already rendered lockouts. A first page with
 	 * items=[] but a non-empty response offset is a fill-up cursor and also
-	 * must not emit empty-row HTML.
+	 * must not emit empty-row HTML — if the whole chain stays empty, the
+	 * widget JS shows the empty-state once the list is exhausted.
 	 *
 	 * @param array  $lockouts {
 	 *     Cloud API lockout list payload.
