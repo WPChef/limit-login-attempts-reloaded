@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.4.5 =
+* Whitelisted usernames no longer see the lockout message on the MemberPress login page.
+
 = 3.4.4 =
 * A failed two-factor verification email is now written to the error log with the mail error, so the failure is no longer only an HTTP 500.
 * Passing a WP_Error to the failed-login hook no longer crashes PHP 8. The attempt is still counted.
