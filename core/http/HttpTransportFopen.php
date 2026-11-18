@@ -45,6 +45,19 @@ class HttpTransportFopen implements HttpTransportInterface {
 	}
 
 	/**
+	 * Parse an HTTP status line into code + optional reason phrase.
+	 *
+	 * @param string $status_line e.g. "HTTP/1.1 200 OK"
+	 * @return array{0:int|string|null,1:string|null} status code and message
+	 */
+	private static function parse_status_line( $status_line ) {
+		$parts = explode( ' ', $status_line, 3 );
+		$code  = isset( $parts[1] ) ? $parts[1] : null;
+		$msg   = isset( $parts[2] ) ? $parts[2] : null;
+		return array( $code, $msg );
+	}
+
+	/**
 	 * Single stream request, no redirect following.
 	 *
 	 * @param string     $url
@@ -106,9 +119,10 @@ class HttpTransportFopen implements HttpTransportInterface {
 		if ( ! $fp ) {
 
 			if ( ! empty( $response_headers[0] ) ) {
-				$parts  = explode( ' ', $response_headers[0], 3 );
-				$status = isset( $parts[1] ) ? $parts[1] : null;
-				$error  = isset( $parts[2] ) ? $parts[2] : $response_headers[0];
+				list( $status, $error ) = self::parse_status_line( $response_headers[0] );
+				if ( null === $error ) {
+					$error = $response_headers[0];
+				}
 
 			} else {
 				$last_err = error_get_last();
@@ -116,9 +130,9 @@ class HttpTransportFopen implements HttpTransportInterface {
 			}
 		} else {
 			if ( ! empty( $response_headers[0] ) ) {
-				$parts  = explode( ' ', $response_headers[0], 3 );
-				$status = isset( $parts[1] ) ? $parts[1] : 0;
-			} else {
+				list( $status ) = self::parse_status_line( $response_headers[0] );
+			}
+			if ( null === $status || '' === $status ) {
 				$status = 0;
 			}
 
