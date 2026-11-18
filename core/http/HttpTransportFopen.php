@@ -48,7 +48,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 	 * Parse an HTTP status line into code + optional reason phrase.
 	 *
 	 * @param string $status_line e.g. "HTTP/1.1 200 OK"
-	 * @return array{0:int|string|null,1:string|null} status code and message
+	 * @return array{0:string|null,1:string|null} status code and message
 	 */
 	private static function parse_status_line( $status_line ) {
 		$parts = explode( ' ', $status_line, 3 );
@@ -127,6 +127,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 			} else {
 				$last_err = error_get_last();
 				$error    = ! empty( $last_err['message'] ) ? $last_err['message'] : 'Unknown error!';
+				$status   = 0;
 			}
 		} else {
 			if ( ! empty( $response_headers[0] ) ) {
