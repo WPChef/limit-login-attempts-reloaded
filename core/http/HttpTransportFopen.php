@@ -93,11 +93,9 @@ class HttpTransportFopen implements HttpTransportInterface {
 		$status   = null;
 		$response = null;
 
-		// PHP 8.5 deprecates the magic $http_response_header variable.
-		// Prefer http_get_last_response_headers() (PHP ≥ 8.4); on older
-		// runtimes read the magic name via variable-variable so this file
-		// never mentions $http_response_header as an identifier (compile-time
-		// deprecation on 8.5+).
+		// PHP 8.5: magic $http_response_header is deprecated. Prefer the 8.4+
+		// API; else variable-variable (must stay in this scope — a helper
+		// would not see the locally scoped magic table on older PHP).
 		$response_headers = function_exists( 'http_get_last_response_headers' )
 			? http_get_last_response_headers()
 			: ( ${'http_response_header'} ?? null );
@@ -108,17 +106,21 @@ class HttpTransportFopen implements HttpTransportInterface {
 		if ( ! $fp ) {
 
 			if ( ! empty( $response_headers[0] ) ) {
-				list(, $code, $message ) = explode( ' ', $response_headers[0], 3 );
-				$error                   = $message;
-				$status                  = $code;
+				$parts  = explode( ' ', $response_headers[0], 3 );
+				$status = isset( $parts[1] ) ? $parts[1] : null;
+				$error  = isset( $parts[2] ) ? $parts[2] : $response_headers[0];
 
 			} else {
 				$last_err = error_get_last();
 				$error    = ! empty( $last_err['message'] ) ? $last_err['message'] : 'Unknown error!';
 			}
 		} else {
-			list(, $code ) = explode( ' ', $response_headers[0], 3 );
-			$status        = $code;
+			if ( ! empty( $response_headers[0] ) ) {
+				$parts  = explode( ' ', $response_headers[0], 3 );
+				$status = isset( $parts[1] ) ? $parts[1] : 0;
+			} else {
+				$status = 0;
+			}
 
 			$response = stream_get_contents( $fp );
 		}
