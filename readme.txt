@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 5.4
 Tested up to: 7.1
-Stable tag: 3.4.5
+Stable tag: 3.4.6
 
 WordPress login security with brute force protection, Two-factor authentication (2FA/MFA), firewall, IP/country blocking, and login monitoring
 
@@ -249,6 +249,10 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 3.4.6 =
+* Two-factor authentication now applies to Ultimate Member login forms.
+* Fixed the Active Lockouts widget showing "No lockouts yet." together with listed lockouts. The message now appears only when the list is actually empty.
 
 = 3.4.5 =
 * Whitelisted usernames no longer see the lockout message on the MemberPress login page.
