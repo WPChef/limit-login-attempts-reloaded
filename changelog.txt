@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.4.6 =
+* Two-factor authentication now applies to Ultimate Member login forms.
+
 = 3.4.5 =
 * Whitelisted usernames no longer see the lockout message on the MemberPress login page.
 
