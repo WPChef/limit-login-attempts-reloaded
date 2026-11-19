@@ -56,11 +56,36 @@ class WooCommerceIntegration extends BaseIntegration {
 	}
 
 	/**
+	 * Detect a WooCommerce login form submission (not merely any request
+	 * carrying a username param). The WooCommerce login form always posts
+	 * its own nonce field; third-party login forms (e.g. Ultimate Member)
+	 * never do.
+	 *
+	 * is_login_page() cannot be used for this: during the wp_authenticate_user
+	 * hook the main query is not set up yet, so is_account_page() returns
+	 * false even for the real /my-account/ login POST.
+	 *
+	 * @return bool
+	 */
+	private function is_woocommerce_login_post() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Presence check only; the nonce itself is verified by WooCommerce
+		return static::is_plugin_active() && isset( $_POST['woocommerce-login-nonce'] );
+	}
+
+	/**
 	 * Get login credentials from the request
+	 *
+	 * Only answer on the WooCommerce login form itself. Without this gate a
+	 * plain username/password pair appended to any other form (e.g. Ultimate
+	 * Member) would shadow that integration's real credentials.
 	 *
 	 * @return array|null
 	 */
 	public function get_login_credentials() {
+		if ( ! $this->is_woocommerce_login_post() ) {
+			return null;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reading POST data for validation, nonce checked by WooCommerce
 		if ( ! isset( $_POST['username'] ) || ! isset( $_POST['password'] ) ) {
 			return null;
@@ -77,9 +102,18 @@ class WooCommerceIntegration extends BaseIntegration {
 	/**
 	 * Get login identifier for WooCommerce auth flow.
 	 *
+	 * Only answer on the WooCommerce login form itself. Without this gate any
+	 * non-empty $_REQUEST['username'] wins over later integrations (the manager
+	 * returns the first non-empty identifier), letting a spoofed username
+	 * replace the real one sent to the MFA allowlist/ACL checks.
+	 *
 	 * @return string
 	 */
 	public function get_login_identifier() {
+		if ( ! $this->is_woocommerce_login_post() ) {
+			return '';
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification -- Read-only access to request data
 		if ( ! isset( $_REQUEST['username'] ) ) {
 			return '';
