@@ -251,9 +251,10 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 		// Store encrypted payload in a dedicated transient per hash_id.
 		// This allows atomic, single-use consumption on the endpoint side.
 		$this->payload_storage->save( $hash_id, $encrypted, MfaConstants::RESCUE_LINK_TTL );
-		// MfaUrl::base() (site_url by default) — not home_url(): drifted home
-		// host makes rescue links bounce (ERR_TOO_MANY_REDIRECTS).
-		return add_query_arg( 'llar_rescue', $hash_id, MfaUrl::base() );
+		// wp-login.php — not the front page. Polylang language redirects on
+		// template_redirect for /?llar_rescue= cause ERR_TOO_MANY_REDIRECTS when
+		// home and siteurl share the same front URL (host swap does not help).
+		return add_query_arg( 'llar_rescue', $hash_id, wp_login_url() );
 	}
 
 	/**

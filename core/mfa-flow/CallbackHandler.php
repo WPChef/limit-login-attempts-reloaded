@@ -73,7 +73,10 @@ class CallbackHandler {
 		if ( 'llar_mfa_flow_send_code' === $action ) {
 			return;
 		}
-		if ( function_exists( 'rest_url' ) && isset( $_SERVER['REQUEST_URI'] ) && false !== strpos( $_SERVER['REQUEST_URI'], 'rest_route=' ) && false !== strpos( $_SERVER['REQUEST_URI'], 'llar/v1/mfa/send-code' ) ) {
+		if ( isset( $_SERVER['REQUEST_URI'] ) && is_string( $_SERVER['REQUEST_URI'] )
+			&& false !== strpos( $_SERVER['REQUEST_URI'], 'llar/v1/mfa/send-code' )
+			&& ( false !== strpos( $_SERVER['REQUEST_URI'], 'rest_route=' )
+				|| false !== strpos( $_SERVER['REQUEST_URI'], '/wp-json/' ) ) ) {
 			return;
 		}
 

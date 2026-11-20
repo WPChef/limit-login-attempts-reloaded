@@ -115,17 +115,28 @@ class MfaRestApi {
 	 * Build REST URL for send-code (POST). Used in handshake as primary send_email_url.
 	 * MFA app POSTs token, secret, and code in the request body.
 	 *
-	 * Uses ?rest_route= on MfaUrl::public_base_for_request() so the host matches
-	 * login_url / the cookie Host when the request is on siteurl or home.
+	 * Pretty permalinks: /{rest_prefix}/… on public_base_for_request() (same host as
+	 * login_url). Do not use rest_url() (home_url path drift) or ?rest_route= on the
+	 * front page (Polylang / page-cache redirect the home and strip POST → 403).
+	 * Plain permalinks still need ?rest_route= (WP REST has no other entry).
 	 *
 	 * @return string
 	 */
 	public static function get_send_code_rest_url() {
-		$path = self::REST_NAMESPACE . '/' . self::SEND_CODE_ROUTE;
-		return add_query_arg(
-			'rest_route',
-			'/' . $path,
-			\LLAR\Core\Mfa\MfaUrl::public_base_for_request()
-		);
+		$route = self::REST_NAMESPACE . '/' . self::SEND_CODE_ROUTE;
+		$base  = \LLAR\Core\Mfa\MfaUrl::public_base_for_request();
+
+		if ( get_option( 'permalink_structure' ) ) {
+			$prefix = function_exists( 'rest_get_url_prefix' ) ? rest_get_url_prefix() : 'wp-json';
+			$url    = trailingslashit( $base ) . trim( (string) $prefix, '/' ) . '/' . $route;
+		} else {
+			$url = add_query_arg( 'rest_route', '/' . $route, $base );
+		}
+
+		if ( is_ssl() ) {
+			$url = set_url_scheme( $url, 'https' );
+		}
+
+		return $url;
 	}
 }
