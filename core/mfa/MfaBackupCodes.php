@@ -251,7 +251,10 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 		// Store encrypted payload in a dedicated transient per hash_id.
 		// This allows atomic, single-use consumption on the endpoint side.
 		$this->payload_storage->save( $hash_id, $encrypted, MfaConstants::RESCUE_LINK_TTL );
-		return add_query_arg( 'llar_rescue', $hash_id, home_url() );
+		// wp-login.php — not the front page. Polylang language redirects on
+		// template_redirect for /?llar_rescue= cause ERR_TOO_MANY_REDIRECTS when
+		// home and siteurl share the same front URL (host swap does not help).
+		return add_query_arg( 'llar_rescue', $hash_id, wp_login_url() );
 	}
 
 	/**
@@ -263,7 +266,7 @@ class MfaBackupCodes implements MfaBackupCodesInterface {
 	 * @throws \Exception When template path invalid
 	 */
 	public function generate_pdf_html( $rescue_urls ) {
-		$domain        = wp_parse_url( home_url(), PHP_URL_HOST );
+		$domain        = wp_parse_url( MfaUrl::base(), PHP_URL_HOST );
 		$allowed_dir   = realpath( LLA_PLUGIN_DIR . 'views' );
 		$template_path = realpath( LLA_PLUGIN_DIR . 'views/mfa-rescue-pdf.php' );
 		if ( false === $allowed_dir || false === $template_path || 0 !== strpos( $template_path, $allowed_dir ) ) {
