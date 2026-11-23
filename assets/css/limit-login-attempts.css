@@ -3584,7 +3584,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .llar-onboarding__line {
   position: relative;
   height: 2px;
-  width: 50%;
+  width: 25%;
   margin: 10px auto 60px;
   background-color: #ABBFC1;
 }
@@ -3795,6 +3795,16 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   flex: 1 1 auto;
   min-width: 0;
   width: 100%;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline .field-email__controls {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline .field-checkbox {
+  margin-left: 0;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline .field-checkbox input {
+  margin-left: 0;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-add {
   color: #666D84;

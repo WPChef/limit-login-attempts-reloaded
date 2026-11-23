@@ -131,7 +131,7 @@
         .llar-onboarding__line {
           position: relative;
           height: 2px;
-          width: 50%;
+          width: 25%;
           margin: 10px auto 60px;
           background-color: $primary-colors__steel_blue;
 
@@ -393,6 +393,19 @@
                 flex: 1 1 auto;
                 min-width: 0;
                 width: 100%;
+              }
+
+              .field-email__controls {
+                flex: 1 1 auto;
+                min-width: 0;
+              }
+
+              .field-checkbox {
+                margin-left: 0;
+
+                input {
+                  margin-left: 0;
+                }
               }
             }
           }
