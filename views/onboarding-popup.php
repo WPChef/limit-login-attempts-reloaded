@@ -63,18 +63,20 @@ ob_start();
 					<label class="field-email__label" for="llar-subscribe-email">
 						<?php echo esc_html( $popup['step1']['email_label'] ); ?>
 					</label>
-					<input type="text" class="input_border" id="llar-subscribe-email" placeholder="<?php echo esc_attr( $popup['step1']['email_placeholder'] ); ?>"
-							value="<?php echo esc_attr( $popup['admin_email'] ); ?>">
+					<div class="field-email__controls">
+						<input type="text" class="input_border" id="llar-subscribe-email" placeholder="<?php echo esc_attr( $popup['step1']['email_placeholder'] ); ?>"
+								value="<?php echo esc_attr( $popup['admin_email'] ); ?>">
+						<label class="field-checkbox">
+							<input type="checkbox" name="lockout_notify_email" value="email"/>
+							<span>
+								<?php echo esc_html( $popup['step1']['checkbox_label'] ); ?>
+							</span>
+						</label>
+					</div>
 				</div>
 				<div class="field-desc-additional">
 					<?php echo esc_html( $popup['step1']['notify_desc'] ); ?>
 				</div>
-				<label class="field-checkbox">
-					<input type="checkbox" name="lockout_notify_email" value="email"/>
-					<span>
-						<?php echo esc_html( $popup['step1']['checkbox_label'] ); ?>
-					</span>
-				</label>
 			</div>
 		</div>
 		<div class="button_block-horizon">
@@ -111,15 +113,17 @@ ob_start();
 				<label class="field-email__label" for="llar-trial-email">
 					<?php echo esc_html( $popup['step2']['email_label'] ); ?>
 				</label>
-				<input type="email" class="input_border" id="llar-trial-email" placeholder="<?php echo esc_attr( $popup['step2']['email_placeholder'] ); ?>"
-						value="<?php echo esc_attr( $popup['admin_email'] ); ?>">
+				<div class="field-email__controls">
+					<input type="email" class="input_border" id="llar-trial-email" placeholder="<?php echo esc_attr( $popup['step2']['email_placeholder'] ); ?>"
+							value="<?php echo esc_attr( $popup['admin_email'] ); ?>">
+					<label class="field-checkbox" for="llar-trial-consent">
+						<input type="checkbox" id="llar-trial-consent" value="consent"/>
+						<span>
+							<?php echo esc_html( $popup['step2']['consent_label'] ); ?>
+						</span>
+					</label>
+				</div>
 			</div>
-			<label class="field-checkbox" for="llar-trial-consent">
-				<input type="checkbox" id="llar-trial-consent" value="consent"/>
-				<span>
-					<?php echo esc_html( $popup['step2']['consent_label'] ); ?>
-				</span>
-			</label>
 		</div>
 		<div class="llar-upgrade-subscribe">
 			<div class="button_block-horizon button_block-horizon--trial">
@@ -156,11 +160,12 @@ wp_enqueue_script(
 );
 
 $onboarding_config = array(
-	'errors'       => $popup['errors'],
-	'trialReturn'  => $popup['trial_return'],
-	'trialLanding' => $popup['trial_landing'],
-	'adminEmail'   => $popup['admin_email'],
-	'spinnerHtml'  => $spinner,
+	'errors'         => $popup['errors'],
+	'trialReturn'    => $popup['trial_return'],
+	'trialLanding'   => $popup['trial_landing'],
+	'adminEmail'     => $popup['admin_email'],
+	'awaitingLabel'  => $popup['step2']['awaiting_label'],
+	'spinnerHtml'    => $spinner,
 	'welcomeHtml'  => trim( $popup_complete_install_content ),
 	'step2Html'    => trim( $content_step_2 ),
 );

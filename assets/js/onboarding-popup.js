@@ -23,6 +23,7 @@
 		const trialReturn = cfg.trialReturn || {};
 		const trialLanding = cfg.trialLanding || {};
 		const adminEmail = cfg.adminEmail || '';
+		const awaitingLabel = cfg.awaitingLabel || '';
 		const spinnerHtml = cfg.spinnerHtml || '';
 		const welcomeHtml = cfg.welcomeHtml || '';
 		const step2Html = cfg.step2Html || '';
@@ -170,7 +171,12 @@
 
 				$limited_upgrade_subscribe.addClass( disabled );
 				$( this ).find( spinner ).addClass( visibility );
-				window.location.href = buildTrialLandingUrl( trialEmail );
+				if ( awaitingLabel ) {
+					$limited_upgrade_subscribe.contents().filter( function () {
+						return this.nodeType === 3;
+					} ).first().replaceWith( awaitingLabel );
+				}
+				window.open( buildTrialLandingUrl( trialEmail ), '_blank' );
 			} );
 
 			if ( trialReturn.can_activate && trialReturn.setup_code ) {

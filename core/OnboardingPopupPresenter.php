@@ -83,6 +83,7 @@ class OnboardingPopupPresenter {
 				'email_placeholder'  => __( 'Your email', 'limit-login-attempts-reloaded' ),
 				'consent_label'      => __( 'I agree to share my email and website domain with Limit Login Attempts Reloaded to activate cloud protection.', 'limit-login-attempts-reloaded' ),
 				'yes_label'          => __( 'Get Free Premium Protection', 'limit-login-attempts-reloaded' ),
+				'awaiting_label'     => __( 'Awaiting your confirmation...', 'limit-login-attempts-reloaded' ),
 				'after_trial_note'   => sprintf(
 					/* translators: %d: trial length in days. */
 					__( 'After %d days, your site continues with free protection unless you choose to upgrade.', 'limit-login-attempts-reloaded' ),
