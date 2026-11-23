@@ -67,6 +67,39 @@ class MfaUrl {
 	}
 
 	/**
+	 * REST / send-code public base: origin from public_base_for_request(), path from
+	 * raw get_option( 'home' ) (not siteurl subdirectory, not filtered home_url
+	 * language prefixes). REST rewrites live under the home path.
+	 *
+	 * @return string Absolute URL with trailing slash.
+	 */
+	public static function rest_public_base() {
+		$origin = self::origin_from_url( self::public_base_for_request() );
+		if ( null === $origin ) {
+			$origin = self::origin_from_url( self::base() );
+		}
+		if ( null === $origin ) {
+			return trailingslashit( home_url( '/' ) );
+		}
+
+		$home_opt = get_option( 'home' );
+		$path     = '/';
+		if ( is_string( $home_opt ) && '' !== $home_opt ) {
+			$parsed = wp_parse_url( $home_opt, PHP_URL_PATH );
+			if ( is_string( $parsed ) && '' !== $parsed ) {
+				$path = $parsed;
+			}
+		}
+
+		$base = $origin . '/' . ltrim( $path, '/' );
+		if ( is_ssl() ) {
+			$base = set_url_scheme( $base, 'https' );
+		}
+
+		return trailingslashit( $base );
+	}
+
+	/**
 	 * Hosts allowed for MFA public redirects / OTP return (site_url + home_url).
 	 *
 	 * @return array<string, true> Lowercase host => true.

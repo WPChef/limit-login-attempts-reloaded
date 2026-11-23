@@ -26,11 +26,46 @@ class MfaFlowSendCode {
 	 * @param array  $context Optional. Keys: ip, browser, location (from request body).
 	 * @return array { 'success' => bool, 'http_status' => int, 'message' => string|null }
 	 */
+	/**
+	 * Log send-code Forbidden branch under WP_DEBUG (no secrets; token prefix only).
+	 *
+	 * @param string $reason Branch id: missing_token, missing_secret, no_send_secret,
+	 *                       secret_mismatch, no_session, …
+	 * @param string $token  Session token (optional; only prefix is logged).
+	 * @return void
+	 */
+	public static function debug_forbidden( $reason, $token = '' ) {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+		$prefix = '';
+		if ( is_string( $token ) && '' !== $token ) {
+			$prefix = substr( $token, 0, 8 );
+		}
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- gated by WP_DEBUG.
+		error_log(
+			sprintf(
+				'LLAR MFA send-code Forbidden: %s (token_prefix=%s)',
+				is_string( $reason ) ? $reason : 'unknown',
+				$prefix
+			)
+		);
+	}
+
 	public static function execute( $token, $secret, $code, $context = array() ) {
 		$store = new SessionStore();
 
 		$stored_secret = $store->get_send_email_secret( $token );
-		if ( null === $stored_secret || ! hash_equals( (string) $stored_secret, (string) $secret ) ) {
+		if ( null === $stored_secret ) {
+			self::debug_forbidden( 'no_send_secret', $token );
+			return array(
+				'success'     => false,
+				'http_status' => 403,
+				'message'     => 'Forbidden',
+			);
+		}
+		if ( ! hash_equals( (string) $stored_secret, (string) $secret ) ) {
+			self::debug_forbidden( 'secret_mismatch', $token );
 			return array(
 				'success'     => false,
 				'http_status' => 403,
@@ -40,6 +75,7 @@ class MfaFlowSendCode {
 
 		$session = $store->get_session( $token );
 		if ( ! $session ) {
+			self::debug_forbidden( 'no_session', $token );
 			return array(
 				'success'     => false,
 				'http_status' => 403,

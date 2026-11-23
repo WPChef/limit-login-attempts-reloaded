@@ -89,6 +89,10 @@ class MfaRestApi {
 		);
 
 		if ( '' === $token || '' === $secret ) {
+			MfaFlowSendCode::debug_forbidden(
+				'' === $token && '' === $secret ? 'missing_token_and_secret' : ( '' === $token ? 'missing_token' : 'missing_secret' ),
+				is_string( $token ) ? $token : ''
+			);
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
@@ -115,16 +119,16 @@ class MfaRestApi {
 	 * Build REST URL for send-code (POST). Used in handshake as primary send_email_url.
 	 * MFA app POSTs token, secret, and code in the request body.
 	 *
-	 * Pretty permalinks: /{rest_prefix}/… on public_base_for_request() (same host as
-	 * login_url). Do not use rest_url() (home_url path drift) or ?rest_route= on the
-	 * front page (Polylang / page-cache redirect the home and strip POST → 403).
-	 * Plain permalinks still need ?rest_route= (WP REST has no other entry).
+	 * Host from public_base_for_request() (matches login_url). Path from raw
+	 * get_option( 'home' ) via MfaUrl::rest_public_base() — not siteurl subdirectory
+	 * (core in /wp/ would otherwise publish /wp/wp-json/ → 404) and not filtered
+	 * home_url() language prefixes. Pretty: /{rest_prefix}/…; plain: ?rest_route=.
 	 *
 	 * @return string
 	 */
 	public static function get_send_code_rest_url() {
 		$route = self::REST_NAMESPACE . '/' . self::SEND_CODE_ROUTE;
-		$base  = \LLAR\Core\Mfa\MfaUrl::public_base_for_request();
+		$base  = \LLAR\Core\Mfa\MfaUrl::rest_public_base();
 
 		if ( get_option( 'permalink_structure' ) ) {
 			$prefix = function_exists( 'rest_get_url_prefix' ) ? rest_get_url_prefix() : 'wp-json';
