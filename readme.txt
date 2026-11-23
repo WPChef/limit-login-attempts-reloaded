@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 5.4
 Tested up to: 7.1
-Stable tag: 3.4.6
+Stable tag: 3.4.7
 
 WordPress login security with brute force protection, Two-factor authentication (2FA/MFA), firewall, IP/country blocking, and login monitoring
 
@@ -250,6 +250,9 @@ By default, you will need to copy and paste the lists to each site manually. For
 
 == Changelog ==
 
+= 3.4.7 =
+* The fopen HTTP transport no longer triggers the PHP 8.5 deprecation warning for $http_response_header.
+
 = 3.4.6 =
 * Two-factor authentication now applies to Ultimate Member login forms.
 * Fixed the Active Lockouts widget showing "No lockouts yet." together with listed lockouts. The message now appears only when the list is actually empty.
@@ -266,18 +269,6 @@ By default, you will need to copy and paste the lists to each site manually. For
 = 3.4.3 =
 * Security: IPv6 addresses in the same /64 now share one lockout, so changing the address ending no longer bypasses the login limit. Thanks to Drakon Tech Solutions SLU for the report.
 * Shortened onboarding to two steps.
-
-= 3.4.2 =
-* Security: blocked a server-side request forgery (SSRF) in the app setup feature. The setup destination is validated before fetching, and redirects are checked again. Thanks to Viktor Heiduck for the report.
-
-= 3.4.1 =
-* Two-factor authentication now applies to XML-RPC logins as well as the login form. Thanks to Qi Qin for the report.
-* An invalid X-Forwarded-For header no longer stops the two-factor check. Thanks to Naoki Kawahigashi for the report.
-* Added an admin notice when the reported PHP version is below the upstream release that fixes critical PHP vulnerabilities. The notice explains that a host or distribution may already have patched PHP without changing the version number, and tells admins to dismiss it instead of opening a support ticket in that case.
-
-= 3.4.0 =
-* Added a red dot to the admin menu and admin bar when Micro Cloud requests are exhausted.
-* Introduced a 7-day free trial with consent-based activation across the plugin.
 
 = Earlier versions =
 For the changelog of earlier versions, please refer to the <a href="https://plugins.svn.wordpress.org/limit-login-attempts-reloaded/trunk/changelog.txt">changelog.txt</a> file.

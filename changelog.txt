@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.4.7 =
+* The fopen HTTP transport no longer triggers the PHP 8.5 deprecation warning for $http_response_header.
+
 = 3.4.6 =
 * Two-factor authentication now applies to Ultimate Member login forms.
 * Fixed the Active Lockouts widget showing "No lockouts yet." together with listed lockouts. The message now appears only when the list is actually empty.
