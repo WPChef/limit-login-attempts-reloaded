@@ -149,7 +149,8 @@ class AdminUiController {
 
 		if ( ! $is_cloud_app_enabled ) {
 
-			$is_local_empty_setup_code = empty( Config::get( 'app_setup_code' ) );
+			$app_setup_code            = Config::get( 'app_setup_code' );
+			$is_local_empty_setup_code = empty( $app_setup_code );
 
 			$submenu_items[] = array(
 				'id'    => 'premium',
