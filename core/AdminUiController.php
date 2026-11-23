@@ -49,6 +49,8 @@ class AdminUiController {
 				'nonce_dismiss_onboarding_popup'  => $dismiss_onboarding_popup,
 				'nonce_subscribe_email'           => $subscribe_email,
 				'nonce_close_premium_message'     => $close_premium_message,
+				// Used by onboarding reset so the redirect follows the registered page (admin.php vs options-general.php).
+				'dashboard_url'                   => $this->get_options_page_uri( 'dashboard' ),
 			));
 
 			global $wp_scripts, $wp_styles;

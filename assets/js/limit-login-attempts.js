@@ -238,8 +238,7 @@ function llar_ajax_callback_post( ajaxurl = null, data ) {
 
             llar_ajax_callback_post( ajaxurl, data )
                 .then( function () {
-                    let clear_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                    window.location = clear_url + '?page=limit-login-attempts&tab=dashboard';
+                    window.location = llar_vars.dashboard_url;
                 } )
 
         } )
