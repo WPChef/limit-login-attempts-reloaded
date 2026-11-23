@@ -77,7 +77,7 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 				printf(
 					/* translators: 1: trial label, 2: requests used, 3: monthly quota */
 					esc_html__( '%1$s: %2$s of %3$s requests used - cloud protection pauses at %3$s.', 'limit-login-attempts-reloaded' ),
-					esc_html( LimitLoginAttempts::trial_label() ),
+					esc_html( LimitLoginAttempts::plan_label() ),
 					esc_html( $request_usage ),
 					esc_html( $request_quota )
 				);
@@ -100,7 +100,7 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 			printf(
 				/* translators: 1: trial label, 2: requests used, 3: monthly quota, 4: upgrade URL, 5: plan price */
 				__( '%1$s: %2$s of %3$s requests used this month. <a href="%4$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $%5$s/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
-				esc_html( LimitLoginAttempts::trial_label() ),
+				esc_html( LimitLoginAttempts::plan_label() ),
 				esc_html( $request_usage ),
 				esc_html( $request_quota ),
 				esc_url( add_query_arg( 'id', '41', $upgrade_premium_url ) ),

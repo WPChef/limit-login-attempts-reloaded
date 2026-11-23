@@ -721,6 +721,9 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 		// "Start Your 7-Day Free Trial" popup behind every non-onboarding CTA.
 		TrialStartPopup::init();
 
+		// Plain dashboard return: server-side activation + success toast.
+		add_action( 'admin_init', array( 'LLAR\Core\TrialLanding', 'maybe_activate_dashboard_return' ) );
+
 		// MFA flow callback: llar_mfa=1&token=...&code=...
 		add_action( 'init', array( $this, 'mfa_flow_callback' ), 1 );
 		add_action( 'init', array( DigestStorage::class, 'register_post_type' ) );
@@ -1524,13 +1527,21 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	}
 
 	/**
-	 * Translated trial label for display (buttons, badges, banners).
+	 * Translated CTA label for trial buttons (buttons only).
 	 *
 	 * @return string
 	 */
 	public static function trial_label() {
-		/* translators: %d: trial length in days. */
-		return sprintf( __( '%d Day Trial', 'limit-login-attempts-reloaded' ), self::TRIAL_DAYS );
+		return __( 'Try Premium Free', 'limit-login-attempts-reloaded' );
+	}
+
+	/**
+	 * Translated plan name for plan/state contexts (banners, table headers).
+	 *
+	 * @return string
+	 */
+	public static function plan_label() {
+		return __( 'Free Trial', 'limit-login-attempts-reloaded' );
 	}
 
 	private function info() {

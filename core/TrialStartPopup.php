@@ -85,29 +85,29 @@ class TrialStartPopup {
 	 * @return void
 	 */
 	public static function render() {
-		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'dashboard'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( '' === $tab ) {
-			$tab = 'dashboard';
-		}
-
 		$token = TrialLanding::create_token( 'dashboard' );
 
 		$config = array(
 			'landing'     => array(
 				'base_url'   => TrialLanding::LANDING_BASE,
 				'info_id'    => TrialLanding::INFO_ID_DASHBOARD,
-				'return_url' => TrialLanding::dashboard_return_url( $tab, $token ),
+				'return_url' => TrialLanding::dashboard_return_url( 'dashboard', $token ),
 			),
 			'admin_email' => TrialLanding::resolve_email(),
 			'i18n'        => array(
 				'title'         => sprintf(
 					/* translators: %d: trial length in days. */
-					__( 'Start Your %d-Day Free Trial', 'limit-login-attempts-reloaded' ),
+					__( 'Try Premium Free for %d Days', 'limit-login-attempts-reloaded' ),
 					LimitLoginAttempts::TRIAL_DAYS
 				),
 				'email_label'   => __( 'Your email', 'limit-login-attempts-reloaded' ),
-				'consent_label' => __( 'I consent to my domain name and email address being sent to the Limit Login Attempts Reloaded server for trial account registration.', 'limit-login-attempts-reloaded' ),
-				'yes_label'     => __( 'Yes, continue to the trial website', 'limit-login-attempts-reloaded' ),
+				'consent_label' => __( 'I agree to share my email and website domain with Limit Login Attempts Reloaded to activate cloud protection.', 'limit-login-attempts-reloaded' ),
+				'yes_label'     => __( 'Get Free Premium Protection', 'limit-login-attempts-reloaded' ),
+				'after_note'    => sprintf(
+					/* translators: %d: trial length in days. */
+					__( 'After %d days, your site continues with free protection unless you choose to upgrade.', 'limit-login-attempts-reloaded' ),
+					LimitLoginAttempts::TRIAL_DAYS
+				),
 				'close_label'   => __( 'Close', 'limit-login-attempts-reloaded' ),
 			),
 		);
@@ -132,8 +132,8 @@ class TrialStartPopup {
 .llar-trial-start .llar-trial-start__consent input{margin-top:0;}
 .llar-trial-start__submit{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;height:42px;padding:0 18px;border:1px solid #FF7C06;border-radius:4px;background:#FF7C06;color:#fff;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 6px 12px rgba(255,124,6,.5);}
 .llar-trial-start__submit:hover{background:#F07200;}
-.llar-trial-start__submit .dashicons{font-size:16px;width:16px;height:16px;}
 .llar-trial-start__submit.llar-disabled{opacity:.55;cursor:not-allowed;box-shadow:none;}
+.llar-trial-start__after-note{margin:14px 0 0;font-size:12px;line-height:1.5;color:#646970;text-align:center;}
 </style>
 <div class="llar-trial-start" id="llar-trial-start" aria-hidden="true">
 	<div class="llar-trial-start__backdrop" data-llar-trial-start-close="1"></div>
@@ -150,8 +150,8 @@ class TrialStartPopup {
 		</label>
 		<button type="button" class="llar-trial-start__submit llar-disabled" id="llar-trial-start-yes">
 			<?php echo esc_html( $config['i18n']['yes_label'] ); ?>
-			<span class="dashicons dashicons-external" aria-hidden="true"></span>
 		</button>
+		<div class="llar-trial-start__after-note" data-llar-trial-outside><?php echo esc_html( $config['i18n']['after_note'] ); ?></div>
 	</div>
 </div>
 <script>

@@ -249,13 +249,15 @@ class TrialLanding {
 	 * asks for it after the consent click.
 	 *
 	 * @param int    $info_id Marketing info id of the CTA.
-	 * @param string $tab     Plugin tab slug to return to.
+	 * @param string $tab     Deprecated, ignored: every trial CTA returns to the dashboard.
 	 * @return string
 	 */
 	public static function cta_landing_url( $info_id, $tab = 'dashboard' ) {
+		unset( $tab );
+
 		return self::build_url(
 			(int) $info_id,
-			self::dashboard_return_url( $tab ),
+			self::dashboard_return_url( 'dashboard' ),
 			'dashboard',
 			''
 		);
@@ -337,6 +339,7 @@ class TrialLanding {
 			'context'         => '',
 			'can_activate'    => false,
 			'return_error'    => false,
+			'token'           => '',
 		);
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- public return URL from external landing.
@@ -379,6 +382,7 @@ class TrialLanding {
 		$result['setup_code']   = $setup_code;
 		$result['context']      = self::normalize_context( $token_data['context'] );
 		$result['can_activate'] = true;
+		$result['token']        = $token;
 
 		if ( 'onboarding' === $result['context'] ) {
 			$result['open_trial_step'] = true;
@@ -386,6 +390,52 @@ class TrialLanding {
 
 		self::$parsed_return = $result;
 		return self::$parsed_return;
+	}
+
+	/**
+	 * Server-side activation for a plain dashboard return (no onboarding=trial).
+	 *
+	 * A valid setup_code + return token carried to the dashboard activates the
+	 * trial during page load and schedules the one-shot success toast, instead
+	 * of opening the Micro Cloud activation modal. The onboarding return keeps
+	 * its own multi-step flow (see the app_setup AJAX handler).
+	 *
+	 * A failed activation leaves the link retryable: the token is consumed
+	 * only after success, mirroring the AJAX contract.
+	 */
+	public static function maybe_activate_dashboard_return() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- public return URL from external landing.
+		if ( empty( $_GET['page'] ) || 'limit-login-attempts' !== $_GET['page'] ) {
+			return;
+		}
+
+		$return = self::parse_return_request();
+		if ( empty( $return['can_activate'] ) || 'dashboard' !== $return['context'] ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$key_result = CloudApp::activate_license_key( $return['setup_code'] );
+		if ( empty( $key_result['success'] ) ) {
+			return;
+		}
+
+		self::consume_token( $return['token'] );
+
+		// Same completion state as an onboarding-scoped activation: the
+		// dashboard renders the one-shot success toast (cleared on admin_footer).
+		Config::update( 'onboarding_popup_shown', true );
+		Config::update( 'onboarding_complete_toast', Config::ONBOARDING_TOAST_TRIAL );
+
+		// Post/Redirect/Get: the cloud app is instantiated early in the plugin
+		// bootstrap, so the current request would still render the local
+		// dashboard. A fresh request picks up the activated state, renders the
+		// trial dashboard with the toast, and drops the one-time URL params.
+		wp_safe_redirect( self::dashboard_return_url( 'dashboard' ) );
+		exit;
 	}
 
 	/**
