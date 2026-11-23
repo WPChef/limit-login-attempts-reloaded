@@ -2,6 +2,8 @@
 
 namespace LLAR\Core\MfaFlow;
 
+use LLAR\Core\Mfa\MfaUrl;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -119,22 +121,30 @@ class MfaRestApi {
 	 * Build REST URL for send-code (POST). Used in handshake as primary send_email_url.
 	 * MFA app POSTs token, secret, and code in the request body.
 	 *
-	 * Host from public_base_for_request() (matches login_url). Path from raw
-	 * get_option( 'home' ) via MfaUrl::rest_public_base() — not siteurl subdirectory
-	 * (core in /wp/ would otherwise publish /wp/wp-json/ → 404) and not filtered
-	 * home_url() language prefixes. Pretty: /{rest_prefix}/…; plain: ?rest_route=.
+	 * Same path forms as core get_rest_url(): pretty permalinks publish
+	 * /{rest_prefix}/..., index.php permalinks /index.php/{rest_prefix}/..., plain
+	 * permalinks /index.php?rest_route= (nginx keeps the POST body on that form).
+	 * The base is MfaUrl::rest_public_base() instead of home_url(): request-matched
+	 * origin (same host as login_url), no siteurl subdirectory (core in /wp/ would
+	 * publish /wp/wp-json/ -> 404) and no filtered home_url() language prefixes.
 	 *
 	 * @return string
 	 */
 	public static function get_send_code_rest_url() {
+		global $wp_rewrite;
+
 		$route = self::REST_NAMESPACE . '/' . self::SEND_CODE_ROUTE;
-		$base  = \LLAR\Core\Mfa\MfaUrl::rest_public_base();
+		$url   = trailingslashit( MfaUrl::rest_public_base() );
 
 		if ( get_option( 'permalink_structure' ) ) {
+			$index = trim( (string) $wp_rewrite->index, '/' );
+			if ( $wp_rewrite->using_index_permalinks() && '' !== $index ) {
+				$url .= $index . '/';
+			}
 			$prefix = function_exists( 'rest_get_url_prefix' ) ? rest_get_url_prefix() : 'wp-json';
-			$url    = trailingslashit( $base ) . trim( (string) $prefix, '/' ) . '/' . $route;
+			$url   .= trim( (string) $prefix, '/' ) . '/' . $route;
 		} else {
-			$url = add_query_arg( 'rest_route', '/' . $route, $base );
+			$url = add_query_arg( 'rest_route', '/' . $route, $url . 'index.php' );
 		}
 
 		if ( is_ssl() ) {
