@@ -3779,7 +3779,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   column-gap: 16px;
   width: 100%;
   text-align: left;
@@ -3789,7 +3789,9 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #2A2F40;
   font-size: 16px;
   font-weight: 600;
+  line-height: 25px;
   white-space: nowrap;
+  margin-top: 15px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline .input_border {
   flex: 1 1 auto;

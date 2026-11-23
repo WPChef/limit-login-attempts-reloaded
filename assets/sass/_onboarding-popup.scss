@@ -376,7 +376,10 @@
 
             &--inline {
               display: flex;
-              align-items: center;
+              // The controls column (input + checkbox) is taller than the
+              // input itself — top-align the row so the label can be pinned
+              // to the input's vertical center instead of the column's.
+              align-items: flex-start;
               column-gap: 16px;
               width: 100%;
               text-align: left;
@@ -386,7 +389,11 @@
                 color: $typography-primary;
                 font-size: 16px;
                 font-weight: 600;
+                line-height: 25px;
                 white-space: nowrap;
+                // Input: 15px padding + ~22px text + 2px border = ~54px.
+                // (54 - 25) / 2 ~= 15px offsets the label to its center.
+                margin-top: 15px;
               }
 
               .input_border {
