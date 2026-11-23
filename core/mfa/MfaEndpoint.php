@@ -128,7 +128,8 @@ class MfaEndpoint implements MfaEndpointInterface {
 			Config::update( 'mfa_rescue_codes', $codes );
 			$this->disable_mfa_temporarily();
 			$login_url = add_query_arg( 'llar_mfa_disabled', '1', wp_login_url() );
-			// Allow only site_url / home_url hosts (not whatever a login_url filter returns).
+			// WP only allows the home host by default; add site_url and home_url so the
+			// result is exactly those two (not whatever a login_url filter returns).
 			// Filter is not removed: exit follows immediately (no leak to later redirects).
 			add_filter(
 				'allowed_redirect_hosts',
@@ -242,17 +243,15 @@ class MfaEndpoint implements MfaEndpointInterface {
 	/**
 	 * Render confirmation page when a request looks like a prefetch.
 	 *
+	 * The form posts to the canonical rescue URL on wp-login.php, whatever URL
+	 * served this page (site_url( REQUEST_URI ) would double a subdirectory).
+	 *
 	 * @param string $hash_id Validated rescue hash.
 	 * @return void
 	 */
 	private function render_rescue_confirmation_page( $hash_id ) {
-		$request_uri = isset( $_SERVER['REQUEST_URI'] ) && is_string( $_SERVER['REQUEST_URI'] )
-			? $_SERVER['REQUEST_URI']
-			: '/';
-		$absolute_request_url = get_site_url( null, $request_uri );
-
 		$rescue_prefetch_intro        = __( 'This will disable 2FA on your website for one hour.', 'limit-login-attempts-reloaded' );
-		$rescue_prefetch_form_action  = $absolute_request_url;
+		$rescue_prefetch_form_action  = MfaUrl::rescue_url( $hash_id );
 		$rescue_prefetch_field_name   = LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG;
 		$rescue_prefetch_field_value  = '1';
 		$rescue_prefetch_button_label = __( 'Click to continue', 'limit-login-attempts-reloaded' );

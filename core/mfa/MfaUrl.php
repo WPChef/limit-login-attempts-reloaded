@@ -100,6 +100,18 @@ class MfaUrl {
 	}
 
 	/**
+	 * Rescue one-time link: wp-login.php, not the front page. Polylang language
+	 * redirects on template_redirect for /?llar_rescue= cause ERR_TOO_MANY_REDIRECTS
+	 * when home and siteurl share the same front URL (host swap does not help).
+	 *
+	 * @param string $hash_id Validated rescue hash id.
+	 * @return string
+	 */
+	public static function rescue_url( $hash_id ) {
+		return add_query_arg( 'llar_rescue', $hash_id, wp_login_url() );
+	}
+
+	/**
 	 * Hosts allowed for MFA public redirects / OTP return (site_url + home_url).
 	 *
 	 * @return array<string, true> Lowercase host => true.
