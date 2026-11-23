@@ -164,7 +164,7 @@ class MfaManager {
 	public function register() {
 		add_action( 'wp_ajax_llar_mfa_generate_rescue_codes', array( $this, 'ajax_generate_rescue_codes' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
-		// Priority 1: before Polylang language redirects (typically template_redirect@10).
+		// Priority 1: before Polylang language redirects (template_redirect priority 4).
 		add_action( 'template_redirect', array( $this, 'handle_rescue_endpoint' ), 1 );
 		// New rescue links use wp-login.php (avoids front-page language loops).
 		add_action( 'login_init', array( $this, 'handle_rescue_endpoint' ), 1 );
@@ -193,7 +193,7 @@ class MfaManager {
 	public function handle_rescue_endpoint() {
 		$hash_id = get_query_var( 'llar_rescue' );
 		if ( empty( $hash_id ) && isset( $_GET['llar_rescue'] ) && is_string( $_GET['llar_rescue'] ) ) {
-			$hash_id = wp_unslash( $_GET['llar_rescue'] );
+			$hash_id = sanitize_text_field( wp_unslash( $_GET['llar_rescue'] ) );
 		}
 		if ( empty( $hash_id ) || ! is_string( $hash_id ) ) {
 			return;

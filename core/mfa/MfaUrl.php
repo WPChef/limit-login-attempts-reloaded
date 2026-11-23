@@ -12,16 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 class MfaUrl {
 
 	/**
-	 * Absolute base for rescue PDF / default MFA public URL (trailing slash).
-	 * Defaults to site_url( '/' ). Filter `llar_mfa_base_url` may retarget it.
-	 * Handshake send-code / login_url use public_base_for_request() instead so
-	 * the cookie Host stays aligned when login is on home ≠ siteurl.
+	 * Absolute base for the rescue PDF domain and the fallback origin of the
+	 * handshake URLs (trailing slash). Defaults to site_url( '/' ). Filter
+	 * `llar_mfa_base_url` may retarget it. Handshake send-code / login_url use
+	 * public_base_for_request() instead so the cookie Host stays aligned when
+	 * login is on home ≠ siteurl.
 	 *
 	 * @return string Absolute URL with trailing slash (no query/fragment).
 	 */
 	public static function base() {
 		/**
-		 * Filter the MFA public base URL (rescue links; handshake fallback).
+		 * Filter the MFA public base URL (rescue PDF domain; fallback origin of
+		 * handshake and REST URLs when the request Host is neither siteurl nor home).
 		 *
 		 * @param string $base Absolute URL, typically site_url( '/' ).
 		 */
@@ -52,7 +54,7 @@ class MfaUrl {
 				if ( ! is_string( $h ) || '' === $h ) {
 					continue;
 				}
-				if ( strtolower( $h ) !== $host_only ) {
+				if ( self::normalize_host( $h ) !== $host_only ) {
 					continue;
 				}
 				$clean = self::sanitize_base( $candidate );
@@ -70,6 +72,11 @@ class MfaUrl {
 	 * REST / send-code public base: origin from public_base_for_request(), path from
 	 * raw get_option( 'home' ) (not siteurl subdirectory, not filtered home_url
 	 * language prefixes). REST rewrites live under the home path.
+	 *
+	 * When siteurl and home sit on different hosts and the request Host is siteurl,
+	 * the origin stays on the request host (hostname equality with login_url). That
+	 * URL is only reachable when this host routes REST as well; the handshake also
+	 * publishes an admin-ajax.php fallback.
 	 *
 	 * @return string Absolute URL with trailing slash.
 	 */
@@ -135,7 +142,9 @@ class MfaUrl {
 	 * wp_login_url() remounted onto the base origin (no site_url( $uri )
 	 * subdirectory doubling; never raw HTTP_HOST port).
 	 *
-	 * @param string $request_uri Sanitized REQUEST_URI (path + query).
+	 * @param string $request_uri Raw REQUEST_URI (path + query). Used only when it
+	 *                             is a safe root-relative reference; percent-encoding
+	 *                             is kept (sanitize_text_field() would strip it).
 	 * @return string Absolute URL.
 	 */
 	public static function request_login_url( $request_uri ) {
@@ -148,19 +157,17 @@ class MfaUrl {
 			return wp_login_url();
 		}
 
-		$base_host   = strtolower( (string) wp_parse_url( $origin, PHP_URL_HOST ) );
+		$base_host   = self::normalize_host( (string) wp_parse_url( $origin, PHP_URL_HOST ) );
 		$base_scheme = strtolower( (string) wp_parse_url( $base, PHP_URL_SCHEME ) );
 		$host_only   = self::request_host_without_port();
 
-		$uri = is_string( $request_uri ) ? $request_uri : '';
 		if (
 			'' !== $base_host
 			&& '' !== $host_only
 			&& $host_only === $base_host
-			&& isset( $uri[0] )
-			&& '/' === $uri[0]
+			&& self::is_safe_request_uri( $request_uri )
 		) {
-			$login_url = $origin . $uri;
+			$login_url = $origin . $request_uri;
 		} else {
 			$fallback  = wp_login_url();
 			$path      = (string) wp_parse_url( $fallback, PHP_URL_PATH );
@@ -176,7 +183,7 @@ class MfaUrl {
 	}
 
 	/**
-	 * @return string Lowercase hostname from HTTP_HOST without port (may be empty).
+	 * @return string Normalized hostname from HTTP_HOST without port (may be empty).
 	 */
 	private static function request_host_without_port() {
 		$host_header = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
@@ -186,16 +193,49 @@ class MfaUrl {
 		// Strip :port; keep bracketed IPv6 host via parse_url.
 		$parsed = wp_parse_url( 'http://' . $host_header, PHP_URL_HOST );
 		if ( ! is_string( $parsed ) || '' === $parsed ) {
-			return strtolower( (string) preg_replace( '/:\d+$/', '', $host_header ) );
+			return self::normalize_host( (string) preg_replace( '/:\d+$/', '', $host_header ) );
 		}
-		return strtolower( $parsed );
+		return self::normalize_host( $parsed );
 	}
 
 	/**
-	 * @param string $url Absolute URL.
-	 * @return string|null scheme://host[:port]
+	 * Hostname for comparison only: lowercase, without brackets or trailing dot.
+	 * URL building keeps the raw host.
+	 *
+	 * @param string $host
+	 * @return string
 	 */
-	private static function origin_from_url( $url ) {
+	private static function normalize_host( $host ) {
+		return strtolower( rtrim( trim( (string) $host, '[]' ), '.' ) );
+	}
+
+	/**
+	 * A request URI may be echoed into login_url only as a root-relative reference
+	 * without control characters or markup (no scheme-relative "//", no CRLF).
+	 *
+	 * @param mixed $uri Raw REQUEST_URI (path + query).
+	 * @return bool
+	 */
+	private static function is_safe_request_uri( $uri ) {
+		if ( ! is_string( $uri ) || ! isset( $uri[0] ) || '/' !== $uri[0] ) {
+			return false;
+		}
+		if ( isset( $uri[1] ) && ( '/' === $uri[1] || '\\' === $uri[1] ) ) {
+			return false;
+		}
+		return ! preg_match( '/[\x00-\x20<>"]/', $uri );
+	}
+
+	/**
+	 * Validated parts of an absolute http(s) URL.
+	 *
+	 * @param mixed $url
+	 * @return array{origin: string, path: string}|null Null unless the URL has an http(s) scheme and a host.
+	 */
+	private static function parse_base( $url ) {
+		if ( ! is_string( $url ) || '' === $url ) {
+			return null;
+		}
 		$parts = wp_parse_url( $url );
 		if ( ! is_array( $parts ) ) {
 			return null;
@@ -206,7 +246,22 @@ class MfaUrl {
 			return null;
 		}
 		$port = isset( $parts['port'] ) ? ':' . (int) $parts['port'] : '';
-		return $scheme . '://' . $host . $port;
+		$path = isset( $parts['path'] ) ? (string) $parts['path'] : '/';
+
+		return array(
+			'origin' => $scheme . '://' . $host . $port,
+			'path'   => $path,
+		);
+	}
+
+	/**
+	 * @param string $url Absolute URL.
+	 * @return string|null scheme://host[:port]
+	 */
+	private static function origin_from_url( $url ) {
+		$parts = self::parse_base( $url );
+
+		return null === $parts ? null : $parts['origin'];
 	}
 
 	/**
@@ -223,17 +278,8 @@ class MfaUrl {
 		if ( ! is_string( $clean ) || '' === $clean ) {
 			return null;
 		}
-		$parts = wp_parse_url( $clean );
-		if ( ! is_array( $parts ) ) {
-			return null;
-		}
-		$scheme = isset( $parts['scheme'] ) ? strtolower( (string) $parts['scheme'] ) : '';
-		$host   = isset( $parts['host'] ) ? (string) $parts['host'] : '';
-		if ( ! in_array( $scheme, array( 'http', 'https' ), true ) || '' === $host ) {
-			return null;
-		}
-		$path = isset( $parts['path'] ) ? (string) $parts['path'] : '/';
-		$port = isset( $parts['port'] ) ? ':' . (int) $parts['port'] : '';
-		return $scheme . '://' . $host . $port . $path;
+		$parts = self::parse_base( $clean );
+
+		return null === $parts ? null : $parts['origin'] . $parts['path'];
 	}
 }

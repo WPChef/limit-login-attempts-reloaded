@@ -9,6 +9,7 @@ use LLAR\Core\IpAddressResolver;
 use LLAR\Core\LimitLoginAttempts;
 use LLAR\Core\LocalLockoutManager;
 use LLAR\Core\MfaConstants;
+use LLAR\Core\Mfa\MfaUrl;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -222,9 +223,7 @@ class MfaFlowLoginHandler {
 		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 		$cancel_url  = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
 		// Same public base as send_email_url (siteurl or home when Host matches).
-		$login_url = \LLAR\Core\Mfa\MfaUrl::request_login_url(
-			sanitize_text_field( Helpers::get_request_uri() )
-		);
+		$login_url = MfaUrl::request_login_url( Helpers::get_request_uri() );
 		$login_url = add_query_arg( 'llar_mfa', '1', $login_url );
 		if ( '' !== $redirect_to ) {
 			$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );

@@ -91,10 +91,11 @@ class MfaRestApi {
 		);
 
 		if ( '' === $token || '' === $secret ) {
-			MfaFlowSendCode::debug_forbidden(
-				'' === $token && '' === $secret ? 'missing_token_and_secret' : ( '' === $token ? 'missing_token' : 'missing_secret' ),
-				is_string( $token ) ? $token : ''
-			);
+			$reason = 'missing_secret';
+			if ( '' === $token ) {
+				$reason = ( '' === $secret ) ? 'missing_token_and_secret' : 'missing_token';
+			}
+			MfaFlowDebug::forbidden( $reason, is_string( $token ) ? $token : '' );
 			return new \WP_REST_Response(
 				array(
 					'success' => false,

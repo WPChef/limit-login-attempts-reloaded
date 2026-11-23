@@ -131,7 +131,9 @@ class CallbackHandler {
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			return;
 		}
-		if ( self::redirect_on_missing_state_cookie( $cookie ) ) {
+		if ( '' === $cookie ) {
+			// Prefetch / host-hop without the state cookie: redirect and keep the transient.
+			self::redirect_login( 'llar_mfa_session_expired' );
 			exit;
 		}
 		$verify = $store->consume_callback_state( $cookie, $token );
@@ -185,7 +187,9 @@ class CallbackHandler {
 			self::redirect_login( 'llar_mfa_session_expired' );
 			return;
 		}
-		if ( self::redirect_on_missing_state_cookie( $cookie ) ) {
+		if ( '' === $cookie ) {
+			// Prefetch / host-hop without the state cookie: redirect and keep the transient.
+			self::redirect_login( 'llar_mfa_session_expired' );
 			return;
 		}
 		$verify = $store->consume_callback_state( $cookie, $token );
@@ -243,20 +247,6 @@ class CallbackHandler {
 		wp_safe_redirect( $redirect_url );
 		$store->delete_session( $token );
 		exit;
-	}
-
-	/**
-	 * Prefetch / host-hop without the state cookie: redirect and keep the transient.
-	 *
-	 * @param string $cookie Raw state cookie value.
-	 * @return bool True when the caller must stop (redirect already issued).
-	 */
-	private static function redirect_on_missing_state_cookie( $cookie ) {
-		if ( '' !== $cookie ) {
-			return false;
-		}
-		self::redirect_login( 'llar_mfa_session_expired' );
-		return true;
 	}
 
 	/**
