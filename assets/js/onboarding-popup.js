@@ -170,7 +170,8 @@
 				}
 
 				$limited_upgrade_subscribe.addClass( disabled );
-				$( this ).find( spinner ).addClass( visibility );
+				// No spinner here: the landing opens in a new window, the dimmed
+				// button itself signals the wait.
 				if ( awaitingLabel ) {
 					$limited_upgrade_subscribe.contents().filter( function () {
 						return this.nodeType === 3;
