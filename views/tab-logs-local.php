@@ -1,30 +1,27 @@
 <?php
 
-use LLAR\Core\Config;
 use LLAR\Core\Helpers;
 use LLAR\Core\LimitLoginAttempts;
 
 if ( ! defined( 'ABSPATH' ) ) exit();
 
 /**
+ * Stats, lists and lockout log data come from the controller via
+ * get_logs_local_view_vars(); this template only assembles markup.
+ *
  * @var $this LimitLoginAttempts
  */
 
-$lockouts_total = Config::get( 'lockouts_total' );
-$lockouts = Config::get( Config::OPTION_LOCKOUTS );
-$lockouts_now = is_array( $lockouts ) ? count( $lockouts ) : 0;
+$logs_local = $this->get_logs_local_view_vars();
 
-$white_list_ips = Config::get( 'whitelist' );
-$white_list_ips = ( is_array( $white_list_ips ) && !empty( $white_list_ips ) ) ? implode( "\n", $white_list_ips ) : '';
-
-$white_list_usernames = Config::get( 'whitelist_usernames' );
-$white_list_usernames = ( is_array( $white_list_usernames ) && !empty( $white_list_usernames ) ) ? implode( "\n", $white_list_usernames ) : '';
-
-$black_list_ips = Config::get( 'blacklist' );
-$black_list_ips = ( is_array( $black_list_ips ) && !empty( $black_list_ips ) ) ? implode( "\n", $black_list_ips ) : '';
-
-$black_list_usernames = Config::get( 'blacklist_usernames' );
-$black_list_usernames = ( is_array( $black_list_usernames ) && ! empty( $black_list_usernames ) ) ? implode( "\n", $black_list_usernames ) : '';
+$lockouts_total       = $logs_local['lockouts_total'];
+$lockouts_now         = $logs_local['lockouts_now'];
+$lockouts             = $logs_local['lockouts'];
+$white_list_ips       = $logs_local['white_list_ips'];
+$white_list_usernames = $logs_local['white_list_usernames'];
+$black_list_ips       = $logs_local['black_list_ips'];
+$black_list_usernames = $logs_local['black_list_usernames'];
+$log                  = $logs_local['log'];
 ?>
 
 <div id="llar-setting-page-logs">
@@ -199,12 +196,7 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && ! empty( $black_l
         </div>
     </div>
 
-    <?php
-    $log = Config::get( Config::OPTION_LOGGED );
-    $log = Helpers::sorted_log_by_date( $log );
-    $lockouts = (array) Config::get( Config::OPTION_LOCKOUTS );
-
-    if ( is_array( $log ) && ! empty( $log ) ) : ?>
+    <?php if ( ! empty( $log ) ) : ?>
         <h3 class="title_page">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-pre-install.png">
             <?php _e( 'Lockout log', 'limit-login-attempts-reloaded' ); ?>

@@ -908,6 +908,15 @@ class AdminUiController {
 	}
 
 	/**
+	 * View data for views/tab-logs-local.php.
+	 *
+	 * @return array
+	 */
+	public function get_logs_local_view_vars() {
+		return ( new LocalLogsPresenter() )->get_view_vars();
+	}
+
+	/**
 	 * View data for views/onboarding-popup.php.
 	 *
 	 * @return array
