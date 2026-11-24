@@ -385,8 +385,9 @@ class AdminUiController {
 	/**
 	 * Get the correct options page URI
 	 *
-	 * @param string|bool $tab Optional tab slug; may carry a "#fragment" suffix
-	 *                         that is appended unencoded.
+	 * @param string|false $tab Optional tab slug; may carry a "#fragment" suffix
+	 *                          that is appended unencoded. Pass false for the
+	 *                          base options page URI.
 	 * @return string
 	 */
 	public function get_options_page_uri( $tab = false )
