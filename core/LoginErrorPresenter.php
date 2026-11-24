@@ -88,18 +88,18 @@ class LoginErrorPresenter {
 
 		// Cloud is off or unreachable — fall back to the local lockouts timer so failover messages match the lockout state.
 
-		$ip       = $this->ip_resolver->get_address();
+		$raw_ip   = $this->ip_resolver->get_address();
+		$ip       = $this->ip_resolver->get_rate_limit_key( $raw_ip );
 		$lockouts = Config::get( Config::OPTION_LOCKOUTS );
-		$a        = $this->local_lockout->check_key($lockouts, $ip);
-		$b        = $this->local_lockout->check_key($lockouts, $this->local_lockout->get_hash($ip));
+		$until    = max(
+			Helpers::get_active_lockout_until( $lockouts, $raw_ip ),
+			$this->local_lockout->check_key( $lockouts, $this->local_lockout->get_hash( $ip ) ),
+			$this->local_lockout->check_key( $lockouts, $this->local_lockout->get_hash( $raw_ip ) )
+		);
 
 		$msg = __( '<strong>ERROR</strong>: Too many failed login attempts.', 'limit-login-attempts-reloaded' ) . ' ';
 
-		if (
-			! is_array( $lockouts )
-			|| ( ! isset( $lockouts[ $ip ] ) && ! isset( $lockouts[ $this->local_lockout->get_hash( $ip ) ] ) )
-			|| ( time() >= $a && time() >= $b )
-		){
+		if ( ! is_array( $lockouts ) || $until <= time() ) {
 			/* Huh? No timeout active? */
 			$msg .= __( 'Please try again later.', 'limit-login-attempts-reloaded' );
 
@@ -109,13 +109,15 @@ class LoginErrorPresenter {
 			return $msg;
 		}
 
-		$when = ceil( ( ($a > $b ? $a : $b) - time() ) / 60 );
+		$when = ceil( ( $until - time() ) / 60 );
 		if ( $when > 60 ) {
 
 			$when = ceil( $when / 60 );
+			/* translators: %d: hours until lockout ends */
 			$msg .= sprintf( _n( 'Please try again in %d hour.', 'Please try again in %d hours.', $when, 'limit-login-attempts-reloaded' ), $when );
 		} else {
 
+			/* translators: %d: minutes until lockout ends */
 			$msg .= sprintf( _n( 'Please try again in %d minute.', 'Please try again in %d minutes.', $when, 'limit-login-attempts-reloaded' ), $when );
 		}
 
@@ -138,7 +140,9 @@ class LoginErrorPresenter {
 			if ( ! is_wp_error( $errors ) ) {
 				$errors = new \WP_Error();
 			}
-			$errors->add( 'llar_mfa_return', __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' ) );
+			// The visitor already passed the password step and was sent to
+			// the MFA app: a password error copy would be misleading here.
+			$errors->add( 'llar_mfa_return', \LLAR\Core\MfaFlow\MfaFlowLoginHandler::refusal_message() );
 		}
 		return $errors;
 	}
@@ -191,8 +195,8 @@ class LoginErrorPresenter {
 				}
 			}
 		} elseif ( $show_mfa_return_error ) {
-			/* Same red error as failed login when returning from MFA (e.g. pre_auth_required). */
-			$content = __( '<strong>ERROR</strong>: Incorrect username or password.', 'limit-login-attempts-reloaded' );
+			/* Returning from the MFA app: the password step already succeeded, keep the two-factor copy. */
+			$content = \LLAR\Core\MfaFlow\MfaFlowLoginHandler::refusal_message();
 		}
 
 		if ( ! empty( $error_msg ) ) {

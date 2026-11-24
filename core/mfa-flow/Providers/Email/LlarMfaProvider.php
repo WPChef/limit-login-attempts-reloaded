@@ -168,10 +168,28 @@ class LlarMfaProvider implements MfaProviderInterface {
 			add_action( 'phpmailer_init', array( __CLASS__, 'phpmailer_embed_otp_logo' ), 10, 1 );
 		}
 
+		// wp_mail() returning false is a delivery failure, not a PHP error:
+		// capture the transport reason (phpmailer exception via wp_mail_failed)
+		// so it can be logged next to the failed send.
+		$mail_failure_reason = '';
+		$capture_mail_failure = static function ( $error ) use ( &$mail_failure_reason ) {
+			$reason = null;
+			if ( $error instanceof \WP_Error ) {
+				$reason = $error->get_error_message();
+			} elseif ( $error instanceof \Exception ) {
+				$reason = $error->getMessage();
+			}
+			if ( is_string( $reason ) && '' !== $reason ) {
+				$mail_failure_reason = trim( str_replace( array( "\r", "\n" ), ' ', $reason ) );
+			}
+		};
+		add_action( 'wp_mail_failed', $capture_mail_failure );
+
 		$sent = false;
 		try {
 			$sent = wp_mail( $to_email, $subject, $message, $headers );
 		} finally {
+			remove_action( 'wp_mail_failed', $capture_mail_failure );
 			if ( $llar_mfa_otp_logo_cid !== '' ) {
 				remove_action( 'phpmailer_init', array( __CLASS__, 'phpmailer_embed_otp_logo' ), 10 );
 				self::$otp_email_embed_path = '';
@@ -184,10 +202,33 @@ class LlarMfaProvider implements MfaProviderInterface {
 				'message' => null,
 			);
 		}
+		$this->log_send_failure( $user, $mail_failure_reason );
 		return array(
 			'success' => false,
 			'message' => 'Failed to send email',
 		);
+	}
+
+	/**
+	 * A failed MFA code delivery leaves no trace in standard logs: the REST /
+	 * AJAX endpoint answers a regular 500 response ("Failed to send email")
+	 * and wp_mail() raises no PHP error. Log the failure with the reason
+	 * captured from wp_mail_failed so broken mail transports are diagnosable
+	 * from debug.log.
+	 *
+	 * @param \WP_User $user   Recipient account.
+	 * @param string   $reason Failure reason captured from wp_mail_failed; '' when the transport reported none.
+	 */
+	private function log_send_failure( $user, $reason = '' ) {
+		$reason = is_string( $reason ) ? trim( $reason ) : '';
+		if ( '' === $reason ) {
+			$reason = 'no failure reason reported by the mail transport';
+		}
+		if ( strlen( $reason ) > 500 ) {
+			$reason = substr( $reason, 0, 500 );
+		}
+		$login = ( $user && isset( $user->user_login ) && is_string( $user->user_login ) ) ? $user->user_login : '';
+		error_log( 'LLAR: MFA email send failed (user: ' . $login . ') - ' . $reason );
 	}
 
 	/**

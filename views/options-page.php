@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-$allowed_tabs  = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'help', 'mfa' );
+$allowed_tabs = array( 'dashboard', 'logs-local', 'logs-custom', 'settings', 'debug', 'premium', 'extensions', 'help', 'mfa' );
 $requested_tab = isset( $_GET['tab'] ) && is_string( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : '';
 $active_tab    = in_array( $requested_tab, $allowed_tabs, true ) ? $requested_tab : 'dashboard';
 
@@ -98,12 +98,13 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 				<span class="dashicons dashicons-superhero"></span>
 			<?php
 			printf(
-				/* translators: 1: trial label, 2: requests used, 3: monthly quota, 4: upgrade URL */
-				__( '%1$s: %2$s of %3$s requests used this month. <a href="%4$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $1.25/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
+				/* translators: 1: trial label, 2: requests used, 3: monthly quota, 4: upgrade URL, 5: plan price */
+				__( '%1$s: %2$s of %3$s requests used this month. <a href="%4$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $%5$s/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
 				esc_html( LimitLoginAttempts::trial_label() ),
 				esc_html( $request_usage ),
 				esc_html( $request_quota ),
-				esc_url( add_query_arg( 'id', '41', $upgrade_premium_url ) )
+				esc_url( add_query_arg( 'id', '41', $upgrade_premium_url ) ),
+				esc_html( LLAR_MIN_PLAN_PRICE )
 			);
 			?>
 			</p>
@@ -119,11 +120,12 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
                     <span class="dashicons dashicons-superhero"></span>
                     <?php
 					echo sprintf(
-						/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL */
-						__( 'Micro Cloud: %1$s of %2$s requests used - cloud protection pauses at %2$s. <a href="%3$s" class="link__style_color_inherit" target="_blank">Keep it running for $1.25/mo →</a>', 'limit-login-attempts-reloaded' ),
-						esc_html( $request_usage ),
-						esc_html( $request_quota ),
-						esc_url( add_query_arg( 'id', '35', $upgrade_premium_url ) )
+					/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL, 4: plan price */
+					__( 'Micro Cloud: %1$s of %2$s requests used - cloud protection pauses at %2$s. <a href="%3$s" class="link__style_color_inherit" target="_blank">Keep it running for $%4$s/mo →</a>', 'limit-login-attempts-reloaded' ),
+					esc_html( $request_usage ),
+					esc_html( $request_quota ),
+					esc_url( add_query_arg( 'id', '35', $upgrade_premium_url ) ),
+					esc_html( LLAR_MIN_PLAN_PRICE )
 					);
                     ?>
                 </p>
@@ -161,11 +163,12 @@ $request_quota = ( is_array( $requests ) && isset( $requests['quota'] ) ) ? (str
 				<span class="dashicons dashicons-superhero"></span>
 				<?php
 				echo sprintf(
-					/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL */
-					__( 'Micro Cloud: %1$s of %2$s requests used this month. <a href="%3$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $1.25/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
-					esc_html( $request_usage ),
-					esc_html( $request_quota ),
-					esc_url( add_query_arg( 'id', '34', $upgrade_premium_url ) )
+				/* translators: 1: requests used, 2: monthly quota, 3: upgrade URL, 4: plan price */
+				__( 'Micro Cloud: %1$s of %2$s requests used this month. <a href="%3$s" class="link__style_color_inherit" target="_blank">Upgrade to Personal for $%4$s/mo for 50k requests.</a>', 'limit-login-attempts-reloaded' ),
+				esc_html( $request_usage ),
+				esc_html( $request_quota ),
+				esc_url( add_query_arg( 'id', '34', $upgrade_premium_url ) ),
+				esc_html( LLAR_MIN_PLAN_PRICE )
 				);
 				?>
 			</p>
@@ -213,6 +216,11 @@ if ( ( $auto_update_choice || $auto_update_choice === null ) && ! Helpers::is_au
 }
 if ( $active_tab === 'mfa' && ! is_ssl() ) {
 	$this->render_admin_notice( 'https-recommended-mfa', array() );
+}
+if ( $active_tab === 'mfa'
+	&& \LLAR\Core\Config::get( 'mfa_enabled' )
+	&& ! \LLAR\Core\MfaFlow\MfaApiClient::default_base_url_is_usable() ) {
+	$this->render_admin_notice( 'mfa-api-not-configured', array() );
 }
 if ( 'debug' === $active_tab && $this->has_capability ) {
 	$foreign_authenticate_hooks = LimitLoginAttempts::get_foreign_authenticate_hooks();
@@ -309,9 +317,13 @@ if ( 'debug' === $active_tab && $this->has_capability ) {
 			class="nav-tab<?php echo $active_tab === 'help' ? $nav_tab_active : ''; ?>">
 			<?php _e( 'Help', 'limit-login-attempts-reloaded' ); ?>
 		</a>
+		<a href="<?php echo $this->get_options_page_uri( 'extensions' ); ?>"
+			class="nav-tab<?php echo $active_tab === 'extensions' ? $nav_tab_active : ''; ?>">
+			<?php _e( 'Extensions', 'limit-login-attempts-reloaded' ); ?>
+		</a>
 		<a href="<?php echo $this->get_options_page_uri( 'premium' ); ?>"
 			class="nav-tab<?php echo $active_tab === 'premium' ? $nav_tab_active : ''; ?>">
-			<?php _e( 'Premium / Extensions', 'limit-login-attempts-reloaded' ); ?>
+			<?php _e( 'Premium', 'limit-login-attempts-reloaded' ); ?>
 		</a>
 
 		<?php if ( $active_tab === 'logs-custom' ) : ?>

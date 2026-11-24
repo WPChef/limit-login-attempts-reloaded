@@ -270,7 +270,7 @@ class MemberPressIntegration extends BaseIntegration {
 		// call wp_authenticate_user (where too_many_retries is added after a valid password check), and
 		// authenticate_late_lockout_check runs only on WP 7.0+. is_login_allowed() uses cloud ACL
 		// (or local lockouts when cloud is off) to surface the lockout message on this path.
-		if ( ! $this->is_login_allowed() ) {
+		if ( ! $this->is_login_allowed() && ! $this->llar_instance->is_lockout_error_suppressed( $this->get_login_identifier() ) ) {
 			return array( $this->get_error_message() );
 		}
 

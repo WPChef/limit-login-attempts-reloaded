@@ -1,6 +1,31 @@
 == Changelog ==
 
+= 3.4.7 =
+* The fopen HTTP transport no longer triggers the PHP 8.5 deprecation warning for $http_response_header.
+
+= 3.4.6 =
+* Two-factor authentication now applies to Ultimate Member login forms.
+* Fixed the Active Lockouts widget showing "No lockouts yet." together with listed lockouts. The message now appears only when the list is actually empty.
+
+= 3.4.5 =
+* Whitelisted usernames no longer see the lockout message on the MemberPress login page.
+
+= 3.4.4 =
+* A failed two-factor verification email is now written to the error log with the mail error, so the failure is no longer only an HTTP 500.
+* Passing a WP_Error to the failed-login hook no longer crashes PHP 8. The attempt is still counted.
+* Added an Extensions tab with easy installation of recommended plugins.
+* The PHP vulnerability notice no longer treats a vendor suffix (such as -nts or -ubuntu) on an already patched version as vulnerable. Pre-release builds (dev, alpha, beta, RC) still show the notice.
+
+= 3.4.3 =
+* Security: IPv6 addresses in the same /64 now share one lockout, so changing the address ending no longer bypasses the login limit. Thanks to Drakon Tech Solutions SLU for the report.
+* Shortened onboarding to two steps.
+
+= 3.4.2 =
+* Security: blocked a server-side request forgery (SSRF) in the app setup feature. The setup destination is validated before fetching, and redirects are checked again. Thanks to Viktor Heiduck for the report.
+
 = 3.4.1 =
+* Two-factor authentication now applies to XML-RPC logins as well as the login form. Thanks to Qi Qin for the report.
+* An invalid X-Forwarded-For header no longer stops the two-factor check. Thanks to Naoki Kawahigashi for the report.
 * Added an admin notice when the reported PHP version is below the upstream release that fixes critical PHP vulnerabilities. The notice explains that a host or distribution may already have patched PHP without changing the version number, and tells admins to dismiss it instead of opening a support ticket in that case.
 
 = 3.4.0 =
