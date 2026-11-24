@@ -24,6 +24,8 @@
 		const trialLanding = cfg.trialLanding || {};
 		const adminEmail = cfg.adminEmail || '';
 		const awaitingLabel = cfg.awaitingLabel || '';
+		const activationDoneLabel = cfg.activationDoneLabel || '';
+		const activatingLabel = cfg.activatingLabel || '';
 		const spinnerHtml = cfg.spinnerHtml || '';
 		const welcomeHtml = cfg.welcomeHtml || '';
 		const step2Html = cfg.step2Html || '';
@@ -90,7 +92,7 @@
 			return llar_ajax_callback_post_wp( ajaxurl, {
 				action: 'dismiss_onboarding_popup',
 				sec: llar_vars.nonce_dismiss_onboarding_popup,
-				outcome: outcome || 'basic'
+				outcome: outcome || ''
 			} ).then( function () {
 				onboardingCompleted = true;
 				$closeIcon.remove();
@@ -113,11 +115,20 @@
 		const bindStep2Handlers = function ( email ) {
 			const $limited_upgrade_subscribe = $( '#llar-limited-upgrade-subscribe' );
 			const $limited_upgrade_no_subscribe = $( '#llar-limited-upgrade-no_subscribe' );
+			const $trial_activation_done = $( '#llar-trial-activation-done' );
 			const $block_upgrade_subscribe = $( '.llar-upgrade-subscribe' );
 			const $description = $( '#llar-description-step-2' );
 			const $trial_email = $( '#llar-trial-email' );
 			const $trial_consent = $( '#llar-trial-consent' );
 			const spinner = '.preloader-wrapper .spinner';
+
+			// The button markup is text node + spinner span; editing the text
+			// node directly keeps the label escaped (no HTML parsing).
+			const setSubscribeLabel = function ( label ) {
+				$limited_upgrade_subscribe.contents().filter( function () {
+					return this.nodeType === 3;
+				} ).first()[ 0 ].nodeValue = label;
+			};
 
 			if ( email === '' || email === null ) {
 				email = adminEmail;
@@ -151,6 +162,19 @@
 			$trial_consent.off( 'change.llarTrial' ).on( 'change.llarTrial', syncTrialCtaFromConsent );
 			syncTrialCtaFromConsent();
 
+			$trial_activation_done.off( 'click.llarTrial' ).on( 'click.llarTrial', function ( e ) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				if ( $trial_activation_done.hasClass( disabled ) || isCompleting ) {
+					return;
+				}
+				$trial_activation_done.addClass( disabled );
+				// Empty outcome: no completion toast, just close + reload.
+				completeOnboarding( '' ).catch( function () {
+					$trial_activation_done.removeClass( disabled );
+				} );
+			} );
+
 			$limited_upgrade_subscribe.off( 'click.llarTrial' ).on( 'click.llarTrial', function ( e ) {
 				e.preventDefault();
 				e.stopImmediatePropagation();
@@ -169,15 +193,16 @@
 					return;
 				}
 
+				// noopener (spec) always returns null, so the result cannot be
+				// inspected; with a direct user gesture blockers are rare, and
+				// the activation-done button below keeps the flow unstuck.
+				window.open( buildTrialLandingUrl( trialEmail ), '_blank', 'noopener' );
+
 				$limited_upgrade_subscribe.addClass( disabled );
-				// No spinner here: the landing opens in a new window, the dimmed
-				// button itself signals the wait.
 				if ( awaitingLabel ) {
-					$limited_upgrade_subscribe.contents().filter( function () {
-						return this.nodeType === 3;
-					} ).first().replaceWith( awaitingLabel );
+					setSubscribeLabel( awaitingLabel );
 				}
-				window.open( buildTrialLandingUrl( trialEmail ), '_blank' );
+				$trial_activation_done.removeClass( 'llar-display-none' );
 			} );
 
 			if ( trialReturn.can_activate && trialReturn.setup_code ) {
@@ -186,9 +211,10 @@
 				$body.addClass( disabled );
 				$( '.jconfirm-closeIcon' ).addClass( hidden );
 
-				const $loadinfo = $( '<div class="llar-trial-loadinfo" style="text-align:center;padding:24px 0;"/>' )
-					.append( spinnerHtml );
-				$( '.llar-onboarding__body .card' ).append( $loadinfo );
+				const $loadinfo = $( '<div class="llar-trial-loadinfo"/>' )
+					.append( $( '<span class="llar-trial-loadinfo__label"/>' ).text( activatingLabel ) )
+					.append( $( '<span class="llar-trial-loadinfo__spinner"/>' ).append( spinnerHtml ) );
+				$( '.llar-onboarding__body .card' ).prepend( $loadinfo );
 
 				const restoreTrialStepUi = function () {
 					unlockBodyAndCloseIcon( $( '.jconfirm-closeIcon' ) );

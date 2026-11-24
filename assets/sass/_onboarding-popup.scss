@@ -73,6 +73,17 @@
               line-height: 1.5;
             }
 
+            .llar-trial-done {
+              margin: 4px auto 0;
+              background-color: $primary-colors__turquoise;
+              color: white;
+              border: none;
+
+              &:hover {
+                background-color: darken($primary-colors__turquoise, 8%);
+              }
+            }
+
             .llar-onboarding-skip {
               width: auto;
               min-width: 0;
@@ -244,6 +255,32 @@
 
           .preloader-wrapper {
             display: block;
+          }
+        }
+
+        // "Activating..." state while the activation return is processed.
+        .llar-trial-loadinfo {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          column-gap: 12px;
+          font-size: 18px;
+          color: $typography-primary;
+          padding: 8px 0 20px;
+
+          .preloader-wrapper {
+            position: static;
+            display: inline-block;
+            background: none;
+          }
+
+          .spinner {
+            display: inline-block;
+            position: static;
+            visibility: visible;
+            top: 0;
+            transform: none;
+            margin: 0;
           }
         }
 
@@ -529,16 +566,16 @@
 
             input {
               // Center the 18px checkbox against the first text line
-              // (line box ~21px, offset by the span's 10px top margin).
-              margin-top: 11px;
+              // (line box ~21px, offset by the span's 6px top margin).
+              margin-top: 9px;
               margin-left: -25px;
               vertical-align: top;
             }
 
             span {
               display: inline-block;
-              margin-left: 15px;
-              margin-top: 10px;
+              margin-left: 10px;
+              margin-top: 6px;
             }
           }
 

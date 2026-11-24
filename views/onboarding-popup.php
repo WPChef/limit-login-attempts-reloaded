@@ -134,6 +134,9 @@ ob_start();
 				<div class="llar-trial-after-note">
 					<?php echo esc_html( $popup['step2']['after_trial_note'] ); ?>
 				</div>
+				<button type="button" class="button button--fit llar-trial-done llar-display-none" id="llar-trial-activation-done">
+					<?php echo esc_html( $popup['step2']['activation_done_label'] ); ?>
+				</button>
 				<button type="button" class="button llar-onboarding-skip" id="llar-limited-upgrade-no_subscribe">
 					<?php echo esc_html( $popup['step2']['skip_label'] ); ?>
 				</button>
@@ -165,6 +168,8 @@ $onboarding_config = array(
 	'trialLanding'   => $popup['trial_landing'],
 	'adminEmail'     => $popup['admin_email'],
 	'awaitingLabel'  => $popup['step2']['awaiting_label'],
+	'activationDoneLabel' => $popup['step2']['activation_done_label'],
+	'activatingLabel' => $popup['step2']['activating_label'],
 	'spinnerHtml'    => $spinner,
 	'welcomeHtml'  => trim( $popup_complete_install_content ),
 	'step2Html'    => trim( $content_step_2 ),
