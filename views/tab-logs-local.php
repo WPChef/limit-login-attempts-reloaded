@@ -6,28 +6,28 @@ use LLAR\Core\LimitLoginAttempts;
 if ( ! defined( 'ABSPATH' ) ) exit();
 
 /**
- * Stats, lists and lockout log data come from the controller via
+ * Stats, lists, lockout log and copy come from the controller via
  * get_logs_local_view_vars(); this template only assembles markup.
  *
  * @var $this LimitLoginAttempts
  */
 
-$logs_local = $this->get_logs_local_view_vars();
+$v = $this->get_logs_local_view_vars();
 
-$lockouts_total       = $logs_local['lockouts_total'];
-$lockouts_now         = $logs_local['lockouts_now'];
-$lockouts             = $logs_local['lockouts'];
-$white_list_ips       = $logs_local['white_list_ips'];
-$white_list_usernames = $logs_local['white_list_usernames'];
-$black_list_ips       = $logs_local['black_list_ips'];
-$black_list_usernames = $logs_local['black_list_usernames'];
-$log                  = $logs_local['log'];
+$lockouts_total       = $v['lockouts_total'];
+$lockouts_now         = $v['lockouts_now'];
+$lockouts             = $v['lockouts'];
+$white_list_ips       = $v['white_list_ips'];
+$white_list_usernames = $v['white_list_usernames'];
+$black_list_ips       = $v['black_list_ips'];
+$black_list_usernames = $v['black_list_usernames'];
+$log                  = $v['log'];
 ?>
 
 <div id="llar-setting-page-logs">
     <h3 class="title_page">
         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-check.png">
-        <?php _e( 'Statistics', 'limit-login-attempts-reloaded' ); ?>
+        <?php echo esc_html( $v['statistics_title'] ); ?>
     </h3>
 
     <form action="<?php echo $this->get_options_page_uri('logs-local'); ?>" method="post">
@@ -37,35 +37,29 @@ $log                  = $logs_local['log'];
             <table class="llar-form-table">
                 <tr>
                     <th scope="row" valign="top">
-                        <?php _e( 'Total lockouts', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo esc_html( $v['total_lockouts_label'] ); ?>
                     </th>
                     <td>
                         <?php if ( $lockouts_total > 0 ) : ?>
                             <input class="button menu__item col button__transparent_orange mx-0_5" name="reset_total"
-                                   value="<?php _e( 'Reset Counter', 'limit-login-attempts-reloaded' ); ?>"
+                                   value="<?php echo esc_attr( $v['reset_counter_label'] ); ?>"
                                    type="submit"/>
-                            <?php echo sprintf(
-                                    _n( '%d lockout since last reset', '%d lockouts since last reset',
-                                        $lockouts_total, 'limit-login-attempts-reloaded' ), $lockouts_total
-                            ); ?>
+                            <?php echo esc_html( $v['lockouts_since_reset'] ); ?>
                         <?php else :
-                            _e( 'No lockouts yet', 'limit-login-attempts-reloaded' );
+                            echo esc_html( $v['no_lockouts_yet'] );
                         endif ?>
                     </td>
                 </tr>
                 <?php if ( $lockouts_now > 0 ) : ?>
                     <tr>
                         <th scope="row" valign="top">
-                            <?php _e( 'Active lockouts', 'limit-login-attempts-reloaded' ); ?>
+                            <?php echo esc_html( $v['active_lockouts_label'] ); ?>
                         </th>
                         <td>
                             <input class="button" name="reset_current"
-                                   value="<?php _e( 'Restore Lockouts', 'limit-login-attempts-reloaded' ); ?>"
+                                   value="<?php echo esc_attr( $v['restore_lockouts_label'] ); ?>"
                                    type="submit"/>
-                            <?php echo sprintf(
-                                    __( '%d IP is currently blocked from trying to log in', 'limit-login-attempts-reloaded' ),
-                                    $lockouts_now
-                            ); ?>
+                            <?php echo esc_html( $v['active_lockouts_summary'] ); ?>
                         </td>
                     </tr>
                 <?php endif ?>
@@ -80,12 +74,12 @@ $log                  = $logs_local['log'];
             <table class="llar-form-table">
                 <tr>
                     <th scope="row" valign="top">
-                        <?php _e( 'Safelist', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo esc_html( $v['safelist_label'] ); ?>
                     </th>
                     <td>
                         <div class="field-col">
                             <div class="description-secondary p-0">
-                                <?php _e( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ); ?>
+                                <?php echo esc_html( $v['ip_per_line_label'] ); ?>
                             </div>
                             <div class="textarea_border mt-0_5">
                                 <textarea name="lla_whitelist_ips" rows="5" cols="50"><?php echo esc_textarea( $white_list_ips ); ?></textarea>
@@ -93,15 +87,7 @@ $log                  = $logs_local['log'];
                         </div>
                         <div class="field-col">
                             <div class="description-secondary p-0">
-                                <?php _e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?>
-                                <span class="hint_tooltip-parent">
-                                    <span class="dashicons dashicons-editor-help"></span>
-                                    <div class="hint_tooltip">
-                                        <div class="hint_tooltip-content">
-                                            <?php _e( "A username in this list does not also cover that account's email. To cover both, add the username and the email on separate lines. Each line is checked on its own, which avoids extra database lookups during attacks, works better with other plugins, and keeps the result predictable.", 'limit-login-attempts-reloaded' ); ?>
-                                        </div>
-                                    </div>
-                                </span>
+                                <?php echo esc_html( $v['username_per_line_label'] ); ?>
                             </div>
                             <div class="textarea_border mt-0_5">
                                 <textarea name="lla_whitelist_usernames" rows="5" cols="50"><?php echo esc_textarea( $white_list_usernames ); ?></textarea>
@@ -111,12 +97,12 @@ $log                  = $logs_local['log'];
                 </tr>
                 <tr>
                     <th scope="row" valign="top">
-                        <?php _e( 'Denylist', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo esc_html( $v['denylist_label'] ); ?>
                     </th>
                     <td>
                         <div class="field-col">
                             <div class="description-secondary p-0">
-                                <?php _e ( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ); ?>
+                                <?php echo esc_html( $v['ip_per_line_label'] ); ?>
                             </div>
                             <div class="textarea_border mt-0_5">
                                 <textarea name="lla_blacklist_ips" rows="5" cols="50"><?php echo esc_textarea( $black_list_ips ); ?></textarea>
@@ -124,12 +110,12 @@ $log                  = $logs_local['log'];
                         </div>
                         <div class="field-col">
                             <div class="description-secondary p-0">
-                                <?php _e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?>
+                                <?php echo esc_html( $v['username_per_line_label'] ); ?>
                                 <span class="hint_tooltip-parent">
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php _e( "A username in this list does not also cover that account's email. To cover both, add the username and the email on separate lines. Each line is checked on its own, which avoids extra database lookups during attacks, works better with other plugins, and keeps the result predictable.", 'limit-login-attempts-reloaded' ); ?>
+                                            <?php echo esc_html( $v['username_list_hint'] ); ?>
                                         </div>
                                     </div>
                                 </span>
@@ -139,9 +125,15 @@ $log                  = $logs_local['log'];
                             </div>
                         </div>
                         <div class="description-additional p-0 mt-0_5">
-                            <?php echo sprintf(
-                                __( 'Automate your denylist with IP intelligence when you <a href="%s" class="unlink link__style_unlink" target="_blank">upgrade to premium</a>.', 'limit-login-attempts-reloaded' ),
-                                'https://www.limitloginattempts.com/info.php?id=21'
+                            <?php echo wp_kses(
+                                $v['denylist_upgrade_html'],
+                                array(
+                                    'a' => array(
+                                        'href'   => true,
+                                        'class'  => true,
+                                        'target' => true,
+                                    ),
+                                )
                             ); ?>
                         </div>
                     </td>
@@ -150,7 +142,7 @@ $log                  = $logs_local['log'];
         </div>
         <p class="submit">
             <input class="button menu__item col button__orange" name="llar_update_dashboard"
-                   value="<?php echo __( 'Save Settings', 'limit-login-attempts-reloaded' ); ?>"
+                   value="<?php echo esc_attr( $v['save_settings_label'] ); ?>"
                    type="submit"/>
         </p>
     </form>
@@ -159,37 +151,37 @@ $log                  = $logs_local['log'];
         <div class="row__list">
             <div class="add_block__title">
                 <div class="description mt-1_5">
-                    <?php _e( 'Upgrade To Premium For Our Login Firewall', 'limit-login-attempts-reloaded' ); ?>
+                    <?php echo esc_html( $v['firewall_upgrade_title'] ); ?>
                 </div>
-                <a href="<?php echo esc_url( \LLAR\Core\TrialLanding::cta_landing_url( \LLAR\Core\TrialLanding::INFO_ID_LOGS, 'logs-local' ) ); ?>"
-                   data-llar-info-id="<?php echo esc_attr( \LLAR\Core\TrialLanding::INFO_ID_LOGS ); ?>"
+                <a href="<?php echo esc_url( $v['trial_cta_url'] ); ?>"
+                   data-llar-info-id="<?php echo esc_attr( $v['trial_info_id'] ); ?>"
                    class="button menu__item button__transparent_orange mt-1_5 llar-trial-start-cta">
-                    <?php echo esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ); ?>
+                    <?php echo esc_html( $v['trial_label'] ); ?>
                 </a>
             </div>
             <div class="add_block__list">
                 <div class="item">
                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/identify-counter-min.png">
                     <div class="name">
-                        <?php _e( 'Identify & Counter New Threats With IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo esc_html( $v['firewall_feature_threats'] ); ?>
                     </div>
                 </div>
                 <div class="item">
                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/actibe-ip-min.png">
                     <div class="name">
-                        <?php _e( 'Access Active Databases Of Malicious IPs To Bolster Defenses', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo esc_html( $v['firewall_feature_databases'] ); ?>
                     </div>
                 </div>
                 <div class="item">
                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/unblock-min.png">
                     <div class="name">
-                        <?php _e( 'Unblock The Blocked Admin With Ease', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo esc_html( $v['firewall_feature_unblock'] ); ?>
                     </div>
                 </div>
                 <div class="item">
                     <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/deny-ip-min.png">
                     <div class="name">
-                        <?php _e( 'Deny IPs By Country', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo esc_html( $v['firewall_feature_country'] ); ?>
                     </div>
                 </div>
             </div>
@@ -199,7 +191,7 @@ $log                  = $logs_local['log'];
     <?php if ( ! empty( $log ) ) : ?>
         <h3 class="title_page">
             <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/icon-pre-install.png">
-            <?php _e( 'Lockout log', 'limit-login-attempts-reloaded' ); ?>
+            <?php echo esc_html( $v['lockout_log_title'] ); ?>
         </h3>
 
         <form action="<?php echo $this->get_options_page_uri('logs-local'); ?>" method="post">
@@ -207,12 +199,18 @@ $log                  = $logs_local['log'];
             <input type="hidden" value="true" name="clear_log"/>
             <div class="description-page">
                 <input class="button menu__item col button__transparent_orange mx-0_5" name="submit"
-                       value="<?php _e( 'Clear Log', 'limit-login-attempts-reloaded' ); ?>"
+                       value="<?php echo esc_attr( $v['clear_log_label'] ); ?>"
                        type="submit"/>
                 <span class="description-secondary">
-                    <?php echo sprintf(
-                        __( '<a href="%s" class="unlink link__style_unlink" target="_blank">Upgrade today</a> to optimize or unload your DB by moving logs to the cloud.', 'limit-login-attempts-reloaded' ),
-                        'https://www.limitloginattempts.com/info.php?from=plugin-clear-log'
+                    <?php echo wp_kses(
+                        $v['clear_log_upgrade_html'],
+                        array(
+                            'a' => array(
+                                'href'   => true,
+                                'class'  => true,
+                                'target' => true,
+                            ),
+                        )
                     ); ?>
                 </span>
             </div>
@@ -222,26 +220,26 @@ $log                  = $logs_local['log'];
             <div class="llar-settings-wrap">
                 <table class="llar-form-table">
                     <tr>
-                        <th scope="col"><?php _e( "Date", 'limit-login-attempts-reloaded' ); ?></th>
-                        <th scope="col"><?php echo _x( "IP", "Internet address", 'limit-login-attempts-reloaded' ); ?></th>
-                        <th scope="col"><?php _e( 'Tried to log in as', 'limit-login-attempts-reloaded' ); ?></th>
-                        <th scope="col"><?php _e( 'Gateway', 'limit-login-attempts-reloaded' ); ?></th>
+                        <th scope="col"><?php echo esc_html( $v['log_col_date'] ); ?></th>
+                        <th scope="col"><?php echo esc_html( $v['log_col_ip'] ); ?></th>
+                        <th scope="col"><?php echo esc_html( $v['log_col_login_as'] ); ?></th>
+                        <th scope="col"><?php echo esc_html( $v['log_col_gateway'] ); ?></th>
                         <th>
                     </tr>
 
                     <?php foreach ( $log as $date => $user_info ) : ?>
                         <tr>
-                            <td class="limit-login-date"><?php echo date_i18n(__( 'F d, Y H:i', 'limit-login-attempts-reloaded' ), $date ); ?></td>
+                            <td class="limit-login-date"><?php echo esc_html( date_i18n( $v['log_date_format'], $date ) ); ?></td>
                             <td class="limit-login-ip">
-                                <a href="<?php echo esc_url('https://www.limitloginattempts.com/location/?ip=' . $user_info['ip'] ) ?>" target="_blank">
-	                                <?php esc_html_e( $user_info['ip'] ); ?>
+                                <a href="<?php echo esc_url( 'https://www.limitloginattempts.com/location/?ip=' . $user_info['ip'] ); ?>" target="_blank">
+	                                <?php echo esc_html( $user_info['ip'] ); ?>
                                 </a>
                             </td>
                             <td class="limit-login-max">
-                                <?php echo esc_html__( $user_info['username'] ) . ' (' . esc_html__( $user_info['counter'] ) . __( ' lockouts', 'limit-login-attempts-reloaded' ) . ')'; ?>
+                                <?php echo esc_html( $user_info['username'] ) . ' (' . esc_html( (string) $user_info['counter'] ) . ' ' . esc_html( $v['lockouts_word'] ) . ')'; ?>
                             </td>
                             <td class="limit-login-gateway">
-                                <?php esc_html_e( $user_info['gateway'] ); ?>
+                                <?php echo esc_html( $user_info['gateway'] ); ?>
                             </td>
                             <td>
 								<?php
@@ -249,12 +247,12 @@ $log                  = $logs_local['log'];
 								$lockout_until = Helpers::get_active_lockout_until( $lockouts, $user_info['ip'] );
 								if ( $lockout_until > time() ) :
 									?>
-                                    <a href="#" class="button limit-login-unlock" data-ip="<?php esc_attr_e( $user_info['ip'] )?>"
-                                       data-username="<?php esc_attr_e( $user_info['username'] )?>">
-                                        <?php esc_html_e( 'Unlock', 'limit-login-attempts-reloaded' ); ?>
+                                    <a href="#" class="button limit-login-unlock" data-ip="<?php echo esc_attr( $user_info['ip'] ); ?>"
+                                       data-username="<?php echo esc_attr( $user_info['username'] ); ?>">
+                                        <?php echo esc_html( $v['unlock_label'] ); ?>
                                     </a>
                                 <?php elseif ( $user_info['unlocked'] ) : ?>
-                                    <?php esc_html_e( 'Unlocked', 'limit-login-attempts-reloaded' ); ?>
+                                    <?php echo esc_html( $v['unlocked_label'] ); ?>
                                 <?php endif ?>
                             </td>
                         </tr>
@@ -268,37 +266,37 @@ $log                  = $logs_local['log'];
             <div class="row__list">
                 <div class="add_block__title">
                     <div class="description mt-1_5">
-                        <?php _e( 'Upgrade Today For Enhanced Logs & IP Intelligence', 'limit-login-attempts-reloaded' ); ?>
+                        <?php echo esc_html( $v['logs_upgrade_title'] ); ?>
                     </div>
-                    <a href="<?php echo esc_url( \LLAR\Core\TrialLanding::cta_landing_url( \LLAR\Core\TrialLanding::INFO_ID_LOGS, 'logs-local' ) ); ?>"
-                   data-llar-info-id="<?php echo esc_attr( \LLAR\Core\TrialLanding::INFO_ID_LOGS ); ?>"
+                    <a href="<?php echo esc_url( $v['trial_cta_url'] ); ?>"
+                   data-llar-info-id="<?php echo esc_attr( $v['trial_info_id'] ); ?>"
                    class="button menu__item button__transparent_orange mt-1_5 llar-trial-start-cta">
-                        <?php echo esc_html( \LLAR\Core\LimitLoginAttempts::trial_label() ); ?>
+                        <?php echo esc_html( $v['trial_label'] ); ?>
                     </a>
                 </div>
                 <div class="add_block__list">
                     <div class="item">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/enhanced-logs-min.png">
                         <div class="name">
-                            <?php _e( 'Enhanced Logs Tell You Exactly Which IPs Are Attempting Logins', 'limit-login-attempts-reloaded' ); ?>
+                            <?php echo esc_html( $v['logs_feature_enhanced'] ); ?>
                         </div>
                     </div>
                     <div class="item">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/new-threats-min.png">
                         <div class="name">
-                            <?php _e( 'Identify & Counter New Threats With Ease', 'limit-login-attempts-reloaded' ); ?>
+                            <?php echo esc_html( $v['logs_feature_threats'] ); ?>
                         </div>
                     </div>
                     <div class="item">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/deny-list-min.png">
                         <div class="name">
-                            <?php _e( 'Automatically Add Malicious IPs To Your Deny List', 'limit-login-attempts-reloaded' ); ?>
+                            <?php echo esc_html( $v['logs_feature_deny'] ); ?>
                         </div>
                     </div>
                     <div class="item">
                         <img src="<?php echo LLA_PLUGIN_URL ?>assets/css/images/unblock-min.png">
                         <div class="name">
-                            <?php _e( 'Unblock The Blocked Admins Effortlessly', 'limit-login-attempts-reloaded' ); ?>
+                            <?php echo esc_html( $v['logs_feature_unblock'] ); ?>
                         </div>
                     </div>
                 </div>
@@ -315,13 +313,13 @@ $log                  = $logs_local['log'];
 
                     $.post( ajaxurl, {
                         action: 'limit-login-unlock',
-                        sec: '<?php echo wp_create_nonce('llar-unlock' ) ?>',
+                        sec: '<?php echo esc_js( $v['unlock_nonce'] ); ?>',
                         ip: btn.data( 'ip' ),
                         username: btn.data( 'username' )
                     } )
                         .done( function( data ) {
                             if ( data === true )
-                                btn.fadeOut( function(){ $( this ).parent().text( 'Unlocked' ) });
+                                btn.fadeOut( function(){ $( this ).parent().text( <?php echo wp_json_encode( $v['unlocked_label'] ); ?> ) });
                             else
                                 fail();
                         } ).fail( fail );
@@ -337,4 +335,3 @@ $log                  = $logs_local['log'];
         </script>
 	<?php endif; ?>
 </div>
-
