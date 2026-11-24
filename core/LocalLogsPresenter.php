@@ -86,7 +86,7 @@ class LocalLogsPresenter {
 			'denylist_label'             => __( 'Denylist', 'limit-login-attempts-reloaded' ),
 			'ip_per_line_label'          => __( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ),
 			'username_per_line_label'    => __( 'One Username per line', 'limit-login-attempts-reloaded' ),
-			// Denylist semantics only: literal line match, no email→user_login mapping.
+			// Same admin-facing hint on Safelist and Denylist username fields (Local Logs).
 			'username_list_hint'         => $username_list_hint,
 			'denylist_upgrade_html'      => sprintf(
 				__( 'Automate your denylist with IP intelligence when you <a href="%s" class="unlink link__style_unlink" target="_blank">upgrade to premium</a>.', 'limit-login-attempts-reloaded' ),

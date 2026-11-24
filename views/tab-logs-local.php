@@ -88,6 +88,14 @@ $log                  = $v['log'];
                         <div class="field-col">
                             <div class="description-secondary p-0">
                                 <?php echo esc_html( $v['username_per_line_label'] ); ?>
+                                <span class="hint_tooltip-parent">
+                                    <span class="dashicons dashicons-editor-help"></span>
+                                    <div class="hint_tooltip">
+                                        <div class="hint_tooltip-content">
+                                            <?php echo esc_html( $v['username_list_hint'] ); ?>
+                                        </div>
+                                    </div>
+                                </span>
                             </div>
                             <div class="textarea_border mt-0_5">
                                 <textarea name="lla_whitelist_usernames" rows="5" cols="50"><?php echo esc_textarea( $white_list_usernames ); ?></textarea>
