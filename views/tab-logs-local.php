@@ -1,27 +1,24 @@
 <?php
 
-use LLAR\Core\Helpers;
-use LLAR\Core\LimitLoginAttempts;
-
 if ( ! defined( 'ABSPATH' ) ) exit();
 
 /**
  * Stats, lists, lockout log and copy come from the controller via
  * get_logs_local_view_vars(); this template only assembles markup.
  *
- * @var $this LimitLoginAttempts
+ * @var \LLAR\Core\AdminUiController $this
  */
 
 $v = $this->get_logs_local_view_vars();
 
 $lockouts_total       = $v['lockouts_total'];
 $lockouts_now         = $v['lockouts_now'];
-$lockouts             = $v['lockouts'];
 $white_list_ips       = $v['white_list_ips'];
 $white_list_usernames = $v['white_list_usernames'];
 $black_list_ips       = $v['black_list_ips'];
 $black_list_usernames = $v['black_list_usernames'];
 $log                  = $v['log'];
+$link_kses            = $v['link_kses'];
 ?>
 
 <div id="llar-setting-page-logs">
@@ -92,7 +89,7 @@ $log                  = $v['log'];
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php echo esc_html( $v['username_list_hint'] ); ?>
+                                            <?php echo esc_html( $v['safelist_username_hint'] ); ?>
                                         </div>
                                     </div>
                                 </span>
@@ -123,7 +120,7 @@ $log                  = $v['log'];
                                     <span class="dashicons dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php echo esc_html( $v['username_list_hint'] ); ?>
+                                            <?php echo esc_html( $v['denylist_username_hint'] ); ?>
                                         </div>
                                     </div>
                                 </span>
@@ -133,16 +130,7 @@ $log                  = $v['log'];
                             </div>
                         </div>
                         <div class="description-additional p-0 mt-0_5">
-                            <?php echo wp_kses(
-                                $v['denylist_upgrade_html'],
-                                array(
-                                    'a' => array(
-                                        'href'   => true,
-                                        'class'  => true,
-                                        'target' => true,
-                                    ),
-                                )
-                            ); ?>
+                            <?php echo wp_kses( $v['denylist_upgrade_html'], $link_kses ); ?>
                         </div>
                     </td>
                 </tr>
@@ -210,16 +198,7 @@ $log                  = $v['log'];
                        value="<?php echo esc_attr( $v['clear_log_label'] ); ?>"
                        type="submit"/>
                 <span class="description-secondary">
-                    <?php echo wp_kses(
-                        $v['clear_log_upgrade_html'],
-                        array(
-                            'a' => array(
-                                'href'   => true,
-                                'class'  => true,
-                                'target' => true,
-                            ),
-                        )
-                    ); ?>
+                    <?php echo wp_kses( $v['clear_log_upgrade_html'], $link_kses ); ?>
                 </span>
             </div>
         </form>
@@ -250,16 +229,12 @@ $log                  = $v['log'];
                                 <?php echo esc_html( $user_info['gateway'] ); ?>
                             </td>
                             <td>
-								<?php
-								// Log rows keep the raw IP; lockouts may be keyed by /64.
-								$lockout_until = Helpers::get_active_lockout_until( $lockouts, $user_info['ip'] );
-								if ( $lockout_until > time() ) :
-									?>
+                                <?php if ( ! empty( $user_info['can_unlock'] ) ) : ?>
                                     <a href="#" class="button limit-login-unlock" data-ip="<?php echo esc_attr( $user_info['ip'] ); ?>"
                                        data-username="<?php echo esc_attr( $user_info['username'] ); ?>">
                                         <?php echo esc_html( $v['unlock_label'] ); ?>
                                     </a>
-                                <?php elseif ( $user_info['unlocked'] ) : ?>
+                                <?php elseif ( ! empty( $user_info['unlocked'] ) ) : ?>
                                     <?php echo esc_html( $v['unlocked_label'] ); ?>
                                 <?php endif ?>
                             </td>
