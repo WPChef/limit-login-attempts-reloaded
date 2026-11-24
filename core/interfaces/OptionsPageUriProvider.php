@@ -22,6 +22,7 @@ interface OptionsPageUriProvider {
 	 * Get the URI for the plugin's options page.
 	 *
 	 * @param string|false $tab Optional tab name to link to (e.g., 'settings', 'logs-local').
+	 *                          A "#fragment" suffix is appended unencoded.
 	 *                          Pass false to get the base options page URI.
 	 * @return string Full URI to the options page, optionally with tab parameter.
 	 */

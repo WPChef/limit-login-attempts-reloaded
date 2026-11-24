@@ -96,7 +96,9 @@ $border-radius__max: $border-radius * 2;
   }
 }
 
-.toplevel_page_limit-login-attempts {
+// Body class is toplevel_page_* with left menu, settings_page_* when under Settings.
+.toplevel_page_limit-login-attempts,
+.settings_page_limit-login-attempts {
 
   * {
     margin: 0;

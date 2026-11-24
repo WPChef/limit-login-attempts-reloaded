@@ -13,14 +13,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class AdminUiController {
 
+	/** Options page slug registered by the plugin. */
+	const OPTIONS_PAGE_SLUG = 'limit-login-attempts';
+
 	/** @var LimitLoginAttempts */
 	private $plugin;
 
 	/** @var string */
-	private $options_page_slug = 'limit-login-attempts';
+	private $options_page_slug;
 
 	public function __construct( LimitLoginAttempts $plugin ) {
-		$this->plugin = $plugin;
+		$this->plugin            = $plugin;
+		$this->options_page_slug = self::OPTIONS_PAGE_SLUG;
 	}
 
 	public function enqueue()
@@ -50,6 +54,8 @@ class AdminUiController {
 				'nonce_dismiss_onboarding_popup'  => $dismiss_onboarding_popup,
 				'nonce_subscribe_email'           => $subscribe_email,
 				'nonce_close_premium_message'     => $close_premium_message,
+				// Used by onboarding reset so the redirect follows the registered page (admin.php vs options-general.php).
+				'dashboard_url'                   => $this->get_options_page_uri( 'dashboard' ),
 				'nonce_extension_install'         => $extension_install,
 				'extension_installing_text'        => __( 'Installing...', 'limit-login-attempts-reloaded' ),
 				'extension_active_text'            => __( 'Active', 'limit-login-attempts-reloaded' ),
@@ -179,68 +185,69 @@ class AdminUiController {
 
 		global $submenu;
 
-		if ( Config::get( 'show_top_level_menu_item' ) ) {
-
-			add_menu_page(
-				'Limit Login Attempts',
-				'Limit Login Attempts' . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
-				LimitLoginAttempts::$capabilities,
-				$this->options_page_slug,
-				array( $this, 'options_page' ),
-				'data:image/svg+xml;base64,' . base64_encode( $this->get_svg_logo_content() ),
-				74
-			);
-
-			$is_cloud_app_enabled = Config::get( Config::OPTION_ACTIVE_APP ) === 'custom';
-			$submenu_items = $this->get_submenu_items();
-
-			$index = 1;
-			foreach ( $submenu_items as $item ) {
-				add_submenu_page(
-					$this->options_page_slug,
-					$item['name'],
-					$item['name'],
+		switch ( true ) {
+			case (bool) Config::get( 'show_top_level_menu_item' ):
+				add_menu_page(
+					'Limit Login Attempts',
+					'Limit Login Attempts' . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
 					LimitLoginAttempts::$capabilities,
-					$this->options_page_slug . $item['url'],
-					array( $this, 'options_page' )
+					$this->options_page_slug,
+					array( $this, 'options_page' ),
+					'data:image/svg+xml;base64,' . base64_encode( $this->get_svg_logo_content() ),
+					74
 				);
 
-				if ( ! empty ( $_GET['page'] ) && $_GET['page'] === $this->options_page_slug && ! empty( $_GET['tab'] ) && $_GET['tab'] === $item['id'] ) {
-					$submenu[$this->options_page_slug][$index][4] = 'current';
+				$is_cloud_app_enabled = Config::get( Config::OPTION_ACTIVE_APP ) === 'custom';
+				$submenu_items = $this->get_submenu_items();
+
+				$index = 1;
+				foreach ( $submenu_items as $item ) {
+					add_submenu_page(
+						$this->options_page_slug,
+						$item['name'],
+						$item['name'],
+						LimitLoginAttempts::$capabilities,
+						$this->options_page_slug . $item['url'],
+						array( $this, 'options_page' )
+					);
+
+					if ( ! empty ( $_GET['page'] ) && $_GET['page'] === $this->options_page_slug && ! empty( $_GET['tab'] ) && $_GET['tab'] === $item['id'] ) {
+						$submenu[$this->options_page_slug][$index][4] = 'current';
+					}
+					$index++;
 				}
-				$index++;
-			}
 
-			remove_submenu_page( $this->options_page_slug, $this->options_page_slug );
+				remove_submenu_page( $this->options_page_slug, $this->options_page_slug );
 
-			if ( ! $is_cloud_app_enabled && isset( $submenu[$this->options_page_slug] ) ) {
-				// Highlight the Premium submenu item (… Help, Extensions, Premium).
-				$premium_key = null;
+				if ( ! $is_cloud_app_enabled && isset( $submenu[$this->options_page_slug] ) ) {
+					// Highlight the Premium submenu item (… Help, Extensions, Premium).
+					$premium_key = null;
 
-				foreach ( $submenu[$this->options_page_slug] as $key => $item ) {
-					if ( ! empty( $item[2] ) && false !== strpos( $item[2], '&tab=premium' ) ) {
-						$premium_key = $key;
-						break;
+					foreach ( $submenu[$this->options_page_slug] as $key => $item ) {
+						if ( ! empty( $item[2] ) && false !== strpos( $item[2], '&tab=premium' ) ) {
+							$premium_key = $key;
+							break;
+						}
+					}
+
+					if ( null !== $premium_key ) {
+						$submenu[$this->options_page_slug][$premium_key][4] =
+							! empty( $submenu[$this->options_page_slug][$premium_key][4] )
+								? $submenu[$this->options_page_slug][$premium_key][4] . ' llar-submenu-premium-item'
+								: 'llar-submenu-premium-item';
 					}
 				}
+				break;
 
-				if ( null !== $premium_key ) {
-					$submenu[$this->options_page_slug][$premium_key][4] =
-						! empty( $submenu[$this->options_page_slug][$premium_key][4] )
-							? $submenu[$this->options_page_slug][$premium_key][4] . ' llar-submenu-premium-item'
-							: 'llar-submenu-premium-item';
-				}
-			}
-
-		} else {
-
-			add_options_page(
-				'Limit Login Attempts',
-				'Limit Login Attempts' . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
-				LimitLoginAttempts::$capabilities,
-				$this->options_page_slug,
-				array( $this, 'options_page' )
-			);
+			default:
+				add_options_page(
+					'Limit Login Attempts',
+					'Limit Login Attempts' . $this->menu_alert_icon() . $this->menu_mc_exhausted_icon(),
+					LimitLoginAttempts::$capabilities,
+					$this->options_page_slug,
+					array( $this, 'options_page' )
+				);
+				break;
 		}
 	}
 
@@ -381,24 +388,64 @@ class AdminUiController {
 	}
 
 	/**
-	 * Get the correct options page URI
+	 * Build the options page URI for a slug and optional tab.
 	 *
-	 * @param bool $tab
-	 * @return mixed
+	 * Shared by the instance getter and static callers (e.g. TrialLanding) so
+	 * the admin.php vs options-general.php decision lives in one place.
+	 *
+	 * @param string       $options_page_slug Options page slug.
+	 * @param string|false $tab               Optional tab slug; may carry a "#fragment"
+	 *                                        suffix that is appended unencoded. Pass
+	 *                                        false for the base options page URI.
+	 * @return string
 	 */
-	public function get_options_page_uri( $tab = false )
+	public static function build_options_page_uri( $options_page_slug, $tab = false )
 	{
-		if ( is_network_admin() ) {
-			$uri = network_admin_url( 'settings.php?page=' . $this->options_page_slug );
-		} else {
-			$uri = admin_url( 'admin.php?page=' . $this->options_page_slug );
+		switch ( true ) {
+			case is_network_admin():
+				$uri = network_admin_url( 'settings.php?page=' . $options_page_slug );
+				break;
+			case (bool) Config::get( 'show_top_level_menu_item' ):
+				$uri = admin_url( 'admin.php?page=' . $options_page_slug );
+				break;
+			default:
+				// add_options_page registers under Settings → options-general.php
+				$uri = admin_url( 'options-general.php?page=' . $options_page_slug );
+				break;
 		}
 
 		if ( ! empty( $tab ) ) {
-			$uri = add_query_arg( 'tab', $tab, $uri );
+			$fragment = '';
+			$parts    = explode( '#', $tab, 2 );
+
+			if ( isset( $parts[1] ) ) {
+				$tab      = $parts[0];
+				$fragment = $parts[1];
+			}
+
+			if ( '' !== $tab ) {
+				$uri = add_query_arg( 'tab', $tab, $uri );
+			}
+
+			if ( '' !== $fragment ) {
+				$uri .= '#' . $fragment;
+			}
 		}
 
 		return $uri;
+	}
+
+	/**
+	 * Get the correct options page URI
+	 *
+	 * @param string|false $tab Optional tab slug; may carry a "#fragment" suffix
+	 *                          that is appended unencoded. Pass false for the
+	 *                          base options page URI.
+	 * @return string
+	 */
+	public function get_options_page_uri( $tab = false )
+	{
+		return self::build_options_page_uri( $this->options_page_slug, $tab );
 	}
 
 
@@ -680,12 +727,13 @@ class AdminUiController {
 
 			check_admin_referer( 'limit-login-attempts-options' );
 
-			if ( is_network_admin() ) {
-
-				Config::update( 'allow_local_options', ! empty( $_POST['allow_local_options'] ) );
-			} elseif ( Helpers::is_network_mode() ) {
-
-				Config::update( 'use_local_options', empty( $_POST['use_global_options'] ) );
+			switch ( true ) {
+				case is_network_admin():
+					Config::update( 'allow_local_options', ! empty( $_POST['allow_local_options'] ) );
+					break;
+				case Helpers::is_network_mode():
+					Config::update( 'use_local_options', empty( $_POST['use_global_options'] ) );
+					break;
 			}
 
 			/* Should we clear log? */

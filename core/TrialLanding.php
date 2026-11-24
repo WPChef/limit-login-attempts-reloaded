@@ -194,7 +194,7 @@ class TrialLanding {
 	 * @return string
 	 */
 	public static function onboarding_return_url( $token = '' ) {
-		$base = admin_url( 'admin.php?page=limit-login-attempts&tab=dashboard' );
+		$base = AdminUiController::build_options_page_uri( AdminUiController::OPTIONS_PAGE_SLUG, 'dashboard' );
 		$base = add_query_arg( 'onboarding', 'true', $base );
 
 		return self::with_token( $base, $token );
@@ -218,7 +218,10 @@ class TrialLanding {
 			$tab = 'dashboard';
 		}
 
-		return self::with_token( admin_url( 'admin.php?page=limit-login-attempts&tab=' . $tab ), $token );
+		return self::with_token(
+			AdminUiController::build_options_page_uri( AdminUiController::OPTIONS_PAGE_SLUG, $tab ),
+			$token
+		);
 	}
 
 	/**

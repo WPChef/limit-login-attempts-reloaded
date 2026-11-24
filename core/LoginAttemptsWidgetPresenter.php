@@ -47,7 +47,7 @@ class LoginAttemptsWidgetPresenter {
 			'limit'                 => $is_tab_dashboard ? 5 : 10,
 			'title'                 => __( 'Successful Login Attempts', 'limit-login-attempts-reloaded' ),
 			'view_more_label'       => __( ' View more', 'limit-login-attempts-reloaded' ),
-			'view_more_url'         => '/wp-admin/admin.php?page=limit-login-attempts&tab=logs-custom',
+			'view_more_url'         => $this->plugin->get_options_page_uri( 'logs-custom' ),
 			'headers'               => array(
 				__( 'Time', 'limit-login-attempts-reloaded' ),
 				__( 'Login', 'limit-login-attempts-reloaded' ),
@@ -60,7 +60,7 @@ class LoginAttemptsWidgetPresenter {
 			'blur_description'      => __( 'All logs are stored in the cloud to ensure malicious users are unable to delete or manipulate site login data.', 'limit-login-attempts-reloaded' ),
 			'blur_footer'           => sprintf(
 				__( 'This feature is only available for<br><a class="link__style_unlink llar_turquoise" href="%s">Premium</a> users.', 'limit-login-attempts-reloaded' ),
-				'/wp-admin/admin.php?page=limit-login-attempts&tab=premium'
+				$this->plugin->get_options_page_uri( 'premium' )
 			),
 		);
 	}
