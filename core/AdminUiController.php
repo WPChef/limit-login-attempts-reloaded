@@ -13,14 +13,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class AdminUiController {
 
+	/** Options page slug registered by the plugin. */
+	const OPTIONS_PAGE_SLUG = 'limit-login-attempts';
+
 	/** @var LimitLoginAttempts */
 	private $plugin;
 
 	/** @var string */
-	private $options_page_slug = 'limit-login-attempts';
+	private $options_page_slug;
 
 	public function __construct( LimitLoginAttempts $plugin ) {
-		$this->plugin = $plugin;
+		$this->plugin            = $plugin;
+		$this->options_page_slug = self::OPTIONS_PAGE_SLUG;
 	}
 
 	public function enqueue()
@@ -383,22 +387,26 @@ class AdminUiController {
 	}
 
 	/**
-	 * Get the correct options page URI
+	 * Build the options page URI for a slug and optional tab.
 	 *
-	 * @param string|false $tab Optional tab slug; may carry a "#fragment" suffix
-	 *                          that is appended unencoded. Pass false for the
-	 *                          base options page URI.
+	 * Shared by the instance getter and static callers (e.g. TrialLanding) so
+	 * the admin.php vs options-general.php decision lives in one place.
+	 *
+	 * @param string       $options_page_slug Options page slug.
+	 * @param string|false $tab               Optional tab slug; may carry a "#fragment"
+	 *                                        suffix that is appended unencoded. Pass
+	 *                                        false for the base options page URI.
 	 * @return string
 	 */
-	public function get_options_page_uri( $tab = false )
+	public static function build_options_page_uri( $options_page_slug, $tab = false )
 	{
 		if ( is_network_admin() ) {
-			$uri = network_admin_url( 'settings.php?page=' . $this->options_page_slug );
+			$uri = network_admin_url( 'settings.php?page=' . $options_page_slug );
 		} elseif ( Config::get( 'show_top_level_menu_item' ) ) {
-			$uri = admin_url( 'admin.php?page=' . $this->options_page_slug );
+			$uri = admin_url( 'admin.php?page=' . $options_page_slug );
 		} else {
 			// add_options_page registers under Settings → options-general.php
-			$uri = admin_url( 'options-general.php?page=' . $this->options_page_slug );
+			$uri = admin_url( 'options-general.php?page=' . $options_page_slug );
 		}
 
 		if ( ! empty( $tab ) ) {
@@ -420,6 +428,19 @@ class AdminUiController {
 		}
 
 		return $uri;
+	}
+
+	/**
+	 * Get the correct options page URI
+	 *
+	 * @param string|false $tab Optional tab slug; may carry a "#fragment" suffix
+	 *                          that is appended unencoded. Pass false for the
+	 *                          base options page URI.
+	 * @return string
+	 */
+	public function get_options_page_uri( $tab = false )
+	{
+		return self::build_options_page_uri( $this->options_page_slug, $tab );
 	}
 
 
