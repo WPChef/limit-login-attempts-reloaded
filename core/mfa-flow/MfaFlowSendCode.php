@@ -30,7 +30,16 @@ class MfaFlowSendCode {
 		$store = new SessionStore();
 
 		$stored_secret = $store->get_send_email_secret( $token );
-		if ( null === $stored_secret || ! hash_equals( (string) $stored_secret, (string) $secret ) ) {
+		if ( null === $stored_secret ) {
+			MfaFlowDebug::forbidden( 'no_send_secret', $token );
+			return array(
+				'success'     => false,
+				'http_status' => 403,
+				'message'     => 'Forbidden',
+			);
+		}
+		if ( ! hash_equals( (string) $stored_secret, (string) $secret ) ) {
+			MfaFlowDebug::forbidden( 'secret_mismatch', $token );
 			return array(
 				'success'     => false,
 				'http_status' => 403,
@@ -40,6 +49,7 @@ class MfaFlowSendCode {
 
 		$session = $store->get_session( $token );
 		if ( ! $session ) {
+			MfaFlowDebug::forbidden( 'no_session', $token );
 			return array(
 				'success'     => false,
 				'http_status' => 403,
