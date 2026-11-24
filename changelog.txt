@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.4.8 =
+* Fixed two-factor login when the login address uses a different host or port than the site URL. The return from the code page and the request that sends the email now use the same address, and the login cookie is kept if a prefetch hits the return URL first.
+* Rescue links now open the login page instead of the front page, so language and cache redirects no longer trap them in a loop. Links that already point at the front page still work.
+
 = 3.4.7 =
 * The fopen HTTP transport no longer triggers the PHP 8.5 deprecation warning for $http_response_header.
 
