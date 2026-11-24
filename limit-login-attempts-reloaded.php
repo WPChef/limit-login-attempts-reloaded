@@ -26,7 +26,7 @@ define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
  * Minimum advertised plan price in USD (e.g. Personal).
  * Change it here; currency signs, request quotas etc. stay at usage sites.
  */
-define( 'LLAR_MIN_PLAN_PRICE', '3.33' );
+define( 'LLAR_MIN_PLAN_PRICE', '1.99' );
 
 /**
  * Default risk widget config (bounds, colors, level rules).
