@@ -97,6 +97,14 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && ! empty( $black_l
                         <div class="field-col">
                             <div class="description-secondary p-0">
                                 <?php _e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="hint_tooltip-parent">
+                                    <span class="dashicons dashicons-editor-help"></span>
+                                    <div class="hint_tooltip">
+                                        <div class="hint_tooltip-content">
+                                            <?php _e( "A username in this list does not also cover that account's email. To cover both, add the username and the email on separate lines. Each line is checked on its own, which avoids extra database lookups during attacks, works better with other plugins, and keeps the result predictable.", 'limit-login-attempts-reloaded' ); ?>
+                                        </div>
+                                    </div>
+                                </span>
                             </div>
                             <div class="textarea_border mt-0_5">
                                 <textarea name="lla_whitelist_usernames" rows="5" cols="50"><?php echo esc_textarea( $white_list_usernames ); ?></textarea>
@@ -120,6 +128,14 @@ $black_list_usernames = ( is_array( $black_list_usernames ) && ! empty( $black_l
                         <div class="field-col">
                             <div class="description-secondary p-0">
                                 <?php _e( 'One Username per line', 'limit-login-attempts-reloaded' ); ?>
+                                <span class="hint_tooltip-parent">
+                                    <span class="dashicons dashicons-editor-help"></span>
+                                    <div class="hint_tooltip">
+                                        <div class="hint_tooltip-content">
+                                            <?php _e( "A username in this list does not also cover that account's email. To cover both, add the username and the email on separate lines. Each line is checked on its own, which avoids extra database lookups during attacks, works better with other plugins, and keeps the result predictable.", 'limit-login-attempts-reloaded' ); ?>
+                                        </div>
+                                    </div>
+                                </span>
                             </div>
                             <div class="textarea_border mt-0_5">
                                 <textarea name="lla_blacklist_usernames" rows="5" cols="50"><?php echo esc_textarea( $black_list_usernames ); ?></textarea>
