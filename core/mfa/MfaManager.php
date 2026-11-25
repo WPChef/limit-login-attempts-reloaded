@@ -379,35 +379,15 @@ class MfaManager {
 	 * @return void Exits with wp_send_json_*.
 	 */
 	public function ajax_generate_rescue_codes() {
-		if ( ! $this->user_can_manage_mfa() ) {
-			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'limit-login-attempts-reloaded' ) ) );
-		}
-		if ( ! check_ajax_referer( 'limit-login-attempts-options', 'nonce', false ) ) {
-			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ) );
-		}
+		$this->require_mfa_ajax_access();
 
-		$user_id   = get_current_user_id();
-		$rate_key  = 'llar_mfa_pdf_gen_' . $user_id;
-		$rate_data = get_transient( $rate_key );
-		if ( false !== $rate_data && is_array( $rate_data ) ) {
-			$elapsed = time() - (int) $rate_data['t'];
-			if ( $elapsed < MfaConstants::PDF_RATE_LIMIT_PERIOD && (int) $rate_data['c'] >= MfaConstants::PDF_RATE_LIMIT_MAX ) {
-				wp_send_json_error( array( 'message' => __( 'Too many generations. Please try again in a minute.', 'limit-login-attempts-reloaded' ) ) );
-			}
-			if ( $elapsed >= MfaConstants::PDF_RATE_LIMIT_PERIOD ) {
-				$rate_data = array(
-					'c' => 0,
-					't' => time(),
-				);
-			}
-		} else {
-			$rate_data = array(
-				'c' => 0,
-				't' => time(),
-			);
-		}
-		$rate_data['c'] = (int) $rate_data['c'] + 1;
-		set_transient( $rate_key, $rate_data, MfaConstants::PDF_RATE_LIMIT_PERIOD );
+		$user_id = get_current_user_id();
+		$this->consume_ajax_rate_limit(
+			'llar_mfa_pdf_gen_' . $user_id,
+			MfaConstants::PDF_RATE_LIMIT_MAX,
+			MfaConstants::PDF_RATE_LIMIT_PERIOD,
+			__( 'Too many generations. Please try again in a minute.', 'limit-login-attempts-reloaded' )
+		);
 
 		try {
 			$plain_codes = $this->backup_codes->generate();
@@ -487,40 +467,20 @@ class MfaManager {
 	 * @return void Exits with wp_send_json_*.
 	 */
 	public function ajax_test_email() {
-		if ( ! $this->user_can_manage_mfa() ) {
-			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'limit-login-attempts-reloaded' ) ) );
-		}
-		if ( ! check_ajax_referer( 'limit-login-attempts-options', 'nonce', false ) ) {
-			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ) );
-		}
+		$this->require_mfa_ajax_access();
 
 		$user = wp_get_current_user();
 		if ( ! $user || 0 === (int) $user->ID || empty( $user->user_email ) ) {
 			wp_send_json_error( array( 'message' => __( 'Your account has no email address. Please set an email in your profile; 2FA requires it to send codes.', 'limit-login-attempts-reloaded' ) ) );
 		}
 
-		$user_id   = (int) $user->ID;
-		$rate_key  = 'llar_mfa_test_email_rl_' . $user_id;
-		$rate_data = get_transient( $rate_key );
-		if ( false !== $rate_data && is_array( $rate_data ) ) {
-			$elapsed = time() - (int) $rate_data['t'];
-			if ( $elapsed < 60 && (int) $rate_data['c'] >= 5 ) {
-				wp_send_json_error( array( 'message' => __( 'Too many attempts. Please try again in a minute.', 'limit-login-attempts-reloaded' ) ) );
-			}
-			if ( $elapsed >= 60 ) {
-				$rate_data = array(
-					'c' => 0,
-					't' => time(),
-				);
-			}
-		} else {
-			$rate_data = array(
-				'c' => 0,
-				't' => time(),
-			);
-		}
-		$rate_data['c'] = (int) $rate_data['c'] + 1;
-		set_transient( $rate_key, $rate_data, 60 );
+		$user_id = (int) $user->ID;
+		$this->consume_ajax_rate_limit(
+			'llar_mfa_test_email_rl_' . $user_id,
+			5,
+			60,
+			__( 'Too many attempts. Please try again in a minute.', 'limit-login-attempts-reloaded' )
+		);
 
 		$store     = new SessionStore();
 		$token_key = 'llar_mfa_test_email_token_' . $user_id;
@@ -562,7 +522,6 @@ class MfaManager {
 				'fallback_url' => isset( $urls['send_email_url_fallback'] ) ? (string) $urls['send_email_url_fallback'] : '',
 				'token'        => $token,
 				'secret'       => $secret,
-				'email'        => $user->user_email,
 			)
 		);
 	}
@@ -573,34 +532,80 @@ class MfaManager {
 	 * @return void Exits with wp_send_json_*.
 	 */
 	public function ajax_test_email_cleanup() {
-		if ( ! $this->user_can_manage_mfa() ) {
-			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'limit-login-attempts-reloaded' ) ) );
-		}
-		if ( ! check_ajax_referer( 'limit-login-attempts-options', 'nonce', false ) ) {
-			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ) );
-		}
+		$this->require_mfa_ajax_access();
 
 		$token = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
 		if ( '' === $token ) {
 			wp_send_json_success();
 		}
 
-		$store   = new SessionStore();
-		$session = $store->get_session( $token );
-		if ( $session && ! empty( $session['is_test'] ) ) {
-			$user_id = get_current_user_id();
-			if ( ! empty( $session['user_id'] ) && (int) $session['user_id'] === (int) $user_id ) {
-				// delete_session removes session + send_email_secret + OTP.
-				$store->delete_session( $token );
-				$token_key = 'llar_mfa_test_email_token_' . $user_id;
-				$stored    = get_transient( $token_key );
-				if ( is_string( $stored ) && hash_equals( $stored, $token ) ) {
-					delete_transient( $token_key );
-				}
-			}
+		$user_id   = get_current_user_id();
+		$store     = new SessionStore();
+		$session   = $store->get_session( $token );
+		$token_key = 'llar_mfa_test_email_token_' . $user_id;
+		$stored    = get_transient( $token_key );
+		$owned     = is_string( $stored ) && hash_equals( $stored, $token );
+
+		// Session may already be gone (one-shot send); still clear the user token pointer.
+		if ( $session && ! empty( $session['is_test'] ) && ! empty( $session['user_id'] ) && (int) $session['user_id'] === (int) $user_id ) {
+			$store->delete_session( $token );
+			$owned = true;
+		} elseif ( $owned ) {
+			$store->delete_session( $token );
+		}
+		if ( $owned ) {
+			delete_transient( $token_key );
 		}
 
 		wp_send_json_success();
+	}
+
+	/**
+	 * Capability + options nonce for MFA admin AJAX; exits on failure.
+	 *
+	 * @return void
+	 */
+	private function require_mfa_ajax_access() {
+		if ( ! $this->user_can_manage_mfa() ) {
+			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'limit-login-attempts-reloaded' ) ) );
+		}
+		if ( ! check_ajax_referer( 'limit-login-attempts-options', 'nonce', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ) );
+		}
+	}
+
+	/**
+	 * Shared AJAX rate-limit (count/window in a transient). Exits when exceeded.
+	 *
+	 * @param string $rate_key Transient key.
+	 * @param int    $max      Max attempts per window.
+	 * @param int    $period   Window length in seconds.
+	 * @param string $message  Error message when limited.
+	 * @return void
+	 */
+	private function consume_ajax_rate_limit( $rate_key, $max, $period, $message ) {
+		$max      = (int) $max;
+		$period   = (int) $period;
+		$rate_data = get_transient( $rate_key );
+		if ( false !== $rate_data && is_array( $rate_data ) ) {
+			$elapsed = time() - (int) $rate_data['t'];
+			if ( $elapsed < $period && (int) $rate_data['c'] >= $max ) {
+				wp_send_json_error( array( 'message' => $message ) );
+			}
+			if ( $elapsed >= $period ) {
+				$rate_data = array(
+					'c' => 0,
+					't' => time(),
+				);
+			}
+		} else {
+			$rate_data = array(
+				'c' => 0,
+				't' => time(),
+			);
+		}
+		$rate_data['c'] = (int) $rate_data['c'] + 1;
+		set_transient( $rate_key, $rate_data, $period );
 	}
 
 	/**
@@ -660,9 +665,8 @@ class MfaManager {
 		$merged = array_merge(
 			$existing_data,
 			array(
-				'nonce_mfa_generate_codes'  => $mfa_generate_codes,
-				'nonce_mfa_send_test_email' => $mfa_generate_codes,
-				'ajax_url'                  => admin_url( 'admin-ajax.php' ),
+				'nonce_mfa_generate_codes' => $mfa_generate_codes,
+				'ajax_url'                 => admin_url( 'admin-ajax.php' ),
 			)
 		);
 		wp_localize_script( 'lla-main', 'llar_vars', $merged );

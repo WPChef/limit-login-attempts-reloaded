@@ -57,8 +57,11 @@ $profile_url = admin_url( 'profile.php' );
 							<p class="description">
 								<?php echo esc_html__( '2FA emails are sent differently. Test delivery before enabling 2FA, even if regular site emails work.', 'limit-login-attempts-reloaded' ); ?>
 							</p>
-							<?php if ( ! empty( $current_user_email ) ) : ?>
-								<div class="llar-rescue-email-test-row">
+							<?php
+							$has_email = ! empty( $current_user_email );
+							?>
+							<div class="llar-rescue-email-test-row">
+								<?php if ( $has_email ) : ?>
 									<p class="description llar-rescue-email-test-copy">
 										<?php
 										echo wp_kses(
@@ -80,27 +83,20 @@ $profile_url = admin_url( 'profile.php' );
 										);
 										?>
 									</p>
-									<button type="button" class="button menu__item button__transparent_orange llar-rescue-send-test-email" id="llar-rescue-send-test-email">
-										<?php echo esc_html__( 'Send', 'limit-login-attempts-reloaded' ); ?>
-									</button>
-								</div>
-								<p class="llar-rescue-email-test-status" id="llar-rescue-email-test-status" aria-live="polite"></p>
-								<label style="display: block; margin-top: 12px;">
-									<input type="checkbox" id="llar-rescue-email-received-confirm" name="llar_rescue_email_received_confirm" value="1" required aria-required="true"/>
-									<?php echo esc_html__( 'I received the test email with the code "T E S T O K".', 'limit-login-attempts-reloaded' ); ?>
-								</label>
-							<?php else : ?>
-								<p class="description" style="color: #dc3232;">
-									<?php esc_html_e( 'Your account has no email address. Please set an email in your profile; 2FA requires it to send codes.', 'limit-login-attempts-reloaded' ); ?>
-								</p>
-								<button type="button" class="button menu__item button__transparent_orange llar-rescue-send-test-email" id="llar-rescue-send-test-email" disabled>
+								<?php else : ?>
+									<p class="description" style="color: #dc3232;">
+										<?php esc_html_e( 'Your account has no email address. Please set an email in your profile; 2FA requires it to send codes.', 'limit-login-attempts-reloaded' ); ?>
+									</p>
+								<?php endif; ?>
+								<button type="button" class="button menu__item button__transparent_orange llar-rescue-send-test-email" id="llar-rescue-send-test-email"<?php disabled( ! $has_email ); ?>>
 									<?php echo esc_html__( 'Send', 'limit-login-attempts-reloaded' ); ?>
 								</button>
-								<label style="display: block; margin-top: 12px;">
-									<input type="checkbox" id="llar-rescue-email-received-confirm" name="llar_rescue_email_received_confirm" value="1" disabled required aria-required="true"/>
-									<?php echo esc_html__( 'I received the test email with the code "T E S T O K".', 'limit-login-attempts-reloaded' ); ?>
-								</label>
-							<?php endif; ?>
+							</div>
+							<p class="llar-rescue-email-test-status" id="llar-rescue-email-test-status" aria-live="polite"></p>
+							<label style="display: block; margin-top: 12px;">
+								<input type="checkbox" id="llar-rescue-email-received-confirm" name="llar_rescue_email_received_confirm" value="1" required aria-required="true"<?php disabled( ! $has_email ); ?>/>
+								<?php echo esc_html__( 'I received the test email with the code "T E S T O K".', 'limit-login-attempts-reloaded' ); ?>
+							</label>
 						</div>
 						<div class="llar-rescue-confirm-row" style="display: none; visibility: hidden;">
 							<label style="display: block; margin-bottom: 10px;">

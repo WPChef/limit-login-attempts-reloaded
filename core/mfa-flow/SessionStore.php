@@ -43,12 +43,7 @@ class SessionStore {
 		if ( ! is_string( $token ) || '' === $token ) {
 			return false;
 		}
-		if ( null === $ttl ) {
-			$ttl = defined( 'LLA_MFA_SESSION_TTL' ) ? (int) LLA_MFA_SESSION_TTL : 600;
-		} else {
-			$ttl = (int) $ttl;
-		}
-		$ttl = $ttl > 0 ? $ttl : 600;
+		$ttl = $this->resolve_ttl( $ttl );
 
 		$data = array(
 			'token'                => $token,
@@ -318,14 +313,24 @@ class SessionStore {
 		if ( ! is_string( $token ) || '' === $token || ! is_string( $secret ) || '' === $secret ) {
 			return false;
 		}
+		$ttl = $this->resolve_ttl( $ttl );
+		$key = LLA_MFA_FLOW_TRANSIENT_SEND_SECRET_PREFIX . $token;
+		return (bool) set_transient( $key, $secret, $ttl );
+	}
+
+	/**
+	 * Normalize transient TTL: null → LLA_MFA_SESSION_TTL (default 600), invalid → 600.
+	 *
+	 * @param int|null $ttl Requested TTL.
+	 * @return int
+	 */
+	private function resolve_ttl( $ttl ) {
 		if ( null === $ttl ) {
 			$ttl = defined( 'LLA_MFA_SESSION_TTL' ) ? (int) LLA_MFA_SESSION_TTL : 600;
 		} else {
 			$ttl = (int) $ttl;
 		}
-		$ttl = $ttl > 0 ? $ttl : 600;
-		$key = LLA_MFA_FLOW_TRANSIENT_SEND_SECRET_PREFIX . $token;
-		return (bool) set_transient( $key, $secret, $ttl );
+		return $ttl > 0 ? $ttl : 600;
 	}
 
 	/**

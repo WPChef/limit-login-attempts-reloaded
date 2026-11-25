@@ -72,12 +72,21 @@ class MfaFlowSendCode {
 		if ( $is_test ) {
 			$context['subject'] = __( '[TEST] Verify your login', 'limit-login-attempts-reloaded' );
 		}
-		$result  = $provider->send_code( $user, $code, $context );
+		$result = $provider->send_code( $user, $code, $context );
 		if ( ! empty( $result['success'] ) ) {
-			$store->save_otp( $token, $code );
 			if ( $is_test ) {
-				// One-shot: delete_session removes session + send_email_secret + OTP.
+				// One-shot test: no OTP needed; drop session + admin token pointer.
 				$store->delete_session( $token );
+				$uid = ! empty( $session['user_id'] ) ? (int) $session['user_id'] : 0;
+				if ( $uid > 0 ) {
+					$token_key = 'llar_mfa_test_email_token_' . $uid;
+					$stored    = get_transient( $token_key );
+					if ( is_string( $stored ) && hash_equals( $stored, (string) $token ) ) {
+						delete_transient( $token_key );
+					}
+				}
+			} else {
+				$store->save_otp( $token, $code );
 			}
 			return array(
 				'success'     => true,
