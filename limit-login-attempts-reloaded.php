@@ -5,7 +5,7 @@ Description: Block excessive login attempts and protect your site against brute 
 Author: Limit Login Attempts Reloaded
 Author URI: https://www.limitloginattempts.com/
 Text Domain: limit-login-attempts-reloaded
-Version: 3.4.2
+Version: 3.4.8
 
 Copyright 2008-2012 Johan Eenfeldt, 2016–present Limit Login Attempts Reloaded
 */
@@ -21,6 +21,12 @@ define( 'LLA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'LLA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LLA_PLUGIN_FILE', __FILE__ );
 define( 'LLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+
+/**
+ * Minimum advertised plan price in USD (e.g. Personal).
+ * Change it here; currency signs, request quotas etc. stay at usage sites.
+ */
+define( 'LLAR_MIN_PLAN_PRICE', '1.99' );
 
 /**
  * Default risk widget config (bounds, colors, level rules).

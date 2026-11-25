@@ -218,24 +218,27 @@ class LoginAuthenticationHandler {
 			return '';
 		}
 
-		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
-			return preg_replace( '/\.\d+$/', '.0', $ip );
+		// Same unmapping as rate-limit keys (::ffff:/compatible → IPv4).
+		$normalized = Helpers::normalize_ip_for_rate_limit( $ip );
+
+		if ( filter_var( $normalized, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return preg_replace( '/\.\d+$/', '.0', $normalized );
 		}
 
-		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
-			if ( function_exists( 'inet_pton' ) && function_exists( 'inet_ntop' ) ) {
-				$binary = inet_pton( $ip );
-				if ( false !== $binary && 16 === strlen( $binary ) ) {
-					$masked = substr( $binary, 0, 8 ) . str_repeat( "\0", 8 );
-					$masked_ip = inet_ntop( $masked );
-					if ( false !== $masked_ip ) {
-						return $masked_ip . '/64';
-					}
-				}
+		if ( filter_var( $normalized, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+			if ( '::1' === $normalized ) {
+				return '::1';
 			}
-			if ( function_exists( 'wp_hash' ) ) {
-				return wp_hash( $ip );
+			// Privacy: never log finer than /64, even if rate-limit prefix is larger.
+			$prefix    = min( 64, Helpers::ipv6_rate_limit_prefix() );
+			$masked_ip = Helpers::ipv6_network_address( $normalized, $prefix );
+			if ( false !== $masked_ip ) {
+				return $masked_ip . '/' . $prefix;
 			}
+		}
+
+		if ( function_exists( 'wp_hash' ) ) {
+			return wp_hash( $ip );
 		}
 
 		return '***';

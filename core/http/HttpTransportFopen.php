@@ -45,6 +45,19 @@ class HttpTransportFopen implements HttpTransportInterface {
 	}
 
 	/**
+	 * Parse an HTTP status line into code + optional reason phrase.
+	 *
+	 * @param string $status_line e.g. "HTTP/1.1 200 OK"
+	 * @return array{0:string|null,1:string|null} status code and message
+	 */
+	private static function parse_status_line( $status_line ) {
+		$parts = explode( ' ', $status_line, 3 );
+		$code  = isset( $parts[1] ) ? $parts[1] : null;
+		$msg   = isset( $parts[2] ) ? $parts[2] : null;
+		return array( $code, $msg );
+	}
+
+	/**
 	 * Single stream request, no redirect following.
 	 *
 	 * @param string     $url
@@ -93,20 +106,36 @@ class HttpTransportFopen implements HttpTransportInterface {
 		$status   = null;
 		$response = null;
 
+		// PHP 8.5: magic $http_response_header is deprecated. Prefer the 8.4+
+		// API; else variable-variable (must stay in this scope — a helper
+		// would not see the locally scoped magic table on older PHP).
+		$response_headers = function_exists( 'http_get_last_response_headers' )
+			? http_get_last_response_headers()
+			: ( ${'http_response_header'} ?? null );
+		if ( ! is_array( $response_headers ) ) {
+			$response_headers = array();
+		}
+
 		if ( ! $fp ) {
 
-			if ( ! empty( $http_response_header[0] ) ) {
-				list(, $code, $message ) = explode( ' ', $http_response_header[0], 3 );
-				$error                   = $message;
-				$status                  = $code;
+			if ( ! empty( $response_headers[0] ) ) {
+				list( $status, $error ) = self::parse_status_line( $response_headers[0] );
+				if ( null === $error ) {
+					$error = $response_headers[0];
+				}
 
 			} else {
 				$last_err = error_get_last();
 				$error    = ! empty( $last_err['message'] ) ? $last_err['message'] : 'Unknown error!';
+				$status   = 0;
 			}
 		} else {
-			list(, $code ) = explode( ' ', $http_response_header[0], 3 );
-			$status        = $code;
+			if ( ! empty( $response_headers[0] ) ) {
+				list( $status ) = self::parse_status_line( $response_headers[0] );
+			}
+			if ( null === $status || '' === $status ) {
+				$status = 0;
+			}
 
 			$response = stream_get_contents( $fp );
 		}
@@ -115,7 +144,7 @@ class HttpTransportFopen implements HttpTransportInterface {
 			'data'        => $response,
 			'status'      => intval( $status ),
 			'error'       => $error,
-			'raw_headers' => isset( $http_response_header ) ? $http_response_header : array(),
+			'raw_headers' => $response_headers,
 		);
 	}
 }

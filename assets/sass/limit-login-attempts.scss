@@ -816,6 +816,10 @@
   @extend #llar-setting-page;
 }
 
+#llar-setting-page-extensions {
+  @extend #llar-setting-page;
+}
+
 #llar-setting-page-debug {
   @extend #llar-setting-page;
 
@@ -2690,6 +2694,7 @@
 @import "admin-dashboard-widgets";
 @import "onboarding-popup";
 @import "premium-tab";
+@import "extensions-tab";
 @import "help-page";
 @import "micro-cloud-modal";
 @import "mfa-tab";

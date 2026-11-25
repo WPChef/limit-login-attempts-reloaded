@@ -43,7 +43,28 @@ if ( !defined( 'ABSPATH' ) ) exit();
                 loading_data = false,
                 page_offset = '',
                 page_limit = 10,
-                total_loaded = 0;
+                total_loaded = 0,
+                emptyLockoutsLabel = <?php echo wp_json_encode( __( 'No lockouts yet.', 'limit-login-attempts-reloaded' ) ); ?>;
+
+            /**
+             * When the API ends with empty pages + a cursor (no rows ever
+             * arrived), the Presenter correctly skips empty HTML on those
+             * pages. Once the list is exhausted, restore the empty-state row
+             * if the table still has no data rows.
+             */
+            function ensureEmptyStateIfNeeded() {
+                if ($log_table_body.children('tr').not('.empty-row').length > 0) {
+                    return;
+                }
+                if ($log_table_body.children('tr.empty-row').length > 0) {
+                    return;
+                }
+                $log_table_body.append(
+                    '<tr class="empty-row"><td colspan="4" style="text-align: center">' +
+                    emptyLockoutsLabel +
+                    '</td></tr>'
+                );
+            }
 
             $infinity_box.on('scroll', function (){
                 if (!loading_data && $infinity_box.get(0).scrollTop + $infinity_box.get(0).clientHeight >= $infinity_box.get(0).scrollHeight - 1) {
@@ -98,6 +119,7 @@ if ( !defined( 'ABSPATH' ) ) exit();
                         return;
                     }
 
+                    $log_table_body.find('tr.empty-row').remove();
                     $log_table_body.append(response.data.html);
 
                     total_loaded += response.data.total_items;
@@ -107,6 +129,7 @@ if ( !defined( 'ABSPATH' ) ) exit();
                         // No offset means the whole list has been loaded.
                         case !response.data.offset:
                             page_offset = false;
+                            ensureEmptyStateIfNeeded();
                             break;
 
                         // A partial batch with an offset means there is more data,

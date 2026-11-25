@@ -4,10 +4,12 @@ namespace LLAR\Core\MfaFlow;
 
 use LLAR\Core\CloudAclService;
 use LLAR\Core\Config;
+use LLAR\Core\Helpers;
 use LLAR\Core\IpAddressResolver;
 use LLAR\Core\LimitLoginAttempts;
 use LLAR\Core\LocalLockoutManager;
 use LLAR\Core\MfaConstants;
+use LLAR\Core\Mfa\MfaUrl;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -82,9 +84,7 @@ class MfaFlowLoginHandler {
 			header( 'Location: ' . $url, true, 302 );
 			exit;
 		}
-		$url_attr = esc_attr( $url );
-		$url_js   = esc_js( $url );
-		echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' . $url_attr . '"><title>Redirect</title></head><body><p><a href="' . $url_attr . '">Continue to verification</a></p><script>window.location.replace("' . $url_js . '");</script></body></html>';
+		echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' . esc_attr( $url ) . '"><title>Redirect</title></head><body><p><a href="' . esc_url( $url ) . '">Continue to verification</a></p><script>window.location.replace("' . esc_js( $url ) . '");</script></body></html>';
 		exit;
 	}
 
@@ -129,12 +129,20 @@ class MfaFlowLoginHandler {
 		}
 		$ip = $this->ip_resolver->get_address();
 
-		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->local_lockout->is_local_allowlisted_username( $username, $authenticated_user ) ) {
+		// The MFA skip decision must be made for the account that gets the
+		// session, not for whatever identifier string the request carried.
+		// A spoofed username param on a third-party login form must not be
+		// able to match the allow list or a cloud ACL pass entry.
+		$identity_username = ( is_a( $authenticated_user, 'WP_User' ) && ! empty( $authenticated_user->user_login ) )
+			? $authenticated_user->user_login
+			: $username;
+
+		if ( $this->ip_resolver->is_ip_whitelisted( $ip ) || $this->local_lockout->is_local_allowlisted_username( $identity_username, $authenticated_user ) ) {
 			return null;
 		}
 
 		if ( LimitLoginAttempts::$cloud_app ) {
-			$acl_response = $this->cloud_acl->get_auth_acl_response( $username );
+			$acl_response = $this->cloud_acl->get_auth_acl_response( $identity_username );
 			if ( is_array( $acl_response ) && ! empty( $acl_response['result'] ) && 'pass' === $acl_response['result'] ) {
 				return null;
 			}
@@ -196,10 +204,16 @@ class MfaFlowLoginHandler {
 
 		if ( is_array( $rate ) && isset( $rate['t'], $rate['c'] ) ) {
 			if ( time() - (int) $rate['t'] >= $period ) {
-				$rate = array( 'c' => 0, 't' => time() );
+				$rate = array(
+					'c' => 0,
+					't' => time(),
+				);
 			}
 		} else {
-			$rate = array( 'c' => 0, 't' => time() );
+			$rate = array(
+				'c' => 0,
+				't' => time(),
+			);
 		}
 
 		$rate_ok = ( (int) $rate['c'] < $max );
@@ -210,18 +224,14 @@ class MfaFlowLoginHandler {
 		}
 
 		self::$mfa_flow_handshake_attempted = true;
-		$user_group = '';
+		$user_group                         = '';
 		if ( $user && ! empty( $user->roles ) && is_array( $user->roles ) ) {
 			$user_group = reset( $user->roles );
 		}
-		$redirect_to         = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
-		$cancel_url          = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
-		$current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		$current_login_url   = '';
-		if ( is_string( $current_request_uri ) && '' !== $current_request_uri ) {
-			$current_login_url = home_url( $current_request_uri );
-		}
-		$login_url = ( '' !== $current_login_url ) ? $current_login_url : wp_login_url();
+		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+		$cancel_url  = add_query_arg( 'llar_mfa_cancelled', '1', wp_login_url() );
+		// Same public base as send_email_url (siteurl or home when Host matches).
+		$login_url = MfaUrl::request_login_url( Helpers::get_request_uri() );
 		$login_url = add_query_arg( 'llar_mfa', '1', $login_url );
 		if ( '' !== $redirect_to ) {
 			$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );
@@ -312,6 +322,7 @@ class MfaFlowLoginHandler {
 				// window opens, not on TTL refreshes (concurrent first requests
 				// may each log it once), and only when the site enabled debug
 				// logging.
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- gated by WP_DEBUG_LOG.
 				error_log( 'LLAR: MFA provider handshake failed (status ' . $status . ') - 2FA temporarily disabled for 60 seconds' );
 			}
 			set_transient( MfaConstants::TRANSIENT_MFA_DISABLED, MfaConstants::TRANSIENT_VALUE_API_UNREACHABLE, 60 );
