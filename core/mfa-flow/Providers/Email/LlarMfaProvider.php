@@ -113,6 +113,9 @@ class LlarMfaProvider implements MfaProviderInterface {
 		}
 
 		$subject = __( 'Verify your login', 'limit-login-attempts-reloaded' );
+		if ( ! empty( $context['subject'] ) && is_string( $context['subject'] ) ) {
+			$subject = $context['subject'];
+		}
 
 		$site_url    = home_url();
 		$site_parsed = wp_parse_url( $site_url );

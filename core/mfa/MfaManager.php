@@ -4,6 +4,8 @@ namespace LLAR\Core\Mfa;
 
 use LLAR\Core\Config;
 use LLAR\Core\MfaConstants;
+use LLAR\Core\MfaFlow\Providers\Email\LlarMfaProvider;
+use LLAR\Core\MfaFlow\SessionStore;
 use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadOptionsStorage;
 use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageInterface;
 use LLAR\Core\Mfa\RescuePayloadStorage\RescuePayloadStorageSelector;
@@ -163,6 +165,8 @@ class MfaManager {
 	 */
 	public function register() {
 		add_action( 'wp_ajax_llar_mfa_generate_rescue_codes', array( $this, 'ajax_generate_rescue_codes' ) );
+		add_action( 'wp_ajax_llar_mfa_test_email', array( $this, 'ajax_test_email' ) );
+		add_action( 'wp_ajax_llar_mfa_test_email_cleanup', array( $this, 'ajax_test_email_cleanup' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
 		add_action( 'template_redirect', array( $this, 'handle_rescue_endpoint' ) );
 		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_mfa_disabled_message_script' ) );
@@ -477,6 +481,129 @@ class MfaManager {
 	}
 
 	/**
+	 * AJAX: create a one-shot is_test MFA session and return cloud send-code URLs + credentials.
+	 * Browser then POSTs to those URLs like the MFA cloud app would.
+	 *
+	 * @return void Exits with wp_send_json_*.
+	 */
+	public function ajax_test_email() {
+		if ( ! $this->user_can_manage_mfa() ) {
+			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'limit-login-attempts-reloaded' ) ) );
+		}
+		if ( ! check_ajax_referer( 'limit-login-attempts-options', 'nonce', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ) );
+		}
+
+		$user = wp_get_current_user();
+		if ( ! $user || 0 === (int) $user->ID || empty( $user->user_email ) ) {
+			wp_send_json_error( array( 'message' => __( 'Your account has no email address. Please set an email in your profile; 2FA requires it to send codes.', 'limit-login-attempts-reloaded' ) ) );
+		}
+
+		$user_id   = (int) $user->ID;
+		$rate_key  = 'llar_mfa_test_email_rl_' . $user_id;
+		$rate_data = get_transient( $rate_key );
+		if ( false !== $rate_data && is_array( $rate_data ) ) {
+			$elapsed = time() - (int) $rate_data['t'];
+			if ( $elapsed < 60 && (int) $rate_data['c'] >= 5 ) {
+				wp_send_json_error( array( 'message' => __( 'Too many attempts. Please try again in a minute.', 'limit-login-attempts-reloaded' ) ) );
+			}
+			if ( $elapsed >= 60 ) {
+				$rate_data = array(
+					'c' => 0,
+					't' => time(),
+				);
+			}
+		} else {
+			$rate_data = array(
+				'c' => 0,
+				't' => time(),
+			);
+		}
+		$rate_data['c'] = (int) $rate_data['c'] + 1;
+		set_transient( $rate_key, $rate_data, 60 );
+
+		$store     = new SessionStore();
+		$token_key = 'llar_mfa_test_email_token_' . $user_id;
+		$prev      = get_transient( $token_key );
+		if ( is_string( $prev ) && '' !== $prev ) {
+			$store->delete_session( $prev );
+		}
+
+		$token  = wp_generate_password( 32, false );
+		$secret = wp_generate_password( 32, false );
+		$ttl    = defined( 'LLA_MFA_TEST_EMAIL_SESSION_TTL' ) ? (int) LLA_MFA_TEST_EMAIL_SESSION_TTL : 120;
+		$ttl    = $ttl >= 30 ? $ttl : 30;
+
+		$saved = $store->save_session(
+			$token,
+			$secret,
+			$user->user_login,
+			$user_id,
+			'',
+			'',
+			'llar',
+			false,
+			false,
+			true,
+			$ttl
+		);
+		if ( ! $saved || ! $store->save_send_email_secret( $token, $secret, $ttl ) ) {
+			$store->delete_session( $token );
+			wp_send_json_error( array( 'message' => __( 'Failed to prepare test email session. Please try again.', 'limit-login-attempts-reloaded' ) ) );
+		}
+		set_transient( $token_key, $token, $ttl );
+
+		$provider = new LlarMfaProvider();
+		$urls     = $provider->build_send_email_urls();
+
+		wp_send_json_success(
+			array(
+				'url'          => isset( $urls['send_email_url'] ) ? (string) $urls['send_email_url'] : '',
+				'fallback_url' => isset( $urls['send_email_url_fallback'] ) ? (string) $urls['send_email_url_fallback'] : '',
+				'token'        => $token,
+				'secret'       => $secret,
+				'email'        => $user->user_email,
+			)
+		);
+	}
+
+	/**
+	 * AJAX: delete a test-email MFA session after browser send-code attempt.
+	 *
+	 * @return void Exits with wp_send_json_*.
+	 */
+	public function ajax_test_email_cleanup() {
+		if ( ! $this->user_can_manage_mfa() ) {
+			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'limit-login-attempts-reloaded' ) ) );
+		}
+		if ( ! check_ajax_referer( 'limit-login-attempts-options', 'nonce', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ) );
+		}
+
+		$token = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
+		if ( '' === $token ) {
+			wp_send_json_success();
+		}
+
+		$store   = new SessionStore();
+		$session = $store->get_session( $token );
+		if ( $session && ! empty( $session['is_test'] ) ) {
+			$user_id = get_current_user_id();
+			if ( ! empty( $session['user_id'] ) && (int) $session['user_id'] === (int) $user_id ) {
+				// delete_session removes session + send_email_secret + OTP.
+				$store->delete_session( $token );
+				$token_key = 'llar_mfa_test_email_token_' . $user_id;
+				$stored    = get_transient( $token_key );
+				if ( is_string( $stored ) && hash_equals( $stored, $token ) ) {
+					delete_transient( $token_key );
+				}
+			}
+		}
+
+		wp_send_json_success();
+	}
+
+	/**
 	 * Enqueue script for "MFA temporarily disabled" message on wp-login and Woo account page.
 	 *
 	 * @return void
@@ -533,8 +660,9 @@ class MfaManager {
 		$merged = array_merge(
 			$existing_data,
 			array(
-				'nonce_mfa_generate_codes' => $mfa_generate_codes,
-				'ajax_url'                 => admin_url( 'admin-ajax.php' ),
+				'nonce_mfa_generate_codes'  => $mfa_generate_codes,
+				'nonce_mfa_send_test_email' => $mfa_generate_codes,
+				'ajax_url'                  => admin_url( 'admin-ajax.php' ),
 			)
 		);
 		wp_localize_script( 'lla-main', 'llar_vars', $merged );

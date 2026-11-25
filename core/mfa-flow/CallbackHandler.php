@@ -125,6 +125,10 @@ class CallbackHandler {
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			return;
 		}
+		if ( ! empty( $session['is_test'] ) ) {
+			$store->delete_session( $token );
+			return;
+		}
 		$verify = $store->consume_callback_state( $cookie, $token );
 		SessionStore::set_state_cookie( '' );
 		if ( ! $verify ) {
@@ -172,6 +176,11 @@ class CallbackHandler {
 		$session = $store->get_session( $token );
 		$cookie  = isset( $_COOKIE['llar_mfa_state'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['llar_mfa_state'] ) ) : '';
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
+			$store->delete_session( $token );
+			self::redirect_login( 'llar_mfa_session_expired' );
+			return;
+		}
+		if ( ! empty( $session['is_test'] ) ) {
 			$store->delete_session( $token );
 			self::redirect_login( 'llar_mfa_session_expired' );
 			return;

@@ -68,9 +68,17 @@ class MfaFlowSendCode {
 		}
 
 		$context = is_array( $context ) ? $context : array();
+		$is_test = ! empty( $session['is_test'] );
+		if ( $is_test ) {
+			$context['subject'] = __( '[TEST] Verify your login', 'limit-login-attempts-reloaded' );
+		}
 		$result  = $provider->send_code( $user, $code, $context );
 		if ( ! empty( $result['success'] ) ) {
 			$store->save_otp( $token, $code );
+			if ( $is_test ) {
+				// One-shot: delete_session removes session + send_email_secret + OTP.
+				$store->delete_session( $token );
+			}
 			return array(
 				'success'     => true,
 				'http_status' => 200,
