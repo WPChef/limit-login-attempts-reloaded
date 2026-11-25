@@ -483,7 +483,7 @@ class MfaManager {
 		);
 
 		$store     = new SessionStore();
-		$token_key = 'llar_mfa_test_email_token_' . $user_id;
+		$token_key = MfaConstants::test_email_token_transient_key( $user_id );
 		$prev      = get_transient( $token_key );
 		if ( is_string( $prev ) && '' !== $prev ) {
 			$store->delete_session( $prev );
@@ -504,8 +504,10 @@ class MfaManager {
 			'llar',
 			false,
 			false,
-			true,
-			$ttl
+			array(
+				'is_test' => true,
+				'ttl'     => $ttl,
+			)
 		);
 		if ( ! $saved || ! $store->save_send_email_secret( $token, $secret, $ttl ) ) {
 			$store->delete_session( $token );
@@ -522,6 +524,7 @@ class MfaManager {
 				'fallback_url' => isset( $urls['send_email_url_fallback'] ) ? (string) $urls['send_email_url_fallback'] : '',
 				'token'        => $token,
 				'secret'       => $secret,
+				'email'        => (string) $user->user_email,
 			)
 		);
 	}
@@ -542,7 +545,7 @@ class MfaManager {
 		$user_id   = get_current_user_id();
 		$store     = new SessionStore();
 		$session   = $store->get_session( $token );
-		$token_key = 'llar_mfa_test_email_token_' . $user_id;
+		$token_key = MfaConstants::test_email_token_transient_key( $user_id );
 		$stored    = get_transient( $token_key );
 		$owned     = is_string( $stored ) && hash_equals( $stored, $token );
 
@@ -554,7 +557,7 @@ class MfaManager {
 			$store->delete_session( $token );
 		}
 		if ( $owned ) {
-			delete_transient( $token_key );
+			MfaConstants::clear_test_email_token_pointer( $user_id, $token );
 		}
 
 		wp_send_json_success();

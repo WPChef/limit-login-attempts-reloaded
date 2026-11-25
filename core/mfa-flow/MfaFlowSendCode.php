@@ -79,11 +79,7 @@ class MfaFlowSendCode {
 				$store->delete_session( $token );
 				$uid = ! empty( $session['user_id'] ) ? (int) $session['user_id'] : 0;
 				if ( $uid > 0 ) {
-					$token_key = 'llar_mfa_test_email_token_' . $uid;
-					$stored    = get_transient( $token_key );
-					if ( is_string( $stored ) && hash_equals( $stored, (string) $token ) ) {
-						delete_transient( $token_key );
-					}
+					\LLAR\Core\MfaConstants::clear_test_email_token_pointer( $uid, (string) $token );
 				}
 			} else {
 				$store->save_otp( $token, $code );

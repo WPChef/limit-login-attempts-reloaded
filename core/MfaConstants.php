@@ -74,8 +74,41 @@ class MfaConstants {
 	/** @var int PDF generation rate limit period in seconds (1 minute) */
 	const PDF_RATE_LIMIT_PERIOD = LLA_MFA_PDF_RATE_LIMIT_PERIOD;
 
+	/** @var string Transient key prefix: live admin test-email session token pointer per user */
+	const TRANSIENT_TEST_EMAIL_TOKEN_PREFIX = 'llar_mfa_test_email_token_';
+
 	/** @var string WordPress wp_salt() scheme used as fallback when AUTH_SALT/NONCE_SALT are not defined */
 	const WP_SALT_SCHEME_FALLBACK = LLA_MFA_WP_SALT_SCHEME_FALLBACK;
+
+	/**
+	 * Transient key for the current is_test send-code session token of a user.
+	 *
+	 * @param int $user_id User ID.
+	 * @return string
+	 */
+	public static function test_email_token_transient_key( $user_id ) {
+		return self::TRANSIENT_TEST_EMAIL_TOKEN_PREFIX . (int) $user_id;
+	}
+
+	/**
+	 * Delete the admin test-email token pointer if it still points at $token.
+	 *
+	 * @param int    $user_id User ID.
+	 * @param string $token   Session token.
+	 * @return bool True if a matching pointer was deleted.
+	 */
+	public static function clear_test_email_token_pointer( $user_id, $token ) {
+		if ( ! is_string( $token ) || '' === $token ) {
+			return false;
+		}
+		$key    = self::test_email_token_transient_key( $user_id );
+		$stored = get_transient( $key );
+		if ( is_string( $stored ) && hash_equals( $stored, $token ) ) {
+			delete_transient( $key );
+			return true;
+		}
+		return false;
+	}
 
 	/** @var string Block reason: SSL/HTTPS required */
 	const MFA_BLOCK_REASON_SSL = LLA_MFA_BLOCK_REASON_SSL;

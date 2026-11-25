@@ -26,24 +26,29 @@ class SessionStore {
 	/**
 	 * Save session after handshake.
 	 *
-	 * @param string $token       From API.
-	 * @param string $secret      From API.
-	 * @param string $username   Login name.
-	 * @param int    $user_id    Optional. User ID if known.
-	 * @param string $redirect_to Optional. URL to redirect after login.
-	 * @param string $cancel_url  Optional. URL for MFA app cancel.
-	 * @param string $provider_id          Optional. Provider id (e.g. 'llar').
-	 * @param bool   $is_pre_authenticated  True if password was already validated at handshake.
-	 * @param bool   $remember_me           True if user checked "Remember Me" on login form.
-	 * @param bool   $is_test               True for admin test-email sessions (not usable for login).
-	 * @param int|null $ttl                 Optional. Transient TTL in seconds; null = LLA_MFA_SESSION_TTL.
+	 * @param string     $token                 From API.
+	 * @param string     $secret                From API.
+	 * @param string     $username              Login name.
+	 * @param int        $user_id               Optional. User ID if known.
+	 * @param string     $redirect_to           Optional. URL to redirect after login.
+	 * @param string     $cancel_url            Optional. URL for MFA app cancel.
+	 * @param string     $provider_id           Optional. Provider id (e.g. 'llar').
+	 * @param bool       $is_pre_authenticated  True if password was already validated at handshake.
+	 * @param bool       $remember_me           True if user checked "Remember Me" on login form.
+	 * @param array|bool $options               Options: is_test (bool), ttl (int|null).
+	 *                                          Legacy: bool treated as is_test.
 	 * @return bool True if saved.
 	 */
-	public function save_session( $token, $secret, $username, $user_id = 0, $redirect_to = '', $cancel_url = '', $provider_id = '', $is_pre_authenticated = false, $remember_me = false, $is_test = false, $ttl = null ) {
+	public function save_session( $token, $secret, $username, $user_id = 0, $redirect_to = '', $cancel_url = '', $provider_id = '', $is_pre_authenticated = false, $remember_me = false, $options = array() ) {
 		if ( ! is_string( $token ) || '' === $token ) {
 			return false;
 		}
-		$ttl = $this->resolve_ttl( $ttl );
+		if ( ! is_array( $options ) ) {
+			$options = array( 'is_test' => (bool) $options );
+		}
+		$is_test = ! empty( $options['is_test'] );
+		$ttl     = array_key_exists( 'ttl', $options ) ? $options['ttl'] : null;
+		$ttl     = $this->resolve_ttl( $ttl );
 
 		$data = array(
 			'token'                => $token,

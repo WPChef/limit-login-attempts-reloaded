@@ -462,7 +462,6 @@ jQuery(document).ready(function($) {
 		if ($emailReceivedCheckbox.length && !$emailReceivedCheckbox.prop('disabled')) {
 			$emailReceivedCheckbox.prop('checked', false);
 		}
-		$status.removeClass('llar-rescue-email-test-status--ok llar-rescue-email-test-status--err').text('');
 		function updateActivateButtonVisual() {
 			const savedOk = $savedCheckbox.is(':checked');
 			const emailOk = $emailReceivedCheckbox.length > 0 && !$emailReceivedCheckbox.prop('disabled') && $emailReceivedCheckbox.is(':checked');
@@ -471,14 +470,20 @@ jQuery(document).ready(function($) {
 			syncMfaConfirmEmailHidden($emailReceivedCheckbox);
 		}
 		function setTestEmailBusy(busy) {
-			$sendBtn.prop('disabled', !!busy).text(busy ? sendingLabel : sendLabel);
+			if (!$sendBtn.data('llarPermanentlyDisabled')) {
+				$sendBtn.prop('disabled', !!busy).text(busy ? sendingLabel : sendLabel);
+			}
 			if ($emailReceivedCheckbox.length && !$emailReceivedCheckbox.data('llarPermanentlyDisabled')) {
 				$emailReceivedCheckbox.prop('disabled', !!busy);
 			}
 		}
 		function setTestEmailStatus(ok, message) {
+			$status.removeClass('llar-rescue-email-test-status--ok llar-rescue-email-test-status--err');
+			if (ok === null || typeof ok === 'undefined') {
+				$status.text('');
+				return;
+			}
 			$status
-				.removeClass('llar-rescue-email-test-status--ok llar-rescue-email-test-status--err')
 				.addClass(ok ? 'llar-rescue-email-test-status--ok' : 'llar-rescue-email-test-status--err')
 				.text(message || '');
 		}
@@ -496,8 +501,12 @@ jQuery(document).ready(function($) {
 			}
 			return fallback;
 		}
+		setTestEmailStatus(null);
 		updateActivateButtonVisual();
 		$savedCheckbox.off('change').on('change', updateActivateButtonVisual);
+		if ($sendBtn.length && $sendBtn.prop('disabled')) {
+			$sendBtn.data('llarPermanentlyDisabled', true);
+		}
 		if ($emailReceivedCheckbox.length) {
 			if ($emailReceivedCheckbox.prop('disabled')) {
 				$emailReceivedCheckbox.data('llarPermanentlyDisabled', true);
@@ -512,11 +521,11 @@ jQuery(document).ready(function($) {
 				setTestEmailStatus(false, '<?php echo esc_js( __( 'Security token is missing. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>');
 				return;
 			}
-			$status.removeClass('llar-rescue-email-test-status--ok llar-rescue-email-test-status--err').text('');
+			setTestEmailStatus(null);
 			setTestEmailBusy(true);
 			const ajaxUrl = llar_vars.ajax_url || '<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>';
 			const nonce = llar_vars.nonce_mfa_generate_codes;
-			const email = ($emailTest.find('.llar-rescue-email-test-copy strong').first().text() || '').trim();
+			const emailFromDom = ($emailTest.find('.llar-rescue-email-test-copy strong').first().text() || '').trim();
 			$.ajax({
 				url: ajaxUrl,
 				type: 'POST',
@@ -530,6 +539,7 @@ jQuery(document).ready(function($) {
 				}
 				const token = prep.data.token;
 				const secret = prep.data.secret;
+				const email = (prep.data.email || emailFromDom || '').trim();
 				const primaryUrl = prep.data.url;
 				const fallbackUrl = prep.data.fallback_url || '';
 				const body = {
