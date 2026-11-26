@@ -1772,12 +1772,18 @@ class LimitLoginAttempts implements OptionsPageUriProvider {
 	 * Side-effect free (no cookie consumption), so it can gate both the
 	 * admin_notices render and the admin_enqueue_scripts asset loading.
 	 *
+	 * Network and user admin screens fire network_admin_notices/user_admin_notices
+	 * instead of admin_notices, so the notice never renders there and its
+	 * script must not be enqueued either.
+	 *
 	 * @return bool
 	 */
 	private function is_leave_review_notice_visible() {
 		$screen = get_current_screen();
 		if (
 			! $this->has_capability
+			|| is_network_admin()
+			|| is_user_admin()
 			|| Config::get( 'review_notice_shown' )
 			|| ! $screen
 			|| ! in_array( $screen->base, array( 'dashboard', 'plugins', 'toplevel_page_limit-login-attempts' ), true )
