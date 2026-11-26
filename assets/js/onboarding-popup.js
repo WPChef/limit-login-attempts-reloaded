@@ -211,9 +211,9 @@
 				$body.addClass( disabled );
 				$( '.jconfirm-closeIcon' ).addClass( hidden );
 
+				// Ellipsis only — no spinner (review: replace loadinfo with «...»).
 				const $loadinfo = $( '<div class="llar-trial-loadinfo"/>' )
-					.append( $( '<span class="llar-trial-loadinfo__label"/>' ).text( activatingLabel ) )
-					.append( $( '<span class="llar-trial-loadinfo__spinner"/>' ).append( spinnerHtml ) );
+					.append( $( '<span class="llar-trial-loadinfo__label"/>' ).text( activatingLabel || '...' ) );
 				$( '.llar-onboarding__body .card' ).prepend( $loadinfo );
 
 				const restoreTrialStepUi = function () {

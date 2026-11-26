@@ -55,10 +55,7 @@ ob_start();
                 </div>
                 <div class="card-body step-loading<?php echo $auto ? '' : ' llar-display-none'; ?>">
                     <div class="llar-upgrade-subscribe_notification">
-                        <div class="field-image">
-                            <?php echo $spinner; ?>
-                        </div>
-                        <div class="description_add">
+                        <div class="description_add llar-micro-cloud-ellipsis">
                             <?php echo esc_html( $modal['activating_text'] ); ?>
                         </div>
                     </div>

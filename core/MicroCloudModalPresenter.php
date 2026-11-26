@@ -71,7 +71,7 @@ class MicroCloudModalPresenter {
 				LimitLoginAttempts::TRIAL_DAYS
 			),
 			'card_title'        => __( 'How To Activate Your Free Trial', 'limit-login-attempts-reloaded' ),
-			'activating_text'   => __( 'Activating your free trial…', 'limit-login-attempts-reloaded' ),
+			'activating_text'   => __( '...', 'limit-login-attempts-reloaded' ),
 			'error_message'     => __( 'The server is not working, try again later', 'limit-login-attempts-reloaded' ),
 			'success_text'      => __( 'Your free trial has been activated!', 'limit-login-attempts-reloaded' ),
 			'dashboard_label'   => __( 'Great!', 'limit-login-attempts-reloaded' ),
