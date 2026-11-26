@@ -134,7 +134,7 @@ ob_start();
 				<div class="llar-trial-after-note">
 					<?php echo esc_html( $popup['step2']['after_trial_note'] ); ?>
 				</div>
-				<button type="button" class="button button--fit llar-trial-done llar-display-none" id="llar-trial-activation-done">
+				<button type="button" class="button menu__item button--fit llar-trial-done llar-display-none" id="llar-trial-activation-done">
 					<?php echo esc_html( $popup['step2']['activation_done_label'] ); ?>
 				</button>
 				<button type="button" class="button llar-onboarding-skip" id="llar-limited-upgrade-no_subscribe">
