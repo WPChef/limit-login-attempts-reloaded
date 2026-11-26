@@ -163,16 +163,16 @@ wp_enqueue_script(
 );
 
 $onboarding_config = array(
-	'errors'         => $popup['errors'],
-	'trialReturn'    => $popup['trial_return'],
-	'trialLanding'   => $popup['trial_landing'],
-	'adminEmail'     => $popup['admin_email'],
-	'awaitingLabel'  => $popup['step2']['awaiting_label'],
+	'errors'              => $popup['errors'],
+	'trialReturn'         => $popup['trial_return'],
+	'trialLanding'        => $popup['trial_landing'],
+	'adminEmail'          => $popup['admin_email'],
+	'awaitingLabel'       => $popup['step2']['awaiting_label'],
 	'activationDoneLabel' => $popup['step2']['activation_done_label'],
-	'activatingLabel' => $popup['step2']['activating_label'],
-	'spinnerHtml'    => $spinner,
-	'welcomeHtml'  => trim( $popup_complete_install_content ),
-	'step2Html'    => trim( $content_step_2 ),
+	'activatingLabel'     => $popup['step2']['activating_label'],
+	'spinnerHtml'         => $spinner,
+	'welcomeHtml'         => trim( $popup_complete_install_content ),
+	'step2Html'           => trim( $content_step_2 ),
 );
 
 wp_add_inline_script(

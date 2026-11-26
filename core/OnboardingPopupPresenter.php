@@ -24,14 +24,14 @@ class OnboardingPopupPresenter {
 			? $admin_notify_email
 			: ( ( ! is_multisite() ) ? get_option( 'admin_email' ) : get_site_option( 'admin_email' ) );
 
-		$trial_return = TrialLanding::parse_return_request();
-		$open_trial   = ! empty( $trial_return['open_trial_step'] );
-		$popup_shown  = (bool) Config::get( 'onboarding_popup_shown' );
+		$trial_return            = TrialLanding::parse_return_request();
+		$open_trial              = ! empty( $trial_return['open_trial_step'] );
+		$popup_shown             = (bool) Config::get( 'onboarding_popup_shown' );
 		$can_activate_onboarding = ! empty( $trial_return['can_activate'] )
 			&& 'onboarding' === $trial_return['context'];
 		// Empty Trial return stays closed after dismiss/Basic, but a valid
 		// onboarding activation link must still be able to complete setup.
-		$should_show  = empty( Config::get( 'app_setup_code' ) )
+		$should_show = empty( Config::get( 'app_setup_code' ) )
 			&& ( ! $popup_shown || $can_activate_onboarding );
 
 		$trial_token = '';
@@ -72,27 +72,27 @@ class OnboardingPopupPresenter {
 				'continue_label'    => __( 'Continue', 'limit-login-attempts-reloaded' ),
 			),
 			'step2'         => array(
-				'title'              => __( 'Experience Premium Protection for Free', 'limit-login-attempts-reloaded' ),
-				'subtitle'           => __( 'No commitment. No credit card required.', 'limit-login-attempts-reloaded' ),
-				'pitch'              => sprintf(
+				'title'                 => __( 'Experience Premium Protection for Free', 'limit-login-attempts-reloaded' ),
+				'subtitle'              => __( 'No commitment. No credit card required.', 'limit-login-attempts-reloaded' ),
+				'pitch'                 => sprintf(
 					/* translators: %d: trial length in days. */
 					__( 'Enjoy %d days of advanced cloud protection, including Login Firewall, Country Blocking, detailed login logs, and more.', 'limit-login-attempts-reloaded' ),
 					LimitLoginAttempts::TRIAL_DAYS
 				),
-				'email_label'        => __( 'Your Email', 'limit-login-attempts-reloaded' ),
-				'email_placeholder'  => __( 'Your email', 'limit-login-attempts-reloaded' ),
-				'consent_label'      => __( 'I agree to share my email and website domain with Limit Login Attempts Reloaded to activate cloud protection.', 'limit-login-attempts-reloaded' ),
-				'yes_label'          => __( 'Get Free Premium Protection', 'limit-login-attempts-reloaded' ),
-				'awaiting_label'     => __( 'Awaiting your confirmation...', 'limit-login-attempts-reloaded' ),
+				'email_label'           => __( 'Your Email', 'limit-login-attempts-reloaded' ),
+				'email_placeholder'     => __( 'Your email', 'limit-login-attempts-reloaded' ),
+				'consent_label'         => __( 'I agree to share my email and website domain with Limit Login Attempts Reloaded to activate cloud protection.', 'limit-login-attempts-reloaded' ),
+				'yes_label'             => __( 'Get Free Premium Protection', 'limit-login-attempts-reloaded' ),
+				'awaiting_label'        => __( 'Awaiting your confirmation...', 'limit-login-attempts-reloaded' ),
 				'activation_done_label' => __( 'I\'ve completed the activation', 'limit-login-attempts-reloaded' ),
-				'activating_label'   => __( '...', 'limit-login-attempts-reloaded' ),
-				'after_trial_note'   => sprintf(
+				'activating_label'      => __( '...', 'limit-login-attempts-reloaded' ),
+				'after_trial_note'      => sprintf(
 					/* translators: %d: trial length in days. */
 					__( 'After %d days, your site continues with free protection unless you choose to upgrade.', 'limit-login-attempts-reloaded' ),
 					LimitLoginAttempts::TRIAL_DAYS
 				),
-				'skip_label'         => __( 'Continue with Basic Protection', 'limit-login-attempts-reloaded' ),
-				'terms'              => sprintf(
+				'skip_label'            => __( 'Continue with Basic Protection', 'limit-login-attempts-reloaded' ),
+				'terms'                 => sprintf(
 					/* translators: %1$s: opening link tag, %2$s: closing link tag */
 					esc_html__( 'We\'ll send you instructions via email to complete setup. You may opt-out of this program at any time. You accept our %1$s terms of service %2$s by participating in this program.', 'limit-login-attempts-reloaded' ),
 					'<a class="link__style_color_inherit llar_turquoise" href="https://www.limitloginattempts.com/terms/" target="_blank">',
