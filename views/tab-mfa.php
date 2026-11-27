@@ -558,7 +558,7 @@ jQuery(document).ready(function($) {
 				}
 				function finishOk() {
 					cleanupSession();
-					const okMsg = '<?php echo esc_js( __( 'Test email sent to %s. Check your inbox and spam folder.', 'limit-login-attempts-reloaded' ) ); ?>'.replace('%s', email);
+					const okMsg = '<?php echo esc_js( __( 'Test email sent to %s. Check your inbox or spam folder if needed.', 'limit-login-attempts-reloaded' ) ); ?>'.replace('%s', email);
 					setTestEmailStatus(true, okMsg);
 					setTestEmailBusy(false);
 				}

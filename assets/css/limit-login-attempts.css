@@ -5250,7 +5250,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   font-size: 13px;
 }
 .jconfirm .llar-rescue-email-test-status--ok {
-  color: #4ACAD8;
+  color: #FF7C06;
 }
 .jconfirm .llar-rescue-email-test-status--err {
   color: #dc3232;

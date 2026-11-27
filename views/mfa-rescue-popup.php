@@ -34,9 +34,6 @@ $profile_url = admin_url( 'profile.php' );
 						<form id="llar-rescue-confirm-form" class="llar-rescue-confirm-form">
 						<!-- Rescue links are generated automatically when popup opens -->
 						<div id="llar-rescue-links-display">
-							<h3 class="title_page">
-								<?php echo esc_html__( 'Your Rescue Links', 'limit-login-attempts-reloaded' ); ?>
-							</h3>
 							<div class="llar-rescue-links-list" id="llar-rescue-links-list"></div>
 							<div class="llar-rescue-copy-row" style="display: none;">
 								<button type="button" class="button menu__item button__transparent_orange llar-copy-rescue-links" title="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>" aria-label="<?php echo esc_attr__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?>">📋 <?php echo esc_html__( 'Copy to clipboard', 'limit-login-attempts-reloaded' ); ?></button>
