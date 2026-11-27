@@ -258,13 +258,12 @@
           }
         }
 
-        // Plain ellipsis while the activation return is processed (no spinner).
+        // "Activating ..." — ellipsis instead of the loadinfo spinner icon.
         .llar-trial-loadinfo {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 28px;
-          letter-spacing: 0.12em;
+          font-size: 18px;
           font-weight: 700;
           color: $typography-primary;
           padding: 24px 0;

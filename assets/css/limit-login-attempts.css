@@ -3691,8 +3691,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  letter-spacing: 0.12em;
+  font-size: 18px;
   font-weight: 700;
   color: #2A2F40;
   padding: 24px 0;
@@ -4805,8 +4804,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   margin: 5px auto 0;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification .llar-micro-cloud-ellipsis {
-  font-size: 28px;
-  letter-spacing: 0.12em;
+  font-size: 18px;
   font-weight: 700;
   text-align: center;
   padding: 24px 0;
