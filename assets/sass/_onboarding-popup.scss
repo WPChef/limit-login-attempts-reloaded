@@ -73,6 +73,17 @@
               line-height: 1.5;
             }
 
+            .llar-trial-done {
+              margin: 4px auto 0;
+              background-color: $primary-colors__turquoise;
+              color: white;
+              border: none;
+
+              &:hover {
+                background-color: darken($primary-colors__turquoise, 8%);
+              }
+            }
+
             .llar-onboarding-skip {
               width: auto;
               min-width: 0;
@@ -131,7 +142,7 @@
         .llar-onboarding__line {
           position: relative;
           height: 2px;
-          width: 50%;
+          width: 25%;
           margin: 10px auto 60px;
           background-color: $primary-colors__steel_blue;
 
@@ -245,6 +256,18 @@
           .preloader-wrapper {
             display: block;
           }
+        }
+
+        // "Activating" + animated dots — replaces the loadinfo spinner icon.
+        .llar-trial-loadinfo {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          column-gap: 2px;
+          font-size: 18px;
+          font-weight: 400;
+          color: $typography-primary;
+          padding: 24px 0;
         }
 
         .card {
@@ -376,7 +399,10 @@
 
             &--inline {
               display: flex;
-              align-items: center;
+              // The controls column (input + checkbox) is taller than the
+              // input itself — top-align the row so the label can be pinned
+              // to the input's vertical center instead of the column's.
+              align-items: flex-start;
               column-gap: 16px;
               width: 100%;
               text-align: left;
@@ -386,13 +412,30 @@
                 color: $typography-primary;
                 font-size: 16px;
                 font-weight: 600;
+                line-height: 25px;
                 white-space: nowrap;
+                // Input: 15px padding + ~22px text + 2px border = ~54px.
+                // (54 - 25) / 2 ~= 15px offsets the label to its center.
+                margin-top: 15px;
               }
 
               .input_border {
                 flex: 1 1 auto;
                 min-width: 0;
                 width: 100%;
+              }
+
+              .field-email__controls {
+                flex: 1 1 auto;
+                min-width: 0;
+              }
+
+              .field-checkbox {
+                margin-left: 0;
+
+                input {
+                  margin-left: 0;
+                }
               }
             }
           }
@@ -509,16 +552,16 @@
 
             input {
               // Center the 18px checkbox against the first text line
-              // (line box ~21px, offset by the span's 10px top margin).
-              margin-top: 11px;
+              // (line box ~21px, offset by the span's 6px top margin).
+              margin-top: 9px;
               margin-left: -25px;
               vertical-align: top;
             }
 
             span {
               display: inline-block;
-              margin-left: 15px;
-              margin-top: 10px;
+              margin-left: 10px;
+              margin-top: 6px;
             }
           }
 
@@ -639,5 +682,40 @@
       color: #666D84;
       outline: none;
     }
+  }
+}
+
+// Animated ellipsis that replaces the loadinfo spinner icon.
+.llar-activating-dots {
+  display: inline-flex;
+  margin-left: 2px;
+  letter-spacing: 0.05em;
+
+  > span {
+    opacity: 0.2;
+    animation: llar-activating-dots 1.2s infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes llar-activating-dots {
+  0%,
+  20% {
+    opacity: 0.2;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.2;
   }
 }

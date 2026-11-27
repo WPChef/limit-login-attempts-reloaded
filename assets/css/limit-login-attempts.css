@@ -3537,6 +3537,15 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #666D84;
   line-height: 1.5;
 }
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-trial-done {
+  margin: 4px auto 0;
+  background-color: #4ACAD8;
+  color: white;
+  border: none;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-trial-done:hover {
+  background-color: rgb(44.1763636364, 189.1654545455, 205.0236363636);
+}
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .button_block-horizon--trial .llar-onboarding-skip {
   width: auto;
   min-width: 0;
@@ -3584,7 +3593,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .llar-onboarding__line {
   position: relative;
   height: 2px;
-  width: 50%;
+  width: 25%;
   margin: 10px auto 60px;
   background-color: #ABBFC1;
 }
@@ -3677,6 +3686,16 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .llar-disabled .preloader-wrapper {
   display: block;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .llar-trial-loadinfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 2px;
+  font-size: 18px;
+  font-weight: 400;
+  color: #2A2F40;
+  padding: 24px 0;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .card {
   min-width: 768px;
@@ -3779,7 +3798,7 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   column-gap: 16px;
   width: 100%;
   text-align: left;
@@ -3789,12 +3808,24 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   color: #2A2F40;
   font-size: 16px;
   font-weight: 600;
+  line-height: 25px;
   white-space: nowrap;
+  margin-top: 15px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline .input_border {
   flex: 1 1 auto;
   min-width: 0;
   width: 100%;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline .field-email__controls {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline .field-checkbox {
+  margin-left: 0;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-email--inline .field-checkbox input {
+  margin-left: 0;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc, .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-desc-add {
   color: #666D84;
@@ -3878,14 +3909,14 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   cursor: pointer;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-checkbox input {
-  margin-top: 11px;
+  margin-top: 9px;
   margin-left: -25px;
   vertical-align: top;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-checkbox span {
   display: inline-block;
-  margin-left: 15px;
-  margin-top: 10px;
+  margin-left: 10px;
+  margin-top: 6px;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .llar-onboarding-popup__content .field-image {
   width: 240px;
@@ -3982,6 +4013,33 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
   outline: none;
 }
 
+.llar-activating-dots {
+  display: inline-flex;
+  margin-left: 2px;
+  letter-spacing: 0.05em;
+}
+.llar-activating-dots > span {
+  opacity: 0.2;
+  animation: llar-activating-dots 1.2s infinite;
+}
+.llar-activating-dots > span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.llar-activating-dots > span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes llar-activating-dots {
+  0%, 20% {
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
 #llar-setting-page-premium {
   font-family: inherit;
   line-height: 1.5;
@@ -4866,6 +4924,12 @@ button.llar_button:focus, #llar-setting-page button.button:focus, .llar_button:f
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification {
   font-size: 18px;
   margin: 5px auto 0;
+}
+.toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification .llar-micro-cloud-ellipsis {
+  font-size: 18px;
+  font-weight: 400;
+  text-align: center;
+  padding: 24px 0;
 }
 .toplevel_page_limit-login-attempts .jconfirm .jconfirm-box .micro_cloud_modal__body .card-body .llar-upgrade-subscribe_notification .field-image img {
   width: 220px;
