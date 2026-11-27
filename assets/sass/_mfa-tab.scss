@@ -414,6 +414,21 @@
     margin-bottom: 0;
   }
 
+  // Tighten title → body gaps in rescue popup (QA).
+  .field-wrap > .title_page,
+  .llar-rescue-email-test > .title_page {
+    margin-bottom: 0;
+  }
+
+  .field-wrap > .title_page + .description-page .description,
+  .llar-rescue-email-test > .title_page + .description {
+    margin-top: 0 !important;
+  }
+
+  .llar-rescue-warning {
+    color: $primary-colors__orange;
+  }
+
   .llar-rescue-email-test {
     margin-top: 1.5em;
     padding-top: 0;

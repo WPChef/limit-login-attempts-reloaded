@@ -24,7 +24,7 @@ $profile_url = admin_url( 'profile.php' );
 							<?php echo esc_html__( 'Download Your Rescue Links', 'limit-login-attempts-reloaded' ); ?>
 						</h3>
 						<div class="description-page">
-							<p class="description" style="color: #dc3232; font-weight: bold;">
+							<p class="description llar-rescue-warning" style="color: #FF7C06; font-weight: bold;">
 								&#9888;&#65039; <?php echo esc_html__( 'Before enabling 2FA, you must download your rescue links. These links allow you to regain access to your site if you lose access to your 2FA device or encounter another technical issue (e.g., email is not working).', 'limit-login-attempts-reloaded' ); ?>
 								<?php echo esc_html__( 'By clicking a rescue link, 2FA will be fully disabled on', 'limit-login-attempts-reloaded' ); ?>
 								<strong><?php echo esc_html( $site_domain ); ?></strong>
