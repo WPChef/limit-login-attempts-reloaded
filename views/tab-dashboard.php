@@ -46,7 +46,7 @@ $toast_message = ! empty( $dashboard['onboarding_toast'] ) ? $dashboard['onboard
             <?php include_once( LLA_PLUGIN_DIR . 'views/chart-failed-attempts.php'); ?>
         </div>
         <?php if ( $dashboard['show_trial_block'] && $trial_modal ) : ?>
-		<div class="info-box-3">
+		<div class="info-box-3" data-llar-trial-card>
             <div class="section-title__new">
                 <div class="title"><?php echo $dashboard['trial_block']['title']; ?></div>
             </div>
