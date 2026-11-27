@@ -259,10 +259,12 @@ jQuery(document).ready(function($) {
 				// Form submit: after HTML5 validation, prevent actual submit and trigger main form
 				rescueModal.$content.find('#llar-rescue-confirm-form').off('submit.llarRescue').on('submit.llarRescue', function(e) {
 					e.preventDefault();
-					const hiddenInput = document.getElementById('llar_mfa_confirm_email_input');
-					if (hiddenInput) {
-						hiddenInput.value = '1';
+					const $received = rescueModal.$content.find('#llar-rescue-email-received-confirm');
+					const $saved = rescueModal.$content.find('#llar-rescue-saved-confirm');
+					if (!$received.length || !$received.is(':checked') || !$saved.length || !$saved.is(':checked')) {
+						return false;
 					}
+					syncMfaConfirmEmailHidden($received);
 					const rescueConfirmedInput = document.getElementById('llar_mfa_rescue_codes_confirmed_input');
 					if (rescueConfirmedInput) {
 						rescueConfirmedInput.value = '1';
@@ -443,29 +445,169 @@ jQuery(document).ready(function($) {
 			window.print();
 		});
 		$displayContainer.find('.llar-rescue-copy-row').show();
+		$displayContainer.find('.llar-rescue-save-hint').show();
 
-		rescueModal.$content.find('.llar-rescue-email-confirm').css('visibility', '');
+		const $emailTest = rescueModal.$content.find('.llar-rescue-email-test');
+		$emailTest.css('visibility', '').show();
 		rescueModal.$content.find('.llar-rescue-confirm-row').css('visibility', '').show();
 		const $confirmRow = rescueModal.$content.find('.llar-rescue-confirm-row');
 		const $savedCheckbox = rescueModal.$content.find('#llar-rescue-saved-confirm');
-		const $emailConfirmCheckbox = rescueModal.$content.find('#llar-rescue-confirm-email');
+		const $emailReceivedCheckbox = rescueModal.$content.find('#llar-rescue-email-received-confirm');
 		const $closeBtn = rescueModal.$content.find('.llar-rescue-close-btn');
+		const $sendBtn = rescueModal.$content.find('#llar-rescue-send-test-email');
+		const $status = rescueModal.$content.find('#llar-rescue-email-test-status');
+		const sendLabel = '<?php echo esc_js( __( 'Send', 'limit-login-attempts-reloaded' ) ); ?>';
+		const sendingLabel = '<?php echo esc_js( __( 'Sending…', 'limit-login-attempts-reloaded' ) ); ?>';
 		$savedCheckbox.prop('checked', false);
-		if ($emailConfirmCheckbox.length) {
-			$emailConfirmCheckbox.prop('checked', false);
+		if ($emailReceivedCheckbox.length && !$emailReceivedCheckbox.prop('disabled')) {
+			$emailReceivedCheckbox.prop('checked', false);
 		}
 		function updateActivateButtonVisual() {
 			const savedOk = $savedCheckbox.is(':checked');
-			const emailOk = $emailConfirmCheckbox.length > 0 && $emailConfirmCheckbox.is(':checked');
+			const emailOk = $emailReceivedCheckbox.length > 0 && !$emailReceivedCheckbox.prop('disabled') && $emailReceivedCheckbox.is(':checked');
 			$closeBtn.toggleClass('llar-rescue-close-btn--inactive', !(savedOk && emailOk));
 			$closeBtn.toggleClass('llar-rescue-close-btn--active', savedOk && emailOk);
+			syncMfaConfirmEmailHidden($emailReceivedCheckbox);
 		}
+		function setTestEmailBusy(busy) {
+			if (!$sendBtn.data('llarPermanentlyDisabled')) {
+				$sendBtn.prop('disabled', !!busy).text(busy ? sendingLabel : sendLabel);
+			}
+			if ($emailReceivedCheckbox.length && !$emailReceivedCheckbox.data('llarPermanentlyDisabled')) {
+				$emailReceivedCheckbox.prop('disabled', !!busy);
+			}
+		}
+		function setTestEmailStatus(ok, message) {
+			$status.removeClass('llar-rescue-email-test-status--ok llar-rescue-email-test-status--err');
+			if (ok === null || typeof ok === 'undefined') {
+				$status.text('');
+				return;
+			}
+			$status
+				.addClass(ok ? 'llar-rescue-email-test-status--ok' : 'llar-rescue-email-test-status--err')
+				.text(message || '');
+		}
+		function xhrMessage(xhr, fallback) {
+			if (xhr && xhr.responseJSON) {
+				if (xhr.responseJSON.message) { return xhr.responseJSON.message; }
+				if (xhr.responseJSON.data && xhr.responseJSON.data.message) { return xhr.responseJSON.data.message; }
+			}
+			if (xhr && xhr.responseText) {
+				try {
+					const parsed = JSON.parse(xhr.responseText);
+					if (parsed && parsed.message) { return parsed.message; }
+					if (parsed && parsed.data && parsed.data.message) { return parsed.data.message; }
+				} catch (e) {}
+			}
+			return fallback;
+		}
+		setTestEmailStatus(null);
 		updateActivateButtonVisual();
 		$savedCheckbox.off('change').on('change', updateActivateButtonVisual);
-		if ($emailConfirmCheckbox.length) {
-			$emailConfirmCheckbox.off('change').on('change', updateActivateButtonVisual);
+		if ($sendBtn.length && $sendBtn.prop('disabled')) {
+			$sendBtn.data('llarPermanentlyDisabled', true);
 		}
+		if ($emailReceivedCheckbox.length) {
+			if ($emailReceivedCheckbox.prop('disabled')) {
+				$emailReceivedCheckbox.data('llarPermanentlyDisabled', true);
+			}
+			$emailReceivedCheckbox.off('change').on('change', updateActivateButtonVisual);
+		}
+		$sendBtn.off('click.llarTestEmail').on('click.llarTestEmail', function() {
+			if ($sendBtn.prop('disabled')) {
+				return;
+			}
+			if (!llar_vars || !llar_vars.nonce_mfa_generate_codes) {
+				setTestEmailStatus(false, '<?php echo esc_js( __( 'Security token is missing. Please refresh the page and try again.', 'limit-login-attempts-reloaded' ) ); ?>');
+				return;
+			}
+			setTestEmailStatus(null);
+			setTestEmailBusy(true);
+			const ajaxUrl = llar_vars.ajax_url || '<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>';
+			const nonce = llar_vars.nonce_mfa_generate_codes;
+			const emailFromDom = ($emailTest.find('.llar-rescue-email-test-copy strong').first().text() || '').trim();
+			$.ajax({
+				url: ajaxUrl,
+				type: 'POST',
+				data: { action: 'llar_mfa_test_email', nonce: nonce }
+			}).done(function(prep) {
+				if (!prep || !prep.success || !prep.data || !prep.data.url || !prep.data.token || !prep.data.secret) {
+					const msg = (prep && prep.data && prep.data.message) ? prep.data.message : '<?php echo esc_js( __( 'Failed to prepare test email.', 'limit-login-attempts-reloaded' ) ); ?>';
+					setTestEmailStatus(false, msg);
+					setTestEmailBusy(false);
+					return;
+				}
+				const token = prep.data.token;
+				const secret = prep.data.secret;
+				const email = (prep.data.email || emailFromDom || '').trim();
+				const primaryUrl = prep.data.url;
+				const fallbackUrl = prep.data.fallback_url || '';
+				const body = {
+					token: token,
+					secret: secret,
+					code: 'TESTOK',
+					ip: '<?php echo esc_js( isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '' ); ?>',
+					browser: navigator.userAgent || ''
+				};
+				function cleanupSession() {
+					$.ajax({
+						url: ajaxUrl,
+						type: 'POST',
+						data: { action: 'llar_mfa_test_email_cleanup', nonce: nonce, token: token }
+					});
+				}
+				function finishOk() {
+					cleanupSession();
+					const okMsg = '<?php echo esc_js( __( 'Test email sent to %s. Check your inbox or spam folder if needed.', 'limit-login-attempts-reloaded' ) ); ?>'.replace('%s', email);
+					setTestEmailStatus(true, okMsg);
+					setTestEmailBusy(false);
+				}
+				function finishErr(message) {
+					cleanupSession();
+					setTestEmailStatus(false, message);
+					setTestEmailBusy(false);
+				}
+				function postSend(url, isFallback) {
+					return $.ajax({
+						url: url,
+						type: 'POST',
+						data: body,
+						dataType: 'json'
+					}).then(function(resp, textStatus, xhr) {
+						const status = xhr && xhr.status ? xhr.status : 200;
+						if (status === 200 && resp && resp.success) {
+							finishOk();
+							return;
+						}
+						// HTTP 200 with success:false — show error, do not hit fallback (spec §1.2).
+						const msg = (resp && resp.message) ? resp.message : ('<?php echo esc_js( __( 'Request failed (%d).', 'limit-login-attempts-reloaded' ) ); ?>'.replace('%d', String(status)));
+						finishErr(msg);
+					}, function(xhr) {
+						// Network error or HTTP ≠ 200 → fallback once.
+						const status = (xhr && typeof xhr.status === 'number') ? xhr.status : 0;
+						const msg = xhrMessage(xhr, '<?php echo esc_js( __( 'Request failed (%d).', 'limit-login-attempts-reloaded' ) ); ?>'.replace('%d', String(status)));
+						if (!isFallback && fallbackUrl) {
+							return postSend(fallbackUrl, true);
+						}
+						finishErr(msg);
+					});
+				}
+				postSend(primaryUrl, false);
+			}).fail(function(xhr) {
+				setTestEmailStatus(false, xhrMessage(xhr, '<?php echo esc_js( __( 'Failed to prepare test email.', 'limit-login-attempts-reloaded' ) ); ?>'));
+				setTestEmailBusy(false);
+			});
+		});
 		$confirmRow.show();
+	}
+
+	function syncMfaConfirmEmailHidden($receivedCheckbox) {
+		const hiddenInput = document.getElementById('llar_mfa_confirm_email_input');
+		if (!hiddenInput) {
+			return;
+		}
+		const checked = $receivedCheckbox && $receivedCheckbox.length && $receivedCheckbox.is(':checked');
+		hiddenInput.value = checked ? '1' : '0';
 	}
 
 	function fallbackCopy(text, onSuccess) {

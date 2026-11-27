@@ -131,6 +131,10 @@ class CallbackHandler {
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
 			return;
 		}
+		if ( ! empty( $session['is_test'] ) ) {
+			$store->delete_session( $token );
+			return;
+		}
 		if ( '' === $cookie ) {
 			// Prefetch / host-hop without the state cookie: redirect and keep the transient.
 			self::redirect_login( 'llar_mfa_session_expired' );
@@ -183,6 +187,11 @@ class CallbackHandler {
 		$session = $store->get_session( $token );
 		$cookie  = SessionStore::get_state_cookie();
 		if ( ! $session || empty( $session['secret'] ) || empty( $session['username'] ) ) {
+			$store->delete_session( $token );
+			self::redirect_login( 'llar_mfa_session_expired' );
+			return;
+		}
+		if ( ! empty( $session['is_test'] ) ) {
 			$store->delete_session( $token );
 			self::redirect_login( 'llar_mfa_session_expired' );
 			return;

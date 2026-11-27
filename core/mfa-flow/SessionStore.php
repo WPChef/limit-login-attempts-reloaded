@@ -63,23 +63,29 @@ class SessionStore {
 	/**
 	 * Save session after handshake.
 	 *
-	 * @param string $token       From API.
-	 * @param string $secret      From API.
-	 * @param string $username   Login name.
-	 * @param int    $user_id    Optional. User ID if known.
-	 * @param string $redirect_to Optional. URL to redirect after login.
-	 * @param string $cancel_url  Optional. URL for MFA app cancel.
-	 * @param string $provider_id          Optional. Provider id (e.g. 'llar').
-	 * @param bool   $is_pre_authenticated  True if password was already validated at handshake.
-	 * @param bool   $remember_me           True if user checked "Remember Me" on login form.
+	 * @param string     $token                 From API.
+	 * @param string     $secret                From API.
+	 * @param string     $username              Login name.
+	 * @param int        $user_id               Optional. User ID if known.
+	 * @param string     $redirect_to           Optional. URL to redirect after login.
+	 * @param string     $cancel_url            Optional. URL for MFA app cancel.
+	 * @param string     $provider_id           Optional. Provider id (e.g. 'llar').
+	 * @param bool       $is_pre_authenticated  True if password was already validated at handshake.
+	 * @param bool       $remember_me           True if user checked "Remember Me" on login form.
+	 * @param array|bool $options               Options: is_test (bool), ttl (int|null).
+	 *                                          Legacy: bool treated as is_test.
 	 * @return bool True if saved.
 	 */
-	public function save_session( $token, $secret, $username, $user_id = 0, $redirect_to = '', $cancel_url = '', $provider_id = '', $is_pre_authenticated = false, $remember_me = false ) {
+	public function save_session( $token, $secret, $username, $user_id = 0, $redirect_to = '', $cancel_url = '', $provider_id = '', $is_pre_authenticated = false, $remember_me = false, $options = array() ) {
 		if ( ! is_string( $token ) || '' === $token ) {
 			return false;
 		}
-		$ttl = defined( 'LLA_MFA_SESSION_TTL' ) ? (int) LLA_MFA_SESSION_TTL : 600;
-		$ttl = $ttl > 0 ? $ttl : 600;
+		if ( ! is_array( $options ) ) {
+			$options = array( 'is_test' => (bool) $options );
+		}
+		$is_test = ! empty( $options['is_test'] );
+		$ttl     = array_key_exists( 'ttl', $options ) ? $options['ttl'] : null;
+		$ttl     = $this->resolve_ttl( $ttl );
 
 		$data = array(
 			'token'                => $token,
@@ -91,6 +97,7 @@ class SessionStore {
 			'provider_id'          => is_string( $provider_id ) ? $provider_id : 'llar',
 			'is_pre_authenticated' => (bool) $is_pre_authenticated,
 			'remember_me'          => (bool) $remember_me,
+			'is_test'              => (bool) $is_test,
 			'created'              => time(),
 		);
 
@@ -339,18 +346,33 @@ class SessionStore {
 	 * Save send_email secret for token (validates POST send_code request body).
 	 * Secret is the same as session secret: from MFA app handshake response, used for verify and send_code.
 	 *
-	 * @param string $token Session token.
-	 * @param string $secret Secret from handshake response (MFA app).
+	 * @param string   $token  Session token.
+	 * @param string   $secret Secret from handshake response (MFA app).
+	 * @param int|null $ttl    Optional. Transient TTL in seconds; null = LLA_MFA_SESSION_TTL.
 	 * @return bool
 	 */
-	public function save_send_email_secret( $token, $secret ) {
+	public function save_send_email_secret( $token, $secret, $ttl = null ) {
 		if ( ! is_string( $token ) || '' === $token || ! is_string( $secret ) || '' === $secret ) {
 			return false;
 		}
-		$ttl = defined( 'LLA_MFA_SESSION_TTL' ) ? (int) LLA_MFA_SESSION_TTL : 600;
-		$ttl = $ttl > 0 ? $ttl : 600;
+		$ttl = $this->resolve_ttl( $ttl );
 		$key = LLA_MFA_FLOW_TRANSIENT_SEND_SECRET_PREFIX . $token;
 		return (bool) set_transient( $key, $secret, $ttl );
+	}
+
+	/**
+	 * Normalize transient TTL: null → LLA_MFA_SESSION_TTL (default 600), invalid → 600.
+	 *
+	 * @param int|null $ttl Requested TTL.
+	 * @return int
+	 */
+	private function resolve_ttl( $ttl ) {
+		if ( null === $ttl ) {
+			$ttl = defined( 'LLA_MFA_SESSION_TTL' ) ? (int) LLA_MFA_SESSION_TTL : 600;
+		} else {
+			$ttl = (int) $ttl;
+		}
+		return $ttl > 0 ? $ttl : 600;
 	}
 
 	/**

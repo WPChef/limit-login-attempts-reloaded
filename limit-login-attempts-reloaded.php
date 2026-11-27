@@ -236,6 +236,7 @@ defined( 'LLA_MFA_RESCUE_PREFETCH_BYPASS_ARG' ) || define( 'LLA_MFA_RESCUE_PREFE
 defined( 'LLA_MFA_API_BASE_URL' ) || define( 'LLA_MFA_API_BASE_URL', 'https://api.limitloginattempts.com' );
 defined( 'LLA_MFA_API_PATH' ) || define( 'LLA_MFA_API_PATH', '/mfa' );
 defined( 'LLA_MFA_SESSION_TTL' ) || define( 'LLA_MFA_SESSION_TTL', 600 ); /* seconds, 10 minutes */
+defined( 'LLA_MFA_TEST_EMAIL_SESSION_TTL' ) || define( 'LLA_MFA_TEST_EMAIL_SESSION_TTL', 120 ); /* seconds; test-email sessions only, min 30 */
 defined( 'LLA_MFA_PROVIDER' ) || define( 'LLA_MFA_PROVIDER', 'llar' );
 
 $um_limit_login_failed            = false;
