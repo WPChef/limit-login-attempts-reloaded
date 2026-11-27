@@ -994,4 +994,37 @@ class Helpers {
 		return require LLA_PLUGIN_DIR . 'resources/compatibility-data.php';
 	}
 
+	/**
+	 * Set an HttpOnly SameSite=Lax cookie on every PHP version the plugin supports.
+	 *
+	 * @param string $name   Cookie name.
+	 * @param string $value  Cookie value.
+	 * @param int    $expire Expiry as a Unix timestamp.
+	 * @param string $path   Cookie path.
+	 * @param string $domain Cookie domain ('' for host-only).
+	 *
+	 * @return void
+	 */
+	public static function set_samesite_lax_cookie( $name, $value, $expire, $path, $domain ) {
+		if ( version_compare( PHP_VERSION, '7.3', '>=' ) ) {
+			setcookie(
+				$name,
+				$value,
+				array(
+					'expires'  => $expire,
+					'path'     => $path,
+					'domain'   => $domain,
+					'secure'   => is_ssl(),
+					'httponly' => true,
+					'samesite' => 'Lax',
+				)
+			);
+
+			return;
+		}
+
+		// PHP below 7.3 has no SameSite option: the path-suffix form is the only way.
+		setcookie( $name, $value, $expire, $path . '; SameSite=Lax', $domain, is_ssl(), true );
+	}
+
 }

@@ -168,7 +168,10 @@ class MfaManager {
 		add_action( 'wp_ajax_llar_mfa_test_email', array( $this, 'ajax_test_email' ) );
 		add_action( 'wp_ajax_llar_mfa_test_email_cleanup', array( $this, 'ajax_test_email_cleanup' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
-		add_action( 'template_redirect', array( $this, 'handle_rescue_endpoint' ) );
+		// Priority 1: before Polylang language redirects (template_redirect priority 4).
+		add_action( 'template_redirect', array( $this, 'handle_rescue_endpoint' ), 1 );
+		// New rescue links use wp-login.php (avoids front-page language loops).
+		add_action( 'login_init', array( $this, 'handle_rescue_endpoint' ), 1 );
 		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_mfa_disabled_message_script' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_mfa_disabled_message_script' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 1000 );
@@ -187,13 +190,16 @@ class MfaManager {
 	}
 
 	/**
-	 * Handle rescue endpoint: pass hash_id from query var to endpoint handler.
+	 * Handle rescue endpoint: pass hash_id from query var / $_GET to endpoint handler.
 	 *
 	 * @return void
 	 */
 	public function handle_rescue_endpoint() {
 		$hash_id = get_query_var( 'llar_rescue' );
-		if ( empty( $hash_id ) ) {
+		if ( empty( $hash_id ) && isset( $_GET['llar_rescue'] ) && is_string( $_GET['llar_rescue'] ) ) {
+			$hash_id = sanitize_text_field( wp_unslash( $_GET['llar_rescue'] ) );
+		}
+		if ( empty( $hash_id ) || ! is_string( $hash_id ) ) {
 			return;
 		}
 		$this->endpoint->handle( $hash_id );
@@ -455,7 +461,7 @@ class MfaManager {
 			array(
 				'rescue_urls'  => $rescue_urls,
 				'html_content' => $html_content,
-				'domain'       => wp_parse_url( home_url(), PHP_URL_HOST ),
+				'domain'       => wp_parse_url( MfaUrl::base(), PHP_URL_HOST ),
 			)
 		);
 	}

@@ -26,8 +26,8 @@ class PremiumPlansPresenter {
 		return array(
 			'Personal' => array(
 				'price'             => '$' . LLAR_MIN_PLAN_PRICE . '/mo',
-				'price_old'         => '$6.67',
-				'billing_label'     => __( 'Billed Annually', 'limit-login-attempts-reloaded' ),
+				'price_old'         => '$4.00',
+				'billing_label'     => __( 'Billed every 3 years', 'limit-login-attempts-reloaded' ),
 				'save_badge'        => __( 'Save 50%', 'limit-login-attempts-reloaded' ),
 				'description_items' => array(
 					__( 'Personal blogs, portfolios, and side projects.', 'limit-login-attempts-reloaded' ),
@@ -36,9 +36,9 @@ class PremiumPlansPresenter {
 				),
 			),
 			'Business' => array(
-				'price'             => '$6.67/mo',
-				'price_old'         => '$13.33',
-				'billing_label'     => __( 'Billed Annually', 'limit-login-attempts-reloaded' ),
+				'price'             => '$5.33/mo',
+				'price_old'         => '$10.67',
+				'billing_label'     => __( 'Billed every 3 years', 'limit-login-attempts-reloaded' ),
 				'save_badge'        => __( 'Save 50%', 'limit-login-attempts-reloaded' ),
 				'description_items' => array(
 					__( 'Sites that make money such as shops, memberships, client work.', 'limit-login-attempts-reloaded' ),

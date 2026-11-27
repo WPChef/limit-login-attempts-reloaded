@@ -1,8 +1,12 @@
 <?php
+/**
+ * MFA flow session and OTP storage in transients.
+ */
 
 namespace LLAR\Core\MfaFlow;
 
 use LLAR\Core\Config;
+use LLAR\Core\Helpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -14,13 +18,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SessionStore {
 
 	/**
+	 * HttpOnly cookie mirroring the server-side callback state.
+	 *
+	 * SameSite=Lax is required for a top-level GET return from the external MFA
+	 * app. A future cross-site POST callback would need SameSite=None; Secure.
+	 */
+	const COOKIE_NAME = 'llar_mfa_state';
+
+	/**
 	 * Set or clear the MFA state cookie.
+	 *
+	 * Path stays `/` and domain host-only (empty) — same scope as before this
+	 * fix — so login/callback outside COOKIEPATH still receive the cookie.
+	 * SameSite=Lax matches the login-flow cookie intent for a top-level GET
+	 * return from the MFA app.
 	 *
 	 * @param string $value State value; empty string clears the cookie.
 	 */
 	public static function set_state_cookie( $value ) {
 		$expire = ( '' === $value ) ? time() - 3600 : time() + 600;
-		setcookie( 'llar_mfa_state', $value, $expire, '/', '', is_ssl(), true );
+
+		Helpers::set_samesite_lax_cookie( self::COOKIE_NAME, $value, $expire, '/', '' );
+	}
+
+	/**
+	 * Read the MFA state cookie value.
+	 *
+	 * State is generated via wp_generate_password( …, false, false ) — alnum only.
+	 * Reject the whole value if it does not match; do not strip characters.
+	 *
+	 * @return string
+	 */
+	public static function get_state_cookie() {
+		if ( ! isset( $_COOKIE[ self::COOKIE_NAME ] ) ) {
+			return '';
+		}
+		$raw = wp_unslash( $_COOKIE[ self::COOKIE_NAME ] );
+		if ( ! is_string( $raw ) || '' === $raw ) {
+			return '';
+		}
+		return preg_match( '/\A[a-zA-Z0-9]+\z/', $raw ) ? $raw : '';
 	}
 
 	/**
