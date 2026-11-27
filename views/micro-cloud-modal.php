@@ -57,6 +57,7 @@ ob_start();
                     <div class="llar-upgrade-subscribe_notification">
                         <div class="description_add llar-micro-cloud-ellipsis">
                             <?php echo esc_html( $modal['activating_text'] ); ?>
+                            <span class="llar-activating-dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span>
                         </div>
                     </div>
                 </div>

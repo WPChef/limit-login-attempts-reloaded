@@ -211,9 +211,13 @@
 				$body.addClass( disabled );
 				$( '.jconfirm-closeIcon' ).addClass( hidden );
 
-				// Text "Activating ..." — ellipsis instead of the loadinfo spinner icon.
+				// "Activating" + animated ellipsis (replaces the loadinfo spinner icon).
 				const $loadinfo = $( '<div class="llar-trial-loadinfo"/>' )
-					.append( $( '<span class="llar-trial-loadinfo__label"/>' ).text( activatingLabel || 'Activating ...' ) );
+					.append( $( '<span class="llar-trial-loadinfo__label"/>' ).text( activatingLabel || 'Activating' ) )
+					.append(
+						$( '<span class="llar-activating-dots" aria-hidden="true"/>' )
+							.append( '<span>.</span><span>.</span><span>.</span>' )
+					);
 				$( '.llar-onboarding__body .card' ).prepend( $loadinfo );
 
 				const restoreTrialStepUi = function () {
