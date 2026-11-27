@@ -86,10 +86,10 @@ $link_kses            = $v['link_kses'];
                             <div class="description-secondary p-0">
                                 <?php echo esc_html( $v['username_per_line_label'] ); ?>
                                 <span class="hint_tooltip-parent">
-                                    <span class="dashicons dashicons-editor-help"></span>
+                                    <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php echo esc_html( $v['safelist_username_hint'] ); ?>
+                                            <?php echo esc_html( $v['username_list_hint'] ); ?>
                                         </div>
                                     </div>
                                 </span>
@@ -117,10 +117,10 @@ $link_kses            = $v['link_kses'];
                             <div class="description-secondary p-0">
                                 <?php echo esc_html( $v['username_per_line_label'] ); ?>
                                 <span class="hint_tooltip-parent">
-                                    <span class="dashicons dashicons-editor-help"></span>
+                                    <span class="dashicons dashicons-secondary dashicons-editor-help"></span>
                                     <div class="hint_tooltip">
                                         <div class="hint_tooltip-content">
-                                            <?php echo esc_html( $v['denylist_username_hint'] ); ?>
+                                            <?php echo esc_html( $v['username_list_hint'] ); ?>
                                         </div>
                                     </div>
                                 </span>

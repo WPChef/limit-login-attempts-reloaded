@@ -103,13 +103,8 @@ class LocalLogsPresenter {
 			'denylist_label'             => __( 'Denylist', 'limit-login-attempts-reloaded' ),
 			'ip_per_line_label'          => __( 'One IP or IP range (1.2.3.4-5.6.7.8) per line', 'limit-login-attempts-reloaded' ),
 			'username_per_line_label'    => __( 'One Username per line', 'limit-login-attempts-reloaded' ),
-			// Safelist maps email → user_login during auth.
-			'safelist_username_hint'     => __(
-				"A username in this list also covers that account's email for allowlist matching. You can still add the email on its own line if you want the email string itself listed.",
-				'limit-login-attempts-reloaded'
-			),
-			// Denylist matches the submitted string only (no email → user_login mapping).
-			'denylist_username_hint'     => __(
+			// Same copy for Safelist + Denylist: each line is matched literally (no email → login mapping).
+			'username_list_hint'         => __(
 				"A username in this list does not also cover that account's email. To cover both, add the username and the email on separate lines. Each line is checked on its own, which avoids extra database lookups during attacks, works better with other plugins, and keeps the result predictable.",
 				'limit-login-attempts-reloaded'
 			),
