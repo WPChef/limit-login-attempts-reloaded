@@ -27,8 +27,8 @@ class PremiumPlansPresenter {
 			'Personal' => array(
 				'price'             => '$' . LLAR_MIN_PLAN_PRICE . '/mo',
 				'price_old'         => '$4.00',
-				'billing_label'     => __( 'Billed every 3 years', 'limit-login-attempts-reloaded' ),
-				'save_badge'        => __( 'Save 50%', 'limit-login-attempts-reloaded' ),
+				'billing_label'     => __( 'Multi-year billing', 'limit-login-attempts-reloaded' ),
+				'save_badge'        => __( 'Save 75%', 'limit-login-attempts-reloaded' ),
 				'description_items' => array(
 					__( 'Personal blogs, portfolios, and side projects.', 'limit-login-attempts-reloaded' ),
 					__( 'For sites where a break-in is a headache, not a business loss.', 'limit-login-attempts-reloaded' ),
@@ -36,10 +36,10 @@ class PremiumPlansPresenter {
 				),
 			),
 			'Business' => array(
-				'price'             => '$5.33/mo',
+				'price'             => '$2.67/mo',
 				'price_old'         => '$10.67',
-				'billing_label'     => __( 'Billed every 3 years', 'limit-login-attempts-reloaded' ),
-				'save_badge'        => __( 'Save 50%', 'limit-login-attempts-reloaded' ),
+				'billing_label'     => __( 'Multi-year billing', 'limit-login-attempts-reloaded' ),
+				'save_badge'        => __( 'Save 75%', 'limit-login-attempts-reloaded' ),
 				'description_items' => array(
 					__( 'Sites that make money such as shops, memberships, client work.', 'limit-login-attempts-reloaded' ),
 					__( "For anyone who'd lose orders or trust if the site went down.", 'limit-login-attempts-reloaded' ),

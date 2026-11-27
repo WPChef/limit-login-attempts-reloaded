@@ -5,7 +5,7 @@ Tags: brute force, login security, security, firewall, 2FA
 License: GPLv2 or later
 Requires at least: 5.4
 Tested up to: 7.1
-Stable tag: 3.4.8
+Stable tag: 3.4.9
 
 WordPress login security with brute force protection, Two-factor authentication (2FA/MFA), firewall, IP/country blocking, and login monitoring
 
@@ -249,6 +249,9 @@ The settings are explained within the plugin in great detail. If you are unsure,
 By default, you will need to copy and paste the lists to each site manually. For the <a href="https://www.limitloginattempts.com/plans/?from=wp-details">premium service</a>, sites are grouped within the same private cloud account. Each site within that group can be configured if it shares its lockouts and access lists with other group members. The setting is located in the plugin's interface. The default options are recommended.
 
 == Changelog ==
+
+= 3.4.9 =
+* Added a Local Logs hint that a listed username does not also cover that account's email. Thanks to Yannael for the report.
 
 = 3.4.8 =
 * Fixed two-factor login when the login address uses a different host or port than the site URL. The return from the code page and the request that sends the email now use the same address, and the login cookie is kept if a prefetch hits the return URL first.
